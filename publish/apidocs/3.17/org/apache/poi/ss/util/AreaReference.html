@@ -1,0 +1,588 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+AreaReference (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="AreaReference (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/util/AreaReference.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="AreaReference.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.util</FONT>
+<BR>
+Class AreaReference</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.util.AreaReference</B>
+</PRE>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../org/apache/poi/hssf/util/AreaReference.html" title="class in org.apache.poi.hssf.util">AreaReference</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>AreaReference</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#AreaReference(org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellReference)">AreaReference</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;topLeft,
+              <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;botRight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#AreaReference(org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellReference, org.apache.poi.ss.SpreadsheetVersion)"><CODE>AreaReference(CellReference, CellReference, SpreadsheetVersion)</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#AreaReference(org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellReference, org.apache.poi.ss.SpreadsheetVersion)">AreaReference</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;topLeft,
+              <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;botRight,
+              <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;version)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an area ref from a pair of Cell References.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#AreaReference(java.lang.String, org.apache.poi.ss.SpreadsheetVersion)">AreaReference</A></B>(java.lang.String&nbsp;reference,
+              <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;version)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an area ref from a string representation.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#formatAsString()">formatAsString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a text representation of this area reference.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html" title="class in org.apache.poi.ss.util">AreaReference</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#generateContiguous(org.apache.poi.ss.SpreadsheetVersion, java.lang.String)">generateContiguous</A></B>(<A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;version,
+                   java.lang.String&nbsp;reference)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Takes a non-contiguous area reference, and returns an array of contiguous area references</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html" title="class in org.apache.poi.ss.util">AreaReference</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#generateContiguous(java.lang.String)">generateContiguous</A></B>(java.lang.String&nbsp;reference)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#generateContiguous(org.apache.poi.ss.SpreadsheetVersion, java.lang.String)"><CODE>generateContiguous(SpreadsheetVersion, String)</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#getAllReferencedCells()">getAllReferencedCells</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a reference to every cell covered by this area</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#getFirstCell()">getFirstCell</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#getLastCell()">getLastCell</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note - if this area reference refers to a single cell, the return value of this method will
+ be identical to that of <tt>getFirstCell()</tt></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html" title="class in org.apache.poi.ss.util">AreaReference</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#getWholeColumn(org.apache.poi.ss.SpreadsheetVersion, java.lang.String, java.lang.String)">getWholeColumn</A></B>(<A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;version,
+               java.lang.String&nbsp;start,
+               java.lang.String&nbsp;end)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html" title="class in org.apache.poi.ss.util">AreaReference</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#getWholeRow(org.apache.poi.ss.SpreadsheetVersion, java.lang.String, java.lang.String)">getWholeRow</A></B>(<A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;version,
+            java.lang.String&nbsp;start,
+            java.lang.String&nbsp;end)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#isContiguous(java.lang.String)">isContiguous</A></B>(java.lang.String&nbsp;reference)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is the reference for a contiguous (i.e.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#isSingleCell()">isSingleCell</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#isWholeColumnReference()">isWholeColumnReference</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#isWholeColumnReference(org.apache.poi.ss.SpreadsheetVersion, org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellReference)">isWholeColumnReference</A></B>(<A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;version,
+                       <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;topLeft,
+                       <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;botRight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is the reference for a whole-column reference,
+  such as C:C or D:G ?</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="AreaReference(java.lang.String, org.apache.poi.ss.SpreadsheetVersion)"><!-- --></A><H3>
+AreaReference</H3>
+<PRE>
+public <B>AreaReference</B>(java.lang.String&nbsp;reference,
+                     <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;version)</PRE>
+<DL>
+<DD>Create an area ref from a string representation.  Sheet names containing special characters should be
+ delimited and escaped as per normal syntax rules for formulas.<br> 
+ The area reference must be contiguous (i.e. represent a single rectangle, not a union of rectangles)
+<P>
+</DL>
+<HR>
+
+<A NAME="AreaReference(org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellReference)"><!-- --></A><H3>
+AreaReference</H3>
+<PRE>
+<FONT SIZE="-1">@Deprecated
+<A HREF="../../../../../org/apache/poi/util/Removal.html" title="annotation in org.apache.poi.util">@Removal</A>(<A HREF="../../../../../org/apache/poi/util/Removal.html#version()">version</A>="3.19")
+</FONT>public <B>AreaReference</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;topLeft,
+                                               <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;botRight)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#AreaReference(org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellReference, org.apache.poi.ss.SpreadsheetVersion)"><CODE>AreaReference(CellReference, CellReference, SpreadsheetVersion)</CODE></A> instead</I>
+<P>
+<DD>Creates an area ref from a pair of Cell References.
+<P>
+</DL>
+<HR>
+
+<A NAME="AreaReference(org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellReference, org.apache.poi.ss.SpreadsheetVersion)"><!-- --></A><H3>
+AreaReference</H3>
+<PRE>
+public <B>AreaReference</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;topLeft,
+                     <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;botRight,
+                     <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;version)</PRE>
+<DL>
+<DD>Creates an area ref from a pair of Cell References.
+<P>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="isContiguous(java.lang.String)"><!-- --></A><H3>
+isContiguous</H3>
+<PRE>
+public static boolean <B>isContiguous</B>(java.lang.String&nbsp;reference)</PRE>
+<DL>
+<DD>Is the reference for a contiguous (i.e.
+  unbroken) area, or is it made up of
+  several different parts?
+ (If it is, you will need to call
+  <A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#generateContiguous(org.apache.poi.ss.SpreadsheetVersion, java.lang.String)"><CODE>generateContiguous(SpreadsheetVersion, String)</CODE></A>)
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getWholeRow(org.apache.poi.ss.SpreadsheetVersion, java.lang.String, java.lang.String)"><!-- --></A><H3>
+getWholeRow</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html" title="class in org.apache.poi.ss.util">AreaReference</A> <B>getWholeRow</B>(<A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;version,
+                                        java.lang.String&nbsp;start,
+                                        java.lang.String&nbsp;end)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getWholeColumn(org.apache.poi.ss.SpreadsheetVersion, java.lang.String, java.lang.String)"><!-- --></A><H3>
+getWholeColumn</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html" title="class in org.apache.poi.ss.util">AreaReference</A> <B>getWholeColumn</B>(<A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;version,
+                                           java.lang.String&nbsp;start,
+                                           java.lang.String&nbsp;end)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isWholeColumnReference(org.apache.poi.ss.SpreadsheetVersion, org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellReference)"><!-- --></A><H3>
+isWholeColumnReference</H3>
+<PRE>
+public static boolean <B>isWholeColumnReference</B>(<A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;version,
+                                             <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;topLeft,
+                                             <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;botRight)</PRE>
+<DL>
+<DD>Is the reference for a whole-column reference,
+  such as C:C or D:G ?
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isWholeColumnReference()"><!-- --></A><H3>
+isWholeColumnReference</H3>
+<PRE>
+public boolean <B>isWholeColumnReference</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="generateContiguous(java.lang.String)"><!-- --></A><H3>
+generateContiguous</H3>
+<PRE>
+<FONT SIZE="-1">@Deprecated
+<A HREF="../../../../../org/apache/poi/util/Removal.html" title="annotation in org.apache.poi.util">@Removal</A>(<A HREF="../../../../../org/apache/poi/util/Removal.html#version()">version</A>="3.19")
+</FONT>public static <A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html" title="class in org.apache.poi.ss.util">AreaReference</A>[] <B>generateContiguous</B>(java.lang.String&nbsp;reference)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html#generateContiguous(org.apache.poi.ss.SpreadsheetVersion, java.lang.String)"><CODE>generateContiguous(SpreadsheetVersion, String)</CODE></A> instead</I>
+<P>
+<DD>Takes a non-contiguous area reference, and returns an array of contiguous area references
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an array of contiguous area references.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="generateContiguous(org.apache.poi.ss.SpreadsheetVersion, java.lang.String)"><!-- --></A><H3>
+generateContiguous</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/util/AreaReference.html" title="class in org.apache.poi.ss.util">AreaReference</A>[] <B>generateContiguous</B>(<A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;version,
+                                                 java.lang.String&nbsp;reference)</PRE>
+<DL>
+<DD>Takes a non-contiguous area reference, and returns an array of contiguous area references
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an array of contiguous area references.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isSingleCell()"><!-- --></A><H3>
+isSingleCell</H3>
+<PRE>
+public boolean <B>isSingleCell</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>false</code> if this area reference involves more than one cell</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstCell()"><!-- --></A><H3>
+getFirstCell</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A> <B>getFirstCell</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the first cell reference which defines this area. Usually this cell is in the upper
+ left corner of the area (but this is not a requirement).</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastCell()"><!-- --></A><H3>
+getLastCell</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A> <B>getLastCell</B>()</PRE>
+<DL>
+<DD>Note - if this area reference refers to a single cell, the return value of this method will
+ be identical to that of <tt>getFirstCell()</tt>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the second cell reference which defines this area.  For multi-cell areas, this is 
+ cell diagonally opposite the 'first cell'.  Usually this cell is in the lower right corner 
+ of the area (but this is not a requirement).</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAllReferencedCells()"><!-- --></A><H3>
+getAllReferencedCells</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>[] <B>getAllReferencedCells</B>()</PRE>
+<DL>
+<DD>Returns a reference to every cell covered by this area
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="formatAsString()"><!-- --></A><H3>
+formatAsString</H3>
+<PRE>
+public java.lang.String <B>formatAsString</B>()</PRE>
+<DL>
+<DD>Returns a text representation of this area reference.
+ <p>
+  Example return values:
+    <table border="0" cellpadding="1" cellspacing="0" summary="Example return values">
+      <tr><th align='left'>Result</th><th align='left'>Comment</th></tr>
+      <tr><td>A1:A1</td><td>Single cell area reference without sheet</td></tr>
+      <tr><td>A1:$C$1</td><td>Multi-cell area reference without sheet</td></tr>
+      <tr><td>Sheet1!A$1:B4</td><td>Standard sheet name</td></tr>
+      <tr><td>'O''Brien''s Sales'!B5:C6'&nbsp;</td><td>Sheet name with special characters</td></tr>
+    </table>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the text representation of this area reference as it would appear in a formula.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/util/AreaReference.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="AreaReference.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

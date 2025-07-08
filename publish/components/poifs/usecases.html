@@ -1,0 +1,1213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>POIFS Use Cases</title>
+<link type="text/css" href="../../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../../skin/profile.css" rel="stylesheet">
+<script src="../../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../../help/index.html">Help</a>
+</li>
+<li class="current">
+<a class="selected" href="../../components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="../../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Component APIs</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../apidocs/index.html">Javadocs</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.3', '../../skin/')" id="menu_1.1.3Title" class="menutitle">Excel (HSSF/XSSF)</div>
+<div id="menu_1.1.3" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/spreadsheet/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/how-to.html">HOWTO</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/converting.html">HSSF to SS Converting</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/formula.html">Formula Support</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval.html">Formula Evaluation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval-devguide.html">Eval Dev Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/examples.html">Examples</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/use-case.html">Use Case</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/diagrams.html">Pictorial Docs</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/limitations.html">Limitations</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/user-defined-functions.html">User Defined Functions</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/excelant.html">ExcelAnt Tests</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/hacking-hssf.html">Hacking HSSF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/record-generator.html">Record Generator</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/chart.html">Charts</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.4', '../../skin/')" id="menu_1.1.4Title" class="menutitle">PowerPoint (HSLF/XSLF)</div>
+<div id="menu_1.1.4" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/slideshow/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/how-to-shapes.html">HSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/xslf-cookbook.html">XSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-wmf-emf-renderer.html">Render SL/WMF/EMF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-file-format.html">PPT File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.5', '../../skin/')" id="menu_1.1.5Title" class="menutitle">Word (HWPF/XWPF)</div>
+<div id="menu_1.1.5" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/document/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide.html">HWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide-xwpf.html">XWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/docoverview.html">HWPF Format</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/projectplan.html">HWPF Project plan</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hsmf/index.html">Outlook (HSMF)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/diagram/index.html">Visio (HDGF+XDGF)</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.8', '../../skin/')" id="menu_1.1.8Title" class="menutitle">Publisher (HPBF)</div>
+<div id="menu_1.1.8" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpbf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpbf/file-format.html">File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_selected_1.1.9', '../../skin/')" id="menu_selected_1.1.9Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">OLE2 Filesystem (POIFS)</div>
+<div id="menu_selected_1.1.9" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/poifs/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/embeded.html">Embedded Documents</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/fileformat.html">File System Documentation</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">Use Cases</div>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/design.html">Design</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.10', '../../skin/')" id="menu_1.1.10Title" class="menutitle">OLE2 Document Props (HPSF)</div>
+<div id="menu_1.1.10" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpsf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/thumbnails.html">Thumbnails</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/internals.html">Internals</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/todo.html">To Do</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hmef/index.html">TNEF (HMEF) for winmail.dat</a>
+</div>
+<div class="menuitem">
+<a href="../../components/oxml4j/index.html">OpenXML4J (OOXML)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/logging.html">Logging framework</a>
+</div>
+<div class="menuitem">
+<a href="../../components/configuration.html">Configuration</a>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>POIFS Use Cases</h1>
+<div id="front-matter"></div>
+    
+<a name="POIFS+Use+Cases"></a>
+<h2 class="boxed">POIFS Use Cases</h2>
+<div class="section">
+<a name="Use+Case+1%3A+Read+existing+file+system"></a>
+<h3 class="boxed">Use Case 1: Read existing file system</h3>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Primary Actor:</em></td>
+	    <td colspan="1" rowspan="1">POIFS client</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Scope:</em></td>
+	    <td colspan="1" rowspan="1">POIFS</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Level:</em></td>
+	    <td colspan="1" rowspan="1">Summary</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Stakeholders and Interests:</em></td>
+	    <td colspan="1" rowspan="1">
+              POIFS client- wants to read content of file
+                  system<br>
+              POIFS - understands POIFS file system
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Precondition:</em></td>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Minimal Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Main Success Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">
+            1. POIFS client requests POIFS to read a POIFS file
+                system, providing an
+                <span class="codefrag">InputStream</span>
+                containing POIFS file system in question.<br>
+            2. POIFS reads from the
+                <span class="codefrag">InputStream</span> in
+                512 byte blocks.<br>
+            3. POIFS verifies that the first block begins with
+                the well known signature
+                (
+                <span class="codefrag">0xE11AB1A1E011CFD0</span>)<br>
+            4. POIFS reads the Block Allocation Table from the
+                first block and, if necessary, from the XBAT
+                blocks.<br>
+            5. POIFS obtains the start block of the Property
+                Table and reads the Property Table (use case 9,
+                read file)<br>
+            6. POIFS reads the individual entries in the Property
+                Table<br>
+            7. POIFS obtains the start block of the Small Block
+                Allocation Table and reads the Small Block
+                Allocation Table (use case 9, read file)<br>
+            8. POIFS obtains the start block of the Small Block
+                store from the first entry in the Property Table
+                and reads the Small Block Array (use case 9, read
+                file)<br>
+        
+</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Extensions:</em></td>
+	    <td colspan="1" rowspan="1">
+	        2a. If the last block read is not a 512 byte
+                block, the
+                <span class="codefrag">InputStream</span> is not that of
+                a POIFS file system, and POIFS throws an
+                appropriate exception.
+            <br>
+		    3a. If the signature is incorrect, the
+            <span class="codefrag">InputStream</span> is not that of a POIFS
+            file system, and POIFS throws an appropriate
+		    exception.<br>
+	    
+</td>
+	  
+</tr>
+	
+</table>
+<a name="Use+Case+2%3A+Write+file+system"></a>
+<h3 class="boxed">Use Case 2: Write file system</h3>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Primary Actor:</th>
+	    <th colspan="1" rowspan="1">POIFS client</th>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Scope:</th>
+	    <td colspan="1" rowspan="1">POIFS</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Level:</th>
+	    <td colspan="1" rowspan="1">Summary</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Stakeholders and Interests:</th>
+	    <td colspan="1" rowspan="1">
+            POIFS client- wants to write file system out.<br>
+            POIFS - knows how to write file system out.
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Precondition:</th>
+	    <td colspan="1" rowspan="1">
+	        File system has been read (use case 1, read
+	            existing file system) and subsequently modified
+	            (use case 4, replace file in file system; use case
+	            5, delete file from file system; or use case 6,
+	            write new file to file system; in any
+	            combination)
+	      <br>or<br>
+	        File system has been created (use case 3, create
+	            new file system)
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Minimal Guarantee:</th>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Main Success Guarantee:</th>
+	    <td colspan="1" rowspan="1">
+                1. POIFS client provides an
+                    <span class="codefrag">OutputStream</span>
+                    to write the file system to.
+                <br>
+                2. POIFS gets the sizes of the Property Table and
+                    each file in the file system.<br>
+                3. If any files in the file system requires storage
+                    in a Small Block Array, POIFS creates a Small
+                    Block Array of sufficient size to hold all of the
+                    small files.<br>
+                4. POIFS calculates the number of big blocks needed
+                    to hold all of the large files, the Property
+                    Table, and, if necessary, the Small Block Array
+                    and the Small Block Allocation Table.<br>
+                5. POIFS creates a set of big blocks sufficient to
+                    store the Block Allocation Table<br>
+                6. POIFS creates and writes the header block<br>
+                7. POIFS writes out the XBAT blocks, if needed.<br>
+                8. POIFS writes out the Small Block Array, if
+                    needed<br>
+                9. POIFS writes out the Small Block Allocation Table,
+                    if needed<br>
+                10. POIFS writes out the Property Table<br>
+                11. POIFS writes out the large files, if needed<br>
+                12. POIFS closes the <span class="codefrag">OutputStream</span>.
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Extensions:</th>
+	    <td colspan="1" rowspan="1">
+              6a. Exceptions writing to the
+                  <span class="codefrag">OutputStream</span> will be propagated back
+                  to the POIFS client.
+              <br>
+              7a. Exceptions writing to the
+                  <span class="codefrag">OutputStream</span> will be propagated back
+                  to the POIFS client.
+              <br>
+              8a. Exceptions writing to the
+                  <span class="codefrag">OutputStream</span> will be propagated back
+                  to the POIFS client.
+              <br>
+              9a. Exceptions writing to the
+                  <span class="codefrag">OutputStream</span> will be propagated back
+                  to the POIFS client.
+              <br>
+              10a. Exceptions writing to the
+                  <span class="codefrag">OutputStream</span> will be propagated back
+                  to the POIFS client.
+              <br>
+              11a. Exceptions writing to the
+                  <span class="codefrag">OutputStream</span> will be propagated back
+                  to the POIFS client.
+              <br>
+              12a. Exceptions closing the
+                  <span class="codefrag">OutputStream</span> will be propagated back
+                  to the POIFS client.
+              <br>
+	    
+</td>
+	  
+</tr>
+	
+</table>
+<a name="Use+Case+3%3A+Create+new+file+system"></a>
+<h3 class="boxed">Use Case 3: Create new file system</h3>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Primary Actor:</th>
+	    <td colspan="1" rowspan="1">POIFS client</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Scope:</th>
+	    <td colspan="1" rowspan="1">POIFS</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Level:</th>
+	    <td colspan="1" rowspan="1">Summary</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Stakeholders and Interests:</th>
+	    <td colspan="1" rowspan="1">
+	        POIFS client- wants to create a new file
+	            system<br>
+    		POIFS - knows how to create a new file system
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Precondition:</th>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Minimal Guarantee:</th>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Main Success Guarantee:</th>
+	    <td colspan="1" rowspan="1">
+	      	POIFS creates an empty Property Table.
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<th colspan="1" rowspan="1">Extensions:</th>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	
+</table>
+<a name="Use+Case+4%3A+Replace+file+in+file+system"></a>
+<h3 class="boxed">Use Case 4: Replace file in file system</h3>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Primary Actor:</em></td>
+	    <td colspan="1" rowspan="1">POIFS client</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Scope:</em></td>
+	    <td colspan="1" rowspan="1">POIFS</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Level:</em></td>
+	    <td colspan="1" rowspan="1">Summary</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Stakeholders and Interests:</em></td>
+	    <td colspan="1" rowspan="1">
+	        1. POIFS client- wants to replace an existing file in
+	            the file system<br>
+		    2. POIFS - knows how to manage the file system
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Precondition:</em></td>
+	    <td colspan="1" rowspan="1">
+	      Either
+	      <br>
+<br>
+	        The file system has been read (use case 1, read
+	            existing file system) and a file has been
+	            extracted from the file system (use case 7, read
+	            existing file from file system)
+	      <br>
+<br>or<br>
+<br>
+	        The file system has been created (use case 3,
+	            create new file system) and a file has been
+	            written to the file system (use case 6, write new
+	            file to file system)
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Minimal Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Main Success Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">
+	        1. POIFS discards storage of the existing file.<br>
+  	        2. POIFS updates the existing file's entry in the
+	            Property Table<br>
+	        3. POIFS stores the new file's data
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Extensions:</em></td>
+	    <td colspan="1" rowspan="1">
+	        1a. POIFS throws an exception if the file does not
+	            exist.
+	    </td>
+	  
+</tr>
+	
+</table>
+<a name="Use+Case+5%3A+Delete+file+from+file+system"></a>
+<h3 class="boxed">Use Case 5: Delete file from file system</h3>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Primary Actor:</em></td>
+	    <td colspan="1" rowspan="1">POIFS client</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Scope:</em></td>
+	    <td colspan="1" rowspan="1">POIFS</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Level:</em></td>
+	    <td colspan="1" rowspan="1">Summary</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Stakeholders and Interests:</em></td>
+	    <td colspan="1" rowspan="1">
+	        * POIFS client- wants to remove a file from a file
+	            system<br>
+		    * POIFS - knows how to manage the file system
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Precondition:</em></td>
+	    <td colspan="1" rowspan="1">
+	      Either<br>
+<br>
+	        The file system has been read (use case 1, read
+	            existing file system) and a file has been
+	            extracted from the file system (use case 7, read
+	            existing file from file system)<br>
+	      
+<br>
+	      or<br>
+	      
+<br>
+	        The file system has been created (use case 3,
+	            create new file system) and a file has been
+	            written to the file system (use case 6, write new
+	            file to file system)
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Minimal Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Main Success Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">
+	      	1. POIFS discards the specified file's storage.<br>
+	      	2. POIFS discards the file's Property Table
+	      	    entry.
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Extensions:</em></td>
+	    <td colspan="1" rowspan="1">
+	        1a. POIFS throws an exception if the file does not
+	            exist.
+	    </td>
+	  
+</tr>
+	
+</table>
+<a name="Use+Case+6%3A+Write+new+file+to+file+system"></a>
+<h3 class="boxed">Use Case 6: Write new file to file system</h3>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Primary Actor:</em></td>
+	    <td colspan="1" rowspan="1">POIFS client</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Scope:</em></td>
+	    <td colspan="1" rowspan="1">POIFS</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Level:</em></td>
+	    <td colspan="1" rowspan="1">Summary</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Stakeholders and Interests:</em></td>
+	    <td colspan="1" rowspan="1">
+	        * POIFS client- wants to add a new file to the file
+	            system<br>
+		    * POIFS - knows how to manage the file system
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Precondition:</em></td>
+	    <td colspan="1" rowspan="1">The specified file does not yet exist in the file
+	        system</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Minimal Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Main Success Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">
+	        1. The POIFS client provides a file name<br>
+	        2. POIFS creates a new Property Table entry for the
+	            new file<br>
+	        3. POIFS provides the POIFS client with an
+	            <span class="codefrag">OutputStream</span> to write to.<br>
+	        4. The POIFS client writes data to the provided
+	            <span class="codefrag">OutputStream</span>.<br>
+	        5. The POIFS client closes the provided
+	            <span class="codefrag">OutputStream</span>
+<br>
+	        6. POIFS updates the Property Table entry with the
+	            new file's size
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Extensions:</em></td>
+	    <td colspan="1" rowspan="1">
+	        1a. POIFS throws an exception if a file with the
+	            specified name already exists in the file
+	            system.<br>
+            1b. POIFS throws an exception if the file name is
+                too long. The limit on file name length is 31
+                characters.
+	    </td>
+	  
+</tr>
+	
+</table>
+<a name="Use+Case+7%3A+Read+existing+file+from+file+system"></a>
+<h3 class="boxed">Use Case 7: Read existing file from file system</h3>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Primary Actor:</em></td>
+	    <td colspan="1" rowspan="1">POIFS client</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Scope:</em></td>
+	    <td colspan="1" rowspan="1">POIFS</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Level:</em></td>
+	    <td colspan="1" rowspan="1">Summary</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Stakeholders and Interests:</em></td>
+	    <td colspan="1" rowspan="1">
+	        * POIFS client- wants to read a file from the file
+	            system<br>
+		    * POIFS - knows how to manage the file system
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Precondition:</em></td>
+	    <td colspan="1" rowspan="1">
+	        * The file system has been read (use case 1, read
+	            existing file system) or has been created and
+	            written to (use case 3, create new file system;
+	            use case 6, write new file to file system).<br>
+            * The specified file exists in the file system.
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Minimal Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Main Success Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">
+	        * The POIFS client provides the name of a file to be read <br>
+            * POIFS provides an <span class="codefrag">InputStream</span> to read from. <br>
+            * The POIFS client reads from the <span class="codefrag">InputStream</span>.<br>
+            * The POIFS client closes the <span class="codefrag">InputStream</span>.
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Extensions:</em></td>
+	    <td colspan="1" rowspan="1">1a. POIFS throws an exception if no file with the
+	        specified name exists.</td>
+	  
+</tr>
+	
+</table>
+<a name="Use+Case+8%3A+Read+file+system+directory"></a>
+<h3 class="boxed">Use Case 8: Read file system directory</h3>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Primary Actor:</em></td>
+	    <td colspan="1" rowspan="1">POIFS client</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Scope:</em></td>
+	    <td colspan="1" rowspan="1">POIFS</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Level:</em></td>
+	    <td colspan="1" rowspan="1">Summary</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Stakeholders and Interests:</em></td>
+	    <td colspan="1" rowspan="1">
+	        * POIFS client- wants to know what files exist in
+	            the file system<br>
+            * POIFS - knows how to manage the file system
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Precondition:</em></td>
+	    <td colspan="1" rowspan="1">The file system has been read (use case 1, read
+	        existing file system) or created (use case 3, create
+	        new file system)</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Minimal Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Main Success Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">
+	        1. The POIFS client requests the file system
+	            directory.
+		    2. POIFS returns an <span class="codefrag">Iterator</span>. The
+		    <span class="codefrag">Iterator</span> will not include the root
+		    entry in the Property Table, and may be an
+		    <span class="codefrag">Iterator</span> over an empty
+		    <span class="codefrag">Collection</span>.
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Extensions:</em></td>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	
+</table>
+<a name="Use+Case+9%3A+Read+file"></a>
+<h3 class="boxed">Use Case 9: Read file</h3>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Primary Actor:</em></td>
+	    <td colspan="1" rowspan="1">POIFS</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Scope:</em></td>
+	    <td colspan="1" rowspan="1">POIFS</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Level:</em></td>
+	    <td colspan="1" rowspan="1">Summary</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Stakeholders and Interests:</em></td>
+	    <td colspan="1" rowspan="1">
+	            POIFS - POIFS needs to read a file, or something
+	            resembling a file (i.e., the Property Table, the
+	            Small Block Array, or the Small Block Allocation
+	            Table)
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Precondition:</em></td>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Minimal Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Main Success Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">
+	        1. POIFS begins with a start block, a file size, and
+	            a flag indicating whether to use the Big Block
+	            Allocation Table or the Small Block Allocation
+	            Table<br>
+            2. POIFS returns an <span class="codefrag">InputStream</span>.<br>
+            3. Reads from the <span class="codefrag">InputStream</span> are
+                performed by walking the specified Block
+                Allocation Table and reading the blocks
+                indicated.<br>
+            4. POIFS closes the <span class="codefrag">InputStream</span> when
+                finished reading the file, or its client wants to
+                close the <span class="codefrag">InputStream</span>.
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Extensions:</em></td>
+	    <td colspan="1" rowspan="1">3a. An exception will be thrown if the specified Block
+	        Allocation Table is corrupt, as evidenced by an index
+	        pointing to a non-existent block, or by a chain
+	        extending past the known size of the file.</td>
+	  
+</tr>
+	
+</table>
+<a name="Use+Case+10%3A+Rename+existing+file+in+the+file+system"></a>
+<h3 class="boxed">Use Case 10: Rename existing file in the file system</h3>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Primary Actor:</em></td>
+	    <td colspan="1" rowspan="1">POIFS client</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Scope:</em></td>
+	    <td colspan="1" rowspan="1">POIFS</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Level:</em></td>
+	    <td colspan="1" rowspan="1">Summary</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Stakeholders and Interests:</em></td>
+	    <td colspan="1" rowspan="1">
+	        * POIFS client- wants to rename an existing file in
+	            the file system.<br>
+            * POIFS - knows how to manage the file system.
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Precondition:</em></td>
+	    <td colspan="1" rowspan="1">
+	        * The file system is has been read (use case 1, read
+	            existing file system) or has been created and
+	            written to (use case 3, create new file system;
+	            use case 6, write new file to file system.<br>
+            * The specified file exists in the file system.<br>
+            * The new name for the file does not duplicate
+                another file in the file system.
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Minimal Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">None</td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Main Success Guarantee:</em></td>
+	    <td colspan="1" rowspan="1">
+	        1. POIFS updates the Property Table entry for the
+	            specified file with its new name.
+	    </td>
+	  
+</tr>
+	  
+<tr>
+	    
+<td colspan="1" rowspan="1"><em>Extensions:</em></td>
+	    <td colspan="1" rowspan="1">
+	        * 1a. If the old file name is not in the file
+	            system, POIFS throws an exception.<br>
+            * 1b. If the new file name already exists in the
+                file system, POIFS throws an exception.<br>
+            * 1c. If the new file name is too long (the limit is
+                31 characters), POIFS throws an exception.
+	    </td>
+	  
+</tr>
+	
+</table>
+</div>
+  
+<p align="right">
+<font size="-2">by&nbsp;Marc Johnson</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0components/poifs/usecases.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

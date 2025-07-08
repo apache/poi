@@ -1,0 +1,559 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+HSSFDataBarFormatting (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="HSSFDataBarFormatting (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCreationHelper.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataFormat.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFDataBarFormatting.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.usermodel</FONT>
+<BR>
+Class HSSFDataBarFormatting</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.usermodel.HSSFDataBarFormatting</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>HSSFDataBarFormatting</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></DL>
+</PRE>
+
+<P>
+High level representation for DataBar / Data-Bar Formatting 
+  component of Conditional Formatting settings
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#HSSFDataBarFormatting(org.apache.poi.hssf.record.CFRule12Record, org.apache.poi.hssf.usermodel.HSSFSheet)">HSSFDataBarFormatting</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/CFRule12Record.html" title="class in org.apache.poi.hssf.record">CFRule12Record</A>&nbsp;cfRule12Record,
+                      <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheet</A>&nbsp;sheet)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingThreshold.html" title="class in org.apache.poi.hssf.usermodel">HSSFConditionalFormattingThreshold</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#createThreshold()">createThreshold</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFExtendedColor.html" title="class in org.apache.poi.hssf.usermodel">HSSFExtendedColor</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#getColor()">getColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingThreshold.html" title="class in org.apache.poi.hssf.usermodel">HSSFConditionalFormattingThreshold</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#getMaxThreshold()">getMaxThreshold</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The threshold that defines "everything from here up is maximum"</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingThreshold.html" title="class in org.apache.poi.hssf.usermodel">HSSFConditionalFormattingThreshold</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#getMinThreshold()">getMinThreshold</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The threshold that defines "everything from here down is minimum"</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#getWidthMax()">getWidthMax</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;How much of the cell width, in %, should be given to
+  the max value?</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#getWidthMin()">getWidthMin</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;How much of the cell width, in %, should be given to
+  the min value?</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#isIconOnly()">isIconOnly</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should Icon + Value be displayed, or only the Icon?</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#isLeftToRight()">isLeftToRight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is the bar drawn from Left-to-Right, or from
+  Right-to-Left</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#setColor(org.apache.poi.ss.usermodel.Color)">setColor</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#setIconOnly(boolean)">setIconOnly</A></B>(boolean&nbsp;only)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Control if only the Icon is shown, or Icon + Value</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#setLeftToRight(boolean)">setLeftToRight</A></B>(boolean&nbsp;ltr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Control if the bar is drawn from Left-to-Right,
+  or from Right-to-Left</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#setWidthMax(int)">setWidthMax</A></B>(int&nbsp;width)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html#setWidthMin(int)">setWidthMin</A></B>(int&nbsp;width)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="HSSFDataBarFormatting(org.apache.poi.hssf.record.CFRule12Record, org.apache.poi.hssf.usermodel.HSSFSheet)"><!-- --></A><H3>
+HSSFDataBarFormatting</H3>
+<PRE>
+protected <B>HSSFDataBarFormatting</B>(<A HREF="../../../../../org/apache/poi/hssf/record/CFRule12Record.html" title="class in org.apache.poi.hssf.record">CFRule12Record</A>&nbsp;cfRule12Record,
+                                <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheet</A>&nbsp;sheet)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="isLeftToRight()"><!-- --></A><H3>
+isLeftToRight</H3>
+<PRE>
+public boolean <B>isLeftToRight</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#isLeftToRight()">DataBarFormatting</A></CODE></B></DD>
+<DD>Is the bar drawn from Left-to-Right, or from
+  Right-to-Left
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#isLeftToRight()">isLeftToRight</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLeftToRight(boolean)"><!-- --></A><H3>
+setLeftToRight</H3>
+<PRE>
+public void <B>setLeftToRight</B>(boolean&nbsp;ltr)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#setLeftToRight(boolean)">DataBarFormatting</A></CODE></B></DD>
+<DD>Control if the bar is drawn from Left-to-Right,
+  or from Right-to-Left
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#setLeftToRight(boolean)">setLeftToRight</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getWidthMin()"><!-- --></A><H3>
+getWidthMin</H3>
+<PRE>
+public int <B>getWidthMin</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#getWidthMin()">DataBarFormatting</A></CODE></B></DD>
+<DD>How much of the cell width, in %, should be given to
+  the min value?
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#getWidthMin()">getWidthMin</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setWidthMin(int)"><!-- --></A><H3>
+setWidthMin</H3>
+<PRE>
+public void <B>setWidthMin</B>(int&nbsp;width)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#setWidthMin(int)">setWidthMin</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getWidthMax()"><!-- --></A><H3>
+getWidthMax</H3>
+<PRE>
+public int <B>getWidthMax</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#getWidthMax()">DataBarFormatting</A></CODE></B></DD>
+<DD>How much of the cell width, in %, should be given to
+  the max value?
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#getWidthMax()">getWidthMax</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setWidthMax(int)"><!-- --></A><H3>
+setWidthMax</H3>
+<PRE>
+public void <B>setWidthMax</B>(int&nbsp;width)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#setWidthMax(int)">setWidthMax</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColor()"><!-- --></A><H3>
+getColor</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFExtendedColor.html" title="class in org.apache.poi.hssf.usermodel">HSSFExtendedColor</A> <B>getColor</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#getColor()">getColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColor(org.apache.poi.ss.usermodel.Color)"><!-- --></A><H3>
+setColor</H3>
+<PRE>
+public void <B>setColor</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#setColor(org.apache.poi.ss.usermodel.Color)">setColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMinThreshold()"><!-- --></A><H3>
+getMinThreshold</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingThreshold.html" title="class in org.apache.poi.hssf.usermodel">HSSFConditionalFormattingThreshold</A> <B>getMinThreshold</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#getMinThreshold()">DataBarFormatting</A></CODE></B></DD>
+<DD>The threshold that defines "everything from here down is minimum"
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#getMinThreshold()">getMinThreshold</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMaxThreshold()"><!-- --></A><H3>
+getMaxThreshold</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingThreshold.html" title="class in org.apache.poi.hssf.usermodel">HSSFConditionalFormattingThreshold</A> <B>getMaxThreshold</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#getMaxThreshold()">DataBarFormatting</A></CODE></B></DD>
+<DD>The threshold that defines "everything from here up is maximum"
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#getMaxThreshold()">getMaxThreshold</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isIconOnly()"><!-- --></A><H3>
+isIconOnly</H3>
+<PRE>
+public boolean <B>isIconOnly</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#isIconOnly()">DataBarFormatting</A></CODE></B></DD>
+<DD>Should Icon + Value be displayed, or only the Icon?
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#isIconOnly()">isIconOnly</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setIconOnly(boolean)"><!-- --></A><H3>
+setIconOnly</H3>
+<PRE>
+public void <B>setIconOnly</B>(boolean&nbsp;only)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#setIconOnly(boolean)">DataBarFormatting</A></CODE></B></DD>
+<DD>Control if only the Icon is shown, or Icon + Value
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html#setIconOnly(boolean)">setIconOnly</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataBarFormatting.html" title="interface in org.apache.poi.ss.usermodel">DataBarFormatting</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createThreshold()"><!-- --></A><H3>
+createThreshold</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingThreshold.html" title="class in org.apache.poi.hssf.usermodel">HSSFConditionalFormattingThreshold</A> <B>createThreshold</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCreationHelper.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataFormat.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFDataBarFormatting.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

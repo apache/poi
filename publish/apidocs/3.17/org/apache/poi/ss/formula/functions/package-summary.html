@@ -1,0 +1,613 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+org.apache.poi.ss.formula.functions (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="org.apache.poi.ss.formula.functions (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/function/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/ptg/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/functions/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<H2>
+Package org.apache.poi.ss.formula.functions
+</H2>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Interface Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/FreeRefFunction.html" title="interface in org.apache.poi.ss.formula.functions">FreeRefFunction</A></B></TD>
+<TD>For most Excel functions, involving references ((cell, area), (2d, 3d)), the references are
+ passed in as arguments, and the exact location remains fixed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></B></TD>
+<TD>Common interface for all implementations of Excel built-in functions.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function0Arg.html" title="interface in org.apache.poi.ss.formula.functions">Function0Arg</A></B></TD>
+<TD>Implemented by all functions that can be called with zero arguments</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function1Arg.html" title="interface in org.apache.poi.ss.formula.functions">Function1Arg</A></B></TD>
+<TD>Implemented by all functions that can be called with one argument</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function2Arg.html" title="interface in org.apache.poi.ss.formula.functions">Function2Arg</A></B></TD>
+<TD>Implemented by all functions that can be called with two arguments</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function3Arg.html" title="interface in org.apache.poi.ss.formula.functions">Function3Arg</A></B></TD>
+<TD>Implemented by all functions that can be called with three arguments</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function4Arg.html" title="interface in org.apache.poi.ss.formula.functions">Function4Arg</A></B></TD>
+<TD>Implemented by all functions that can be called with four arguments</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/IDStarAlgorithm.html" title="interface in org.apache.poi.ss.formula.functions">IDStarAlgorithm</A></B></TD>
+<TD>Interface specifying how an algorithm to be used by <A HREF="../../../../../../org/apache/poi/ss/formula/functions/DStarRunner.html" title="class in org.apache.poi.ss.formula.functions"><CODE>DStarRunner</CODE></A> should look like.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/XYNumericFunction.Accumulator.html" title="interface in org.apache.poi.ss.formula.functions">XYNumericFunction.Accumulator</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Address.html" title="class in org.apache.poi.ss.formula.functions">Address</A></B></TD>
+<TD>Creates a text reference as text, given specified row and column numbers.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/AggregateFunction.html" title="class in org.apache.poi.ss.formula.functions">AggregateFunction</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/BaseNumberUtils.html" title="class in org.apache.poi.ss.formula.functions">BaseNumberUtils</A></B></TD>
+<TD>Some utils for converting from and to any base</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Bin2Dec.html" title="class in org.apache.poi.ss.formula.functions">Bin2Dec</A></B></TD>
+<TD>Implementation for Excel Bin2Dec() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/BooleanFunction.html" title="class in org.apache.poi.ss.formula.functions">BooleanFunction</A></B></TD>
+<TD>Here are the general rules concerning Boolean functions:
+ 
+  Blanks are ignored (not either true or false) 
+  Strings are ignored if part of an area ref or cell ref, otherwise they must be 'true' or 'false'
+  Numbers: 0 is false.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/CalendarFieldFunction.html" title="class in org.apache.poi.ss.formula.functions">CalendarFieldFunction</A></B></TD>
+<TD>Implementation of Excel functions Date parsing functions:
+  Date - DAY, MONTH and YEAR
+  Time - HOUR, MINUTE and SECOND</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Choose.html" title="class in org.apache.poi.ss.formula.functions">Choose</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Code.html" title="class in org.apache.poi.ss.formula.functions">Code</A></B></TD>
+<TD>Implementation for Excel CODE () function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Column.html" title="class in org.apache.poi.ss.formula.functions">Column</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Columns.html" title="class in org.apache.poi.ss.formula.functions">Columns</A></B></TD>
+<TD>Implementation for Excel COLUMNS function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Complex.html" title="class in org.apache.poi.ss.formula.functions">Complex</A></B></TD>
+<TD>Implementation for Excel COMPLEX () function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Count.html" title="class in org.apache.poi.ss.formula.functions">Count</A></B></TD>
+<TD>Counts the number of cells that contain numeric data within
+  the list of arguments.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Counta.html" title="class in org.apache.poi.ss.formula.functions">Counta</A></B></TD>
+<TD>Counts the number of cells that contain data within the list of arguments.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Countblank.html" title="class in org.apache.poi.ss.formula.functions">Countblank</A></B></TD>
+<TD>Implementation for the function COUNTBLANK</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Countif.html" title="class in org.apache.poi.ss.formula.functions">Countif</A></B></TD>
+<TD>Implementation for the function COUNTIF</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Countif.ErrorMatcher.html" title="class in org.apache.poi.ss.formula.functions">Countif.ErrorMatcher</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Countif.StringMatcher.html" title="class in org.apache.poi.ss.formula.functions">Countif.StringMatcher</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Countifs.html" title="class in org.apache.poi.ss.formula.functions">Countifs</A></B></TD>
+<TD>Implementation for the function COUNTIFS</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/DateFunc.html" title="class in org.apache.poi.ss.formula.functions">DateFunc</A></B></TD>
+<TD>Implementation for the Excel function DATE</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Days360.html" title="class in org.apache.poi.ss.formula.functions">Days360</A></B></TD>
+<TD>Calculates the number of days between two dates based on a 360-day year
+ (twelve 30-day months), which is used in some accounting calculations.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Dec2Bin.html" title="class in org.apache.poi.ss.formula.functions">Dec2Bin</A></B></TD>
+<TD>Implementation for Excel Bin2Dec() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Dec2Hex.html" title="class in org.apache.poi.ss.formula.functions">Dec2Hex</A></B></TD>
+<TD>Implementation for Excel DELTA() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Delta.html" title="class in org.apache.poi.ss.formula.functions">Delta</A></B></TD>
+<TD>Implementation for Excel DELTA() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/DGet.html" title="class in org.apache.poi.ss.formula.functions">DGet</A></B></TD>
+<TD>Implementation of the DGet function:
+ Finds the value of a column in an area with given conditions.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/DMin.html" title="class in org.apache.poi.ss.formula.functions">DMin</A></B></TD>
+<TD>Implementation of the DMin function:
+ Finds the minimum value of a column in an area with given conditions.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/DStarRunner.html" title="class in org.apache.poi.ss.formula.functions">DStarRunner</A></B></TD>
+<TD>This class performs a D* calculation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/EDate.html" title="class in org.apache.poi.ss.formula.functions">EDate</A></B></TD>
+<TD>Implementation for Excel EDATE () function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/EOMonth.html" title="class in org.apache.poi.ss.formula.functions">EOMonth</A></B></TD>
+<TD>Implementation for the Excel EOMONTH() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Errortype.html" title="class in org.apache.poi.ss.formula.functions">Errortype</A></B></TD>
+<TD>Implementation for the ERROR.TYPE() Excel function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Even.html" title="class in org.apache.poi.ss.formula.functions">Even</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/FactDouble.html" title="class in org.apache.poi.ss.formula.functions">FactDouble</A></B></TD>
+<TD>Implementation for Excel FACTDOUBLE() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Finance.html" title="class in org.apache.poi.ss.formula.functions">Finance</A></B></TD>
+<TD>Implementation of the financial functions pmt, fv, ppmt, ipmt.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/FinanceFunction.html" title="class in org.apache.poi.ss.formula.functions">FinanceFunction</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/FinanceLib.html" title="class in org.apache.poi.ss.formula.functions">FinanceLib</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Fixed.html" title="class in org.apache.poi.ss.formula.functions">Fixed</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Fixed0ArgFunction.html" title="class in org.apache.poi.ss.formula.functions">Fixed0ArgFunction</A></B></TD>
+<TD>Convenience base class for functions that only take zero arguments.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Fixed1ArgFunction.html" title="class in org.apache.poi.ss.formula.functions">Fixed1ArgFunction</A></B></TD>
+<TD>Convenience base class for functions that must take exactly one argument.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Fixed2ArgFunction.html" title="class in org.apache.poi.ss.formula.functions">Fixed2ArgFunction</A></B></TD>
+<TD>Convenience base class for functions that must take exactly two arguments.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Fixed3ArgFunction.html" title="class in org.apache.poi.ss.formula.functions">Fixed3ArgFunction</A></B></TD>
+<TD>Convenience base class for functions that must take exactly three arguments.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Fixed4ArgFunction.html" title="class in org.apache.poi.ss.formula.functions">Fixed4ArgFunction</A></B></TD>
+<TD>Convenience base class for functions that must take exactly four arguments.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Hex2Dec.html" title="class in org.apache.poi.ss.formula.functions">Hex2Dec</A></B></TD>
+<TD>Implementation for Excel HEX2DEC() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Hlookup.html" title="class in org.apache.poi.ss.formula.functions">Hlookup</A></B></TD>
+<TD>Implementation of the HLOOKUP() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Hyperlink.html" title="class in org.apache.poi.ss.formula.functions">Hyperlink</A></B></TD>
+<TD>Implementation of Excel HYPERLINK function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/IfFunc.html" title="class in org.apache.poi.ss.formula.functions">IfFunc</A></B></TD>
+<TD>Implementation for the Excel function IF</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Imaginary.html" title="class in org.apache.poi.ss.formula.functions">Imaginary</A></B></TD>
+<TD>Implementation for Excel IMAGINARY() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/ImReal.html" title="class in org.apache.poi.ss.formula.functions">ImReal</A></B></TD>
+<TD>Implementation for Excel ImReal() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Index.html" title="class in org.apache.poi.ss.formula.functions">Index</A></B></TD>
+<TD>Implementation for the Excel function INDEX</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Indirect.html" title="class in org.apache.poi.ss.formula.functions">Indirect</A></B></TD>
+<TD>Implementation for Excel function INDIRECT</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Intercept.html" title="class in org.apache.poi.ss.formula.functions">Intercept</A></B></TD>
+<TD>Implementation of Excel function INTERCEPT()</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/IPMT.html" title="class in org.apache.poi.ss.formula.functions">IPMT</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Irr.html" title="class in org.apache.poi.ss.formula.functions">Irr</A></B></TD>
+<TD>Calculates the internal rate of return.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/LinearRegressionFunction.html" title="class in org.apache.poi.ss.formula.functions">LinearRegressionFunction</A></B></TD>
+<TD>Base class for linear regression functions.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/LogicalFunction.html" title="class in org.apache.poi.ss.formula.functions">LogicalFunction</A></B></TD>
+<TD>Implementation of the various ISxxx Logical Functions, which
+  take a single expression argument, and return True or False.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Lookup.html" title="class in org.apache.poi.ss.formula.functions">Lookup</A></B></TD>
+<TD>Implementation of Excel function LOOKUP.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Match.html" title="class in org.apache.poi.ss.formula.functions">Match</A></B></TD>
+<TD>Implementation for the MATCH() Excel function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/MinaMaxa.html" title="class in org.apache.poi.ss.formula.functions">MinaMaxa</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Mirr.html" title="class in org.apache.poi.ss.formula.functions">Mirr</A></B></TD>
+<TD>Calculates Modified internal rate of return.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Mode.html" title="class in org.apache.poi.ss.formula.functions">Mode</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/MultiOperandNumericFunction.html" title="class in org.apache.poi.ss.formula.functions">MultiOperandNumericFunction</A></B></TD>
+<TD>This is the super class for all excel function evaluator
+ classes that take variable number of operands, and
+ where the order of operands does not matter</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Na.html" title="class in org.apache.poi.ss.formula.functions">Na</A></B></TD>
+<TD>Implementation of Excel function NA()</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NotImplementedFunction.html" title="class in org.apache.poi.ss.formula.functions">NotImplementedFunction</A></B></TD>
+<TD>This is the default implementation of a Function class.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Now.html" title="class in org.apache.poi.ss.formula.functions">Now</A></B></TD>
+<TD>Implementation of Excel NOW() Function</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Npv.html" title="class in org.apache.poi.ss.formula.functions">Npv</A></B></TD>
+<TD>Calculates the net present value of an investment by using a discount rate
+ and a series of future payments (negative values) and income (positive
+ values).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html" title="class in org.apache.poi.ss.formula.functions">NumericFunction</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.OneArg.html" title="class in org.apache.poi.ss.formula.functions">NumericFunction.OneArg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.TwoArg.html" title="class in org.apache.poi.ss.formula.functions">NumericFunction.TwoArg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Oct2Dec.html" title="class in org.apache.poi.ss.formula.functions">Oct2Dec</A></B></TD>
+<TD>Implementation for Excel Oct2Dec() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Odd.html" title="class in org.apache.poi.ss.formula.functions">Odd</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Offset.html" title="class in org.apache.poi.ss.formula.functions">Offset</A></B></TD>
+<TD>Implementation for Excel function OFFSET()</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/PPMT.html" title="class in org.apache.poi.ss.formula.functions">PPMT</A></B></TD>
+<TD>Compute the interest portion of a payment.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Quotient.html" title="class in org.apache.poi.ss.formula.functions">Quotient</A></B></TD>
+<TD>Implementation for Excel QUOTIENT () function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Rank.html" title="class in org.apache.poi.ss.formula.functions">Rank</A></B></TD>
+<TD>Returns the rank of a number in a list of numbers.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Rate.html" title="class in org.apache.poi.ss.formula.functions">Rate</A></B></TD>
+<TD>Implements the Excel Rate function</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Replace.html" title="class in org.apache.poi.ss.formula.functions">Replace</A></B></TD>
+<TD>An implementation of the Excel REPLACE() function:</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Rept.html" title="class in org.apache.poi.ss.formula.functions">Rept</A></B></TD>
+<TD>Implementation for Excel REPT () function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Roman.html" title="class in org.apache.poi.ss.formula.functions">Roman</A></B></TD>
+<TD>Implementation for Excel WeekNum() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/RowFunc.html" title="class in org.apache.poi.ss.formula.functions">RowFunc</A></B></TD>
+<TD>Implementation for the Excel function ROW</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Rows.html" title="class in org.apache.poi.ss.formula.functions">Rows</A></B></TD>
+<TD>Implementation for Excel ROWS function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Slope.html" title="class in org.apache.poi.ss.formula.functions">Slope</A></B></TD>
+<TD>Implementation of Excel function SLOPE()</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Substitute.html" title="class in org.apache.poi.ss.formula.functions">Substitute</A></B></TD>
+<TD>An implementation of the SUBSTITUTE function:</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Subtotal.html" title="class in org.apache.poi.ss.formula.functions">Subtotal</A></B></TD>
+<TD>Implementation for the Excel function SUBTOTAL</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Sumif.html" title="class in org.apache.poi.ss.formula.functions">Sumif</A></B></TD>
+<TD>Implementation for the Excel function SUMIF</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Sumifs.html" title="class in org.apache.poi.ss.formula.functions">Sumifs</A></B></TD>
+<TD>Implementation for the Excel function SUMIFS</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Sumproduct.html" title="class in org.apache.poi.ss.formula.functions">Sumproduct</A></B></TD>
+<TD>Implementation for the Excel function SUMPRODUCT</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Sumx2my2.html" title="class in org.apache.poi.ss.formula.functions">Sumx2my2</A></B></TD>
+<TD>Implementation of Excel function SUMX2MY2()</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Sumx2py2.html" title="class in org.apache.poi.ss.formula.functions">Sumx2py2</A></B></TD>
+<TD>Implementation of Excel function SUMX2PY2()</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Sumxmy2.html" title="class in org.apache.poi.ss.formula.functions">Sumxmy2</A></B></TD>
+<TD>Implementation of Excel function SUMXMY2()</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/T.html" title="class in org.apache.poi.ss.formula.functions">T</A></B></TD>
+<TD>Implementation of Excel T() function</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/TextFunction.html" title="class in org.apache.poi.ss.formula.functions">TextFunction</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/TimeFunc.html" title="class in org.apache.poi.ss.formula.functions">TimeFunc</A></B></TD>
+<TD>Implementation for the Excel function TIME</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Today.html" title="class in org.apache.poi.ss.formula.functions">Today</A></B></TD>
+<TD>Implementation of Excel TODAY() Function<br></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Value.html" title="class in org.apache.poi.ss.formula.functions">Value</A></B></TD>
+<TD>Implementation for Excel VALUE() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Vlookup.html" title="class in org.apache.poi.ss.formula.functions">Vlookup</A></B></TD>
+<TD>Implementation of the VLOOKUP() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/WeekdayFunc.html" title="class in org.apache.poi.ss.formula.functions">WeekdayFunc</A></B></TD>
+<TD>Implementation for the Excel function WEEKDAY</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/WeekNum.html" title="class in org.apache.poi.ss.formula.functions">WeekNum</A></B></TD>
+<TD>Implementation for Excel WeekNum() function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/XYNumericFunction.html" title="class in org.apache.poi.ss.formula.functions">XYNumericFunction</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Enum Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/DStarRunner.DStarAlgorithmEnum.html" title="enum in org.apache.poi.ss.formula.functions">DStarRunner.DStarAlgorithmEnum</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/LinearRegressionFunction.FUNCTION.html" title="enum in org.apache.poi.ss.formula.functions">LinearRegressionFunction.FUNCTION</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+<DL>
+</DL>
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/function/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/ptg/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/functions/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

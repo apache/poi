@@ -1,0 +1,829 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+HSSFConditionalFormattingRule (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="HSSFConditionalFormattingRule (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormatting.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingThreshold.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFConditionalFormattingRule.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.usermodel</FONT>
+<BR>
+Class HSSFConditionalFormattingRule</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.usermodel.HSSFConditionalFormattingRule</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html" title="interface in org.apache.poi.ss.usermodel">DifferentialStyleProvider</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>HSSFConditionalFormattingRule</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></DL>
+</PRE>
+
+<P>
+High level representation of Conditional Formatting Rule.
+ It allows to specify formula based conditions for the Conditional Formatting
+ and the formatting settings such as font, border and pattern.
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFBorderFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFBorderFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#createBorderFormatting()">createBorderFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a new border formatting structure if it does not exist,
+ otherwise just return existing object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFColorScaleFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFColorScaleFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#createColorScaleFormatting()">createColorScaleFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a new color scale / gradient formatting object if it does not exist,
+ otherwise just return the existing object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFDataBarFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#createDataBarFormatting()">createDataBarFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a new databar / data-bar formatting object if it does not exist,
+ otherwise just return the existing object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFontFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFFontFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#createFontFormatting()">createFontFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a new font formatting structure if it does not exist,
+ otherwise just return existing object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFIconMultiStateFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFIconMultiStateFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#createMultiStateFormatting()">createMultiStateFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a new icon / multi-state formatting object if it does not exist,
+ otherwise just return the existing object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatternFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatternFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#createPatternFormatting()">createPatternFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a new pattern formatting structure if it does not exist,
+ otherwise just return existing object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFBorderFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFBorderFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getBorderFormatting()">getBorderFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFColorScaleFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFColorScaleFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getColorScaleFormatting()">getColorScaleFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getComparisonOperation()">getComparisonOperation</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The comparison function used when the type of conditional formatting is set to
+ <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionType.html#CELL_VALUE_IS"><CODE>ConditionType.CELL_VALUE_IS</CODE></A></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionFilterType.html" title="enum in org.apache.poi.ss.usermodel">ConditionFilterType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getConditionFilterType()">getConditionFilterType</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;always null (not a filter condition) or <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionFilterType.html#FILTER"><CODE>ConditionFilterType.FILTER</CODE></A> if it is.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionType.html" title="class in org.apache.poi.ss.usermodel">ConditionType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getConditionType()">getConditionType</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type of conditional formatting rule.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFDataBarFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getDataBarFormatting()">getDataBarFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionFilterData.html" title="interface in org.apache.poi.ss.usermodel">ConditionFilterData</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getFilterConfiguration()">getFilterConfiguration</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is null if</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFontFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFFontFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getFontFormatting()">getFontFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getFormula1()">getFormula1</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The formula used to evaluate the first operand for the conditional formatting rule.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getFormula2()">getFormula2</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The formula used to evaluate the second operand of the comparison when
+ comparison type is  <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionType.html#CELL_VALUE_IS"><CODE>ConditionType.CELL_VALUE_IS</CODE></A> and operator
+ is either <A HREF="../../../../../org/apache/poi/ss/usermodel/ComparisonOperator.html#BETWEEN"><CODE>ComparisonOperator.BETWEEN</CODE></A> or <A HREF="../../../../../org/apache/poi/ss/usermodel/ComparisonOperator.html#NOT_BETWEEN"><CODE>ComparisonOperator.NOT_BETWEEN</CODE></A></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFIconMultiStateFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFIconMultiStateFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getMultiStateFormatting()">getMultiStateFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/ExcelNumberFormat.html" title="class in org.apache.poi.ss.usermodel">ExcelNumberFormat</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getNumberFormat()">getNumberFormat</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Always null for HSSF records, until someone figures out where to find it</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatternFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatternFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getPatternFormatting()">getPatternFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getPriority()">getPriority</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only newer style formatting rules have priorities.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getStopIfTrue()">getStopIfTrue</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Always true for HSSF files, per Microsoft Excel documentation</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#getStripeSize()">getStripeSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Conditional format rules don't define stripes, so always 0</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#toFormulaString(org.apache.poi.ss.formula.ptg.Ptg[])">toFormulaString</A></B>(<A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]&nbsp;parsedExpression)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html#toFormulaString(org.apache.poi.ss.formula.ptg.Ptg[], org.apache.poi.hssf.usermodel.HSSFWorkbook)">toFormulaString</A></B>(<A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]&nbsp;parsedExpression,
+                <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getPriority()"><!-- --></A><H3>
+getPriority</H3>
+<PRE>
+public int <B>getPriority</B>()</PRE>
+<DL>
+<DD>Only newer style formatting rules have priorities. For older ones,
+  we don't know priority for these, other than definition/model order, 
+  which appears to be what Excel uses.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getPriority()">getPriority</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>rule priority<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getPriority()"><CODE>ConditionalFormattingRule.getPriority()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStopIfTrue()"><!-- --></A><H3>
+getStopIfTrue</H3>
+<PRE>
+public boolean <B>getStopIfTrue</B>()</PRE>
+<DL>
+<DD>Always true for HSSF files, per Microsoft Excel documentation
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getStopIfTrue()">getStopIfTrue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if conditional formatting rule processing stops when this one is true, false if not<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getStopIfTrue()"><CODE>ConditionalFormattingRule.getStopIfTrue()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNumberFormat()"><!-- --></A><H3>
+getNumberFormat</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/ExcelNumberFormat.html" title="class in org.apache.poi.ss.usermodel">ExcelNumberFormat</A> <B>getNumberFormat</B>()</PRE>
+<DL>
+<DD>Always null for HSSF records, until someone figures out where to find it
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getNumberFormat()">getNumberFormat</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE><DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html#getNumberFormat()">getNumberFormat</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html" title="interface in org.apache.poi.ss.usermodel">DifferentialStyleProvider</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>number format defined for this rule, or null if the cell default should be used<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getNumberFormat()"><CODE>ConditionalFormattingRule.getNumberFormat()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFontFormatting()"><!-- --></A><H3>
+getFontFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFontFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFFontFormatting</A> <B>getFontFormatting</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getFontFormatting()">getFontFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE><DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html#getFontFormatting()">getFontFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html" title="interface in org.apache.poi.ss.usermodel">DifferentialStyleProvider</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>- font formatting object  if defined,  <code>null</code> otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createFontFormatting()"><!-- --></A><H3>
+createFontFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFontFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFFontFormatting</A> <B>createFontFormatting</B>()</PRE>
+<DL>
+<DD>create a new font formatting structure if it does not exist,
+ otherwise just return existing object.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#createFontFormatting()">createFontFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>- font formatting object, never returns <code>null</code>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderFormatting()"><!-- --></A><H3>
+getBorderFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFBorderFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFBorderFormatting</A> <B>getBorderFormatting</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getBorderFormatting()">getBorderFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE><DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html#getBorderFormatting()">getBorderFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html" title="interface in org.apache.poi.ss.usermodel">DifferentialStyleProvider</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>- border formatting object  if defined,  <code>null</code> otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createBorderFormatting()"><!-- --></A><H3>
+createBorderFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFBorderFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFBorderFormatting</A> <B>createBorderFormatting</B>()</PRE>
+<DL>
+<DD>create a new border formatting structure if it does not exist,
+ otherwise just return existing object.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#createBorderFormatting()">createBorderFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>- border formatting object, never returns <code>null</code>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPatternFormatting()"><!-- --></A><H3>
+getPatternFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatternFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatternFormatting</A> <B>getPatternFormatting</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getPatternFormatting()">getPatternFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE><DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html#getPatternFormatting()">getPatternFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html" title="interface in org.apache.poi.ss.usermodel">DifferentialStyleProvider</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>- pattern formatting object  if defined, <code>null</code> otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createPatternFormatting()"><!-- --></A><H3>
+createPatternFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatternFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatternFormatting</A> <B>createPatternFormatting</B>()</PRE>
+<DL>
+<DD>create a new pattern formatting structure if it does not exist,
+ otherwise just return existing object.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#createPatternFormatting()">createPatternFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>- pattern formatting object, never returns <code>null</code>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataBarFormatting()"><!-- --></A><H3>
+getDataBarFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFDataBarFormatting</A> <B>getDataBarFormatting</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getDataBarFormatting()">getDataBarFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>databar / data-bar formatting object if defined, <code>null</code> otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createDataBarFormatting()"><!-- --></A><H3>
+createDataBarFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataBarFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFDataBarFormatting</A> <B>createDataBarFormatting</B>()</PRE>
+<DL>
+<DD>create a new databar / data-bar formatting object if it does not exist,
+ otherwise just return the existing object.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMultiStateFormatting()"><!-- --></A><H3>
+getMultiStateFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFIconMultiStateFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFIconMultiStateFormatting</A> <B>getMultiStateFormatting</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getMultiStateFormatting()">getMultiStateFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>icon / multi-state formatting object if defined, <code>null</code> otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createMultiStateFormatting()"><!-- --></A><H3>
+createMultiStateFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFIconMultiStateFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFIconMultiStateFormatting</A> <B>createMultiStateFormatting</B>()</PRE>
+<DL>
+<DD>create a new icon / multi-state formatting object if it does not exist,
+ otherwise just return the existing object.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColorScaleFormatting()"><!-- --></A><H3>
+getColorScaleFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFColorScaleFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFColorScaleFormatting</A> <B>getColorScaleFormatting</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getColorScaleFormatting()">getColorScaleFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>color scale / gradient formatting object if defined, <code>null</code> otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createColorScaleFormatting()"><!-- --></A><H3>
+createColorScaleFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFColorScaleFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFColorScaleFormatting</A> <B>createColorScaleFormatting</B>()</PRE>
+<DL>
+<DD>create a new color scale / gradient formatting object if it does not exist,
+ otherwise just return the existing object.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getConditionType()"><!-- --></A><H3>
+getConditionType</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionType.html" title="class in org.apache.poi.ss.usermodel">ConditionType</A> <B>getConditionType</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getConditionType()">ConditionalFormattingRule</A></CODE></B></DD>
+<DD>Type of conditional formatting rule.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getConditionType()">getConditionType</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>-  the conditiontype for the cfrule</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getConditionFilterType()"><!-- --></A><H3>
+getConditionFilterType</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionFilterType.html" title="enum in org.apache.poi.ss.usermodel">ConditionFilterType</A> <B>getConditionFilterType</B>()</PRE>
+<DL>
+<DD>always null (not a filter condition) or <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionFilterType.html#FILTER"><CODE>ConditionFilterType.FILTER</CODE></A> if it is.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getConditionFilterType()">getConditionFilterType</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>filter type for filter rules, or null if not a filter rule.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getConditionFilterType()"><CODE>ConditionalFormattingRule.getConditionFilterType()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFilterConfiguration()"><!-- --></A><H3>
+getFilterConfiguration</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionFilterData.html" title="interface in org.apache.poi.ss.usermodel">ConditionFilterData</A> <B>getFilterConfiguration</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getFilterConfiguration()">ConditionalFormattingRule</A></CODE></B></DD>
+<DD>This is null if 
+ <p>
+ <code><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getConditionFilterType()"><CODE>ConditionalFormattingRule.getConditionFilterType()</CODE></A> == null</code>
+ <p>
+ This means it is always null for HSSF, which does not define the extended condition types.
+ <p>
+ This object contains the additional configuration information for XSSF filter conditions.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getFilterConfiguration()">getFilterConfiguration</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the Filter Configuration Data, or null if there isn't any</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getComparisonOperation()"><!-- --></A><H3>
+getComparisonOperation</H3>
+<PRE>
+public byte <B>getComparisonOperation</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getComparisonOperation()">ConditionalFormattingRule</A></CODE></B></DD>
+<DD>The comparison function used when the type of conditional formatting is set to
+ <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionType.html#CELL_VALUE_IS"><CODE>ConditionType.CELL_VALUE_IS</CODE></A>
+ <p>
+     MUST be a constant from <A HREF="../../../../../org/apache/poi/ss/usermodel/ComparisonOperator.html" title="class in org.apache.poi.ss.usermodel"><CODE>ComparisonOperator</CODE></A>
+ </p>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getComparisonOperation()">getComparisonOperation</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>- the comparisionoperatation for the cfrule</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFormula1()"><!-- --></A><H3>
+getFormula1</H3>
+<PRE>
+public java.lang.String <B>getFormula1</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getFormula1()">ConditionalFormattingRule</A></CODE></B></DD>
+<DD>The formula used to evaluate the first operand for the conditional formatting rule.
+ <p>
+ If the condition type is <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionType.html#CELL_VALUE_IS"><CODE>ConditionType.CELL_VALUE_IS</CODE></A>,
+ this field is the first operand of the comparison.
+ If type is <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionType.html#FORMULA"><CODE>ConditionType.FORMULA</CODE></A>, this formula is used
+ to determine if the conditional formatting is applied.
+ </p>
+ <p>
+ If comparison type is <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionType.html#FORMULA"><CODE>ConditionType.FORMULA</CODE></A> the formula MUST be a Boolean function
+ </p>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getFormula1()">getFormula1</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the first formula</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFormula2()"><!-- --></A><H3>
+getFormula2</H3>
+<PRE>
+public java.lang.String <B>getFormula2</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getFormula2()">ConditionalFormattingRule</A></CODE></B></DD>
+<DD>The formula used to evaluate the second operand of the comparison when
+ comparison type is  <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionType.html#CELL_VALUE_IS"><CODE>ConditionType.CELL_VALUE_IS</CODE></A> and operator
+ is either <A HREF="../../../../../org/apache/poi/ss/usermodel/ComparisonOperator.html#BETWEEN"><CODE>ComparisonOperator.BETWEEN</CODE></A> or <A HREF="../../../../../org/apache/poi/ss/usermodel/ComparisonOperator.html#NOT_BETWEEN"><CODE>ComparisonOperator.NOT_BETWEEN</CODE></A>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html#getFormula2()">getFormula2</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel">ConditionalFormattingRule</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the second formula</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toFormulaString(org.apache.poi.ss.formula.ptg.Ptg[])"><!-- --></A><H3>
+toFormulaString</H3>
+<PRE>
+protected java.lang.String <B>toFormulaString</B>(<A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]&nbsp;parsedExpression)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toFormulaString(org.apache.poi.ss.formula.ptg.Ptg[], org.apache.poi.hssf.usermodel.HSSFWorkbook)"><!-- --></A><H3>
+toFormulaString</H3>
+<PRE>
+protected static java.lang.String <B>toFormulaString</B>(<A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]&nbsp;parsedExpression,
+                                                  <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStripeSize()"><!-- --></A><H3>
+getStripeSize</H3>
+<PRE>
+public int <B>getStripeSize</B>()</PRE>
+<DL>
+<DD>Conditional format rules don't define stripes, so always 0
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html#getStripeSize()">getStripeSize</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html" title="interface in org.apache.poi.ss.usermodel">DifferentialStyleProvider</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>number of rows/columns in a stripe for stripe styles, 0 for all others<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html#getStripeSize()"><CODE>DifferentialStyleProvider.getStripeSize()</CODE></A></DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormatting.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFConditionalFormattingThreshold.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFConditionalFormattingRule.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFConditionalFormattingRule.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

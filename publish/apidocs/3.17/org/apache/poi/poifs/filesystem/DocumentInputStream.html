@@ -1,0 +1,880 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+DocumentInputStream (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="DocumentInputStream (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentFactoryHelper.html" title="class in org.apache.poi.poifs.filesystem"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentNode.html" title="class in org.apache.poi.poifs.filesystem"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/filesystem/DocumentInputStream.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DocumentInputStream.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.poifs.filesystem</FONT>
+<BR>
+Class DocumentInputStream</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by ">java.io.InputStream
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.poifs.filesystem.DocumentInputStream</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.io.Closeable, <A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></DD>
+</DL>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../org/apache/poi/poifs/filesystem/NDocumentInputStream.html" title="class in org.apache.poi.poifs.filesystem">NDocumentInputStream</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/ODocumentInputStream.html" title="class in org.apache.poi.poifs.filesystem">ODocumentInputStream</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>DocumentInputStream</B><DT>extends java.io.InputStream<DT>implements <A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></DL>
+</PRE>
+
+<P>
+This class provides methods to read a DocumentEntry managed by a
+  <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>POIFSFileSystem</CODE></A> or <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>NPOIFSFileSystem</CODE></A> instance.
+ It creates the appropriate one, and delegates, allowing us to
+  work transparently with the two.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#EOF">EOF</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returned by read operations if we're at end of document</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#SIZE_INT">SIZE_INT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#SIZE_LONG">SIZE_LONG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#SIZE_SHORT">SIZE_SHORT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#DocumentInputStream()">DocumentInputStream</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For use by downstream implementations</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#DocumentInputStream(org.apache.poi.poifs.filesystem.DocumentEntry)">DocumentInputStream</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentEntry.html" title="interface in org.apache.poi.poifs.filesystem">DocumentEntry</A>&nbsp;document)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an InputStream from the specified DocumentEntry</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#DocumentInputStream(org.apache.poi.poifs.filesystem.NPOIFSDocument)">DocumentInputStream</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSDocument</A>&nbsp;document)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an InputStream from the specified Document</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#DocumentInputStream(org.apache.poi.poifs.filesystem.OPOIFSDocument)">DocumentInputStream</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/OPOIFSDocument.html" title="class in org.apache.poi.poifs.filesystem">OPOIFSDocument</A>&nbsp;document)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an InputStream from the specified Document</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#available()">available</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#close()">close</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#mark(int)">mark</A></B>(int&nbsp;ignoredReadlimit)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#markSupported()">markSupported</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tests if this input stream supports the mark and reset methods.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#read()">read</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#read(byte[])">read</A></B>(byte[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#read(byte[], int, int)">read</A></B>(byte[]&nbsp;b,
+     int&nbsp;off,
+     int&nbsp;len)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#readByte()">readByte</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#readDouble()">readDouble</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#readFully(byte[])">readFully</A></B>(byte[]&nbsp;buf)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#readFully(byte[], int, int)">readFully</A></B>(byte[]&nbsp;buf,
+          int&nbsp;off,
+          int&nbsp;len)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#readInt()">readInt</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#readLong()">readLong</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#readPlain(byte[], int, int)">readPlain</A></B>(byte[]&nbsp;buf,
+          int&nbsp;off,
+          int&nbsp;len)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Usually acts the same as <A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readFully(byte[], int, int)"><CODE>LittleEndianInput.readFully(byte[], int, int)</CODE></A>, but
+ for an encrypted stream the raw (unencrypted) data is filled</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#readShort()">readShort</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#readUByte()">readUByte</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#readUInt()">readUInt</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#readUShort()">readUShort</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#reset()">reset</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Repositions this stream to the position at the time the mark() method was
+ last called on this input stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html#skip(long)">skip</A></B>(long&nbsp;n)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="EOF"><!-- --></A><H3>
+EOF</H3>
+<PRE>
+protected static final int <B>EOF</B></PRE>
+<DL>
+<DD>returned by read operations if we're at end of document
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.filesystem.DocumentInputStream.EOF">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SIZE_SHORT"><!-- --></A><H3>
+SIZE_SHORT</H3>
+<PRE>
+protected static final int <B>SIZE_SHORT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.filesystem.DocumentInputStream.SIZE_SHORT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SIZE_INT"><!-- --></A><H3>
+SIZE_INT</H3>
+<PRE>
+protected static final int <B>SIZE_INT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.filesystem.DocumentInputStream.SIZE_INT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SIZE_LONG"><!-- --></A><H3>
+SIZE_LONG</H3>
+<PRE>
+protected static final int <B>SIZE_LONG</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.filesystem.DocumentInputStream.SIZE_LONG">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DocumentInputStream()"><!-- --></A><H3>
+DocumentInputStream</H3>
+<PRE>
+protected <B>DocumentInputStream</B>()</PRE>
+<DL>
+<DD>For use by downstream implementations
+<P>
+</DL>
+<HR>
+
+<A NAME="DocumentInputStream(org.apache.poi.poifs.filesystem.DocumentEntry)"><!-- --></A><H3>
+DocumentInputStream</H3>
+<PRE>
+public <B>DocumentInputStream</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentEntry.html" title="interface in org.apache.poi.poifs.filesystem">DocumentEntry</A>&nbsp;document)
+                    throws java.io.IOException</PRE>
+<DL>
+<DD>Create an InputStream from the specified DocumentEntry
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>document</CODE> - the DocumentEntry to be read
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if the DocumentEntry cannot be opened (like, maybe it has
+                been deleted?)</DL>
+</DL>
+<HR>
+
+<A NAME="DocumentInputStream(org.apache.poi.poifs.filesystem.OPOIFSDocument)"><!-- --></A><H3>
+DocumentInputStream</H3>
+<PRE>
+public <B>DocumentInputStream</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/OPOIFSDocument.html" title="class in org.apache.poi.poifs.filesystem">OPOIFSDocument</A>&nbsp;document)</PRE>
+<DL>
+<DD>Create an InputStream from the specified Document
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>document</CODE> - the Document to be read</DL>
+</DL>
+<HR>
+
+<A NAME="DocumentInputStream(org.apache.poi.poifs.filesystem.NPOIFSDocument)"><!-- --></A><H3>
+DocumentInputStream</H3>
+<PRE>
+public <B>DocumentInputStream</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSDocument</A>&nbsp;document)</PRE>
+<DL>
+<DD>Create an InputStream from the specified Document
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>document</CODE> - the Document to be read</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="available()"><!-- --></A><H3>
+available</H3>
+<PRE>
+public int <B>available</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#available()">available</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></CODE><DT><B>Overrides:</B><DD><CODE>available</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="close()"><!-- --></A><H3>
+close</H3>
+<PRE>
+public void <B>close</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>close</CODE> in interface <CODE>java.io.Closeable</CODE><DT><B>Overrides:</B><DD><CODE>close</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="mark(int)"><!-- --></A><H3>
+mark</H3>
+<PRE>
+public void <B>mark</B>(int&nbsp;ignoredReadlimit)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>mark</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="markSupported()"><!-- --></A><H3>
+markSupported</H3>
+<PRE>
+public boolean <B>markSupported</B>()</PRE>
+<DL>
+<DD>Tests if this input stream supports the mark and reset methods.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>markSupported</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> always</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read()"><!-- --></A><H3>
+read</H3>
+<PRE>
+public int <B>read</B>()
+         throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>read</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(byte[])"><!-- --></A><H3>
+read</H3>
+<PRE>
+public int <B>read</B>(byte[]&nbsp;b)
+         throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>read</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(byte[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public int <B>read</B>(byte[]&nbsp;b,
+                int&nbsp;off,
+                int&nbsp;len)
+         throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>read</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="reset()"><!-- --></A><H3>
+reset</H3>
+<PRE>
+public void <B>reset</B>()</PRE>
+<DL>
+<DD>Repositions this stream to the position at the time the mark() method was
+ last called on this input stream. If mark() has not been called this
+ method repositions the stream to its beginning.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>reset</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="skip(long)"><!-- --></A><H3>
+skip</H3>
+<PRE>
+public long <B>skip</B>(long&nbsp;n)
+          throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>skip</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readByte()"><!-- --></A><H3>
+readByte</H3>
+<PRE>
+public byte <B>readByte</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readByte()">readByte</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readDouble()"><!-- --></A><H3>
+readDouble</H3>
+<PRE>
+public double <B>readDouble</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readDouble()">readDouble</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readShort()"><!-- --></A><H3>
+readShort</H3>
+<PRE>
+public short <B>readShort</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readShort()">readShort</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readFully(byte[])"><!-- --></A><H3>
+readFully</H3>
+<PRE>
+public void <B>readFully</B>(byte[]&nbsp;buf)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readFully(byte[])">readFully</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readFully(byte[], int, int)"><!-- --></A><H3>
+readFully</H3>
+<PRE>
+public void <B>readFully</B>(byte[]&nbsp;buf,
+                      int&nbsp;off,
+                      int&nbsp;len)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readFully(byte[], int, int)">readFully</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readLong()"><!-- --></A><H3>
+readLong</H3>
+<PRE>
+public long <B>readLong</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readLong()">readLong</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readInt()"><!-- --></A><H3>
+readInt</H3>
+<PRE>
+public int <B>readInt</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readInt()">readInt</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUShort()"><!-- --></A><H3>
+readUShort</H3>
+<PRE>
+public int <B>readUShort</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readUShort()">readUShort</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUByte()"><!-- --></A><H3>
+readUByte</H3>
+<PRE>
+public int <B>readUByte</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readUByte()">readUByte</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUInt()"><!-- --></A><H3>
+readUInt</H3>
+<PRE>
+public long <B>readUInt</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readPlain(byte[], int, int)"><!-- --></A><H3>
+readPlain</H3>
+<PRE>
+public void <B>readPlain</B>(byte[]&nbsp;buf,
+                      int&nbsp;off,
+                      int&nbsp;len)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readPlain(byte[], int, int)">LittleEndianInput</A></CODE></B></DD>
+<DD>Usually acts the same as <A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readFully(byte[], int, int)"><CODE>LittleEndianInput.readFully(byte[], int, int)</CODE></A>, but
+ for an encrypted stream the raw (unencrypted) data is filled
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html#readPlain(byte[], int, int)">readPlain</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>buf</CODE> - the byte array to receive the bytes<DD><CODE>off</CODE> - the start offset into the byte array<DD><CODE>len</CODE> - the amount of bytes to fill</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentFactoryHelper.html" title="class in org.apache.poi.poifs.filesystem"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentNode.html" title="class in org.apache.poi.poifs.filesystem"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/filesystem/DocumentInputStream.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DocumentInputStream.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

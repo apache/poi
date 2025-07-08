@@ -1,0 +1,481 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+BitmapImageRenderer (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="BitmapImageRenderer (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/Drawable.html" title="interface in org.apache.poi.sl.draw"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/draw/BitmapImageRenderer.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="BitmapImageRenderer.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.draw</FONT>
+<BR>
+Class BitmapImageRenderer</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.sl.draw.BitmapImageRenderer</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html" title="interface in org.apache.poi.sl.draw">ImageRenderer</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>BitmapImageRenderer</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html" title="interface in org.apache.poi.sl.draw">ImageRenderer</A></DL>
+</PRE>
+
+<P>
+For now this class renders only images supported by the javax.imageio.ImageIO framework.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.awt.image.BufferedImage</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/BitmapImageRenderer.html#img">img</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/BitmapImageRenderer.html#BitmapImageRenderer()">BitmapImageRenderer</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/BitmapImageRenderer.html#drawImage(java.awt.Graphics2D, java.awt.geom.Rectangle2D)">drawImage</A></B>(java.awt.Graphics2D&nbsp;graphics,
+          java.awt.geom.Rectangle2D&nbsp;anchor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Render picture data into the supplied graphics</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/BitmapImageRenderer.html#drawImage(java.awt.Graphics2D, java.awt.geom.Rectangle2D, java.awt.Insets)">drawImage</A></B>(java.awt.Graphics2D&nbsp;graphics,
+          java.awt.geom.Rectangle2D&nbsp;anchor,
+          java.awt.Insets&nbsp;clip)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Render picture data into the supplied graphics</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Dimension</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/BitmapImageRenderer.html#getDimension()">getDimension</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.image.BufferedImage</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/BitmapImageRenderer.html#getImage()">getImage</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.image.BufferedImage</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/BitmapImageRenderer.html#getImage(java.awt.Dimension)">getImage</A></B>(java.awt.Dimension&nbsp;dim)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/BitmapImageRenderer.html#loadImage(byte[], java.lang.String)">loadImage</A></B>(byte[]&nbsp;data,
+          java.lang.String&nbsp;contentType)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load and buffer the image</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/BitmapImageRenderer.html#loadImage(java.io.InputStream, java.lang.String)">loadImage</A></B>(java.io.InputStream&nbsp;data,
+          java.lang.String&nbsp;contentType)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load and buffer the image</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/BitmapImageRenderer.html#setAlpha(double)">setAlpha</A></B>(double&nbsp;alpha)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="img"><!-- --></A><H3>
+img</H3>
+<PRE>
+protected java.awt.image.BufferedImage <B>img</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="BitmapImageRenderer()"><!-- --></A><H3>
+BitmapImageRenderer</H3>
+<PRE>
+public <B>BitmapImageRenderer</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="loadImage(java.io.InputStream, java.lang.String)"><!-- --></A><H3>
+loadImage</H3>
+<PRE>
+public void <B>loadImage</B>(java.io.InputStream&nbsp;data,
+                      java.lang.String&nbsp;contentType)
+               throws java.io.IOException</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#loadImage(java.io.InputStream, java.lang.String)">ImageRenderer</A></CODE></B></DD>
+<DD>Load and buffer the image
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#loadImage(java.io.InputStream, java.lang.String)">loadImage</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html" title="interface in org.apache.poi.sl.draw">ImageRenderer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the raw image stream<DD><CODE>contentType</CODE> - the content type
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadImage(byte[], java.lang.String)"><!-- --></A><H3>
+loadImage</H3>
+<PRE>
+public void <B>loadImage</B>(byte[]&nbsp;data,
+                      java.lang.String&nbsp;contentType)
+               throws java.io.IOException</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#loadImage(byte[], java.lang.String)">ImageRenderer</A></CODE></B></DD>
+<DD>Load and buffer the image
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#loadImage(byte[], java.lang.String)">loadImage</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html" title="interface in org.apache.poi.sl.draw">ImageRenderer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the raw image bytes<DD><CODE>contentType</CODE> - the content type
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getImage()"><!-- --></A><H3>
+getImage</H3>
+<PRE>
+public java.awt.image.BufferedImage <B>getImage</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#getImage()">getImage</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html" title="interface in org.apache.poi.sl.draw">ImageRenderer</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the image as buffered image</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getImage(java.awt.Dimension)"><!-- --></A><H3>
+getImage</H3>
+<PRE>
+public java.awt.image.BufferedImage <B>getImage</B>(java.awt.Dimension&nbsp;dim)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#getImage(java.awt.Dimension)">getImage</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html" title="interface in org.apache.poi.sl.draw">ImageRenderer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dim</CODE> - the dimension in pixels of the returned image
+<DT><B>Returns:</B><DD>the image as buffered image</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDimension()"><!-- --></A><H3>
+getDimension</H3>
+<PRE>
+public java.awt.Dimension <B>getDimension</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#getDimension()">getDimension</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html" title="interface in org.apache.poi.sl.draw">ImageRenderer</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the dimension of the buffered image</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAlpha(double)"><!-- --></A><H3>
+setAlpha</H3>
+<PRE>
+public void <B>setAlpha</B>(double&nbsp;alpha)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#setAlpha(double)">setAlpha</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html" title="interface in org.apache.poi.sl.draw">ImageRenderer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>alpha</CODE> - the alpha [0..1] to be added to the image (possibly already containing an alpha channel)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawImage(java.awt.Graphics2D, java.awt.geom.Rectangle2D)"><!-- --></A><H3>
+drawImage</H3>
+<PRE>
+public boolean <B>drawImage</B>(java.awt.Graphics2D&nbsp;graphics,
+                         java.awt.geom.Rectangle2D&nbsp;anchor)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#drawImage(java.awt.Graphics2D, java.awt.geom.Rectangle2D)">ImageRenderer</A></CODE></B></DD>
+<DD>Render picture data into the supplied graphics
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#drawImage(java.awt.Graphics2D, java.awt.geom.Rectangle2D)">drawImage</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html" title="interface in org.apache.poi.sl.draw">ImageRenderer</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if the picture data was successfully rendered</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawImage(java.awt.Graphics2D, java.awt.geom.Rectangle2D, java.awt.Insets)"><!-- --></A><H3>
+drawImage</H3>
+<PRE>
+public boolean <B>drawImage</B>(java.awt.Graphics2D&nbsp;graphics,
+                         java.awt.geom.Rectangle2D&nbsp;anchor,
+                         java.awt.Insets&nbsp;clip)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#drawImage(java.awt.Graphics2D, java.awt.geom.Rectangle2D, java.awt.Insets)">ImageRenderer</A></CODE></B></DD>
+<DD>Render picture data into the supplied graphics
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#drawImage(java.awt.Graphics2D, java.awt.geom.Rectangle2D, java.awt.Insets)">drawImage</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html" title="interface in org.apache.poi.sl.draw">ImageRenderer</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if the picture data was successfully rendered</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/Drawable.html" title="interface in org.apache.poi.sl.draw"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/draw/BitmapImageRenderer.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="BitmapImageRenderer.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

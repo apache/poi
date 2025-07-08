@@ -1,0 +1,262 @@
+
+
+/* ==================== aural ============================ */
+
+@media aural {
+  h1, h2, h3, h4, h5, h6 { voice-family: paul, male; stress: 20; richness: 90 }
+  h1 { pitch: x-low; pitch-range: 90 }
+  h2 { pitch: x-low; pitch-range: 80 }
+  h3 { pitch: low; pitch-range: 70 }
+  h4 { pitch: medium; pitch-range: 60 }
+  h5 { pitch: medium; pitch-range: 50 }
+  h6 { pitch: medium; pitch-range: 40 }
+  li, dt, dd { pitch: medium; richness: 60 }
+  dt { stress: 80 }
+  pre, code, tt { pitch: medium; pitch-range: 0; stress: 0; richness: 80 }
+  em { pitch: medium; pitch-range: 60; stress: 60; richness: 50 }
+  strong { pitch: medium; pitch-range: 60; stress: 90; richness: 90 }
+  dfn { pitch: high; pitch-range: 60; stress: 60 }
+  s, strike { richness: 0 }
+  i { pitch: medium; pitch-range: 60; stress: 60; richness: 50 }
+  b { pitch: medium; pitch-range: 60; stress: 90; richness: 90 }
+  u { richness: 0 }
+  
+  :link { voice-family: harry, male }
+  :visited { voice-family: betty, female }
+  :active { voice-family: betty, female; pitch-range: 80; pitch: x-high }
+}
+  
+a.external  {
+  padding: 0 20px 0px 0px;
+	display:inline;
+  background-repeat: no-repeat;
+	background-position: center right;
+	background-image: url(images/external-link.gif);
+}
+  
+#top          { background-color: #FFFFFF;}  
+ 
+#top .header .current { background-color: #4C6C8F;} 
+#top .header .current a:link {  color: #ffffff;  }
+#top .header .current a:visited { color: #ffffff; }
+#top .header .current a:hover { color: #ffffff; }
+ 
+#tabs li      { background-color: #E5E4D9 ;} 
+#tabs li a:link {  color: #000000;  }
+#tabs li a:visited { color: #000000; }
+#tabs li a:hover { color: #000000; }
+
+#level2tabs a.selected      { background-color: #4C6C8F ;} 
+#level2tabs a:link {  color: #ffffff;  }
+#level2tabs a:visited { color: #ffffff; }
+#level2tabs a:hover { color: #ffffff; }
+
+#level2tabs { background-color: #E5E4D9;}
+#level2tabs a.unselected:link {  color: #000000;  }
+#level2tabs a.unselected:visited { color: #000000; }
+#level2tabs a.unselected:hover { color: #000000; }
+
+.heading { background-color: #E5E4D9;} 
+
+.boxed { background-color: #E5E4D9;} 
+.underlined_5 	{border-bottom: solid 5px #E5E4D9;}
+.underlined_10 	{border-bottom: solid 10px #E5E4D9;}
+table caption { 
+background-color: #E5E4D9; 
+color: #000000;
+}
+    
+#feedback {
+color: #FFFFFF;
+background: #4C6C8F;
+text-align: center;
+}
+#feedback #feedbackto {
+color: #FFFFFF;
+}   
+
+#publishedStrip { 
+color: #FFFFFF;
+background: #4C6C8F; 
+}
+
+#publishedStrip { 
+color: #000000;
+background: #E5E4D9; 
+}
+
+#menu .menupagetitle  { background-color: #CFDCED;
+  color: #000000;}
+
+#menu           { border-color: #999999;}
+#menu .menupagetitle  { border-color: #999999;}
+#menu .menupageitemgroup  { border-color: #999999;}
+
+#menu      { background-color: #4C6C8F;} 
+#menu  {  color: #ffffff;} 
+#menu a:link {  color: #ffffff;} 
+#menu a:visited {  color: #ffffff;} 
+#menu a:hover {  
+background-color: #4C6C8F;
+color: #ffffff;} 
+
+#menu h1 {
+color: #000000;
+background-color: #cfdced;
+}   
+ 
+#top .searchbox { 
+background-color: #E5E4D9 ;
+color: #000000; 
+} 
+ 
+#menu .menupageitemgroup     { 
+background-color: #E5E4D9;
+}
+#menu .menupageitem {
+color: #000000;
+} 
+#menu .menupageitem a:link {  color: #000000;} 
+#menu .menupageitem a:visited {  color: #000000;} 
+#menu .menupageitem a:hover {  
+background-color: #E5E4D9;
+color: #000000;
+}
+
+body{ 
+background-color: #ffffff;
+color: #000000;
+} 
+a:link { color:#0000ff} 
+a:visited { color:#009999} 
+a:hover { color:#6587ff} 
+
+ 
+.ForrestTable      { background-color: #ccc;} 
+ 
+.ForrestTable td   { background-color: #ffffff;} 
+ 
+.highlight        { background-color: #ffff00;} 
+ 
+.fixme        { border-color: #c60;} 
+ 
+.note         { border-color: #069;} 
+ 
+.warning         { border-color: #900;} 
+ 
+.code         { border-color: #a5b6c6;} 
+ 
+#footer       { background-color: #E5E4D9;} 
+/* extra-css */
+        
+        p.quote {
+        margin-left: 2em;
+        padding: .5em;
+        background-color: #f0f0f0;
+        font-family: monospace;
+        }
+        
+        #footer a { color: #0F3660; }
+        #footer a:visited { color: #009999; }
+        #top .projectlogo { float: none; text-align: center; width: auto; }
+        #menu { width: 200px }
+        #content { padding-left: 230px }
+        #content table.autosize { width: auto; }
+        #credit2 img { margin-top: 20px }
+
+        .boxed { padding-left: 10px; border-radius: 10px 0px; }
+        h2.boxed { color: white; background-color: #036; }
+        h3.boxed { color: white; background-color: #888; }
+        table.POITable th  { background-color: #bbb !important }
+        table.POITable tr:nth-child(even) { background-color: #ddd }
+        table.POITable tr:nth-child(odd) { background-color: #efefef }
+        .feature-yes { background-color: #9f9 }
+        .feature-na { background-color: #ddf }
+        .feature-no { background-color: #f99 }
+
+        li.pro, li.con {
+            list-style: none;
+            padding-left: 0.7em;
+            text-indent: -0.3em;
+        }
+
+        li.pro::before, li.con::before {
+            content: "\00a0";
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+            margin-right: 0.3em;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        li.pro::before {
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='green' d='M16.59 7.58L10 14.17l-3.59-3.58L5 12l5 5 8-8zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z'/></svg>");
+        }
+
+
+        li.con::before {
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='red' d='M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.59-13L12 10.59 8.41 7 7 8.41 10.59 12 7 15.59 8.41 17 12 13.41 15.59 17 17 15.59 13.41 12 17 8.41z'></path></svg>");
+        }
+
+        /* Bare bones style for the desired effect */
+        div.code {
+            display: table;
+            white-space: pre-wrap;
+            border: solid 1px black;
+            font-family: monospace;
+        }
+
+        div.code::before {
+            counter-reset: linenum;
+        }
+
+        div.codeline {
+            display: table-row;
+            counter-increment: linenum;
+        }
+
+        span.lineno {
+            display: table-cell;
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            width: 4em;
+            background: #f0f0f0;
+            padding: 3px;
+            padding-top: 0px;
+            border-right: solid 1px silver;
+            border-top: solid 1px silver;
+        }
+
+        span.lineno::before {
+            content: counter(linenum) ".";
+            text-align: right;
+            display: block;
+            font-size: 90%;
+            color: #999;
+        }
+
+        span.codebody {
+            display: table-cell;
+            padding: 3px 5em 3px 1em;
+            background: white;
+        }
+
+        div.code div.codeline:nth-child(odd) .codebody {
+            background: #f0f8ff;
+        }
+
+        dd {
+            margin-bottom: 1em;
+        }
+
+        tr.action td:nth-child(1), tr.action td:nth-child(2), tr.action td:nth-child(3) {
+            text-align: center;
+        }
+
+        .sebb, a.sebb:link, a.sebb:visited {
+            color: white;
+        }
+    

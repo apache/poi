@@ -1,0 +1,891 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Decryptor (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Decryptor (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/DataSpaceMapUtils.TransformInfoHeader.html" title="class in org.apache.poi.poifs.crypt"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionHeader.html" title="class in org.apache.poi.poifs.crypt"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/crypt/Decryptor.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Decryptor.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.poifs.crypt</FONT>
+<BR>
+Class Decryptor</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.poifs.crypt.Decryptor</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable</DD>
+</DL>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../org/apache/poi/poifs/crypt/binaryrc4/BinaryRC4Decryptor.html" title="class in org.apache.poi.poifs.crypt.binaryrc4">BinaryRC4Decryptor</A>, <A HREF="../../../../../org/apache/poi/poifs/crypt/cryptoapi/CryptoAPIDecryptor.html" title="class in org.apache.poi.poifs.crypt.cryptoapi">CryptoAPIDecryptor</A>, <A HREF="../../../../../org/apache/poi/poifs/crypt/standard/StandardDecryptor.html" title="class in org.apache.poi.poifs.crypt.standard">StandardDecryptor</A>, <A HREF="../../../../../org/apache/poi/poifs/crypt/xor/XORDecryptor.html" title="class in org.apache.poi.poifs.crypt.xor">XORDecryptor</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public abstract class <B>Decryptor</B><DT>extends java.lang.Object<DT>implements java.lang.Cloneable</DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#DEFAULT_PASSWORD">DEFAULT_PASSWORD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#DEFAULT_POIFS_ENTRY">DEFAULT_POIFS_ENTRY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html" title="class in org.apache.poi.poifs.crypt">EncryptionInfo</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#encryptionInfo">encryptionInfo</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#Decryptor()">Decryptor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html" title="class in org.apache.poi.poifs.crypt">Decryptor</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#clone()">clone</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getBlockSizeInBytes()">getBlockSizeInBytes</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>abstract &nbsp;java.io.InputStream</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)">getDataStream</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryNode.html" title="class in org.apache.poi.poifs.filesystem">DirectoryNode</A>&nbsp;dir)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a stream with decrypted data.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.io.InputStream</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getDataStream(java.io.InputStream, int, int)">getDataStream</A></B>(java.io.InputStream&nbsp;stream,
+              int&nbsp;size,
+              int&nbsp;initialPos)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wraps a stream for decryption</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.io.InputStream</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getDataStream(org.apache.poi.poifs.filesystem.NPOIFSFileSystem)">getDataStream</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A>&nbsp;fs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.io.InputStream</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getDataStream(org.apache.poi.poifs.filesystem.OPOIFSFileSystem)">getDataStream</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/OPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">OPOIFSFileSystem</A>&nbsp;fs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.io.InputStream</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getDataStream(org.apache.poi.poifs.filesystem.POIFSFileSystem)">getDataStream</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">POIFSFileSystem</A>&nbsp;fs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html" title="class in org.apache.poi.poifs.crypt">EncryptionInfo</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getEncryptionInfo()">getEncryptionInfo</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html" title="class in org.apache.poi.poifs.crypt">Decryptor</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getInstance(org.apache.poi.poifs.crypt.EncryptionInfo)">getInstance</A></B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html" title="class in org.apache.poi.poifs.crypt">EncryptionInfo</A>&nbsp;info)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getIntegrityHmacKey()">getIntegrityHmacKey</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getIntegrityHmacValue()">getIntegrityHmacValue</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getKeySizeInBytes()">getKeySizeInBytes</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>abstract &nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getLength()">getLength</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the length of the encrypted data that can be safely read with
+ <A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)"><CODE>getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;javax.crypto.SecretKey</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getSecretKey()">getSecretKey</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getVerifier()">getVerifier</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;javax.crypto.Cipher</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#initCipherForBlock(javax.crypto.Cipher, int)">initCipherForBlock</A></B>(javax.crypto.Cipher&nbsp;cipher,
+                   int&nbsp;block)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes a cipher object for a given block index for encryption</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#setChunkSize(int)">setChunkSize</A></B>(int&nbsp;chunkSize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the chunk size of the data stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#setEncryptionInfo(org.apache.poi.poifs.crypt.EncryptionInfo)">setEncryptionInfo</A></B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html" title="class in org.apache.poi.poifs.crypt">EncryptionInfo</A>&nbsp;encryptionInfo)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#setIntegrityHmacKey(byte[])">setIntegrityHmacKey</A></B>(byte[]&nbsp;integrityHmacKey)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#setIntegrityHmacValue(byte[])">setIntegrityHmacValue</A></B>(byte[]&nbsp;integrityHmacValue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#setSecretKey(javax.crypto.SecretKey)">setSecretKey</A></B>(javax.crypto.SecretKey&nbsp;secretKey)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#setVerifier(byte[])">setVerifier</A></B>(byte[]&nbsp;verifier)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>abstract &nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#verifyPassword(java.lang.String)">verifyPassword</A></B>(java.lang.String&nbsp;password)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DEFAULT_PASSWORD"><!-- --></A><H3>
+DEFAULT_PASSWORD</H3>
+<PRE>
+public static final java.lang.String <B>DEFAULT_PASSWORD</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.crypt.Decryptor.DEFAULT_PASSWORD">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DEFAULT_POIFS_ENTRY"><!-- --></A><H3>
+DEFAULT_POIFS_ENTRY</H3>
+<PRE>
+public static final java.lang.String <B>DEFAULT_POIFS_ENTRY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.crypt.Decryptor.DEFAULT_POIFS_ENTRY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="encryptionInfo"><!-- --></A><H3>
+encryptionInfo</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html" title="class in org.apache.poi.poifs.crypt">EncryptionInfo</A> <B>encryptionInfo</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="Decryptor()"><!-- --></A><H3>
+Decryptor</H3>
+<PRE>
+protected <B>Decryptor</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)"><!-- --></A><H3>
+getDataStream</H3>
+<PRE>
+public abstract java.io.InputStream <B>getDataStream</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryNode.html" title="class in org.apache.poi.poifs.filesystem">DirectoryNode</A>&nbsp;dir)
+                                           throws java.io.IOException,
+                                                  java.security.GeneralSecurityException</PRE>
+<DL>
+<DD>Return a stream with decrypted data.
+ <p>
+ Use <A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getLength()"><CODE>getLength()</CODE></A> to get the size of that data that can be safely read from the stream.
+ Just reading to the end of the input stream is not sufficient because there are
+ normally padding bytes that must be discarded
+ </p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dir</CODE> - the node to read from
+<DT><B>Returns:</B><DD>decrypted stream
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataStream(java.io.InputStream, int, int)"><!-- --></A><H3>
+getDataStream</H3>
+<PRE>
+public java.io.InputStream <B>getDataStream</B>(java.io.InputStream&nbsp;stream,
+                                         int&nbsp;size,
+                                         int&nbsp;initialPos)
+                                  throws java.io.IOException,
+                                         java.security.GeneralSecurityException</PRE>
+<DL>
+<DD>Wraps a stream for decryption<p>
+ 
+ As we are handling streams and don't know the total length beforehand,
+ it's the callers duty to care for the length of the entries.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - the stream to be wrapped<DD><CODE>initialPos</CODE> - initial/current byte position within the stream
+<DT><B>Returns:</B><DD>decrypted stream
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setChunkSize(int)"><!-- --></A><H3>
+setChunkSize</H3>
+<PRE>
+public void <B>setChunkSize</B>(int&nbsp;chunkSize)</PRE>
+<DL>
+<DD>Sets the chunk size of the data stream.
+ Needs to be set before the data stream is requested.
+ When not set, the implementation uses method specific default values
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>chunkSize</CODE> - the chunk size, i.e. the block size with the same encryption key</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="initCipherForBlock(javax.crypto.Cipher, int)"><!-- --></A><H3>
+initCipherForBlock</H3>
+<PRE>
+public javax.crypto.Cipher <B>initCipherForBlock</B>(javax.crypto.Cipher&nbsp;cipher,
+                                              int&nbsp;block)
+                                       throws java.security.GeneralSecurityException</PRE>
+<DL>
+<DD>Initializes a cipher object for a given block index for encryption
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cipher</CODE> - may be null, otherwise the given instance is reset to the new block index<DD><CODE>block</CODE> - the block index, e.g. the persist/slide id (hslf)
+<DT><B>Returns:</B><DD>a new cipher object, if cipher was null, otherwise the reinitialized cipher
+<DT><B>Throws:</B>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="verifyPassword(java.lang.String)"><!-- --></A><H3>
+verifyPassword</H3>
+<PRE>
+public abstract boolean <B>verifyPassword</B>(java.lang.String&nbsp;password)
+                                throws java.security.GeneralSecurityException</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLength()"><!-- --></A><H3>
+getLength</H3>
+<PRE>
+public abstract long <B>getLength</B>()</PRE>
+<DL>
+<DD>Returns the length of the encrypted data that can be safely read with
+ <A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)"><CODE>getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)</CODE></A>.
+ Just reading to the end of the input stream is not sufficient because there are
+ normally padding bytes that must be discarded
+
+ <p>
+    The length variable is initialized in <A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)"><CODE>getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)</CODE></A>,
+    an attempt to call getLength() prior to getDataStream() will result in IllegalStateException.
+ </p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>length of the encrypted data
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalStateException</CODE> - if <A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html#getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)"><CODE>getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)</CODE></A>
+ was not called</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getInstance(org.apache.poi.poifs.crypt.EncryptionInfo)"><!-- --></A><H3>
+getInstance</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html" title="class in org.apache.poi.poifs.crypt">Decryptor</A> <B>getInstance</B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html" title="class in org.apache.poi.poifs.crypt">EncryptionInfo</A>&nbsp;info)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataStream(org.apache.poi.poifs.filesystem.NPOIFSFileSystem)"><!-- --></A><H3>
+getDataStream</H3>
+<PRE>
+public java.io.InputStream <B>getDataStream</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A>&nbsp;fs)
+                                  throws java.io.IOException,
+                                         java.security.GeneralSecurityException</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataStream(org.apache.poi.poifs.filesystem.OPOIFSFileSystem)"><!-- --></A><H3>
+getDataStream</H3>
+<PRE>
+public java.io.InputStream <B>getDataStream</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/OPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">OPOIFSFileSystem</A>&nbsp;fs)
+                                  throws java.io.IOException,
+                                         java.security.GeneralSecurityException</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataStream(org.apache.poi.poifs.filesystem.POIFSFileSystem)"><!-- --></A><H3>
+getDataStream</H3>
+<PRE>
+public java.io.InputStream <B>getDataStream</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">POIFSFileSystem</A>&nbsp;fs)
+                                  throws java.io.IOException,
+                                         java.security.GeneralSecurityException</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVerifier()"><!-- --></A><H3>
+getVerifier</H3>
+<PRE>
+public byte[] <B>getVerifier</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSecretKey()"><!-- --></A><H3>
+getSecretKey</H3>
+<PRE>
+public javax.crypto.SecretKey <B>getSecretKey</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIntegrityHmacKey()"><!-- --></A><H3>
+getIntegrityHmacKey</H3>
+<PRE>
+public byte[] <B>getIntegrityHmacKey</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIntegrityHmacValue()"><!-- --></A><H3>
+getIntegrityHmacValue</H3>
+<PRE>
+public byte[] <B>getIntegrityHmacValue</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setSecretKey(javax.crypto.SecretKey)"><!-- --></A><H3>
+setSecretKey</H3>
+<PRE>
+protected void <B>setSecretKey</B>(javax.crypto.SecretKey&nbsp;secretKey)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setVerifier(byte[])"><!-- --></A><H3>
+setVerifier</H3>
+<PRE>
+protected void <B>setVerifier</B>(byte[]&nbsp;verifier)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setIntegrityHmacKey(byte[])"><!-- --></A><H3>
+setIntegrityHmacKey</H3>
+<PRE>
+protected void <B>setIntegrityHmacKey</B>(byte[]&nbsp;integrityHmacKey)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setIntegrityHmacValue(byte[])"><!-- --></A><H3>
+setIntegrityHmacValue</H3>
+<PRE>
+protected void <B>setIntegrityHmacValue</B>(byte[]&nbsp;integrityHmacValue)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBlockSizeInBytes()"><!-- --></A><H3>
+getBlockSizeInBytes</H3>
+<PRE>
+protected int <B>getBlockSizeInBytes</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getKeySizeInBytes()"><!-- --></A><H3>
+getKeySizeInBytes</H3>
+<PRE>
+protected int <B>getKeySizeInBytes</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getEncryptionInfo()"><!-- --></A><H3>
+getEncryptionInfo</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html" title="class in org.apache.poi.poifs.crypt">EncryptionInfo</A> <B>getEncryptionInfo</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setEncryptionInfo(org.apache.poi.poifs.crypt.EncryptionInfo)"><!-- --></A><H3>
+setEncryptionInfo</H3>
+<PRE>
+public void <B>setEncryptionInfo</B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html" title="class in org.apache.poi.poifs.crypt">EncryptionInfo</A>&nbsp;encryptionInfo)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clone()"><!-- --></A><H3>
+clone</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html" title="class in org.apache.poi.poifs.crypt">Decryptor</A> <B>clone</B>()
+                throws java.lang.CloneNotSupportedException</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>clone</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.CloneNotSupportedException</CODE></DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/DataSpaceMapUtils.TransformInfoHeader.html" title="class in org.apache.poi.poifs.crypt"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionHeader.html" title="class in org.apache.poi.poifs.crypt"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/crypt/Decryptor.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Decryptor.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

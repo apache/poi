@@ -1,0 +1,441 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+RelationalOperationEval (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="RelationalOperationEval (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/RefListEval.html" title="class in org.apache.poi.ss.formula.eval"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/StringEval.html" title="class in org.apache.poi.ss.formula.eval"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/eval/RelationalOperationEval.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="RelationalOperationEval.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.formula.eval</FONT>
+<BR>
+Class RelationalOperationEval</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Fixed2ArgFunction.html" title="class in org.apache.poi.ss.formula.functions">org.apache.poi.ss.formula.functions.Fixed2ArgFunction</A>
+      <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.formula.eval.RelationalOperationEval</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function2Arg.html" title="interface in org.apache.poi.ss.formula.functions">Function2Arg</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public abstract class <B>RelationalOperationEval</B><DT>extends <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Fixed2ArgFunction.html" title="class in org.apache.poi.ss.formula.functions">Fixed2ArgFunction</A></DL>
+</PRE>
+
+<P>
+Base class for all comparison operator evaluators
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/RelationalOperationEval.html#EqualEval">EqualEval</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/RelationalOperationEval.html#GreaterEqualEval">GreaterEqualEval</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/RelationalOperationEval.html#GreaterThanEval">GreaterThanEval</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/RelationalOperationEval.html#LessEqualEval">LessEqualEval</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/RelationalOperationEval.html#LessThanEval">LessThanEval</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/RelationalOperationEval.html#NotEqualEval">NotEqualEval</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/RelationalOperationEval.html#RelationalOperationEval()">RelationalOperationEval</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected abstract &nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/RelationalOperationEval.html#convertComparisonResult(int)">convertComparisonResult</A></B>(int&nbsp;cmpResult)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts a standard compare result (-1, 0, 1) to <code>true</code> or <code>false</code>
+ according to subclass' comparison type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/RelationalOperationEval.html#evaluate(int, int, org.apache.poi.ss.formula.eval.ValueEval, org.apache.poi.ss.formula.eval.ValueEval)">evaluate</A></B>(int&nbsp;srcRowIndex,
+         int&nbsp;srcColumnIndex,
+         <A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;arg0,
+         <A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;arg1)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is a description of how the relational operators apply in MS Excel.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.ss.formula.functions.Fixed2ArgFunction"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.ss.formula.functions.<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Fixed2ArgFunction.html" title="class in org.apache.poi.ss.formula.functions">Fixed2ArgFunction</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Fixed2ArgFunction.html#evaluate(org.apache.poi.ss.formula.eval.ValueEval[], int, int)">evaluate</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="EqualEval"><!-- --></A><H3>
+EqualEval</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>EqualEval</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="GreaterEqualEval"><!-- --></A><H3>
+GreaterEqualEval</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>GreaterEqualEval</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="GreaterThanEval"><!-- --></A><H3>
+GreaterThanEval</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>GreaterThanEval</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LessEqualEval"><!-- --></A><H3>
+LessEqualEval</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>LessEqualEval</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LessThanEval"><!-- --></A><H3>
+LessThanEval</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>LessThanEval</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="NotEqualEval"><!-- --></A><H3>
+NotEqualEval</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>NotEqualEval</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="RelationalOperationEval()"><!-- --></A><H3>
+RelationalOperationEval</H3>
+<PRE>
+public <B>RelationalOperationEval</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="convertComparisonResult(int)"><!-- --></A><H3>
+convertComparisonResult</H3>
+<PRE>
+protected abstract boolean <B>convertComparisonResult</B>(int&nbsp;cmpResult)</PRE>
+<DL>
+<DD>Converts a standard compare result (-1, 0, 1) to <code>true</code> or <code>false</code>
+ according to subclass' comparison type.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluate(int, int, org.apache.poi.ss.formula.eval.ValueEval, org.apache.poi.ss.formula.eval.ValueEval)"><!-- --></A><H3>
+evaluate</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A> <B>evaluate</B>(int&nbsp;srcRowIndex,
+                          int&nbsp;srcColumnIndex,
+                          <A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;arg0,
+                          <A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;arg1)</PRE>
+<DL>
+<DD>This is a description of how the relational operators apply in MS Excel.
+ Use this as a guideline when testing/implementing the evaluate methods
+ for the relational operators Evals.
+
+ <pre>
+ Bool.TRUE > any number.
+ Bool > any string. ALWAYS
+ Bool.TRUE > Bool.FALSE
+ Bool.FALSE == Blank
+
+ Strings are never converted to numbers or booleans
+ String > any number. ALWAYS
+ Non-empty String > Blank
+ Empty String == Blank
+ String are sorted dictionary wise
+
+ Blank > Negative numbers
+ Blank == 0
+ Blank < Positive numbers
+ </pre>
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/RefListEval.html" title="class in org.apache.poi.ss.formula.eval"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/StringEval.html" title="class in org.apache.poi.ss.formula.eval"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/eval/RelationalOperationEval.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="RelationalOperationEval.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

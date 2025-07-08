@@ -1,0 +1,1634 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+PrintSetup (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PrintSetup (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/PrintOrientation.html" title="enum in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/PrintSetup.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PrintSetup.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.usermodel</FONT>
+<BR>
+Interface PrintSetup</H2>
+<DL>
+<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPrintSetup.html" title="class in org.apache.poi.hssf.usermodel">HSSFPrintSetup</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>PrintSetup</B></DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#A3_PAPERSIZE">A3_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A3 - 297x420 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#A4_EXTRA_PAPERSIZE">A4_EXTRA_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A4 Extra - 9.27 x 12.69 in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#A4_PAPERSIZE">A4_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A4 - 210x297 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#A4_PLUS_PAPERSIZE">A4_PLUS_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A4 Plus - 210x330 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#A4_ROTATED_PAPERSIZE">A4_ROTATED_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A4 Rotated - 297x210 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#A4_SMALL_PAPERSIZE">A4_SMALL_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A4 Small - 210x297 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#A4_TRANSVERSE_PAPERSIZE">A4_TRANSVERSE_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A4 Transverse - 210x297 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#A5_PAPERSIZE">A5_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A5 - 148x210 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#B4_PAPERSIZE">B4_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B4 (JIS) 250x354 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#B5_PAPERSIZE">B5_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B5 (JIS) 182x257 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#ELEVEN_BY_SEVENTEEN_PAPERSIZE">ELEVEN_BY_SEVENTEEN_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11 x 17 in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#ENVELOPE_10_PAPERSIZE">ENVELOPE_10_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;US Envelope #10 4 1/8 x 9 1/2</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#ENVELOPE_9_PAPERSIZE">ENVELOPE_9_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;US Envelope #9 3 7/8 x 8 7/8</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#ENVELOPE_C3_PAPERSIZE">ENVELOPE_C3_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Envelope C3 324x458 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#ENVELOPE_C4_PAPERSIZE">ENVELOPE_C4_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Envelope C4 229x324 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#ENVELOPE_C5_PAPERSIZE">ENVELOPE_C5_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#ENVELOPE_C6_PAPERSIZE">ENVELOPE_C6_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Envelope C6 114x162 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#ENVELOPE_CS_PAPERSIZE">ENVELOPE_CS_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Envelope C5 162x229 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#ENVELOPE_DL_PAPERSIZE">ENVELOPE_DL_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Envelope DL 110x220 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#ENVELOPE_MONARCH_PAPERSIZE">ENVELOPE_MONARCH_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#EXECUTIVE_PAPERSIZE">EXECUTIVE_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;US Executive 7 1/4 x 10 1/2 in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#FOLIO8_PAPERSIZE">FOLIO8_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Folio 8 1/2 x 13 in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#LEDGER_PAPERSIZE">LEDGER_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;US Ledger 17 x 11 in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#LEGAL_PAPERSIZE">LEGAL_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;US Legal 8 1/2 x 14 in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#LETTER_PAPERSIZE">LETTER_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;US Letter 8 1/2 x 11 in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#LETTER_ROTATED_PAPERSIZE">LETTER_ROTATED_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;US Letter Rotated 11 x 8 1/2 in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#LETTER_SMALL_PAGESIZE">LETTER_SMALL_PAGESIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;US Letter Small 8 1/2 x 11 in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#NOTE8_PAPERSIZE">NOTE8_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;US Note 8 1/2 x 11 in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#PRINTER_DEFAULT_PAPERSIZE">PRINTER_DEFAULT_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whatever the printer's default paper size is</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#QUARTO_PAPERSIZE">QUARTO_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quarto 215x275 mm</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#STATEMENT_PAPERSIZE">STATEMENT_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;US Statement 5 1/2 x 8 1/2 in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#TABLOID_PAPERSIZE">TABLOID_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;US Tabloid 11 x 17 in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#TEN_BY_FOURTEEN_PAPERSIZE">TEN_BY_FOURTEEN_PAPERSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10 x 14 in</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getCopies()">getCopies</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the number of copies.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getDraft()">getDraft</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the draft mode.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getFitHeight()">getFitHeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the number of pages high to fit the sheet in.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getFitWidth()">getFitWidth</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the number of pages wide to fit sheet in.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getFooterMargin()">getFooterMargin</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the footer margin.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getHeaderMargin()">getHeaderMargin</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the header margin.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getHResolution()">getHResolution</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the horizontal resolution.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getLandscape()">getLandscape</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the landscape mode.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getLeftToRight()">getLeftToRight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the left to right print order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getNoColor()">getNoColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the black and white setting.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getNoOrientation()">getNoOrientation</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the no orientation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getNotes()">getNotes</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the print notes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getPageStart()">getPageStart</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the page start.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getPaperSize()">getPaperSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the paper size.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getScale()">getScale</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the scale.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getUsePage()">getUsePage</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the use page numbers.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getValidSettings()">getValidSettings</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the valid settings.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#getVResolution()">getVResolution</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the vertical resolution.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setCopies(short)">setCopies</A></B>(short&nbsp;copies)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the number of copies.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setDraft(boolean)">setDraft</A></B>(boolean&nbsp;d)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set whether it is in draft mode</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setFitHeight(short)">setFitHeight</A></B>(short&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the number of pages high to fit the sheet in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setFitWidth(short)">setFitWidth</A></B>(short&nbsp;width)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the number of pages wide to fit the sheet in</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setFooterMargin(double)">setFooterMargin</A></B>(double&nbsp;footermargin)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the footer margin.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setHeaderMargin(double)">setHeaderMargin</A></B>(double&nbsp;headermargin)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the header margin.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setHResolution(short)">setHResolution</A></B>(short&nbsp;resolution)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the horizontal resolution.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setLandscape(boolean)">setLandscape</A></B>(boolean&nbsp;ls)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set whether to print in landscape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setLeftToRight(boolean)">setLeftToRight</A></B>(boolean&nbsp;ltor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set whether to go left to right or top down in ordering</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setNoColor(boolean)">setNoColor</A></B>(boolean&nbsp;mono)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set whether it is black and white</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setNoOrientation(boolean)">setNoOrientation</A></B>(boolean&nbsp;orientation)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set no orientation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setNotes(boolean)">setNotes</A></B>(boolean&nbsp;printnotes)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Print the include notes</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setPageStart(short)">setPageStart</A></B>(short&nbsp;start)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the page numbering start.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setPaperSize(short)">setPaperSize</A></B>(short&nbsp;size)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the paper size.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setScale(short)">setScale</A></B>(short&nbsp;scale)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the scale.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setUsePage(boolean)">setUsePage</A></B>(boolean&nbsp;page)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set whether to use page start</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setValidSettings(boolean)">setValidSettings</A></B>(boolean&nbsp;valid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Valid settings.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/PrintSetup.html#setVResolution(short)">setVResolution</A></B>(short&nbsp;resolution)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the vertical resolution.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="PRINTER_DEFAULT_PAPERSIZE"><!-- --></A><H3>
+PRINTER_DEFAULT_PAPERSIZE</H3>
+<PRE>
+static final short <B>PRINTER_DEFAULT_PAPERSIZE</B></PRE>
+<DL>
+<DD>Whatever the printer's default paper size is
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.PRINTER_DEFAULT_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LETTER_PAPERSIZE"><!-- --></A><H3>
+LETTER_PAPERSIZE</H3>
+<PRE>
+static final short <B>LETTER_PAPERSIZE</B></PRE>
+<DL>
+<DD>US Letter 8 1/2 x 11 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.LETTER_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LETTER_SMALL_PAGESIZE"><!-- --></A><H3>
+LETTER_SMALL_PAGESIZE</H3>
+<PRE>
+static final short <B>LETTER_SMALL_PAGESIZE</B></PRE>
+<DL>
+<DD>US Letter Small 8 1/2 x 11 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.LETTER_SMALL_PAGESIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TABLOID_PAPERSIZE"><!-- --></A><H3>
+TABLOID_PAPERSIZE</H3>
+<PRE>
+static final short <B>TABLOID_PAPERSIZE</B></PRE>
+<DL>
+<DD>US Tabloid 11 x 17 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.TABLOID_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LEDGER_PAPERSIZE"><!-- --></A><H3>
+LEDGER_PAPERSIZE</H3>
+<PRE>
+static final short <B>LEDGER_PAPERSIZE</B></PRE>
+<DL>
+<DD>US Ledger 17 x 11 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.LEDGER_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LEGAL_PAPERSIZE"><!-- --></A><H3>
+LEGAL_PAPERSIZE</H3>
+<PRE>
+static final short <B>LEGAL_PAPERSIZE</B></PRE>
+<DL>
+<DD>US Legal 8 1/2 x 14 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.LEGAL_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="STATEMENT_PAPERSIZE"><!-- --></A><H3>
+STATEMENT_PAPERSIZE</H3>
+<PRE>
+static final short <B>STATEMENT_PAPERSIZE</B></PRE>
+<DL>
+<DD>US Statement 5 1/2 x 8 1/2 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.STATEMENT_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="EXECUTIVE_PAPERSIZE"><!-- --></A><H3>
+EXECUTIVE_PAPERSIZE</H3>
+<PRE>
+static final short <B>EXECUTIVE_PAPERSIZE</B></PRE>
+<DL>
+<DD>US Executive 7 1/4 x 10 1/2 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.EXECUTIVE_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="A3_PAPERSIZE"><!-- --></A><H3>
+A3_PAPERSIZE</H3>
+<PRE>
+static final short <B>A3_PAPERSIZE</B></PRE>
+<DL>
+<DD>A3 - 297x420 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.A3_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="A4_PAPERSIZE"><!-- --></A><H3>
+A4_PAPERSIZE</H3>
+<PRE>
+static final short <B>A4_PAPERSIZE</B></PRE>
+<DL>
+<DD>A4 - 210x297 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.A4_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="A4_SMALL_PAPERSIZE"><!-- --></A><H3>
+A4_SMALL_PAPERSIZE</H3>
+<PRE>
+static final short <B>A4_SMALL_PAPERSIZE</B></PRE>
+<DL>
+<DD>A4 Small - 210x297 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.A4_SMALL_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="A5_PAPERSIZE"><!-- --></A><H3>
+A5_PAPERSIZE</H3>
+<PRE>
+static final short <B>A5_PAPERSIZE</B></PRE>
+<DL>
+<DD>A5 - 148x210 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.A5_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="B4_PAPERSIZE"><!-- --></A><H3>
+B4_PAPERSIZE</H3>
+<PRE>
+static final short <B>B4_PAPERSIZE</B></PRE>
+<DL>
+<DD>B4 (JIS) 250x354 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.B4_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="B5_PAPERSIZE"><!-- --></A><H3>
+B5_PAPERSIZE</H3>
+<PRE>
+static final short <B>B5_PAPERSIZE</B></PRE>
+<DL>
+<DD>B5 (JIS) 182x257 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.B5_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FOLIO8_PAPERSIZE"><!-- --></A><H3>
+FOLIO8_PAPERSIZE</H3>
+<PRE>
+static final short <B>FOLIO8_PAPERSIZE</B></PRE>
+<DL>
+<DD>Folio 8 1/2 x 13 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.FOLIO8_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="QUARTO_PAPERSIZE"><!-- --></A><H3>
+QUARTO_PAPERSIZE</H3>
+<PRE>
+static final short <B>QUARTO_PAPERSIZE</B></PRE>
+<DL>
+<DD>Quarto 215x275 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.QUARTO_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TEN_BY_FOURTEEN_PAPERSIZE"><!-- --></A><H3>
+TEN_BY_FOURTEEN_PAPERSIZE</H3>
+<PRE>
+static final short <B>TEN_BY_FOURTEEN_PAPERSIZE</B></PRE>
+<DL>
+<DD>10 x 14 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.TEN_BY_FOURTEEN_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ELEVEN_BY_SEVENTEEN_PAPERSIZE"><!-- --></A><H3>
+ELEVEN_BY_SEVENTEEN_PAPERSIZE</H3>
+<PRE>
+static final short <B>ELEVEN_BY_SEVENTEEN_PAPERSIZE</B></PRE>
+<DL>
+<DD>11 x 17 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.ELEVEN_BY_SEVENTEEN_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="NOTE8_PAPERSIZE"><!-- --></A><H3>
+NOTE8_PAPERSIZE</H3>
+<PRE>
+static final short <B>NOTE8_PAPERSIZE</B></PRE>
+<DL>
+<DD>US Note 8 1/2 x 11 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.NOTE8_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENVELOPE_9_PAPERSIZE"><!-- --></A><H3>
+ENVELOPE_9_PAPERSIZE</H3>
+<PRE>
+static final short <B>ENVELOPE_9_PAPERSIZE</B></PRE>
+<DL>
+<DD>US Envelope #9 3 7/8 x 8 7/8
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.ENVELOPE_9_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENVELOPE_10_PAPERSIZE"><!-- --></A><H3>
+ENVELOPE_10_PAPERSIZE</H3>
+<PRE>
+static final short <B>ENVELOPE_10_PAPERSIZE</B></PRE>
+<DL>
+<DD>US Envelope #10 4 1/8 x 9 1/2
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.ENVELOPE_10_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENVELOPE_DL_PAPERSIZE"><!-- --></A><H3>
+ENVELOPE_DL_PAPERSIZE</H3>
+<PRE>
+static final short <B>ENVELOPE_DL_PAPERSIZE</B></PRE>
+<DL>
+<DD>Envelope DL 110x220 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.ENVELOPE_DL_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENVELOPE_CS_PAPERSIZE"><!-- --></A><H3>
+ENVELOPE_CS_PAPERSIZE</H3>
+<PRE>
+static final short <B>ENVELOPE_CS_PAPERSIZE</B></PRE>
+<DL>
+<DD>Envelope C5 162x229 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.ENVELOPE_CS_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENVELOPE_C5_PAPERSIZE"><!-- --></A><H3>
+ENVELOPE_C5_PAPERSIZE</H3>
+<PRE>
+static final short <B>ENVELOPE_C5_PAPERSIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.ENVELOPE_C5_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENVELOPE_C3_PAPERSIZE"><!-- --></A><H3>
+ENVELOPE_C3_PAPERSIZE</H3>
+<PRE>
+static final short <B>ENVELOPE_C3_PAPERSIZE</B></PRE>
+<DL>
+<DD>Envelope C3 324x458 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.ENVELOPE_C3_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENVELOPE_C4_PAPERSIZE"><!-- --></A><H3>
+ENVELOPE_C4_PAPERSIZE</H3>
+<PRE>
+static final short <B>ENVELOPE_C4_PAPERSIZE</B></PRE>
+<DL>
+<DD>Envelope C4 229x324 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.ENVELOPE_C4_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENVELOPE_C6_PAPERSIZE"><!-- --></A><H3>
+ENVELOPE_C6_PAPERSIZE</H3>
+<PRE>
+static final short <B>ENVELOPE_C6_PAPERSIZE</B></PRE>
+<DL>
+<DD>Envelope C6 114x162 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.ENVELOPE_C6_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENVELOPE_MONARCH_PAPERSIZE"><!-- --></A><H3>
+ENVELOPE_MONARCH_PAPERSIZE</H3>
+<PRE>
+static final short <B>ENVELOPE_MONARCH_PAPERSIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.ENVELOPE_MONARCH_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="A4_EXTRA_PAPERSIZE"><!-- --></A><H3>
+A4_EXTRA_PAPERSIZE</H3>
+<PRE>
+static final short <B>A4_EXTRA_PAPERSIZE</B></PRE>
+<DL>
+<DD>A4 Extra - 9.27 x 12.69 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.A4_EXTRA_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="A4_TRANSVERSE_PAPERSIZE"><!-- --></A><H3>
+A4_TRANSVERSE_PAPERSIZE</H3>
+<PRE>
+static final short <B>A4_TRANSVERSE_PAPERSIZE</B></PRE>
+<DL>
+<DD>A4 Transverse - 210x297 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.A4_TRANSVERSE_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="A4_PLUS_PAPERSIZE"><!-- --></A><H3>
+A4_PLUS_PAPERSIZE</H3>
+<PRE>
+static final short <B>A4_PLUS_PAPERSIZE</B></PRE>
+<DL>
+<DD>A4 Plus - 210x330 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.A4_PLUS_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LETTER_ROTATED_PAPERSIZE"><!-- --></A><H3>
+LETTER_ROTATED_PAPERSIZE</H3>
+<PRE>
+static final short <B>LETTER_ROTATED_PAPERSIZE</B></PRE>
+<DL>
+<DD>US Letter Rotated 11 x 8 1/2 in
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.LETTER_ROTATED_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="A4_ROTATED_PAPERSIZE"><!-- --></A><H3>
+A4_ROTATED_PAPERSIZE</H3>
+<PRE>
+static final short <B>A4_ROTATED_PAPERSIZE</B></PRE>
+<DL>
+<DD>A4 Rotated - 297x210 mm
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.PrintSetup.A4_ROTATED_PAPERSIZE">Constant Field Values</A></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="setPaperSize(short)"><!-- --></A><H3>
+setPaperSize</H3>
+<PRE>
+void <B>setPaperSize</B>(short&nbsp;size)</PRE>
+<DL>
+<DD>Set the paper size.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>size</CODE> - the paper size.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setScale(short)"><!-- --></A><H3>
+setScale</H3>
+<PRE>
+void <B>setScale</B>(short&nbsp;scale)</PRE>
+<DL>
+<DD>Set the scale.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>scale</CODE> - the scale to use</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPageStart(short)"><!-- --></A><H3>
+setPageStart</H3>
+<PRE>
+void <B>setPageStart</B>(short&nbsp;start)</PRE>
+<DL>
+<DD>Set the page numbering start.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>start</CODE> - the page numbering start</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFitWidth(short)"><!-- --></A><H3>
+setFitWidth</H3>
+<PRE>
+void <B>setFitWidth</B>(short&nbsp;width)</PRE>
+<DL>
+<DD>Set the number of pages wide to fit the sheet in
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>width</CODE> - the number of pages</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFitHeight(short)"><!-- --></A><H3>
+setFitHeight</H3>
+<PRE>
+void <B>setFitHeight</B>(short&nbsp;height)</PRE>
+<DL>
+<DD>Set the number of pages high to fit the sheet in
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>height</CODE> - the number of pages</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLeftToRight(boolean)"><!-- --></A><H3>
+setLeftToRight</H3>
+<PRE>
+void <B>setLeftToRight</B>(boolean&nbsp;ltor)</PRE>
+<DL>
+<DD>Set whether to go left to right or top down in ordering
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ltor</CODE> - left to right</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLandscape(boolean)"><!-- --></A><H3>
+setLandscape</H3>
+<PRE>
+void <B>setLandscape</B>(boolean&nbsp;ls)</PRE>
+<DL>
+<DD>Set whether to print in landscape
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ls</CODE> - landscape</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setValidSettings(boolean)"><!-- --></A><H3>
+setValidSettings</H3>
+<PRE>
+void <B>setValidSettings</B>(boolean&nbsp;valid)</PRE>
+<DL>
+<DD>Valid settings.  I'm not for sure.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>valid</CODE> - Valid</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setNoColor(boolean)"><!-- --></A><H3>
+setNoColor</H3>
+<PRE>
+void <B>setNoColor</B>(boolean&nbsp;mono)</PRE>
+<DL>
+<DD>Set whether it is black and white
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>mono</CODE> - Black and white</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDraft(boolean)"><!-- --></A><H3>
+setDraft</H3>
+<PRE>
+void <B>setDraft</B>(boolean&nbsp;d)</PRE>
+<DL>
+<DD>Set whether it is in draft mode
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>d</CODE> - draft</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setNotes(boolean)"><!-- --></A><H3>
+setNotes</H3>
+<PRE>
+void <B>setNotes</B>(boolean&nbsp;printnotes)</PRE>
+<DL>
+<DD>Print the include notes
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>printnotes</CODE> - print the notes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setNoOrientation(boolean)"><!-- --></A><H3>
+setNoOrientation</H3>
+<PRE>
+void <B>setNoOrientation</B>(boolean&nbsp;orientation)</PRE>
+<DL>
+<DD>Set no orientation. ?
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>orientation</CODE> - Orientation.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setUsePage(boolean)"><!-- --></A><H3>
+setUsePage</H3>
+<PRE>
+void <B>setUsePage</B>(boolean&nbsp;page)</PRE>
+<DL>
+<DD>Set whether to use page start
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>page</CODE> - Use page start</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHResolution(short)"><!-- --></A><H3>
+setHResolution</H3>
+<PRE>
+void <B>setHResolution</B>(short&nbsp;resolution)</PRE>
+<DL>
+<DD>Sets the horizontal resolution.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>resolution</CODE> - horizontal resolution</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setVResolution(short)"><!-- --></A><H3>
+setVResolution</H3>
+<PRE>
+void <B>setVResolution</B>(short&nbsp;resolution)</PRE>
+<DL>
+<DD>Sets the vertical resolution.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>resolution</CODE> - vertical resolution</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHeaderMargin(double)"><!-- --></A><H3>
+setHeaderMargin</H3>
+<PRE>
+void <B>setHeaderMargin</B>(double&nbsp;headermargin)</PRE>
+<DL>
+<DD>Sets the header margin.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>headermargin</CODE> - header margin</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFooterMargin(double)"><!-- --></A><H3>
+setFooterMargin</H3>
+<PRE>
+void <B>setFooterMargin</B>(double&nbsp;footermargin)</PRE>
+<DL>
+<DD>Sets the footer margin.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>footermargin</CODE> - footer margin</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCopies(short)"><!-- --></A><H3>
+setCopies</H3>
+<PRE>
+void <B>setCopies</B>(short&nbsp;copies)</PRE>
+<DL>
+<DD>Sets the number of copies.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>copies</CODE> - number of copies</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPaperSize()"><!-- --></A><H3>
+getPaperSize</H3>
+<PRE>
+short <B>getPaperSize</B>()</PRE>
+<DL>
+<DD>Returns the paper size.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>paper size</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getScale()"><!-- --></A><H3>
+getScale</H3>
+<PRE>
+short <B>getScale</B>()</PRE>
+<DL>
+<DD>Returns the scale.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>scale</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPageStart()"><!-- --></A><H3>
+getPageStart</H3>
+<PRE>
+short <B>getPageStart</B>()</PRE>
+<DL>
+<DD>Returns the page start.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>page start</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFitWidth()"><!-- --></A><H3>
+getFitWidth</H3>
+<PRE>
+short <B>getFitWidth</B>()</PRE>
+<DL>
+<DD>Returns the number of pages wide to fit sheet in.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>number of pages wide to fit sheet in</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFitHeight()"><!-- --></A><H3>
+getFitHeight</H3>
+<PRE>
+short <B>getFitHeight</B>()</PRE>
+<DL>
+<DD>Returns the number of pages high to fit the sheet in.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>number of pages high to fit the sheet in</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLeftToRight()"><!-- --></A><H3>
+getLeftToRight</H3>
+<PRE>
+boolean <B>getLeftToRight</B>()</PRE>
+<DL>
+<DD>Returns the left to right print order.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>left to right print order</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLandscape()"><!-- --></A><H3>
+getLandscape</H3>
+<PRE>
+boolean <B>getLandscape</B>()</PRE>
+<DL>
+<DD>Returns the landscape mode.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>landscape mode</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getValidSettings()"><!-- --></A><H3>
+getValidSettings</H3>
+<PRE>
+boolean <B>getValidSettings</B>()</PRE>
+<DL>
+<DD>Returns the valid settings.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>valid settings</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNoColor()"><!-- --></A><H3>
+getNoColor</H3>
+<PRE>
+boolean <B>getNoColor</B>()</PRE>
+<DL>
+<DD>Returns the black and white setting.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>black and white setting</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDraft()"><!-- --></A><H3>
+getDraft</H3>
+<PRE>
+boolean <B>getDraft</B>()</PRE>
+<DL>
+<DD>Returns the draft mode.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>draft mode</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNotes()"><!-- --></A><H3>
+getNotes</H3>
+<PRE>
+boolean <B>getNotes</B>()</PRE>
+<DL>
+<DD>Returns the print notes.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>print notes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNoOrientation()"><!-- --></A><H3>
+getNoOrientation</H3>
+<PRE>
+boolean <B>getNoOrientation</B>()</PRE>
+<DL>
+<DD>Returns the no orientation.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>no orientation</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUsePage()"><!-- --></A><H3>
+getUsePage</H3>
+<PRE>
+boolean <B>getUsePage</B>()</PRE>
+<DL>
+<DD>Returns the use page numbers.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>use page numbers</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHResolution()"><!-- --></A><H3>
+getHResolution</H3>
+<PRE>
+short <B>getHResolution</B>()</PRE>
+<DL>
+<DD>Returns the horizontal resolution.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>horizontal resolution</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVResolution()"><!-- --></A><H3>
+getVResolution</H3>
+<PRE>
+short <B>getVResolution</B>()</PRE>
+<DL>
+<DD>Returns the vertical resolution.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>vertical resolution</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHeaderMargin()"><!-- --></A><H3>
+getHeaderMargin</H3>
+<PRE>
+double <B>getHeaderMargin</B>()</PRE>
+<DL>
+<DD>Returns the header margin.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>header margin</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFooterMargin()"><!-- --></A><H3>
+getFooterMargin</H3>
+<PRE>
+double <B>getFooterMargin</B>()</PRE>
+<DL>
+<DD>Returns the footer margin.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>footer margin</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCopies()"><!-- --></A><H3>
+getCopies</H3>
+<PRE>
+short <B>getCopies</B>()</PRE>
+<DL>
+<DD>Returns the number of copies.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>number of copies</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/PrintOrientation.html" title="enum in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/PrintSetup.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PrintSetup.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

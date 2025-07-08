@@ -1,0 +1,839 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+ColumnInfoRecord (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ColumnInfoRecord (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/CodepageRecord.html" title="class in org.apache.poi.hssf.record"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/CommonObjectDataSubRecord.html" title="class in org.apache.poi.hssf.record"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/record/ColumnInfoRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ColumnInfoRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.record</FONT>
+<BR>
+Class ColumnInfoRecord</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.RecordBase</A>
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.Record</A>
+          <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.StandardRecord</A>
+              <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.record.ColumnInfoRecord</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>ColumnInfoRecord</B><DT>extends <A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A><DT>implements java.lang.Cloneable</DL>
+</PRE>
+
+<P>
+Title: COLINFO Record (0x007D)<p>
+ Description:  Defines with width and formatting for a range of columns<p>
+ REFERENCE:  PG 293 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#sid">sid</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#ColumnInfoRecord()">ColumnInfoRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a column info record with default width and format</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#ColumnInfoRecord(org.apache.poi.hssf.record.RecordInputStream)">ColumnInfoRecord</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/RecordInputStream.html" title="class in org.apache.poi.hssf.record">RecordInputStream</A>&nbsp;in)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html" title="class in org.apache.poi.hssf.record">ColumnInfoRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#clone()">clone</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#containsColumn(int)">containsColumn</A></B>(int&nbsp;columnIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#formatMatches(org.apache.poi.hssf.record.ColumnInfoRecord)">formatMatches</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html" title="class in org.apache.poi.hssf.record">ColumnInfoRecord</A>&nbsp;other)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#getCollapsed()">getCollapsed</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#getColumnWidth()">getColumnWidth</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#getDataSize()">getDataSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#getFirstColumn()">getFirstColumn</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the first column this record defines formatting info for</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#getHidden()">getHidden</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#getLastColumn()">getLastColumn</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the last column this record defines formatting info for</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#getOutlineLevel()">getOutlineLevel</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#getSid()">getSid</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return the non static version of the id for this record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#getXFIndex()">getXFIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the columns' default format info</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#isAdjacentBefore(org.apache.poi.hssf.record.ColumnInfoRecord)">isAdjacentBefore</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html" title="class in org.apache.poi.hssf.record">ColumnInfoRecord</A>&nbsp;other)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">serialize</A></B>(<A HREF="../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write the data content of this BIFF record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#setCollapsed(boolean)">setCollapsed</A></B>(boolean&nbsp;isCollapsed)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether the cells are collapsed</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#setColumnWidth(int)">setColumnWidth</A></B>(int&nbsp;cw)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the columns' width in 1/256 of a character width</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#setFirstColumn(int)">setFirstColumn</A></B>(int&nbsp;fc)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the first column this record defines formatting info for</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#setHidden(boolean)">setHidden</A></B>(boolean&nbsp;ishidden)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether or not these cells are hidden</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#setLastColumn(int)">setLastColumn</A></B>(int&nbsp;lc)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the last column this record defines formatting info for</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#setOutlineLevel(int)">setOutlineLevel</A></B>(int&nbsp;olevel)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the outline level for the cells</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#setXFIndex(int)">setXFIndex</A></B>(int&nbsp;xfi)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the columns' default format info</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a string representation of the record (for biffview/debugging)</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.StandardRecord"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.<A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#getRecordSize()">getRecordSize</A>, <A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(int, byte[])">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.Record"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.<A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#cloneViaReserialise()">cloneViaReserialise</A>, <A HREF="../../../../../org/apache/poi/hssf/record/Record.html#serialize()">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="sid"><!-- --></A><H3>
+sid</H3>
+<PRE>
+public static final short <B>sid</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.ColumnInfoRecord.sid">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="ColumnInfoRecord()"><!-- --></A><H3>
+ColumnInfoRecord</H3>
+<PRE>
+public <B>ColumnInfoRecord</B>()</PRE>
+<DL>
+<DD>Creates a column info record with default width and format
+<P>
+</DL>
+<HR>
+
+<A NAME="ColumnInfoRecord(org.apache.poi.hssf.record.RecordInputStream)"><!-- --></A><H3>
+ColumnInfoRecord</H3>
+<PRE>
+public <B>ColumnInfoRecord</B>(<A HREF="../../../../../org/apache/poi/hssf/record/RecordInputStream.html" title="class in org.apache.poi.hssf.record">RecordInputStream</A>&nbsp;in)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="setFirstColumn(int)"><!-- --></A><H3>
+setFirstColumn</H3>
+<PRE>
+public void <B>setFirstColumn</B>(int&nbsp;fc)</PRE>
+<DL>
+<DD>set the first column this record defines formatting info for
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>fc</CODE> - - the first column index (0-based)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLastColumn(int)"><!-- --></A><H3>
+setLastColumn</H3>
+<PRE>
+public void <B>setLastColumn</B>(int&nbsp;lc)</PRE>
+<DL>
+<DD>set the last column this record defines formatting info for
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lc</CODE> - - the last column index (0-based)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColumnWidth(int)"><!-- --></A><H3>
+setColumnWidth</H3>
+<PRE>
+public void <B>setColumnWidth</B>(int&nbsp;cw)</PRE>
+<DL>
+<DD>set the columns' width in 1/256 of a character width
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cw</CODE> - - column width</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setXFIndex(int)"><!-- --></A><H3>
+setXFIndex</H3>
+<PRE>
+public void <B>setXFIndex</B>(int&nbsp;xfi)</PRE>
+<DL>
+<DD>set the columns' default format info
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>xfi</CODE> - - the extended format index<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/ExtendedFormatRecord.html" title="class in org.apache.poi.hssf.record"><CODE>ExtendedFormatRecord</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHidden(boolean)"><!-- --></A><H3>
+setHidden</H3>
+<PRE>
+public void <B>setHidden</B>(boolean&nbsp;ishidden)</PRE>
+<DL>
+<DD>set whether or not these cells are hidden
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ishidden</CODE> - - whether the cells are hidden.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setOutlineLevel(int)"><!-- --></A><H3>
+setOutlineLevel</H3>
+<PRE>
+public void <B>setOutlineLevel</B>(int&nbsp;olevel)</PRE>
+<DL>
+<DD>set the outline level for the cells
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>olevel</CODE> - -outline level for the cells</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCollapsed(boolean)"><!-- --></A><H3>
+setCollapsed</H3>
+<PRE>
+public void <B>setCollapsed</B>(boolean&nbsp;isCollapsed)</PRE>
+<DL>
+<DD>set whether the cells are collapsed
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>isCollapsed</CODE> - - whether the cells are collapsed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstColumn()"><!-- --></A><H3>
+getFirstColumn</H3>
+<PRE>
+public int <B>getFirstColumn</B>()</PRE>
+<DL>
+<DD>get the first column this record defines formatting info for
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the first column index (0-based)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastColumn()"><!-- --></A><H3>
+getLastColumn</H3>
+<PRE>
+public int <B>getLastColumn</B>()</PRE>
+<DL>
+<DD>get the last column this record defines formatting info for
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the last column index (0-based)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColumnWidth()"><!-- --></A><H3>
+getColumnWidth</H3>
+<PRE>
+public int <B>getColumnWidth</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>column width in units of 1/256 of a character width</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getXFIndex()"><!-- --></A><H3>
+getXFIndex</H3>
+<PRE>
+public int <B>getXFIndex</B>()</PRE>
+<DL>
+<DD>get the columns' default format info
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the extended format index<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/ExtendedFormatRecord.html" title="class in org.apache.poi.hssf.record"><CODE>ExtendedFormatRecord</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHidden()"><!-- --></A><H3>
+getHidden</H3>
+<PRE>
+public boolean <B>getHidden</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether the cells are hidden.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOutlineLevel()"><!-- --></A><H3>
+getOutlineLevel</H3>
+<PRE>
+public int <B>getOutlineLevel</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>outline level for the cells</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCollapsed()"><!-- --></A><H3>
+getCollapsed</H3>
+<PRE>
+public boolean <B>getCollapsed</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether the cells are collapsed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="containsColumn(int)"><!-- --></A><H3>
+containsColumn</H3>
+<PRE>
+public boolean <B>containsColumn</B>(int&nbsp;columnIndex)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isAdjacentBefore(org.apache.poi.hssf.record.ColumnInfoRecord)"><!-- --></A><H3>
+isAdjacentBefore</H3>
+<PRE>
+public boolean <B>isAdjacentBefore</B>(<A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html" title="class in org.apache.poi.hssf.record">ColumnInfoRecord</A>&nbsp;other)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="formatMatches(org.apache.poi.hssf.record.ColumnInfoRecord)"><!-- --></A><H3>
+formatMatches</H3>
+<PRE>
+public boolean <B>formatMatches</B>(<A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html" title="class in org.apache.poi.hssf.record">ColumnInfoRecord</A>&nbsp;other)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>other</CODE> - the format to match with
+<DT><B>Returns:</B><DD><code>true</code> if the format, options and column width match</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSid()"><!-- --></A><H3>
+getSid</H3>
+<PRE>
+public short <B>getSid</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#getSid()">Record</A></CODE></B></DD>
+<DD>return the non static version of the id for this record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#getSid()">getSid</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>he id for this record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="serialize(org.apache.poi.util.LittleEndianOutput)"><!-- --></A><H3>
+serialize</H3>
+<PRE>
+public void <B>serialize</B>(<A HREF="../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">StandardRecord</A></CODE></B></DD>
+<DD>Write the data content of this BIFF record.  The 'ushort sid' and 'ushort size' header fields
+ have already been written by the superclass.
+ <p>
+ The number of bytes written must equal the record size reported by
+  <A HREF="../../../../../org/apache/poi/hssf/record/RecordBase.html#getRecordSize()"><CODE>RecordBase.getRecordSize()</CODE></A>} minus four
+  ( record header consisting of a 'ushort sid' and 'ushort reclength' has already been written
+  by their superclass).
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">serialize</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>out</CODE> - the output object</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataSize()"><!-- --></A><H3>
+getDataSize</H3>
+<PRE>
+protected int <B>getDataSize</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#getDataSize()">getDataSize</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#toString()">Record</A></CODE></B></DD>
+<DD>get a string representation of the record (for biffview/debugging)
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#toString()">toString</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clone()"><!-- --></A><H3>
+clone</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html" title="class in org.apache.poi.hssf.record">ColumnInfoRecord</A> <B>clone</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#clone()">clone</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/CodepageRecord.html" title="class in org.apache.poi.hssf.record"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/CommonObjectDataSubRecord.html" title="class in org.apache.poi.hssf.record"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/record/ColumnInfoRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ColumnInfoRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

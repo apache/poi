@@ -1,0 +1,1718 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>Apache POI&trade; - POIFS - Design Document</title>
+<link type="text/css" href="../../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../../skin/profile.css" rel="stylesheet">
+<script src="../../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../../help/index.html">Help</a>
+</li>
+<li class="current">
+<a class="selected" href="../../components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="../../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Component APIs</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../apidocs/index.html">Javadocs</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.3', '../../skin/')" id="menu_1.1.3Title" class="menutitle">Excel (HSSF/XSSF)</div>
+<div id="menu_1.1.3" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/spreadsheet/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/how-to.html">HOWTO</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/converting.html">HSSF to SS Converting</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/formula.html">Formula Support</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval.html">Formula Evaluation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval-devguide.html">Eval Dev Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/examples.html">Examples</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/use-case.html">Use Case</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/diagrams.html">Pictorial Docs</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/limitations.html">Limitations</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/user-defined-functions.html">User Defined Functions</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/excelant.html">ExcelAnt Tests</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/hacking-hssf.html">Hacking HSSF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/record-generator.html">Record Generator</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/chart.html">Charts</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.4', '../../skin/')" id="menu_1.1.4Title" class="menutitle">PowerPoint (HSLF/XSLF)</div>
+<div id="menu_1.1.4" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/slideshow/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/how-to-shapes.html">HSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/xslf-cookbook.html">XSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-wmf-emf-renderer.html">Render SL/WMF/EMF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-file-format.html">PPT File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.5', '../../skin/')" id="menu_1.1.5Title" class="menutitle">Word (HWPF/XWPF)</div>
+<div id="menu_1.1.5" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/document/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide.html">HWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide-xwpf.html">XWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/docoverview.html">HWPF Format</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/projectplan.html">HWPF Project plan</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hsmf/index.html">Outlook (HSMF)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/diagram/index.html">Visio (HDGF+XDGF)</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.8', '../../skin/')" id="menu_1.1.8Title" class="menutitle">Publisher (HPBF)</div>
+<div id="menu_1.1.8" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpbf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpbf/file-format.html">File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_selected_1.1.9', '../../skin/')" id="menu_selected_1.1.9Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">OLE2 Filesystem (POIFS)</div>
+<div id="menu_selected_1.1.9" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/poifs/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/embeded.html">Embedded Documents</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/fileformat.html">File System Documentation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/usecases.html">Use Cases</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">Design</div>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.10', '../../skin/')" id="menu_1.1.10Title" class="menutitle">OLE2 Document Props (HPSF)</div>
+<div id="menu_1.1.10" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpsf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/thumbnails.html">Thumbnails</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/internals.html">Internals</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/todo.html">To Do</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hmef/index.html">TNEF (HMEF) for winmail.dat</a>
+</div>
+<div class="menuitem">
+<a href="../../components/oxml4j/index.html">OpenXML4J (OOXML)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/logging.html">Logging framework</a>
+</div>
+<div class="menuitem">
+<a href="../../components/configuration.html">Configuration</a>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>Apache POI&trade; - POIFS - Design Document</h1>
+<div id="front-matter"></div>
+        
+<a name="POIFS+Design+Document"></a>
+<h2 class="boxed">POIFS Design Document</h2>
+<div class="section">
+<p>This document describes the design of the POIFS system. It is organized as follows:</p>
+<ul>
+                
+<li>
+                    
+<a href="#Scope">Scope:</a>
+                    A description of the limitations of this document.
+                </li>
+                
+<li>
+                    
+<a href="#Assumptions">Assumptions:</a>
+                    The assumptions on which this design is based.
+                </li>
+                
+<li>
+                    
+<a href="#Considerations">Design Considerations:</a>
+                    The constraints and goals applied to the design.
+                </li>
+                
+<li>
+                    
+<a href="#Design">Design:</a>
+                    The design of the POIFS system.
+                </li>
+            
+</ul>
+</div>
+        
+<a name="Scope"></a>
+<h2 class="boxed">Scope</h2>
+<div class="section">
+<p>This document is written as part of an iterative process. As that process is not yet complete, neither is
+                this document.
+            </p>
+</div>
+        
+<a name="Assumptions"></a>
+<h2 class="boxed">Assumptions</h2>
+<div class="section">
+<p>The design of POIFS is not dependent on the code written for the proof-of-concept prototype POIFS
+                package.
+            </p>
+</div>
+        
+<a name="Considerations"></a>
+<h2 class="boxed">Design Considerations</h2>
+<div class="section">
+<p>As usual, the primary considerations in the design of the POIFS assumption involve the classic space-time
+                tradeoff. In this case, the main consideration has to involve minimizing the memory footprint of POIFS.
+                POIFS may be called upon to create relatively large documents, and in web application server, it may be
+                called upon to create several documents simultaneously, and it will likely co-exist with other
+                Serializer systems, competing with those other systems for space on the server.
+            </p>
+<p>We've addressed the risk of being too slow through a proof-of-concept prototype. This prototype for POIFS
+                involved reading an existing file, decomposing it into its constituent documents, composing a new POIFS
+                from the constituent documents, and writing the POIFS file back to disk and verifying that the output
+                file, while not necessarily a byte-for-byte image of the input file, could be read by the application
+                that generated the input file. This prototype proved to be quite fast, reading, decomposing, and
+                re-generating a large (300K) file in 2 to 2.5 seconds.
+            </p>
+<p>While the POIFS format allows great flexibility in laying out the documents and the other internal data
+                structures, the layout of the filesystem will be kept as simple as possible.
+            </p>
+</div>
+        
+<a name="Design"></a>
+<h2 class="boxed">Design</h2>
+<div class="section">
+<p>The design of the POIFS is broken down into two parts: <a href="#Classes">discussion of the classes and
+                interfaces</a>, and <a href="#Scenarios">discussion of how these classes and interfaces will be used to
+                convert an appropriate Java InputStream (such as an XML stream) to a POIFS output stream containing an
+                HSSF document</a>.
+            </p>
+<p>
+                
+<a name="Classes"></a><strong id="Classes">Classes and Interfaces</strong>
+            
+</p>
+<p>The classes and interfaces used in the POIFS are broken down as follows:</p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+                
+<tr>
+                    
+<th colspan="1" rowspan="1">Package</th>
+                    <th colspan="1" rowspan="1">Contents</th>
+                
+</tr>
+                
+<tr>
+                    
+<td colspan="1" rowspan="1">
+                        <a href="#BlockClasses">net.sourceforge.poi.poifs.storage</a>
+                    </td>
+                    <td colspan="1" rowspan="1">Block classes and interfaces</td>
+                
+</tr>
+                
+<tr>
+                    
+<td colspan="1" rowspan="1">
+                        <a href="#PropertyClasses">net.sourceforge.poi.poifs.property</a>
+                    </td>
+                    <td colspan="1" rowspan="1">Property classes and interfaces</td>
+                
+</tr>
+                
+<tr>
+                    
+<td colspan="1" rowspan="1">
+                        <a href="#FilesystemClasses">net.sourceforge.poi.poifs.filesystem</a>
+                    </td>
+                    <td colspan="1" rowspan="1">Filesystem classes and interfaces</td>
+                
+</tr>
+                
+<tr>
+                    
+<td colspan="1" rowspan="1">
+                        <a href="#UtilityClasses">net.sourceforge.poi.util</a>
+                    </td>
+                    <td colspan="1" rowspan="1">Utility classes and interfaces</td>
+                
+</tr>
+            
+</table>
+<a name="BlockClasses"></a>
+<h3 class="boxed">Block Classes and Interfaces</h3>
+<p>The block classes and interfaces are shownin the following class diagram.</p>
+<p>
+                    
+<img alt="Block Classes and Interfaces" src="images/BlockClassDiagram.gif">
+                </p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">Class/Interface</th>
+                        <th colspan="1" rowspan="1">Description</th>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="BATBlock"></a><th colspan="1" rowspan="1" id="BATBlock">BATBlock</th>
+                        <td colspan="1" rowspan="1">The <strong>BATBlock</strong> class represents a single big block containing 128
+                            <a href="fileformat.html#BAT">BAT entries</a>.<br>Its <span class="codefrag">_fields</span> array is used to
+                            read and write the BAT entries into the <span class="codefrag">_data</span> array.
+                            <br>Its <span class="codefrag">createBATBlocks</span> method is used to create an array of BATBlock
+                            instances from an array of int BAT entries.
+                            <br>
+                            Its <span class="codefrag">calculateStorageRequirements</span> method calculates the number of BAT blocks
+                            necessary to hold the specified number of BAT entries.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="BigBlock"></a><th colspan="1" rowspan="1" id="BigBlock">BigBlock</th>
+                        <td colspan="1" rowspan="1">The <strong>BigBlock</strong> class is an abstract class representing the common big block
+                            of 512 bytes. It implements <a href="#BlockWritable">BlockWritable</a>, trivially delegating
+                            the <span class="codefrag">writeBlocks</span> method of BlockWritable to its own abstract <span class="codefrag">writeData
+                            </span> method.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="BlockWritable"></a><th colspan="1" rowspan="1" id="BlockWritable">BlockWritable</th>
+                        <td colspan="1" rowspan="1">The <strong>BlockWritable</strong> interface defines a single method,
+                            <span class="codefrag">writeBlocks</span>, that is used to write an implementation's block data to an <span class="codefrag">
+                                OutputStream</span>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="DocumentBlock"></a><th colspan="1" rowspan="1" id="DocumentBlock">DocumentBlock</th>
+                        <td colspan="1" rowspan="1">The <strong>DocumentBlock</strong> class is used by a <a href="#Document">
+                            Document
+                        </a> to holds its raw data. It also retains the number of bytes read, as this is used by the
+                            Document class to determine the total size of the data, and is also used internally to
+                            determine whether the block was filled by the
+                            <span class="codefrag">InputStream</span>
+                            or not.
+                            <br>
+                            The <span class="codefrag">DocumentBlock</span> constructor is passed an <span class="codefrag">InputStream</span> from which
+                            to fill its <span class="codefrag">_data</span> array.
+                            <br>
+                            The <span class="codefrag">size</span> method returns the number of bytes read (<span class="codefrag">_bytes_read</span>)
+                            when the instance was constructed.
+                            <br>
+                            The <span class="codefrag">partiallyRead</span> method returns true if the <span class="codefrag">_data</span> array was not
+                            completely filled, which may be interpreted by the Document as having reached the end of
+                            file point.<br>Typical use of the DocumentBlock class is like this:
+                            <br>
+                            
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">while (true) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    DocumentBlock block = new DocumentBlock(stream);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    blocks.add(block);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    size += block.size();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    if (block.partiallyRead()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        break;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+</div>
+                        
+</td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="HeaderBlock"></a><th colspan="1" rowspan="1" id="HeaderBlock">HeaderBlock</th>
+                        <td colspan="1" rowspan="1">The <strong>HeaderBlock</strong> class is used to contain the data found in a POIFS header.
+                            <br>
+                            Its <a href="#IntegerField">IntegerField</a> members are used to read and write the
+                            appropriate entries into the
+                            <span class="codefrag">_data</span>
+                            array.<br>Its
+                            <span class="codefrag">setBATBlocks</span>
+                            ,
+                            <span class="codefrag">setPropertyStart</span>
+                            , and
+                            <span class="codefrag">setXBATStart</span>
+                            methods are used to set the appropriate fields in the
+                            <span class="codefrag">_data</span>
+                            array.<br>The
+                            <span class="codefrag">calculateXBATStorageRequirements</span>
+                            method is used to determine how many XBAT blocks are necessary to accommodate the specified
+                            number of BAT blocks.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="PropertyBlock"></a><th colspan="1" rowspan="1" id="PropertyBlock">PropertyBlock</th>
+                        <td colspan="1" rowspan="1">The <strong>PropertyBlock</strong> class is used to contain
+                            <a href="#Property">Property</a>
+                            instances for the
+                            <a href="#PropertyTable">PropertyTable</a>
+                            class.<br>It contains an array, <span class="codefrag">_properties</span> of 4 Property instances, which
+                            together comprise the 512 bytes of a <a href="#BigBlock">BigBlock</a>.
+                            <br>
+                            The <span class="codefrag">createPropertyBlockArray</span> method is used to convert a
+                            <span class="codefrag">List</span>
+                            of Property instances into an array of PropertyBlock instances. The number of Property
+                            instances is rounded up to a multiple of 4 by creating empty anonymous inner class
+                            extensions of Property.
+                        </td>
+                    
+</tr>
+                
+</table>
+<a name="PropertyClasses"></a>
+<h3 class="boxed">Property Classes and Interfaces</h3>
+<p>The property classes and interfaces are shown in the following class diagram.
+                </p>
+<p>
+                    
+<img alt="Property Classes and Interfaces" src="images/PropertyTableClassDiagram.gif">
+                </p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">Class/Interface</th>
+                        <th colspan="1" rowspan="1">Description</th>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="Directory"></a><th colspan="1" rowspan="1" id="Directory">Directory</th>
+                        <td colspan="1" rowspan="1">The <strong>Directory</strong> interface is implemented by the
+                            <a href="#RootProperty">RootProperty</a>
+                            class. It is not strictly necessary for the initial POIFS implementation, but when the POIFS
+                            supports <a href="fileformat.html#directoryEntry">directory elements</a>, this interface
+                            will be more widely implemented, and so is included in the design at this point to ease the
+                            eventual support of directory elements.<br>Its methods are a getter/setter pair,
+                            <span class="codefrag">getChildren</span>
+                            , returning an <span class="codefrag">Iterator</span> of
+                            <a href="#Property">Property</a>
+                            instances; and
+                            <span class="codefrag">addChild</span>
+                            , which will allow the caller to add another Property instance to the Directory's children.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="DocumentProperty"></a><th colspan="1" rowspan="1" id="DocumentProperty">DocumentProperty</th>
+                        <td colspan="1" rowspan="1">The <strong>DocumentProperty</strong> class is a trivial extension of <a href="#Property">
+                            Property
+                        </a> and is used by <a href="#Document">Document</a> to keep track of its associated entry in
+                            the
+                            <a href="#PropertyTable">PropertyTable</a>.<br>Its constructor takes a name and the
+                            document size, on the assumption that the Document will not create a DocumentProperty until
+                            after it has created the storage for the document data and therefore knows how much data
+                            there is.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="File"></a><th colspan="1" rowspan="1" id="File">File</th>
+                        <td colspan="1" rowspan="1">The <strong>File</strong> interface specifies the behavior of reading and writing the next
+                            and previous child fields of a <a href="#Property">Property</a>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="Property"></a><th colspan="1" rowspan="1" id="Property">Property</th>
+                        <td colspan="1" rowspan="1">The <strong>Property</strong> class is an abstract class that defines the basic data
+                            structure of an element of the <a href="fileformat.html#PropertyTable">
+                                Property Table</a>.<br>Its <a href="#ByteField">ByteField</a>, <a href="#ShortField">
+                                ShortField</a>, and
+                            <a href="#IntegerField">IntegerField</a>
+                            members are used to read and write data into the appropriate locations in the
+                            <span class="codefrag">_raw_data</span>
+                            array.<br>The
+                            <span class="codefrag">_index</span>
+                            member is used to hold a Propery instance's index in the <span class="codefrag">List</span> of Property
+                            instances maintained by <a href="#PropertyTable">PropertyTable</a>, which is used to
+                            populate the child property of parent
+                            <a href="#Directory">Directory</a>
+                            properties and the next property and previous property of sibling
+                            <a href="#File">File</a>
+                            properties.<br>The
+                            <span class="codefrag">_name</span>
+                            ,
+                            <span class="codefrag">_next_file</span>
+                            , and
+                            <span class="codefrag">_previous_file</span>
+                            members are used to help fill the appropriate fields of the _raw_data array.<br>Setters are
+                            provided for some of the fields (name, property type, node color, child property, size,
+                            index, start block), as well as a few getters (index, child property).<br>The
+                            <span class="codefrag">preWrite</span>
+                            method is abstract and is used by the owning PropertyTable to iterate through its Property
+                            instances and prepare each for writing.<br>The
+                            <span class="codefrag">shouldUseSmallBlocks</span>
+                            method returns true if the Property's size is sufficiently small - how small is none of the
+                            caller's business.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">PropertyBlock</th>
+                        <td colspan="1" rowspan="1">See the description in <a href="#PropertyBlock">PropertyBlock</a>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="PropertyTable"></a><th colspan="1" rowspan="1" id="PropertyTable">PropertyTable</th>
+                        <td colspan="1" rowspan="1">The <strong>PropertyTable</strong> class holds all of the
+                            <a href="#DocumentProperty">DocumentProperty</a>
+                            instances and the
+                            <a href="#RootProperty">RootProperty</a>
+                            instance for a
+                            <a href="#Filesystem">Filesystem</a>
+                            instance.<br>It maintains a
+                            <span class="codefrag">List</span>
+                            of its
+                            <a href="#Property">Property</a>
+                            instances (
+                            <span class="codefrag">_properties</span>
+                            ), and when prepared to write its data by a call to
+                            <span class="codefrag">preWrite</span>
+                            , it gets and holds an array of
+                            <a href="#PropertyBlock">PropertyBlock</a>
+                            instances (
+                            <span class="codefrag">_blocks</span>) .<br>It also maintains its start block in its
+                            <span class="codefrag">_start_block</span>
+                            member.<br>It has a method,
+                            <span class="codefrag">getRoot</span>
+                            , to get the RootProperty, returning it as an implementation of <a href="#Directory">
+                                Directory</a>, and a method to add a Property,
+                            <span class="codefrag">addProperty</span>
+                            , and a method to get its start block,
+                            <span class="codefrag">getStartBlock</span>
+                            .
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="RootProperty"></a><th colspan="1" rowspan="1" id="RootProperty">RootProperty</th>
+                        <td colspan="1" rowspan="1">The <strong>RootProperty</strong> class acts as the <a href="#Directory">Directory</a> for
+                            all of the
+                            <a href="#DocumentProperty">DocumentProperty</a>
+                            instance. As such, it is more of a pure <a href="fileformat.html#directoryEntry">directory
+                                entry
+                            </a> than a proper <a href="fileformat.html#RootEntry">root entry
+                            </a> in the <a href="fileformat.html#PropertyTable">Property Table</a>, but the initial
+                            POIFS implementation does not warrant the additional complexity of a full-blown root entry,
+                            and so it is not modeled in this design.<br>It maintains a
+                            <span class="codefrag">List</span>
+                            of its children,
+                            <span class="codefrag">_children</span>
+                            , in order to perform its directory-oriented duties.
+                        </td>
+                    
+</tr>
+                
+</table>
+<a name="FilesystemClasses"></a>
+<h3 class="boxed">Filesystem Classes and Interfaces</h3>
+<p>The property classes and interfaces are shown in the following class diagram.
+                </p>
+<p>
+                    
+<img alt="Filesystem Classes and Interfaces" src="images/POIFSClassDiagram.gif">
+                </p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">Class/Interface</th>
+                        <th colspan="1" rowspan="1">Description</th>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="Filesystem"></a><th colspan="1" rowspan="1" id="Filesystem">Filesystem</th>
+                        <td colspan="1" rowspan="1">The <strong>Filesystem</strong> class is the top-level class that manages the creation of a
+                            POIFS document.<br>It maintains a
+                            <a href="#PropertyTable">PropertyTable</a>
+                            instance in its
+                            <span class="codefrag">_property_table</span>
+                            member, a
+                            <a href="#HeaderBlock">HeaderBlock</a>
+                            instance in its
+                            <span class="codefrag">_header_block</span>
+                            member, and a <span class="codefrag">List</span> of its
+                            <a href="#Document">Document</a>
+                            instances in its
+                            <span class="codefrag">_documents</span>
+                            member.<br>It provides methods for a client to create a document (
+                            <span class="codefrag">createDocument</span>
+                            ), and a method to write the Filesystem to an
+                            <span class="codefrag">OutputStream</span>
+                            (
+                            <span class="codefrag">writeFilesystem</span>
+                            ).
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">BATBlock</th>
+                        <td colspan="1" rowspan="1">See the description in
+                            <a href="#BATBlock">BATBlock</a>
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="BATManaged"></a><th colspan="1" rowspan="1" id="BATManaged">BATManaged</th>
+                        <td colspan="1" rowspan="1">The <strong>BATManaged</strong> interface defines common behavior for objects whose location
+                            in the written file is managed by the <a href="fileformat.html#BAT">Block Allocation
+                                Table</a>.<br>It defines methods to get a count of the implementation's
+                            <a href="#BigBlock">BigBlock</a>
+                            instances (
+                            <span class="codefrag">countBlocks</span>
+                            ), and to set an implementation's start block (
+                            <span class="codefrag">setStartBlock</span>
+                            ).
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="BlockAllocationTable"></a><th colspan="1" rowspan="1" id="BlockAllocationTable">BlockAllocationTable</th>
+                        <td colspan="1" rowspan="1">The <strong>BlockAllocationTable</strong> is an implementation of the
+                            POIFS <a href="fileformat.html#BAT">Block Allocation Table</a>. It is only created when the <a href="#Filesystem">
+                                Filesystem
+                            </a> is about to be written to an
+                            <span class="codefrag">OutputStream</span>.<br>It contains an <a href="#IntList">IntList</a> of block
+                            numbers for all of the
+                            <a href="#BATManaged">BATManaged</a>
+                            implementations owned by the Filesystem,
+                            <span class="codefrag">_entries</span>
+                            , which is filled by calls to
+                            <span class="codefrag">allocateSpace</span>
+                            .<br>It fills its array,
+                            <span class="codefrag">_blocks</span>
+                            , of
+                            <a href="#BATBlock">BATBlock</a>
+                            instances when its
+                            <span class="codefrag">createBATBlocks</span>
+                            method is called. This method has to take into account its own storage requirements, as well
+                            as those of the XBAT blocks, and so calls
+                            <span class="codefrag">BATBlock.calculateStorageRequirements</span>
+                            and
+                            <span class="codefrag">HeaderBlock.calculateXBATStorageRequirements</span>
+                            repeatedly until the counts returned by those methods stabilize.<br>The
+                            <span class="codefrag">countBlocks</span>
+                            method returns the number of BATBlock instances created by the preceding call to
+                            createBlocks.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">BlockWritable</th>
+                        <td colspan="1" rowspan="1">See the description in
+                            <a href="#BlockWritable">BlockWritable</a>
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="Document"></a><th colspan="1" rowspan="1" id="Document">Document</th>
+                        <td colspan="1" rowspan="1">The <strong>Document</strong> class is used to contain a document, such as an HSSF workbook.
+                            <br>It has its own
+                            <a href="#DocumentProperty">DocumentProperty</a>
+                            (
+                            <span class="codefrag">_property</span>
+                            ) and stores its data in a collection of
+                            <a href="#DocumentBlock">DocumentBlock</a>
+                            instances (
+                            <span class="codefrag">_blocks</span>
+                            ).<br>It has a method,
+                            <span class="codefrag">getDocumentProperty</span>
+                            , to get its DocumentProperty.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">DocumentBlock</th>
+                        <td colspan="1" rowspan="1">See the description in
+                            <a href="#DocumentBlock">DocumentBlock</a>
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">DocumentProperty</th>
+                        <td colspan="1" rowspan="1">See the description in
+                            <a href="#DocumentProperty">DocumentProperty</a>
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">HeaderBlock</th>
+                        <td colspan="1" rowspan="1">See the description in
+                            <a href="#HeaderBlock">HeaderBlock</a>
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">PropertyTable</th>
+                        <td colspan="1" rowspan="1">See the description in
+                            <a href="#PropertyTable">PropertyTable</a>
+                        </td>
+                    
+</tr>
+                
+</table>
+<a name="UtilityClasses"></a>
+<h3 class="boxed">Utility Classes and Interfaces</h3>
+<p>The utility classes and interfaces are shown in the following class diagram.
+                </p>
+<p>
+                    
+<img alt="Utility Classes and Interfaces" src="images/utilClasses.gif">
+                </p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">Class/Interface</th>
+                        <th colspan="1" rowspan="1">Description</th>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="BitField"></a><th colspan="1" rowspan="1" id="BitField">BitField</th>
+                        <td colspan="1" rowspan="1">The <strong>BitField</strong> class is used primarily by HSSF code to manage bit-mapped
+                            fields of HSSF records. It is not likely to be used in the POIFS code itself and is only
+                            included here for the sake of complete documentation of the POI utility classes.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="ByteField"></a><th colspan="1" rowspan="1" id="ByteField">ByteField</th>
+                        <td colspan="1" rowspan="1">The <strong>ByteField</strong> class is an implementation of <a href="#FixedField">
+                            FixedField
+                        </a> for the purpose of managing reading and writing to a byte-wide field in an array of <span class="codefrag">
+                            bytes</span>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="FixedField"></a><th colspan="1" rowspan="1" id="FixedField">FixedField</th>
+                        <td colspan="1" rowspan="1">The <strong>FixedField</strong> interface defines a set of methods for reading a field from
+                            an array of
+                            <span class="codefrag">bytes</span>
+                            or from an
+                            <span class="codefrag">InputStream</span>, and for writing a field to an array of
+                            <span class="codefrag">bytes</span>. Implementations typically require an offset in their constructors that,
+                            for the purposes of reading and writing to an array of
+                            <span class="codefrag">bytes</span>, makes sure that the correct <span class="codefrag">bytes</span> in the array are read or
+                            written.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="HexDump"></a><th colspan="1" rowspan="1" id="HexDump">HexDump</th>
+                        <td colspan="1" rowspan="1">The <strong>HexDump</strong> class is a debugging class that can be used to dump an array of <span class="codefrag">
+                            bytes
+                        </span> to an <span class="codefrag">OutputStream</span>. The static method
+                            <span class="codefrag">dump</span>
+                            takes an array of <span class="codefrag">bytes</span>, a <span class="codefrag">long</span> offset that is used to label the
+                            output, an open
+                            <span class="codefrag">OutputStream</span>, and an
+                            <span class="codefrag">int</span>
+                            index that specifies the starting index within the array of
+                            <span class="codefrag">bytes</span>.<br>The data is displayed 16 bytes per line, with each byte displayed in
+                            hexadecimal format and again in printable form, if possible (a byte is considered printable
+                            if its value is in the range of 32 ... 126).<br>Here is an example of a small array of
+                            <span class="codefrag">bytes</span>
+                            with an offset of 0x110:
+                            <br>
+                            
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">00000110 C8 00 00 00 FF 7F 90 01 00 00 00 00 00 00 05 01 ................</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">00000120 41 00 72 00 69 00 61 00 6C 00                   A.r.i.a.l.</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                        </span>
+</div>
+</div>
+                        
+</td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="IntegerField"></a><th colspan="1" rowspan="1" id="IntegerField">IntegerField</th>
+                        <td colspan="1" rowspan="1">The <strong>IntegerField</strong> class is an implementation of <a href="#FixedField">
+                            FixedField
+                        </a> for the purpose of managing reading and writing to an integer-wide field in an array
+                            of <span class="codefrag">bytes</span>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="IntList"></a><th colspan="1" rowspan="1" id="IntList">IntList</th>
+                        <td colspan="1" rowspan="1">The <strong>IntList</strong> class is a work-around for functionality missing in Java (see
+                            <a href="https://developer.java.sun.com/developer/bugParade/bugs/4487555.html">
+                                https://developer.java.sun.com/developer/bugParade/bugs/4487555.html
+                            </a>
+                            for details); it is a simple growable array of <span class="codefrag">ints</span> that gets around the
+                            requirement of wrapping and unwrapping <span class="codefrag">ints</span> in
+                            <span class="codefrag">Integer</span>
+                            instances in order to use the
+                            <span class="codefrag">java.util.List</span>
+                            interface.
+                            <br>
+                            
+<strong>IntList</strong>
+                            mimics the functionality of the
+                            <span class="codefrag">java.util.List</span>
+                            interface as much as possible.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="LittleEndian"></a><th colspan="1" rowspan="1" id="LittleEndian">LittleEndian</th>
+                        <td colspan="1" rowspan="1">The <strong>LittleEndian</strong> class provides a set of static methods for reading and
+                            writing
+                            <span class="codefrag">shorts</span>,
+                            <span class="codefrag">ints</span>, <span class="codefrag">longs</span>, and <span class="codefrag">doubles</span> in and out of
+                            <span class="codefrag">byte</span>
+                            arrays, and out of
+                            <span class="codefrag">InputStreams</span>, preserving the Intel byte ordering and encoding of these values.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="LittleEndianConsts"></a><th colspan="1" rowspan="1" id="LittleEndianConsts">LittleEndianConsts</th>
+                        <td colspan="1" rowspan="1">The
+                            <strong>LittleEndianConsts</strong>
+                            interface defines the width of a
+                            <span class="codefrag">short</span>, <span class="codefrag">int</span>,
+                            <span class="codefrag">long</span>, and
+                            <span class="codefrag">double</span>
+                            as stored by Intel processors.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="LongField"></a><th colspan="1" rowspan="1" id="LongField">LongField</th>
+                        <td colspan="1" rowspan="1">The <strong>LongField</strong> class is an implementation of <a href="#FixedField">
+                            FixedField
+                        </a> for the purpose of managing reading and writing to a long-wide field in an array of <span class="codefrag">
+                            bytes</span>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="ShortField"></a><th colspan="1" rowspan="1" id="ShortField">ShortField</th>
+                        <td colspan="1" rowspan="1">The <strong>ShortField</strong> class is an implementation of <a href="#FixedField">
+                            FixedField
+                        </a> for the purpose of managing reading and writing to a short-wide field in an array of <span class="codefrag">
+                            bytes</span>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="ShortList"></a><th colspan="1" rowspan="1" id="ShortList">ShortList</th>
+                        <td colspan="1" rowspan="1">The <strong>ShortList</strong> class is a work-around for functionality missing in Java (see
+                            <a href="https://developer.java.sun.com/developer/bugParade/bugs/4487555.html">
+                                https://developer.java.sun.com/developer/bugParade/bugs/4487555.html
+                            </a>
+                            for details); it is a simple growable array of <span class="codefrag">shorts</span> that gets around the
+                            requirement of wrapping and unwrapping <span class="codefrag">shorts</span> in
+                            <span class="codefrag">Short</span>
+                            instances in order to use the
+                            <span class="codefrag">java.util.List</span>
+                            interface.
+                            <br>
+                            
+<strong>ShortList</strong>
+                            mimics the functionality of the
+                            <span class="codefrag">java.util.List</span>
+                            interface as much as possible.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<a name="StringUtil"></a><th colspan="1" rowspan="1" id="StringUtil">StringUtil</th>
+                        <td colspan="1" rowspan="1">The <strong>StringUtil</strong> class manages the processing of Unicode strings.
+                        </td>
+                    
+</tr>
+                
+</table>
+</div>
+
+        
+<a name="Scenarios"></a>
+<h2 class="boxed">Scenarios</h2>
+<div class="section">
+<p>This section describes the scenarios of how the POIFS classes and interfaces will be used to convert an
+                appropriate XML stream to a POIFS output stream containing an HSSF document.
+            </p>
+<p>It is broken down as suggested by the following scenario diagram:
+            </p>
+<p>
+                
+<img alt="POIFS LifeCycle" src="images/POIFSLifeCycle.gif">
+            </p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+                
+<tr>
+                    
+<th colspan="1" rowspan="1">Step</th>
+                    <th colspan="1" rowspan="1">Description</th>
+                
+</tr>
+                
+<tr>
+                    
+<th colspan="1" rowspan="1">1</th>
+                    <td colspan="1" rowspan="1">
+                        <a href="#Initialization">The Filesystem is created by the client application.
+                        </a>
+                    </td>
+                
+</tr>
+                
+<tr>
+                    
+<th colspan="1" rowspan="1">2</th>
+                    <td colspan="1" rowspan="1"><a href="#CreateDocument">The client application tells the Filesystem to create a document</a>,
+                        providing an
+                        <span class="codefrag">InputStream</span>
+                        and the name of the document. This may be repeated several times.
+                    </td>
+                
+</tr>
+                
+<tr>
+                    
+<th colspan="1" rowspan="1">3</th>
+                    <td colspan="1" rowspan="1">
+                        <a href="#Initialization">The client application asks the Filesystem to write its data to
+                            an <span class="codefrag">OutputStream</span>.
+                        </a>
+                    </td>
+                
+</tr>
+            
+</table>
+<a name="Initialization"></a>
+<h3 class="boxed">Initialization</h3>
+<p>Initialization of the POIFS system is shown in the following scenario diagram:
+                </p>
+<p>
+                    
+<img alt="Initialization" src="images/POIFSInitialization.gif">
+                </p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">Step</th>
+                        <th colspan="1" rowspan="1">Description</th>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">1</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#Filesystem">Filesystem</a>
+                            object, which is created for each request to convert an appropriate XML stream to a POIFS
+                            output stream containing an HSSF document, creates its <a href="#PropertyTable">
+                                PropertyTable</a>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">2</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#PropertyTable">PropertyTable</a>
+                            creates its
+                            <a href="#RootProperty">RootProperty</a>
+                            instance, making the RootProperty the first
+                            <a href="#Property">Property</a>
+                            in its <span class="codefrag">List</span> of Property instances.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">3</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#Filesystem">Filesystem</a>
+                            creates its
+                            <a href="#HeaderBlock">HeaderBlock</a>
+                            instance. It should be noted that the decision to create the HeaderBlock at Filesystem
+                            initialization is arbitrary; creation of the HeaderBlock could easily and harmlessly be
+                            postponed to the appropriate moment in
+                            <a href="#WriteFilesystem">writing the filesystem</a>.
+                        </td>
+                    
+</tr>
+                
+</table>
+<a name="CreateDocument"></a>
+<h3 class="boxed">Creating a Document</h3>
+<p>Creating and adding a document to a POIFS system is shown in the following scenario diagram:
+                </p>
+<p>
+                    
+<img alt="Add Document" src="images/POIFSAddDocument.gif">
+                </p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">Step</th>
+                        <th colspan="1" rowspan="1">Description</th>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">1</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#Filesystem">Filesystem</a>
+                            instance creates a new
+                            <a href="#Document">Document</a>
+                            instance. It will store the newly created Document in a
+                            <span class="codefrag">List</span>
+                            of
+                            <a href="#BATManaged">BATManaged</a>
+                            instances.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">2</th>
+                        <td colspan="1" rowspan="1">The <a href="#Document">Document</a> reads data from the provided
+                            <span class="codefrag">InputStream</span>, storing the data in
+                            <a href="#DocumentBlock">DocumentBlock</a>
+                            instances. It keeps track of the byte count as it reads the data.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">3</th>
+                        <td colspan="1" rowspan="1">The <a href="#Document">Document</a> creates a
+                            <a href="#DocumentProperty">DocumentProperty</a>
+                            to keep track of its property data. The byte count is stored in the newly created
+                            DocumentProperty instance.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">4</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#Filesystem">Filesystem</a>
+                            requests the newly created
+                            <a href="#DocumentProperty">DocumentProperty</a>
+                            from the newly created
+                            <a href="#Document">Document</a>
+                            instance.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">5</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#Filesystem">Filesystem</a>
+                            sends the newly created
+                            <a href="#DocumentProperty">DocumentProperty</a>
+                            to the Filesystem's
+                            <a href="#PropertyTable">PropertyTable</a>
+                            so that the PropertyTable can add the DocumentProperty to its
+                            <span class="codefrag">List</span>
+                            of
+                            <a href="#Property">Property</a>
+                            instances.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">6</th>
+                        <td colspan="1" rowspan="1">The <a href="#Filesystem">Filesystem</a> gets the
+                            <a href="#RootProperty">RootProperty</a>
+                            from its <a href="#PropertyTable">PropertyTable</a>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">7</th>
+                        <td colspan="1" rowspan="1">The <a href="#Filesystem">Filesystem</a> adds the newly created
+                            <a href="#DocumentProperty">DocumentProperty</a>
+                            to the <a href="#RootProperty">RootProperty</a>.
+                        </td>
+                    
+</tr>
+                
+</table>
+<p>Although typical deployment of the POIFS system will only entail adding a single <a href="#Document">
+                    Document
+                </a> (the workbook) to the <a href="#Filesystem">Filesystem</a>, there is nothing in the design to
+                    prevent multiple Documents from being added to the Filesystem. This flexibility can be employed to
+                    write summary information document(s) in addition to the workbook.
+                </p>
+<a name="WriteFilesystem"></a>
+<h3 class="boxed">Writing the Filesystem</h3>
+<p>Writing the filesystem is shown in the following scenario diagram:
+                </p>
+<p>
+                    
+<img alt="Writing the Filesystem" src="images/POIFSWriteFilesystem.gif">
+                </p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">Step</th>
+                        <th colspan="2" rowspan="1">Description</th>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">1</th>
+                        <td colspan="2" rowspan="1">The <a href="#Filesystem">Filesystem</a> adds the
+                            <a href="#PropertyTable">PropertyTable</a>
+                            to its <span class="codefrag">List</span> of
+                            <a href="#BATManaged">BATManaged</a>
+                            instances and calls the PropertyTable's
+                            <span class="codefrag">preWrite</span>
+                            method. The action taken by the PropertyTable is shown in
+                            the <a href="#PropertyTablePreWrite">PropertyTable preWrite scenario diagram</a>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">2</th>
+                        <td colspan="2" rowspan="1">The
+                            <a href="#Filesystem">Filesystem</a>
+                            creates the <a href="#BlockAllocationTable">BlockAllocationTable</a>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">3</th>
+                        <td colspan="1" rowspan="1">The <a href="#Filesystem">Filesystem</a> gets the block count from the
+                            <a href="#BATManaged">BATManaged</a>
+                            instance.
+                        </td>
+                        <td colspan="1" rowspan="3">These three steps are repeated for each
+                            <a href="#BATManaged">BATManaged</a>
+                            instance in the <a href="#Filesystem">Filesystem</a>'s
+                            <span class="codefrag">List</span>
+                            of BATManaged instances (i.e., the <a href="#Document">Documents</a>, in order of their
+                            addition to the Filesystem, followed by the <a href="#PropertyTable">PropertyTable</a>).
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">4</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#Filesystem">Filesystem</a>
+                            sends the block count to the <a href="#BlockAllocationTable">
+                                BlockAllocationTable</a>, which adds the appropriate entries to is <a href="#IntList">
+                                IntList
+                            </a> of entries, returning the starting block for the newly added entries.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">5</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#Filesystem">Filesystem</a>
+                            gives the start block number to the
+                            <a href="#BATManaged">BATManaged</a>
+                            instance. If the BATManaged instance is a <a href="#Document">Document</a>, it sets the
+                            start block field in its
+                            <a href="#DocumentProperty">DocumentProperty</a>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">6</th>
+                        <td colspan="2" rowspan="1">The
+                            <a href="#Filesystem">Filesystem</a>
+                            tells the
+                            <a href="#BlockAllocationTable">BlockAllocationTable</a>
+                            to create its <a href="#BATBlock">BatBlocks</a>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">7</th>
+                        <td colspan="2" rowspan="1">The
+                            <a href="#Filesystem">Filesystem</a>
+                            gives the BAT information to the <a href="#HeaderBlock">HeaderBlock</a> so that it can set
+                            its BAT fields and, if necessary, create XBAT blocks.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">8</th>
+                        <td colspan="2" rowspan="1">If the filesystem is unusually large (over <strong>7MB</strong>), the
+                            <a href="#HeaderBlock">HeaderBlock</a>
+                            will create XBAT blocks to contain the BAT data that it cannot hold directly. In this case,
+                            the
+                            <a href="#Filesystem">Filesystem</a>
+                            tells the HeaderBlock where those additional blocks will be stored.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">9</th>
+                        <td colspan="2" rowspan="1">The
+                            <a href="#Filesystem">Filesystem</a>
+                            gives the
+                            <a href="#PropertyTable">PropertyTable</a>
+                            start block to the <a href="#HeaderBlock">HeaderBlock</a>.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">10</th>
+                        <td colspan="2" rowspan="1">The
+                            <a href="#Filesystem">Filesystem</a>
+                            tells the
+                            <a href="#BlockWritable">BlockWritable</a>
+                            instance to write its blocks to the provided
+                            <span class="codefrag">OutputStream</span>.<br>This step is repeated for each BlockWritable instance, in
+                            this order:
+                            <br>
+                            
+<ol>
+                                
+<li>
+                                    The <a href="#HeaderBlock">HeaderBlock</a>.
+                                </li>
+                                
+<li>
+                                    Each <a href="#Document">Document</a>, in the order in which it was added to
+                                    the <a href="#Filesystem">Filesystem</a>.
+                                </li>
+                                
+<li>
+                                    The <a href="#PropertyTable">PropertyTable</a>.
+                                </li>
+                                
+<li>
+                                    The
+                                    <a href="#BlockAllocationTable">BlockAllocationTable</a>
+                                
+</li>
+                                
+<li>
+                                    The XBAT blocks created by the
+                                    <a href="#HeaderBlock">HeaderBlock</a>, if any.
+                                </li>
+                            
+</ol>
+                        
+</td>
+                    
+</tr>
+                
+</table>
+<a name="PropertyTablePreWrite"></a>
+<h3 class="boxed">PropertyTable preWrite scenario diagram</h3>
+<p>
+                    
+<img alt="PropertyTable preWrite scenario diagram" src="images/POIFSPropertyTablePreWrite.gif">
+                </p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">Step</th>
+                        <th colspan="1" rowspan="1">Description</th>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">1</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#PropertyTable">PropertyTable</a>
+                            calls
+                            <span class="codefrag">setIndex</span>
+                            for each of its
+                            <a href="#Property">Property</a>
+                            instances, so that each Property now knows its index within the PropertyTable's <span class="codefrag">List
+                            </span> of Property instances.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">2</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#PropertyTable">PropertyTable</a>
+                            requests the
+                            <a href="#PropertyBlock">PropertyBlock</a>
+                            class to create an array of
+                            <a href="#PropertyBlock">PropertyBlock</a>
+                            instances.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">3</th>
+
+                        <td colspan="1" rowspan="1">The
+                            <a href="#PropertyBlock">PropertyBlock</a>
+                            calculates the number of empty
+                            <a href="#Property">Property</a>
+                            instances it needs to create and creates them. The algorithm for the number to create is:
+                            <br>
+                            
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">block_count = (properties.size() + 3) / 4;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">emptyPropertiesNeeded = (block_count * 4) - properties.size();</span>
+</div>
+</div>
+                        
+</td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">4</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#PropertyBlock">PropertyBlock</a>
+                            creates the required number of
+                            <a href="#PropertyBlock">PropertyBlock</a>
+                            instances from the
+                            <span class="codefrag">List</span>
+                            of
+                            <a href="#Property">Property</a>
+                            instances, including the newly created empty
+                            <a href="#Property">Property</a>
+                            instances.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">5</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#PropertyTable">PropertyTable</a>
+                            calls
+                            <span class="codefrag">preWrite</span>
+                            on each of its
+                            <a href="#Property">Property</a>
+                            instances. For
+                            <a href="#DocumentProperty">DocumentProperty</a>
+                            instances, this call is a no-op. For the <a href="#RootProperty">RootProperty</a>, the
+                            action taken is shown in the <a href="#RootPropertyPreWrite">RootProperty preWrite scenario
+                                diagram</a>.
+                        </td>
+                    
+</tr>
+                
+</table>
+<a name="RootPropertyPreWrite"></a>
+<h3 class="boxed">RootProperty preWrite scenario diagram</h3>
+<p>
+                    
+<img alt="RootProperty preWrite scenario diagram" src="images/POIFSRootPropertyPreWrite.gif">
+                </p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">Step</th>
+                        <th colspan="2" rowspan="1">Description</th>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">1</th>
+                        <td colspan="2" rowspan="1">The
+                            <a href="#RootProperty">RootProperty</a>
+                            sets its child property with the index of the child <a href="#Property">Property</a> that is
+                            first in its <span class="codefrag">List</span> of children.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">2</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#RootProperty">RootProperty</a>
+                            sets its child's next property field with the index of the child's next sibling in the
+                            RootProperty's
+                            <span class="codefrag">List</span>
+                            of children. If the child is the last in the
+                            <span class="codefrag">List</span>, its next property field is set to <span class="codefrag">-1</span>.
+                        </td>
+                        <td colspan="1" rowspan="2">These two steps are repeated for each <a href="#File">File</a> in
+                            the <a href="#RootProperty">
+                                RootProperty</a>'s
+                            <span class="codefrag">List</span>
+                            of children.
+                        </td>
+                    
+</tr>
+                    
+<tr>
+                        
+<th colspan="1" rowspan="1">3</th>
+                        <td colspan="1" rowspan="1">The
+                            <a href="#RootProperty">RootProperty</a>
+                            sets its child's previous property field with a value of
+                            <span class="codefrag">-1</span>.
+                        </td>
+                    
+</tr>
+                
+</table>
+</div>
+    
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0components/poifs/design.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

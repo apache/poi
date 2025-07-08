@@ -1,0 +1,693 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+HSSFRichTextString (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="HSSFRichTextString (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPrintSetup.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFRichTextString.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFRichTextString.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.usermodel</FONT>
+<BR>
+Class HSSFRichTextString</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.usermodel.HSSFRichTextString</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Comparable&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html" title="class in org.apache.poi.hssf.usermodel">HSSFRichTextString</A>&gt;, <A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>HSSFRichTextString</B><DT>extends java.lang.Object<DT>implements java.lang.Comparable&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html" title="class in org.apache.poi.hssf.usermodel">HSSFRichTextString</A>&gt;, <A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A></DL>
+</PRE>
+
+<P>
+Rich text unicode string.  These strings can have fonts applied to
+ arbitary parts of the string.
+
+ <p>
+ Note, that in certain cases creating too many HSSFRichTextString cells may cause Excel 2003 and lower to crash
+ when changing the color of the cells and then saving the Excel file. Compare two snippets that produce equivalent output:
+
+ <p><blockquote><pre>
+  HSSFCell hssfCell = row.createCell(idx);
+  //rich text consists of two runs
+  HSSFRichTextString richString = new HSSFRichTextString( "Hello, World!" );
+  richString.applyFont( 0, 6, font1 );
+  richString.applyFont( 6, 13, font2 );
+  hssfCell.setCellValue( richString );
+ </pre></blockquote>
+
+ and
+
+ <p><blockquote><pre>
+  //create a cell style and assign the first font to it
+  HSSFCellStyle style = workbook.createCellStyle();
+  style.setFont(font1);
+
+  HSSFCell hssfCell = row.createCell(idx);
+  hssfCell.setCellStyle(style);
+
+  //rich text consists of one run overriding the cell style
+  HSSFRichTextString richString = new HSSFRichTextString( "Hello, World!" );
+  richString.applyFont( 6, 13, font2 );
+  hssfCell.setCellValue( richString );
+ </pre></blockquote><p>
+
+ Excel always uses the latter approach: for a reach text containing N runs Excel saves the font of the first run in the cell's
+ style and subsequent N-1 runs override this font.
+
+ <p> For more information regarding this behavior please consult Bugzilla 47543:
+
+ <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=47543">
+ https://issues.apache.org/bugzilla/show_bug.cgi?id=47543</a>
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#NO_FONT">NO_FONT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Place holder for indicating that NO_FONT has been applied here</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#HSSFRichTextString()">HSSFRichTextString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#HSSFRichTextString(java.lang.String)">HSSFRichTextString</A></B>(java.lang.String&nbsp;string)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#applyFont(org.apache.poi.ss.usermodel.Font)">applyFont</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html" title="interface in org.apache.poi.ss.usermodel">Font</A>&nbsp;font)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the font of the entire string.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#applyFont(int, int, org.apache.poi.ss.usermodel.Font)">applyFont</A></B>(int&nbsp;startIndex,
+          int&nbsp;endIndex,
+          <A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html" title="interface in org.apache.poi.ss.usermodel">Font</A>&nbsp;font)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Applies a font to the specified characters of a string.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#applyFont(int, int, short)">applyFont</A></B>(int&nbsp;startIndex,
+          int&nbsp;endIndex,
+          short&nbsp;fontIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Applies a font to the specified characters of a string.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#applyFont(short)">applyFont</A></B>(short&nbsp;fontIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Applies the specified font to the entire string.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#clearFormatting()">clearFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes any formatting that may have been applied to the string.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#compareTo(org.apache.poi.hssf.usermodel.HSSFRichTextString)">compareTo</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html" title="class in org.apache.poi.hssf.usermodel">HSSFRichTextString</A>&nbsp;r)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compares one rich text string to another.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#equals(java.lang.Object)">equals</A></B>(java.lang.Object&nbsp;o)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#getFontAtIndex(int)">getFontAtIndex</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the font in use at a particular index.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#getFontOfFormattingRun(int)">getFontOfFormattingRun</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the font used in a particular formatting run.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#getIndexOfFormattingRun(int)">getIndexOfFormattingRun</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The index within the string to which the specified formatting run applies.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#getString()">getString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the plain string representation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#hashCode()">hashCode</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#length()">length</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#numFormattingRuns()">numFormattingRuns</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="NO_FONT"><!-- --></A><H3>
+NO_FONT</H3>
+<PRE>
+public static final short <B>NO_FONT</B></PRE>
+<DL>
+<DD>Place holder for indicating that NO_FONT has been applied here
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFRichTextString.NO_FONT">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="HSSFRichTextString()"><!-- --></A><H3>
+HSSFRichTextString</H3>
+<PRE>
+public <B>HSSFRichTextString</B>()</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="HSSFRichTextString(java.lang.String)"><!-- --></A><H3>
+HSSFRichTextString</H3>
+<PRE>
+public <B>HSSFRichTextString</B>(java.lang.String&nbsp;string)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="applyFont(int, int, short)"><!-- --></A><H3>
+applyFont</H3>
+<PRE>
+public void <B>applyFont</B>(int&nbsp;startIndex,
+                      int&nbsp;endIndex,
+                      short&nbsp;fontIndex)</PRE>
+<DL>
+<DD>Applies a font to the specified characters of a string.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html#applyFont(int, int, short)">applyFont</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>startIndex</CODE> - The start index to apply the font to (inclusive)<DD><CODE>endIndex</CODE> - The end index to apply the font to (exclusive)<DD><CODE>fontIndex</CODE> - The font to use.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="applyFont(int, int, org.apache.poi.ss.usermodel.Font)"><!-- --></A><H3>
+applyFont</H3>
+<PRE>
+public void <B>applyFont</B>(int&nbsp;startIndex,
+                      int&nbsp;endIndex,
+                      <A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html" title="interface in org.apache.poi.ss.usermodel">Font</A>&nbsp;font)</PRE>
+<DL>
+<DD>Applies a font to the specified characters of a string.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html#applyFont(int, int, org.apache.poi.ss.usermodel.Font)">applyFont</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>startIndex</CODE> - The start index to apply the font to (inclusive)<DD><CODE>endIndex</CODE> - The end index to apply to font to (exclusive)<DD><CODE>font</CODE> - The index of the font to use.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="applyFont(org.apache.poi.ss.usermodel.Font)"><!-- --></A><H3>
+applyFont</H3>
+<PRE>
+public void <B>applyFont</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html" title="interface in org.apache.poi.ss.usermodel">Font</A>&nbsp;font)</PRE>
+<DL>
+<DD>Sets the font of the entire string.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html#applyFont(org.apache.poi.ss.usermodel.Font)">applyFont</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>font</CODE> - The font to use.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clearFormatting()"><!-- --></A><H3>
+clearFormatting</H3>
+<PRE>
+public void <B>clearFormatting</B>()</PRE>
+<DL>
+<DD>Removes any formatting that may have been applied to the string.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html#clearFormatting()">clearFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getString()"><!-- --></A><H3>
+getString</H3>
+<PRE>
+public java.lang.String <B>getString</B>()</PRE>
+<DL>
+<DD>Returns the plain string representation.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html#getString()">getString</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="length()"><!-- --></A><H3>
+length</H3>
+<PRE>
+public int <B>length</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html#length()">length</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the number of characters in the text.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFontAtIndex(int)"><!-- --></A><H3>
+getFontAtIndex</H3>
+<PRE>
+public short <B>getFontAtIndex</B>(int&nbsp;index)</PRE>
+<DL>
+<DD>Returns the font in use at a particular index.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>index</CODE> - The index.
+<DT><B>Returns:</B><DD>The font that's currently being applied at that
+                      index or null if no font is being applied or the
+                      index is out of range.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="numFormattingRuns()"><!-- --></A><H3>
+numFormattingRuns</H3>
+<PRE>
+public int <B>numFormattingRuns</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html#numFormattingRuns()">numFormattingRuns</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The number of formatting runs used. There will always be at
+          least one of font NO_FONT.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html#NO_FONT"><CODE>NO_FONT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIndexOfFormattingRun(int)"><!-- --></A><H3>
+getIndexOfFormattingRun</H3>
+<PRE>
+public int <B>getIndexOfFormattingRun</B>(int&nbsp;index)</PRE>
+<DL>
+<DD>The index within the string to which the specified formatting run applies.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html#getIndexOfFormattingRun(int)">getIndexOfFormattingRun</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>index</CODE> - the index of the formatting run
+<DT><B>Returns:</B><DD>the index within the string.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFontOfFormattingRun(int)"><!-- --></A><H3>
+getFontOfFormattingRun</H3>
+<PRE>
+public short <B>getFontOfFormattingRun</B>(int&nbsp;index)</PRE>
+<DL>
+<DD>Gets the font used in a particular formatting run.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>index</CODE> - the index of the formatting run
+<DT><B>Returns:</B><DD>the font number used.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="compareTo(org.apache.poi.hssf.usermodel.HSSFRichTextString)"><!-- --></A><H3>
+compareTo</H3>
+<PRE>
+public int <B>compareTo</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html" title="class in org.apache.poi.hssf.usermodel">HSSFRichTextString</A>&nbsp;r)</PRE>
+<DL>
+<DD>Compares one rich text string to another.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>compareTo</CODE> in interface <CODE>java.lang.Comparable&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html" title="class in org.apache.poi.hssf.usermodel">HSSFRichTextString</A>&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="equals(java.lang.Object)"><!-- --></A><H3>
+equals</H3>
+<PRE>
+public boolean <B>equals</B>(java.lang.Object&nbsp;o)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>equals</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hashCode()"><!-- --></A><H3>
+hashCode</H3>
+<PRE>
+public int <B>hashCode</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>hashCode</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the plain text representation of this string.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="applyFont(short)"><!-- --></A><H3>
+applyFont</H3>
+<PRE>
+public void <B>applyFont</B>(short&nbsp;fontIndex)</PRE>
+<DL>
+<DD>Applies the specified font to the entire string.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html#applyFont(short)">applyFont</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>fontIndex</CODE> - the font to apply.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPrintSetup.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFRichTextString.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFRichTextString.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

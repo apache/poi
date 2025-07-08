@@ -1,0 +1,1311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>User Defined Functions</title>
+<link type="text/css" href="../../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../../skin/profile.css" rel="stylesheet">
+<script src="../../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../../help/index.html">Help</a>
+</li>
+<li class="current">
+<a class="selected" href="../../components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="../../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Component APIs</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../apidocs/index.html">Javadocs</a>
+</div>
+<div onclick="SwitchMenu('menu_selected_1.1.3', '../../skin/')" id="menu_selected_1.1.3Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Excel (HSSF/XSSF)</div>
+<div id="menu_selected_1.1.3" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/spreadsheet/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/how-to.html">HOWTO</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/converting.html">HSSF to SS Converting</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/formula.html">Formula Support</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval.html">Formula Evaluation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval-devguide.html">Eval Dev Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/examples.html">Examples</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/use-case.html">Use Case</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/diagrams.html">Pictorial Docs</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/limitations.html">Limitations</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">User Defined Functions</div>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/excelant.html">ExcelAnt Tests</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/hacking-hssf.html">Hacking HSSF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/record-generator.html">Record Generator</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/chart.html">Charts</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.4', '../../skin/')" id="menu_1.1.4Title" class="menutitle">PowerPoint (HSLF/XSLF)</div>
+<div id="menu_1.1.4" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/slideshow/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/how-to-shapes.html">HSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/xslf-cookbook.html">XSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-wmf-emf-renderer.html">Render SL/WMF/EMF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-file-format.html">PPT File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.5', '../../skin/')" id="menu_1.1.5Title" class="menutitle">Word (HWPF/XWPF)</div>
+<div id="menu_1.1.5" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/document/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide.html">HWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide-xwpf.html">XWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/docoverview.html">HWPF Format</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/projectplan.html">HWPF Project plan</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hsmf/index.html">Outlook (HSMF)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/diagram/index.html">Visio (HDGF+XDGF)</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.8', '../../skin/')" id="menu_1.1.8Title" class="menutitle">Publisher (HPBF)</div>
+<div id="menu_1.1.8" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpbf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpbf/file-format.html">File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.9', '../../skin/')" id="menu_1.1.9Title" class="menutitle">OLE2 Filesystem (POIFS)</div>
+<div id="menu_1.1.9" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/poifs/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/embeded.html">Embedded Documents</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/fileformat.html">File System Documentation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/usecases.html">Use Cases</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/design.html">Design</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.10', '../../skin/')" id="menu_1.1.10Title" class="menutitle">OLE2 Document Props (HPSF)</div>
+<div id="menu_1.1.10" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpsf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/thumbnails.html">Thumbnails</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/internals.html">Internals</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/todo.html">To Do</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hmef/index.html">TNEF (HMEF) for winmail.dat</a>
+</div>
+<div class="menuitem">
+<a href="../../components/oxml4j/index.html">OpenXML4J (OOXML)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/logging.html">Logging framework</a>
+</div>
+<div class="menuitem">
+<a href="../../components/configuration.html">Configuration</a>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>User Defined Functions</h1>
+<div id="front-matter"></div>
+    
+<a name="How+to+Create+and+Use+User+Defined+Functions"></a>
+<h2 class="boxed">How to Create and Use User Defined Functions</h2>
+<div class="section">
+<a name="Description"></a>
+<h3 class="boxed">Description</h3>
+<p>This document describes the User Defined Functions within POI.
+            User defined functions allow you to take code that is written in VBA
+            and re-write in Java and use within POI. Consider the following example.</p>
+<a name="An+Example"></a>
+<h3 class="boxed">An Example</h3>
+<p>Suppose you are given a spreadsheet that can calculate the principal and interest
+        payments for a mortgage.  The user enters the principal loan amount, the interest rate
+        and the term of the loan.  The Excel spreadsheet does the rest.</p>
+<p>
+            
+<img alt="mortgage calculation spreadsheet" src="images/simple-xls-with-function.jpg">
+        </p>
+<p>When you actually look at the workbook you discover that rather than having
+        the formula in a cell it has been written as VBA function.  You review the 
+        function and determine that it could be written in Java:</p>
+<p>
+            
+<img alt="VBA code" src="images/calculatePayment.jpg">
+        </p>
+<p>If we write a small program to try to evaluate this cell, we'll fail.  Consider this source code:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import java.io.File ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import java.io.FileInputStream ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import java.io.FileNotFoundException ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import java.io.IOException ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.openxml4j.exceptions.InvalidFormatException ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.functions.FreeRefFunction ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.udf.AggregatingUDFFinder ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.udf.DefaultUDFFinder ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.udf.UDFFinder ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.usermodel.Cell ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.usermodel.CellValue ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.usermodel.Row ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.usermodel.Sheet ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.usermodel.Workbook ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.usermodel.WorkbookFactory ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.util.CellReference ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">public class Evaluator {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    public static void main( String[] args ) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        System.out.println( "fileName: " + args[0] ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        System.out.println( "cell: " + args[1] ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        File workbookFile = new File( args[0] ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        try {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            FileInputStream fis = new FileInputStream(workbookFile);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            Workbook workbook = WorkbookFactory.create(fis);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            CellReference cr = new CellReference( args[1] ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            String sheetName = cr.getSheetName() ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            Sheet sheet = workbook.getSheet( sheetName ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            int rowIdx = cr.getRow() ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            int colIdx = cr.getCol() ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            Row row = sheet.getRow( rowIdx ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            Cell cell = row.getCell( colIdx ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            CellValue value = evaluator.evaluate( cell ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            System.out.println("returns value: " +  value ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        } catch( FileNotFoundException e ) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            e.printStackTrace();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        } catch( InvalidFormatException e ) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            e.printStackTrace();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        } catch( IOException e ) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            e.printStackTrace();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        </span>
+</div>
+</div>
+<p>If you run this code, you're likely to get the following error:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Exception in thread "main" org.apache.poi.ss.formula.eval.NotImplementedException: Error evaluating cell Sheet1!B4</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    at org.apache.poi.ss.formula.WorkbookEvaluator.addExceptionInfo(WorkbookEvaluator.java:321)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    at org.apache.poi.ss.formula.WorkbookEvaluator.evaluateAny(WorkbookEvaluator.java:288)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    at org.apache.poi.ss.formula.WorkbookEvaluator.evaluate(WorkbookEvaluator.java:221)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    at org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.evaluateFormulaCellValue(HSSFFormulaEvaluator.java:320)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    at org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.evaluate(HSSFFormulaEvaluator.java:182)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    at poi.tests.Evaluator.main(Evaluator.java:61)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Caused by: org.apache.poi.ss.formula.eval.NotImplementedException: calculatePayment</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    at org.apache.poi.ss.formula.UserDefinedFunction.evaluate(UserDefinedFunction.java:59)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    at org.apache.poi.ss.formula.OperationEvaluatorFactory.evaluate(OperationEvaluatorFactory.java:129)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    at org.apache.poi.ss.formula.WorkbookEvaluator.evaluateFormula(WorkbookEvaluator.java:456)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    at org.apache.poi.ss.formula.WorkbookEvaluator.evaluateAny(WorkbookEvaluator.java:279)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    ... 4 more</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        </span>
+</div>
+</div>
+<p>How would we make it so POI can use this sheet?</p>
+<a name="Defining+Your+Function"></a>
+<h3 class="boxed">Defining Your Function</h3>
+<p>To 'convert' this code to Java and make it available to POI you need to implement
+        a FreeRefFunction instance.  FreeRefFunction is an interface in the org.apache.poi.ss.formula.functions 
+        package.  This interface defines one method, evaluate(ValueEval[] args, OperationEvaluationContext ec),
+        which is how you will receive the argument values from POI.</p>
+<p>The evaluate() method as defined above is where you will convert the ValueEval instances to the 
+        proper number types.  The following code snippet shows you how to get your values:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">public class CalculateMortgage implements FreeRefFunction {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">@Override</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">public ValueEval evaluate( ValueEval[] args, OperationEvaluationContext ec ) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    if (args.length != 3) {  </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        return ErrorEval.VALUE_INVALID;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    double principal, rate, years,  result;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    try {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        ValueEval v1 = OperandResolver.getSingleValue( args[0], </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                                       ec.getRowIndex(), </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                                       ec.getColumnIndex() ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        ValueEval v2 = OperandResolver.getSingleValue( args[1], </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                                       ec.getRowIndex(), </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                                       ec.getColumnIndex() ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        ValueEval v3 = OperandResolver.getSingleValue( args[2], </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                                       ec.getRowIndex(), </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                                       ec.getColumnIndex() ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        principal  = OperandResolver.coerceValueToDouble( v1 ) ; </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        rate  = OperandResolver.coerceValueToDouble( v2 ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        years = OperandResolver.coerceValueToDouble( v3 ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">     </span>
+</div>
+</div>
+<p>The first thing we do is check the number of arguments being passed since there is no sense
+     in attempting to go further if you are missing critical information.</p>
+<p>Next we declare our variables, in our case we need variables for:</p>
+<ul>
+        
+<li>principal - the amount of the loan</li>
+        
+<li>rate - the interest rate as a decimal</li>
+        
+<li>years - the length of the loan in years</li>
+        
+<li>result - the result of the calculation</li>
+     
+</ul>
+<p>Next, we use the OperandResolver to convert the ValueEval instances to doubles, though not directly.  
+     First we start by getting discreet values.  Using the OperandResolver.getSingleValue() method
+     we retrieve each of the values passed in by the cell in the spreadsheet.  Next, we use the
+     OperandResolver again to convert the ValueEval instances to doubles, in this case.  This
+     class has other methods of coercion for getting Strings, ints and booleans.  Now that we've
+     got our primitive values we can move on to calculating the value.</p>
+<p>As shown previously, we have the VBA source.  We need to add code to our class to calculate 
+        the payment.  To do this you could simply add it to the method we've already created but I've
+        chosen to add it as its own method.  Add the following method: </p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">public double calculateMortgagePayment( double p, double r, double y ) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    double i = r / 12 ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    double n = y * 12 ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    double principalAndInterest = </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">         p * (( i * Math.pow((1 + i),n ) ) / ( Math.pow((1 + i),n) - 1))  ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    return principalAndInterest ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}	</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        </span>
+</div>
+</div>
+<p>The biggest change necessary is related to the exponents; Java doesn't have a notation for this
+            so we had to add calls to Math.pow().  Now we need to add this call to our previous method:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">result = calculateMortgagePayment( principal, rate, years ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   </span>
+</div>
+</div>
+<p>Having done that, the last things we need to do are to check to make sure we didn't get a bad result and,
+            if not, we need to return the value. Add the following code to the class:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">private void checkValue(double result) throws EvaluationException {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    if (Double.isNaN(result) || Double.isInfinite(result)) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        throw new EvaluationException(ErrorEval.NUM_ERROR);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">} </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+</div>
+<p>Then add a line of code to our evaluate method to call this new static method, complete our try/catch and return the value:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">checkValue(result);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">tch (EvaluationException e) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">e.printStackTrace() ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">return e.getErrorEval();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">rn new NumberEval( result ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    </span>
+</div>
+</div>
+<p>So the whole class would be as follows:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.OperationEvaluationContext ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.ErrorEval ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.EvaluationException ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.NumberEval ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.OperandResolver ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.ValueEval ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.functions.FreeRefFunction ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">/**</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"> * A simple function to calculate principal and interest.</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"> * </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"> * @author Jon Svede</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"> *</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"> */</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">public class CalculateMortgage implements FreeRefFunction {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    @Override</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    public ValueEval evaluate( ValueEval[] args, OperationEvaluationContext ec ) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        if (args.length != 3) {  </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            return ErrorEval.VALUE_INVALID;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        double principal, rate, years,  result;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        try {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            ValueEval v1 = OperandResolver.getSingleValue( args[0], </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                                           ec.getRowIndex(), </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                                           ec.getColumnIndex() ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            ValueEval v2 = OperandResolver.getSingleValue( args[1], </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                                           ec.getRowIndex(), </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                                           ec.getColumnIndex() ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            ValueEval v3 = OperandResolver.getSingleValue( args[2], </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                                           ec.getRowIndex(), </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                                                           ec.getColumnIndex() ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            principal  = OperandResolver.coerceValueToDouble( v1 ) ; </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            rate  = OperandResolver.coerceValueToDouble( v2 ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            years = OperandResolver.coerceValueToDouble( v3 ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            result = calculateMortgagePayment( principal, rate, years ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            checkValue(result);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        } catch (EvaluationException e) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            e.printStackTrace() ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            return e.getErrorEval();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        return new NumberEval( result ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    public double calculateMortgagePayment( double p, double r, double y ) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        double i = r / 12 ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        double n = y * 12 ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        //M = P [ i(1 + i)n ] / [ (1 + i)n - 1] </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        double principalAndInterest = </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">             p * (( i * Math.pow((1 + i),n ) ) / ( Math.pow((1 + i),n) - 1))  ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        return principalAndInterest ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    /**</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">     * Excel does not support infinities and NaNs, rather, it gives a #NUM! error in these cases</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">     * </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">     * @throws EvaluationException (#NUM!) if &lt;tt&gt;result&lt;/tt&gt; is &lt;tt&gt;NaN&lt;/&gt; or &lt;tt&gt;Infinity&lt;/tt&gt;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">     */</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">     static final void checkValue(double result) throws EvaluationException {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">         if (Double.isNaN(result) || Double.isInfinite(result)) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">             throw new EvaluationException(ErrorEval.NUM_ERROR);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">         }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">     }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+</div>
+<p>Great!  Now we need to go back to our original program that failed to evaluate our cell and add code that will allow it run our new Java code.</p>
+<a name="Registering+Your+Function"></a>
+<h3 class="boxed">Registering Your Function</h3>
+<p>Now we need to register our function in the Workbook, so that the Formula Evaluator can resolve the name "calculatePayment"
+and map it to the actual implementation (CalculateMortgage). This is done using the UDFFinder object. 
+The UDFFinder manages FreeRefFunctions which are our analogy for the VBA code.  We need to create a UDFFinder. There are
+                a few things we need to know in order to do this:</p>
+<ul>
+          
+<li>The name of the function in the VBA code (in our case it is calculatePayment)</li>
+          
+<li>The Class name of our FreeRefFunction</li>
+        
+</ul>
+<p>UDFFinder is actually an interface, so we need to use an actual implementation of this interface.  Therefore we use the org.apache.poi.ss.formula.udf.DefaultUDFFinder class.  If you refer to the Javadocs you'll see that this class expects to get two arrays, one
+            containing the alias and the other containing an instance of the class that will represent that alias.  In our case our alias will be calculatePayment
+            and our class instance will be of the  CalculateMortgage type.  This class needs to be available at compile and runtime.  Be sure to keep these arrays
+            well organized because you'll run into problems if these arrays are of different sizes or the alias aren't in the same relative position in their respective
+            arrays.  Add the following code:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">String[] functionNames = { "calculatePayment" } ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FreeRefFunction[] functionImpls = { new CalculateMortgage() } ; </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">UDFFinder udfs = new DefaultUDFFinder( functionNames, functionImpls ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">UDFFinder udfToolpack = new AggregatingUDFFinder( udfs ) ;	</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+</div>
+<p>Now we have our UDFFinder instance and we've created the AggregatingUDFFinder instance.  The last step is to pass this to our Workbook:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">workbook.addToolPack(udfToolpack);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+</div>
+<p>So now the whole class will look like this:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import java.io.File ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import java.io.FileInputStream ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import java.io.FileNotFoundException ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import java.io.IOException ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.openxml4j.exceptions.InvalidFormatException ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.functions.FreeRefFunction ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.udf.AggregatingUDFFinder ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.udf.DefaultUDFFinder ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.udf.UDFFinder ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.usermodel.Cell ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.usermodel.CellValue ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.usermodel.Row ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.usermodel.Sheet ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.usermodel.Workbook ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.usermodel.WorkbookFactory ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.util.CellReference ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">public class Evaluator {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    public static void main( String[] args ) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        System.out.println( "fileName: " + args[0] ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        System.out.println( "cell: " + args[1] ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        File workbookFile = new File( args[0] ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        try {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            FileInputStream fis = new FileInputStream(workbookFile);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            Workbook workbook = WorkbookFactory.create(fis);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            String[] functionNames = { "calculatePayment" } ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            FreeRefFunction[] functionImpls = { new CalculateMortgage() } ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            UDFFinder udfs = new DefaultUDFFinder( functionNames, functionImpls ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            UDFFinder udfToolpack = new AggregatingUDFFinder( udfs ) ;	</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                      </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            workbook.addToolPack(udfToolpack);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            CellReference cr = new CellReference( args[1] ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            String sheetName = cr.getSheetName() ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            Sheet sheet = workbook.getSheet( sheetName ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            int rowIdx = cr.getRow() ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            int colIdx = cr.getCol() ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            Row row = sheet.getRow( rowIdx ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            Cell cell = row.getCell( colIdx ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            CellValue value = evaluator.evaluate( cell ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            System.out.println("returns value: " +  value ) ;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        } catch( FileNotFoundException e ) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            e.printStackTrace();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        } catch( InvalidFormatException e ) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            e.printStackTrace();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        } catch( IOException e ) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            e.printStackTrace();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">          </span>
+</div>
+</div>
+<p>Now that our evaluator is aware of the UDFFinder which in turn is aware of our FreeRefFunction, we're ready to re-run our example:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Evaluator mortgage-calculation.xls Sheet1!B4</span>
+</div>
+</div>
+<p>which prints the following output in the console:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">fileName: mortgage-calculation.xls</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">cell: Sheet1!B4</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">returns value: org.apache.poi.ss.usermodel.CellValue [790.7936267415464]</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        </span>
+</div>
+</div>
+<p>That is it!  Now you can create Java code and register it, allowing your POI based appliction to run spreadsheets that previously were inaccessible.</p>
+<p>This example can be found in the <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples/ss/formula">poi-examples/src/main/java/org/apache/poi/examples/ss/formula</a> folder in the source.</p>
+</div>
+
+<p align="right">
+<font size="-2">by&nbsp;Jon Svede,&nbsp;Brian Bush</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0components/spreadsheet/user-defined-functions.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

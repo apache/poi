@@ -1,0 +1,1013 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+DateUtil (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="DateUtil (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html" title="interface in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/DateUtil.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DateUtil.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.usermodel</FONT>
+<BR>
+Class DateUtil</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.usermodel.DateUtil</B>
+</PRE>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDateUtil.html" title="class in org.apache.poi.hssf.usermodel">HSSFDateUtil</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>DateUtil</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Contains methods for dealing with Excel dates.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#DAY_MILLISECONDS">DAY_MILLISECONDS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#HOURS_PER_DAY">HOURS_PER_DAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#MINUTES_PER_HOUR">MINUTES_PER_HOUR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#SECONDS_PER_DAY">SECONDS_PER_DAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#SECONDS_PER_MINUTE">SECONDS_PER_MINUTE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#DateUtil()">DateUtil</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#absoluteDay(java.util.Calendar, boolean)">absoluteDay</A></B>(java.util.Calendar&nbsp;cal,
+            boolean&nbsp;use1904windowing)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given a Calendar, return the number of days since 1900/12/31.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#convertTime(java.lang.String)">convertTime</A></B>(java.lang.String&nbsp;timeStr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts a string of format "HH:MM" or "HH:MM:SS" to its (Excel) numeric equivalent</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getExcelDate(java.util.Calendar, boolean)">getExcelDate</A></B>(java.util.Calendar&nbsp;date,
+             boolean&nbsp;use1904windowing)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given a Date in the form of a Calendar, converts it into a double
+  representing its internal Excel representation, which is the
+  number of days since 1/1/1900.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getExcelDate(java.util.Date)">getExcelDate</A></B>(java.util.Date&nbsp;date)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given a Date, converts it into a double representing its internal Excel representation,
+   which is the number of days since 1/1/1900.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getExcelDate(java.util.Date, boolean)">getExcelDate</A></B>(java.util.Date&nbsp;date,
+             boolean&nbsp;use1904windowing)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given a Date, converts it into a double representing its internal Excel representation,
+   which is the number of days since 1/1/1900.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Calendar</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaCalendar(double)">getJavaCalendar</A></B>(double&nbsp;date)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get EXCEL date as Java Calendar (with default time zone).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Calendar</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaCalendar(double, boolean)">getJavaCalendar</A></B>(double&nbsp;date,
+                boolean&nbsp;use1904windowing)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get EXCEL date as Java Calendar (with default time zone).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Calendar</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaCalendar(double, boolean, java.util.TimeZone)">getJavaCalendar</A></B>(double&nbsp;date,
+                boolean&nbsp;use1904windowing,
+                java.util.TimeZone&nbsp;timeZone)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get EXCEL date as Java Calendar with given time zone.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Calendar</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaCalendar(double, boolean, java.util.TimeZone, boolean)">getJavaCalendar</A></B>(double&nbsp;date,
+                boolean&nbsp;use1904windowing,
+                java.util.TimeZone&nbsp;timeZone,
+                boolean&nbsp;roundSeconds)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get EXCEL date as Java Calendar with given time zone.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Calendar</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaCalendarUTC(double, boolean)">getJavaCalendarUTC</A></B>(double&nbsp;date,
+                   boolean&nbsp;use1904windowing)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get EXCEL date as Java Calendar with UTC time zone.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Date</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaDate(double)">getJavaDate</A></B>(double&nbsp;date)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given an Excel date with using 1900 date windowing, and
+   converts it to a java.util.Date.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Date</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaDate(double, boolean)">getJavaDate</A></B>(double&nbsp;date,
+            boolean&nbsp;use1904windowing)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given an Excel date with either 1900 or 1904 date windowing,
+  converts it to a java.util.Date.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Date</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaDate(double, boolean, java.util.TimeZone)">getJavaDate</A></B>(double&nbsp;date,
+            boolean&nbsp;use1904windowing,
+            java.util.TimeZone&nbsp;tz)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given an Excel date with either 1900 or 1904 date windowing,
+  converts it to a java.util.Date.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Date</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaDate(double, boolean, java.util.TimeZone, boolean)">getJavaDate</A></B>(double&nbsp;date,
+            boolean&nbsp;use1904windowing,
+            java.util.TimeZone&nbsp;tz,
+            boolean&nbsp;roundSeconds)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given an Excel date with either 1900 or 1904 date windowing,
+  converts it to a java.util.Date.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Date</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaDate(double, java.util.TimeZone)">getJavaDate</A></B>(double&nbsp;date,
+            java.util.TimeZone&nbsp;tz)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given an Excel date with using 1900 date windowing, and
+  converts it to a java.util.Date.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isADateFormat(org.apache.poi.ss.usermodel.ExcelNumberFormat)">isADateFormat</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/ExcelNumberFormat.html" title="class in org.apache.poi.ss.usermodel">ExcelNumberFormat</A>&nbsp;numFmt)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given a format ID and its format String, will check to see if the
+  format represents a date format or not.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isADateFormat(int, java.lang.String)">isADateFormat</A></B>(int&nbsp;formatIndex,
+              java.lang.String&nbsp;formatString)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given a format ID and its format String, will check to see if the
+  format represents a date format or not.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isCellDateFormatted(org.apache.poi.ss.usermodel.Cell)">isCellDateFormatted</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check if a cell contains a date
+  Since dates are stored internally in Excel as double values
+  we infer it is a date if it is formatted as such.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isCellDateFormatted(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.formula.ConditionalFormattingEvaluator)">isCellDateFormatted</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                    <A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html" title="class in org.apache.poi.ss.formula">ConditionalFormattingEvaluator</A>&nbsp;cfEvaluator)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check if a cell contains a date
+  Since dates are stored internally in Excel as double values
+  we infer it is a date if it is formatted as such.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isCellInternalDateFormatted(org.apache.poi.ss.usermodel.Cell)">isCellInternalDateFormatted</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check if a cell contains a date, checking only for internal
+   excel date formats.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isInternalDateFormat(int)">isInternalDateFormat</A></B>(int&nbsp;format)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given a format ID this will check whether the format represents
+  an internal excel date format or not.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isValidExcelDate(double)">isValidExcelDate</A></B>(double&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given a double, checks if it is a valid Excel date.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Date</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#parseYYYYMMDDDate(java.lang.String)">parseYYYYMMDDDate</A></B>(java.lang.String&nbsp;dateStr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts a string of format "YYYY/MM/DD" to its (Excel) numeric equivalent</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#setCalendar(java.util.Calendar, int, int, boolean, boolean)">setCalendar</A></B>(java.util.Calendar&nbsp;calendar,
+            int&nbsp;wholeDays,
+            int&nbsp;millisecondsInDay,
+            boolean&nbsp;use1904windowing,
+            boolean&nbsp;roundSeconds)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SECONDS_PER_MINUTE"><!-- --></A><H3>
+SECONDS_PER_MINUTE</H3>
+<PRE>
+public static final int <B>SECONDS_PER_MINUTE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.DateUtil.SECONDS_PER_MINUTE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="MINUTES_PER_HOUR"><!-- --></A><H3>
+MINUTES_PER_HOUR</H3>
+<PRE>
+public static final int <B>MINUTES_PER_HOUR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.DateUtil.MINUTES_PER_HOUR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="HOURS_PER_DAY"><!-- --></A><H3>
+HOURS_PER_DAY</H3>
+<PRE>
+public static final int <B>HOURS_PER_DAY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.DateUtil.HOURS_PER_DAY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SECONDS_PER_DAY"><!-- --></A><H3>
+SECONDS_PER_DAY</H3>
+<PRE>
+public static final int <B>SECONDS_PER_DAY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.DateUtil.SECONDS_PER_DAY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DAY_MILLISECONDS"><!-- --></A><H3>
+DAY_MILLISECONDS</H3>
+<PRE>
+public static final long <B>DAY_MILLISECONDS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.DateUtil.DAY_MILLISECONDS">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DateUtil()"><!-- --></A><H3>
+DateUtil</H3>
+<PRE>
+protected <B>DateUtil</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getExcelDate(java.util.Date)"><!-- --></A><H3>
+getExcelDate</H3>
+<PRE>
+public static double <B>getExcelDate</B>(java.util.Date&nbsp;date)</PRE>
+<DL>
+<DD>Given a Date, converts it into a double representing its internal Excel representation,
+   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - the Date
+<DT><B>Returns:</B><DD>Excel representation of Date (-1 if error - test for error by checking for less than 0.1)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getExcelDate(java.util.Date, boolean)"><!-- --></A><H3>
+getExcelDate</H3>
+<PRE>
+public static double <B>getExcelDate</B>(java.util.Date&nbsp;date,
+                                  boolean&nbsp;use1904windowing)</PRE>
+<DL>
+<DD>Given a Date, converts it into a double representing its internal Excel representation,
+   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - the Date<DD><CODE>use1904windowing</CODE> - Should 1900 or 1904 date windowing be used?
+<DT><B>Returns:</B><DD>Excel representation of Date (-1 if error - test for error by checking for less than 0.1)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getExcelDate(java.util.Calendar, boolean)"><!-- --></A><H3>
+getExcelDate</H3>
+<PRE>
+public static double <B>getExcelDate</B>(java.util.Calendar&nbsp;date,
+                                  boolean&nbsp;use1904windowing)</PRE>
+<DL>
+<DD>Given a Date in the form of a Calendar, converts it into a double
+  representing its internal Excel representation, which is the
+  number of days since 1/1/1900. Fractional days represent hours,
+  minutes, and seconds.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - the Calendar holding the date to convert<DD><CODE>use1904windowing</CODE> - Should 1900 or 1904 date windowing be used?
+<DT><B>Returns:</B><DD>Excel representation of Date (-1 if error - test for error by checking for less than 0.1)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getJavaDate(double, java.util.TimeZone)"><!-- --></A><H3>
+getJavaDate</H3>
+<PRE>
+public static java.util.Date <B>getJavaDate</B>(double&nbsp;date,
+                                         java.util.TimeZone&nbsp;tz)</PRE>
+<DL>
+<DD>Given an Excel date with using 1900 date windowing, and
+  converts it to a java.util.Date.
+  
+  Excel Dates and Times are stored without any timezone 
+  information. If you know (through other means) that your file 
+  uses a different TimeZone to the system default, you can use
+  this version of the getJavaDate() method to handle it.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - The Excel date.<DD><CODE>tz</CODE> - The TimeZone to evaluate the date in
+<DT><B>Returns:</B><DD>Java representation of the date, or null if date is not a valid Excel date</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getJavaDate(double)"><!-- --></A><H3>
+getJavaDate</H3>
+<PRE>
+public static java.util.Date <B>getJavaDate</B>(double&nbsp;date)</PRE>
+<DL>
+<DD>Given an Excel date with using 1900 date windowing, and
+   converts it to a java.util.Date.
+
+  NOTE: If the default <code>TimeZone</code> in Java uses Daylight
+  Saving Time then the conversion back to an Excel date may not give
+  the same value, that is the comparison
+  <CODE>excelDate == getExcelDate(getJavaDate(excelDate,false))</CODE>
+  is not always true. For example if default timezone is
+  <code>Europe/Copenhagen</code>, on 2004-03-28 the minute after
+  01:59 CET is 03:00 CEST, if the excel date represents a time between
+  02:00 and 03:00 then it is converted to past 03:00 summer time
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - The Excel date.
+<DT><B>Returns:</B><DD>Java representation of the date, or null if date is not a valid Excel date<DT><B>See Also:</B><DD><CODE>TimeZone</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getJavaDate(double, boolean, java.util.TimeZone)"><!-- --></A><H3>
+getJavaDate</H3>
+<PRE>
+public static java.util.Date <B>getJavaDate</B>(double&nbsp;date,
+                                         boolean&nbsp;use1904windowing,
+                                         java.util.TimeZone&nbsp;tz)</PRE>
+<DL>
+<DD>Given an Excel date with either 1900 or 1904 date windowing,
+  converts it to a java.util.Date.
+  
+  Excel Dates and Times are stored without any timezone 
+  information. If you know (through other means) that your file 
+  uses a different TimeZone to the system default, you can use
+  this version of the getJavaDate() method to handle it.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - The Excel date.<DD><CODE>tz</CODE> - The TimeZone to evaluate the date in<DD><CODE>use1904windowing</CODE> - true if date uses 1904 windowing,
+   or false if using 1900 date windowing.
+<DT><B>Returns:</B><DD>Java representation of the date, or null if date is not a valid Excel date</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getJavaDate(double, boolean, java.util.TimeZone, boolean)"><!-- --></A><H3>
+getJavaDate</H3>
+<PRE>
+public static java.util.Date <B>getJavaDate</B>(double&nbsp;date,
+                                         boolean&nbsp;use1904windowing,
+                                         java.util.TimeZone&nbsp;tz,
+                                         boolean&nbsp;roundSeconds)</PRE>
+<DL>
+<DD>Given an Excel date with either 1900 or 1904 date windowing,
+  converts it to a java.util.Date.
+  
+  Excel Dates and Times are stored without any timezone 
+  information. If you know (through other means) that your file 
+  uses a different TimeZone to the system default, you can use
+  this version of the getJavaDate() method to handle it.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - The Excel date.<DD><CODE>tz</CODE> - The TimeZone to evaluate the date in<DD><CODE>use1904windowing</CODE> - true if date uses 1904 windowing,
+   or false if using 1900 date windowing.<DD><CODE>roundSeconds</CODE> - round to closest second
+<DT><B>Returns:</B><DD>Java representation of the date, or null if date is not a valid Excel date</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getJavaDate(double, boolean)"><!-- --></A><H3>
+getJavaDate</H3>
+<PRE>
+public static java.util.Date <B>getJavaDate</B>(double&nbsp;date,
+                                         boolean&nbsp;use1904windowing)</PRE>
+<DL>
+<DD>Given an Excel date with either 1900 or 1904 date windowing,
+  converts it to a java.util.Date.
+
+  NOTE: If the default <code>TimeZone</code> in Java uses Daylight
+  Saving Time then the conversion back to an Excel date may not give
+  the same value, that is the comparison
+  <CODE>excelDate == getExcelDate(getJavaDate(excelDate,false))</CODE>
+  is not always true. For example if default timezone is
+  <code>Europe/Copenhagen</code>, on 2004-03-28 the minute after
+  01:59 CET is 03:00 CEST, if the excel date represents a time between
+  02:00 and 03:00 then it is converted to past 03:00 summer time
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - The Excel date.<DD><CODE>use1904windowing</CODE> - true if date uses 1904 windowing,
+   or false if using 1900 date windowing.
+<DT><B>Returns:</B><DD>Java representation of the date, or null if date is not a valid Excel date<DT><B>See Also:</B><DD><CODE>TimeZone</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCalendar(java.util.Calendar, int, int, boolean, boolean)"><!-- --></A><H3>
+setCalendar</H3>
+<PRE>
+public static void <B>setCalendar</B>(java.util.Calendar&nbsp;calendar,
+                               int&nbsp;wholeDays,
+                               int&nbsp;millisecondsInDay,
+                               boolean&nbsp;use1904windowing,
+                               boolean&nbsp;roundSeconds)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getJavaCalendar(double)"><!-- --></A><H3>
+getJavaCalendar</H3>
+<PRE>
+public static java.util.Calendar <B>getJavaCalendar</B>(double&nbsp;date)</PRE>
+<DL>
+<DD>Get EXCEL date as Java Calendar (with default time zone).
+ This is like <A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaDate(double)"><CODE>getJavaDate(double)</CODE></A> but returns a Calendar object.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - The Excel date.
+<DT><B>Returns:</B><DD>Java representation of the date, or null if date is not a valid Excel date</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getJavaCalendar(double, boolean)"><!-- --></A><H3>
+getJavaCalendar</H3>
+<PRE>
+public static java.util.Calendar <B>getJavaCalendar</B>(double&nbsp;date,
+                                                 boolean&nbsp;use1904windowing)</PRE>
+<DL>
+<DD>Get EXCEL date as Java Calendar (with default time zone).
+ This is like <A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaDate(double, boolean)"><CODE>getJavaDate(double, boolean)</CODE></A> but returns a Calendar object.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - The Excel date.<DD><CODE>use1904windowing</CODE> - true if date uses 1904 windowing,
+   or false if using 1900 date windowing.
+<DT><B>Returns:</B><DD>Java representation of the date, or null if date is not a valid Excel date</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getJavaCalendarUTC(double, boolean)"><!-- --></A><H3>
+getJavaCalendarUTC</H3>
+<PRE>
+public static java.util.Calendar <B>getJavaCalendarUTC</B>(double&nbsp;date,
+                                                    boolean&nbsp;use1904windowing)</PRE>
+<DL>
+<DD>Get EXCEL date as Java Calendar with UTC time zone.
+ This is similar to <A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#getJavaDate(double, boolean)"><CODE>getJavaDate(double, boolean)</CODE></A> but returns a
+ Calendar object that has UTC as time zone, so no daylight saving hassle.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - The Excel date.<DD><CODE>use1904windowing</CODE> - true if date uses 1904 windowing,
+  or false if using 1900 date windowing.
+<DT><B>Returns:</B><DD>Java representation of the date in UTC, or null if date is not a valid Excel date</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getJavaCalendar(double, boolean, java.util.TimeZone)"><!-- --></A><H3>
+getJavaCalendar</H3>
+<PRE>
+public static java.util.Calendar <B>getJavaCalendar</B>(double&nbsp;date,
+                                                 boolean&nbsp;use1904windowing,
+                                                 java.util.TimeZone&nbsp;timeZone)</PRE>
+<DL>
+<DD>Get EXCEL date as Java Calendar with given time zone.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - The Excel date.<DD><CODE>use1904windowing</CODE> - true if date uses 1904 windowing,
+  or false if using 1900 date windowing.<DD><CODE>timeZone</CODE> - The TimeZone to evaluate the date in
+<DT><B>Returns:</B><DD>Java representation of the date, or null if date is not a valid Excel date</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getJavaCalendar(double, boolean, java.util.TimeZone, boolean)"><!-- --></A><H3>
+getJavaCalendar</H3>
+<PRE>
+public static java.util.Calendar <B>getJavaCalendar</B>(double&nbsp;date,
+                                                 boolean&nbsp;use1904windowing,
+                                                 java.util.TimeZone&nbsp;timeZone,
+                                                 boolean&nbsp;roundSeconds)</PRE>
+<DL>
+<DD>Get EXCEL date as Java Calendar with given time zone.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>date</CODE> - The Excel date.<DD><CODE>use1904windowing</CODE> - true if date uses 1904 windowing,
+  or false if using 1900 date windowing.<DD><CODE>timeZone</CODE> - The TimeZone to evaluate the date in<DD><CODE>roundSeconds</CODE> - round to closest second
+<DT><B>Returns:</B><DD>Java representation of the date, or null if date is not a valid Excel date</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isADateFormat(org.apache.poi.ss.usermodel.ExcelNumberFormat)"><!-- --></A><H3>
+isADateFormat</H3>
+<PRE>
+public static boolean <B>isADateFormat</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/ExcelNumberFormat.html" title="class in org.apache.poi.ss.usermodel">ExcelNumberFormat</A>&nbsp;numFmt)</PRE>
+<DL>
+<DD>Given a format ID and its format String, will check to see if the
+  format represents a date format or not.
+ Firstly, it will check to see if the format ID corresponds to an
+  internal excel date format (eg most US date formats)
+ If not, it will check to see if the format string only contains
+  date formatting characters (ymd-/), which covers most
+  non US date formats.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>numFmt</CODE> - The number format index and string expression, or null if not specified
+<DT><B>Returns:</B><DD>true if it is a valid date format, false if not or null<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isInternalDateFormat(int)"><CODE>isInternalDateFormat(int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isADateFormat(int, java.lang.String)"><!-- --></A><H3>
+isADateFormat</H3>
+<PRE>
+public static boolean <B>isADateFormat</B>(int&nbsp;formatIndex,
+                                    java.lang.String&nbsp;formatString)</PRE>
+<DL>
+<DD>Given a format ID and its format String, will check to see if the
+  format represents a date format or not.
+ Firstly, it will check to see if the format ID corresponds to an
+  internal excel date format (eg most US date formats)
+ If not, it will check to see if the format string only contains
+  date formatting characters (ymd-/), which covers most
+  non US date formats.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>formatIndex</CODE> - The index of the format, eg from ExtendedFormatRecord.getFormatIndex<DD><CODE>formatString</CODE> - The format string, eg from FormatRecord.getFormatString
+<DT><B>Returns:</B><DD>true if it is a valid date format, false if not or null<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isInternalDateFormat(int)"><CODE>isInternalDateFormat(int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isInternalDateFormat(int)"><!-- --></A><H3>
+isInternalDateFormat</H3>
+<PRE>
+public static boolean <B>isInternalDateFormat</B>(int&nbsp;format)</PRE>
+<DL>
+<DD>Given a format ID this will check whether the format represents
+  an internal excel date format or not.
+<P>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isADateFormat(int, java.lang.String)"><CODE>isADateFormat(int, java.lang.String)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isCellDateFormatted(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+isCellDateFormatted</H3>
+<PRE>
+public static boolean <B>isCellDateFormatted</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Check if a cell contains a date
+  Since dates are stored internally in Excel as double values
+  we infer it is a date if it is formatted as such.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - 
+<DT><B>Returns:</B><DD>true if it looks like a date<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isADateFormat(int, java.lang.String)"><CODE>isADateFormat(int, String)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isInternalDateFormat(int)"><CODE>isInternalDateFormat(int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isCellDateFormatted(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.formula.ConditionalFormattingEvaluator)"><!-- --></A><H3>
+isCellDateFormatted</H3>
+<PRE>
+public static boolean <B>isCellDateFormatted</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                                          <A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html" title="class in org.apache.poi.ss.formula">ConditionalFormattingEvaluator</A>&nbsp;cfEvaluator)</PRE>
+<DL>
+<DD>Check if a cell contains a date
+  Since dates are stored internally in Excel as double values
+  we infer it is a date if it is formatted as such.
+  Format is determined from applicable conditional formatting, if
+  any, or cell style.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - <DD><CODE>cfEvaluator</CODE> - if available, or null
+<DT><B>Returns:</B><DD>true if it looks like a date<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isADateFormat(int, java.lang.String)"><CODE>isADateFormat(int, String)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isInternalDateFormat(int)"><CODE>isInternalDateFormat(int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isCellInternalDateFormatted(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+isCellInternalDateFormatted</H3>
+<PRE>
+public static boolean <B>isCellInternalDateFormatted</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Check if a cell contains a date, checking only for internal
+   excel date formats.
+  As Excel stores a great many of its dates in "non-internal"
+   date formats, you will not normally want to use this method.
+<P>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isADateFormat(int, java.lang.String)"><CODE>isADateFormat(int,String)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/DateUtil.html#isInternalDateFormat(int)"><CODE>isInternalDateFormat(int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isValidExcelDate(double)"><!-- --></A><H3>
+isValidExcelDate</H3>
+<PRE>
+public static boolean <B>isValidExcelDate</B>(double&nbsp;value)</PRE>
+<DL>
+<DD>Given a double, checks if it is a valid Excel date.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - the double value
+<DT><B>Returns:</B><DD>true if valid</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="absoluteDay(java.util.Calendar, boolean)"><!-- --></A><H3>
+absoluteDay</H3>
+<PRE>
+protected static int <B>absoluteDay</B>(java.util.Calendar&nbsp;cal,
+                                 boolean&nbsp;use1904windowing)</PRE>
+<DL>
+<DD>Given a Calendar, return the number of days since 1900/12/31.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cal</CODE> - the Calendar
+<DT><B>Returns:</B><DD>days number of days since 1900/12/31
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if date is invalid</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="convertTime(java.lang.String)"><!-- --></A><H3>
+convertTime</H3>
+<PRE>
+public static double <B>convertTime</B>(java.lang.String&nbsp;timeStr)</PRE>
+<DL>
+<DD>Converts a string of format "HH:MM" or "HH:MM:SS" to its (Excel) numeric equivalent
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a double between 0 and 1 representing the fraction of the day</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="parseYYYYMMDDDate(java.lang.String)"><!-- --></A><H3>
+parseYYYYMMDDDate</H3>
+<PRE>
+public static java.util.Date <B>parseYYYYMMDDDate</B>(java.lang.String&nbsp;dateStr)</PRE>
+<DL>
+<DD>Converts a string of format "YYYY/MM/DD" to its (Excel) numeric equivalent
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a double representing the (integer) number of days since the start of the Excel epoch</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DifferentialStyleProvider.html" title="interface in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/DateUtil.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DateUtil.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

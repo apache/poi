@@ -1,0 +1,416 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+EvaluationException (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="EvaluationException (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ErrorEval.html" title="class in org.apache.poi.ss.formula.eval"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ExternalNameEval.html" title="class in org.apache.poi.ss.formula.eval"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/eval/EvaluationException.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EvaluationException.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.formula.eval</FONT>
+<BR>
+Class EvaluationException</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by ">java.lang.Throwable
+      <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by ">java.lang.Exception
+          <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.formula.eval.EvaluationException</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.io.Serializable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>EvaluationException</B><DT>extends java.lang.Exception</DL>
+</PRE>
+
+<P>
+This class is used to simplify error handling logic <i>within</i> operator and function
+ implementations.   Note - <tt>OperationEval.evaluate()</tt> and <tt>Function.evaluate()</tt>
+ method signatures do not throw this exception so it cannot propagate outside.<p>
+ 
+ Here is an example coded without <tt>EvaluationException</tt>, to show how it can help:
+ <pre>
+ public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
+        // ...
+        Eval arg0 = args[0];
+        if(arg0 instanceof ErrorEval) {
+                return arg0;
+        }
+        if(!(arg0 instanceof AreaEval)) {
+                return ErrorEval.VALUE_INVALID;
+        }
+        double temp = 0;
+        AreaEval area = (AreaEval)arg0;
+        ValueEval[] values = area.getValues();
+        for (int i = 0; i < values.length; i++) {
+                ValueEval ve = values[i];
+                if(ve instanceof ErrorEval) {
+                        return ve;
+                }
+                if(!(ve instanceof NumericValueEval)) {
+                        return ErrorEval.VALUE_INVALID;
+                }
+                temp += ((NumericValueEval)ve).getNumberValue();
+        }
+        // ...
+ }       
+ </pre>
+ In this example, if any error is encountered while processing the arguments, an error is 
+ returned immediately. This code is difficult to refactor due to all the points where errors
+ are returned.<br>
+ Using <tt>EvaluationException</tt> allows the error returning code to be consolidated to one
+ place.<p>
+ <pre>
+ public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
+        try {
+                // ...
+                AreaEval area = getAreaArg(args[0]);
+                double temp = sumValues(area.getValues());
+                // ...
+        } catch (EvaluationException e) {
+                return e.getErrorEval();
+        }
+}
+
+private static AreaEval getAreaArg(Eval arg0) throws EvaluationException {
+        if (arg0 instanceof ErrorEval) {
+                throw new EvaluationException((ErrorEval) arg0);
+        }
+        if (arg0 instanceof AreaEval) {
+                return (AreaEval) arg0;
+        }
+        throw EvaluationException.invalidValue();
+}
+
+private double sumValues(ValueEval[] values) throws EvaluationException {
+        double temp = 0;
+        for (int i = 0; i < values.length; i++) {
+                ValueEval ve = values[i];
+                if (ve instanceof ErrorEval) {
+                        throw new EvaluationException((ErrorEval) ve);
+                }
+                if (!(ve instanceof NumericValueEval)) {
+                        throw EvaluationException.invalidValue();
+                }
+                temp += ((NumericValueEval) ve).getNumberValue();
+        }
+        return temp;
+}
+ </pre>   
+ It is not mandatory to use EvaluationException, doing so might give the following advantages:<br>
+  - Methods can more easily be extracted, allowing for re-use.<br>
+  - Type management (typecasting etc) is simpler because error conditions have been separated from
+ intermediate calculation values.<br>
+  - Fewer local variables are required. Local variables can have stronger types.<br>
+  - It is easier to mimic common Excel error handling behaviour (exit upon encountering first 
+  error), because exceptions conveniently propagate up the call stack regardless of execution 
+  points or the number of levels of nested calls.<p>
+  
+ <b>Note</b> - Only standard evaluation errors are represented by <tt>EvaluationException</tt> (
+ i.e. conditions expected to be encountered when evaluating arbitrary Excel formulas). Conditions
+ that could never occur in an Excel spreadsheet should result in runtime exceptions. Care should
+ be taken to not translate any POI internal error into an Excel evaluation error code.
+<P>
+
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../serialized-form.html#org.apache.poi.ss.formula.eval.EvaluationException">Serialized Form</A></DL>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html#EvaluationException(org.apache.poi.ss.formula.eval.ErrorEval)">EvaluationException</A></B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ErrorEval.html" title="class in org.apache.poi.ss.formula.eval">ErrorEval</A>&nbsp;errorEval)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ErrorEval.html" title="class in org.apache.poi.ss.formula.eval">ErrorEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html#getErrorEval()">getErrorEval</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html#invalidRef()">invalidRef</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>#REF!</b> - Illegal or deleted cell reference</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html#invalidValue()">invalidValue</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>#VALUE!</b> - Wrong type of operand</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html#numberError()">numberError</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>#NUM!</b> - Value range overflow</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Throwable"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Throwable</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>fillInStackTrace, getCause, getLocalizedMessage, getMessage, getStackTrace, initCause, printStackTrace, printStackTrace, printStackTrace, setStackTrace, toString</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="EvaluationException(org.apache.poi.ss.formula.eval.ErrorEval)"><!-- --></A><H3>
+EvaluationException</H3>
+<PRE>
+public <B>EvaluationException</B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ErrorEval.html" title="class in org.apache.poi.ss.formula.eval">ErrorEval</A>&nbsp;errorEval)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="invalidValue()"><!-- --></A><H3>
+invalidValue</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A> <B>invalidValue</B>()</PRE>
+<DL>
+<DD><b>#VALUE!</b> - Wrong type of operand
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invalidRef()"><!-- --></A><H3>
+invalidRef</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A> <B>invalidRef</B>()</PRE>
+<DL>
+<DD><b>#REF!</b> - Illegal or deleted cell reference
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="numberError()"><!-- --></A><H3>
+numberError</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A> <B>numberError</B>()</PRE>
+<DL>
+<DD><b>#NUM!</b> - Value range overflow
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getErrorEval()"><!-- --></A><H3>
+getErrorEval</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/ss/formula/eval/ErrorEval.html" title="class in org.apache.poi.ss.formula.eval">ErrorEval</A> <B>getErrorEval</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ErrorEval.html" title="class in org.apache.poi.ss.formula.eval"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ExternalNameEval.html" title="class in org.apache.poi.ss.formula.eval"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/eval/EvaluationException.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EvaluationException.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

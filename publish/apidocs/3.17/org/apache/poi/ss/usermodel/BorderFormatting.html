@@ -1,0 +1,1293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+BorderFormatting (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="BorderFormatting (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderExtent.html" title="enum in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/BorderFormatting.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="BorderFormatting.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.usermodel</FONT>
+<BR>
+Interface BorderFormatting</H2>
+<DL>
+<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFBorderFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFBorderFormatting</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>BorderFormatting</B></DL>
+</PRE>
+
+<P>
+High level representation for Border Formatting component
+ of Conditional Formatting settings
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderBottom()">getBorderBottom</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderBottomEnum()"><CODE>getBorderBottomEnum()</CODE></A>.
+ This method will return an BorderStyle enum in the future.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderBottomEnum()">getBorderBottomEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderDiagonal()">getBorderDiagonal</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderDiagonalEnum()"><CODE>getBorderDiagonalEnum()</CODE></A>.
+ This method will return an BorderStyle enum in the future.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderDiagonalEnum()">getBorderDiagonalEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderHorizontalEnum()">getBorderHorizontalEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only valid for range borders, such as table styles</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderLeft()">getBorderLeft</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderLeftEnum()"><CODE>getBorderLeftEnum()</CODE></A>.
+ This method will return an BorderStyle enum in the future.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderLeftEnum()">getBorderLeftEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderRight()">getBorderRight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderRightEnum()"><CODE>getBorderRightEnum()</CODE></A>.
+ This method will return an BorderStyle enum in the future.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderRightEnum()">getBorderRightEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderTop()">getBorderTop</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderTopEnum()"><CODE>getBorderTopEnum()</CODE></A>.
+ This method will return an BorderStyle enum in the future.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderTopEnum()">getBorderTopEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderVerticalEnum()">getBorderVerticalEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only valid for range borders, such as table styles</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBottomBorderColor()">getBottomBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBottomBorderColorColor()">getBottomBorderColorColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getDiagonalBorderColor()">getDiagonalBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getDiagonalBorderColorColor()">getDiagonalBorderColorColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getHorizontalBorderColor()">getHorizontalBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Range internal borders.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getHorizontalBorderColorColor()">getHorizontalBorderColorColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Range internal borders.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getLeftBorderColor()">getLeftBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getLeftBorderColorColor()">getLeftBorderColorColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getRightBorderColor()">getRightBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getRightBorderColorColor()">getRightBorderColorColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getTopBorderColor()">getTopBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getTopBorderColorColor()">getTopBorderColorColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getVerticalBorderColor()">getVerticalBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Range internal borders.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getVerticalBorderColorColor()">getVerticalBorderColorColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Range internal borders.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderBottom(org.apache.poi.ss.usermodel.BorderStyle)">setBorderBottom</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set bottom border.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderBottom(short)">setBorderBottom</A></B>(short&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderBottom(org.apache.poi.ss.usermodel.BorderStyle)"><CODE>setBorderBottom(BorderStyle)</CODE></A></I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderDiagonal(org.apache.poi.ss.usermodel.BorderStyle)">setBorderDiagonal</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set diagonal border.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderDiagonal(short)">setBorderDiagonal</A></B>(short&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderDiagonal(org.apache.poi.ss.usermodel.BorderStyle)"><CODE>setBorderDiagonal(BorderStyle)</CODE></A></I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderHorizontal(org.apache.poi.ss.usermodel.BorderStyle)">setBorderHorizontal</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set range internal horizontal borders.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle)">setBorderLeft</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set left border.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderLeft(short)">setBorderLeft</A></B>(short&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle)"><CODE>setBorderLeft(BorderStyle)</CODE></A></I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderRight(org.apache.poi.ss.usermodel.BorderStyle)">setBorderRight</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set right border.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderRight(short)">setBorderRight</A></B>(short&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderRight(org.apache.poi.ss.usermodel.BorderStyle)"><CODE>setBorderRight(BorderStyle)</CODE></A></I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderTop(org.apache.poi.ss.usermodel.BorderStyle)">setBorderTop</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set top border.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderTop(short)">setBorderTop</A></B>(short&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderTop(org.apache.poi.ss.usermodel.BorderStyle)"><CODE>setBorderTop(BorderStyle)</CODE></A></I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderVertical(org.apache.poi.ss.usermodel.BorderStyle)">setBorderVertical</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set range internal vertical borders.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBottomBorderColor(org.apache.poi.ss.usermodel.Color)">setBottomBorderColor</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBottomBorderColor(short)">setBottomBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setDiagonalBorderColor(org.apache.poi.ss.usermodel.Color)">setDiagonalBorderColor</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setDiagonalBorderColor(short)">setDiagonalBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setHorizontalBorderColor(org.apache.poi.ss.usermodel.Color)">setHorizontalBorderColor</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Range internal border color, such as table styles</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setHorizontalBorderColor(short)">setHorizontalBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Range internal border color, such as table styles</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setLeftBorderColor(org.apache.poi.ss.usermodel.Color)">setLeftBorderColor</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setLeftBorderColor(short)">setLeftBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setRightBorderColor(org.apache.poi.ss.usermodel.Color)">setRightBorderColor</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setRightBorderColor(short)">setRightBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setTopBorderColor(org.apache.poi.ss.usermodel.Color)">setTopBorderColor</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setTopBorderColor(short)">setTopBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setVerticalBorderColor(org.apache.poi.ss.usermodel.Color)">setVerticalBorderColor</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Range internal border color, such as table styles</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setVerticalBorderColor(short)">setVerticalBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Range internal border color, such as table styles</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getBorderBottom()"><!-- --></A><H3>
+getBorderBottom</H3>
+<PRE>
+short <B>getBorderBottom</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderBottomEnum()"><CODE>getBorderBottomEnum()</CODE></A>.
+ This method will return an BorderStyle enum in the future.</I>
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderBottomEnum()"><!-- --></A><H3>
+getBorderBottomEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderBottomEnum</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderDiagonal()"><!-- --></A><H3>
+getBorderDiagonal</H3>
+<PRE>
+short <B>getBorderDiagonal</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderDiagonalEnum()"><CODE>getBorderDiagonalEnum()</CODE></A>.
+ This method will return an BorderStyle enum in the future.</I>
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderDiagonalEnum()"><!-- --></A><H3>
+getBorderDiagonalEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderDiagonalEnum</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderLeft()"><!-- --></A><H3>
+getBorderLeft</H3>
+<PRE>
+short <B>getBorderLeft</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderLeftEnum()"><CODE>getBorderLeftEnum()</CODE></A>.
+ This method will return an BorderStyle enum in the future.</I>
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderLeftEnum()"><!-- --></A><H3>
+getBorderLeftEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderLeftEnum</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderRight()"><!-- --></A><H3>
+getBorderRight</H3>
+<PRE>
+short <B>getBorderRight</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderRightEnum()"><CODE>getBorderRightEnum()</CODE></A>.
+ This method will return an BorderStyle enum in the future.</I>
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderRightEnum()"><!-- --></A><H3>
+getBorderRightEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderRightEnum</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderTop()"><!-- --></A><H3>
+getBorderTop</H3>
+<PRE>
+short <B>getBorderTop</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#getBorderTopEnum()"><CODE>getBorderTopEnum()</CODE></A>.
+ This method will return an BorderStyle enum in the future.</I>
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderTopEnum()"><!-- --></A><H3>
+getBorderTopEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderTopEnum</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderVerticalEnum()"><!-- --></A><H3>
+getBorderVerticalEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderVerticalEnum</B>()</PRE>
+<DL>
+<DD>Only valid for range borders, such as table styles
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border style<DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderHorizontalEnum()"><!-- --></A><H3>
+getBorderHorizontalEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderHorizontalEnum</B>()</PRE>
+<DL>
+<DD>Only valid for range borders, such as table styles
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border style<DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBottomBorderColor()"><!-- --></A><H3>
+getBottomBorderColor</H3>
+<PRE>
+short <B>getBottomBorderColor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBottomBorderColorColor()"><!-- --></A><H3>
+getBottomBorderColorColor</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A> <B>getBottomBorderColorColor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDiagonalBorderColor()"><!-- --></A><H3>
+getDiagonalBorderColor</H3>
+<PRE>
+short <B>getDiagonalBorderColor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDiagonalBorderColorColor()"><!-- --></A><H3>
+getDiagonalBorderColorColor</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A> <B>getDiagonalBorderColorColor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLeftBorderColor()"><!-- --></A><H3>
+getLeftBorderColor</H3>
+<PRE>
+short <B>getLeftBorderColor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLeftBorderColorColor()"><!-- --></A><H3>
+getLeftBorderColorColor</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A> <B>getLeftBorderColorColor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRightBorderColor()"><!-- --></A><H3>
+getRightBorderColor</H3>
+<PRE>
+short <B>getRightBorderColor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRightBorderColorColor()"><!-- --></A><H3>
+getRightBorderColorColor</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A> <B>getRightBorderColorColor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTopBorderColor()"><!-- --></A><H3>
+getTopBorderColor</H3>
+<PRE>
+short <B>getTopBorderColor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTopBorderColorColor()"><!-- --></A><H3>
+getTopBorderColorColor</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A> <B>getTopBorderColorColor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVerticalBorderColor()"><!-- --></A><H3>
+getVerticalBorderColor</H3>
+<PRE>
+short <B>getVerticalBorderColor</B>()</PRE>
+<DL>
+<DD>Range internal borders. Only relevant for range styles, such as table formatting
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>color index<DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVerticalBorderColorColor()"><!-- --></A><H3>
+getVerticalBorderColorColor</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A> <B>getVerticalBorderColorColor</B>()</PRE>
+<DL>
+<DD>Range internal borders. Only relevant for range styles, such as table formatting
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>color<DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHorizontalBorderColor()"><!-- --></A><H3>
+getHorizontalBorderColor</H3>
+<PRE>
+short <B>getHorizontalBorderColor</B>()</PRE>
+<DL>
+<DD>Range internal borders. Only relevant for range styles, such as table formatting
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>color index<DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHorizontalBorderColorColor()"><!-- --></A><H3>
+getHorizontalBorderColorColor</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A> <B>getHorizontalBorderColorColor</B>()</PRE>
+<DL>
+<DD>Range internal borders. Only relevant for range styles, such as table formatting
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>color<DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderBottom(short)"><!-- --></A><H3>
+setBorderBottom</H3>
+<PRE>
+void <B>setBorderBottom</B>(short&nbsp;border)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderBottom(org.apache.poi.ss.usermodel.BorderStyle)"><CODE>setBorderBottom(BorderStyle)</CODE></A></I>
+<P>
+<DD>Set bottom border.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - MUST be a BORDER_* constant</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderBottom(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderBottom</H3>
+<PRE>
+void <B>setBorderBottom</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>Set bottom border.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderDiagonal(short)"><!-- --></A><H3>
+setBorderDiagonal</H3>
+<PRE>
+void <B>setBorderDiagonal</B>(short&nbsp;border)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderDiagonal(org.apache.poi.ss.usermodel.BorderStyle)"><CODE>setBorderDiagonal(BorderStyle)</CODE></A></I>
+<P>
+<DD>Set diagonal border.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - MUST be a BORDER_* constant</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderDiagonal(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderDiagonal</H3>
+<PRE>
+void <B>setBorderDiagonal</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>Set diagonal border.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderLeft(short)"><!-- --></A><H3>
+setBorderLeft</H3>
+<PRE>
+void <B>setBorderLeft</B>(short&nbsp;border)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle)"><CODE>setBorderLeft(BorderStyle)</CODE></A></I>
+<P>
+<DD>Set left border.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - MUST be a BORDER_* constant</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderLeft</H3>
+<PRE>
+void <B>setBorderLeft</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>Set left border.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderRight(short)"><!-- --></A><H3>
+setBorderRight</H3>
+<PRE>
+void <B>setBorderRight</B>(short&nbsp;border)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderRight(org.apache.poi.ss.usermodel.BorderStyle)"><CODE>setBorderRight(BorderStyle)</CODE></A></I>
+<P>
+<DD>Set right border.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - MUST be a BORDER_* constant</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderRight(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderRight</H3>
+<PRE>
+void <B>setBorderRight</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>Set right border.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderTop(short)"><!-- --></A><H3>
+setBorderTop</H3>
+<PRE>
+void <B>setBorderTop</B>(short&nbsp;border)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderFormatting.html#setBorderTop(org.apache.poi.ss.usermodel.BorderStyle)"><CODE>setBorderTop(BorderStyle)</CODE></A></I>
+<P>
+<DD>Set top border.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - MUST be a BORDER_* constant</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderTop(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderTop</H3>
+<PRE>
+void <B>setBorderTop</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>Set top border.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderHorizontal(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderHorizontal</H3>
+<PRE>
+void <B>setBorderHorizontal</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>Set range internal horizontal borders.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - <DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderVertical(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderVertical</H3>
+<PRE>
+void <B>setBorderVertical</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>Set range internal vertical borders.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - <DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBottomBorderColor(short)"><!-- --></A><H3>
+setBottomBorderColor</H3>
+<PRE>
+void <B>setBottomBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBottomBorderColor(org.apache.poi.ss.usermodel.Color)"><!-- --></A><H3>
+setBottomBorderColor</H3>
+<PRE>
+void <B>setBottomBorderColor</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDiagonalBorderColor(short)"><!-- --></A><H3>
+setDiagonalBorderColor</H3>
+<PRE>
+void <B>setDiagonalBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDiagonalBorderColor(org.apache.poi.ss.usermodel.Color)"><!-- --></A><H3>
+setDiagonalBorderColor</H3>
+<PRE>
+void <B>setDiagonalBorderColor</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLeftBorderColor(short)"><!-- --></A><H3>
+setLeftBorderColor</H3>
+<PRE>
+void <B>setLeftBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLeftBorderColor(org.apache.poi.ss.usermodel.Color)"><!-- --></A><H3>
+setLeftBorderColor</H3>
+<PRE>
+void <B>setLeftBorderColor</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRightBorderColor(short)"><!-- --></A><H3>
+setRightBorderColor</H3>
+<PRE>
+void <B>setRightBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRightBorderColor(org.apache.poi.ss.usermodel.Color)"><!-- --></A><H3>
+setRightBorderColor</H3>
+<PRE>
+void <B>setRightBorderColor</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTopBorderColor(short)"><!-- --></A><H3>
+setTopBorderColor</H3>
+<PRE>
+void <B>setTopBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTopBorderColor(org.apache.poi.ss.usermodel.Color)"><!-- --></A><H3>
+setTopBorderColor</H3>
+<PRE>
+void <B>setTopBorderColor</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHorizontalBorderColor(short)"><!-- --></A><H3>
+setHorizontalBorderColor</H3>
+<PRE>
+void <B>setHorizontalBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD>Range internal border color, such as table styles
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - index<DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHorizontalBorderColor(org.apache.poi.ss.usermodel.Color)"><!-- --></A><H3>
+setHorizontalBorderColor</H3>
+<PRE>
+void <B>setHorizontalBorderColor</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</PRE>
+<DL>
+<DD>Range internal border color, such as table styles
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - index<DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setVerticalBorderColor(short)"><!-- --></A><H3>
+setVerticalBorderColor</H3>
+<PRE>
+void <B>setVerticalBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD>Range internal border color, such as table styles
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - index<DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setVerticalBorderColor(org.apache.poi.ss.usermodel.Color)"><!-- --></A><H3>
+setVerticalBorderColor</H3>
+<PRE>
+void <B>setVerticalBorderColor</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</PRE>
+<DL>
+<DD>Range internal border color, such as table styles
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - index<DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderExtent.html" title="enum in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/BorderFormatting.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="BorderFormatting.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

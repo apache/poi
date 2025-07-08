@@ -1,0 +1,877 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+HSSFColor (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="HSSFColor (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/util/CellReference.html" title="class in org.apache.poi.hssf.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.AQUA.html" title="class in org.apache.poi.hssf.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/util/HSSFColor.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFColor.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.util</FONT>
+<BR>
+Class HSSFColor</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.util.HSSFColor</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A></DD>
+</DL>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.AQUA.html" title="class in org.apache.poi.hssf.util">HSSFColor.AQUA</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.AUTOMATIC.html" title="class in org.apache.poi.hssf.util">HSSFColor.AUTOMATIC</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.BLACK.html" title="class in org.apache.poi.hssf.util">HSSFColor.BLACK</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.BLUE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.BLUE_GREY.html" title="class in org.apache.poi.hssf.util">HSSFColor.BLUE_GREY</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.BRIGHT_GREEN.html" title="class in org.apache.poi.hssf.util">HSSFColor.BRIGHT_GREEN</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.BROWN.html" title="class in org.apache.poi.hssf.util">HSSFColor.BROWN</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.CORAL.html" title="class in org.apache.poi.hssf.util">HSSFColor.CORAL</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.CORNFLOWER_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.CORNFLOWER_BLUE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.DARK_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.DARK_BLUE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.DARK_GREEN.html" title="class in org.apache.poi.hssf.util">HSSFColor.DARK_GREEN</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.DARK_RED.html" title="class in org.apache.poi.hssf.util">HSSFColor.DARK_RED</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.DARK_TEAL.html" title="class in org.apache.poi.hssf.util">HSSFColor.DARK_TEAL</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.DARK_YELLOW.html" title="class in org.apache.poi.hssf.util">HSSFColor.DARK_YELLOW</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.GOLD.html" title="class in org.apache.poi.hssf.util">HSSFColor.GOLD</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.GREEN.html" title="class in org.apache.poi.hssf.util">HSSFColor.GREEN</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.GREY_25_PERCENT.html" title="class in org.apache.poi.hssf.util">HSSFColor.GREY_25_PERCENT</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.GREY_40_PERCENT.html" title="class in org.apache.poi.hssf.util">HSSFColor.GREY_40_PERCENT</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.GREY_50_PERCENT.html" title="class in org.apache.poi.hssf.util">HSSFColor.GREY_50_PERCENT</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.GREY_80_PERCENT.html" title="class in org.apache.poi.hssf.util">HSSFColor.GREY_80_PERCENT</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.INDIGO.html" title="class in org.apache.poi.hssf.util">HSSFColor.INDIGO</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LAVENDER.html" title="class in org.apache.poi.hssf.util">HSSFColor.LAVENDER</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LEMON_CHIFFON.html" title="class in org.apache.poi.hssf.util">HSSFColor.LEMON_CHIFFON</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIGHT_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIGHT_BLUE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIGHT_CORNFLOWER_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIGHT_CORNFLOWER_BLUE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIGHT_GREEN.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIGHT_GREEN</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIGHT_ORANGE.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIGHT_ORANGE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIGHT_TURQUOISE.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIGHT_TURQUOISE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIGHT_YELLOW.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIGHT_YELLOW</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIME.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIME</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.MAROON.html" title="class in org.apache.poi.hssf.util">HSSFColor.MAROON</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.OLIVE_GREEN.html" title="class in org.apache.poi.hssf.util">HSSFColor.OLIVE_GREEN</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.ORANGE.html" title="class in org.apache.poi.hssf.util">HSSFColor.ORANGE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.ORCHID.html" title="class in org.apache.poi.hssf.util">HSSFColor.ORCHID</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.PALE_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.PALE_BLUE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.PINK.html" title="class in org.apache.poi.hssf.util">HSSFColor.PINK</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.PLUM.html" title="class in org.apache.poi.hssf.util">HSSFColor.PLUM</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.RED.html" title="class in org.apache.poi.hssf.util">HSSFColor.RED</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.ROSE.html" title="class in org.apache.poi.hssf.util">HSSFColor.ROSE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.ROYAL_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.ROYAL_BLUE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.SEA_GREEN.html" title="class in org.apache.poi.hssf.util">HSSFColor.SEA_GREEN</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.SKY_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.SKY_BLUE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.TAN.html" title="class in org.apache.poi.hssf.util">HSSFColor.TAN</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.TEAL.html" title="class in org.apache.poi.hssf.util">HSSFColor.TEAL</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.TURQUOISE.html" title="class in org.apache.poi.hssf.util">HSSFColor.TURQUOISE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.VIOLET.html" title="class in org.apache.poi.hssf.util">HSSFColor.VIOLET</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.WHITE.html" title="class in org.apache.poi.hssf.util">HSSFColor.WHITE</A>, <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.YELLOW.html" title="class in org.apache.poi.hssf.util">HSSFColor.YELLOW</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>HSSFColor</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A></DL>
+</PRE>
+
+<P>
+Intends to provide support for the very evil index to triplet issue and
+ will likely replace the color constants interface for HSSF 2.0.
+ This class contains static inner class members for representing colors.
+ Each color has an index (for the standard palette in Excel (tm) ),
+ native (RGB) triplet and string triplet.  The string triplet is as the
+ color would be represented by Gnumeric.  Having (string) this here is a bit of a
+ collision of function between HSSF and the HSSFSerializer but I think its
+ a reasonable one in this case.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.AQUA.html" title="class in org.apache.poi.hssf.util">HSSFColor.AQUA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.AUTOMATIC.html" title="class in org.apache.poi.hssf.util">HSSFColor.AUTOMATIC</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.BLACK.html" title="class in org.apache.poi.hssf.util">HSSFColor.BLACK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.BLUE_GREY.html" title="class in org.apache.poi.hssf.util">HSSFColor.BLUE_GREY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.BRIGHT_GREEN.html" title="class in org.apache.poi.hssf.util">HSSFColor.BRIGHT_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.BROWN.html" title="class in org.apache.poi.hssf.util">HSSFColor.BROWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.CORAL.html" title="class in org.apache.poi.hssf.util">HSSFColor.CORAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.CORNFLOWER_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.CORNFLOWER_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.DARK_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.DARK_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.DARK_GREEN.html" title="class in org.apache.poi.hssf.util">HSSFColor.DARK_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.DARK_RED.html" title="class in org.apache.poi.hssf.util">HSSFColor.DARK_RED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.DARK_TEAL.html" title="class in org.apache.poi.hssf.util">HSSFColor.DARK_TEAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.DARK_YELLOW.html" title="class in org.apache.poi.hssf.util">HSSFColor.DARK_YELLOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.GOLD.html" title="class in org.apache.poi.hssf.util">HSSFColor.GOLD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.GREEN.html" title="class in org.apache.poi.hssf.util">HSSFColor.GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.GREY_25_PERCENT.html" title="class in org.apache.poi.hssf.util">HSSFColor.GREY_25_PERCENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.GREY_40_PERCENT.html" title="class in org.apache.poi.hssf.util">HSSFColor.GREY_40_PERCENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.GREY_50_PERCENT.html" title="class in org.apache.poi.hssf.util">HSSFColor.GREY_50_PERCENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.GREY_80_PERCENT.html" title="class in org.apache.poi.hssf.util">HSSFColor.GREY_80_PERCENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util">HSSFColor.HSSFColorPredefined</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predefined HSSFColors with their given palette index (and an optional 2nd index)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.INDIGO.html" title="class in org.apache.poi.hssf.util">HSSFColor.INDIGO</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LAVENDER.html" title="class in org.apache.poi.hssf.util">HSSFColor.LAVENDER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LEMON_CHIFFON.html" title="class in org.apache.poi.hssf.util">HSSFColor.LEMON_CHIFFON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIGHT_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIGHT_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIGHT_CORNFLOWER_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIGHT_CORNFLOWER_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIGHT_GREEN.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIGHT_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIGHT_ORANGE.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIGHT_ORANGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIGHT_TURQUOISE.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIGHT_TURQUOISE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIGHT_YELLOW.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIGHT_YELLOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.LIME.html" title="class in org.apache.poi.hssf.util">HSSFColor.LIME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.MAROON.html" title="class in org.apache.poi.hssf.util">HSSFColor.MAROON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.OLIVE_GREEN.html" title="class in org.apache.poi.hssf.util">HSSFColor.OLIVE_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.ORANGE.html" title="class in org.apache.poi.hssf.util">HSSFColor.ORANGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.ORCHID.html" title="class in org.apache.poi.hssf.util">HSSFColor.ORCHID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.PALE_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.PALE_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.PINK.html" title="class in org.apache.poi.hssf.util">HSSFColor.PINK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.PLUM.html" title="class in org.apache.poi.hssf.util">HSSFColor.PLUM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.RED.html" title="class in org.apache.poi.hssf.util">HSSFColor.RED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.ROSE.html" title="class in org.apache.poi.hssf.util">HSSFColor.ROSE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.ROYAL_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.ROYAL_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.SEA_GREEN.html" title="class in org.apache.poi.hssf.util">HSSFColor.SEA_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.SKY_BLUE.html" title="class in org.apache.poi.hssf.util">HSSFColor.SKY_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.TAN.html" title="class in org.apache.poi.hssf.util">HSSFColor.TAN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.TEAL.html" title="class in org.apache.poi.hssf.util">HSSFColor.TEAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.TURQUOISE.html" title="class in org.apache.poi.hssf.util">HSSFColor.TURQUOISE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.VIOLET.html" title="class in org.apache.poi.hssf.util">HSSFColor.VIOLET</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.WHITE.html" title="class in org.apache.poi.hssf.util">HSSFColor.WHITE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.YELLOW.html" title="class in org.apache.poi.hssf.util">HSSFColor.YELLOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.HSSFColorPredefined.html" title="enum in org.apache.poi.hssf.util"><CODE>HSSFColor.HSSFColorPredefined</CODE></A> instead</I></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html#HSSFColor()">HSSFColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new instance of HSSFColor</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html#HSSFColor(int, int, java.awt.Color)">HSSFColor</A></B>(int&nbsp;index,
+          int&nbsp;index2,
+          java.awt.Color&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html#getHexString()">getHexString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns colon-delimited hex string "0:0:0"</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html#getIndex()">getIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns color standard palette index</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html#getIndex2()">getIndex2</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns alternative color standard palette index</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Map&lt;java.lang.Integer,<A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html" title="class in org.apache.poi.hssf.util">HSSFColor</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html#getIndexHash()">getIndexHash</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function returns all the colours in an unmodifiable Map.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Map&lt;java.lang.Integer,<A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html" title="class in org.apache.poi.hssf.util">HSSFColor</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html#getMutableIndexHash()">getMutableIndexHash</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function returns all the Colours, stored in a Map that
+  can be edited.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html#getTriplet()">getTriplet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns  RGB triplet (0, 0, 0)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Map&lt;java.lang.String,<A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html" title="class in org.apache.poi.hssf.util">HSSFColor</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html#getTripletHash()">getTripletHash</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this function returns all colors in a hastable.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html" title="class in org.apache.poi.hssf.util">HSSFColor</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html#toHSSFColor(org.apache.poi.ss.usermodel.Color)">toHSSFColor</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checked type cast <tt>color</tt> to an HSSFColor.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="HSSFColor()"><!-- --></A><H3>
+HSSFColor</H3>
+<PRE>
+public <B>HSSFColor</B>()</PRE>
+<DL>
+<DD>Creates a new instance of HSSFColor
+<P>
+</DL>
+<HR>
+
+<A NAME="HSSFColor(int, int, java.awt.Color)"><!-- --></A><H3>
+HSSFColor</H3>
+<PRE>
+public <B>HSSFColor</B>(int&nbsp;index,
+                 int&nbsp;index2,
+                 java.awt.Color&nbsp;color)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getIndexHash()"><!-- --></A><H3>
+getIndexHash</H3>
+<PRE>
+public static final java.util.Map&lt;java.lang.Integer,<A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html" title="class in org.apache.poi.hssf.util">HSSFColor</A>&gt; <B>getIndexHash</B>()</PRE>
+<DL>
+<DD>This function returns all the colours in an unmodifiable Map.
+ The map is cached on first use.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a Map containing all colours keyed by <tt>Integer</tt> excel-style palette indexes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMutableIndexHash()"><!-- --></A><H3>
+getMutableIndexHash</H3>
+<PRE>
+public static final java.util.Map&lt;java.lang.Integer,<A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html" title="class in org.apache.poi.hssf.util">HSSFColor</A>&gt; <B>getMutableIndexHash</B>()</PRE>
+<DL>
+<DD>This function returns all the Colours, stored in a Map that
+  can be edited. No caching is performed. If you don't need to edit
+  the table, then call <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html#getIndexHash()"><CODE>getIndexHash()</CODE></A> which returns a
+  statically cached imuatable map of colours.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTripletHash()"><!-- --></A><H3>
+getTripletHash</H3>
+<PRE>
+public static java.util.Map&lt;java.lang.String,<A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html" title="class in org.apache.poi.hssf.util">HSSFColor</A>&gt; <B>getTripletHash</B>()</PRE>
+<DL>
+<DD>this function returns all colors in a hastable.  Its not implemented as a
+ static member/staticly initialized because that would be dirty in a
+ server environment as it is intended.  This means you'll eat the time
+ it takes to create it once per request but you will not hold onto it
+ if you have none of those requests.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a Map containing all colors keyed by String gnumeric-like triplets</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIndex()"><!-- --></A><H3>
+getIndex</H3>
+<PRE>
+public short <B>getIndex</B>()</PRE>
+<DL>
+<DD>returns color standard palette index
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>index to the standard palette</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIndex2()"><!-- --></A><H3>
+getIndex2</H3>
+<PRE>
+public short <B>getIndex2</B>()</PRE>
+<DL>
+<DD>returns alternative color standard palette index
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>alternative index to the standard palette, if -1 this index is not defined</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTriplet()"><!-- --></A><H3>
+getTriplet</H3>
+<PRE>
+public short[] <B>getTriplet</B>()</PRE>
+<DL>
+<DD>returns  RGB triplet (0, 0, 0)
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>triplet representation like that in Excel</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHexString()"><!-- --></A><H3>
+getHexString</H3>
+<PRE>
+public java.lang.String <B>getHexString</B>()</PRE>
+<DL>
+<DD>returns colon-delimited hex string "0:0:0"
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a hex string exactly like a gnumeric triplet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toHSSFColor(org.apache.poi.ss.usermodel.Color)"><!-- --></A><H3>
+toHSSFColor</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html" title="class in org.apache.poi.hssf.util">HSSFColor</A> <B>toHSSFColor</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A>&nbsp;color)</PRE>
+<DL>
+<DD>Checked type cast <tt>color</tt> to an HSSFColor.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - the color to type cast
+<DT><B>Returns:</B><DD>the type casted color
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if color is null or is not an instance of HSSFColor</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/util/CellReference.html" title="class in org.apache.poi.hssf.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.AQUA.html" title="class in org.apache.poi.hssf.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/util/HSSFColor.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFColor.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

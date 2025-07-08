@@ -1,0 +1,464 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>POI-HSLF - A Quick Guide</title>
+<link type="text/css" href="../../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../../skin/profile.css" rel="stylesheet">
+<script src="../../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../../help/index.html">Help</a>
+</li>
+<li class="current">
+<a class="selected" href="../../components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="../../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Component APIs</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../apidocs/index.html">Javadocs</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.3', '../../skin/')" id="menu_1.1.3Title" class="menutitle">Excel (HSSF/XSSF)</div>
+<div id="menu_1.1.3" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/spreadsheet/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/how-to.html">HOWTO</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/converting.html">HSSF to SS Converting</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/formula.html">Formula Support</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval.html">Formula Evaluation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval-devguide.html">Eval Dev Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/examples.html">Examples</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/use-case.html">Use Case</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/diagrams.html">Pictorial Docs</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/limitations.html">Limitations</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/user-defined-functions.html">User Defined Functions</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/excelant.html">ExcelAnt Tests</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/hacking-hssf.html">Hacking HSSF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/record-generator.html">Record Generator</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/chart.html">Charts</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_selected_1.1.4', '../../skin/')" id="menu_selected_1.1.4Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">PowerPoint (HSLF/XSLF)</div>
+<div id="menu_selected_1.1.4" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/slideshow/index.html">Overview</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">Quick Guide</div>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/how-to-shapes.html">HSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/xslf-cookbook.html">XSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-wmf-emf-renderer.html">Render SL/WMF/EMF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-file-format.html">PPT File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.5', '../../skin/')" id="menu_1.1.5Title" class="menutitle">Word (HWPF/XWPF)</div>
+<div id="menu_1.1.5" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/document/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide.html">HWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide-xwpf.html">XWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/docoverview.html">HWPF Format</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/projectplan.html">HWPF Project plan</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hsmf/index.html">Outlook (HSMF)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/diagram/index.html">Visio (HDGF+XDGF)</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.8', '../../skin/')" id="menu_1.1.8Title" class="menutitle">Publisher (HPBF)</div>
+<div id="menu_1.1.8" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpbf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpbf/file-format.html">File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.9', '../../skin/')" id="menu_1.1.9Title" class="menutitle">OLE2 Filesystem (POIFS)</div>
+<div id="menu_1.1.9" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/poifs/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/embeded.html">Embedded Documents</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/fileformat.html">File System Documentation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/usecases.html">Use Cases</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/design.html">Design</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.10', '../../skin/')" id="menu_1.1.10Title" class="menutitle">OLE2 Document Props (HPSF)</div>
+<div id="menu_1.1.10" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpsf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/thumbnails.html">Thumbnails</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/internals.html">Internals</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/todo.html">To Do</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hmef/index.html">TNEF (HMEF) for winmail.dat</a>
+</div>
+<div class="menuitem">
+<a href="../../components/oxml4j/index.html">OpenXML4J (OOXML)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/logging.html">Logging framework</a>
+</div>
+<div class="menuitem">
+<a href="../../components/configuration.html">Configuration</a>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>POI-HSLF - A Quick Guide</h1>
+<h3>Overview</h3>
+<div id="front-matter"></div>
+        
+<a name="Basic+Text+Extraction"></a>
+<h2 class="boxed">Basic Text Extraction</h2>
+<div class="section">
+<p>For basic text extraction, make use of 
+			<span class="codefrag">org.apache.poi.sl.extractor.SlideShowExtractor</span>.
+			It accepts a slideshow which can be created from a file or stream via <span class="codefrag">org.apache.poi.sl.usermodel.SlideShowFactory</span>.
+			The <span class="codefrag">getText()</span> method can be used to get the text from the slides.
+		</p>
+</div>
+		
+		
+<a name="Specific+Text+Extraction"></a>
+<h2 class="boxed">Specific Text Extraction</h2>
+<div class="section">
+<p>To get specific bits of text, first create a <span class="codefrag">org.apache.poi.hslf.usermodel.HSLFSlideShow</span>
+(from a <span class="codefrag">org.apache.poi.hslf.usermodel.HSLFSlideShowImpl</span>, which accepts a file or an input
+stream). Use <span class="codefrag">getSlides()</span> and <span class="codefrag">getNotes()</span> to get the slides and notes.
+These can be queried to get their page ID (though they should be returned
+in the right order).</p>
+<p>You can then call <span class="codefrag">getTextParagraphs()</span> on these, to get 
+their blocks of text. (A list of <span class="codefrag">HSLFTextParagraph</span> normally holds all the text in a 
+given area of the page, eg in the title bar, or in a box).
+From the <span class="codefrag">HSLFTextParagraph</span>, you can extract the text, and check
+what type of text it is (eg Body, Title). You can also call
+<span class="codefrag">getTextRuns()</span>, which will return the 
+<span class="codefrag">HSLFTextRun</span>s that make up the <span class="codefrag">TextParagraph</span>. A 
+<span class="codefrag">HSLFTextRun</span> is a text fragment, having the same character formatting.
+The paragraph formatting is defined in the parent <span class="codefrag">HSLFTextParagraph</span>.
+		</p>
+</div>
+		
+        
+<a name="Poor+Quality+Text+Extraction"></a>
+<h2 class="boxed">Poor Quality Text Extraction</h2>
+<div class="section">
+<p>If speed is the most important thing for you, you don't care
+		about getting duplicate blocks of text, you don't care about 
+		getting text from master sheets, and you don't care about getting
+		old text, then 
+		<span class="codefrag">org.apache.poi.hslf.extractor.QuickButCruddyTextExtractor</span>
+		might be of use.</p>
+<p>QuickButCruddyTextExtractor doesn't use the normal record 
+		parsing code, instead it uses a tree structure blind search 
+		method to get all text holding records. You will get all the text,
+		including lots of text you normally wouldn't ever want. However,
+		you will get it back very very fast!</p>
+<p>There are two ways of getting the text back. 
+		<span class="codefrag">getTextAsString()</span> will return a single string with all
+		the text in it. <span class="codefrag">getTextAsVector()</span> will return a 
+		vector of strings, one for each text record found in the file.
+		</p>
+</div>
+
+		
+<a name="Changing+Text"></a>
+<h2 class="boxed">Changing Text</h2>
+<div class="section">
+<p>It is possible to change the text via 
+		<span class="codefrag">HSLFTextParagraph.setText(List&lt;HSLFTextParagraph&gt;,String)</span> or
+		<span class="codefrag">HSLFTextRun.setText(String)</span>. It is possible to add additional TextRuns
+        with <span class="codefrag">HSLFTextParagraph.appendText(List&lt;HSLFTextParagraph&gt;,String,boolean)</span>
+         or <span class="codefrag">HSLFTextParagraph.addTextRun(HSLFTextRun)</span>
+</p>
+<p>When calling <span class="codefrag">HSLFTextParagraph.setText(List&lt;HSLFTextParagraph&gt;,String)</span>, all
+		the text will end up with the same formatting. When calling
+		<span class="codefrag">HSLFTextRun.setText(String)</span>, the text will retain
+		the old formatting of that <span class="codefrag">HSLFTextRun</span>.
+		</p>
+</div>
+
+		
+<a name="Adding+Slides"></a>
+<h2 class="boxed">Adding Slides</h2>
+<div class="section">
+<p>You may add new slides by calling
+		<span class="codefrag">HSLFSlideShow.createSlide()</span>, which will add a new slide
+		to the end of the SlideShow. It is possible to re-order slides with <span class="codefrag">HSLFSlideShow.reorderSlide(...)</span>.
+		</p>
+</div>
+		
+		
+<a name="Guide+to+key+classes"></a>
+<h2 class="boxed">Guide to key classes</h2>
+<div class="section">
+<ul>
+		
+<li>
+<span class="codefrag">org.apache.poi.hslf.usermodel.HSLFSlideShowImpl</span>
+		Handles reading in and writing out files. Calls 
+		<span class="codefrag">org.apache.poi.hslf.record.record</span> to build a tree
+		of all the records in the file, which it allows access to.
+  		</li>
+		
+<li>
+<span class="codefrag">org.apache.poi.hslf.record.Record</span>
+		Base class of all records. Also provides the main record generation
+		code, which will build up a tree of records for a file.
+  		</li>
+  		
+<li>
+<span class="codefrag">org.apache.poi.hslf.usermodel.HSLFSlideShow</span>
+  Builds up model entries from the records, and presents a user facing
+  view of the file
+  		</li>
+  		
+<li>
+<span class="codefrag">org.apache.poi.hslf.usermodel.HSLFSlide</span>
+  A user facing view of a Slide in a slideshow. Allows you to get at the
+  Text of the slide, and at any drawing objects on it.
+  		</li>
+  		
+<li>
+<span class="codefrag">org.apache.poi.hslf.usermodel.HSLFTextParagraph</span>
+  A list of <span class="codefrag">HSLFTextParagraph</span>s holds all the text in a given area of the Slide, and will
+  contain one or more <span class="codefrag">HSLFTextRun</span>s.
+  		</li>
+  		
+<li>
+<span class="codefrag">org.apache.poi.hslf.usermodel.HSLFTextRun</span>
+  Holds a run of text, all having the same character stylings. It is possible to modify text, and/or text stylings.
+  		</li>
+  		
+<li>
+<span class="codefrag">org.apache.poi.sl.extractor.SlideShowExtractor</span>
+  Uses the model code to allow extraction of text from files
+		</li>
+		
+<li>
+<span class="codefrag">org.apache.poi.hslf.extractor.QuickButCruddyTextExtractor</span>
+  Uses the record code to extract all the text from files very fast, 
+  but including deleted text (and other bits of Crud).
+		</li>
+		
+</ul>
+</div>
+	
+<p align="right">
+<font size="-2">by&nbsp;Nick Burch</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0components/slideshow/quick-guide.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

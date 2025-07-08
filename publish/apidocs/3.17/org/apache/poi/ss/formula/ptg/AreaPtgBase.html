@@ -1,0 +1,979 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+AreaPtgBase (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="AreaPtgBase (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtg.html" title="class in org.apache.poi.ss.formula.ptg"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/ptg/ArrayPtg.html" title="class in org.apache.poi.ss.formula.ptg"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/ptg/AreaPtgBase.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="AreaPtgBase.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_org.apache.poi.ss.formula.ptg.Ptg">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.formula.ptg</FONT>
+<BR>
+Class AreaPtgBase</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">org.apache.poi.ss.formula.ptg.Ptg</A>
+      <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/OperandPtg.html" title="class in org.apache.poi.ss.formula.ptg">org.apache.poi.ss.formula.ptg.OperandPtg</A>
+          <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.formula.ptg.AreaPtgBase</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.html" title="interface in org.apache.poi.ss.formula.ptg">AreaI</A></DD>
+</DL>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Area2DPtgBase.html" title="class in org.apache.poi.ss.formula.ptg">Area2DPtgBase</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Area3DPtg.html" title="class in org.apache.poi.ss.formula.ptg">Area3DPtg</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Area3DPxg.html" title="class in org.apache.poi.ss.formula.ptg">Area3DPxg</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public abstract class <B>AreaPtgBase</B><DT>extends <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/OperandPtg.html" title="class in org.apache.poi.ss.formula.ptg">OperandPtg</A><DT>implements <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.html" title="interface in org.apache.poi.ss.formula.ptg">AreaI</A></DL>
+</PRE>
+
+<P>
+Specifies a rectangular area of cells A1:A4 for instance.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_org.apache.poi.ss.formula.ptg.AreaI"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface org.apache.poi.ss.formula.ptg.<A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.html" title="interface in org.apache.poi.ss.formula.ptg">AreaI</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.OffsetArea.html" title="class in org.apache.poi.ss.formula.ptg">AreaI.OffsetArea</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_org.apache.poi.ss.formula.ptg.Ptg"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class org.apache.poi.ss.formula.ptg.<A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#CLASS_ARRAY">CLASS_ARRAY</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#CLASS_REF">CLASS_REF</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#CLASS_VALUE">CLASS_VALUE</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#EMPTY_PTG_ARRAY">EMPTY_PTG_ARRAY</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#AreaPtgBase()">AreaPtgBase</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#AreaPtgBase(org.apache.poi.ss.util.AreaReference)">AreaPtgBase</A></B>(<A HREF="../../../../../../org/apache/poi/ss/util/AreaReference.html" title="class in org.apache.poi.ss.util">AreaReference</A>&nbsp;ar)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#AreaPtgBase(int, int, int, int, boolean, boolean, boolean, boolean)">AreaPtgBase</A></B>(int&nbsp;firstRow,
+            int&nbsp;lastRow,
+            int&nbsp;firstColumn,
+            int&nbsp;lastColumn,
+            boolean&nbsp;firstRowRelative,
+            boolean&nbsp;lastRowRelative,
+            boolean&nbsp;firstColRelative,
+            boolean&nbsp;lastColRelative)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#formatReferenceAsString()">formatReferenceAsString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#getDefaultOperandClass()">getDefaultOperandClass</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#getFirstColumn()">getFirstColumn</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#getFirstColumnRaw()">getFirstColumnRaw</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#getFirstRow()">getFirstRow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#getLastColumn()">getLastColumn</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#getLastColumnRaw()">getLastColumnRaw</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#getLastRow()">getLastRow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#isFirstColRelative()">isFirstColRelative</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#isFirstRowRelative()">isFirstRowRelative</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#isLastColRelative()">isLastColRelative</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#isLastRowRelative()">isLastRowRelative</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.lang.RuntimeException</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#notImplemented()">notImplemented</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TODO - (May-2008) fix subclasses of AreaPtg 'AreaN~' which are used in shared formulas.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#readCoordinates(org.apache.poi.util.LittleEndianInput)">readCoordinates</A></B>(<A HREF="../../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;in)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#setFirstColRelative(boolean)">setFirstColRelative</A></B>(boolean&nbsp;rel)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether the first column is relative</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#setFirstColumn(int)">setFirstColumn</A></B>(int&nbsp;colIx)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the first column in the area</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#setFirstColumnRaw(int)">setFirstColumnRaw</A></B>(int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the first column irrespective of the bitmasks</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#setFirstRow(int)">setFirstRow</A></B>(int&nbsp;rowIx)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sets the first row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#setFirstRowRelative(boolean)">setFirstRowRelative</A></B>(boolean&nbsp;rel)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sets the first row to relative or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#setLastColRelative(boolean)">setLastColRelative</A></B>(boolean&nbsp;rel)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether the last column should be relative or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#setLastColumn(int)">setLastColumn</A></B>(int&nbsp;colIx)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the last column in the area</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#setLastColumnRaw(short)">setLastColumnRaw</A></B>(short&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the last column irrespective of the bitmasks</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#setLastRow(int)">setLastRow</A></B>(int&nbsp;rowIx)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#setLastRowRelative(boolean)">setLastRowRelative</A></B>(boolean&nbsp;rel)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether the last row is relative or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#sortTopLeftToBottomRight()">sortTopLeftToBottomRight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sort the first and last row and columns in-place to the preferred (top left:bottom right) order
+ Note: Sort only occurs when an instance is constructed or when this method is called.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#toFormulaString()">toFormulaString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return a string representation of this token alone</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html#writeCoordinates(org.apache.poi.util.LittleEndianOutput)">writeCoordinates</A></B>(<A HREF="../../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.ss.formula.ptg.OperandPtg"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.ss.formula.ptg.<A HREF="../../../../../../org/apache/poi/ss/formula/ptg/OperandPtg.html" title="class in org.apache.poi.ss.formula.ptg">OperandPtg</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/OperandPtg.html#copy()">copy</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/OperandPtg.html#isBaseToken()">isBaseToken</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.ss.formula.ptg.Ptg"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.ss.formula.ptg.<A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#createPtg(org.apache.poi.util.LittleEndianInput)">createPtg</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#doesFormulaReferToDeletedCell(org.apache.poi.ss.formula.ptg.Ptg[])">doesFormulaReferToDeletedCell</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#getEncodedSize(org.apache.poi.ss.formula.ptg.Ptg[])">getEncodedSize</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#getEncodedSizeWithoutArrayData(org.apache.poi.ss.formula.ptg.Ptg[])">getEncodedSizeWithoutArrayData</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#getPtgClass()">getPtgClass</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#getRVAType()">getRVAType</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#getSize()">getSize</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#readTokens(int, org.apache.poi.util.LittleEndianInput)">readTokens</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#serializePtgs(org.apache.poi.ss.formula.ptg.Ptg[], byte[], int)">serializePtgs</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#setClass(byte)">setClass</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#toString()">toString</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#write(org.apache.poi.util.LittleEndianOutput)">write</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="AreaPtgBase()"><!-- --></A><H3>
+AreaPtgBase</H3>
+<PRE>
+protected <B>AreaPtgBase</B>()</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="AreaPtgBase(org.apache.poi.ss.util.AreaReference)"><!-- --></A><H3>
+AreaPtgBase</H3>
+<PRE>
+protected <B>AreaPtgBase</B>(<A HREF="../../../../../../org/apache/poi/ss/util/AreaReference.html" title="class in org.apache.poi.ss.util">AreaReference</A>&nbsp;ar)</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="AreaPtgBase(int, int, int, int, boolean, boolean, boolean, boolean)"><!-- --></A><H3>
+AreaPtgBase</H3>
+<PRE>
+protected <B>AreaPtgBase</B>(int&nbsp;firstRow,
+                      int&nbsp;lastRow,
+                      int&nbsp;firstColumn,
+                      int&nbsp;lastColumn,
+                      boolean&nbsp;firstRowRelative,
+                      boolean&nbsp;lastRowRelative,
+                      boolean&nbsp;firstColRelative,
+                      boolean&nbsp;lastColRelative)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="notImplemented()"><!-- --></A><H3>
+notImplemented</H3>
+<PRE>
+protected final java.lang.RuntimeException <B>notImplemented</B>()</PRE>
+<DL>
+<DD>TODO - (May-2008) fix subclasses of AreaPtg 'AreaN~' which are used in shared formulas.
+ see similar comment in ReferencePtg
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="sortTopLeftToBottomRight()"><!-- --></A><H3>
+sortTopLeftToBottomRight</H3>
+<PRE>
+public void <B>sortTopLeftToBottomRight</B>()</PRE>
+<DL>
+<DD>Sort the first and last row and columns in-place to the preferred (top left:bottom right) order
+ Note: Sort only occurs when an instance is constructed or when this method is called.
+ 
+ <p>For example, <code>$E5:B$10</code> becomes <code>B5:$E$10</code></p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readCoordinates(org.apache.poi.util.LittleEndianInput)"><!-- --></A><H3>
+readCoordinates</H3>
+<PRE>
+protected final void <B>readCoordinates</B>(<A HREF="../../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;in)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeCoordinates(org.apache.poi.util.LittleEndianOutput)"><!-- --></A><H3>
+writeCoordinates</H3>
+<PRE>
+protected final void <B>writeCoordinates</B>(<A HREF="../../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstRow()"><!-- --></A><H3>
+getFirstRow</H3>
+<PRE>
+public final int <B>getFirstRow</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.html#getFirstRow()">getFirstRow</A></CODE> in interface <CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.html" title="interface in org.apache.poi.ss.formula.ptg">AreaI</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the first row in the area</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFirstRow(int)"><!-- --></A><H3>
+setFirstRow</H3>
+<PRE>
+public final void <B>setFirstRow</B>(int&nbsp;rowIx)</PRE>
+<DL>
+<DD>sets the first row
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rowIx</CODE> - number (0-based)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastRow()"><!-- --></A><H3>
+getLastRow</H3>
+<PRE>
+public final int <B>getLastRow</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.html#getLastRow()">getLastRow</A></CODE> in interface <CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.html" title="interface in org.apache.poi.ss.formula.ptg">AreaI</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>last row in the range (x2 in x1,y1-x2,y2)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLastRow(int)"><!-- --></A><H3>
+setLastRow</H3>
+<PRE>
+public final void <B>setLastRow</B>(int&nbsp;rowIx)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rowIx</CODE> - last row number in the area</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstColumn()"><!-- --></A><H3>
+getFirstColumn</H3>
+<PRE>
+public final int <B>getFirstColumn</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.html#getFirstColumn()">getFirstColumn</A></CODE> in interface <CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.html" title="interface in org.apache.poi.ss.formula.ptg">AreaI</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the first column number in the area.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstColumnRaw()"><!-- --></A><H3>
+getFirstColumnRaw</H3>
+<PRE>
+public final short <B>getFirstColumnRaw</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the first column number + the options bit settings unstripped</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isFirstRowRelative()"><!-- --></A><H3>
+isFirstRowRelative</H3>
+<PRE>
+public final boolean <B>isFirstRowRelative</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether or not the first row is a relative reference or not.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFirstRowRelative(boolean)"><!-- --></A><H3>
+setFirstRowRelative</H3>
+<PRE>
+public final void <B>setFirstRowRelative</B>(boolean&nbsp;rel)</PRE>
+<DL>
+<DD>sets the first row to relative or not
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rel</CODE> - is relative or not.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isFirstColRelative()"><!-- --></A><H3>
+isFirstColRelative</H3>
+<PRE>
+public final boolean <B>isFirstColRelative</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>isrelative first column to relative or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFirstColRelative(boolean)"><!-- --></A><H3>
+setFirstColRelative</H3>
+<PRE>
+public final void <B>setFirstColRelative</B>(boolean&nbsp;rel)</PRE>
+<DL>
+<DD>set whether the first column is relative
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFirstColumn(int)"><!-- --></A><H3>
+setFirstColumn</H3>
+<PRE>
+public final void <B>setFirstColumn</B>(int&nbsp;colIx)</PRE>
+<DL>
+<DD>set the first column in the area
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFirstColumnRaw(int)"><!-- --></A><H3>
+setFirstColumnRaw</H3>
+<PRE>
+public final void <B>setFirstColumnRaw</B>(int&nbsp;column)</PRE>
+<DL>
+<DD>set the first column irrespective of the bitmasks
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastColumn()"><!-- --></A><H3>
+getLastColumn</H3>
+<PRE>
+public final int <B>getLastColumn</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.html#getLastColumn()">getLastColumn</A></CODE> in interface <CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.html" title="interface in org.apache.poi.ss.formula.ptg">AreaI</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>lastcolumn in the area</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastColumnRaw()"><!-- --></A><H3>
+getLastColumnRaw</H3>
+<PRE>
+public final short <B>getLastColumnRaw</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>last column and bitmask (the raw field)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isLastRowRelative()"><!-- --></A><H3>
+isLastRowRelative</H3>
+<PRE>
+public final boolean <B>isLastRowRelative</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>last row relative or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLastRowRelative(boolean)"><!-- --></A><H3>
+setLastRowRelative</H3>
+<PRE>
+public final void <B>setLastRowRelative</B>(boolean&nbsp;rel)</PRE>
+<DL>
+<DD>set whether the last row is relative or not
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rel</CODE> - <code>true</code> if the last row relative, else
+ <code>false</code></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isLastColRelative()"><!-- --></A><H3>
+isLastColRelative</H3>
+<PRE>
+public final boolean <B>isLastColRelative</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>lastcol relative or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLastColRelative(boolean)"><!-- --></A><H3>
+setLastColRelative</H3>
+<PRE>
+public final void <B>setLastColRelative</B>(boolean&nbsp;rel)</PRE>
+<DL>
+<DD>set whether the last column should be relative or not
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLastColumn(int)"><!-- --></A><H3>
+setLastColumn</H3>
+<PRE>
+public final void <B>setLastColumn</B>(int&nbsp;colIx)</PRE>
+<DL>
+<DD>set the last column in the area
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLastColumnRaw(short)"><!-- --></A><H3>
+setLastColumnRaw</H3>
+<PRE>
+public final void <B>setLastColumnRaw</B>(short&nbsp;column)</PRE>
+<DL>
+<DD>set the last column irrespective of the bitmasks
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="formatReferenceAsString()"><!-- --></A><H3>
+formatReferenceAsString</H3>
+<PRE>
+protected final java.lang.String <B>formatReferenceAsString</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toFormulaString()"><!-- --></A><H3>
+toFormulaString</H3>
+<PRE>
+public java.lang.String <B>toFormulaString</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#toFormulaString()">Ptg</A></CODE></B></DD>
+<DD>return a string representation of this token alone
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#toFormulaString()">toFormulaString</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDefaultOperandClass()"><!-- --></A><H3>
+getDefaultOperandClass</H3>
+<PRE>
+public byte <B>getDefaultOperandClass</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html#getDefaultOperandClass()">getDefaultOperandClass</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtg.html" title="class in org.apache.poi.ss.formula.ptg"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/ptg/ArrayPtg.html" title="class in org.apache.poi.ss.formula.ptg"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/ptg/AreaPtgBase.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="AreaPtgBase.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_org.apache.poi.ss.formula.ptg.Ptg">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

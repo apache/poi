@@ -1,0 +1,775 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+CategorySeriesAxisRecord (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="CategorySeriesAxisRecord (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/chart/BeginRecord.html" title="class in org.apache.poi.hssf.record.chart"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/chart/CatLabRecord.html" title="class in org.apache.poi.hssf.record.chart"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CategorySeriesAxisRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.record.chart</FONT>
+<BR>
+Class CategorySeriesAxisRecord</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.RecordBase</A>
+      <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.Record</A>
+          <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.StandardRecord</A>
+              <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.record.chart.CategorySeriesAxisRecord</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>CategorySeriesAxisRecord</B><DT>extends <A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A><DT>implements java.lang.Cloneable</DL>
+</PRE>
+
+<P>
+This record refers to a category or series axis and is used to specify label/tickmark frequency.<p>
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#sid">sid</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#CategorySeriesAxisRecord()">CategorySeriesAxisRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#CategorySeriesAxisRecord(org.apache.poi.hssf.record.RecordInputStream)">CategorySeriesAxisRecord</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/record/RecordInputStream.html" title="class in org.apache.poi.hssf.record">RecordInputStream</A>&nbsp;in)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html" title="class in org.apache.poi.hssf.record.chart">CategorySeriesAxisRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#clone()">clone</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#getCrossingPoint()">getCrossingPoint</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the crossing point field for the CategorySeriesAxis record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#getDataSize()">getDataSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#getLabelFrequency()">getLabelFrequency</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the label frequency field for the CategorySeriesAxis record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#getOptions()">getOptions</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the options field for the CategorySeriesAxis record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#getSid()">getSid</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return the non static version of the id for this record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#getTickMarkFrequency()">getTickMarkFrequency</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the tick mark frequency field for the CategorySeriesAxis record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#isCrossesFarRight()">isCrossesFarRight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;axis crosses at the far right</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#isReversed()">isReversed</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;categories are displayed in reverse order</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#isValueAxisCrossing()">isValueAxisCrossing</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set true to indicate axis crosses between categories and false to cross axis midway</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">serialize</A></B>(<A HREF="../../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write the data content of this BIFF record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#setCrossesFarRight(boolean)">setCrossesFarRight</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the crosses far right field value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#setCrossingPoint(short)">setCrossingPoint</A></B>(short&nbsp;field_1_crossingPoint)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the crossing point field for the CategorySeriesAxis record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#setLabelFrequency(short)">setLabelFrequency</A></B>(short&nbsp;field_2_labelFrequency)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the label frequency field for the CategorySeriesAxis record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#setOptions(short)">setOptions</A></B>(short&nbsp;field_4_options)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the options field for the CategorySeriesAxis record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#setReversed(boolean)">setReversed</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the reversed field value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#setTickMarkFrequency(short)">setTickMarkFrequency</A></B>(short&nbsp;field_3_tickMarkFrequency)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the tick mark frequency field for the CategorySeriesAxis record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#setValueAxisCrossing(boolean)">setValueAxisCrossing</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the value axis crossing field value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a string representation of the record (for biffview/debugging)</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.StandardRecord"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.<A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html#getRecordSize()">getRecordSize</A>, <A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(int, byte[])">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.Record"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.<A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#cloneViaReserialise()">cloneViaReserialise</A>, <A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#serialize()">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="sid"><!-- --></A><H3>
+sid</H3>
+<PRE>
+public static final short <B>sid</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.chart.CategorySeriesAxisRecord.sid">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="CategorySeriesAxisRecord()"><!-- --></A><H3>
+CategorySeriesAxisRecord</H3>
+<PRE>
+public <B>CategorySeriesAxisRecord</B>()</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="CategorySeriesAxisRecord(org.apache.poi.hssf.record.RecordInputStream)"><!-- --></A><H3>
+CategorySeriesAxisRecord</H3>
+<PRE>
+public <B>CategorySeriesAxisRecord</B>(<A HREF="../../../../../../org/apache/poi/hssf/record/RecordInputStream.html" title="class in org.apache.poi.hssf.record">RecordInputStream</A>&nbsp;in)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#toString()">Record</A></CODE></B></DD>
+<DD>get a string representation of the record (for biffview/debugging)
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#toString()">toString</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="serialize(org.apache.poi.util.LittleEndianOutput)"><!-- --></A><H3>
+serialize</H3>
+<PRE>
+public void <B>serialize</B>(<A HREF="../../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">StandardRecord</A></CODE></B></DD>
+<DD>Write the data content of this BIFF record.  The 'ushort sid' and 'ushort size' header fields
+ have already been written by the superclass.
+ <p>
+ The number of bytes written must equal the record size reported by
+  <A HREF="../../../../../../org/apache/poi/hssf/record/RecordBase.html#getRecordSize()"><CODE>RecordBase.getRecordSize()</CODE></A>} minus four
+  ( record header consisting of a 'ushort sid' and 'ushort reclength' has already been written
+  by their superclass).
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">serialize</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>out</CODE> - the output object</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataSize()"><!-- --></A><H3>
+getDataSize</H3>
+<PRE>
+protected int <B>getDataSize</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html#getDataSize()">getDataSize</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSid()"><!-- --></A><H3>
+getSid</H3>
+<PRE>
+public short <B>getSid</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#getSid()">Record</A></CODE></B></DD>
+<DD>return the non static version of the id for this record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#getSid()">getSid</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>he id for this record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clone()"><!-- --></A><H3>
+clone</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html" title="class in org.apache.poi.hssf.record.chart">CategorySeriesAxisRecord</A> <B>clone</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#clone()">clone</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCrossingPoint()"><!-- --></A><H3>
+getCrossingPoint</H3>
+<PRE>
+public short <B>getCrossingPoint</B>()</PRE>
+<DL>
+<DD>Get the crossing point field for the CategorySeriesAxis record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCrossingPoint(short)"><!-- --></A><H3>
+setCrossingPoint</H3>
+<PRE>
+public void <B>setCrossingPoint</B>(short&nbsp;field_1_crossingPoint)</PRE>
+<DL>
+<DD>Set the crossing point field for the CategorySeriesAxis record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLabelFrequency()"><!-- --></A><H3>
+getLabelFrequency</H3>
+<PRE>
+public short <B>getLabelFrequency</B>()</PRE>
+<DL>
+<DD>Get the label frequency field for the CategorySeriesAxis record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLabelFrequency(short)"><!-- --></A><H3>
+setLabelFrequency</H3>
+<PRE>
+public void <B>setLabelFrequency</B>(short&nbsp;field_2_labelFrequency)</PRE>
+<DL>
+<DD>Set the label frequency field for the CategorySeriesAxis record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTickMarkFrequency()"><!-- --></A><H3>
+getTickMarkFrequency</H3>
+<PRE>
+public short <B>getTickMarkFrequency</B>()</PRE>
+<DL>
+<DD>Get the tick mark frequency field for the CategorySeriesAxis record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTickMarkFrequency(short)"><!-- --></A><H3>
+setTickMarkFrequency</H3>
+<PRE>
+public void <B>setTickMarkFrequency</B>(short&nbsp;field_3_tickMarkFrequency)</PRE>
+<DL>
+<DD>Set the tick mark frequency field for the CategorySeriesAxis record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOptions()"><!-- --></A><H3>
+getOptions</H3>
+<PRE>
+public short <B>getOptions</B>()</PRE>
+<DL>
+<DD>Get the options field for the CategorySeriesAxis record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setOptions(short)"><!-- --></A><H3>
+setOptions</H3>
+<PRE>
+public void <B>setOptions</B>(short&nbsp;field_4_options)</PRE>
+<DL>
+<DD>Set the options field for the CategorySeriesAxis record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setValueAxisCrossing(boolean)"><!-- --></A><H3>
+setValueAxisCrossing</H3>
+<PRE>
+public void <B>setValueAxisCrossing</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Sets the value axis crossing field value.
+ set true to indicate axis crosses between categories and false to cross axis midway
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isValueAxisCrossing()"><!-- --></A><H3>
+isValueAxisCrossing</H3>
+<PRE>
+public boolean <B>isValueAxisCrossing</B>()</PRE>
+<DL>
+<DD>set true to indicate axis crosses between categories and false to cross axis midway
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the value axis crossing field value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCrossesFarRight(boolean)"><!-- --></A><H3>
+setCrossesFarRight</H3>
+<PRE>
+public void <B>setCrossesFarRight</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Sets the crosses far right field value.
+ axis crosses at the far right
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isCrossesFarRight()"><!-- --></A><H3>
+isCrossesFarRight</H3>
+<PRE>
+public boolean <B>isCrossesFarRight</B>()</PRE>
+<DL>
+<DD>axis crosses at the far right
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the crosses far right field value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setReversed(boolean)"><!-- --></A><H3>
+setReversed</H3>
+<PRE>
+public void <B>setReversed</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Sets the reversed field value.
+ categories are displayed in reverse order
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isReversed()"><!-- --></A><H3>
+isReversed</H3>
+<PRE>
+public boolean <B>isReversed</B>()</PRE>
+<DL>
+<DD>categories are displayed in reverse order
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the reversed field value.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/chart/BeginRecord.html" title="class in org.apache.poi.hssf.record.chart"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/chart/CatLabRecord.html" title="class in org.apache.poi.hssf.record.chart"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/hssf/record/chart/CategorySeriesAxisRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CategorySeriesAxisRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

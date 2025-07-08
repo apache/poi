@@ -1,0 +1,1960 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+DocumentSummaryInformation (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="DocumentSummaryInformation (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/Filetime.html" title="class in org.apache.poi.hpsf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/hpsf/DocumentSummaryInformation.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DocumentSummaryInformation.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hpsf</FONT>
+<BR>
+Class DocumentSummaryInformation</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">org.apache.poi.hpsf.PropertySet</A>
+      <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../org/apache/poi/hpsf/MutablePropertySet.html" title="class in org.apache.poi.hpsf">org.apache.poi.hpsf.MutablePropertySet</A>
+          <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../org/apache/poi/hpsf/SpecialPropertySet.html" title="class in org.apache.poi.hpsf">org.apache.poi.hpsf.SpecialPropertySet</A>
+              <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hpsf.DocumentSummaryInformation</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>DocumentSummaryInformation</B><DT>extends <A HREF="../../../../org/apache/poi/hpsf/SpecialPropertySet.html" title="class in org.apache.poi.hpsf">SpecialPropertySet</A></DL>
+</PRE>
+
+<P>
+Convenience class representing a DocumentSummary Information stream in a
+ Microsoft Office document.
+<P>
+
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>SummaryInformation</CODE></A></DL>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#DEFAULT_STREAM_NAME">DEFAULT_STREAM_NAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The document name a document summary information stream
+ usually has in a POIFS filesystem.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_org.apache.poi.hpsf.PropertySet"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class org.apache.poi.hpsf.<A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">PropertySet</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#OS_MACINTOSH">OS_MACINTOSH</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#OS_WIN16">OS_WIN16</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#OS_WIN32">OS_WIN32</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#DocumentSummaryInformation()">DocumentSummaryInformation</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an empty <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#DocumentSummaryInformation(java.io.InputStream)">DocumentSummaryInformation</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> instance from an <CODE>InputStream</CODE> in the Horrible Property Set Format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#DocumentSummaryInformation(org.apache.poi.hpsf.PropertySet)">DocumentSummaryInformation</A></B>(<A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">PropertySet</A>&nbsp;ps)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> from a given
+ <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A>.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getApplicationVersion()">getApplicationVersion</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the version of the Application which wrote the
+  Property set, stored with the two high order bytes having the major
+  version number, and the two low order bytes the minor version number.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getByteCount()">getByteCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the byte count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a byte count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getCategory()">getCategory</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the category (or <code>null</code>).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getCharCountWithSpaces()">getCharCountWithSpaces</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the character count including whitespace, or 0 if the 
+  <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain this char count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getCompany()">getCompany</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the company (or <code>null</code>).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getContentStatus()">getContentStatus</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the content status of the file (or <code>null</code>).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getContentType()">getContentType</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the content type of the file (or <code>null</code>).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html" title="class in org.apache.poi.hpsf">CustomProperties</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getCustomProperties()">getCustomProperties</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the custom properties.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getDocparts()">getDocparts</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the doc parts (or <code>null</code>)
+ <strong>when this method is implemented.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getDocumentVersion()">getDocumentVersion</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the document version as a string, which is normally unset and empty
+  (or <code>null</code>).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getHeadingPair()">getHeadingPair</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the heading pair (or <code>null</code>)
+ <strong>when this method is implemented.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getHiddenCount()">getHiddenCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the hidden count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a hidden
+ count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getHyperlinksChanged()">getHyperlinksChanged</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get if the User Defined Property Set has been updated outside of the 
+ Application.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getLanguage()">getLanguage</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the document language, which is normally unset and empty (or <code>null</code>).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getLineCount()">getLineCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the line count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a line count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getLinksDirty()">getLinksDirty</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns <code>true</code> if the custom links are dirty.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getManager()">getManager</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the manager (or <code>null</code>).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getMMClipCount()">getMMClipCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the mmclip count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a mmclip
+ count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getNoteCount()">getNoteCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the note count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a note count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getParCount()">getParCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the par count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a par count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getPresentationFormat()">getPresentationFormat</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the presentation format (or
+ <code>null</code>).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getPropertySetIDMap()">getPropertySetIDMap</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The id to name mapping of the properties in this set.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getScale()">getScale</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns <code>true</code> when scaling of the thumbnail is
+ desired, <code>false</code> if cropping is desired.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getSlideCount()">getSlideCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the slide count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a slide count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#getVBADigitalSignature()">getVBADigitalSignature</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the VBA digital signature for the VBA project 
+ embedded in the document (or <code>null</code>).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeApplicationVersion()">removeApplicationVersion</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the Application Version</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeByteCount()">removeByteCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the byte count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeCategory()">removeCategory</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the category.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeCharCountWithSpaces()">removeCharCountWithSpaces</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the character count</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeCompany()">removeCompany</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the company.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeContentStatus()">removeContentStatus</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the content status of the file</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeContentType()">removeContentType</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the content type of the file</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeCustomProperties()">removeCustomProperties</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the custom properties.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeDocparts()">removeDocparts</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the doc parts.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeDocumentVersion()">removeDocumentVersion</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the document version string</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeHeadingPair()">removeHeadingPair</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the heading pair.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeHiddenCount()">removeHiddenCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the hidden count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeHyperlinksChanged()">removeHyperlinksChanged</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the flag for if the User Defined Property Set has been updated
+  outside of the Application.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeLanguage()">removeLanguage</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the document language</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeLineCount()">removeLineCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the line count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeLinksDirty()">removeLinksDirty</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the links dirty.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeManager()">removeManager</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the manager.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeMMClipCount()">removeMMClipCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the mmclip count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeNoteCount()">removeNoteCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the noteCount.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeParCount()">removeParCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the par count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removePresentationFormat()">removePresentationFormat</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the presentation format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeScale()">removeScale</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the scale.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeSlideCount()">removeSlideCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the slide count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#removeVBADigitalSignature()">removeVBADigitalSignature</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the VBA Digital Signature</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setApplicationVersion(int)">setApplicationVersion</A></B>(int&nbsp;version)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the Application version, which must be a 4 byte int with
+  the  two high order bytes having the major version number, and the 
+  two low order bytes the minor version number.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setByteCount(int)">setByteCount</A></B>(int&nbsp;byteCount)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the byte count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setCategory(java.lang.String)">setCategory</A></B>(java.lang.String&nbsp;category)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the category.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setCharCountWithSpaces(int)">setCharCountWithSpaces</A></B>(int&nbsp;count)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the character count including whitespace</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setCompany(java.lang.String)">setCompany</A></B>(java.lang.String&nbsp;company)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the company.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setContentStatus(java.lang.String)">setContentStatus</A></B>(java.lang.String&nbsp;status)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the content status of the file</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setContentType(java.lang.String)">setContentType</A></B>(java.lang.String&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the content type of the file</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setCustomProperties(org.apache.poi.hpsf.CustomProperties)">setCustomProperties</A></B>(<A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html" title="class in org.apache.poi.hpsf">CustomProperties</A>&nbsp;customProperties)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the custom properties.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setDocparts(byte[])">setDocparts</A></B>(byte[]&nbsp;docparts)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the doc parts.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setDocumentVersion(java.lang.String)">setDocumentVersion</A></B>(java.lang.String&nbsp;version)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the document version string</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setHeadingPair(byte[])">setHeadingPair</A></B>(byte[]&nbsp;headingPair)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the heading pair.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setHiddenCount(int)">setHiddenCount</A></B>(int&nbsp;hiddenCount)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the hidden count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setHyperlinksChanged(boolean)">setHyperlinksChanged</A></B>(boolean&nbsp;changed)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the flag for if the User Defined Property Set has been updated outside 
+  of the Application.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setLanguage(java.lang.String)">setLanguage</A></B>(java.lang.String&nbsp;language)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the document language</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setLineCount(int)">setLineCount</A></B>(int&nbsp;lineCount)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the line count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setLinksDirty(boolean)">setLinksDirty</A></B>(boolean&nbsp;linksDirty)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the linksDirty.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setManager(java.lang.String)">setManager</A></B>(java.lang.String&nbsp;manager)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the manager.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setMMClipCount(int)">setMMClipCount</A></B>(int&nbsp;mmClipCount)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the mmclip count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setNoteCount(int)">setNoteCount</A></B>(int&nbsp;noteCount)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the note count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setParCount(int)">setParCount</A></B>(int&nbsp;parCount)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the par count.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setPresentationFormat(java.lang.String)">setPresentationFormat</A></B>(java.lang.String&nbsp;presentationFormat)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the presentation format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setScale(boolean)">setScale</A></B>(boolean&nbsp;scale)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the scale.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setSlideCount(int)">setSlideCount</A></B>(int&nbsp;slideCount)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the slideCount.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html#setVBADigitalSignature(byte[])">setVBADigitalSignature</A></B>(byte[]&nbsp;signature)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the VBA digital signature for the VBA project 
+  embedded in the document.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hpsf.PropertySet"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hpsf.<A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">PropertySet</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#addSection(org.apache.poi.hpsf.Section)">addSection</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#clearSections()">clearSections</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getByteOrder()">getByteOrder</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getClassID()">getClassID</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getFirstSection()">getFirstSection</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getFormat()">getFormat</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getOSVersion()">getOSVersion</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getProperties()">getProperties</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getProperty(int)">getProperty</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyBooleanValue(int)">getPropertyBooleanValue</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyIntValue(int)">getPropertyIntValue</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyStringValue(int)">getPropertyStringValue</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyStringValue(java.lang.Object)">getPropertyStringValue</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getSectionCount()">getSectionCount</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getSections()">getSections</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getSingleSection()">getSingleSection</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#hashCode()">hashCode</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#isDocumentSummaryInformation()">isDocumentSummaryInformation</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#isPropertySetStream(byte[], int, int)">isPropertySetStream</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#isPropertySetStream(java.io.InputStream)">isPropertySetStream</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#isSummaryInformation()">isSummaryInformation</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#remove1stProperty(long)">remove1stProperty</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#set1stProperty(long, boolean)">set1stProperty</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#set1stProperty(long, byte[])">set1stProperty</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#set1stProperty(long, int)">set1stProperty</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#set1stProperty(long, java.lang.String)">set1stProperty</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#setByteOrder(int)">setByteOrder</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#setClassID(org.apache.poi.hpsf.ClassID)">setClassID</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#setFormat(int)">setFormat</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#setOSVersion(int)">setOSVersion</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#toInputStream()">toInputStream</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#toString()">toString</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#wasNull()">wasNull</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#write(org.apache.poi.poifs.filesystem.DirectoryEntry, java.lang.String)">write</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#write(java.io.OutputStream)">write</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DEFAULT_STREAM_NAME"><!-- --></A><H3>
+DEFAULT_STREAM_NAME</H3>
+<PRE>
+public static final java.lang.String <B>DEFAULT_STREAM_NAME</B></PRE>
+<DL>
+<DD>The document name a document summary information stream
+ usually has in a POIFS filesystem.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.DocumentSummaryInformation.DEFAULT_STREAM_NAME">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DocumentSummaryInformation()"><!-- --></A><H3>
+DocumentSummaryInformation</H3>
+<PRE>
+public <B>DocumentSummaryInformation</B>()</PRE>
+<DL>
+<DD>Creates an empty <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A>.
+<P>
+</DL>
+<HR>
+
+<A NAME="DocumentSummaryInformation(org.apache.poi.hpsf.PropertySet)"><!-- --></A><H3>
+DocumentSummaryInformation</H3>
+<PRE>
+public <B>DocumentSummaryInformation</B>(<A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">PropertySet</A>&nbsp;ps)
+                           throws <A HREF="../../../../org/apache/poi/hpsf/UnexpectedPropertySetTypeException.html" title="class in org.apache.poi.hpsf">UnexpectedPropertySetTypeException</A></PRE>
+<DL>
+<DD>Creates a <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> from a given
+ <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A>.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>ps</CODE> - A property set which should be created from a
+ document summary information stream.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/UnexpectedPropertySetTypeException.html" title="class in org.apache.poi.hpsf">UnexpectedPropertySetTypeException</A></CODE> - if <code>ps</code>
+ does not contain a document summary information stream.</DL>
+</DL>
+<HR>
+
+<A NAME="DocumentSummaryInformation(java.io.InputStream)"><!-- --></A><H3>
+DocumentSummaryInformation</H3>
+<PRE>
+public <B>DocumentSummaryInformation</B>(java.io.InputStream&nbsp;stream)
+                           throws <A HREF="../../../../org/apache/poi/hpsf/NoPropertySetStreamException.html" title="class in org.apache.poi.hpsf">NoPropertySetStreamException</A>,
+                                  <A HREF="../../../../org/apache/poi/hpsf/MarkUnsupportedException.html" title="class in org.apache.poi.hpsf">MarkUnsupportedException</A>,
+                                  java.io.IOException,
+                                  java.io.UnsupportedEncodingException</PRE>
+<DL>
+<DD>Creates a <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> instance from an <CODE>InputStream</CODE> in the Horrible Property Set Format.<p>
+
+ The constructor reads the first few bytes from the stream
+ and determines whether it is really a property set stream. If
+ it is, it parses the rest of the stream. If it is not, it
+ resets the stream to its beginning in order to let other
+ components mess around with the data and throws an
+ exception.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - Holds the data making out the property set
+ stream.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/MarkUnsupportedException.html" title="class in org.apache.poi.hpsf">MarkUnsupportedException</A></CODE> - if the stream does not support the <CODE>InputStream.markSupported()</CODE> method.
+<DD><CODE>java.io.IOException</CODE> - if the <CODE>InputStream</CODE> cannot be accessed as needed.
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/NoPropertySetStreamException.html" title="class in org.apache.poi.hpsf">NoPropertySetStreamException</A></CODE> - if the input stream does not contain a property set.
+<DD><CODE>java.io.UnsupportedEncodingException</CODE> - if a character encoding is not supported.</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getPropertySetIDMap()"><!-- --></A><H3>
+getPropertySetIDMap</H3>
+<PRE>
+public <A HREF="../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A> <B>getPropertySetIDMap</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertySetIDMap()">PropertySet</A></CODE></B></DD>
+<DD>The id to name mapping of the properties in this set.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertySetIDMap()">getPropertySetIDMap</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">PropertySet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the id to name mapping of the properties in this set or <code>null</code> if not applicable</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCategory()"><!-- --></A><H3>
+getCategory</H3>
+<PRE>
+public java.lang.String <B>getCategory</B>()</PRE>
+<DL>
+<DD>Returns the category (or <code>null</code>).
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The category value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCategory(java.lang.String)"><!-- --></A><H3>
+setCategory</H3>
+<PRE>
+public void <B>setCategory</B>(java.lang.String&nbsp;category)</PRE>
+<DL>
+<DD>Sets the category.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>category</CODE> - The category to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeCategory()"><!-- --></A><H3>
+removeCategory</H3>
+<PRE>
+public void <B>removeCategory</B>()</PRE>
+<DL>
+<DD>Removes the category.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPresentationFormat()"><!-- --></A><H3>
+getPresentationFormat</H3>
+<PRE>
+public java.lang.String <B>getPresentationFormat</B>()</PRE>
+<DL>
+<DD>Returns the presentation format (or
+ <code>null</code>).
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The presentation format value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPresentationFormat(java.lang.String)"><!-- --></A><H3>
+setPresentationFormat</H3>
+<PRE>
+public void <B>setPresentationFormat</B>(java.lang.String&nbsp;presentationFormat)</PRE>
+<DL>
+<DD>Sets the presentation format.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>presentationFormat</CODE> - The presentation format to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removePresentationFormat()"><!-- --></A><H3>
+removePresentationFormat</H3>
+<PRE>
+public void <B>removePresentationFormat</B>()</PRE>
+<DL>
+<DD>Removes the presentation format.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getByteCount()"><!-- --></A><H3>
+getByteCount</H3>
+<PRE>
+public int <B>getByteCount</B>()</PRE>
+<DL>
+<DD>Returns the byte count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a byte count.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The byteCount value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setByteCount(int)"><!-- --></A><H3>
+setByteCount</H3>
+<PRE>
+public void <B>setByteCount</B>(int&nbsp;byteCount)</PRE>
+<DL>
+<DD>Sets the byte count.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>byteCount</CODE> - The byte count to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeByteCount()"><!-- --></A><H3>
+removeByteCount</H3>
+<PRE>
+public void <B>removeByteCount</B>()</PRE>
+<DL>
+<DD>Removes the byte count.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLineCount()"><!-- --></A><H3>
+getLineCount</H3>
+<PRE>
+public int <B>getLineCount</B>()</PRE>
+<DL>
+<DD>Returns the line count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a line count.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The line count value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLineCount(int)"><!-- --></A><H3>
+setLineCount</H3>
+<PRE>
+public void <B>setLineCount</B>(int&nbsp;lineCount)</PRE>
+<DL>
+<DD>Sets the line count.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lineCount</CODE> - The line count to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeLineCount()"><!-- --></A><H3>
+removeLineCount</H3>
+<PRE>
+public void <B>removeLineCount</B>()</PRE>
+<DL>
+<DD>Removes the line count.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getParCount()"><!-- --></A><H3>
+getParCount</H3>
+<PRE>
+public int <B>getParCount</B>()</PRE>
+<DL>
+<DD>Returns the par count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a par count.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The par count value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setParCount(int)"><!-- --></A><H3>
+setParCount</H3>
+<PRE>
+public void <B>setParCount</B>(int&nbsp;parCount)</PRE>
+<DL>
+<DD>Sets the par count.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>parCount</CODE> - The par count to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeParCount()"><!-- --></A><H3>
+removeParCount</H3>
+<PRE>
+public void <B>removeParCount</B>()</PRE>
+<DL>
+<DD>Removes the par count.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSlideCount()"><!-- --></A><H3>
+getSlideCount</H3>
+<PRE>
+public int <B>getSlideCount</B>()</PRE>
+<DL>
+<DD>Returns the slide count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a slide count.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The slide count value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setSlideCount(int)"><!-- --></A><H3>
+setSlideCount</H3>
+<PRE>
+public void <B>setSlideCount</B>(int&nbsp;slideCount)</PRE>
+<DL>
+<DD>Sets the slideCount.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>slideCount</CODE> - The slide count to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeSlideCount()"><!-- --></A><H3>
+removeSlideCount</H3>
+<PRE>
+public void <B>removeSlideCount</B>()</PRE>
+<DL>
+<DD>Removes the slide count.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNoteCount()"><!-- --></A><H3>
+getNoteCount</H3>
+<PRE>
+public int <B>getNoteCount</B>()</PRE>
+<DL>
+<DD>Returns the note count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a note count.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The note count value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setNoteCount(int)"><!-- --></A><H3>
+setNoteCount</H3>
+<PRE>
+public void <B>setNoteCount</B>(int&nbsp;noteCount)</PRE>
+<DL>
+<DD>Sets the note count.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>noteCount</CODE> - The note count to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeNoteCount()"><!-- --></A><H3>
+removeNoteCount</H3>
+<PRE>
+public void <B>removeNoteCount</B>()</PRE>
+<DL>
+<DD>Removes the noteCount.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHiddenCount()"><!-- --></A><H3>
+getHiddenCount</H3>
+<PRE>
+public int <B>getHiddenCount</B>()</PRE>
+<DL>
+<DD>Returns the hidden count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a hidden
+ count.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The hidden count value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHiddenCount(int)"><!-- --></A><H3>
+setHiddenCount</H3>
+<PRE>
+public void <B>setHiddenCount</B>(int&nbsp;hiddenCount)</PRE>
+<DL>
+<DD>Sets the hidden count.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hiddenCount</CODE> - The hidden count to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeHiddenCount()"><!-- --></A><H3>
+removeHiddenCount</H3>
+<PRE>
+public void <B>removeHiddenCount</B>()</PRE>
+<DL>
+<DD>Removes the hidden count.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMMClipCount()"><!-- --></A><H3>
+getMMClipCount</H3>
+<PRE>
+public int <B>getMMClipCount</B>()</PRE>
+<DL>
+<DD>Returns the mmclip count or 0 if the <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain a mmclip
+ count.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The mmclip count value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setMMClipCount(int)"><!-- --></A><H3>
+setMMClipCount</H3>
+<PRE>
+public void <B>setMMClipCount</B>(int&nbsp;mmClipCount)</PRE>
+<DL>
+<DD>Sets the mmclip count.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>mmClipCount</CODE> - The mmclip count to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeMMClipCount()"><!-- --></A><H3>
+removeMMClipCount</H3>
+<PRE>
+public void <B>removeMMClipCount</B>()</PRE>
+<DL>
+<DD>Removes the mmclip count.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getScale()"><!-- --></A><H3>
+getScale</H3>
+<PRE>
+public boolean <B>getScale</B>()</PRE>
+<DL>
+<DD>Returns <code>true</code> when scaling of the thumbnail is
+ desired, <code>false</code> if cropping is desired.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The scale value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setScale(boolean)"><!-- --></A><H3>
+setScale</H3>
+<PRE>
+public void <B>setScale</B>(boolean&nbsp;scale)</PRE>
+<DL>
+<DD>Sets the scale.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>scale</CODE> - The scale to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeScale()"><!-- --></A><H3>
+removeScale</H3>
+<PRE>
+public void <B>removeScale</B>()</PRE>
+<DL>
+<DD>Removes the scale.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHeadingPair()"><!-- --></A><H3>
+getHeadingPair</H3>
+<PRE>
+public byte[] <B>getHeadingPair</B>()</PRE>
+<DL>
+<DD><p>Returns the heading pair (or <code>null</code>)
+ <strong>when this method is implemented. Please note that the
+ return type is likely to change!</strong>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The heading pair value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHeadingPair(byte[])"><!-- --></A><H3>
+setHeadingPair</H3>
+<PRE>
+public void <B>setHeadingPair</B>(byte[]&nbsp;headingPair)</PRE>
+<DL>
+<DD>Sets the heading pair.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>headingPair</CODE> - The heading pair to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeHeadingPair()"><!-- --></A><H3>
+removeHeadingPair</H3>
+<PRE>
+public void <B>removeHeadingPair</B>()</PRE>
+<DL>
+<DD>Removes the heading pair.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDocparts()"><!-- --></A><H3>
+getDocparts</H3>
+<PRE>
+public byte[] <B>getDocparts</B>()</PRE>
+<DL>
+<DD><p>Returns the doc parts (or <code>null</code>)
+ <strong>when this method is implemented. Please note that the
+ return type is likely to change!</strong>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The doc parts value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDocparts(byte[])"><!-- --></A><H3>
+setDocparts</H3>
+<PRE>
+public void <B>setDocparts</B>(byte[]&nbsp;docparts)</PRE>
+<DL>
+<DD>Sets the doc parts.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>docparts</CODE> - The doc parts to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeDocparts()"><!-- --></A><H3>
+removeDocparts</H3>
+<PRE>
+public void <B>removeDocparts</B>()</PRE>
+<DL>
+<DD>Removes the doc parts.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getManager()"><!-- --></A><H3>
+getManager</H3>
+<PRE>
+public java.lang.String <B>getManager</B>()</PRE>
+<DL>
+<DD>Returns the manager (or <code>null</code>).
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The manager value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setManager(java.lang.String)"><!-- --></A><H3>
+setManager</H3>
+<PRE>
+public void <B>setManager</B>(java.lang.String&nbsp;manager)</PRE>
+<DL>
+<DD>Sets the manager.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>manager</CODE> - The manager to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeManager()"><!-- --></A><H3>
+removeManager</H3>
+<PRE>
+public void <B>removeManager</B>()</PRE>
+<DL>
+<DD>Removes the manager.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCompany()"><!-- --></A><H3>
+getCompany</H3>
+<PRE>
+public java.lang.String <B>getCompany</B>()</PRE>
+<DL>
+<DD>Returns the company (or <code>null</code>).
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The company value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCompany(java.lang.String)"><!-- --></A><H3>
+setCompany</H3>
+<PRE>
+public void <B>setCompany</B>(java.lang.String&nbsp;company)</PRE>
+<DL>
+<DD>Sets the company.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>company</CODE> - The company to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeCompany()"><!-- --></A><H3>
+removeCompany</H3>
+<PRE>
+public void <B>removeCompany</B>()</PRE>
+<DL>
+<DD>Removes the company.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLinksDirty()"><!-- --></A><H3>
+getLinksDirty</H3>
+<PRE>
+public boolean <B>getLinksDirty</B>()</PRE>
+<DL>
+<DD>Returns <code>true</code> if the custom links are dirty. <p>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The links dirty value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLinksDirty(boolean)"><!-- --></A><H3>
+setLinksDirty</H3>
+<PRE>
+public void <B>setLinksDirty</B>(boolean&nbsp;linksDirty)</PRE>
+<DL>
+<DD>Sets the linksDirty.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>linksDirty</CODE> - The links dirty value to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeLinksDirty()"><!-- --></A><H3>
+removeLinksDirty</H3>
+<PRE>
+public void <B>removeLinksDirty</B>()</PRE>
+<DL>
+<DD>Removes the links dirty.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCharCountWithSpaces()"><!-- --></A><H3>
+getCharCountWithSpaces</H3>
+<PRE>
+public int <B>getCharCountWithSpaces</B>()</PRE>
+<DL>
+<DD>Returns the character count including whitespace, or 0 if the 
+  <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> does not contain this char count.
+ <p>This is the whitespace-including version of <A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html#getCharCount()"><CODE>SummaryInformation.getCharCount()</CODE></A>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The character count or <code>null</code></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCharCountWithSpaces(int)"><!-- --></A><H3>
+setCharCountWithSpaces</H3>
+<PRE>
+public void <B>setCharCountWithSpaces</B>(int&nbsp;count)</PRE>
+<DL>
+<DD>Sets the character count including whitespace
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>count</CODE> - The character count to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeCharCountWithSpaces()"><!-- --></A><H3>
+removeCharCountWithSpaces</H3>
+<PRE>
+public void <B>removeCharCountWithSpaces</B>()</PRE>
+<DL>
+<DD>Removes the character count
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHyperlinksChanged()"><!-- --></A><H3>
+getHyperlinksChanged</H3>
+<PRE>
+public boolean <B>getHyperlinksChanged</B>()</PRE>
+<DL>
+<DD>Get if the User Defined Property Set has been updated outside of the 
+ Application.<p>
+ If it has (true), the hyperlinks should be updated on document load.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true, if the hyperlinks should be updated on document load</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHyperlinksChanged(boolean)"><!-- --></A><H3>
+setHyperlinksChanged</H3>
+<PRE>
+public void <B>setHyperlinksChanged</B>(boolean&nbsp;changed)</PRE>
+<DL>
+<DD>Set the flag for if the User Defined Property Set has been updated outside 
+  of the Application.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>changed</CODE> - true, if the User Defined Property Set has been updated</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeHyperlinksChanged()"><!-- --></A><H3>
+removeHyperlinksChanged</H3>
+<PRE>
+public void <B>removeHyperlinksChanged</B>()</PRE>
+<DL>
+<DD>Removes the flag for if the User Defined Property Set has been updated
+  outside of the Application.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getApplicationVersion()"><!-- --></A><H3>
+getApplicationVersion</H3>
+<PRE>
+public int <B>getApplicationVersion</B>()</PRE>
+<DL>
+<DD>Gets the version of the Application which wrote the
+  Property set, stored with the two high order bytes having the major
+  version number, and the two low order bytes the minor version number.<p>
+ This will be 0 if no version is set.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the Application version</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setApplicationVersion(int)"><!-- --></A><H3>
+setApplicationVersion</H3>
+<PRE>
+public void <B>setApplicationVersion</B>(int&nbsp;version)</PRE>
+<DL>
+<DD>Sets the Application version, which must be a 4 byte int with
+  the  two high order bytes having the major version number, and the 
+  two low order bytes the minor version number.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>version</CODE> - the Application version</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeApplicationVersion()"><!-- --></A><H3>
+removeApplicationVersion</H3>
+<PRE>
+public void <B>removeApplicationVersion</B>()</PRE>
+<DL>
+<DD>Removes the Application Version
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVBADigitalSignature()"><!-- --></A><H3>
+getVBADigitalSignature</H3>
+<PRE>
+public byte[] <B>getVBADigitalSignature</B>()</PRE>
+<DL>
+<DD>Returns the VBA digital signature for the VBA project 
+ embedded in the document (or <code>null</code>).
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the VBA digital signature</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setVBADigitalSignature(byte[])"><!-- --></A><H3>
+setVBADigitalSignature</H3>
+<PRE>
+public void <B>setVBADigitalSignature</B>(byte[]&nbsp;signature)</PRE>
+<DL>
+<DD>Sets the VBA digital signature for the VBA project 
+  embedded in the document.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>signature</CODE> - VBA Digital Signature for the project</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeVBADigitalSignature()"><!-- --></A><H3>
+removeVBADigitalSignature</H3>
+<PRE>
+public void <B>removeVBADigitalSignature</B>()</PRE>
+<DL>
+<DD>Removes the VBA Digital Signature
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getContentType()"><!-- --></A><H3>
+getContentType</H3>
+<PRE>
+public java.lang.String <B>getContentType</B>()</PRE>
+<DL>
+<DD>Gets the content type of the file (or <code>null</code>).
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the content type of the file</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setContentType(java.lang.String)"><!-- --></A><H3>
+setContentType</H3>
+<PRE>
+public void <B>setContentType</B>(java.lang.String&nbsp;type)</PRE>
+<DL>
+<DD>Sets the content type of the file
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>type</CODE> - the content type of the file</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeContentType()"><!-- --></A><H3>
+removeContentType</H3>
+<PRE>
+public void <B>removeContentType</B>()</PRE>
+<DL>
+<DD>Removes the content type of the file
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getContentStatus()"><!-- --></A><H3>
+getContentStatus</H3>
+<PRE>
+public java.lang.String <B>getContentStatus</B>()</PRE>
+<DL>
+<DD>Gets the content status of the file (or <code>null</code>).
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the content status of the file</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setContentStatus(java.lang.String)"><!-- --></A><H3>
+setContentStatus</H3>
+<PRE>
+public void <B>setContentStatus</B>(java.lang.String&nbsp;status)</PRE>
+<DL>
+<DD>Sets the content status of the file
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>status</CODE> - the content status of the file</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeContentStatus()"><!-- --></A><H3>
+removeContentStatus</H3>
+<PRE>
+public void <B>removeContentStatus</B>()</PRE>
+<DL>
+<DD>Removes the content status of the file
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLanguage()"><!-- --></A><H3>
+getLanguage</H3>
+<PRE>
+public java.lang.String <B>getLanguage</B>()</PRE>
+<DL>
+<DD>Gets the document language, which is normally unset and empty (or <code>null</code>).
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the document language</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLanguage(java.lang.String)"><!-- --></A><H3>
+setLanguage</H3>
+<PRE>
+public void <B>setLanguage</B>(java.lang.String&nbsp;language)</PRE>
+<DL>
+<DD>Set the document language
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>language</CODE> - the document language</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeLanguage()"><!-- --></A><H3>
+removeLanguage</H3>
+<PRE>
+public void <B>removeLanguage</B>()</PRE>
+<DL>
+<DD>Removes the document language
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDocumentVersion()"><!-- --></A><H3>
+getDocumentVersion</H3>
+<PRE>
+public java.lang.String <B>getDocumentVersion</B>()</PRE>
+<DL>
+<DD>Gets the document version as a string, which is normally unset and empty
+  (or <code>null</code>).
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the document verion</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDocumentVersion(java.lang.String)"><!-- --></A><H3>
+setDocumentVersion</H3>
+<PRE>
+public void <B>setDocumentVersion</B>(java.lang.String&nbsp;version)</PRE>
+<DL>
+<DD>Sets the document version string
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>version</CODE> - the document version string</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeDocumentVersion()"><!-- --></A><H3>
+removeDocumentVersion</H3>
+<PRE>
+public void <B>removeDocumentVersion</B>()</PRE>
+<DL>
+<DD>Removes the document version string
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCustomProperties()"><!-- --></A><H3>
+getCustomProperties</H3>
+<PRE>
+public <A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html" title="class in org.apache.poi.hpsf">CustomProperties</A> <B>getCustomProperties</B>()</PRE>
+<DL>
+<DD>Gets the custom properties.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The custom properties.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCustomProperties(org.apache.poi.hpsf.CustomProperties)"><!-- --></A><H3>
+setCustomProperties</H3>
+<PRE>
+public void <B>setCustomProperties</B>(<A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html" title="class in org.apache.poi.hpsf">CustomProperties</A>&nbsp;customProperties)</PRE>
+<DL>
+<DD>Sets the custom properties.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>customProperties</CODE> - The custom properties</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeCustomProperties()"><!-- --></A><H3>
+removeCustomProperties</H3>
+<PRE>
+public void <B>removeCustomProperties</B>()</PRE>
+<DL>
+<DD>Removes the custom properties.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/Filetime.html" title="class in org.apache.poi.hpsf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/hpsf/DocumentSummaryInformation.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DocumentSummaryInformation.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

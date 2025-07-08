@@ -1,0 +1,1156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+RowRecord (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="RowRecord (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/RKRecord.html" title="class in org.apache.poi.hssf.record"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/SaveRecalcRecord.html" title="class in org.apache.poi.hssf.record"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/record/RowRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="RowRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.record</FONT>
+<BR>
+Class RowRecord</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.RecordBase</A>
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.Record</A>
+          <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.StandardRecord</A>
+              <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.record.RowRecord</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>RowRecord</B><DT>extends <A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></DL>
+</PRE>
+
+<P>
+Title:        Row Record (0x0208)<p>
+ Description:  stores the row information for the sheet.<p>
+ REFERENCE:  PG 379 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+<P>
+
+<P>
+<DL>
+<DT><B>Since:</B></DT>
+  <DD>2.0-pre</DD>
+</DL>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#ENCODED_SIZE">ENCODED_SIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#sid">sid</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#RowRecord(int)">RowRecord</A></B>(int&nbsp;rowNumber)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#RowRecord(org.apache.poi.hssf.record.RecordInputStream)">RowRecord</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/RecordInputStream.html" title="class in org.apache.poi.hssf.record">RecordInputStream</A>&nbsp;in)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Object</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#clone()">clone</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getBadFontHeight()">getBadFontHeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether the font and row height are not compatible</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getBottomBorder()">getBottomBorder</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A bit that specifies whether any cell in the row has a medium or thick bottom border,
+ or any cell in the row directly below the current row has a medium or thick top border.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getColapsed()">getColapsed</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether or not to colapse this row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getDataSize()">getDataSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getFirstCol()">getFirstCol</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the logical col number for the first cell this row (0 based index)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getFormatted()">getFormatted</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether the row has been formatted (even if its got all blank cells)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getHeight()">getHeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the height of the row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getLastCol()">getLastCol</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the logical col number for the last cell this row (0 based index), plus one</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getOptimize()">getOptimize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether to optimize or not (set to 0)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getOptionFlags()">getOptionFlags</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gets the option bitmask.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getOptionFlags2()">getOptionFlags2</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gets the 2nd option bitmask.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getOutlineLevel()">getOutlineLevel</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the outline level of this row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getPhoeneticGuide()">getPhoeneticGuide</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A bit that specifies whether the phonetic guide feature is enabled for
+ any cell in this row.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getRowNumber()">getRowNumber</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the logical row number for this row (0 based index)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getSid()">getSid</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return the non static version of the id for this record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getTopBorder()">getTopBorder</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A bit that specifies whether any cell in the row has a thick top border, or any
+ cell in the row directly above the current row has a thick bottom border.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getXFIndex()">getXFIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if the row is formatted then this is the index to the extended format record</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getZeroHeight()">getZeroHeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether or not to display this row with 0 height</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#isEmpty()">isEmpty</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">serialize</A></B>(<A HREF="../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write the data content of this BIFF record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setBadFontHeight(boolean)">setBadFontHeight</A></B>(boolean&nbsp;f)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether the font and row height are not compatible</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setBottomBorder(boolean)">setBottomBorder</A></B>(boolean&nbsp;f)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A bit that specifies whether any cell in the row has a medium or thick
+ bottom border, or any cell in the row directly below the current row has
+ a medium or thick top border.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setColapsed(boolean)">setColapsed</A></B>(boolean&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether or not to collapse this row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setEmpty()">setEmpty</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Updates the firstCol and lastCol fields to the reserved value (-1) 
+ to signify that this row is empty</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setFirstCol(int)">setFirstCol</A></B>(int&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the logical col number for the first cell this row (0 based index)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setFormatted(boolean)">setFormatted</A></B>(boolean&nbsp;f)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether the row has been formatted (even if its got all blank cells)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setHeight(short)">setHeight</A></B>(short&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the height of the row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setLastCol(int)">setLastCol</A></B>(int&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setOptimize(short)">setOptimize</A></B>(short&nbsp;optimize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether to optimize or not (set to 0)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setOutlineLevel(short)">setOutlineLevel</A></B>(short&nbsp;ol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the outline level of this row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setPhoeneticGuide(boolean)">setPhoeneticGuide</A></B>(boolean&nbsp;f)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A bit that specifies whether the phonetic guide feature is enabled for
+ any cell in this row.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setRowNumber(int)">setRowNumber</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the logical row number for this row (0 based index)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setTopBorder(boolean)">setTopBorder</A></B>(boolean&nbsp;f)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bit that specifies whether any cell in the row has a thick top border, or any
+ cell in the row directly above the current row has a thick bottom border.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setXFIndex(short)">setXFIndex</A></B>(short&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if the row is formatted then this is the index to the extended format record</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#setZeroHeight(boolean)">setZeroHeight</A></B>(boolean&nbsp;z)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether or not to display this row with 0 height</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a string representation of the record (for biffview/debugging)</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.StandardRecord"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.<A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#getRecordSize()">getRecordSize</A>, <A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(int, byte[])">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.Record"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.<A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#cloneViaReserialise()">cloneViaReserialise</A>, <A HREF="../../../../../org/apache/poi/hssf/record/Record.html#serialize()">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="sid"><!-- --></A><H3>
+sid</H3>
+<PRE>
+public static final short <B>sid</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.RowRecord.sid">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENCODED_SIZE"><!-- --></A><H3>
+ENCODED_SIZE</H3>
+<PRE>
+public static final int <B>ENCODED_SIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.RowRecord.ENCODED_SIZE">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="RowRecord(int)"><!-- --></A><H3>
+RowRecord</H3>
+<PRE>
+public <B>RowRecord</B>(int&nbsp;rowNumber)</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="RowRecord(org.apache.poi.hssf.record.RecordInputStream)"><!-- --></A><H3>
+RowRecord</H3>
+<PRE>
+public <B>RowRecord</B>(<A HREF="../../../../../org/apache/poi/hssf/record/RecordInputStream.html" title="class in org.apache.poi.hssf.record">RecordInputStream</A>&nbsp;in)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="setEmpty()"><!-- --></A><H3>
+setEmpty</H3>
+<PRE>
+public void <B>setEmpty</B>()</PRE>
+<DL>
+<DD>Updates the firstCol and lastCol fields to the reserved value (-1) 
+ to signify that this row is empty
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isEmpty()"><!-- --></A><H3>
+isEmpty</H3>
+<PRE>
+public boolean <B>isEmpty</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRowNumber(int)"><!-- --></A><H3>
+setRowNumber</H3>
+<PRE>
+public void <B>setRowNumber</B>(int&nbsp;row)</PRE>
+<DL>
+<DD>set the logical row number for this row (0 based index)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - - the row number</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFirstCol(int)"><!-- --></A><H3>
+setFirstCol</H3>
+<PRE>
+public void <B>setFirstCol</B>(int&nbsp;col)</PRE>
+<DL>
+<DD>set the logical col number for the first cell this row (0 based index)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>col</CODE> - - the col number</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLastCol(int)"><!-- --></A><H3>
+setLastCol</H3>
+<PRE>
+public void <B>setLastCol</B>(int&nbsp;col)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>col</CODE> - - one past the zero-based index to the last cell in this row</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHeight(short)"><!-- --></A><H3>
+setHeight</H3>
+<PRE>
+public void <B>setHeight</B>(short&nbsp;height)</PRE>
+<DL>
+<DD>set the height of the row
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>height</CODE> - of the row</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setOptimize(short)"><!-- --></A><H3>
+setOptimize</H3>
+<PRE>
+public void <B>setOptimize</B>(short&nbsp;optimize)</PRE>
+<DL>
+<DD>set whether to optimize or not (set to 0)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>optimize</CODE> - (set to 0)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setOutlineLevel(short)"><!-- --></A><H3>
+setOutlineLevel</H3>
+<PRE>
+public void <B>setOutlineLevel</B>(short&nbsp;ol)</PRE>
+<DL>
+<DD>set the outline level of this row
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ol</CODE> - - the outline level</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColapsed(boolean)"><!-- --></A><H3>
+setColapsed</H3>
+<PRE>
+public void <B>setColapsed</B>(boolean&nbsp;c)</PRE>
+<DL>
+<DD>set whether or not to collapse this row
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>c</CODE> - - collapse or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setZeroHeight(boolean)"><!-- --></A><H3>
+setZeroHeight</H3>
+<PRE>
+public void <B>setZeroHeight</B>(boolean&nbsp;z)</PRE>
+<DL>
+<DD>set whether or not to display this row with 0 height
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>z</CODE> - height is zero or not.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBadFontHeight(boolean)"><!-- --></A><H3>
+setBadFontHeight</H3>
+<PRE>
+public void <B>setBadFontHeight</B>(boolean&nbsp;f)</PRE>
+<DL>
+<DD>set whether the font and row height are not compatible
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>f</CODE> - true if they aren't compatible (damn not logic)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFormatted(boolean)"><!-- --></A><H3>
+setFormatted</H3>
+<PRE>
+public void <B>setFormatted</B>(boolean&nbsp;f)</PRE>
+<DL>
+<DD>set whether the row has been formatted (even if its got all blank cells)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>f</CODE> - formatted or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setXFIndex(short)"><!-- --></A><H3>
+setXFIndex</H3>
+<PRE>
+public void <B>setXFIndex</B>(short&nbsp;index)</PRE>
+<DL>
+<DD>if the row is formatted then this is the index to the extended format record
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>index</CODE> - to the XF record<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/ExtendedFormatRecord.html" title="class in org.apache.poi.hssf.record"><CODE>ExtendedFormatRecord</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTopBorder(boolean)"><!-- --></A><H3>
+setTopBorder</H3>
+<PRE>
+public void <B>setTopBorder</B>(boolean&nbsp;f)</PRE>
+<DL>
+<DD>bit that specifies whether any cell in the row has a thick top border, or any
+ cell in the row directly above the current row has a thick bottom border.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>f</CODE> - has thick top border</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBottomBorder(boolean)"><!-- --></A><H3>
+setBottomBorder</H3>
+<PRE>
+public void <B>setBottomBorder</B>(boolean&nbsp;f)</PRE>
+<DL>
+<DD>A bit that specifies whether any cell in the row has a medium or thick
+ bottom border, or any cell in the row directly below the current row has
+ a medium or thick top border.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>f</CODE> - has thick bottom border</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPhoeneticGuide(boolean)"><!-- --></A><H3>
+setPhoeneticGuide</H3>
+<PRE>
+public void <B>setPhoeneticGuide</B>(boolean&nbsp;f)</PRE>
+<DL>
+<DD>A bit that specifies whether the phonetic guide feature is enabled for
+ any cell in this row.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>f</CODE> - use phoenetic guide</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRowNumber()"><!-- --></A><H3>
+getRowNumber</H3>
+<PRE>
+public int <B>getRowNumber</B>()</PRE>
+<DL>
+<DD>get the logical row number for this row (0 based index)
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>row - the row number</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstCol()"><!-- --></A><H3>
+getFirstCol</H3>
+<PRE>
+public int <B>getFirstCol</B>()</PRE>
+<DL>
+<DD>get the logical col number for the first cell this row (0 based index)
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>col - the col number</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastCol()"><!-- --></A><H3>
+getLastCol</H3>
+<PRE>
+public int <B>getLastCol</B>()</PRE>
+<DL>
+<DD>get the logical col number for the last cell this row (0 based index), plus one
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>col - the last col index + 1</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHeight()"><!-- --></A><H3>
+getHeight</H3>
+<PRE>
+public short <B>getHeight</B>()</PRE>
+<DL>
+<DD>get the height of the row
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>height of the row</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOptimize()"><!-- --></A><H3>
+getOptimize</H3>
+<PRE>
+public short <B>getOptimize</B>()</PRE>
+<DL>
+<DD>get whether to optimize or not (set to 0)
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>optimize (set to 0)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOptionFlags()"><!-- --></A><H3>
+getOptionFlags</H3>
+<PRE>
+public short <B>getOptionFlags</B>()</PRE>
+<DL>
+<DD>gets the option bitmask.  (use the individual bit setters that refer to this
+ method)
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>options - the bitmask</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOutlineLevel()"><!-- --></A><H3>
+getOutlineLevel</H3>
+<PRE>
+public short <B>getOutlineLevel</B>()</PRE>
+<DL>
+<DD>get the outline level of this row
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>ol - the outline level<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getOptionFlags()"><CODE>getOptionFlags()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColapsed()"><!-- --></A><H3>
+getColapsed</H3>
+<PRE>
+public boolean <B>getColapsed</B>()</PRE>
+<DL>
+<DD>get whether or not to colapse this row
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>c - colapse or not<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getOptionFlags()"><CODE>getOptionFlags()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getZeroHeight()"><!-- --></A><H3>
+getZeroHeight</H3>
+<PRE>
+public boolean <B>getZeroHeight</B>()</PRE>
+<DL>
+<DD>get whether or not to display this row with 0 height
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>- z height is zero or not.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getOptionFlags()"><CODE>getOptionFlags()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBadFontHeight()"><!-- --></A><H3>
+getBadFontHeight</H3>
+<PRE>
+public boolean <B>getBadFontHeight</B>()</PRE>
+<DL>
+<DD>get whether the font and row height are not compatible
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>- f -true if they aren't compatible (damn not logic)<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getOptionFlags()"><CODE>getOptionFlags()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFormatted()"><!-- --></A><H3>
+getFormatted</H3>
+<PRE>
+public boolean <B>getFormatted</B>()</PRE>
+<DL>
+<DD>get whether the row has been formatted (even if its got all blank cells)
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>formatted or not<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html#getOptionFlags()"><CODE>getOptionFlags()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOptionFlags2()"><!-- --></A><H3>
+getOptionFlags2</H3>
+<PRE>
+public short <B>getOptionFlags2</B>()</PRE>
+<DL>
+<DD>gets the 2nd option bitmask.  (use the individual bit setters that refer to this
+ method)
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>options - the bitmask</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getXFIndex()"><!-- --></A><H3>
+getXFIndex</H3>
+<PRE>
+public short <B>getXFIndex</B>()</PRE>
+<DL>
+<DD>if the row is formatted then this is the index to the extended format record
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>index to the XF record or bogus value (undefined) if isn't formatted<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/ExtendedFormatRecord.html" title="class in org.apache.poi.hssf.record"><CODE>ExtendedFormatRecord</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTopBorder()"><!-- --></A><H3>
+getTopBorder</H3>
+<PRE>
+public boolean <B>getTopBorder</B>()</PRE>
+<DL>
+<DD>A bit that specifies whether any cell in the row has a thick top border, or any
+ cell in the row directly above the current row has a thick bottom border.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>has cells with a thick top border</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBottomBorder()"><!-- --></A><H3>
+getBottomBorder</H3>
+<PRE>
+public boolean <B>getBottomBorder</B>()</PRE>
+<DL>
+<DD>A bit that specifies whether any cell in the row has a medium or thick bottom border,
+ or any cell in the row directly below the current row has a medium or thick top border.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>has cells with a thick bottom border</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPhoeneticGuide()"><!-- --></A><H3>
+getPhoeneticGuide</H3>
+<PRE>
+public boolean <B>getPhoeneticGuide</B>()</PRE>
+<DL>
+<DD>A bit that specifies whether the phonetic guide feature is enabled for
+ any cell in this row.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>has phoentic guide</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#toString()">Record</A></CODE></B></DD>
+<DD>get a string representation of the record (for biffview/debugging)
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#toString()">toString</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="serialize(org.apache.poi.util.LittleEndianOutput)"><!-- --></A><H3>
+serialize</H3>
+<PRE>
+public void <B>serialize</B>(<A HREF="../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">StandardRecord</A></CODE></B></DD>
+<DD>Write the data content of this BIFF record.  The 'ushort sid' and 'ushort size' header fields
+ have already been written by the superclass.
+ <p>
+ The number of bytes written must equal the record size reported by
+  <A HREF="../../../../../org/apache/poi/hssf/record/RecordBase.html#getRecordSize()"><CODE>RecordBase.getRecordSize()</CODE></A>} minus four
+  ( record header consisting of a 'ushort sid' and 'ushort reclength' has already been written
+  by their superclass).
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">serialize</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>out</CODE> - the output object</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataSize()"><!-- --></A><H3>
+getDataSize</H3>
+<PRE>
+protected int <B>getDataSize</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#getDataSize()">getDataSize</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSid()"><!-- --></A><H3>
+getSid</H3>
+<PRE>
+public short <B>getSid</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#getSid()">Record</A></CODE></B></DD>
+<DD>return the non static version of the id for this record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#getSid()">getSid</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>he id for this record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clone()"><!-- --></A><H3>
+clone</H3>
+<PRE>
+public java.lang.Object <B>clone</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#clone()">clone</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/RKRecord.html" title="class in org.apache.poi.hssf.record"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/SaveRecalcRecord.html" title="class in org.apache.poi.hssf.record"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/record/RowRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="RowRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

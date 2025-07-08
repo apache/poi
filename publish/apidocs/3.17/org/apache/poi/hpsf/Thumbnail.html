@@ -1,0 +1,685 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Thumbnail (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Thumbnail (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html" title="class in org.apache.poi.hpsf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/TypeWriter.html" title="class in org.apache.poi.hpsf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/hpsf/Thumbnail.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Thumbnail.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hpsf</FONT>
+<BR>
+Class Thumbnail</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hpsf.Thumbnail</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>Thumbnail</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+<p>Class to manipulate data in the Clipboard Variant (<A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_CF"><CODE>VT_CF</CODE></A>) format.</p>
+<P>
+
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html#getThumbnail()"><CODE>SummaryInformation.getThumbnail()</CODE></A>, 
+<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms649014(v=vs.85).aspx">Clipboard Operations</a></DL>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CF_BITMAP">CF_BITMAP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clipboard Format - Bitmap</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CF_DIB">CF_DIB</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clipboard Format - Device Independent Bitmap</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CF_ENHMETAFILE">CF_ENHMETAFILE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clipboard Format - Enhanced Windows metafile format</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CF_METAFILEPICT">CF_METAFILEPICT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clipboard Format - Windows metafile format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_FMTID">CFTAG_FMTID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clipboard Format Tag - Format ID</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_MACINTOSH">CFTAG_MACINTOSH</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clipboard Format Tag - Macintosh clipboard format</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_NODATA">CFTAG_NODATA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clipboard Format Tag - No Data</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_WINDOWS">CFTAG_WINDOWS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clipboard Format Tag - Windows clipboard format</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#OFFSET_CF">OFFSET_CF</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Offset in bytes where the Clipboard Format starts in the
+ <code>byte[]</code> returned by <A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html#getThumbnail()"><CODE>SummaryInformation.getThumbnail()</CODE></A></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#OFFSET_CFTAG">OFFSET_CFTAG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Offset in bytes where the Clipboard Format Tag starts in the
+ <code>byte[]</code> returned by <A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html#getThumbnail()"><CODE>SummaryInformation.getThumbnail()</CODE></A></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#OFFSET_WMFDATA">OFFSET_WMFDATA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Offset in bytes where the Windows Metafile (WMF) image data
+ starts in the <code>byte[]</code> returned by <A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html#getThumbnail()"><CODE>SummaryInformation.getThumbnail()</CODE></A></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#Thumbnail()">Thumbnail</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default Constructor.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#Thumbnail(byte[])">Thumbnail</A></B>(byte[]&nbsp;thumbnailData)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a <code>Thumbnail</code> instance and initializes
+ with the specified image bytes.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#getClipboardFormat()">getClipboardFormat</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an <code>int</code> representing the Clipboard
+ Format</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#getClipboardFormatTag()">getClipboardFormatTag</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an <code>int</code> representing the Clipboard
+ Format Tag</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#getThumbnail()">getThumbnail</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the thumbnail as a <code>byte[]</code> in <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_CF"><CODE>VT_CF</CODE></A> format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#getThumbnailAsWMF()">getThumbnailAsWMF</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the Thumbnail as a <code>byte[]</code> of WMF data
+ if the Thumbnail's Clipboard Format Tag is <A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_WINDOWS"><CODE>CFTAG_WINDOWS</CODE></A> and its Clipboard Format is
+ <A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CF_METAFILEPICT"><CODE>CF_METAFILEPICT</CODE></A></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#setThumbnail(byte[])">setThumbnail</A></B>(byte[]&nbsp;thumbnail)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the Thumbnail's underlying <code>byte[]</code> in
+ <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_CF"><CODE>VT_CF</CODE></A> format.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="OFFSET_CFTAG"><!-- --></A><H3>
+OFFSET_CFTAG</H3>
+<PRE>
+public static final int <B>OFFSET_CFTAG</B></PRE>
+<DL>
+<DD><p>Offset in bytes where the Clipboard Format Tag starts in the
+ <code>byte[]</code> returned by <A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html#getThumbnail()"><CODE>SummaryInformation.getThumbnail()</CODE></A></p>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.Thumbnail.OFFSET_CFTAG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="OFFSET_CF"><!-- --></A><H3>
+OFFSET_CF</H3>
+<PRE>
+public static final int <B>OFFSET_CF</B></PRE>
+<DL>
+<DD><p>Offset in bytes where the Clipboard Format starts in the
+ <code>byte[]</code> returned by <A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html#getThumbnail()"><CODE>SummaryInformation.getThumbnail()</CODE></A></p>
+
+ <p>This is only valid if the Clipboard Format Tag is <A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_WINDOWS"><CODE>CFTAG_WINDOWS</CODE></A></p>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.Thumbnail.OFFSET_CF">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="OFFSET_WMFDATA"><!-- --></A><H3>
+OFFSET_WMFDATA</H3>
+<PRE>
+public static final int <B>OFFSET_WMFDATA</B></PRE>
+<DL>
+<DD><p>Offset in bytes where the Windows Metafile (WMF) image data
+ starts in the <code>byte[]</code> returned by <A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html#getThumbnail()"><CODE>SummaryInformation.getThumbnail()</CODE></A></p>
+
+ <p>There is only WMF data at this point in the
+ <code>byte[]</code> if the Clipboard Format Tag is <A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_WINDOWS"><CODE>CFTAG_WINDOWS</CODE></A> and the Clipboard Format is <A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CF_METAFILEPICT"><CODE>CF_METAFILEPICT</CODE></A>.</p>
+
+ <p>Note: The <code>byte[]</code> that starts at
+ <code>OFFSET_WMFDATA</code> and ends at
+ <code>getThumbnail().length - 1</code> forms a complete WMF
+ image. It can be saved to disk with a <code>.wmf</code> file
+ type and read using a WMF-capable image viewer.</p>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.Thumbnail.OFFSET_WMFDATA">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="CFTAG_WINDOWS"><!-- --></A><H3>
+CFTAG_WINDOWS</H3>
+<PRE>
+public static final int <B>CFTAG_WINDOWS</B></PRE>
+<DL>
+<DD><p>Clipboard Format Tag - Windows clipboard format</p>
+
+ <p>A <code>DWORD</code> indicating a built-in Windows clipboard
+ format value</p>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.Thumbnail.CFTAG_WINDOWS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="CFTAG_MACINTOSH"><!-- --></A><H3>
+CFTAG_MACINTOSH</H3>
+<PRE>
+public static final int <B>CFTAG_MACINTOSH</B></PRE>
+<DL>
+<DD><p>Clipboard Format Tag - Macintosh clipboard format</p>
+
+ <p>A <code>DWORD</code> indicating a Macintosh clipboard format
+ value</p>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.Thumbnail.CFTAG_MACINTOSH">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="CFTAG_FMTID"><!-- --></A><H3>
+CFTAG_FMTID</H3>
+<PRE>
+public static final int <B>CFTAG_FMTID</B></PRE>
+<DL>
+<DD><p>Clipboard Format Tag - Format ID</p>
+
+ <p>A GUID containing a format identifier (FMTID). This is
+ rarely used.</p>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.Thumbnail.CFTAG_FMTID">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="CFTAG_NODATA"><!-- --></A><H3>
+CFTAG_NODATA</H3>
+<PRE>
+public static final int <B>CFTAG_NODATA</B></PRE>
+<DL>
+<DD><p>Clipboard Format Tag - No Data</p>
+
+ <p>A <code>DWORD</code> indicating No data. This is rarely
+ used.</p>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.Thumbnail.CFTAG_NODATA">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="CF_METAFILEPICT"><!-- --></A><H3>
+CF_METAFILEPICT</H3>
+<PRE>
+public static final int <B>CF_METAFILEPICT</B></PRE>
+<DL>
+<DD><p>Clipboard Format - Windows metafile format. This is the
+ recommended way to store thumbnails in Property Streams.</p>
+
+ <p><strong>Note:</strong> This is not the same format used in
+ regular WMF images. The clipboard version of this format has an
+ extra clipboard-specific header.</p>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.Thumbnail.CF_METAFILEPICT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="CF_DIB"><!-- --></A><H3>
+CF_DIB</H3>
+<PRE>
+public static final int <B>CF_DIB</B></PRE>
+<DL>
+<DD><p>Clipboard Format - Device Independent Bitmap</p>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.Thumbnail.CF_DIB">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="CF_ENHMETAFILE"><!-- --></A><H3>
+CF_ENHMETAFILE</H3>
+<PRE>
+public static final int <B>CF_ENHMETAFILE</B></PRE>
+<DL>
+<DD><p>Clipboard Format - Enhanced Windows metafile format</p>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.Thumbnail.CF_ENHMETAFILE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="CF_BITMAP"><!-- --></A><H3>
+CF_BITMAP</H3>
+<PRE>
+public static final int <B>CF_BITMAP</B></PRE>
+<DL>
+<DD><p>Clipboard Format - Bitmap</p>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.Thumbnail.CF_BITMAP">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="Thumbnail()"><!-- --></A><H3>
+Thumbnail</H3>
+<PRE>
+public <B>Thumbnail</B>()</PRE>
+<DL>
+<DD><p>Default Constructor. If you use it then one you'll have to add
+ the thumbnail <code>byte[]</code> from <A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html#getThumbnail()"><CODE>SummaryInformation.getThumbnail()</CODE></A> to do any useful
+ manipulations, otherwise you'll get a
+ <code>NullPointerException</code>.</p>
+<P>
+</DL>
+<HR>
+
+<A NAME="Thumbnail(byte[])"><!-- --></A><H3>
+Thumbnail</H3>
+<PRE>
+public <B>Thumbnail</B>(byte[]&nbsp;thumbnailData)</PRE>
+<DL>
+<DD><p>Creates a <code>Thumbnail</code> instance and initializes
+ with the specified image bytes.</p>
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>thumbnailData</CODE> - The thumbnail data</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getThumbnail()"><!-- --></A><H3>
+getThumbnail</H3>
+<PRE>
+public byte[] <B>getThumbnail</B>()</PRE>
+<DL>
+<DD><p>Returns the thumbnail as a <code>byte[]</code> in <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_CF"><CODE>VT_CF</CODE></A> format.</p>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The thumbnail value<DT><B>See Also:</B><DD><A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html#getThumbnail()"><CODE>SummaryInformation.getThumbnail()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setThumbnail(byte[])"><!-- --></A><H3>
+setThumbnail</H3>
+<PRE>
+public void <B>setThumbnail</B>(byte[]&nbsp;thumbnail)</PRE>
+<DL>
+<DD><p>Sets the Thumbnail's underlying <code>byte[]</code> in
+ <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_CF"><CODE>VT_CF</CODE></A> format.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>thumbnail</CODE> - The new thumbnail value<DT><B>See Also:</B><DD><A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html#getThumbnail()"><CODE>SummaryInformation.getThumbnail()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getClipboardFormatTag()"><!-- --></A><H3>
+getClipboardFormatTag</H3>
+<PRE>
+public long <B>getClipboardFormatTag</B>()</PRE>
+<DL>
+<DD><p>Returns an <code>int</code> representing the Clipboard
+ Format Tag</p>
+
+ <p>Possible return values are:</p>
+ <ul>
+  <li><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_WINDOWS"><CODE>CFTAG_WINDOWS</CODE></A></li>
+  <li><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_MACINTOSH"><CODE>CFTAG_MACINTOSH</CODE></A></li>
+  <li><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_FMTID"><CODE>CFTAG_FMTID</CODE></A></li>
+  <li><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_NODATA"><CODE>CFTAG_NODATA</CODE></A></li>
+ </ul>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>A flag indicating the Clipboard Format Tag</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getClipboardFormat()"><!-- --></A><H3>
+getClipboardFormat</H3>
+<PRE>
+public long <B>getClipboardFormat</B>()
+                        throws <A HREF="../../../../org/apache/poi/hpsf/HPSFException.html" title="class in org.apache.poi.hpsf">HPSFException</A></PRE>
+<DL>
+<DD><p>Returns an <code>int</code> representing the Clipboard
+ Format</p>
+
+ <p>Will throw an exception if the Thumbnail's Clipboard Format
+ Tag is not <A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_WINDOWS"><CODE>CFTAG_WINDOWS</CODE></A>.</p>
+
+ <p>Possible return values are:</p>
+
+ <ul>
+  <li><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CF_METAFILEPICT"><CODE>CF_METAFILEPICT</CODE></A></li>
+  <li><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CF_DIB"><CODE>CF_DIB</CODE></A></li>
+  <li><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CF_ENHMETAFILE"><CODE>CF_ENHMETAFILE</CODE></A></li>
+  <li><A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CF_BITMAP"><CODE>CF_BITMAP</CODE></A></li>
+ </ul>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a flag indicating the Clipboard Format
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/HPSFException.html" title="class in org.apache.poi.hpsf">HPSFException</A></CODE> - if the Thumbnail isn't CFTAG_WINDOWS</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getThumbnailAsWMF()"><!-- --></A><H3>
+getThumbnailAsWMF</H3>
+<PRE>
+public byte[] <B>getThumbnailAsWMF</B>()
+                         throws <A HREF="../../../../org/apache/poi/hpsf/HPSFException.html" title="class in org.apache.poi.hpsf">HPSFException</A></PRE>
+<DL>
+<DD><p>Returns the Thumbnail as a <code>byte[]</code> of WMF data
+ if the Thumbnail's Clipboard Format Tag is <A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CFTAG_WINDOWS"><CODE>CFTAG_WINDOWS</CODE></A> and its Clipboard Format is
+ <A HREF="../../../../org/apache/poi/hpsf/Thumbnail.html#CF_METAFILEPICT"><CODE>CF_METAFILEPICT</CODE></A></p> <p>This
+ <code>byte[]</code> is in the traditional WMF file, not the
+ clipboard-specific version with special headers.</p>
+
+ <p>See <a href="http://www.wvware.com/caolan/ora-wmf.html"
+ target="_blank">http://www.wvware.com/caolan/ora-wmf.html</a>
+ for more information on the WMF image format.</p>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>A WMF image of the Thumbnail
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/HPSFException.html" title="class in org.apache.poi.hpsf">HPSFException</A></CODE> - if the Thumbnail isn't CFTAG_WINDOWS and
+ CF_METAFILEPICT</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/SummaryInformation.html" title="class in org.apache.poi.hpsf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/TypeWriter.html" title="class in org.apache.poi.hpsf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/hpsf/Thumbnail.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Thumbnail.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

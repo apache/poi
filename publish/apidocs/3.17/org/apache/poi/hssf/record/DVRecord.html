@@ -1,0 +1,811 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+DVRecord (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="DVRecord (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/DVALRecord.html" title="class in org.apache.poi.hssf.record"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/EmbeddedObjectRefSubRecord.html" title="class in org.apache.poi.hssf.record"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/record/DVRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DVRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.record</FONT>
+<BR>
+Class DVRecord</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.RecordBase</A>
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.Record</A>
+          <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.StandardRecord</A>
+              <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.record.DVRecord</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>DVRecord</B><DT>extends <A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A><DT>implements java.lang.Cloneable</DL>
+</PRE>
+
+<P>
+Title:        DATAVALIDATION Record (0x01BE)<p>
+ Description:  This record stores data validation settings and a list of cell ranges
+               which contain these settings. The data validation settings of a sheet
+               are stored in a sequential list of DV records. This list is followed by
+               DVAL record(s)
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#sid">sid</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#DVRecord(int, int, int, boolean, boolean, boolean, boolean, java.lang.String, java.lang.String, boolean, java.lang.String, java.lang.String, org.apache.poi.ss.formula.ptg.Ptg[], org.apache.poi.ss.formula.ptg.Ptg[], org.apache.poi.ss.util.CellRangeAddressList)">DVRecord</A></B>(int&nbsp;validationType,
+         int&nbsp;operator,
+         int&nbsp;errorStyle,
+         boolean&nbsp;emptyCellAllowed,
+         boolean&nbsp;suppressDropDownArrow,
+         boolean&nbsp;isExplicitList,
+         boolean&nbsp;showPromptBox,
+         java.lang.String&nbsp;promptTitle,
+         java.lang.String&nbsp;promptText,
+         boolean&nbsp;showErrorBox,
+         java.lang.String&nbsp;errorTitle,
+         java.lang.String&nbsp;errorText,
+         <A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]&nbsp;formula1,
+         <A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]&nbsp;formula2,
+         <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressList.html" title="class in org.apache.poi.ss.util">CellRangeAddressList</A>&nbsp;regions)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#DVRecord(org.apache.poi.hssf.record.RecordInputStream)">DVRecord</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/RecordInputStream.html" title="class in org.apache.poi.hssf.record">RecordInputStream</A>&nbsp;in)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html" title="class in org.apache.poi.hssf.record">DVRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#clone()">clone</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clones the object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressList.html" title="class in org.apache.poi.ss.util">CellRangeAddressList</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getCellRangeAddress()">getCellRangeAddress</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getConditionOperator()">getConditionOperator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the condition operator</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getDataSize()">getDataSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getDataType()">getDataType</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getEmptyCellAllowed()">getEmptyCellAllowed</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getErrorStyle()">getErrorStyle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getErrorText()">getErrorText</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getErrorTitle()">getErrorTitle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getFormula1()">getFormula1</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getFormula2()">getFormula2</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getListExplicitFormula()">getListExplicitFormula</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getPromptText()">getPromptText</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getPromptTitle()">getPromptTitle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getShowErrorOnInvalidValue()">getShowErrorOnInvalidValue</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getShowPromptOnCellSelected()">getShowPromptOnCellSelected</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getSid()">getSid</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return the non static version of the id for this record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#getSuppressDropdownArrow()">getSuppressDropdownArrow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">serialize</A></B>(<A HREF="../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write the data content of this BIFF record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a string representation of the record (for biffview/debugging)</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.StandardRecord"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.<A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#getRecordSize()">getRecordSize</A>, <A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(int, byte[])">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.Record"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.<A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#cloneViaReserialise()">cloneViaReserialise</A>, <A HREF="../../../../../org/apache/poi/hssf/record/Record.html#serialize()">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="sid"><!-- --></A><H3>
+sid</H3>
+<PRE>
+public static final short <B>sid</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.DVRecord.sid">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DVRecord(int, int, int, boolean, boolean, boolean, boolean, java.lang.String, java.lang.String, boolean, java.lang.String, java.lang.String, org.apache.poi.ss.formula.ptg.Ptg[], org.apache.poi.ss.formula.ptg.Ptg[], org.apache.poi.ss.util.CellRangeAddressList)"><!-- --></A><H3>
+DVRecord</H3>
+<PRE>
+public <B>DVRecord</B>(int&nbsp;validationType,
+                int&nbsp;operator,
+                int&nbsp;errorStyle,
+                boolean&nbsp;emptyCellAllowed,
+                boolean&nbsp;suppressDropDownArrow,
+                boolean&nbsp;isExplicitList,
+                boolean&nbsp;showPromptBox,
+                java.lang.String&nbsp;promptTitle,
+                java.lang.String&nbsp;promptText,
+                boolean&nbsp;showErrorBox,
+                java.lang.String&nbsp;errorTitle,
+                java.lang.String&nbsp;errorText,
+                <A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]&nbsp;formula1,
+                <A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]&nbsp;formula2,
+                <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressList.html" title="class in org.apache.poi.ss.util">CellRangeAddressList</A>&nbsp;regions)</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="DVRecord(org.apache.poi.hssf.record.RecordInputStream)"><!-- --></A><H3>
+DVRecord</H3>
+<PRE>
+public <B>DVRecord</B>(<A HREF="../../../../../org/apache/poi/hssf/record/RecordInputStream.html" title="class in org.apache.poi.hssf.record">RecordInputStream</A>&nbsp;in)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getDataType()"><!-- --></A><H3>
+getDataType</H3>
+<PRE>
+public int <B>getDataType</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the condition data type<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.ValidationType.html" title="class in org.apache.poi.ss.usermodel"><CODE>DataValidationConstraint.ValidationType</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getErrorStyle()"><!-- --></A><H3>
+getErrorStyle</H3>
+<PRE>
+public int <B>getErrorStyle</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the condition error style<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.ErrorStyle.html" title="class in org.apache.poi.ss.usermodel"><CODE>DataValidation.ErrorStyle</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getListExplicitFormula()"><!-- --></A><H3>
+getListExplicitFormula</H3>
+<PRE>
+public boolean <B>getListExplicitFormula</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if in list validations the string list is explicitly given in the
+  formula, <code>false</code> otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getEmptyCellAllowed()"><!-- --></A><H3>
+getEmptyCellAllowed</H3>
+<PRE>
+public boolean <B>getEmptyCellAllowed</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if empty values are allowed in cells, <code>false</code> otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSuppressDropdownArrow()"><!-- --></A><H3>
+getSuppressDropdownArrow</H3>
+<PRE>
+public boolean <B>getSuppressDropdownArrow</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if drop down arrow should be suppressed when list validation is
+ used, <code>false</code> otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShowPromptOnCellSelected()"><!-- --></A><H3>
+getShowPromptOnCellSelected</H3>
+<PRE>
+public boolean <B>getShowPromptOnCellSelected</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if a prompt window should appear when cell is selected, <code>false</code> otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShowErrorOnInvalidValue()"><!-- --></A><H3>
+getShowErrorOnInvalidValue</H3>
+<PRE>
+public boolean <B>getShowErrorOnInvalidValue</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if an error window should appear when an invalid value is entered
+  in the cell, <code>false</code> otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getConditionOperator()"><!-- --></A><H3>
+getConditionOperator</H3>
+<PRE>
+public int <B>getConditionOperator</B>()</PRE>
+<DL>
+<DD>get the condition operator
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the condition operator<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidation.html" title="class in org.apache.poi.hssf.usermodel"><CODE>utility class</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPromptTitle()"><!-- --></A><H3>
+getPromptTitle</H3>
+<PRE>
+public java.lang.String <B>getPromptTitle</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getErrorTitle()"><!-- --></A><H3>
+getErrorTitle</H3>
+<PRE>
+public java.lang.String <B>getErrorTitle</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPromptText()"><!-- --></A><H3>
+getPromptText</H3>
+<PRE>
+public java.lang.String <B>getPromptText</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getErrorText()"><!-- --></A><H3>
+getErrorText</H3>
+<PRE>
+public java.lang.String <B>getErrorText</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFormula1()"><!-- --></A><H3>
+getFormula1</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[] <B>getFormula1</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFormula2()"><!-- --></A><H3>
+getFormula2</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[] <B>getFormula2</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellRangeAddress()"><!-- --></A><H3>
+getCellRangeAddress</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressList.html" title="class in org.apache.poi.ss.util">CellRangeAddressList</A> <B>getCellRangeAddress</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#toString()">Record</A></CODE></B></DD>
+<DD>get a string representation of the record (for biffview/debugging)
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#toString()">toString</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="serialize(org.apache.poi.util.LittleEndianOutput)"><!-- --></A><H3>
+serialize</H3>
+<PRE>
+public void <B>serialize</B>(<A HREF="../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">StandardRecord</A></CODE></B></DD>
+<DD>Write the data content of this BIFF record.  The 'ushort sid' and 'ushort size' header fields
+ have already been written by the superclass.
+ <p>
+ The number of bytes written must equal the record size reported by
+  <A HREF="../../../../../org/apache/poi/hssf/record/RecordBase.html#getRecordSize()"><CODE>RecordBase.getRecordSize()</CODE></A>} minus four
+  ( record header consisting of a 'ushort sid' and 'ushort reclength' has already been written
+  by their superclass).
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">serialize</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>out</CODE> - the output object</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataSize()"><!-- --></A><H3>
+getDataSize</H3>
+<PRE>
+protected int <B>getDataSize</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html#getDataSize()">getDataSize</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSid()"><!-- --></A><H3>
+getSid</H3>
+<PRE>
+public short <B>getSid</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#getSid()">Record</A></CODE></B></DD>
+<DD>return the non static version of the id for this record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#getSid()">getSid</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>he id for this record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clone()"><!-- --></A><H3>
+clone</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/DVRecord.html" title="class in org.apache.poi.hssf.record">DVRecord</A> <B>clone</B>()</PRE>
+<DL>
+<DD>Clones the object. Uses serialisation, as the
+  contents are somewhat complex
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#clone()">clone</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/DVALRecord.html" title="class in org.apache.poi.hssf.record"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/EmbeddedObjectRefSubRecord.html" title="class in org.apache.poi.hssf.record"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/record/DVRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DVRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

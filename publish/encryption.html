@@ -1,0 +1,1180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>Apache POI&trade; - Encryption support</title>
+<link type="text/css" href="skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="skin/print.css" rel="stylesheet">
+<link type="text/css" href="skin/profile.css" rel="stylesheet">
+<script src="skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li class="current">
+<a class="selected" href="index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="help/index.html">Help</a>
+</li>
+<li>
+<a class="unselected" href="components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', 'skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('skin/images/chapter_open.gif');">Overview</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="index.html">Home</a>
+</div>
+<div class="menuitem">
+<a href="download.html">Download</a>
+</div>
+<div class="menuitem">
+<a href="changes.html">Changelog</a>
+</div>
+<div class="menuitem">
+<a href="apidocs/index.html">Javadocs</a>
+</div>
+<div class="menuitem">
+<a href="text-extraction.html">Text Extraction</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">Encryption support</div>
+</div>
+<div class="menuitem">
+<a href="security.html">Secure processing</a>
+</div>
+<div class="menuitem">
+<a href="casestudies.html">Case Studies</a>
+</div>
+<div class="menuitem">
+<a href="related-projects.html">Related projects</a>
+</div>
+<div class="menuitem">
+<a href="legal.html">Legal</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.2', 'skin/')" id="menu_1.2Title" class="menutitle">Apache Wide</div>
+<div id="menu_1.2" class="menuitemgroup">
+<div class="menuitem">
+<a href="https://www.apache.org/">Apache Software Foundation</a>
+</div>
+<div class="menuitem">
+<a href="https://www.apache.org/licenses/">License</a>
+</div>
+<div class="menuitem">
+<a href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+</div>
+<div class="menuitem">
+<a href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+</div>
+<div class="menuitem">
+<a href="https://www.apache.org/security/">Security</a>
+</div>
+<div class="menuitem">
+<a href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>Apache POI&trade; - Encryption support</h1>
+<div id="front-matter"></div>
+    
+<a name="Overview"></a>
+<h2 class="boxed">Overview</h2>
+<div class="section">
+<p>Apache POI contains support for reading few variants of encrypted office files: </p>
+<ul>
+            
+<li>Binary formats (.xls, .ppt, .doc, ...)<br>
+            encryption is format-dependent and needs to be implemented per format differently.<br>
+            Use <a href="apidocs/dev/org/apache/poi/hssf/record/crypto/Biff8EncryptionKey.html">
+            Biff8EncryptionKey</a>.<a href="apidocs/dev/org/apache/poi/hssf/record/crypto/Biff8EncryptionKey.html#setCurrentUserPassword(java.lang.String)">setCurrentUserPassword</a>(String password)
+            to specify the decryption password before opening the file or (where applicable) before saving.
+            Setting a null password before saving removes the password protection.<br>
+            The password is set in a thread local variable. Do not forget to reset it to null after text extraction.
+            </li>
+            
+<li>XML-based formats (.xlsx, .pptx, .docx, ...)<br>
+            use the same encryption logic over all formats. When encrypted, the zipped files will be
+            stored within an OLE file in the EncryptedPackage stream.<br>
+            If you plan to use POI to actually generate encrypted documents, be aware not to use anything less than
+            agile encryption, because <a href="https://eprint.iacr.org/2005/007.pdf">RC4 is not really secure</a> and
+            <a href="https://blog.cryptographyengineering.com/2011/12/01/how-not-to-use-symmetric-encryption/">ECB chaining is problematic too</a>.
+            Of course you'll need to make sure, that your clients can read the documents,
+            i.e. the various free Excel, Powerpoint, Word viewers have limitations in the cipher or hashing parameters.<br>
+            If you want to use high encryption parameters, you need to install the "Java Cryptography Extension (JCE) Unlimited
+            Strength Jurisdiction Policy Files" for your JRE version
+            (Oracle <a href="http://www.oracle.com/technetwork/java/javase/downloads/jce-6-download-429243.html">JDK6</a>,
+            <a href="http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html">JDK7</a>,
+            <a href="http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html">JDK8</a>,
+            IBM <a href="https://www.ibm.com/support/knowledgecenter/en/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/sdkpolicyfiles.html">JDK8</a>).
+            </li>
+        
+</ul>
+<p>Some "write-protected" files are encrypted with the built-in password "VelvetSweatshop", POI can read that files too.</p>
+</div>
+
+    
+<a name="Supported+feature+matrix"></a>
+<h2 class="boxed">Supported feature matrix</h2>
+<div class="section">
+<table class="autosize POITable">
+            
+<tr>
+                
+<th colspan="1" rowspan="1">Encryption</th>
+                <th colspan="1" rowspan="1">HSSF</th>
+                <th colspan="1" rowspan="1">HSLF</th>
+                <th colspan="1" rowspan="1">HWPF</th>
+            
+</tr>
+            
+<tr>
+                
+<td colspan="1" rowspan="1"><a href="https://msdn.microsoft.com/en-us/library/dd949802(v=office.12).aspx">XOR obfuscation *)</a></td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes (Writing since 3.16)</td>
+                <td class="feature-na" colspan="1" rowspan="1">N/A</td>
+                <td class="feature-no" colspan="1" rowspan="1">No</td>
+            
+</tr>
+            
+<tr>
+                
+<td colspan="1" rowspan="1"><a href="https://msdn.microsoft.com/en-us/library/dd909583(v=office.12).aspx">40-bit RC4 encryption</a></td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes (Writing since 3.16)</td>
+                <td class="feature-na" colspan="1" rowspan="1">N/A</td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes (since 3.17)</td>
+            
+</tr>
+            
+<tr>
+                
+<td colspan="1" rowspan="1"><a href="https://msdn.microsoft.com/en-us/library/dd910113(v=office.12).aspx">Office Binary Document RC4 CryptoAPI Encryption</a></td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes (Since 3.16)</td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes (since 3.17)</td>
+            
+</tr>
+            
+<tr>
+                
+<th colspan="1" rowspan="1"></th>
+                <th colspan="1" rowspan="1">XSSF</th>
+                <th colspan="1" rowspan="1">XSLF</th>
+                <th colspan="1" rowspan="1">XWPF</th>
+            
+</tr>
+            
+<tr>
+                
+<td colspan="1" rowspan="1"><a href="https://msdn.microsoft.com/en-us/library/dd907466(v=office.12).aspx">Office Binary Document RC4 Encryption **)</a></td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+            
+</tr>
+            
+<tr>
+                
+<td colspan="1" rowspan="1"><a href="https://msdn.microsoft.com/en-us/library/dd906131(v=office.12).aspx">ECMA-376 Standard Encryption</a></td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+            
+</tr>
+            
+<tr>
+                
+<td colspan="1" rowspan="1"><a href="https://msdn.microsoft.com/en-us/library/dd906131(v=office.12).aspx">ECMA-376 Agile Encryption</a></td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+            
+</tr>
+            
+<tr>
+                
+<td colspan="1" rowspan="1"><a href="https://msdn.microsoft.com/en-us/library/ms757845(v=vs.85).aspx">ECMA-376 XML Signature</a></td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+                <td class="feature-yes" colspan="1" rowspan="1">Yes</td>
+            
+</tr>
+        
+</table>
+<p>*) the xor encryption is flawed and works only for very small files - see <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=59857">#59857</a>.
+        </p>
+<p>**) the <a href="https://msdn.microsoft.com/en-us/library/cc313071(v=office.12).aspx">MS-OFFCRYPTO</a>
+        documentation only mentions the RC4 (without CryptoAPI) encryption as a "in place" encryption, but
+        apparently there's also a container based method with that key generation logic.
+        </p>
+</div>
+
+    
+<a name="Binary+formats"></a>
+<h2 class="boxed">Binary formats</h2>
+<div class="section">
+<p>As mentioned above, use
+        <a href="apidocs/dev/org/apache/poi/hssf/record/crypto/Biff8EncryptionKey.html">
+        Biff8EncryptionKey</a>.<a href="apidocs/dev/org/apache/poi/hssf/record/crypto/Biff8EncryptionKey.html#setCurrentUserPassword(java.lang.String)">setCurrentUserPassword</a>(String password)
+        to specify the password.</p>
+<a name="XOR%2FRC4+decryption+for+xls"></a>
+<h3 class="boxed">XOR/RC4 decryption for xls</h3>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Biff8EncryptionKey.setCurrentUserPassword("pass");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">POIFSFileSystem fs = new POIFSFileSystem(new File("file.xls"), true);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSSFWorkbook hwb = new HSSFWorkbook(fs.getRoot(), true);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Biff8EncryptionKey.setCurrentUserPassword(null);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+<a name="RC4+CryptoApi+support+ppt+-+decryption"></a>
+<h3 class="boxed">RC4 CryptoApi support ppt - decryption</h3>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Biff8EncryptionKey.setCurrentUserPassword("pass");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">POIFSFileSystem fs = new POIFSFileSystem(new File("file.ppt"), true);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow hss = new HSLFSlideShow(fs);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// Option 1: remove password</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Biff8EncryptionKey.setCurrentUserPassword(null);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">OutputStream os = new FileOutputStream("decrypted.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">hss.write(os);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">os.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// Option 2: change encryption settings (experimental)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// need to cache data (i.e. read all data) before changing the key size</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PictureData picsExpected[] = hss.getPictures();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">hss.getDocumentSummaryInformation();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">EncryptionInfo ei = hss.getDocumentEncryptionAtom().getEncryptionInfo();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">((CryptoAPIEncryptionHeader)ei.getHeader()).setKeySize(0x78);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">OutputStream os = new FileOutputStream("file_120bit.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">hss.write(os);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">os.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+</div>
+
+    
+<a name="XML-based+formats+-+Decryption"></a>
+<h2 class="boxed">XML-based formats - Decryption</h2>
+<div class="section">
+<p>XML-based formats are stored in OLE-package stream "EncryptedPackage". Use org.apache.poi.poifs.crypt.Decryptor
+        to decode file:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">EncryptionInfo info = new EncryptionInfo(filesystem);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Decryptor d = Decryptor.getInstance(info);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">try {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    if (!d.verifyPassword(password)) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        throw new RuntimeException("Unable to process: document is encrypted");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    InputStream dataStream = d.getDataStream(filesystem);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    // parse dataStream</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">} catch (GeneralSecurityException ex) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    throw new RuntimeException("Unable to process encrypted document", ex);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+<p>If you want to read file encrypted with build-in password, use Decryptor.DEFAULT_PASSWORD.</p>
+</div>
+
+    
+<a name="XML-based+formats+-+Encryption"></a>
+<h2 class="boxed">XML-based formats - Encryption</h2>
+<div class="section">
+<p>Encrypting a file is similar to the above decryption process. Basically you'll need to choose between
+        <a href="apidocs/dev/org/apache/poi/poifs/crypt/EncryptionMode.html">binaryRC4, standard and agile encryption</a>,
+        the cryptoAPI mode is used internally and its direct use would result in an incomplete file.
+        Apart of the CipherMode, the EncryptionInfo class provides further parameters to specify the cipher and
+        hashing algorithm to be used.</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">try (POIFSFileSystem fs = new POIFSFileSystem()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    // EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile, CipherAlgorithm.aes192, HashAlgorithm.sha384, -1, -1, null);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    Encryptor enc = info.getEncryptor();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    enc.confirmPassword("foobaa");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    // Read in an existing OOXML file and write to encrypted output stream</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    // don't forget to close the output stream otherwise the padding bytes aren't added</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    try (OPCPackage opc = OPCPackage.open(new File("..."), PackageAccess.READ_WRITE);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        OutputStream os = enc.getDataStream(fs)) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        opc.save(os);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    // Write out the encrypted version</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    try (FileOutputStream fos = new FileOutputStream("...")) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        fs.writeFilesystem(fos);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+</div>
+
+    
+<a name="XML-based+formats+-+Signing+%28XML+Signature%29"></a>
+<h2 class="boxed">XML-based formats - Signing (XML Signature)</h2>
+<div class="section">
+<div class="note">
+<div class="label">Note</div>
+<div class="content">As of <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=64186">#64186</a> the configuration of the
+        OPCPackage has changed, the examples below have been adopted and reflect the POI 5.0.0 API</div>
+</div>
+<p>An Office document can be digital signed by a <a href="https://en.wikipedia.org/wiki/XML_Signature">XML Signature</a>
+        to protect it from unauthorized modifications, i.e. modifications without having the original certificate.
+        The current implementation is based on the <!--<a href="http://eid-applet.googlecode.com">eID Applet</a>-->
+        <a href="https://github.com/e-Contract/eid-applet">eID Applet</a> which
+        is dual-licensed to
+        <a href="https://github.com/e-Contract/eid-applet/blob/master/README.md#7-license">Apache License 2.0 and LGPL v3.0</a>.
+        Instead of using the internal <a href="http://www.jsourcecode.com/class.php?proj=jdk%5Copenjdk&amp;jar=openjdk-6-b14&amp;class=org.jcp.xml.dsig.internal.dom.DOMXMLSignatureFactory">JDK API</a>
+        this version is based on <a href="https://santuario.apache.org">Apache Santuario</a>.</p>
+<p>The classes have been tested against the following libraries, which need to be included additionally to the
+        <a href="components/">default dependencies</a>:</p>
+<ul>
+            
+<li>BouncyCastle bcpkix, bcprov and bcutil (tested against 1.80)</li>
+            
+<li>Apache Santuario "xmlsec" (tested against 3.0.5)</li>
+            
+<li>and slf4j-api (tested against 2.0.x)</li>
+        
+</ul>
+<p>Depending on the <a href="apidocs/dev/org/apache/poi/poifs/crypt/dsig/SignatureConfig.html">configuration</a>
+        and the activated <a href="apidocs/dev/org/apache/poi/poifs/crypt/dsig/facets/package-summary.html">facets</a>
+        various <a href="https://en.wikipedia.org/wiki/XAdES">XAdES levels</a> are supported - the support for higher levels (XAdES-T+)
+        depend on supporting services and although the code is adopted, the integration is not well tested ... please support us on
+        integration (testing) with timestamp and revocation (OCSP) services.
+        </p>
+<p>Further test examples can be found in the corresponding <a href="https://svn.apache.org/viewvc/poi/trunk/poi-ooxml/src/test/java/org/apache/poi/poifs/crypt/dsig/TestSignatureInfo.java?view=markup">test class</a>.</p>
+<p>If you want to use a hash algorithm with 64 bytes (currently only applies to SHA512),
+        <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=42061">a base64 "feature"</a> in xmlsec
+        leads to line breaks in the digest values, which won't be accepted by Office. To workaround this, you
+        need to set the following system property:<br>
+        
+<strong>-Dorg.apache.xml.security.ignoreLineBreaks=true</strong>
+</p>
+</div>
+
+    
+<a name="Validating+a+signed+office+document"></a>
+<h2 class="boxed">Validating a signed office document</h2>
+<div class="section">
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">OPCPackage pkg = OPCPackage.open(..., PackageAccess.READ);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SignatureConfig sic = new SignatureConfig();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SignatureInfo si = new SignatureInfo();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">si.setOpcPackage(pkg);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">si.setSignatureConfig(sic);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">boolean isValid = si.verifySignature();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+</div>
+
+    
+<a name="Signing+an+office+document"></a>
+<h2 class="boxed">Signing an office document</h2>
+<div class="section">
+<a name="Signing+a+file"></a>
+<h3 class="boxed">Signing a file</h3>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// loading the keystore - pkcs12 is used here, but of course jks &amp; co are also valid</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// the keystore needs to contain a private key and it's certificate having a</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// 'digitalSignature' key usage</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">char password[] = "test".toCharArray();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">File file = new File("test.pfx");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">KeyStore keystore = KeyStore.getInstance("PKCS12");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileInputStream fis = new FileInputStream(file);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">keystore.load(fis, password);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">fis.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// extracting private key and certificate</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">String alias = "xyz"; // alias of the keystore entry</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Key key = keystore.getKey(alias, password);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">X509Certificate x509 = (X509Certificate)keystore.getCertificate(alias);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// filling the SignatureConfig entries (minimum fields, more options are available ...)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SignatureConfig signatureConfig = new SignatureConfig();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">signatureConfig.setKey(keyPair.getPrivate());</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// adding the signature document to the package</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SignatureInfo si = new SignatureInfo();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">OPCPackage pkg = OPCPackage.open(..., PackageAccess.READ_WRITE);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">si.setOpcPackage(pkg);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">si.setSignatureConfig(signatureConfig);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">si.confirmSignature();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// optionally verify the generated signature</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">boolean b = si.verifySignature();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">assert (b);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// write the changes back to disc</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">pkg.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+<a name="Signing+a+stream+-+in-memory"></a>
+<h3 class="boxed">Signing a stream - in-memory</h3>
+<p>When saving a OOXML document, POI creates missing relations on the fly. Therefore calling the signing method before
+            would result in an invalid signature. Instead of trying to fix all save invocations, the user is asked to save the stream
+            before in an intermediate byte array (stream) and process this stream instead.</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// load the key and setup SignatureConfig ... - see "Signing a file"</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SignatureInfo si = new SignatureInfo();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">si.setSignatureConfig(signatureConfig);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// populate sample object</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">XSSFWorkbook wb = new XSSFWorkbook();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">wb.createSheet().createRow(1).createCell(1).setCellValue("Test");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ByteArrayOutputStream bos = new ByteArrayOutputStream(100000);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">wb.write(bos);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">wb.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// process the</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(bos.toByteArray()));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">si.setOpcPackage(pkg);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">si.confirmSignature();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">bos.reset();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">pkg.save(bos);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">pkg.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// bos now contains the signed ooxml document</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+</div>
+
+    
+<a name="Encrypting+temporary+files+created+when+unzipping+an+OOXML+document"></a>
+<h2 class="boxed">Encrypting temporary files created when unzipping an OOXML document</h2>
+<div class="section">
+<p>For security-conscious environments where data at rest must be stored encrypted,
+        the creation of plaintext temporary files is a grey area.</p>
+<p>The code example, written by PJ Fanning, modifies the behavior of SXSSFWorkbook
+        to extract an OOXML spreadsheet zipped container and write the contents to disk using AES
+        encryption.</p>
+<p>See <a href="https://svn.apache.org/viewvc/poi/trunk/poi-ooxml/src/main/java/org/apache/poi/poifs/crypt/temp/SXSSFWorkbookWithCustomZipEntrySource.java?view=markup">SXSSFWorkbookWithCustomZipEntrySource.java</a>
+        and other <a href="https://svn.apache.org/viewvc?view=revision&amp;revision=1768744">files</a>
+        that are needed for this example.</p>
+</div>
+
+    
+<a name="Debugging+XML+signature+issues"></a>
+<h2 class="boxed">Debugging XML signature issues</h2>
+<div class="section">
+<p>Finding the source of a XML signature problem can be sometimes a pain in the ... neck, because
+        the hashing of the canonicalized form is more or less done in the background.</p>
+<p>One of the tripping hazards are <a href="https://stackoverflow.com/questions/36063375">different
+        linebreaks in Windows/Unix</a>, therefore use the non-indent form of the xmls. Furthermore the
+        elements/ancestors containing namespace definitions and the used prefix might also differ.</p>
+<p>The next thing is to compare successful signed documents from Office vs. POIs generated signature,
+        i.e. unzip both files and look for differences. Usually the package relations (*.rels) will be different,
+        and the sig1.xml, core.xml and [Content_Types].xml due to different order of the references.</p>
+<p>The package relationships (*.rels) will be specially handled, i.e. they will be filtered and only
+        a subset will be processed - see <a href="https://www.ecma-international.org/activities/Office%20Open%20XML%20Formats/Draft%20ECMA-376%203rd%20edition,%20March%202011/Office%20Open%20XML%20Part%202%20-%20Open%20Packaging%20Conventions.pdf">13.2.4.24 Relationships Transform Algorithm</a>.</p>
+<p>POI and Santuario (XmlSec) use <a href="https://logging.apache.org/log4j/2.x">Log4J 2.x</a> and
+            <a href="https://www.slf4j.org/">SLF4J</a> respectively for logging.</p>
+<ul>
+            
+<li>
+                (Since the change to Log4J 2 in POI 5.1.0, this hasn't been tested, and you need to adapt the
+                logging settings to get all log output of XmlSec and POI)
+            </li>
+            
+<li>
+                add the following JVM parameters:
+                <div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">-Djava.io.tmpdir=&lt;custom temp directory&gt;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">-Xbootclasspath/p:&lt;preload dir, which contains /org/apache/xml/security/utils/UnsyncBufferedOutputStream.class&gt;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+            
+</li>
+            
+<li>
+                To check the processed files in the canonicalized form, the below UnsyncBufferedOutputStream class needs
+                to be injected/replaced. Put the .class file in separate directory and add it to the JVM parameters (see above):
+
+                <div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">package org.apache.xml.security.utils;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import java.io.File;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import java.io.FileOutputStream;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import java.io.IOException;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import java.io.OutputStream;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">public class UnsyncBufferedOutputStream extends OutputStream {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    static final int size = 8*1024;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    static int filecnt = 0;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    private int pointer = 0;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    private final OutputStream out;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    private final FileOutputStream out2;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    private final byte[] buf;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    public UnsyncBufferedOutputStream(OutputStream out) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        buf = new byte[size];</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        this.out = out;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        synchronized(UnsyncBufferedOutputStream.class) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            try {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                String tmpDir = System.getProperty("java.io.tmpdir");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                if (tmpDir == null) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                    tmpDir = "build";</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                File f = new File(tmpDir, "unsync-"+filecnt+".xml");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                out2 = new FileOutputStream(f);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            } catch (IOException e) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                throw new RuntimeException(e);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            } finally {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                filecnt++;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    public void write(byte[] arg0) throws IOException {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        write(arg0, 0, arg0.length);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    public void write(byte[] arg0, int arg1, int len) throws IOException {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        int newLen = pointer+len;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        if (newLen &gt; size) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            flushBuffer();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            if (len &gt; size) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                out.write(arg0, arg1,len);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                out2.write(arg0, arg1,len);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                return;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            newLen = len;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        System.arraycopy(arg0, arg1, buf, pointer, len);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        pointer = newLen;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    private void flushBuffer() throws IOException {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        if (pointer &gt; 0) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            out.write(buf, 0, pointer);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            out2.write(buf, 0, pointer);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        pointer = 0;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    public void write(int arg0) throws IOException {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        if (pointer &gt;= size) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            flushBuffer();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        buf[pointer++] = (byte)arg0;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    public void flush() throws IOException {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        flushBuffer();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        out.flush();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        out2.flush();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    public void close() throws IOException {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        flush();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        out2.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+            
+</li>
+        
+</ul>
+</div>
+    
+<p align="right">
+<font size="-2">by&nbsp;Maxim Valyanskiy,&nbsp;Andreas Beeker</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0encryption.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

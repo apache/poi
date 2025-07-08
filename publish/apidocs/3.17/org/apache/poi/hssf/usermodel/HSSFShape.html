@@ -1,0 +1,1459 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+HSSFShape (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="HSSFShape (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFShape.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFShape.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.usermodel</FONT>
+<BR>
+Class HSSFShape</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.usermodel.HSSFShape</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html" title="interface in org.apache.poi.ss.usermodel">Shape</A></DD>
+</DL>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html" title="class in org.apache.poi.hssf.usermodel">HSSFShapeGroup</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSimpleShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFSimpleShape</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public abstract class <B>HSSFShape</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html" title="interface in org.apache.poi.ss.usermodel">Shape</A></DL>
+</PRE>
+
+<P>
+An abstract shape.
+ 
+ Note: Microsoft Excel seems to sometimes disallow 
+ higher y1 than y2 or higher x1 than x2 in the anchor, you might need to 
+ reverse them and draw shapes vertically or horizontally flipped via
+ setFlipVertical() or setFlipHorizontally().
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#FILL__FILLCOLOR_DEFAULT">FILL__FILLCOLOR_DEFAULT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE__COLOR_DEFAULT">LINESTYLE__COLOR_DEFAULT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DASHDOTDOTSYS">LINESTYLE_DASHDOTDOTSYS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DASHDOTGEL">LINESTYLE_DASHDOTGEL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DASHDOTSYS">LINESTYLE_DASHDOTSYS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DASHGEL">LINESTYLE_DASHGEL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DASHSYS">LINESTYLE_DASHSYS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DEFAULT">LINESTYLE_DEFAULT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DOTGEL">LINESTYLE_DOTGEL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DOTSYS">LINESTYLE_DOTSYS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_LONGDASHDOTDOTGEL">LINESTYLE_LONGDASHDOTDOTGEL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_LONGDASHDOTGEL">LINESTYLE_LONGDASHDOTGEL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_LONGDASHGEL">LINESTYLE_LONGDASHGEL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_NONE">LINESTYLE_NONE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_SOLID">LINESTYLE_SOLID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINEWIDTH_DEFAULT">LINEWIDTH_DEFAULT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINEWIDTH_ONE_PT">LINEWIDTH_ONE_PT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#NO_FILL_DEFAULT">NO_FILL_DEFAULT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#NO_FILLHITTEST_FALSE">NO_FILLHITTEST_FALSE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#NO_FILLHITTEST_TRUE">NO_FILLHITTEST_TRUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#HSSFShape(org.apache.poi.ddf.EscherContainerRecord, org.apache.poi.hssf.record.ObjRecord)">HSSFShape</A></B>(<A HREF="../../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf">EscherContainerRecord</A>&nbsp;spContainer,
+          <A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record">ObjRecord</A>&nbsp;objRecord)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;creates shapes from existing file</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#HSSFShape(org.apache.poi.hssf.usermodel.HSSFShape, org.apache.poi.hssf.usermodel.HSSFAnchor)">HSSFShape</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&nbsp;parent,
+          <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFAnchor</A>&nbsp;anchor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new shape with the specified parent and anchor.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected abstract &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#afterRemove(org.apache.poi.hssf.usermodel.HSSFPatriarch)">afterRemove</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A>&nbsp;patriarch)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;remove escher container from the patriarch.escherAggregate
+ remove obj, textObj and note records if it's necessary
+ in case of ShapeGroup remove all contained shapes</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected abstract &nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#cloneShape()">cloneShape</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#countOfAllChildren()">countOfAllChildren</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Count of all children and their children's children.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected abstract &nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record">ObjRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#createObjRecord()">createObjRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected abstract &nbsp;<A HREF="../../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf">EscherContainerRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#createSpContainer()">createSpContainer</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFAnchor</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getAnchor()">getAnchor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf">EscherContainerRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getEscherContainer()">getEscherContainer</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getFillColor()">getFillColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The color used to fill this shape.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getLineStyle()">getLineStyle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getLineStyleColor()">getLineStyleColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The color applied to the lines of this shape.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getLineWidth()">getLineWidth</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record">ObjRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getObjRecord()">getObjRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ddf/EscherOptRecord.html" title="class in org.apache.poi.ddf">EscherOptRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getOptRecord()">getOptRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the low-level EscherOptRecord to read/modify not yet wrapped escher properties</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getParent()">getParent</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getPatriarch()">getPatriarch</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getRotationDegree()">getRotationDegree</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getShapeName()">getShapeName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#isFlipHorizontal()">isFlipHorizontal</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#isFlipVertical()">isFlipVertical</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#isNoFill()">isNoFill</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether this shape is not filled with a color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setAnchor(org.apache.poi.hssf.usermodel.HSSFAnchor)">setAnchor</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFAnchor</A>&nbsp;anchor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets a particular anchor.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setFillColor(int)">setFillColor</A></B>(int&nbsp;fillColor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The color used to fill this shape.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setFillColor(int, int, int)">setFillColor</A></B>(int&nbsp;red,
+             int&nbsp;green,
+             int&nbsp;blue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the color used to fill this shape using the solid fill pattern.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setFlipHorizontal(boolean)">setFlipHorizontal</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setFlipVertical(boolean)">setFlipVertical</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setLineStyle(int)">setLineStyle</A></B>(int&nbsp;lineStyle)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the line style.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setLineStyleColor(int)">setLineStyleColor</A></B>(int&nbsp;lineStyleColor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The color applied to the lines of this shape.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setLineStyleColor(int, int, int)">setLineStyleColor</A></B>(int&nbsp;red,
+                  int&nbsp;green,
+                  int&nbsp;blue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The color applied to the lines of this shape.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setLineWidth(int)">setLineWidth</A></B>(int&nbsp;lineWidth)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the width of the line.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setNoFill(boolean)">setNoFill</A></B>(boolean&nbsp;noFill)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether this shape is filled or transparent.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setParent(org.apache.poi.hssf.usermodel.HSSFShape)">setParent</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&nbsp;parent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setPatriarch(org.apache.poi.hssf.usermodel.HSSFPatriarch)">setPatriarch</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A>&nbsp;_patriarch)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setPropertyValue(org.apache.poi.ddf.EscherProperty)">setPropertyValue</A></B>(<A HREF="../../../../../org/apache/poi/ddf/EscherProperty.html" title="class in org.apache.poi.ddf">EscherProperty</A>&nbsp;property)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setRotationDegree(short)">setRotationDegree</A></B>(short&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specifies the rotation, in degrees, that is applied to a shape.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="LINEWIDTH_ONE_PT"><!-- --></A><H3>
+LINEWIDTH_ONE_PT</H3>
+<PRE>
+public static final int <B>LINEWIDTH_ONE_PT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINEWIDTH_ONE_PT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINEWIDTH_DEFAULT"><!-- --></A><H3>
+LINEWIDTH_DEFAULT</H3>
+<PRE>
+public static final int <B>LINEWIDTH_DEFAULT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINEWIDTH_DEFAULT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE__COLOR_DEFAULT"><!-- --></A><H3>
+LINESTYLE__COLOR_DEFAULT</H3>
+<PRE>
+public static final int <B>LINESTYLE__COLOR_DEFAULT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE__COLOR_DEFAULT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FILL__FILLCOLOR_DEFAULT"><!-- --></A><H3>
+FILL__FILLCOLOR_DEFAULT</H3>
+<PRE>
+public static final int <B>FILL__FILLCOLOR_DEFAULT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.FILL__FILLCOLOR_DEFAULT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="NO_FILL_DEFAULT"><!-- --></A><H3>
+NO_FILL_DEFAULT</H3>
+<PRE>
+public static final boolean <B>NO_FILL_DEFAULT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.NO_FILL_DEFAULT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_SOLID"><!-- --></A><H3>
+LINESTYLE_SOLID</H3>
+<PRE>
+public static final int <B>LINESTYLE_SOLID</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_SOLID">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_DASHSYS"><!-- --></A><H3>
+LINESTYLE_DASHSYS</H3>
+<PRE>
+public static final int <B>LINESTYLE_DASHSYS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_DASHSYS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_DOTSYS"><!-- --></A><H3>
+LINESTYLE_DOTSYS</H3>
+<PRE>
+public static final int <B>LINESTYLE_DOTSYS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_DOTSYS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_DASHDOTSYS"><!-- --></A><H3>
+LINESTYLE_DASHDOTSYS</H3>
+<PRE>
+public static final int <B>LINESTYLE_DASHDOTSYS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_DASHDOTSYS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_DASHDOTDOTSYS"><!-- --></A><H3>
+LINESTYLE_DASHDOTDOTSYS</H3>
+<PRE>
+public static final int <B>LINESTYLE_DASHDOTDOTSYS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_DASHDOTDOTSYS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_DOTGEL"><!-- --></A><H3>
+LINESTYLE_DOTGEL</H3>
+<PRE>
+public static final int <B>LINESTYLE_DOTGEL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_DOTGEL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_DASHGEL"><!-- --></A><H3>
+LINESTYLE_DASHGEL</H3>
+<PRE>
+public static final int <B>LINESTYLE_DASHGEL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_DASHGEL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_LONGDASHGEL"><!-- --></A><H3>
+LINESTYLE_LONGDASHGEL</H3>
+<PRE>
+public static final int <B>LINESTYLE_LONGDASHGEL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_LONGDASHGEL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_DASHDOTGEL"><!-- --></A><H3>
+LINESTYLE_DASHDOTGEL</H3>
+<PRE>
+public static final int <B>LINESTYLE_DASHDOTGEL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_DASHDOTGEL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_LONGDASHDOTGEL"><!-- --></A><H3>
+LINESTYLE_LONGDASHDOTGEL</H3>
+<PRE>
+public static final int <B>LINESTYLE_LONGDASHDOTGEL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_LONGDASHDOTGEL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_LONGDASHDOTDOTGEL"><!-- --></A><H3>
+LINESTYLE_LONGDASHDOTDOTGEL</H3>
+<PRE>
+public static final int <B>LINESTYLE_LONGDASHDOTDOTGEL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_LONGDASHDOTDOTGEL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_NONE"><!-- --></A><H3>
+LINESTYLE_NONE</H3>
+<PRE>
+public static final int <B>LINESTYLE_NONE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_NONE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINESTYLE_DEFAULT"><!-- --></A><H3>
+LINESTYLE_DEFAULT</H3>
+<PRE>
+public static final int <B>LINESTYLE_DEFAULT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.LINESTYLE_DEFAULT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="NO_FILLHITTEST_TRUE"><!-- --></A><H3>
+NO_FILLHITTEST_TRUE</H3>
+<PRE>
+public static final int <B>NO_FILLHITTEST_TRUE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.NO_FILLHITTEST_TRUE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="NO_FILLHITTEST_FALSE"><!-- --></A><H3>
+NO_FILLHITTEST_FALSE</H3>
+<PRE>
+public static final int <B>NO_FILLHITTEST_FALSE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFShape.NO_FILLHITTEST_FALSE">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="HSSFShape(org.apache.poi.ddf.EscherContainerRecord, org.apache.poi.hssf.record.ObjRecord)"><!-- --></A><H3>
+HSSFShape</H3>
+<PRE>
+public <B>HSSFShape</B>(<A HREF="../../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf">EscherContainerRecord</A>&nbsp;spContainer,
+                 <A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record">ObjRecord</A>&nbsp;objRecord)</PRE>
+<DL>
+<DD>creates shapes from existing file
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>spContainer</CODE> - <DD><CODE>objRecord</CODE> - </DL>
+</DL>
+<HR>
+
+<A NAME="HSSFShape(org.apache.poi.hssf.usermodel.HSSFShape, org.apache.poi.hssf.usermodel.HSSFAnchor)"><!-- --></A><H3>
+HSSFShape</H3>
+<PRE>
+public <B>HSSFShape</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&nbsp;parent,
+                 <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFAnchor</A>&nbsp;anchor)</PRE>
+<DL>
+<DD>Create a new shape with the specified parent and anchor.
+<P>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="createSpContainer()"><!-- --></A><H3>
+createSpContainer</H3>
+<PRE>
+protected abstract <A HREF="../../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf">EscherContainerRecord</A> <B>createSpContainer</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createObjRecord()"><!-- --></A><H3>
+createObjRecord</H3>
+<PRE>
+protected abstract <A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record">ObjRecord</A> <B>createObjRecord</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="afterRemove(org.apache.poi.hssf.usermodel.HSSFPatriarch)"><!-- --></A><H3>
+afterRemove</H3>
+<PRE>
+protected abstract void <B>afterRemove</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A>&nbsp;patriarch)</PRE>
+<DL>
+<DD>remove escher container from the patriarch.escherAggregate
+ remove obj, textObj and note records if it's necessary
+ in case of ShapeGroup remove all contained shapes
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>patriarch</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getEscherContainer()"><!-- --></A><H3>
+getEscherContainer</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf">EscherContainerRecord</A> <B>getEscherContainer</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getObjRecord()"><!-- --></A><H3>
+getObjRecord</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record">ObjRecord</A> <B>getObjRecord</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOptRecord()"><!-- --></A><H3>
+getOptRecord</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ddf/EscherOptRecord.html" title="class in org.apache.poi.ddf">EscherOptRecord</A> <B>getOptRecord</B>()</PRE>
+<DL>
+<DD>Return the low-level EscherOptRecord to read/modify not yet wrapped escher properties
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the low-level EscherOptRecord</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getParent()"><!-- --></A><H3>
+getParent</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A> <B>getParent</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html#getParent()">getParent</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html" title="interface in org.apache.poi.ss.usermodel">Shape</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the parent shape.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAnchor()"><!-- --></A><H3>
+getAnchor</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFAnchor</A> <B>getAnchor</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html#getAnchor()">getAnchor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html" title="interface in org.apache.poi.ss.usermodel">Shape</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the anchor that is used by this shape.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAnchor(org.apache.poi.hssf.usermodel.HSSFAnchor)"><!-- --></A><H3>
+setAnchor</H3>
+<PRE>
+public void <B>setAnchor</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFAnchor</A>&nbsp;anchor)</PRE>
+<DL>
+<DD>Sets a particular anchor.  A top-level shape must have an anchor of
+ HSSFClientAnchor.  A child anchor must have an anchor of HSSFChildAnchor
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>anchor</CODE> - the anchor to use.
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - when the wrong anchor is used for
+                                  this particular shape.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFChildAnchor</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFClientAnchor.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFClientAnchor</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLineStyleColor()"><!-- --></A><H3>
+getLineStyleColor</H3>
+<PRE>
+public int <B>getLineStyleColor</B>()</PRE>
+<DL>
+<DD>The color applied to the lines of this shape.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLineStyleColor(int)"><!-- --></A><H3>
+setLineStyleColor</H3>
+<PRE>
+public void <B>setLineStyleColor</B>(int&nbsp;lineStyleColor)</PRE>
+<DL>
+<DD>The color applied to the lines of this shape.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLineStyleColor(int, int, int)"><!-- --></A><H3>
+setLineStyleColor</H3>
+<PRE>
+public void <B>setLineStyleColor</B>(int&nbsp;red,
+                              int&nbsp;green,
+                              int&nbsp;blue)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html#setLineStyleColor(int, int, int)">Shape</A></CODE></B></DD>
+<DD>The color applied to the lines of this shape.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html#setLineStyleColor(int, int, int)">setLineStyleColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html" title="interface in org.apache.poi.ss.usermodel">Shape</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillColor()"><!-- --></A><H3>
+getFillColor</H3>
+<PRE>
+public int <B>getFillColor</B>()</PRE>
+<DL>
+<DD>The color used to fill this shape.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFillColor(int)"><!-- --></A><H3>
+setFillColor</H3>
+<PRE>
+public void <B>setFillColor</B>(int&nbsp;fillColor)</PRE>
+<DL>
+<DD>The color used to fill this shape.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFillColor(int, int, int)"><!-- --></A><H3>
+setFillColor</H3>
+<PRE>
+public void <B>setFillColor</B>(int&nbsp;red,
+                         int&nbsp;green,
+                         int&nbsp;blue)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html#setFillColor(int, int, int)">Shape</A></CODE></B></DD>
+<DD>Sets the color used to fill this shape using the solid fill pattern.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html#setFillColor(int, int, int)">setFillColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html" title="interface in org.apache.poi.ss.usermodel">Shape</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLineWidth()"><!-- --></A><H3>
+getLineWidth</H3>
+<PRE>
+public int <B>getLineWidth</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>returns with width of the line in EMUs.  12700 = 1 pt.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLineWidth(int)"><!-- --></A><H3>
+setLineWidth</H3>
+<PRE>
+public void <B>setLineWidth</B>(int&nbsp;lineWidth)</PRE>
+<DL>
+<DD>Sets the width of the line.  12700 = 1 pt.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lineWidth</CODE> - width in EMU's.  12700EMU's = 1 pt<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINEWIDTH_ONE_PT"><CODE>LINEWIDTH_ONE_PT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLineStyle()"><!-- --></A><H3>
+getLineStyle</H3>
+<PRE>
+public int <B>getLineStyle</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>One of the constants in LINESTYLE_*</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLineStyle(int)"><!-- --></A><H3>
+setLineStyle</H3>
+<PRE>
+public void <B>setLineStyle</B>(int&nbsp;lineStyle)</PRE>
+<DL>
+<DD>Sets the line style.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lineStyle</CODE> - One of the constants in LINESTYLE_*</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isNoFill()"><!-- --></A><H3>
+isNoFill</H3>
+<PRE>
+public boolean <B>isNoFill</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html#isNoFill()">Shape</A></CODE></B></DD>
+<DD>Whether this shape is not filled with a color
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html#isNoFill()">isNoFill</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html" title="interface in org.apache.poi.ss.usermodel">Shape</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if this shape is not filled with a color.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setNoFill(boolean)"><!-- --></A><H3>
+setNoFill</H3>
+<PRE>
+public void <B>setNoFill</B>(boolean&nbsp;noFill)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html#setNoFill(boolean)">Shape</A></CODE></B></DD>
+<DD>Sets whether this shape is filled or transparent.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html#setNoFill(boolean)">setNoFill</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html" title="interface in org.apache.poi.ss.usermodel">Shape</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>noFill</CODE> - if true then no fill will be applied to the shape element.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPropertyValue(org.apache.poi.ddf.EscherProperty)"><!-- --></A><H3>
+setPropertyValue</H3>
+<PRE>
+protected void <B>setPropertyValue</B>(<A HREF="../../../../../org/apache/poi/ddf/EscherProperty.html" title="class in org.apache.poi.ddf">EscherProperty</A>&nbsp;property)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFlipVertical(boolean)"><!-- --></A><H3>
+setFlipVertical</H3>
+<PRE>
+public void <B>setFlipVertical</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - specifies whether this shape is vertically flipped.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFlipHorizontal(boolean)"><!-- --></A><H3>
+setFlipHorizontal</H3>
+<PRE>
+public void <B>setFlipHorizontal</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - specifies whether this shape is horizontally flipped.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isFlipVertical()"><!-- --></A><H3>
+isFlipVertical</H3>
+<PRE>
+public boolean <B>isFlipVertical</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether this shape is vertically flipped.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isFlipHorizontal()"><!-- --></A><H3>
+isFlipHorizontal</H3>
+<PRE>
+public boolean <B>isFlipHorizontal</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether this shape is horizontally flipped.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRotationDegree()"><!-- --></A><H3>
+getRotationDegree</H3>
+<PRE>
+public int <B>getRotationDegree</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the rotation, in degrees, that is applied to a shape.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRotationDegree(short)"><!-- --></A><H3>
+setRotationDegree</H3>
+<PRE>
+public void <B>setRotationDegree</B>(short&nbsp;value)</PRE>
+<DL>
+<DD>specifies the rotation, in degrees, that is applied to a shape.
+ Positive values specify rotation in the clockwise direction.
+ Negative values specify rotation in the counterclockwise direction.
+ Rotation occurs around the center of the shape.
+ The default value for this property is 0x00000000
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="countOfAllChildren()"><!-- --></A><H3>
+countOfAllChildren</H3>
+<PRE>
+public int <B>countOfAllChildren</B>()</PRE>
+<DL>
+<DD>Count of all children and their children's children.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="cloneShape()"><!-- --></A><H3>
+cloneShape</H3>
+<PRE>
+protected abstract <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A> <B>cloneShape</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPatriarch(org.apache.poi.hssf.usermodel.HSSFPatriarch)"><!-- --></A><H3>
+setPatriarch</H3>
+<PRE>
+protected void <B>setPatriarch</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A>&nbsp;_patriarch)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPatriarch()"><!-- --></A><H3>
+getPatriarch</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A> <B>getPatriarch</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setParent(org.apache.poi.hssf.usermodel.HSSFShape)"><!-- --></A><H3>
+setParent</H3>
+<PRE>
+protected void <B>setParent</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&nbsp;parent)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShapeName()"><!-- --></A><H3>
+getShapeName</H3>
+<PRE>
+public java.lang.String <B>getShapeName</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html#getShapeName()">getShapeName</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html" title="interface in org.apache.poi.ss.usermodel">Shape</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the name of this shape</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFShape.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFShape.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

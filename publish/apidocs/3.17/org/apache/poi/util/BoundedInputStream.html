@@ -1,0 +1,607 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+BoundedInputStream (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="BoundedInputStream (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/util/BitFieldFactory.html" title="class in org.apache.poi.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/util/ByteField.html" title="class in org.apache.poi.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/util/BoundedInputStream.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="BoundedInputStream.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.util</FONT>
+<BR>
+Class BoundedInputStream</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by ">java.io.InputStream
+      <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.util.BoundedInputStream</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.io.Closeable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>BoundedInputStream</B><DT>extends java.io.InputStream</DL>
+</PRE>
+
+<P>
+This is a stream that will only supply bytes up to a certain length - if its
+ position goes above that, it will stop.
+ <p>
+ This is useful to wrap ServletInputStreams. The ServletInputStream will block
+ if you try to read content from it that isn't there, because it doesn't know
+ whether the content hasn't arrived yet or whether the content has finished.
+ So, one of these, initialized with the Content-length sent in the
+ ServletInputStream's header, will stop it blocking, providing it's been sent
+ with a correct content length.
+<P>
+
+<P>
+<DL>
+<DT><B>Since:</B></DT>
+  <DD>Commons IO 2.0</DD>
+</DL>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#BoundedInputStream(java.io.InputStream)">BoundedInputStream</A></B>(java.io.InputStream&nbsp;in)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new <code>BoundedInputStream</code> that wraps the given input
+ stream and is unlimited.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#BoundedInputStream(java.io.InputStream, long)">BoundedInputStream</A></B>(java.io.InputStream&nbsp;in,
+                   long&nbsp;size)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new <code>BoundedInputStream</code> that wraps the given input
+ stream and limits it to a certain size.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#available()">available</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#close()">close</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invokes the delegate's <code>close()</code> method
+ if <A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#isPropagateClose()"><CODE>isPropagateClose()</CODE></A> is <code>true</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#isPropagateClose()">isPropagateClose</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates whether the <A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#close()"><CODE>close()</CODE></A> method
+ should propagate to the underling <CODE>InputStream</CODE>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#mark(int)">mark</A></B>(int&nbsp;readlimit)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invokes the delegate's <code>mark(int)</code> method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#markSupported()">markSupported</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invokes the delegate's <code>markSupported()</code> method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#read()">read</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invokes the delegate's <code>read()</code> method if
+ the current position is less than the limit.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#read(byte[])">read</A></B>(byte[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invokes the delegate's <code>read(byte[])</code> method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#read(byte[], int, int)">read</A></B>(byte[]&nbsp;b,
+     int&nbsp;off,
+     int&nbsp;len)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invokes the delegate's <code>read(byte[], int, int)</code> method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#reset()">reset</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invokes the delegate's <code>reset()</code> method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#setPropagateClose(boolean)">setPropagateClose</A></B>(boolean&nbsp;propagateClose)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set whether the <A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#close()"><CODE>close()</CODE></A> method
+ should propagate to the underling <CODE>InputStream</CODE>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#skip(long)">skip</A></B>(long&nbsp;n)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invokes the delegate's <code>skip(long)</code> method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invokes the delegate's <code>toString()</code> method.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="BoundedInputStream(java.io.InputStream, long)"><!-- --></A><H3>
+BoundedInputStream</H3>
+<PRE>
+public <B>BoundedInputStream</B>(java.io.InputStream&nbsp;in,
+                          long&nbsp;size)</PRE>
+<DL>
+<DD>Creates a new <code>BoundedInputStream</code> that wraps the given input
+ stream and limits it to a certain size.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>in</CODE> - The wrapped input stream<DD><CODE>size</CODE> - The maximum number of bytes to return</DL>
+</DL>
+<HR>
+
+<A NAME="BoundedInputStream(java.io.InputStream)"><!-- --></A><H3>
+BoundedInputStream</H3>
+<PRE>
+public <B>BoundedInputStream</B>(java.io.InputStream&nbsp;in)</PRE>
+<DL>
+<DD>Creates a new <code>BoundedInputStream</code> that wraps the given input
+ stream and is unlimited.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>in</CODE> - The wrapped input stream</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="read()"><!-- --></A><H3>
+read</H3>
+<PRE>
+public int <B>read</B>()
+         throws java.io.IOException</PRE>
+<DL>
+<DD>Invokes the delegate's <code>read()</code> method if
+ the current position is less than the limit.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>read</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the byte read or -1 if the end of stream or
+ the limit has been reached.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(byte[])"><!-- --></A><H3>
+read</H3>
+<PRE>
+public int <B>read</B>(byte[]&nbsp;b)
+         throws java.io.IOException</PRE>
+<DL>
+<DD>Invokes the delegate's <code>read(byte[])</code> method.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>read</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - the buffer to read the bytes into
+<DT><B>Returns:</B><DD>the number of bytes read or -1 if the end of stream or
+ the limit has been reached.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(byte[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public int <B>read</B>(byte[]&nbsp;b,
+                int&nbsp;off,
+                int&nbsp;len)
+         throws java.io.IOException</PRE>
+<DL>
+<DD>Invokes the delegate's <code>read(byte[], int, int)</code> method.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>read</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - the buffer to read the bytes into<DD><CODE>off</CODE> - The start offset<DD><CODE>len</CODE> - The number of bytes to read
+<DT><B>Returns:</B><DD>the number of bytes read or -1 if the end of stream or
+ the limit has been reached.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="skip(long)"><!-- --></A><H3>
+skip</H3>
+<PRE>
+public long <B>skip</B>(long&nbsp;n)
+          throws java.io.IOException</PRE>
+<DL>
+<DD>Invokes the delegate's <code>skip(long)</code> method.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>skip</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>n</CODE> - the number of bytes to skip
+<DT><B>Returns:</B><DD>the actual number of bytes skipped
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="available()"><!-- --></A><H3>
+available</H3>
+<PRE>
+public int <B>available</B>()
+              throws java.io.IOException</PRE>
+<DL>
+<DD>
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>available</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD>Invokes the delegate's <code>toString()</code> method.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the delegate's <code>toString()</code></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="close()"><!-- --></A><H3>
+close</H3>
+<PRE>
+public void <B>close</B>()
+           throws java.io.IOException</PRE>
+<DL>
+<DD>Invokes the delegate's <code>close()</code> method
+ if <A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#isPropagateClose()"><CODE>isPropagateClose()</CODE></A> is <code>true</code>.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>close</CODE> in interface <CODE>java.io.Closeable</CODE><DT><B>Overrides:</B><DD><CODE>close</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="reset()"><!-- --></A><H3>
+reset</H3>
+<PRE>
+public void <B>reset</B>()
+           throws java.io.IOException</PRE>
+<DL>
+<DD>Invokes the delegate's <code>reset()</code> method.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>reset</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="mark(int)"><!-- --></A><H3>
+mark</H3>
+<PRE>
+public void <B>mark</B>(int&nbsp;readlimit)</PRE>
+<DL>
+<DD>Invokes the delegate's <code>mark(int)</code> method.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>mark</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>readlimit</CODE> - read ahead limit</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="markSupported()"><!-- --></A><H3>
+markSupported</H3>
+<PRE>
+public boolean <B>markSupported</B>()</PRE>
+<DL>
+<DD>Invokes the delegate's <code>markSupported()</code> method.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>markSupported</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if mark is supported, otherwise false</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isPropagateClose()"><!-- --></A><H3>
+isPropagateClose</H3>
+<PRE>
+public boolean <B>isPropagateClose</B>()</PRE>
+<DL>
+<DD>Indicates whether the <A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#close()"><CODE>close()</CODE></A> method
+ should propagate to the underling <CODE>InputStream</CODE>.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if calling <A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#close()"><CODE>close()</CODE></A>
+ propagates to the <code>close()</code> method of the
+ underlying stream or <code>false</code> if it does not.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPropagateClose(boolean)"><!-- --></A><H3>
+setPropagateClose</H3>
+<PRE>
+public void <B>setPropagateClose</B>(boolean&nbsp;propagateClose)</PRE>
+<DL>
+<DD>Set whether the <A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#close()"><CODE>close()</CODE></A> method
+ should propagate to the underling <CODE>InputStream</CODE>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>propagateClose</CODE> - <code>true</code> if calling
+ <A HREF="../../../../org/apache/poi/util/BoundedInputStream.html#close()"><CODE>close()</CODE></A> propagates to the <code>close()</code>
+ method of the underlying stream or
+ <code>false</code> if it does not.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/util/BitFieldFactory.html" title="class in org.apache.poi.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/util/ByteField.html" title="class in org.apache.poi.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/util/BoundedInputStream.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="BoundedInputStream.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

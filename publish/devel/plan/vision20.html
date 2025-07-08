@@ -1,0 +1,897 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>POI 2.0 Vision Document</title>
+<link type="text/css" href="../../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../../skin/profile.css" rel="stylesheet">
+<script src="../../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../../help/index.html">Help</a>
+</li>
+<li>
+<a class="unselected" href="../../components/index.html">Component APIs</a>
+</li>
+<li class="current">
+<a class="selected" href="../../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Getting Involved</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../devel/index.html">How To Build</a>
+</div>
+<div class="menuitem">
+<a href="../../devel/nightly.html">Nightly Builds</a>
+</div>
+<div class="menuitem">
+<a href="../../devel/subversion.html">Subversion Repository</a>
+</div>
+<div class="menuitem">
+<a href="../../devel/guidelines.html">Contribution Guidelines</a>
+</div>
+<div class="menuitem">
+<a href="../../devel/who.html">Who We Are</a>
+</div>
+<div onclick="SwitchMenu('menu_selected_1.1.6', '../../skin/')" id="menu_selected_1.1.6Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Planning Documents</div>
+<div id="menu_selected_1.1.6" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../devel/plan/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../devel/plan/vision10.html">1.0 Vision</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">2.0 Vision</div>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.7', '../../skin/')" id="menu_1.1.7Title" class="menutitle">References</div>
+<div id="menu_1.1.7" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../devel/references/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../devel/references/logocontest.html">Logo Submissions</a>
+</div>
+<div class="menuitem">
+<a href="https://sc.openoffice.org/excelfileformat.pdf">XLS spec [PDF]</a>
+</div>
+<div class="menuitem">
+<a href="https://xml.apache.org/cocoon/">Apache Cocoon</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.8', '../../skin/')" id="menu_1.1.8Title" class="menutitle">Resolutions</div>
+<div id="menu_1.1.8" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../devel/resolutions/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../devel/resolutions/res001.html">Minimal Coding Standards</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.9', '../../skin/')" id="menu_1.1.9Title" class="menutitle">History</div>
+<div id="menu_1.1.9" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../devel/history/index.html">The early years</a>
+</div>
+<div class="menuitem">
+<a href="../../devel/history/changes-3x.html">Changelog 3.x</a>
+</div>
+<div class="menuitem">
+<a href="../../devel/history/changes-pre3x.html">Changelog 0-2.x</a>
+</div>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>POI 2.0 Vision Document</h1>
+<div id="front-matter"></div>
+ 
+ 
+<a name="Preface"></a>
+<h2 class="boxed">Preface</h2>
+<div class="section">
+<p>
+                This is the POI 2.0 cycle vision document.  Although the vision
+                has not changed and this document is certainly not out of date and 
+                the vision has not changed, the structure of the project has
+                changed a bit.  We're not going to change the vision document to
+                reflect this (however proper that may be) because it would only
+                involve deletion.  There is no purpose in providing less
+                information provided we give clarification.
+        </p>
+<p>
+                This document was created before the POI components for 
+                <a href="https://xml.apache.org/cocoon">Apache Cocoon</a>
+                were accepted into the Cocoon project itself.  It was also
+                written before POI was accepted into Jakarta.  So while the
+                vision hasn't changed some of the components are actually now
+                part of other projects.  We'll still be working on them on the
+                same timeline roughly (minus the overhead of coordination with
+                other groups), but they are no longer technically part of the
+                POI project itself.
+        </p>
+</div>
+
+ 
+<a name="1.+Introduction"></a>
+<h2 class="boxed">1. Introduction</h2>
+<div class="section">
+<a name="1.1+Purpose+of+this+document"></a>
+<h3 class="boxed">1.1 Purpose of this document</h3>
+<p>
+                The purpose of this document is to
+                collect, analyze and define high-level requirements, user needs, 
+                and features of the second release of the POI project software. 
+                The POI project currently consists of the following components: 
+                the HSSF Serializer, the HSSF library and the POIFS library.
+	</p>
+<ul>
+	        
+<li>
+                        The HSSF Serializer is a set of Java classes whose main 
+                        class supports the Serializer interface from the Cocoon 
+                        2 project and outputs the serialized data in a format 
+                        compatible with the spreadsheet program Microsoft Excel 
+                        '97.
+                </li>
+	        
+<li>
+                        The HSSF library is a set of classes for reading and 
+                        writing Microsoft Excel 97 file format using pure Java.
+                </li>
+	        
+<li>
+                        The POIFS library is a set of classes for reading and 
+                        writing Microsoft's OLE 2 Compound Document format using 
+                        pure Java.
+                </li>
+        
+</ul>
+<p>By the completion of this release cycle the POI project will also
+        include the HSSF Generator and the HWPF library.
+        </p>
+<ul>
+	        
+<li>The HSSF Generator will be responsible for using HSSF to read
+	        in the XLS (Excel 97) file format and create SAX events. The HSSF
+	        Generator will support the applicable interfaces specified by the
+	        Apache Cocoon 2 project.
+                </li>
+	        
+<li>The HWPF library will provide a set of high level interfaces
+	        for reading and writing Microsoft Word 97 file format using pure
+	        Java.</li>
+        
+</ul>
+<a name="1.2+Project+Overview"></a>
+<h3 class="boxed">1.2 Project Overview</h3>
+<p>
+                The first release of the POI project
+                was an astounding success. This release seeks to build on that
+                success by:
+        </p>
+<ul>
+                
+<li>
+                        Refactoring POIFS into input and
+                        output classes as well as an event-driven API for reading.
+                </li>
+                
+<li>
+                        Refactor HSSF for greater
+	                performance as well as an event-driven API for reading
+                </li>
+                
+<li>
+                        Extend HSSF by adding the ability to read and write formulas.
+                </li>
+	        
+<li>
+                        Extend HSSF by adding the ability to read and write 
+                        user-defined styles.
+                </li>
+	        
+<li>
+                        Create a Cocoon 2 Generator for HSSF using the same tags 
+                        as the HSSF Serializer.
+                </li>
+	        
+<li>
+                        Create a new library (HWPF) for reading and writing 
+                        Microsoft Word DOC format.
+                </li>
+	        
+<li>
+                        Refactor the HSSFSerializer into a separate extensible 
+                        POIFSSerializer and HSSFSerializer
+                </li>
+                
+<li>
+                        Providing the create excel charts. (write only)
+                </li>
+        
+</ul>
+</div>
+ 
+<a name="2.+User+Description"></a>
+<h2 class="boxed">2. User Description</h2>
+<div class="section">
+<a name="2.1+User%2FMarket+Demographics"></a>
+<h3 class="boxed">2.1 User/Market Demographics</h3>
+<p>
+                There are a number of enthusiastic
+                users of XML, UNIX and Java technology. Furthermore, the Microsoft
+                solution for outputting Office Document formats often involves
+                actually manipulating the software as an OLE Server. This method
+                provides extremely low performance, extremely high overhead and is
+                only capable of handing one document at a time.	
+        </p>
+<ol>
+                
+<li>
+                        Our intended audience for the HSSF
+                        Serializer portion of this project are developers writing reports or
+                        data extracts in XML format.
+                </li>
+                
+<li>
+                        Our intended audience for the HSSF
+                        library portion of this project is ourselves as we are developing
+                        the HSSF serializer and anyone who needs to read and write Excel
+                        spreadsheets in a non-XML Java environment, or who has specific
+                        needs not addressed by the Serializer
+                </li>
+                
+<li>
+                        Our intended audience for the
+                        POIFS library is ourselves as we are developing the HSSF and HWPF
+                        libraries and anyone wishing to provide other libraries for
+                        reading/writing other file formats utilizing the OLE 2 Compound
+                        Document Format in Java.
+                </li>
+                
+<li>
+                        Our intended audience for the HSSF
+                        generator are developers who need to export Excel spreadsheets to
+                        XML in a non-proprietary environment.
+                </li>
+                
+<li>
+                        Our intended audience for the HWPF
+                        library is ourselves, as we will be developing a HWPF Serializer in a
+                        later release, and anyone wishing to add .DOC file processing and
+                        creation to their projects.
+                </li>
+        
+</ol>
+<a name="2.2.+User+environment"></a>
+<h3 class="boxed">2.2. User environment</h3>
+<p>
+                The users of this software shall be
+                developers in a Java environment on any operating system, or power
+                users who are capable of XML document generation/deployment.
+        </p>
+<a name="2.3.+Key+User+Needs"></a>
+<h3 class="boxed">2.3. Key User Needs</h3>
+<p>
+                The HSSF library currently requires a
+                full object representation to be created before reading values. This
+                results in very high memory utilization. We need to reduce this
+                substantially for reading. It would be preferable to do this for
+                writing, but it may not be possible due to the constraints imposed by
+                the file format itself. Memory utilization during read is our top
+                user complaint.	
+        </p>
+<p>
+                The POIFS library currently requires a
+                full object representation to be created before reading values. This
+                results in very high memory utilization. We need to reduce this
+                substantially for reading.	
+        </p>
+<p>
+                The HSSF library currently ignores
+                formula cells and identifies them as "UnknownRecord" at the
+                lower level of the API. We must provide a way to read and write
+                formulas. This is now the top requested feature.
+        </p>
+<p>
+                The HSSF library currently does not support
+                charts.  This is a key requirement of some users who wish to use HSSF
+                in a reporting engine.
+        </p>
+<p>
+                The HSSF Serializer currently does not
+                provide serialization for cell styling. User's will want stylish
+                spreadsheets to result from their XML.
+        </p>
+<p>
+                There is currently no way to generate
+                the XML from an XLS that is consistent with the format used by the
+                HSSF Serializer.
+        </p>
+<p>
+                There should be a way to read and write
+                the DOC file format using pure Java.
+        </p>
+</div>
+ 
+<a name="3.+Project+Overview"></a>
+<h2 class="boxed">3. Project Overview</h2>
+<div class="section">
+<a name="3.1.+Project+Perspective"></a>
+<h3 class="boxed">3.1. Project Perspective</h3>
+<p>
+                The produced code shall be licensed by
+                the Apache License as used by the Cocoon 2 project (APL 1.1) and
+                maintained on at <a href="http://poi.sourceforge.net/">http://poi.sourceforge.net</a>
+                and <a href="http://sourceforge.net/projects/poi">http://sourcefoge.net/projects/poi</a>.
+                It is our hope to at some point integrate with the various Apache
+                projects (xml.apache.org and jakarta.apache.org), at which point we'd
+                turn the copyright over to them.
+	</p>
+<a name="3.2.+Project+Position+Statement"></a>
+<h3 class="boxed">3.2. Project Position Statement</h3>
+<p>
+                For developers on a Java and/or XML
+                environment this project will provide all the tools necessary for
+                outputting XML data in the Microsoft Excel format. This project seeks
+                to make the use of Microsoft Windows based servers unnecessary for
+                file format considerations and to fully document the OLE 2 Compound
+                Document format. The project aims not only to provide the tools for
+                serializing XML to Excel and Word file formats and the tools for
+                writing to those file formats from Java, but also to provide the
+                tools for later projects to convert other OLE 2 Compound Document
+                formats to pure Java APIs.
+	</p>
+<a name="3.3.+Summary+of+Capabilities"></a>
+<h3 class="boxed">3.3. Summary of Capabilities</h3>
+<p>
+		HSSF Serializer for Apache Cocoon 2
+	</p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+		
+<tr>
+			
+<th colspan="1" rowspan="1">
+				Benefit
+			</th>
+			<th colspan="1" rowspan="1">
+				Supporting Features
+			</th>
+		
+</tr>
+		
+<tr>
+			
+<td colspan="1" rowspan="1">
+				Ability to serialize styles from XML spreadsheets.
+			</td>
+			<td colspan="1" rowspan="1">
+				HSSFSerializer will support styles.
+			</td>
+		
+</tr>
+		
+<tr>
+			
+<td colspan="1" rowspan="1">
+				Ability to read and write formulas in XLS files.
+			</td>
+			<td colspan="1" rowspan="1">
+				HSSF will support reading/writing formulas.
+			</td>
+		
+</tr>
+		
+<tr>
+			
+<td colspan="1" rowspan="1">
+				Ability to output in MS Word on any platform using Java.
+			</td>
+			<td colspan="1" rowspan="1">
+				The project will develop an API that outputs in Word format
+			        using pure Java.
+			</td>
+		
+</tr>
+		
+<tr>
+			
+<td colspan="1" rowspan="1">
+				Enhance performance for reading and writing XLS files.
+			</td>
+			<td colspan="1" rowspan="1">
+				HSSF will undergo a number of performance enhancements. HSSF
+			        will include a new event-based API for reading XLS files. POIFS
+			        will support a new event-based API for reading OLE2 CDF files.
+			</td>
+		
+</tr>
+		
+<tr>
+			
+<td colspan="1" rowspan="1">
+				Ability to generate XML from XLS files
+			</td>
+			<td colspan="1" rowspan="1">
+				The project will develop an HSSF Generator.
+			</td>
+		
+</tr>
+		
+<tr>
+			
+<td colspan="1" rowspan="1">
+				The ability to generate charts
+			</td>
+			<td colspan="1" rowspan="1">
+                                HSSF will provide low level support for chart records as well
+                                as high level API support for generating charts.  The ability
+                                to read chart information will not initially be provided.
+                        </td>
+		
+</tr>
+                
+	
+</table>
+<a name="3.4.+Assumptions+and+Dependencies"></a>
+<h3 class="boxed">3.4. Assumptions and Dependencies</h3>
+<ul>
+		
+<li>
+                        The HSSF Serializer and Generator
+	                will support the Gnumeric 1.0 XML tag language.
+                </li>
+		
+<li>
+                        The HSSF Generator and HSSF
+                        Serializer will be mutually validating.  It should be possible to
+                        have an XLS file created by the Serializer run through the Generator
+                        and the output back through the Serializer (via the Cocoon pipeline)
+	                and get the same file or a reasonable facsimile (no one cares if it
+	                differs by the order of the binary records in some minor but
+	                non-visually recognizable manner).
+		</li>
+		
+<li>
+                        The HSSF Generator will run on any
+	                Java 2 supporting platform with Apache Cocoon 2 installed along with
+	                the HSSF and POIFS APIs.
+                </li>
+		
+<li>
+                        The HSSF Serializer will run on
+                        any Java 2 supporting platform with Apache Cocoon 2 installed along
+                        with the HSSF and POIFS APIs.
+                </li>
+		
+<li>
+                        The HWPF API requires a Java 2
+                        implementation and the POIFS API.
+                </li>
+		
+<li>
+                        The HSSF API requires a Java 2
+                        implementation and the POIFS API.
+                </li>
+		
+<li>
+                        The POIFS API requires a Java 2
+                        implementation.
+                </li>
+                
+	
+</ul>
+</div>
+ 
+<a name="4.+Project+Features"></a>
+<h2 class="boxed">4. Project Features</h2>
+<div class="section">
+<p> 
+                Enhancements to the POIFS API will
+                include:
+	</p>
+<ul>
+		
+<li>
+                        An event driven API for reading
+                        POIFS Filesystems.
+		</li>
+		
+<li>
+			A low-level API for
+			creating/manipulating POI filesystems.
+		</li>
+		
+<li>
+                        Code improvements supporting
+	                greater separation between read and write structures.
+		</li>
+	
+</ul>
+<p>
+                        Enhancements to the HSSF API will
+                        include:
+	</p>
+<ul>
+		
+<li>
+                        An event driven API for reading
+                        XLS files.
+		</li>
+		
+<li>
+                        Performance improvements.
+		</li>
+		
+<li>
+                        Formula support (read/write)
+		</li>
+		
+<li>
+                        Support for user-defined data
+                        formats
+		</li>
+		
+<li>
+                        Better documentation of the file
+                        format and structure.
+		</li>
+		
+<li>
+                        An API for creation of charts.
+		</li>                                
+	
+</ul>
+<p>
+                The HSSF Generator will include:
+	</p>
+<ul>
+		
+<li>
+                        A set of classes supporting the
+	                Cocoon 2 Generator interfaces providing a method for reading XLS
+	                files and outputting SAX events.
+		</li>
+		
+<li>
+                        The same tag format used by the
+                        HSSFSerializer in any given release.
+		</li>
+	
+</ul>
+<p>
+                The HWPF API will include:
+	</p>
+<ul>
+		
+<li>
+                        An event driven API for reading
+	                DOC files.
+                </li>
+		
+<li>
+                        A set of high and low level APIs
+                        for reading and writing DOC files.
+                </li>
+		
+<li>
+                        Documentation of the DOC file
+                        format or enhancements to existing documentation.
+                </li>                
+	
+</ul>
+</div>		
+ 
+<a name="5.+Other+Product+Requirements"></a>
+<h2 class="boxed">5. Other Product Requirements</h2>
+<div class="section">
+<a name="5.1.+Applicable+Standards"></a>
+<h3 class="boxed">5.1. Applicable Standards</h3>
+<p>
+		All Java code will be 100% pure Java.
+	</p>
+<a name="5.2.+System+Requirements"></a>
+<h3 class="boxed">5.2. System Requirements</h3>
+<p>
+		The minimum system requirements for the POIFS API are:
+	</p>
+<ul>
+		
+<li>64 Mbytes memory</li>
+		
+<li>Java 2 environment</li>
+		
+<li>Pentium or better processor (or equivalent on other platforms)</li>
+	
+</ul>
+<p>
+		The minimum system requirements for the HSSF API are:
+	</p>
+<ul>
+		
+<li>64 Mbytes memory</li>
+		
+<li>Java 2 environment</li>
+		
+<li>Pentium or better processor (or equivalent on other platforms)</li>
+		
+<li>POIFS API</li>
+	
+</ul>
+<p>
+		The minimum system requirements for the HWPF API are:
+	</p>
+<ul>
+		
+<li>64 Mbytes memory</li>
+		
+<li>Java 2 environment</li>
+		
+<li>Pentium or better processor (or equivalent on other platforms)</li>
+		
+<li>POIFS API</li>
+	
+</ul>
+<p>
+		The minimum system requirements for the HSSF Serializer are:
+	</p>
+<ul>
+		
+<li>64 Mbytes memory</li>
+		
+<li>Java 2 environment</li>
+		
+<li>Pentium or better processor (or equivalent on other platforms)</li>
+		
+<li>Cocoon 2</li>
+		
+<li>HSSF API</li>
+		
+<li>POI API</li>
+	
+</ul>
+<a name="5.3.+Performance+Requirements"></a>
+<h3 class="boxed">5.3. Performance Requirements</h3>
+<p>
+		All components must perform well enough
+		to be practical for use in a webserver environment (especially
+		the "killer trio": Cocoon2/Tomcat/Apache combo)
+	</p>
+<a name="5.4.+Environmental+Requirements"></a>
+<h3 class="boxed">5.4. Environmental Requirements</h3>
+<p>
+		The software will run primarily in
+		developer environments. We should make some allowances for
+		not-highly-technical users to write XML documents for the HSSF
+		Serializer. All other components will assume intermediate Java 2
+		knowledge. No XML knowledge will be required except for using the
+		HSSF Serializer. As much documentation as is practical shall be
+		required for all components as XML is relatively new, and the
+		concepts introduced for writing spreadsheets and to POI filesystems
+		will be brand new to Java and many Java developers.
+	</p>
+</div>
+ 
+<a name="6.+Documentation+Requirements"></a>
+<h2 class="boxed">6. Documentation Requirements</h2>
+<div class="section">
+<a name="6.1+POI+Filesystem"></a>
+<h3 class="boxed">6.1 POI Filesystem</h3>
+<p>
+		The filesystem as read and written by
+		POI shall be fully documented and explained so that the average Java
+		developer can understand it.
+	</p>
+<a name="6.2.+POI+API"></a>
+<h3 class="boxed">6.2. POI API</h3>
+<p>
+		The POI API will be fully documented
+		through Javadoc. A walkthrough of using the high level POI API shall
+		be provided. No documentation outside of the Javadoc shall be
+		provided for the low-level POI APIs.	
+	</p>
+<a name="6.3.+HSSF+File+Format"></a>
+<h3 class="boxed">6.3. HSSF File Format</h3>
+<p>
+		The HSSF File Format as implemented by
+		the HSSF API will be fully documented. No documentation will be
+		provided for features that are not supported by HSSF API that are
+		supported by the Excel 97 File Format. Care will be taken not to
+		infringe on any "legal stuff".  Additionally, we are 
+                collaborating with the fine folks at OpenOffice.org on
+                *free* documentation of the format.
+	</p>
+<a name="6.4.+HSSF+API"></a>
+<h3 class="boxed">6.4. HSSF API</h3>
+<p>
+		The HSSF API will be documented by
+		javadoc. A walkthrough of using the high level HSSF API shall be
+		provided. No documentation outside of the Javadoc shall be provided
+		for the low level HSSF APIs.	
+	</p>
+<a name="6.5+HWPF+API"></a>
+<h3 class="boxed">6.5 HWPF API</h3>
+<p>
+                The HWPF API will be documented by
+                javadoc. A walkthrough of using the high level HWPF API shall be
+                provided. No documentation outside of the Javadoc shall be provided
+                for the low level HWPF APIs.        
+	</p>
+<a name="6.6+HSSF+Serializer"></a>
+<h3 class="boxed">6.6 HSSF Serializer</h3>
+<p>
+		The HSSF Serializer will be documented
+		by javadoc. 	
+	</p>
+<a name="6.7+HSSF+Generator"></a>
+<h3 class="boxed">6.7 HSSF Generator</h3>
+<p>
+		The HSSF Generator will be documented
+		by javadoc. 	
+	</p>
+<a name="6.8+HSSF+Serializer+Tag+language"></a>
+<h3 class="boxed">6.8 HSSF Serializer Tag language</h3>
+<p>
+		The XML tag language along with
+		function and usage shall be fully documented. Examples will be
+		provided as well.
+	</p>
+</div>
+ 
+<a name="7.+Terminology"></a>
+<h2 class="boxed">7. Terminology</h2>
+<div class="section">
+<a name="7.1+Filesystem"></a>
+<h3 class="boxed">7.1 Filesystem</h3>
+<p>
+		filesystem shall refer only to the POI formatted archive.
+	</p>
+<a name="7.2+File"></a>
+<h3 class="boxed">7.2 File</h3>
+<p>
+		file shall refer to the embedded data stream within a 
+		POI filesystem. This will be the actual embedded document. 
+	</p>
+</div>
+
+<p align="right">
+<font size="-2">by&nbsp;Andrew C. Oliver,&nbsp;Marcus W. Johnson,&nbsp;Glen Stampoultzis,&nbsp;Nicola Ken Barozzi</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0devel/plan/vision20.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+OperandResolver (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="OperandResolver (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/NumericValueEval.html" title="interface in org.apache.poi.ss.formula.eval"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/PercentEval.html" title="class in org.apache.poi.ss.formula.eval"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/eval/OperandResolver.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="OperandResolver.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.formula.eval</FONT>
+<BR>
+Class OperandResolver</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.formula.eval.OperandResolver</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>OperandResolver</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Provides functionality for evaluating arguments to functions and operators.
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/OperandResolver.html#chooseSingleElementFromArea(org.apache.poi.ss.formula.eval.AreaEval, int, int)">chooseSingleElementFromArea</A></B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html" title="interface in org.apache.poi.ss.formula.eval">AreaEval</A>&nbsp;ae,
+                            int&nbsp;srcCellRow,
+                            int&nbsp;srcCellCol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Implements (some perhaps not well known) Excel functionality to select a single cell from an
+ area depending on the coordinates of the calling cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.Boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/OperandResolver.html#coerceValueToBoolean(org.apache.poi.ss.formula.eval.ValueEval, boolean)">coerceValueToBoolean</A></B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;ve,
+                     boolean&nbsp;stringsAreBlanks)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/OperandResolver.html#coerceValueToDouble(org.apache.poi.ss.formula.eval.ValueEval)">coerceValueToDouble</A></B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;ev)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Applies some conversion rules if the supplied value is not already a number.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/OperandResolver.html#coerceValueToInt(org.apache.poi.ss.formula.eval.ValueEval)">coerceValueToInt</A></B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;ev)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Applies some conversion rules if the supplied value is not already an integer.<br>
+ Value is first coerced to a <tt>double</tt> ( See <tt>coerceValueToDouble()</tt> ).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/OperandResolver.html#coerceValueToString(org.apache.poi.ss.formula.eval.ValueEval)">coerceValueToString</A></B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;ve)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/OperandResolver.html#getSingleValue(org.apache.poi.ss.formula.eval.ValueEval, int, int)">getSingleValue</A></B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;arg,
+               int&nbsp;srcCellRow,
+               int&nbsp;srcCellCol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves a single value from a variety of different argument types according to standard
+ Excel rules.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.Double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/OperandResolver.html#parseDouble(java.lang.String)">parseDouble</A></B>(java.lang.String&nbsp;pText)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts a string to a double using standard rules that Excel would use.<br>
+ Tolerates leading and trailing spaces,</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getSingleValue(org.apache.poi.ss.formula.eval.ValueEval, int, int)"><!-- --></A><H3>
+getSingleValue</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A> <B>getSingleValue</B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;arg,
+                                       int&nbsp;srcCellRow,
+                                       int&nbsp;srcCellCol)
+                                throws <A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></PRE>
+<DL>
+<DD>Retrieves a single value from a variety of different argument types according to standard
+ Excel rules.  Does not perform any type conversion.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>arg</CODE> - the evaluated argument as passed to the function or operator.<DD><CODE>srcCellRow</CODE> - used when arg is a single column AreaRef<DD><CODE>srcCellCol</CODE> - used when arg is a single row AreaRef
+<DT><B>Returns:</B><DD>a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt> or <tt>BlankEval</tt>.
+ Never <code>null</code> or <tt>ErrorEval</tt>.
+<DT><B>Throws:</B>
+<DD><CODE>EvaluationException(#VALUE!)</CODE> - if srcCellRow or srcCellCol do not properly index into
+  an AreaEval.  If the actual value retrieved is an ErrorEval, a corresponding
+  EvaluationException is thrown.
+<DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="chooseSingleElementFromArea(org.apache.poi.ss.formula.eval.AreaEval, int, int)"><!-- --></A><H3>
+chooseSingleElementFromArea</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A> <B>chooseSingleElementFromArea</B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html" title="interface in org.apache.poi.ss.formula.eval">AreaEval</A>&nbsp;ae,
+                                                    int&nbsp;srcCellRow,
+                                                    int&nbsp;srcCellCol)
+                                             throws <A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></PRE>
+<DL>
+<DD>Implements (some perhaps not well known) Excel functionality to select a single cell from an
+ area depending on the coordinates of the calling cell.  Here is an example demonstrating
+ both selection from a single row area and a single column area in the same formula.
+
+    <table border="1" cellpadding="1" cellspacing="1" summary="sample spreadsheet">
+      <tr><th>&nbsp;</th><th>&nbsp;A&nbsp;</th><th>&nbsp;B&nbsp;</th><th>&nbsp;C&nbsp;</th><th>&nbsp;D&nbsp;</th></tr>
+      <tr><th>1</th><td>15</td><td>20</td><td>25</td><td>&nbsp;</td></tr>
+      <tr><th>2</th><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>200</td></tr>
+      <tr><th>3</th><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>300</td></tr>
+      <tr><th>3</th><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>400</td></tr>
+    </table>
+
+ If the formula "=1000+A1:B1+D2:D3" is put into the 9 cells from A2 to C4, the spreadsheet
+ will look like this:
+
+    <table border="1" cellpadding="1" cellspacing="1" summary="sample spreadsheet">
+      <tr><th>&nbsp;</th><th>&nbsp;A&nbsp;</th><th>&nbsp;B&nbsp;</th><th>&nbsp;C&nbsp;</th><th>&nbsp;D&nbsp;</th></tr>
+      <tr><th>1</th><td>15</td><td>20</td><td>25</td><td>&nbsp;</td></tr>
+      <tr><th>2</th><td>1215</td><td>1220</td><td>#VALUE!</td><td>200</td></tr>
+      <tr><th>3</th><td>1315</td><td>1320</td><td>#VALUE!</td><td>300</td></tr>
+      <tr><th>4</th><td>#VALUE!</td><td>#VALUE!</td><td>#VALUE!</td><td>400</td></tr>
+    </table>
+
+ Note that the row area (A1:B1) does not include column C and the column area (D2:D3) does
+ not include row 4, so the values in C1(=25) and D4(=400) are not accessible to the formula
+ as written, but in the 4 cells A2:B3, the row and column selection works ok.<p>
+
+ The same concept is extended to references across sheets, such that even multi-row,
+ multi-column areas can be useful.<p>
+
+ Of course with carefully (or carelessly) chosen parameters, cyclic references can occur and
+ hence this method <b>can</b> throw a 'circular reference' EvaluationException.  Note that
+ this method does not attempt to detect cycles.  Every cell in the specified Area <tt>ae</tt>
+ has already been evaluated prior to this method call.  Any cell (or cell<b>s</b>) part of
+ <tt>ae</tt> that would incur a cyclic reference error if selected by this method, will
+ already have the value <t>ErrorEval.CIRCULAR_REF_ERROR</tt> upon entry to this method.  It
+ is assumed logic exists elsewhere to produce this behaviour.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whatever the selected cell's evaluated value is.  Never <code>null</code>. Never
+  <tt>ErrorEval</tt>.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></CODE> - if there is a problem with indexing into the area, or if the
+  evaluated cell has an error.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="coerceValueToInt(org.apache.poi.ss.formula.eval.ValueEval)"><!-- --></A><H3>
+coerceValueToInt</H3>
+<PRE>
+public static int <B>coerceValueToInt</B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;ev)
+                            throws <A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></PRE>
+<DL>
+<DD>Applies some conversion rules if the supplied value is not already an integer.<br>
+ Value is first coerced to a <tt>double</tt> ( See <tt>coerceValueToDouble()</tt> ).
+ Note - <tt>BlankEval</tt> is converted to <code>0</code>.<p>
+
+ Excel typically converts doubles to integers by truncating toward negative infinity.<br>
+ The equivalent java code is:<br>
+ &nbsp;&nbsp;<code>return (int)Math.floor(d);</code><br>
+ <b>not</b>:<br>
+ &nbsp;&nbsp;<code>return (int)d; // wrong - rounds toward zero</code>
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="coerceValueToDouble(org.apache.poi.ss.formula.eval.ValueEval)"><!-- --></A><H3>
+coerceValueToDouble</H3>
+<PRE>
+public static double <B>coerceValueToDouble</B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;ev)
+                                  throws <A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></PRE>
+<DL>
+<DD>Applies some conversion rules if the supplied value is not already a number.
+ Note - <tt>BlankEval</tt> is converted to <A HREF="../../../../../../org/apache/poi/ss/formula/eval/NumberEval.html#ZERO"><CODE>NumberEval.ZERO</CODE></A>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ev</CODE> - must be a <A HREF="../../../../../../org/apache/poi/ss/formula/eval/NumberEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>NumberEval</CODE></A>, <A HREF="../../../../../../org/apache/poi/ss/formula/eval/StringEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>StringEval</CODE></A>, <A HREF="../../../../../../org/apache/poi/ss/formula/eval/BoolEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>BoolEval</CODE></A> or
+ <A HREF="../../../../../../org/apache/poi/ss/formula/eval/BlankEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>BlankEval</CODE></A>
+<DT><B>Returns:</B><DD>actual, parsed or interpreted double value (respectively).
+<DT><B>Throws:</B>
+<DD><CODE>EvaluationException(#VALUE!)</CODE> - only if a StringEval is supplied and cannot be parsed
+ as a double (See <tt>parseDouble()</tt> for allowable formats).
+<DD><CODE>java.lang.RuntimeException</CODE> - if the supplied parameter is not <A HREF="../../../../../../org/apache/poi/ss/formula/eval/NumberEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>NumberEval</CODE></A>,
+ <A HREF="../../../../../../org/apache/poi/ss/formula/eval/StringEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>StringEval</CODE></A>, <A HREF="../../../../../../org/apache/poi/ss/formula/eval/BoolEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>BoolEval</CODE></A> or <A HREF="../../../../../../org/apache/poi/ss/formula/eval/BlankEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>BlankEval</CODE></A>
+<DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="parseDouble(java.lang.String)"><!-- --></A><H3>
+parseDouble</H3>
+<PRE>
+public static java.lang.Double <B>parseDouble</B>(java.lang.String&nbsp;pText)</PRE>
+<DL>
+<DD>Converts a string to a double using standard rules that Excel would use.<br>
+ Tolerates leading and trailing spaces, <p>
+ 
+ Doesn't support currency prefixes, commas, percentage signs or arithmetic operations strings.  
+
+  Some examples:<br>
+  " 123 " -&gt; 123.0<br>
+  ".123" -&gt; 0.123<br>
+  "1E4" -&gt; 1000<br>
+  "-123" -&gt; -123.0<br>
+  These not supported yet:<br>
+  " $ 1,000.00 " -&gt; 1000.0<br>
+  "$1.25E4" -&gt; 12500.0<br>
+  "5**2" -&gt; 500<br>
+  "250%" -&gt; 2.5<br>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>null</code> if the specified text cannot be parsed as a number</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="coerceValueToString(org.apache.poi.ss.formula.eval.ValueEval)"><!-- --></A><H3>
+coerceValueToString</H3>
+<PRE>
+public static java.lang.String <B>coerceValueToString</B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;ve)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ve</CODE> - must be a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt>, or <tt>BlankEval</tt>
+<DT><B>Returns:</B><DD>the converted string value. never <code>null</code></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="coerceValueToBoolean(org.apache.poi.ss.formula.eval.ValueEval, boolean)"><!-- --></A><H3>
+coerceValueToBoolean</H3>
+<PRE>
+public static java.lang.Boolean <B>coerceValueToBoolean</B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;ve,
+                                                     boolean&nbsp;stringsAreBlanks)
+                                              throws <A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>null</code> to represent blank values
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></CODE> - if ve is an ErrorEval, or if a string value cannot be converted</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/NumericValueEval.html" title="interface in org.apache.poi.ss.formula.eval"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/PercentEval.html" title="class in org.apache.poi.ss.formula.eval"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/eval/OperandResolver.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="OperandResolver.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

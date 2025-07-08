@@ -1,0 +1,419 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+org.apache.poi.sl.usermodel (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="org.apache.poi.sl.usermodel (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/image/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/usermodel/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<H2>
+Package org.apache.poi.sl.usermodel
+</H2>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Interface Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/AutoShape.html" title="interface in org.apache.poi.sl.usermodel">AutoShape&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/Background.html" title="interface in org.apache.poi.sl.usermodel">Background&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ColorStyle.html" title="interface in org.apache.poi.sl.usermodel">ColorStyle</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ConnectorShape.html" title="interface in org.apache.poi.sl.usermodel">ConnectorShape&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/FillStyle.html" title="interface in org.apache.poi.sl.usermodel">FillStyle</A></B></TD>
+<TD>This interface is the counterpart to <A HREF="../../../../../org/apache/poi/sl/usermodel/StrokeStyle.html" title="interface in org.apache.poi.sl.usermodel"><CODE>StrokeStyle</CODE></A> - it's specifies the filling of a shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/FontCollection.html" title="interface in org.apache.poi.sl.usermodel">FontCollection</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/FreeformShape.html" title="interface in org.apache.poi.sl.usermodel">FreeformShape&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/GraphicalFrame.html" title="interface in org.apache.poi.sl.usermodel">GraphicalFrame&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/GroupShape.html" title="interface in org.apache.poi.sl.usermodel">GroupShape&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/Hyperlink.html" title="interface in org.apache.poi.sl.usermodel">Hyperlink&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>A PowerPoint hyperlink</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/Line.html" title="interface in org.apache.poi.sl.usermodel">Line&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>Interface for Lines ...</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/LineDecoration.html" title="interface in org.apache.poi.sl.usermodel">LineDecoration</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/MasterSheet.html" title="interface in org.apache.poi.sl.usermodel">MasterSheet&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/Notes.html" title="interface in org.apache.poi.sl.usermodel">Notes&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.GradientPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.GradientPaint</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.SolidPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.SolidPaint</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.TexturePaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.TexturePaint</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PictureData.html" title="interface in org.apache.poi.sl.usermodel">PictureData</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PictureShape.html" title="interface in org.apache.poi.sl.usermodel">PictureShape&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="interface in org.apache.poi.sl.usermodel">PlaceableShape&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/Resources.html" title="interface in org.apache.poi.sl.usermodel">Resources</A></B></TD>
+<TD>Common SlideShow resources, such as fonts, pictures
+  and multimedia data</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/Shadow.html" title="interface in org.apache.poi.sl.usermodel">Shadow&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="interface in org.apache.poi.sl.usermodel">ShapeContainer&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/Sheet.html" title="interface in org.apache.poi.sl.usermodel">Sheet&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>Common parent of Slides, Notes and Masters</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="interface in org.apache.poi.sl.usermodel">SimpleShape&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/Slide.html" title="interface in org.apache.poi.sl.usermodel">Slide&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SlideShow.html" title="interface in org.apache.poi.sl.usermodel">SlideShow&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/StrokeStyle.html" title="interface in org.apache.poi.sl.usermodel">StrokeStyle</A></B></TD>
+<TD>This interface specifies the line style of a shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TableCell.html" title="interface in org.apache.poi.sl.usermodel">TableCell&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TableShape.html" title="interface in org.apache.poi.sl.usermodel">TableShape&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextBox.html" title="interface in org.apache.poi.sl.usermodel">TextBox&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>Represents a TextFrame shape in PowerPoint.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,T&gt;,T extends TextRun&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.BulletStyle.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph.BulletStyle</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextRun.html" title="interface in org.apache.poi.sl.usermodel">TextRun</A></B></TD>
+<TD>Some text.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextShape.html" title="interface in org.apache.poi.sl.usermodel">TextShape&lt;S extends Shape&lt;S,P&gt;,P extends TextParagraph&lt;S,P,?&gt;&gt;</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/Insets2D.html" title="class in org.apache.poi.sl.usermodel">Insets2D</A></B></TD>
+<TD>This is a replacement for <CODE>Insets</CODE> which works on doubles
+ instead of ints</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SlideShowFactory.html" title="class in org.apache.poi.sl.usermodel">SlideShowFactory</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Enum Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/AutoNumberingScheme.html" title="enum in org.apache.poi.sl.usermodel">AutoNumberingScheme</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/LineDecoration.DecorationShape.html" title="enum in org.apache.poi.sl.usermodel">LineDecoration.DecorationShape</A></B></TD>
+<TD>Represents the shape decoration that appears at the ends of lines.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/LineDecoration.DecorationSize.html" title="enum in org.apache.poi.sl.usermodel">LineDecoration.DecorationSize</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.GradientPaint.GradientType.html" title="enum in org.apache.poi.sl.usermodel">PaintStyle.GradientPaint.GradientType</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.PaintModifier.html" title="enum in org.apache.poi.sl.usermodel">PaintStyle.PaintModifier</A></B></TD>
+<TD>The PaintStyle can be modified by secondary sources, e.g.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PictureData.PictureType.html" title="enum in org.apache.poi.sl.usermodel">PictureData.PictureType</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/Placeholder.html" title="enum in org.apache.poi.sl.usermodel">Placeholder</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PresetColor.html" title="enum in org.apache.poi.sl.usermodel">PresetColor</A></B></TD>
+<TD>Preset colors defined in DrawingML aka known/system colors</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/RectAlign.html" title="enum in org.apache.poi.sl.usermodel">RectAlign</A></B></TD>
+<TD>Specifies possible rectangle alignment types.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeType.html" title="enum in org.apache.poi.sl.usermodel">ShapeType</A></B></TD>
+<TD>known preset shape geometries in PresentationML</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/StrokeStyle.LineCap.html" title="enum in org.apache.poi.sl.usermodel">StrokeStyle.LineCap</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/StrokeStyle.LineCompound.html" title="enum in org.apache.poi.sl.usermodel">StrokeStyle.LineCompound</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/StrokeStyle.LineDash.html" title="enum in org.apache.poi.sl.usermodel">StrokeStyle.LineDash</A></B></TD>
+<TD>The line dash with pattern.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TableCell.BorderEdge.html" title="enum in org.apache.poi.sl.usermodel">TableCell.BorderEdge</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.FontAlign.html" title="enum in org.apache.poi.sl.usermodel">TextParagraph.FontAlign</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.TextAlign.html" title="enum in org.apache.poi.sl.usermodel">TextParagraph.TextAlign</A></B></TD>
+<TD>Specifies a list of text alignment types</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextRun.FieldType.html" title="enum in org.apache.poi.sl.usermodel">TextRun.FieldType</A></B></TD>
+<TD>Type of placeholder fields</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextRun.TextCap.html" title="enum in org.apache.poi.sl.usermodel">TextRun.TextCap</A></B></TD>
+<TD>Type of text capitals</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextShape.TextAutofit.html" title="enum in org.apache.poi.sl.usermodel">TextShape.TextAutofit</A></B></TD>
+<TD>Specifies alist of auto-fit types.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextShape.TextDirection.html" title="enum in org.apache.poi.sl.usermodel">TextShape.TextDirection</A></B></TD>
+<TD>Vertical Text Types</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextShape.TextPlaceholder.html" title="enum in org.apache.poi.sl.usermodel">TextShape.TextPlaceholder</A></B></TD>
+<TD>This enum represents a compromise for the handling of
+ HSLF run types (see org.apache.poi.hslf.record.TextHeaderAtom) and
+ XSLF placeholders (see org.apache.poi.xslf.usermodel.Placeholder).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/sl/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.sl.usermodel">VerticalAlignment</A></B></TD>
+<TD>Specifies a list of available anchoring types for text
+ 
+ <!-- FIXME: Identical to <A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel"><CODE>VerticalAlignment</CODE></A>.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+<DL>
+</DL>
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/image/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/usermodel/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

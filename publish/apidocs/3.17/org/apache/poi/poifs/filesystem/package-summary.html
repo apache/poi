@@ -1,0 +1,358 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+org.apache.poi.poifs.filesystem (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="org.apache.poi.poifs.filesystem (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/eventfilesystem/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/macros/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/filesystem/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<H2>
+Package org.apache.poi.poifs.filesystem
+</H2>
+filesystem package maps OLE 2 Compound document files to a more familiar filesystem interface.
+<P>
+<B>See:</B>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#package_description"><B>Description</B></A>
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Interface Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/BATManaged.html" title="interface in org.apache.poi.poifs.filesystem">BATManaged</A></B></TD>
+<TD>This interface defines behaviors for objects managed by the Block
+ Allocation Table (BAT).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></B></TD>
+<TD>This interface defines methods specific to Directory objects
+ managed by a Filesystem instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentEntry.html" title="interface in org.apache.poi.poifs.filesystem">DocumentEntry</A></B></TD>
+<TD>This interface defines methods specific to Document objects
+ managed by a Filesystem instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A></B></TD>
+<TD>This interface provides access to an object managed by a Filesystem
+ instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSWriterListener.html" title="interface in org.apache.poi.poifs.filesystem">POIFSWriterListener</A></B></TD>
+<TD>Interface POIFSWriterListener</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/BlockStore.html" title="class in org.apache.poi.poifs.filesystem">BlockStore</A></B></TD>
+<TD>This abstract class describes a way to read, store, chain
+  and free a series of blocks (be they Big or Small ones)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryNode.html" title="class in org.apache.poi.poifs.filesystem">DirectoryNode</A></B></TD>
+<TD>Simple implementation of DirectoryEntry</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentDescriptor.html" title="class in org.apache.poi.poifs.filesystem">DocumentDescriptor</A></B></TD>
+<TD>Class DocumentDescriptor</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentFactoryHelper.html" title="class in org.apache.poi.poifs.filesystem">DocumentFactoryHelper</A></B></TD>
+<TD>A small base class for the various factories, e.g.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentInputStream.html" title="class in org.apache.poi.poifs.filesystem">DocumentInputStream</A></B></TD>
+<TD>This class provides methods to read a DocumentEntry managed by a
+  <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>POIFSFileSystem</CODE></A> or <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>NPOIFSFileSystem</CODE></A> instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentNode.html" title="class in org.apache.poi.poifs.filesystem">DocumentNode</A></B></TD>
+<TD>Simple implementation of DocumentEntry for OPOIFS</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentOutputStream.html" title="class in org.apache.poi.poifs.filesystem">DocumentOutputStream</A></B></TD>
+<TD>This class provides a wrapper over an OutputStream so that Document
+ writers can't accidently go over their size limits</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/EntryNode.html" title="class in org.apache.poi.poifs.filesystem">EntryNode</A></B></TD>
+<TD>Abstract implementation of Entry
+
+ Extending classes should override isDocument() or isDirectory(), as
+ appropriate
+
+ Extending classes must override isDeleteOK()</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/EntryUtils.html" title="class in org.apache.poi.poifs.filesystem">EntryUtils</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html" title="class in org.apache.poi.poifs.filesystem">FilteringDirectoryNode</A></B></TD>
+<TD>A DirectoryEntry filter, which exposes another
+  DirectoryEntry less certain parts.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NDocumentInputStream.html" title="class in org.apache.poi.poifs.filesystem">NDocumentInputStream</A></B></TD>
+<TD>This class provides methods to read a DocumentEntry managed by a
+ <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>NPOIFSFileSystem</CODE></A> instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NDocumentOutputStream.html" title="class in org.apache.poi.poifs.filesystem">NDocumentOutputStream</A></B></TD>
+<TD>This class provides methods to write a DocumentEntry managed by a
+ <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>NPOIFSFileSystem</CODE></A> instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSDocument</A></B></TD>
+<TD>This class manages a document in the NIO POIFS filesystem.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A></B></TD>
+<TD>This is the main class of the POIFS system; it manages the entire
+ life cycle of the filesystem.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSMiniStore.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSMiniStore</A></B></TD>
+<TD>This class handles the MiniStream (small block store)
+  in the NIO case for <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>NPOIFSFileSystem</CODE></A></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSStream.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSStream</A></B></TD>
+<TD>This handles reading and writing a stream within a
+  <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>NPOIFSFileSystem</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/ODocumentInputStream.html" title="class in org.apache.poi.poifs.filesystem">ODocumentInputStream</A></B></TD>
+<TD>This class provides methods to read a DocumentEntry managed by a
+ <A HREF="../../../../../org/apache/poi/poifs/filesystem/OPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>OPOIFSFileSystem</CODE></A> instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/Ole10Native.html" title="class in org.apache.poi.poifs.filesystem">Ole10Native</A></B></TD>
+<TD>Represents an Ole10Native record which is wrapped around certain binary
+ files being embedded in OLE2 documents.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/OPOIFSDocument.html" title="class in org.apache.poi.poifs.filesystem">OPOIFSDocument</A></B></TD>
+<TD>This class manages a document in a old-style 
+  OPOIFS filesystem.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/OPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">OPOIFSFileSystem</A></B></TD>
+<TD>This is the main class of the POIFS system; it manages the entire
+ life cycle of the filesystem.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSDocumentPath.html" title="class in org.apache.poi.poifs.filesystem">POIFSDocumentPath</A></B></TD>
+<TD>Class POIFSDocumentPath</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">POIFSFileSystem</A></B></TD>
+<TD>Transition class for the move from <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>POIFSFileSystem</CODE></A> to 
+  <A HREF="../../../../../org/apache/poi/poifs/filesystem/OPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>OPOIFSFileSystem</CODE></A>, and from <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>NPOIFSFileSystem</CODE></A> to
+  <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>POIFSFileSystem</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSWriterEvent.html" title="class in org.apache.poi.poifs.filesystem">POIFSWriterEvent</A></B></TD>
+<TD>Class POIFSWriterEvent</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Enum Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FileMagic.html" title="enum in org.apache.poi.poifs.filesystem">FileMagic</A></B></TD>
+<TD>The file magic number, i.e.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Exception Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NotOLE2FileException.html" title="class in org.apache.poi.poifs.filesystem">NotOLE2FileException</A></B></TD>
+<TD>This exception is thrown when we try to open a file that doesn't
+  seem to actually be an OLE2 file after all</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/OfficeXmlFileException.html" title="class in org.apache.poi.poifs.filesystem">OfficeXmlFileException</A></B></TD>
+<TD>This exception is thrown when we try to open a file that's actually
+  an Office 2007+ XML file, rather than an OLE2 file (which is what
+  POIFS works with)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/Ole10NativeException.html" title="class in org.apache.poi.poifs.filesystem">Ole10NativeException</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+<A NAME="package_description"><!-- --></A><H2>
+Package org.apache.poi.poifs.filesystem Description
+</H2>
+
+<P>
+filesystem package maps OLE 2 Compound document files to a more familiar filesystem interface.
+
+<h2>Related Documentation</h2>
+
+For overviews, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+<li><a href="http://poi.apache.org">Apache POI Project</a>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+<P>
+
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/poifs/eventfilesystem/package-summary.html"><CODE>org.apache.poi.poifs.eventfilesystem</CODE></A></DL>
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/eventfilesystem/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/macros/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/filesystem/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

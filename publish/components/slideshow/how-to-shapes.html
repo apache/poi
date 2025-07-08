@@ -1,0 +1,1973 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>Busy Developers' Guide to HSLF drawing layer</title>
+<link type="text/css" href="../../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../../skin/profile.css" rel="stylesheet">
+<script src="../../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../../help/index.html">Help</a>
+</li>
+<li class="current">
+<a class="selected" href="../../components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="../../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Component APIs</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../apidocs/index.html">Javadocs</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.3', '../../skin/')" id="menu_1.1.3Title" class="menutitle">Excel (HSSF/XSSF)</div>
+<div id="menu_1.1.3" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/spreadsheet/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/how-to.html">HOWTO</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/converting.html">HSSF to SS Converting</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/formula.html">Formula Support</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval.html">Formula Evaluation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval-devguide.html">Eval Dev Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/examples.html">Examples</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/use-case.html">Use Case</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/diagrams.html">Pictorial Docs</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/limitations.html">Limitations</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/user-defined-functions.html">User Defined Functions</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/excelant.html">ExcelAnt Tests</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/hacking-hssf.html">Hacking HSSF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/record-generator.html">Record Generator</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/chart.html">Charts</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_selected_1.1.4', '../../skin/')" id="menu_selected_1.1.4Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">PowerPoint (HSLF/XSLF)</div>
+<div id="menu_selected_1.1.4" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/slideshow/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">HSLF Cookbook</div>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/xslf-cookbook.html">XSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-wmf-emf-renderer.html">Render SL/WMF/EMF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-file-format.html">PPT File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.5', '../../skin/')" id="menu_1.1.5Title" class="menutitle">Word (HWPF/XWPF)</div>
+<div id="menu_1.1.5" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/document/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide.html">HWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide-xwpf.html">XWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/docoverview.html">HWPF Format</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/projectplan.html">HWPF Project plan</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hsmf/index.html">Outlook (HSMF)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/diagram/index.html">Visio (HDGF+XDGF)</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.8', '../../skin/')" id="menu_1.1.8Title" class="menutitle">Publisher (HPBF)</div>
+<div id="menu_1.1.8" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpbf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpbf/file-format.html">File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.9', '../../skin/')" id="menu_1.1.9Title" class="menutitle">OLE2 Filesystem (POIFS)</div>
+<div id="menu_1.1.9" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/poifs/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/embeded.html">Embedded Documents</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/fileformat.html">File System Documentation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/usecases.html">Use Cases</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/design.html">Design</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.10', '../../skin/')" id="menu_1.1.10Title" class="menutitle">OLE2 Document Props (HPSF)</div>
+<div id="menu_1.1.10" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpsf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/thumbnails.html">Thumbnails</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/internals.html">Internals</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/todo.html">To Do</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hmef/index.html">TNEF (HMEF) for winmail.dat</a>
+</div>
+<div class="menuitem">
+<a href="../../components/oxml4j/index.html">OpenXML4J (OOXML)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/logging.html">Logging framework</a>
+</div>
+<div class="menuitem">
+<a href="../../components/configuration.html">Configuration</a>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>Busy Developers' Guide to HSLF drawing layer</h1>
+<div id="front-matter"></div>
+        
+<a name="Busy+Developers%27+Guide+to+HSLF+drawing+layer"></a>
+<h2 class="boxed">Busy Developers' Guide to HSLF drawing layer</h2>
+<div class="section">
+<a name="Index+of+Features"></a>
+<h3 class="boxed">Index of Features</h3>
+<ul>
+                    
+<li>
+<a href="#NewPresentation">How to create a new presentation and add new slides to it</a>
+</li>
+                    
+<li>
+<a href="#PageSize">How to retrieve or change slide size</a>
+</li>
+                    
+<li>
+<a href="#GetShapes">How to get shapes contained in a particular slide</a>
+</li>
+                    
+<li>
+<a href="#Shapes">Drawing a shape on a slide</a>
+</li>
+                    
+<li>
+<a href="#Pictures">How to work with pictures</a>
+</li>
+                    
+<li>
+<a href="#SlideTitle">How to set slide title</a>
+</li>
+                    
+<li>
+<a href="#Fill">How to work with slide/shape background</a>
+</li>
+                    
+<li>
+<a href="#Bullets">How to create bulleted lists</a>
+</li>
+                    
+<li>
+<a href="#Hyperlinks">Hyperlinks</a>
+</li>
+                    
+<li>
+<a href="#Tables">Tables</a>
+</li>
+                    
+<li>
+<a href="#RemoveShape">How to remove shapes</a>
+</li>
+                    
+<li>
+<a href="#OLE">How to retrieve embedded OLE objects</a>
+</li>
+                    
+<li>
+<a href="#Sound">How to retrieve embedded sounds</a>
+</li>
+                    
+<li>
+<a href="#Freeform">How to create shapes of arbitrary geometry</a>
+</li>
+                    
+<li>
+<a href="#Graphics2D">Shapes and Graphics2D</a>
+</li>
+                    
+<li>
+<a href="#Render">How to convert slides into images</a>
+</li>
+                    
+<li>
+<a href="#HeadersFooters">Headers / Footers</a>
+</li>
+                
+</ul>
+<a name="Features"></a>
+<h3 class="boxed">Features</h3>
+<a name="NewPresentation" id="NewPresentation"></a><a name="New+Presentation"></a>
+<h4>New Presentation</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//create a new empty slide show</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//add first slide</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlide s1 = ppt.createSlide();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//add second slide</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlide s2 = ppt.createSlide();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//save changes in a file</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileOutputStream out = new FileOutputStream("slideshow.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ppt.write(out);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">             </span>
+</div>
+</div>
+<a name="PageSize" id="PageSize"></a><a name="How+to+retrieve+or+change+slide+size"></a>
+<h4>How to retrieve or change slide size</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl("slideshow.ppt"));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//retrieve page size. Coordinates are expressed in points (72 dpi)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">java.awt.Dimension pgsize = ppt.getPageSize();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">int pgx = pgsize.width; //slide width</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">int pgy = pgsize.height; //slide height</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//set new page size</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ppt.setPageSize(new java.awt.Dimension(1024, 768));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//save changes </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileOutputStream out = new FileOutputStream("slideshow.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ppt.write(out);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">              </span>
+</div>
+</div>
+<a name="GetShapes" id="GetShapes"></a><a name="How+to+get+shapes+contained+in+a+particular+slide"></a>
+<h4>How to get shapes contained in a particular slide</h4>
+<p>
+                    The following code demonstrates how to iterate over shapes for each slide.
+                  </p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl("slideshow.ppt"));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// get slides</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for (HSLFSlide slide : ppt.getSlides()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    for (HSLFShape sh : slide.getShapes()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        // name of the shape</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        String name = sh.getShapeName();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        // shapes's anchor which defines the position of this shape in the slide</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        java.awt.Rectangle anchor = sh.getAnchor();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        if (sh instanceof Line) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            Line line = (Line) sh;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            // work with Line</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        } else if (sh instanceof HSLFAutoShape) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            HSLFAutoShape shape = (HSLFAutoShape) sh;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            // work with AutoShape</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        } else if (sh instanceof HSLFTextBox) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            HSLFTextBox shape = (HSLFTextBox) sh;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            // work with TextBox</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        } else if (sh instanceof HSLFPictureShape) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            HSLFPictureShape shape = (HSLFPictureShape) sh;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            // work with Picture</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">              </span>
+</div>
+</div>
+<a name="Shapes" id="Shapes"></a><a name="Drawing+a+shape+on+a+slide"></a>
+<h4>Drawing a shape on a slide</h4>
+<div class="warning">
+<div class="label">Warning</div>
+<div class="content">
+    To work with graphic objects HSLF uses Java2D classes
+    that may throw exceptions if graphical environment is not available. In case if graphical environment
+    is not available, you must tell Java that you are running in headless mode and
+    set the following system property: <span class="codefrag"> java.awt.headless=true </span>
+    (either via <span class="codefrag">-Djava.awt.headless=true</span> startup parameter or via <span class="codefrag">System.setProperty("java.awt.headless", "true")</span>).
+        </div>
+</div>
+<p>
+                     When you add a shape, you usually specify the dimensions of the shape and the position
+                     of the upper left corner of the bounding box for the shape relative to the upper left
+                     corner of the slide. Distances in the drawing layer are measured in points (72 points = 1 inch).
+                   </p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlide slide = ppt.createSlide();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//Line shape</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Line line = new Line();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">line.setAnchor(new java.awt.Rectangle(50, 50, 100, 20));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">line.setLineColor(new Color(0, 128, 0));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">line.setLineCompound(LineCompound.DOUBLE);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide.addShape(line);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//TextBox</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFTextBox txt = new HSLFTextBox();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">txt.setText("Hello, World!");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">txt.setAnchor(new java.awt.Rectangle(300, 100, 300, 50));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// use TextRun to work with the text format</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFTextParagraph tp = txt.getTextParagraphs().get(0);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">tp.setAlignment(TextAlign.RIGHT);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFTextRun rt = tp.getTextRuns().get(0);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">rt.setFontSize(32.);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">rt.setFontFamily("Arial");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">rt.setBold(true);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">rt.setItalic(true);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">rt.setUnderlined(true);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">rt.setFontColor(Color.red);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide.addShape(txt);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// Autoshape</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// 32-point star</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFAutoShape sh1 = new HSLFAutoShape(ShapeType.STAR_32);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">sh1.setAnchor(new java.awt.Rectangle(50, 50, 100, 200));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">sh1.setFillColor(Color.red);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide.addShape(sh1);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//Trapezoid</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFAutoShape sh2 = new HSLFAutoShape(ShapeType.TRAPEZOID);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">sh2.setAnchor(new java.awt.Rectangle(150, 150, 100, 200));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">sh2.setFillColor(Color.blue);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide.addShape(sh2);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileOutputStream out = new FileOutputStream("slideshow.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ppt.write(out);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">              </span>
+</div>
+</div>
+<a name="Pictures" id="Pictures"></a><a name="How+to+work+with+pictures"></a>
+<h4>How to work with pictures</h4>
+<p>
+  Currently, HSLF API supports the following types of pictures:
+  </p>
+<ul>
+    
+<li>Windows Metafiles (WMF)</li>
+    
+<li>Enhanced Metafiles (EMF)</li>
+    
+<li>JPEG Interchange Format</li>
+    
+<li>Portable Network Graphics (PNG)</li>
+    
+<li>Macintosh PICT</li>
+  
+</ul>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl("slideshow.ppt"));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// extract all pictures contained in the presentation</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">int idx = 1;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for (HSLFPictureData pict : ppt.getPictureData()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    // picture data</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    byte[] data = pict.getData();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    PictureData.PictureType type = pict.getType();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    String ext = type.extension;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    FileOutputStream out = new FileOutputStream("pict_" + idx + ext);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    out.write(data);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    idx++;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// add a new picture to this slideshow and insert it in a new slide</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFPictureData pd = ppt.addPicture(new File("clock.jpg"), PictureData.PictureType.JPEG);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFPictureShape pictNew = new HSLFPictureShape(pd);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// set image position in the slide</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">pictNew.setAnchor(new java.awt.Rectangle(100, 100, 300, 200));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlide slide = ppt.createSlide();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide.addShape(pictNew);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// now retrieve pictures containes in the first slide and save them on disk</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">idx = 1;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide = ppt.getSlides().get(0);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for (HSLFShape sh : slide.getShapes()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    if (sh instanceof HSLFPictureShape) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        HSLFPictureShape pict = (HSLFPictureShape) sh;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        HSLFPictureData pictData = pict.getPictureData();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        byte[] data = pictData.getData();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        PictureData.PictureType type = pictData.getType();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        FileOutputStream out = new FileOutputStream("slide0_" + idx + type.extension);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        out.write(data);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        idx++;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileOutputStream out = new FileOutputStream("slideshow.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ppt.write(out);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                </span>
+</div>
+</div>
+<a name="SlideTitle" id="SlideTitle"></a><a name="How+to+set+slide+title"></a>
+<h4>How to set slide title</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlide slide = ppt.createSlide();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFTextBox title = slide.addTitle();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">title.setText("Hello, World!");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// save changes</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileOutputStream out = new FileOutputStream("slideshow.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ppt.write(out);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">              </span>
+</div>
+</div>
+<p>
+                    Below is the equivalent code in PowerPoint VBA:
+                  </p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Set myDocument = ActivePresentation.Slides(1)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">myDocument.Shapes.AddTitle.TextFrame.TextRange.Text = "Hello, World!"</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">              </span>
+</div>
+</div>
+<a name="Fill" id="Fill"></a><a name="How+to+modify+background+of+a+slide+master"></a>
+<h4>How to modify background of a slide master</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideMaster master = ppt.getSlideMasters().get(0);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFFill fill = master.getBackground().getFill();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFPictureData pd = ppt.addPicture(new File("background.png"), PictureData.PictureType.PNG);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">fill.setFillType(HSLFFill.FILL_PICTURE);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">fill.setPictureData(pd);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">              </span>
+</div>
+</div>
+<a name="How+to+modify+background+of+a+slide"></a>
+<h4>How to modify background of a slide</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlide slide = ppt.createSlide();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// This slide has its own background.</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// Without this line it will use master's background.</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide.setFollowMasterBackground(false);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFFill fill = slide.getBackground().getFill();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFPictureData pd = ppt.addPicture(new File("background.png"), PictureData.PictureType.PNG);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">fill.setFillType(HSLFFill.FILL_PATTERN);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">fill.setPictureData(pd);    </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">              </span>
+</div>
+</div>
+<a name="How+to+modify+background+of+a+shape"></a>
+<h4>How to modify background of a shape</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlide slide = ppt.createSlide();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFShape shape = new HSLFAutoShape(ShapeType.RECT);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFFill fill = shape.getFill();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">fill.setFillType(HSLFFill.FILL_SHADE);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">fill.setBackgroundColor(Color.red);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">fill.setForegroundColor(Color.green);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide.addShape(shape);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">              </span>
+</div>
+</div>
+<a name="Bullets" id="Bullets"></a><a name="How+to+create+bulleted+lists"></a>
+<h4>How to create bulleted lists</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlide slide = ppt.createSlide();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFTextBox shape = new HSLFTextBox();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFTextParagraph tp = shape.getTextParagraphs().get(0);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">tp.setBullet(true);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">tp.setBulletChar('\u263A'); //bullet character</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">tp.setIndent(0.);  //bullet offset</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">tp.setLeftMargin(50.);   //text offset (should be greater than bullet offset)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFTextRun rt = tp.getTextRuns().get(0);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">shape.setText(</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    "January\r" +</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    "February\r" +</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    "March\r" +</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    "April");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">rt.setFontSize(42.);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide.addShape(shape);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">shape.setAnchor(new java.awt.Rectangle(50, 50, 500, 300));  //position of the text box in the slide</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide.addShape(shape);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileOutputStream out = new FileOutputStream("bullets.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ppt.write(out);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+</div>
+<a name="Hyperlinks" id="Hyperlinks"></a><a name="How+to+read+hyperlinks+from+a+slide+show"></a>
+<h4>How to read hyperlinks from a slide show</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileInputStream is = new FileInputStream("slideshow.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow(is);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">is.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for (HSLFSlide slide : ppt.getSlides()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    //read hyperlinks from the text runs</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    for (List&lt;HSLFTextParagraph&gt; txt : slide.getTextParagraphs()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        for (HSLFTextParagraph para : txt) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            for (HSLFTextRun run : para) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                HSLFHyperlink link = run.getHyperlink();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                if (link != null) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                    String title = link.getLabel();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                    String address = link.getAddress();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                    String text = run.getRawText();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    //in PowerPoint you can assign a hyperlink to a shape without text,</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    //for example to a Line object. The code below demonstrates how to</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    //read such hyperlinks</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    for (HSLFShape sh : slide.getShapes()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        if (sh instanceof HSLFSimpleShape) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            HSLFHyperlink link = ((HSLFSimpleShape)sh).getHyperlink();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            if(link != null)  {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                String title = link.getLabel();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                String address = link.getAddress();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+</div>
+<a name="Tables" id="Tables"></a><a name="How+to+create+tables"></a>
+<h4>How to create tables</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//table data              </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">String[][] data = {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    {"INPUT FILE", "NUMBER OF RECORDS"},</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    {"Item File", "11,559"},</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    {"Vendor File", "300"},</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    {"Purchase History File", "10,000"},</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    {"Total # of requisitions", "10,200,038"}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">};</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlide slide = ppt.createSlide();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//create a table of 5 rows and 2 columns</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFTable table = new HSLFTable(5, 2);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for (int i = 0; i &lt; data.length; i++) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    for (int j = 0; j &lt; data[i].length; j++) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        HSLFTableCell cell = table.getCell(i, j);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        cell.setText(data[i][j]);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        HSLFTextRun rt = cell.getTextParagraphs().get(0).getTextRuns().get(0);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        rt.setFontFamily("Arial");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        rt.setFontSize(10.);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        cell.setVerticalAlignment(VerticalAlignment.MIDDLE);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        cell.setHorizontalCentered(true);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//set table borders</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Line border = table.createBorder();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">border.setLineColor(Color.black);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">border.setLineWidth(1.0);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">table.setAllBorders(border);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//set width of the 1st column</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">table.setColumnWidth(0, 300);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">//set width of the 2nd column</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">table.setColumnWidth(1, 150);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide.addShape(table);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">table.moveTo(100, 100);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileOutputStream out = new FileOutputStream("hslf-table.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ppt.write(out);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                </span>
+</div>
+</div>
+<a name="RemoveShape" id="RemoveShape"></a><a name="How+to+remove+shapes+from+a+slide"></a>
+<h4>How to remove shapes from a slide</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for (HSLFShape shape : slide.getShapes()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    // remove the shape</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    boolean ok = slide.removeShape(shape);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    if (ok) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        // the shape was removed. Do something.</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                </span>
+</div>
+</div>
+<a name="OLE" id="OLE"></a><a name="How+to+retrieve+embedded+OLE+objects"></a>
+<h4>How to retrieve embedded OLE objects</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for (HSLFShape shape : slide.getShapes()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    if (shape instanceof OLEShape) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        OLEShape ole = (OLEShape) shape;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        HSLFObjectData data = ole.getObjectData();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        String name = ole.getInstanceName();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        if ("Worksheet".equals(name)) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            HSSFWorkbook wb = new HSSFWorkbook(data.getData());</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        } else if ("Document".equals(name)) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            HWPFDocument doc = new HWPFDocument(data.getData());</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                </span>
+</div>
+</div>
+<a name="Sound" id="Sound"></a><a name="How+to+retrieve+embedded+sounds"></a>
+<h4>How to retrieve embedded sounds</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileInputStream is = new FileInputStream(args[0]);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow(is);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">is.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for (HSLFSoundData sound : ppt.getSoundData()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    // save *WAV sounds on disk</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    if (sound.getSoundType().equals(".WAV")) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        FileOutputStream out = new FileOutputStream(sound.getSoundName());</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        out.write(sound.getData());</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                </span>
+</div>
+</div>
+<a name="Freeform" id="Freeform"></a><a name="How+to+create+shapes+of+arbitrary+geometry"></a>
+<h4>How to create shapes of arbitrary geometry</h4>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlide slide = ppt.createSlide();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">java.awt.geom.GeneralPath path = new java.awt.geom.GeneralPath();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">path.moveTo(100, 100);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">path.lineTo(200, 100);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">path.curveTo(50, 45, 134, 22, 78, 133);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">path.curveTo(10, 45, 134, 56, 78, 100);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">path.lineTo(100, 200);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">path.closePath();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFFreeformShape shape = new HSLFFreeformShape();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">shape.setPath(path);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide.addShape(shape);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">                </span>
+</div>
+</div>
+<a name="Graphics2D" id="Graphics2D"></a><a name="How+to+draw+into+a+slide+using+Graphics2D"></a>
+<h4>How to draw into a slide using Graphics2D</h4>
+<div class="warning">
+<div class="label">Warning</div>
+<div class="content">
+                   Current implementation of the PowerPoint Graphics2D driver is not fully compliant with the java.awt.Graphics2D specification.
+                   Some features like clipping, drawing of images are not yet supported. 
+                  </div>
+</div>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlide slide = ppt.createSlide();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// draw a simple bar graph</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// bar chart data.</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// The first value is the bar color,</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// the second is the width</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Object[] def = new Object[]{</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    Color.yellow, new Integer(100),</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    Color.green, new Integer(150),</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    Color.gray, new Integer(75),</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    Color.red, new Integer(200),</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">};</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// all objects are drawn into a shape group so we need to create one</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFGroupShape group = new HSLFGroupShape();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// define position of the drawing in the slide</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Rectangle bounds = new java.awt.Rectangle(200, 100, 350, 300);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// if you want to draw in the entire slide area then define the anchor</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// as follows:</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// Dimension pgsize = ppt.getPageSize();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// java.awt.Rectangle bounds = new java.awt.Rectangle(0, 0,</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// pgsize.width, pgsize.height);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">group.setAnchor(bounds);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">slide.addShape(group);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// draw a simple bar chart</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Graphics2D graphics = new PPGraphics2D(group);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">int x = bounds.x + 50, y = bounds.y + 50;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">graphics.setFont(new Font("Arial", Font.BOLD, 10));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for (int i = 0, idx = 1; i &lt; def.length; i += 2, idx++) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    graphics.setColor(Color.black);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    int width = ((Integer) def[i + 1]).intValue();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    graphics.drawString("Q" + idx, x - 20, y + 20);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    graphics.drawString(width + "%", x + width + 10, y + 20);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    graphics.setColor((Color) def[i]);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    graphics.fill(new Rectangle(x, y, width, 30));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    y += 40;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">graphics.setColor(Color.black);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">graphics.setFont(new Font("Arial", Font.BOLD, 14));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">graphics.draw(bounds);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">graphics.drawString("Performance", x + 70, y + 40);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileOutputStream out = new FileOutputStream("hslf-graphics2d.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ppt.write(out);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">               </span>
+</div>
+</div>
+<a name="Render" id="Render"></a><a name="Export+PowerPoint+slides+into+java.awt.Graphics2D"></a>
+<h4>Export PowerPoint slides into java.awt.Graphics2D</h4>
+<p>
+                    HSLF provides a way to export slides into images. You can capture slides into java.awt.Graphics2D object (or any other) 
+                    and serialize it into a PNG or JPEG format. Please note, although HSLF attempts to render slides as close to PowerPoint as possible, 
+                    the output may look differently from PowerPoint due to the following reasons: 
+                  </p>
+<ul>
+              
+<li>Java2D renders fonts differently vs PowerPoint. There are always some differences in the way the font glyphs are painted</li>   
+              
+<li>HSLF uses java.awt.font.LineBreakMeasurer to break text into lines. PowerPoint may do it in a different way.</li>
+              
+<li>If a font from the presentation is not available, then the JDK default font will be used.</li>
+            
+</ul>
+<p>
+            Current Limitations:
+            </p>
+<ul>
+              
+<li>Some types of shapes are not yet supported (WordArt, complex auto-shapes)</li>
+              
+<li>Only Bitmap images (PNG, JPEG, DIB) can be rendered in Java</li>  
+            
+</ul>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileInputStream is = new FileInputStream("slideshow.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow(is);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">is.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Dimension pgsize = ppt.getPageSize();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">int idx = 1;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for (HSLFSlide slide : ppt.getSlides()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_RGB);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    Graphics2D graphics = img.createGraphics();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    // clear the drawing area</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    graphics.setPaint(Color.white);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width, pgsize.height));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    // render</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    slide.draw(graphics);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    // save the output</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    FileOutputStream out = new FileOutputStream("slide-" + idx + ".png");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    javax.imageio.ImageIO.write(img, "png", out);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    out.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    idx++;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">              </span>
+</div>
+</div>
+<a name="HeadersFooters" id="HeadersFooters"></a><a name="How+to+extract+Headers+%2F+Footers+from+an+existing+presentation"></a>
+<h3 class="boxed">How to extract Headers / Footers from an existing presentation</h3>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileInputStream is = new FileInputStream("slideshow.ppt");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow(is);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">is.close();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// presentation-scope headers / footers</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HeadersFooters hdd = ppt.getSlideHeadersFooters();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">if (hdd.isFooterVisible()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    String footerText = hdd.getFooterText();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// per-slide headers / footers</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for (HSLFSlide slide : ppt.getSlides()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    HeadersFooters hdd2 = slide.getHeadersFooters();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    if (hdd2.isFooterVisible()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        String footerText = hdd2.getFooterText();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    if (hdd2.isUserDateVisible()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        String customDate = hdd2.getDateTimeText();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    if (hdd2.isSlideNumberVisible()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        int slideNUm = slide.getSlideNumber();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+</div>
+<a name="How+to+set+Headers+%2F+Footers"></a>
+<h3 class="boxed">How to set Headers / Footers</h3>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HSLFSlideShow ppt = new HSLFSlideShow();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// presentation-scope headers / footers</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HeadersFooters hdd = ppt.getSlideHeadersFooters();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">hdd.setSlideNumberVisible(true);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">hdd.setFootersText("Created by POI-HSLF");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">            </span>
+</div>
+</div>
+</div>
+    
+<p align="right">
+<font size="-2">by&nbsp;Yegor Kozlov</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0components/slideshow/how-to-shapes.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

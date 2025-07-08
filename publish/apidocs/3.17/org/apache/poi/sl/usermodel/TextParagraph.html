@@ -1,0 +1,907 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+TextParagraph (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="TextParagraph (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextBox.html" title="interface in org.apache.poi.sl.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.BulletStyle.html" title="interface in org.apache.poi.sl.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/usermodel/TextParagraph.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="TextParagraph.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.usermodel</FONT>
+<BR>
+Interface TextParagraph&lt;S extends <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;S,P&gt;,P extends TextParagraph&lt;S,P,T&gt;,T extends <A HREF="../../../../../org/apache/poi/sl/usermodel/TextRun.html" title="interface in org.apache.poi.sl.usermodel">TextRun</A>&gt;</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD>java.lang.Iterable&lt;T&gt;</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>TextParagraph&lt;S extends <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;S,P&gt;,P extends TextParagraph&lt;S,P,T&gt;,T extends <A HREF="../../../../../org/apache/poi/sl/usermodel/TextRun.html" title="interface in org.apache.poi.sl.usermodel">TextRun</A>&gt;</B><DT>extends java.lang.Iterable&lt;T&gt;</DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;interface</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.BulletStyle.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph.BulletStyle</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.FontAlign.html" title="enum in org.apache.poi.sl.usermodel">TextParagraph.FontAlign</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.TextAlign.html" title="enum in org.apache.poi.sl.usermodel">TextParagraph.TextAlign</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies a list of text alignment types</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.BulletStyle.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph.BulletStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getBulletStyle()">getBulletStyle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getDefaultFontFamily()">getDefaultFontFamily</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getDefaultFontSize()">getDefaultFontSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getDefaultTabSize()">getDefaultTabSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.FontAlign.html" title="enum in org.apache.poi.sl.usermodel">TextParagraph.FontAlign</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getFontAlign()">getFontAlign</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the font alignment that is applied to the paragraph.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getIndent()">getIndent</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getIndentLevel()">getIndentLevel</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getLeftMargin()">getLeftMargin</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getLineSpacing()">getLineSpacing</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the vertical line spacing that is to be used within a paragraph.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextShape.html" title="interface in org.apache.poi.sl.usermodel">TextShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="type parameter in TextParagraph">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="type parameter in TextParagraph">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getParentShape()">getParentShape</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getRightMargin()">getRightMargin</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies the right margin of the paragraph.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getSpaceAfter()">getSpaceAfter</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The amount of vertical white space after the paragraph
+ This may be specified in two different ways, percentage spacing and font point spacing:</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getSpaceBefore()">getSpaceBefore</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The amount of vertical white space before the paragraph
+ This may be specified in two different ways, percentage spacing and font point spacing:</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.TextAlign.html" title="enum in org.apache.poi.sl.usermodel">TextParagraph.TextAlign</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getTextAlign()">getTextAlign</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the alignment that is applied to the paragraph.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="type parameter in TextParagraph">T</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#getTextRuns()">getTextRuns</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fetch the text runs that are contained within this block of text</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#isHeaderOrFooter()">isHeaderOrFooter</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method to determine if this text paragraph is part of
+ the slide header or footer</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#setBulletStyle(java.lang.Object...)">setBulletStyle</A></B>(java.lang.Object...&nbsp;styles)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the bullet styles.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#setIndent(java.lang.Double)">setIndent</A></B>(java.lang.Double&nbsp;indent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies the indent size that will be applied to the first line of text in the paragraph.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#setIndentLevel(int)">setIndentLevel</A></B>(int&nbsp;level)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies the particular level text properties that this paragraph will follow.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#setLeftMargin(java.lang.Double)">setLeftMargin</A></B>(java.lang.Double&nbsp;leftMargin)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies the left margin of the paragraph.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#setLineSpacing(java.lang.Double)">setLineSpacing</A></B>(java.lang.Double&nbsp;lineSpacing)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This element specifies the vertical line spacing that is to be used within a paragraph.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#setRightMargin(java.lang.Double)">setRightMargin</A></B>(java.lang.Double&nbsp;rightMargin)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#setSpaceAfter(java.lang.Double)">setSpaceAfter</A></B>(java.lang.Double&nbsp;spaceAfter)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the amount of vertical white space that will be present after the paragraph.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#setSpaceBefore(java.lang.Double)">setSpaceBefore</A></B>(java.lang.Double&nbsp;spaceBefore)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the amount of vertical white space that will be present before the paragraph.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html#setTextAlign(org.apache.poi.sl.usermodel.TextParagraph.TextAlign)">setTextAlign</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.TextAlign.html" title="enum in org.apache.poi.sl.usermodel">TextParagraph.TextAlign</A>&nbsp;align)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies the alignment that is to be applied to the paragraph.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Iterable"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from interface java.lang.Iterable</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>iterator</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getSpaceBefore()"><!-- --></A><H3>
+getSpaceBefore</H3>
+<PRE>
+java.lang.Double <B>getSpaceBefore</B>()</PRE>
+<DL>
+<DD>The amount of vertical white space before the paragraph
+ This may be specified in two different ways, percentage spacing and font point spacing:
+ <p>
+ If spaceBefore >= 0, then space is a percentage of normal line height.
+ If spaceBefore < 0, the absolute value in points
+ </p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the vertical white space before the paragraph, or null if unset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setSpaceBefore(java.lang.Double)"><!-- --></A><H3>
+setSpaceBefore</H3>
+<PRE>
+void <B>setSpaceBefore</B>(java.lang.Double&nbsp;spaceBefore)</PRE>
+<DL>
+<DD>Set the amount of vertical white space that will be present before the paragraph.
+ This space is specified in either percentage or points:
+ <p>
+ If spaceBefore >= 0, then space is a percentage of normal line height.
+ If spaceBefore < 0, the absolute value of linespacing is the spacing in points
+ </p>
+ Examples:
+ <pre><code>
+      // The paragraph will be formatted to have a spacing before the paragraph text.
+      // The spacing will be 200% of the size of the largest text on each line
+      paragraph.setSpaceBefore(200);
+
+      // The spacing will be a size of 48 points
+      paragraph.setSpaceBefore(-48.0);
+ </code></pre>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>spaceBefore</CODE> - the vertical white space before the paragraph, null to unset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSpaceAfter()"><!-- --></A><H3>
+getSpaceAfter</H3>
+<PRE>
+java.lang.Double <B>getSpaceAfter</B>()</PRE>
+<DL>
+<DD>The amount of vertical white space after the paragraph
+ This may be specified in two different ways, percentage spacing and font point spacing:
+ <p>
+ If spaceBefore >= 0, then space is a percentage of normal line height.
+ If spaceBefore < 0, the absolute value of linespacing is the spacing in points
+ </p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the vertical white space after the paragraph or null, if unset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setSpaceAfter(java.lang.Double)"><!-- --></A><H3>
+setSpaceAfter</H3>
+<PRE>
+void <B>setSpaceAfter</B>(java.lang.Double&nbsp;spaceAfter)</PRE>
+<DL>
+<DD>Set the amount of vertical white space that will be present after the paragraph.
+ This space is specified in either percentage or points:
+ <p>
+ If spaceAfter >= 0, then space is a percentage of normal line height.
+ If spaceAfter < 0, the absolute value of linespacing is the spacing in points
+ </p>
+ Examples:
+ <pre><code>
+      // The paragraph will be formatted to have a spacing after the paragraph text.
+      // The spacing will be 200% of the size of the largest text on each line
+      paragraph.setSpaceAfter(200);
+
+      // The spacing will be a size of 48 points
+      paragraph.setSpaceAfter(-48.0);
+ </code></pre>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>spaceAfter</CODE> - the vertical white space after the paragraph, null to unset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLeftMargin()"><!-- --></A><H3>
+getLeftMargin</H3>
+<PRE>
+java.lang.Double <B>getLeftMargin</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the left margin (in points) of the paragraph or null, if unset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLeftMargin(java.lang.Double)"><!-- --></A><H3>
+setLeftMargin</H3>
+<PRE>
+void <B>setLeftMargin</B>(java.lang.Double&nbsp;leftMargin)</PRE>
+<DL>
+<DD>Specifies the left margin of the paragraph. This is specified in addition to the text body
+ inset and applies only to this text paragraph. That is the text body Inset and the LeftMargin
+ attributes are additive with respect to the text position.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>leftMargin</CODE> - the left margin (in points) or null to unset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRightMargin()"><!-- --></A><H3>
+getRightMargin</H3>
+<PRE>
+java.lang.Double <B>getRightMargin</B>()</PRE>
+<DL>
+<DD>Specifies the right margin of the paragraph. This is specified in addition to the text body
+ inset and applies only to this text paragraph. That is the text body Inset and the RightMargin
+ attributes are additive with respect to the text position.
+ 
+ The right margin is not support and therefore ignored by the HSLF implementation.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the right margin (in points) of the paragraph or null, if unset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRightMargin(java.lang.Double)"><!-- --></A><H3>
+setRightMargin</H3>
+<PRE>
+void <B>setRightMargin</B>(java.lang.Double&nbsp;rightMargin)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rightMargin</CODE> - the right margin (in points) of the paragraph</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIndent()"><!-- --></A><H3>
+getIndent</H3>
+<PRE>
+java.lang.Double <B>getIndent</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the indent (in points) applied to the first line of text in the paragraph.
+  or null, if unset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setIndent(java.lang.Double)"><!-- --></A><H3>
+setIndent</H3>
+<PRE>
+void <B>setIndent</B>(java.lang.Double&nbsp;indent)</PRE>
+<DL>
+<DD>Specifies the indent size that will be applied to the first line of text in the paragraph.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>indent</CODE> - the indent (in points) applied to the first line of text in the paragraph</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIndentLevel()"><!-- --></A><H3>
+getIndentLevel</H3>
+<PRE>
+int <B>getIndentLevel</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the text level of this paragraph (0-based). Default is 0.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setIndentLevel(int)"><!-- --></A><H3>
+setIndentLevel</H3>
+<PRE>
+void <B>setIndentLevel</B>(int&nbsp;level)</PRE>
+<DL>
+<DD>Specifies the particular level text properties that this paragraph will follow.
+ The value for this attribute formats the text according to the corresponding level
+ paragraph properties defined in the SlideMaster.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>level</CODE> - the level (0 ... 4)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLineSpacing()"><!-- --></A><H3>
+getLineSpacing</H3>
+<PRE>
+java.lang.Double <B>getLineSpacing</B>()</PRE>
+<DL>
+<DD>Returns the vertical line spacing that is to be used within a paragraph.
+ This may be specified in two different ways, percentage spacing and font point spacing:
+ <p>
+ If linespacing >= 0, then linespacing is a percentage of normal line height.
+ If linespacing < 0, the absolute value of linespacing is the spacing in points
+ </p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the vertical line spacing or null, if unset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLineSpacing(java.lang.Double)"><!-- --></A><H3>
+setLineSpacing</H3>
+<PRE>
+void <B>setLineSpacing</B>(java.lang.Double&nbsp;lineSpacing)</PRE>
+<DL>
+<DD>This element specifies the vertical line spacing that is to be used within a paragraph.
+ This may be specified in two different ways, percentage spacing and font point spacing:
+ <p>
+ If linespacing >= 0, then linespacing is a percentage of normal line height
+ If linespacing < 0, the absolute value of linespacing is the spacing in points
+ </p>
+ Examples:
+ <pre><code>
+      // spacing will be 120% of the size of the largest text on each line
+      paragraph.setLineSpacing(120);
+
+      // spacing will be 200% of the size of the largest text on each line
+      paragraph.setLineSpacing(200);
+
+      // spacing will be 48 points
+      paragraph.setLineSpacing(-48.0);
+ </code></pre>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lineSpacing</CODE> - the vertical line spacing</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDefaultFontFamily()"><!-- --></A><H3>
+getDefaultFontFamily</H3>
+<PRE>
+java.lang.String <B>getDefaultFontFamily</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDefaultFontSize()"><!-- --></A><H3>
+getDefaultFontSize</H3>
+<PRE>
+java.lang.Double <B>getDefaultFontSize</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the default font size, in case its not set in the textrun or null, if unset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTextAlign()"><!-- --></A><H3>
+getTextAlign</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.TextAlign.html" title="enum in org.apache.poi.sl.usermodel">TextParagraph.TextAlign</A> <B>getTextAlign</B>()</PRE>
+<DL>
+<DD>Returns the alignment that is applied to the paragraph.
+
+ If this attribute is omitted, then null is returned.
+ User code can imply the value <A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.TextAlign.html#LEFT"><CODE>TextParagraph.TextAlign.LEFT</CODE></A> then.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>alignment that is applied to the paragraph</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTextAlign(org.apache.poi.sl.usermodel.TextParagraph.TextAlign)"><!-- --></A><H3>
+setTextAlign</H3>
+<PRE>
+void <B>setTextAlign</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.TextAlign.html" title="enum in org.apache.poi.sl.usermodel">TextParagraph.TextAlign</A>&nbsp;align)</PRE>
+<DL>
+<DD>Specifies the alignment that is to be applied to the paragraph.
+ Possible values for this include left, right, centered, justified and distributed,
+ see <A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.TextAlign.html" title="enum in org.apache.poi.sl.usermodel"><CODE>TextParagraph.TextAlign</CODE></A>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>align</CODE> - text align</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFontAlign()"><!-- --></A><H3>
+getFontAlign</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.FontAlign.html" title="enum in org.apache.poi.sl.usermodel">TextParagraph.FontAlign</A> <B>getFontAlign</B>()</PRE>
+<DL>
+<DD>Returns the font alignment that is applied to the paragraph.
+
+ If this attribute is omitted, then null is return,
+ user code can imply the a value of <A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.FontAlign.html#AUTO"><CODE>TextParagraph.FontAlign.AUTO</CODE></A>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>alignment that is applied to the paragraph</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBulletStyle()"><!-- --></A><H3>
+getBulletStyle</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.BulletStyle.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph.BulletStyle</A> <B>getBulletStyle</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the bullet style of the paragraph, if <code>null</code> then no bullets are used</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBulletStyle(java.lang.Object...)"><!-- --></A><H3>
+setBulletStyle</H3>
+<PRE>
+void <B>setBulletStyle</B>(java.lang.Object...&nbsp;styles)</PRE>
+<DL>
+<DD>Sets the bullet styles. If no styles are given, the bullets are omitted.
+ Possible attributes are integer/double (bullet size), Color (bullet color),
+ character (bullet character), string (bullet font), AutoNumberingScheme
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>styles</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDefaultTabSize()"><!-- --></A><H3>
+getDefaultTabSize</H3>
+<PRE>
+java.lang.Double <B>getDefaultTabSize</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the default size for a tab character within this paragraph in points, null if unset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getParentShape()"><!-- --></A><H3>
+getParentShape</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/TextShape.html" title="interface in org.apache.poi.sl.usermodel">TextShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="type parameter in TextParagraph">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="type parameter in TextParagraph">P</A>&gt; <B>getParentShape</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTextRuns()"><!-- --></A><H3>
+getTextRuns</H3>
+<PRE>
+java.util.List&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="type parameter in TextParagraph">T</A>&gt; <B>getTextRuns</B>()</PRE>
+<DL>
+<DD>Fetch the text runs that are contained within this block of text
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isHeaderOrFooter()"><!-- --></A><H3>
+isHeaderOrFooter</H3>
+<PRE>
+boolean <B>isHeaderOrFooter</B>()</PRE>
+<DL>
+<DD>Convenience method to determine if this text paragraph is part of
+ the slide header or footer
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if this paragraph is part of a header or footer placeholder<DT><B>Since:</B></DT>
+  <DD>POI 3.15-beta2</DD>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextBox.html" title="interface in org.apache.poi.sl.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.BulletStyle.html" title="interface in org.apache.poi.sl.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/usermodel/TextParagraph.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="TextParagraph.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

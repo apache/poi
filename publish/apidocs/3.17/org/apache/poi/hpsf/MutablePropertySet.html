@@ -1,0 +1,275 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+MutablePropertySet (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="MutablePropertySet (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/MutableProperty.html" title="class in org.apache.poi.hpsf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/MutableSection.html" title="class in org.apache.poi.hpsf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/hpsf/MutablePropertySet.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="MutablePropertySet.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_org.apache.poi.hpsf.PropertySet">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#methods_inherited_from_class_org.apache.poi.hpsf.PropertySet">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hpsf</FONT>
+<BR>
+Class MutablePropertySet</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">org.apache.poi.hpsf.PropertySet</A>
+      <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hpsf.MutablePropertySet</B>
+</PRE>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../org/apache/poi/hpsf/SpecialPropertySet.html" title="class in org.apache.poi.hpsf">SpecialPropertySet</A></DD>
+</DL>
+<HR>
+<B>Deprecated.</B>&nbsp;<I>POI 3.16 - use PropertySet as base class instead</I>
+<P>
+<DL>
+<DT><PRE><FONT SIZE="-1"><A HREF="../../../../org/apache/poi/util/Removal.html" title="annotation in org.apache.poi.util">@Removal</A>(<A HREF="../../../../org/apache/poi/util/Removal.html#version()">version</A>="3.18")
+</FONT>public class <B>MutablePropertySet</B><DT>extends <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">PropertySet</A></DL>
+</PRE>
+
+<P>
+dds writing support to the <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> class.<p>
+
+ Please be aware that this class' functionality will be merged into the
+ <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> class at a later time, so the API will change.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_org.apache.poi.hpsf.PropertySet"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class org.apache.poi.hpsf.<A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">PropertySet</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#OS_MACINTOSH">OS_MACINTOSH</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#OS_WIN16">OS_WIN16</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#OS_WIN32">OS_WIN32</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/MutablePropertySet.html#MutablePropertySet()">MutablePropertySet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/MutablePropertySet.html#MutablePropertySet(org.apache.poi.hpsf.PropertySet)">MutablePropertySet</A></B>(<A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">PropertySet</A>&nbsp;ps)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hpsf.PropertySet"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hpsf.<A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">PropertySet</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#addSection(org.apache.poi.hpsf.Section)">addSection</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#clearSections()">clearSections</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getByteOrder()">getByteOrder</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getClassID()">getClassID</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getFirstSection()">getFirstSection</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getFormat()">getFormat</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getOSVersion()">getOSVersion</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getProperties()">getProperties</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getProperty(int)">getProperty</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyBooleanValue(int)">getPropertyBooleanValue</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyIntValue(int)">getPropertyIntValue</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertySetIDMap()">getPropertySetIDMap</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyStringValue(int)">getPropertyStringValue</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyStringValue(java.lang.Object)">getPropertyStringValue</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getSectionCount()">getSectionCount</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getSections()">getSections</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getSingleSection()">getSingleSection</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#hashCode()">hashCode</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#isDocumentSummaryInformation()">isDocumentSummaryInformation</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#isPropertySetStream(byte[], int, int)">isPropertySetStream</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#isPropertySetStream(java.io.InputStream)">isPropertySetStream</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#isSummaryInformation()">isSummaryInformation</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#remove1stProperty(long)">remove1stProperty</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#set1stProperty(long, boolean)">set1stProperty</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#set1stProperty(long, byte[])">set1stProperty</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#set1stProperty(long, int)">set1stProperty</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#set1stProperty(long, java.lang.String)">set1stProperty</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#setByteOrder(int)">setByteOrder</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#setClassID(org.apache.poi.hpsf.ClassID)">setClassID</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#setFormat(int)">setFormat</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#setOSVersion(int)">setOSVersion</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#toInputStream()">toInputStream</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#toString()">toString</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#wasNull()">wasNull</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#write(org.apache.poi.poifs.filesystem.DirectoryEntry, java.lang.String)">write</A>, <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#write(java.io.OutputStream)">write</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="MutablePropertySet()"><!-- --></A><H3>
+MutablePropertySet</H3>
+<PRE>
+public <B>MutablePropertySet</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;</DL>
+<HR>
+
+<A NAME="MutablePropertySet(org.apache.poi.hpsf.PropertySet)"><!-- --></A><H3>
+MutablePropertySet</H3>
+<PRE>
+public <B>MutablePropertySet</B>(<A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">PropertySet</A>&nbsp;ps)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/MutableProperty.html" title="class in org.apache.poi.hpsf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/MutableSection.html" title="class in org.apache.poi.hpsf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/hpsf/MutablePropertySet.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="MutablePropertySet.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_org.apache.poi.hpsf.PropertySet">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#methods_inherited_from_class_org.apache.poi.hpsf.PropertySet">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

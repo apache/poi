@@ -1,0 +1,301 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+DrawFontManager (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="DrawFontManager (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html" title="class in org.apache.poi.sl.draw"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawFontManagerDefault.html" title="class in org.apache.poi.sl.draw"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/draw/DrawFontManager.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DrawFontManager.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.draw</FONT>
+<BR>
+Interface DrawFontManager</H2>
+<DL>
+<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../../../../../org/apache/poi/sl/draw/DrawFontManagerDefault.html" title="class in org.apache.poi.sl.draw">DrawFontManagerDefault</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>DrawFontManager</B></DL>
+</PRE>
+
+<P>
+Manages fonts when rendering slides.
+
+ Use this class to handle unknown / missing fonts or to substitute fonts
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Font</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFontManager.html#createAWTFont(java.awt.Graphics2D, org.apache.poi.common.usermodel.fonts.FontInfo, double, boolean, boolean)">createAWTFont</A></B>(java.awt.Graphics2D&nbsp;graphics,
+              <A HREF="../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html" title="interface in org.apache.poi.common.usermodel.fonts">FontInfo</A>&nbsp;fontInfo,
+              double&nbsp;size,
+              boolean&nbsp;bold,
+              boolean&nbsp;italic)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an AWT font object with the given attributes</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html" title="interface in org.apache.poi.common.usermodel.fonts">FontInfo</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFontManager.html#getFallbackFont(java.awt.Graphics2D, org.apache.poi.common.usermodel.fonts.FontInfo)">getFallbackFont</A></B>(java.awt.Graphics2D&nbsp;graphics,
+                <A HREF="../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html" title="interface in org.apache.poi.common.usermodel.fonts">FontInfo</A>&nbsp;fontInfo)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In case the original font doesn't contain a glyph, use the
+ returned fallback font as an alternative</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html" title="interface in org.apache.poi.common.usermodel.fonts">FontInfo</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFontManager.html#getMappedFont(java.awt.Graphics2D, org.apache.poi.common.usermodel.fonts.FontInfo)">getMappedFont</A></B>(java.awt.Graphics2D&nbsp;graphics,
+              <A HREF="../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html" title="interface in org.apache.poi.common.usermodel.fonts">FontInfo</A>&nbsp;fontInfo)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;select a font to be used to paint text</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFontManager.html#mapFontCharset(java.awt.Graphics2D, org.apache.poi.common.usermodel.fonts.FontInfo, java.lang.String)">mapFontCharset</A></B>(java.awt.Graphics2D&nbsp;graphics,
+               <A HREF="../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html" title="interface in org.apache.poi.common.usermodel.fonts">FontInfo</A>&nbsp;fontInfo,
+               java.lang.String&nbsp;text)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map text charset depending on font family.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getMappedFont(java.awt.Graphics2D, org.apache.poi.common.usermodel.fonts.FontInfo)"><!-- --></A><H3>
+getMappedFont</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html" title="interface in org.apache.poi.common.usermodel.fonts">FontInfo</A> <B>getMappedFont</B>(java.awt.Graphics2D&nbsp;graphics,
+                       <A HREF="../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html" title="interface in org.apache.poi.common.usermodel.fonts">FontInfo</A>&nbsp;fontInfo)</PRE>
+<DL>
+<DD>select a font to be used to paint text
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>graphics</CODE> - the graphics context to request additional rendering hints<DD><CODE>fontInfo</CODE> - the font info object corresponding to the text run font
+<DT><B>Returns:</B><DD>the font to be used to paint text</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFallbackFont(java.awt.Graphics2D, org.apache.poi.common.usermodel.fonts.FontInfo)"><!-- --></A><H3>
+getFallbackFont</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html" title="interface in org.apache.poi.common.usermodel.fonts">FontInfo</A> <B>getFallbackFont</B>(java.awt.Graphics2D&nbsp;graphics,
+                         <A HREF="../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html" title="interface in org.apache.poi.common.usermodel.fonts">FontInfo</A>&nbsp;fontInfo)</PRE>
+<DL>
+<DD>In case the original font doesn't contain a glyph, use the
+ returned fallback font as an alternative
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>graphics</CODE> - the graphics context to request additional rendering hints<DD><CODE>fontInfo</CODE> - the font info object corresponding to the text run font
+<DT><B>Returns:</B><DD>the font to be used as a fallback for the original typeface</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="mapFontCharset(java.awt.Graphics2D, org.apache.poi.common.usermodel.fonts.FontInfo, java.lang.String)"><!-- --></A><H3>
+mapFontCharset</H3>
+<PRE>
+java.lang.String <B>mapFontCharset</B>(java.awt.Graphics2D&nbsp;graphics,
+                                <A HREF="../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html" title="interface in org.apache.poi.common.usermodel.fonts">FontInfo</A>&nbsp;fontInfo,
+                                java.lang.String&nbsp;text)</PRE>
+<DL>
+<DD>Map text charset depending on font family.<p>
+ 
+ Currently this only maps for wingdings font (into unicode private use area)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>graphics</CODE> - the graphics context to request additional rendering hints<DD><CODE>fontInfo</CODE> - the font info object corresponding to the text run font<DD><CODE>text</CODE> - the raw text
+<DT><B>Returns:</B><DD>String with mapped codepoints<DT><B>See Also:</B><DD><a href="http://stackoverflow.com/questions/8692095">Drawing exotic fonts in a java applet</a>, 
+<A HREF="../../../../../org/apache/poi/util/StringUtil.html#mapMsCodepointString(java.lang.String)"><CODE>StringUtil.mapMsCodepointString(String)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createAWTFont(java.awt.Graphics2D, org.apache.poi.common.usermodel.fonts.FontInfo, double, boolean, boolean)"><!-- --></A><H3>
+createAWTFont</H3>
+<PRE>
+java.awt.Font <B>createAWTFont</B>(java.awt.Graphics2D&nbsp;graphics,
+                            <A HREF="../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html" title="interface in org.apache.poi.common.usermodel.fonts">FontInfo</A>&nbsp;fontInfo,
+                            double&nbsp;size,
+                            boolean&nbsp;bold,
+                            boolean&nbsp;italic)</PRE>
+<DL>
+<DD>Create an AWT font object with the given attributes
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>graphics</CODE> - the graphics context to request additional rendering hints<DD><CODE>fontInfo</CODE> - the font info object corresponding to the text run font<DD><CODE>size</CODE> - the font size in points<DD><CODE>bold</CODE> - <code>true</code> if the font is bold<DD><CODE>italic</CODE> - <code>true</code> if the font is italic
+<DT><B>Returns:</B><DD>the AWT font object</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html" title="class in org.apache.poi.sl.draw"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawFontManagerDefault.html" title="class in org.apache.poi.sl.draw"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/draw/DrawFontManager.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DrawFontManager.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

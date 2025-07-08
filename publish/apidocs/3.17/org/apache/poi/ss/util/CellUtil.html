@@ -1,0 +1,876 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+CellUtil (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="CellUtil (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellReference.NameType.html" title="enum in org.apache.poi.ss.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/DateFormatConverter.html" title="class in org.apache.poi.ss.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/util/CellUtil.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CellUtil.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.util</FONT>
+<BR>
+Class CellUtil</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.util.CellUtil</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>CellUtil</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Various utility functions that make working with a cells and rows easier. The various methods
+ that deal with style's allow you to create your CellStyles as you need them. When you apply a
+ style change to a cell, the code will attempt to see if a style already exists that meets your
+ needs. If not, then it will create a new style. This is to prevent creating too many styles.
+ there is an upper limit in Excel on the number of styles that can be supported.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#ALIGNMENT">ALIGNMENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#BORDER_BOTTOM">BORDER_BOTTOM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#BORDER_LEFT">BORDER_LEFT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#BORDER_RIGHT">BORDER_RIGHT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#BORDER_TOP">BORDER_TOP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#BOTTOM_BORDER_COLOR">BOTTOM_BORDER_COLOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#DATA_FORMAT">DATA_FORMAT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#FILL_BACKGROUND_COLOR">FILL_BACKGROUND_COLOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#FILL_FOREGROUND_COLOR">FILL_FOREGROUND_COLOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#FILL_PATTERN">FILL_PATTERN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#FONT">FONT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#HIDDEN">HIDDEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#INDENTION">INDENTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#LEFT_BORDER_COLOR">LEFT_BORDER_COLOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#LOCKED">LOCKED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#RIGHT_BORDER_COLOR">RIGHT_BORDER_COLOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#ROTATION">ROTATION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#TOP_BORDER_COLOR">TOP_BORDER_COLOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#VERTICAL_ALIGNMENT">VERTICAL_ALIGNMENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#WRAP_TEXT">WRAP_TEXT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#createCell(org.apache.poi.ss.usermodel.Row, int, java.lang.String)">createCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&nbsp;row,
+           int&nbsp;column,
+           java.lang.String&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a cell, and give it a value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#createCell(org.apache.poi.ss.usermodel.Row, int, java.lang.String, org.apache.poi.ss.usermodel.CellStyle)">createCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&nbsp;row,
+           int&nbsp;column,
+           java.lang.String&nbsp;value,
+           <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A>&nbsp;style)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a cell, gives it a value, and applies a style if provided</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#getCell(org.apache.poi.ss.usermodel.Row, int)">getCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&nbsp;row,
+        int&nbsp;columnIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get a specific cell from a row.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#getRow(int, org.apache.poi.ss.usermodel.Sheet)">getRow</A></B>(int&nbsp;rowIndex,
+       <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get a row from the spreadsheet, and create it if it doesn't exist.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#setAlignment(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.HorizontalAlignment)">setAlignment</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+             <A HREF="../../../../../org/apache/poi/ss/usermodel/HorizontalAlignment.html" title="enum in org.apache.poi.ss.usermodel">HorizontalAlignment</A>&nbsp;align)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Take a cell, and align it.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, java.util.Map)">setCellStyleProperties</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                       java.util.Map&lt;java.lang.String,java.lang.Object&gt;&nbsp;properties)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method attempts to find an existing CellStyle that matches the <code>cell</code>'s 
+ current style plus styles properties in <code>properties</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#setCellStyleProperty(org.apache.poi.ss.usermodel.Cell, java.lang.String, java.lang.Object)">setCellStyleProperty</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                     java.lang.String&nbsp;propertyName,
+                     java.lang.Object&nbsp;propertyValue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method attempts to find an existing CellStyle that matches the <code>cell</code>'s
+ current style plus a single style property <code>propertyName</code> with value
+ <code>propertyValue</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#setFont(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.Font)">setFont</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+        <A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html" title="interface in org.apache.poi.ss.usermodel">Font</A>&nbsp;font)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Take a cell, and apply a font to it</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#setVerticalAlignment(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.VerticalAlignment)">setVerticalAlignment</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                     <A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel">VerticalAlignment</A>&nbsp;align)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Take a cell, and vertically align it.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#translateUnicodeValues(org.apache.poi.ss.usermodel.Cell)">translateUnicodeValues</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Looks for text in the cell that should be unicode, like &alpha; and provides the
+  unicode version of it.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="ALIGNMENT"><!-- --></A><H3>
+ALIGNMENT</H3>
+<PRE>
+public static final java.lang.String <B>ALIGNMENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.ALIGNMENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_BOTTOM"><!-- --></A><H3>
+BORDER_BOTTOM</H3>
+<PRE>
+public static final java.lang.String <B>BORDER_BOTTOM</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.BORDER_BOTTOM">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_LEFT"><!-- --></A><H3>
+BORDER_LEFT</H3>
+<PRE>
+public static final java.lang.String <B>BORDER_LEFT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.BORDER_LEFT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_RIGHT"><!-- --></A><H3>
+BORDER_RIGHT</H3>
+<PRE>
+public static final java.lang.String <B>BORDER_RIGHT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.BORDER_RIGHT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_TOP"><!-- --></A><H3>
+BORDER_TOP</H3>
+<PRE>
+public static final java.lang.String <B>BORDER_TOP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.BORDER_TOP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BOTTOM_BORDER_COLOR"><!-- --></A><H3>
+BOTTOM_BORDER_COLOR</H3>
+<PRE>
+public static final java.lang.String <B>BOTTOM_BORDER_COLOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.BOTTOM_BORDER_COLOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LEFT_BORDER_COLOR"><!-- --></A><H3>
+LEFT_BORDER_COLOR</H3>
+<PRE>
+public static final java.lang.String <B>LEFT_BORDER_COLOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.LEFT_BORDER_COLOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RIGHT_BORDER_COLOR"><!-- --></A><H3>
+RIGHT_BORDER_COLOR</H3>
+<PRE>
+public static final java.lang.String <B>RIGHT_BORDER_COLOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.RIGHT_BORDER_COLOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TOP_BORDER_COLOR"><!-- --></A><H3>
+TOP_BORDER_COLOR</H3>
+<PRE>
+public static final java.lang.String <B>TOP_BORDER_COLOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.TOP_BORDER_COLOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DATA_FORMAT"><!-- --></A><H3>
+DATA_FORMAT</H3>
+<PRE>
+public static final java.lang.String <B>DATA_FORMAT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.DATA_FORMAT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FILL_BACKGROUND_COLOR"><!-- --></A><H3>
+FILL_BACKGROUND_COLOR</H3>
+<PRE>
+public static final java.lang.String <B>FILL_BACKGROUND_COLOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.FILL_BACKGROUND_COLOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FILL_FOREGROUND_COLOR"><!-- --></A><H3>
+FILL_FOREGROUND_COLOR</H3>
+<PRE>
+public static final java.lang.String <B>FILL_FOREGROUND_COLOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.FILL_FOREGROUND_COLOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FILL_PATTERN"><!-- --></A><H3>
+FILL_PATTERN</H3>
+<PRE>
+public static final java.lang.String <B>FILL_PATTERN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.FILL_PATTERN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FONT"><!-- --></A><H3>
+FONT</H3>
+<PRE>
+public static final java.lang.String <B>FONT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.FONT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="HIDDEN"><!-- --></A><H3>
+HIDDEN</H3>
+<PRE>
+public static final java.lang.String <B>HIDDEN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.HIDDEN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INDENTION"><!-- --></A><H3>
+INDENTION</H3>
+<PRE>
+public static final java.lang.String <B>INDENTION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.INDENTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LOCKED"><!-- --></A><H3>
+LOCKED</H3>
+<PRE>
+public static final java.lang.String <B>LOCKED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.LOCKED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ROTATION"><!-- --></A><H3>
+ROTATION</H3>
+<PRE>
+public static final java.lang.String <B>ROTATION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.ROTATION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="VERTICAL_ALIGNMENT"><!-- --></A><H3>
+VERTICAL_ALIGNMENT</H3>
+<PRE>
+public static final java.lang.String <B>VERTICAL_ALIGNMENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.VERTICAL_ALIGNMENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WRAP_TEXT"><!-- --></A><H3>
+WRAP_TEXT</H3>
+<PRE>
+public static final java.lang.String <B>WRAP_TEXT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellUtil.WRAP_TEXT">Constant Field Values</A></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getRow(int, org.apache.poi.ss.usermodel.Sheet)"><!-- --></A><H3>
+getRow</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A> <B>getRow</B>(int&nbsp;rowIndex,
+                         <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet)</PRE>
+<DL>
+<DD>Get a row from the spreadsheet, and create it if it doesn't exist.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rowIndex</CODE> - The 0 based row number<DD><CODE>sheet</CODE> - The sheet that the row is part of.
+<DT><B>Returns:</B><DD>The row indicated by the rowCounter</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCell(org.apache.poi.ss.usermodel.Row, int)"><!-- --></A><H3>
+getCell</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A> <B>getCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&nbsp;row,
+                           int&nbsp;columnIndex)</PRE>
+<DL>
+<DD>Get a specific cell from a row. If the cell doesn't exist, then create it.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - The row that the cell is part of<DD><CODE>columnIndex</CODE> - The column index that the cell is in.
+<DT><B>Returns:</B><DD>The cell indicated by the column.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createCell(org.apache.poi.ss.usermodel.Row, int, java.lang.String, org.apache.poi.ss.usermodel.CellStyle)"><!-- --></A><H3>
+createCell</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A> <B>createCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&nbsp;row,
+                              int&nbsp;column,
+                              java.lang.String&nbsp;value,
+                              <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A>&nbsp;style)</PRE>
+<DL>
+<DD>Creates a cell, gives it a value, and applies a style if provided
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - the row to create the cell in<DD><CODE>column</CODE> - the column index to create the cell in<DD><CODE>value</CODE> - The value of the cell<DD><CODE>style</CODE> - If the style is not null, then set
+<DT><B>Returns:</B><DD>A new Cell</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createCell(org.apache.poi.ss.usermodel.Row, int, java.lang.String)"><!-- --></A><H3>
+createCell</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A> <B>createCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&nbsp;row,
+                              int&nbsp;column,
+                              java.lang.String&nbsp;value)</PRE>
+<DL>
+<DD>Create a cell, and give it a value.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - the row to create the cell in<DD><CODE>column</CODE> - the column index to create the cell in<DD><CODE>value</CODE> - The value of the cell
+<DT><B>Returns:</B><DD>A new Cell.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAlignment(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.HorizontalAlignment)"><!-- --></A><H3>
+setAlignment</H3>
+<PRE>
+public static void <B>setAlignment</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                                <A HREF="../../../../../org/apache/poi/ss/usermodel/HorizontalAlignment.html" title="enum in org.apache.poi.ss.usermodel">HorizontalAlignment</A>&nbsp;align)</PRE>
+<DL>
+<DD>Take a cell, and align it.
+ 
+ This is superior to cell.getCellStyle().setAlignment(align) because
+ this method will not modify the CellStyle object that may be referenced
+ by multiple cells. Instead, this method will search for existing CellStyles
+ that match the desired CellStyle, creating a new CellStyle with the desired
+ style if no match exists.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - the cell to set the alignment for<DD><CODE>align</CODE> - the horizontal alignment to use.<DT><B>Since:</B></DT>
+  <DD>POI 3.15 beta 3</DD>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/HorizontalAlignment.html" title="enum in org.apache.poi.ss.usermodel"><CODE>for alignment options</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setVerticalAlignment(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.VerticalAlignment)"><!-- --></A><H3>
+setVerticalAlignment</H3>
+<PRE>
+public static void <B>setVerticalAlignment</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                                        <A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel">VerticalAlignment</A>&nbsp;align)</PRE>
+<DL>
+<DD>Take a cell, and vertically align it.
+ 
+ This is superior to cell.getCellStyle().setVerticalAlignment(align) because
+ this method will not modify the CellStyle object that may be referenced
+ by multiple cells. Instead, this method will search for existing CellStyles
+ that match the desired CellStyle, creating a new CellStyle with the desired
+ style if no match exists.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - the cell to set the alignment for<DD><CODE>align</CODE> - the vertical alignment to use.<DT><B>Since:</B></DT>
+  <DD>POI 3.15 beta 3</DD>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel"><CODE>for alignment options</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFont(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.Font)"><!-- --></A><H3>
+setFont</H3>
+<PRE>
+public static void <B>setFont</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                           <A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html" title="interface in org.apache.poi.ss.usermodel">Font</A>&nbsp;font)</PRE>
+<DL>
+<DD>Take a cell, and apply a font to it
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - the cell to set the alignment for<DD><CODE>font</CODE> - The Font that you want to set.
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if <tt>font</tt> and <tt>cell</tt> do not belong to the same workbook</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, java.util.Map)"><!-- --></A><H3>
+setCellStyleProperties</H3>
+<PRE>
+public static void <B>setCellStyleProperties</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                                          java.util.Map&lt;java.lang.String,java.lang.Object&gt;&nbsp;properties)</PRE>
+<DL>
+<DD><p>This method attempts to find an existing CellStyle that matches the <code>cell</code>'s 
+ current style plus styles properties in <code>properties</code>. A new style is created if the
+ workbook does not contain a matching style.</p>
+ 
+ <p>Modifies the cell style of <code>cell</code> without affecting other cells that use the
+ same style.</p>
+ 
+ <p>This is necessary because Excel has an upper limit on the number of styles that it supports.</p>
+ 
+ <p>This function is more efficient than multiple calls to
+ <A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#setCellStyleProperty(org.apache.poi.ss.usermodel.Cell, java.lang.String, java.lang.Object)"><CODE>setCellStyleProperty(org.apache.poi.ss.usermodel.Cell, String, Object)</CODE></A>
+ if adding multiple cell styles.</p>
+ 
+ <p>For performance reasons, if this is the only cell in a workbook that uses a cell style,
+ this method does NOT remove the old style from the workbook.
+ <!-- NOT IMPLEMENTED: Unused styles should be
+ pruned from the workbook with [@link #removeUnusedCellStyles(Workbook)] or
+ [@link #removeStyleFromWorkbookIfUnused(CellStyle, Workbook)]. -->
+ </p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - The cell to change the style of<DD><CODE>properties</CODE> - The properties to be added to a cell style, as {propertyName: propertyValue}.<DT><B>Since:</B></DT>
+  <DD>POI 3.14 beta 2</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellStyleProperty(org.apache.poi.ss.usermodel.Cell, java.lang.String, java.lang.Object)"><!-- --></A><H3>
+setCellStyleProperty</H3>
+<PRE>
+public static void <B>setCellStyleProperty</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                                        java.lang.String&nbsp;propertyName,
+                                        java.lang.Object&nbsp;propertyValue)</PRE>
+<DL>
+<DD><p>This method attempts to find an existing CellStyle that matches the <code>cell</code>'s
+ current style plus a single style property <code>propertyName</code> with value
+ <code>propertyValue</code>.
+ A new style is created if the workbook does not contain a matching style.</p>
+ 
+ <p>Modifies the cell style of <code>cell</code> without affecting other cells that use the
+ same style.</p>
+ 
+ <p>If setting more than one cell style property on a cell, use
+ <A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, java.util.Map)"><CODE>setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, Map)</CODE></A>,
+ which is faster and does not add unnecessary intermediate CellStyles to the workbook.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - The cell that is to be changed.<DD><CODE>propertyName</CODE> - The name of the property that is to be changed.<DD><CODE>propertyValue</CODE> - The value of the property that is to be changed.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="translateUnicodeValues(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+translateUnicodeValues</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A> <B>translateUnicodeValues</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Looks for text in the cell that should be unicode, like &alpha; and provides the
+  unicode version of it.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - The cell to check for unicode values
+<DT><B>Returns:</B><DD>translated to unicode</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellReference.NameType.html" title="enum in org.apache.poi.ss.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/DateFormatConverter.html" title="class in org.apache.poi.ss.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/util/CellUtil.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CellUtil.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

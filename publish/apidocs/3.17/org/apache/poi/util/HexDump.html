@@ -1,0 +1,725 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+HexDump (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="HexDump (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/util/FontMetricsDumper.html" title="class in org.apache.poi.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/util/HexRead.html" title="class in org.apache.poi.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/util/HexDump.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HexDump.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.util</FONT>
+<BR>
+Class HexDump</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.util.HexDump</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE><FONT SIZE="-1"><A HREF="../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">@Internal</A>
+</FONT>public class <B>HexDump</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+dump data in hexadecimal format
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#EOL">EOL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.nio.charset.Charset</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#UTF8">UTF8</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#byteToHex(int)">byteToHex</A></B>(int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#dump(byte[], long, int)">dump</A></B>(byte[]&nbsp;data,
+     long&nbsp;offset,
+     int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dump an array of bytes to a String</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#dump(byte[], long, int, int)">dump</A></B>(byte[]&nbsp;data,
+     long&nbsp;offset,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dump an array of bytes to a String</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#dump(byte[], long, java.io.OutputStream, int)">dump</A></B>(byte[]&nbsp;data,
+     long&nbsp;offset,
+     java.io.OutputStream&nbsp;stream,
+     int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dump an array of bytes to an OutputStream</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#dump(byte[], long, java.io.OutputStream, int, int)">dump</A></B>(byte[]&nbsp;data,
+     long&nbsp;offset,
+     java.io.OutputStream&nbsp;stream,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dump an array of bytes to an OutputStream</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#dump(java.io.InputStream, java.io.PrintStream, int, int)">dump</A></B>(java.io.InputStream&nbsp;in,
+     java.io.PrintStream&nbsp;out,
+     int&nbsp;start,
+     int&nbsp;bytesToDump)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dumps <code>bytesToDump</code> bytes to an output stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#intToHex(int)">intToHex</A></B>(int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#longToHex(long)">longToHex</A></B>(long&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#main(java.lang.String[])">main</A></B>(java.lang.String[]&nbsp;args)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#shortToHex(int)">shortToHex</A></B>(int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;char</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#toAscii(int)">toAscii</A></B>(int&nbsp;dataB)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#toHex(byte)">toHex</A></B>(byte&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts the parameter to a hex value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#toHex(byte[])">toHex</A></B>(byte[]&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts the parameter to a hex value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#toHex(byte[], int)">toHex</A></B>(byte[]&nbsp;value,
+      int&nbsp;bytesPerLine)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts the parameter to a hex value breaking the results into
+ lines.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#toHex(int)">toHex</A></B>(int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts the parameter to a hex value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#toHex(long)">toHex</A></B>(long&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts the parameter to a hex value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#toHex(short)">toHex</A></B>(short&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts the parameter to a hex value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#toHex(short[])">toHex</A></B>(short[]&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts the parameter to a hex value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/HexDump.html#toHex(java.lang.String)">toHex</A></B>(java.lang.String&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts the string to a string of hex values.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="EOL"><!-- --></A><H3>
+EOL</H3>
+<PRE>
+public static final java.lang.String <B>EOL</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="UTF8"><!-- --></A><H3>
+UTF8</H3>
+<PRE>
+public static final java.nio.charset.Charset <B>UTF8</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="dump(byte[], long, java.io.OutputStream, int, int)"><!-- --></A><H3>
+dump</H3>
+<PRE>
+public static void <B>dump</B>(byte[]&nbsp;data,
+                        long&nbsp;offset,
+                        java.io.OutputStream&nbsp;stream,
+                        int&nbsp;index,
+                        int&nbsp;length)
+                 throws java.io.IOException,
+                        java.lang.ArrayIndexOutOfBoundsException,
+                        java.lang.IllegalArgumentException</PRE>
+<DL>
+<DD>dump an array of bytes to an OutputStream
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array to be dumped<DD><CODE>offset</CODE> - its offset, whatever that might mean<DD><CODE>stream</CODE> - the OutputStream to which the data is to be
+               written<DD><CODE>index</CODE> - initial index into the byte array<DD><CODE>length</CODE> - number of characters to output
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - is thrown if anything goes wrong writing
+            the data to stream
+<DD><CODE>java.lang.ArrayIndexOutOfBoundsException</CODE> - if the index is
+            outside the data array's bounds
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if the output stream is
+            null</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dump(byte[], long, java.io.OutputStream, int)"><!-- --></A><H3>
+dump</H3>
+<PRE>
+public static void <B>dump</B>(byte[]&nbsp;data,
+                        long&nbsp;offset,
+                        java.io.OutputStream&nbsp;stream,
+                        int&nbsp;index)
+                 throws java.io.IOException,
+                        java.lang.ArrayIndexOutOfBoundsException,
+                        java.lang.IllegalArgumentException</PRE>
+<DL>
+<DD>dump an array of bytes to an OutputStream
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array to be dumped<DD><CODE>offset</CODE> - its offset, whatever that might mean<DD><CODE>stream</CODE> - the OutputStream to which the data is to be
+               written<DD><CODE>index</CODE> - initial index into the byte array
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - is thrown if anything goes wrong writing
+            the data to stream
+<DD><CODE>java.lang.ArrayIndexOutOfBoundsException</CODE> - if the index is
+            outside the data array's bounds
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if the output stream is
+            null</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dump(byte[], long, int)"><!-- --></A><H3>
+dump</H3>
+<PRE>
+public static java.lang.String <B>dump</B>(byte[]&nbsp;data,
+                                    long&nbsp;offset,
+                                    int&nbsp;index)</PRE>
+<DL>
+<DD>dump an array of bytes to a String
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array to be dumped<DD><CODE>offset</CODE> - its offset, whatever that might mean<DD><CODE>index</CODE> - initial index into the byte array
+<DT><B>Returns:</B><DD>output string
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.ArrayIndexOutOfBoundsException</CODE> - if the index is
+            outside the data array's bounds</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dump(byte[], long, int, int)"><!-- --></A><H3>
+dump</H3>
+<PRE>
+public static java.lang.String <B>dump</B>(byte[]&nbsp;data,
+                                    long&nbsp;offset,
+                                    int&nbsp;index,
+                                    int&nbsp;length)</PRE>
+<DL>
+<DD>dump an array of bytes to a String
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array to be dumped<DD><CODE>offset</CODE> - its offset, whatever that might mean<DD><CODE>index</CODE> - initial index into the byte array<DD><CODE>length</CODE> - number of characters to output
+<DT><B>Returns:</B><DD>output string
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.ArrayIndexOutOfBoundsException</CODE> - if the index is
+            outside the data array's bounds</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toAscii(int)"><!-- --></A><H3>
+toAscii</H3>
+<PRE>
+public static char <B>toAscii</B>(int&nbsp;dataB)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toHex(byte[])"><!-- --></A><H3>
+toHex</H3>
+<PRE>
+public static java.lang.String <B>toHex</B>(byte[]&nbsp;value)</PRE>
+<DL>
+<DD>Converts the parameter to a hex value.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - The value to convert
+<DT><B>Returns:</B><DD>A String representing the array of bytes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toHex(short[])"><!-- --></A><H3>
+toHex</H3>
+<PRE>
+public static java.lang.String <B>toHex</B>(short[]&nbsp;value)</PRE>
+<DL>
+<DD>Converts the parameter to a hex value.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - The value to convert
+<DT><B>Returns:</B><DD>A String representing the array of shorts</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toHex(byte[], int)"><!-- --></A><H3>
+toHex</H3>
+<PRE>
+public static java.lang.String <B>toHex</B>(byte[]&nbsp;value,
+                                     int&nbsp;bytesPerLine)</PRE>
+<DL>
+<DD><p>Converts the parameter to a hex value breaking the results into
+ lines.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - The value to convert<DD><CODE>bytesPerLine</CODE> - The maximum number of bytes per line. The next byte
+                     will be written to a new line
+<DT><B>Returns:</B><DD>A String representing the array of bytes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toHex(short)"><!-- --></A><H3>
+toHex</H3>
+<PRE>
+public static java.lang.String <B>toHex</B>(short&nbsp;value)</PRE>
+<DL>
+<DD>Converts the parameter to a hex value.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - The value to convert
+<DT><B>Returns:</B><DD>The result right padded with 0</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toHex(byte)"><!-- --></A><H3>
+toHex</H3>
+<PRE>
+public static java.lang.String <B>toHex</B>(byte&nbsp;value)</PRE>
+<DL>
+<DD>Converts the parameter to a hex value.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - The value to convert
+<DT><B>Returns:</B><DD>The result right padded with 0</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toHex(int)"><!-- --></A><H3>
+toHex</H3>
+<PRE>
+public static java.lang.String <B>toHex</B>(int&nbsp;value)</PRE>
+<DL>
+<DD>Converts the parameter to a hex value.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - The value to convert
+<DT><B>Returns:</B><DD>The result right padded with 0</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toHex(long)"><!-- --></A><H3>
+toHex</H3>
+<PRE>
+public static java.lang.String <B>toHex</B>(long&nbsp;value)</PRE>
+<DL>
+<DD>Converts the parameter to a hex value.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - The value to convert
+<DT><B>Returns:</B><DD>The result right padded with 0</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toHex(java.lang.String)"><!-- --></A><H3>
+toHex</H3>
+<PRE>
+public static java.lang.String <B>toHex</B>(java.lang.String&nbsp;value)</PRE>
+<DL>
+<DD>Converts the string to a string of hex values.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - The value to convert
+<DT><B>Returns:</B><DD>The resulted hex string</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dump(java.io.InputStream, java.io.PrintStream, int, int)"><!-- --></A><H3>
+dump</H3>
+<PRE>
+public static void <B>dump</B>(java.io.InputStream&nbsp;in,
+                        java.io.PrintStream&nbsp;out,
+                        int&nbsp;start,
+                        int&nbsp;bytesToDump)
+                 throws java.io.IOException</PRE>
+<DL>
+<DD>Dumps <code>bytesToDump</code> bytes to an output stream.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>in</CODE> - The stream to read from<DD><CODE>out</CODE> - The output stream<DD><CODE>start</CODE> - The index to use as the starting position for the left hand side label<DD><CODE>bytesToDump</CODE> - The number of bytes to output.  Use -1 to read until the end of file.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="longToHex(long)"><!-- --></A><H3>
+longToHex</H3>
+<PRE>
+public static java.lang.String <B>longToHex</B>(long&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>string of 16 (zero padded) uppercase hex chars and prefixed with '0x'</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="intToHex(int)"><!-- --></A><H3>
+intToHex</H3>
+<PRE>
+public static java.lang.String <B>intToHex</B>(int&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>string of 8 (zero padded) uppercase hex chars and prefixed with '0x'</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shortToHex(int)"><!-- --></A><H3>
+shortToHex</H3>
+<PRE>
+public static java.lang.String <B>shortToHex</B>(int&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>string of 4 (zero padded) uppercase hex chars and prefixed with '0x'</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="byteToHex(int)"><!-- --></A><H3>
+byteToHex</H3>
+<PRE>
+public static java.lang.String <B>byteToHex</B>(int&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>string of 2 (zero padded) uppercase hex chars and prefixed with '0x'</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="main(java.lang.String[])"><!-- --></A><H3>
+main</H3>
+<PRE>
+public static void <B>main</B>(java.lang.String[]&nbsp;args)
+                 throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/util/FontMetricsDumper.html" title="class in org.apache.poi.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/util/HexRead.html" title="class in org.apache.poi.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/util/HexDump.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HexDump.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

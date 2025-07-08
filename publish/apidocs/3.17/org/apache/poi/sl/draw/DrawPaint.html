@@ -1,0 +1,595 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+DrawPaint (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="DrawPaint (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawNotImplemented.html" title="annotation in org.apache.poi.sl.draw"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawPictureShape.html" title="class in org.apache.poi.sl.draw"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/draw/DrawPaint.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DrawPaint.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.draw</FONT>
+<BR>
+Class DrawPaint</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.sl.draw.DrawPaint</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>DrawPaint</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+This class handles color transformations.
+<P>
+
+<P>
+<DL>
+<DT><B>See Also:</B><DD><a href="https://tips4java.wordpress.com/2009/07/05/hsl-color/">HSL code taken from Java Tips Weblog</a></DL>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="interface in org.apache.poi.sl.usermodel">PlaceableShape</A>&lt;?,?&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#shape">shape</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#DrawPaint(org.apache.poi.sl.usermodel.PlaceableShape)">DrawPaint</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="interface in org.apache.poi.sl.usermodel">PlaceableShape</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.awt.Color</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#applyColorTransform(org.apache.poi.sl.usermodel.ColorStyle)">applyColorTransform</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/ColorStyle.html" title="interface in org.apache.poi.sl.usermodel">ColorStyle</A>&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert color transformations in <A HREF="../../../../../org/apache/poi/sl/usermodel/ColorStyle.html" title="interface in org.apache.poi.sl.usermodel"><CODE>ColorStyle</CODE></A> to a <CODE>Color</CODE> instance</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.awt.Paint</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#createLinearGradientPaint(org.apache.poi.sl.usermodel.PaintStyle.GradientPaint, java.awt.Graphics2D)">createLinearGradientPaint</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.GradientPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.GradientPaint</A>&nbsp;fill,
+                          java.awt.Graphics2D&nbsp;graphics)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.awt.Paint</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#createPathGradientPaint(org.apache.poi.sl.usermodel.PaintStyle.GradientPaint, java.awt.Graphics2D)">createPathGradientPaint</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.GradientPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.GradientPaint</A>&nbsp;fill,
+                        java.awt.Graphics2D&nbsp;graphics)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.awt.Paint</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#createRadialGradientPaint(org.apache.poi.sl.usermodel.PaintStyle.GradientPaint, java.awt.Graphics2D)">createRadialGradientPaint</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.GradientPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.GradientPaint</A>&nbsp;fill,
+                          java.awt.Graphics2D&nbsp;graphics)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.SolidPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.SolidPaint</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#createSolidPaint(java.awt.Color)">createSolidPaint</A></B>(java.awt.Color&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.SolidPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.SolidPaint</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#createSolidPaint(org.apache.poi.sl.usermodel.ColorStyle)">createSolidPaint</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/ColorStyle.html" title="interface in org.apache.poi.sl.usermodel">ColorStyle</A>&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.awt.Paint</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#getGradientPaint(org.apache.poi.sl.usermodel.PaintStyle.GradientPaint, java.awt.Graphics2D)">getGradientPaint</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.GradientPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.GradientPaint</A>&nbsp;fill,
+                 java.awt.Graphics2D&nbsp;graphics)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Paint</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#getPaint(java.awt.Graphics2D, org.apache.poi.sl.usermodel.PaintStyle)">getPaint</A></B>(java.awt.Graphics2D&nbsp;graphics,
+         <A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle</A>&nbsp;paint)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Paint</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#getPaint(java.awt.Graphics2D, org.apache.poi.sl.usermodel.PaintStyle, org.apache.poi.sl.usermodel.PaintStyle.PaintModifier)">getPaint</A></B>(java.awt.Graphics2D&nbsp;graphics,
+         <A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle</A>&nbsp;paint,
+         <A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.PaintModifier.html" title="enum in org.apache.poi.sl.usermodel">PaintStyle.PaintModifier</A>&nbsp;modifier)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.awt.Paint</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#getSolidPaint(org.apache.poi.sl.usermodel.PaintStyle.SolidPaint, java.awt.Graphics2D, org.apache.poi.sl.usermodel.PaintStyle.PaintModifier)">getSolidPaint</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.SolidPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.SolidPaint</A>&nbsp;fill,
+              java.awt.Graphics2D&nbsp;graphics,
+              <A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.PaintModifier.html" title="enum in org.apache.poi.sl.usermodel">PaintStyle.PaintModifier</A>&nbsp;modifier)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.awt.Paint</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#getTexturePaint(org.apache.poi.sl.usermodel.PaintStyle.TexturePaint, java.awt.Graphics2D)">getTexturePaint</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.TexturePaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.TexturePaint</A>&nbsp;fill,
+                java.awt.Graphics2D&nbsp;graphics)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.awt.Color</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#HSL2RGB(double, double, double, double)">HSL2RGB</A></B>(double&nbsp;h,
+        double&nbsp;s,
+        double&nbsp;l,
+        double&nbsp;alpha)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert HSL values to a RGB Color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#lin2srgb(int)">lin2srgb</A></B>(int&nbsp;linRGB)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert linear RGB [0..100000] to sRGB float component [0..1]</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#snapToAnchor(java.awt.geom.Point2D, java.awt.geom.Rectangle2D)">snapToAnchor</A></B>(java.awt.geom.Point2D&nbsp;p,
+             java.awt.geom.Rectangle2D&nbsp;anchor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html#srgb2lin(float)">srgb2lin</A></B>(float&nbsp;sRGB)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert sRGB float component [0..1] from sRGB to linear RGB [0..100000]</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="shape"><!-- --></A><H3>
+shape</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="interface in org.apache.poi.sl.usermodel">PlaceableShape</A>&lt;?,?&gt; <B>shape</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DrawPaint(org.apache.poi.sl.usermodel.PlaceableShape)"><!-- --></A><H3>
+DrawPaint</H3>
+<PRE>
+public <B>DrawPaint</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="interface in org.apache.poi.sl.usermodel">PlaceableShape</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="createSolidPaint(java.awt.Color)"><!-- --></A><H3>
+createSolidPaint</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.SolidPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.SolidPaint</A> <B>createSolidPaint</B>(java.awt.Color&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createSolidPaint(org.apache.poi.sl.usermodel.ColorStyle)"><!-- --></A><H3>
+createSolidPaint</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.SolidPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.SolidPaint</A> <B>createSolidPaint</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/ColorStyle.html" title="interface in org.apache.poi.sl.usermodel">ColorStyle</A>&nbsp;color)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPaint(java.awt.Graphics2D, org.apache.poi.sl.usermodel.PaintStyle)"><!-- --></A><H3>
+getPaint</H3>
+<PRE>
+public java.awt.Paint <B>getPaint</B>(java.awt.Graphics2D&nbsp;graphics,
+                               <A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle</A>&nbsp;paint)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPaint(java.awt.Graphics2D, org.apache.poi.sl.usermodel.PaintStyle, org.apache.poi.sl.usermodel.PaintStyle.PaintModifier)"><!-- --></A><H3>
+getPaint</H3>
+<PRE>
+public java.awt.Paint <B>getPaint</B>(java.awt.Graphics2D&nbsp;graphics,
+                               <A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle</A>&nbsp;paint,
+                               <A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.PaintModifier.html" title="enum in org.apache.poi.sl.usermodel">PaintStyle.PaintModifier</A>&nbsp;modifier)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSolidPaint(org.apache.poi.sl.usermodel.PaintStyle.SolidPaint, java.awt.Graphics2D, org.apache.poi.sl.usermodel.PaintStyle.PaintModifier)"><!-- --></A><H3>
+getSolidPaint</H3>
+<PRE>
+protected java.awt.Paint <B>getSolidPaint</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.SolidPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.SolidPaint</A>&nbsp;fill,
+                                       java.awt.Graphics2D&nbsp;graphics,
+                                       <A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.PaintModifier.html" title="enum in org.apache.poi.sl.usermodel">PaintStyle.PaintModifier</A>&nbsp;modifier)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getGradientPaint(org.apache.poi.sl.usermodel.PaintStyle.GradientPaint, java.awt.Graphics2D)"><!-- --></A><H3>
+getGradientPaint</H3>
+<PRE>
+protected java.awt.Paint <B>getGradientPaint</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.GradientPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.GradientPaint</A>&nbsp;fill,
+                                          java.awt.Graphics2D&nbsp;graphics)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTexturePaint(org.apache.poi.sl.usermodel.PaintStyle.TexturePaint, java.awt.Graphics2D)"><!-- --></A><H3>
+getTexturePaint</H3>
+<PRE>
+protected java.awt.Paint <B>getTexturePaint</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.TexturePaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.TexturePaint</A>&nbsp;fill,
+                                         java.awt.Graphics2D&nbsp;graphics)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="applyColorTransform(org.apache.poi.sl.usermodel.ColorStyle)"><!-- --></A><H3>
+applyColorTransform</H3>
+<PRE>
+public static java.awt.Color <B>applyColorTransform</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/ColorStyle.html" title="interface in org.apache.poi.sl.usermodel">ColorStyle</A>&nbsp;color)</PRE>
+<DL>
+<DD>Convert color transformations in <A HREF="../../../../../org/apache/poi/sl/usermodel/ColorStyle.html" title="interface in org.apache.poi.sl.usermodel"><CODE>ColorStyle</CODE></A> to a <CODE>Color</CODE> instance
+<P>
+<DD><DL>
+<DT><B>See Also:</B><DD><a href="https://msdn.microsoft.com/en-us/library/dd560821%28v=office.12%29.aspx">Using Office Open XML to Customize Document Formatting in the 2007 Office System</a>, 
+<a href="https://social.msdn.microsoft.com/Forums/office/en-US/040e0a1f-dbfe-4ce5-826b-38b4b6f6d3f7/saturation-modulation-satmod">saturation modulation (satMod)</a>, 
+<a href="http://stackoverflow.com/questions/6754127/office-open-xml-satmod-results-in-more-than-100-saturation">Office Open XML satMod results in more than 100% saturation</a></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createLinearGradientPaint(org.apache.poi.sl.usermodel.PaintStyle.GradientPaint, java.awt.Graphics2D)"><!-- --></A><H3>
+createLinearGradientPaint</H3>
+<PRE>
+protected java.awt.Paint <B>createLinearGradientPaint</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.GradientPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.GradientPaint</A>&nbsp;fill,
+                                                   java.awt.Graphics2D&nbsp;graphics)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createRadialGradientPaint(org.apache.poi.sl.usermodel.PaintStyle.GradientPaint, java.awt.Graphics2D)"><!-- --></A><H3>
+createRadialGradientPaint</H3>
+<PRE>
+protected java.awt.Paint <B>createRadialGradientPaint</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.GradientPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.GradientPaint</A>&nbsp;fill,
+                                                   java.awt.Graphics2D&nbsp;graphics)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createPathGradientPaint(org.apache.poi.sl.usermodel.PaintStyle.GradientPaint, java.awt.Graphics2D)"><!-- --></A><H3>
+createPathGradientPaint</H3>
+<PRE>
+protected java.awt.Paint <B>createPathGradientPaint</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PaintStyle.GradientPaint.html" title="interface in org.apache.poi.sl.usermodel">PaintStyle.GradientPaint</A>&nbsp;fill,
+                                                 java.awt.Graphics2D&nbsp;graphics)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="snapToAnchor(java.awt.geom.Point2D, java.awt.geom.Rectangle2D)"><!-- --></A><H3>
+snapToAnchor</H3>
+<PRE>
+protected void <B>snapToAnchor</B>(java.awt.geom.Point2D&nbsp;p,
+                            java.awt.geom.Rectangle2D&nbsp;anchor)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="HSL2RGB(double, double, double, double)"><!-- --></A><H3>
+HSL2RGB</H3>
+<PRE>
+public static java.awt.Color <B>HSL2RGB</B>(double&nbsp;h,
+                                     double&nbsp;s,
+                                     double&nbsp;l,
+                                     double&nbsp;alpha)</PRE>
+<DL>
+<DD>Convert HSL values to a RGB Color.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>h</CODE> - Hue is specified as degrees in the range 0 - 360.<DD><CODE>s</CODE> - Saturation is specified as a percentage in the range 1 - 100.<DD><CODE>l</CODE> - Luminance is specified as a percentage in the range 1 - 100.<DD><CODE>alpha</CODE> - the alpha value between 0 - 1
+<DT><B>Returns:</B><DD>the RGB Color object</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="srgb2lin(float)"><!-- --></A><H3>
+srgb2lin</H3>
+<PRE>
+public static int <B>srgb2lin</B>(float&nbsp;sRGB)</PRE>
+<DL>
+<DD>Convert sRGB float component [0..1] from sRGB to linear RGB [0..100000]
+<P>
+<DD><DL>
+<DT><B>See Also:</B><DD><CODE>Color.getRGBColorComponents(float[])</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="lin2srgb(int)"><!-- --></A><H3>
+lin2srgb</H3>
+<PRE>
+public static float <B>lin2srgb</B>(int&nbsp;linRGB)</PRE>
+<DL>
+<DD>Convert linear RGB [0..100000] to sRGB float component [0..1]
+<P>
+<DD><DL>
+<DT><B>See Also:</B><DD><CODE>Color.getRGBColorComponents(float[])</CODE></DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawNotImplemented.html" title="annotation in org.apache.poi.sl.draw"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawPictureShape.html" title="class in org.apache.poi.sl.draw"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/draw/DrawPaint.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DrawPaint.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

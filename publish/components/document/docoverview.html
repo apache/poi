@@ -1,0 +1,408 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>Apache POI&trade; - HWPF - Java API to Handle Microsoft Word Files</title>
+<link type="text/css" href="../../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../../skin/profile.css" rel="stylesheet">
+<script src="../../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../../help/index.html">Help</a>
+</li>
+<li class="current">
+<a class="selected" href="../../components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="../../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Component APIs</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../apidocs/index.html">Javadocs</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.3', '../../skin/')" id="menu_1.1.3Title" class="menutitle">Excel (HSSF/XSSF)</div>
+<div id="menu_1.1.3" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/spreadsheet/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/how-to.html">HOWTO</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/converting.html">HSSF to SS Converting</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/formula.html">Formula Support</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval.html">Formula Evaluation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval-devguide.html">Eval Dev Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/examples.html">Examples</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/use-case.html">Use Case</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/diagrams.html">Pictorial Docs</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/limitations.html">Limitations</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/user-defined-functions.html">User Defined Functions</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/excelant.html">ExcelAnt Tests</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/hacking-hssf.html">Hacking HSSF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/record-generator.html">Record Generator</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/chart.html">Charts</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.4', '../../skin/')" id="menu_1.1.4Title" class="menutitle">PowerPoint (HSLF/XSLF)</div>
+<div id="menu_1.1.4" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/slideshow/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/how-to-shapes.html">HSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/xslf-cookbook.html">XSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-wmf-emf-renderer.html">Render SL/WMF/EMF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-file-format.html">PPT File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_selected_1.1.5', '../../skin/')" id="menu_selected_1.1.5Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Word (HWPF/XWPF)</div>
+<div id="menu_selected_1.1.5" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/document/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide.html">HWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide-xwpf.html">XWPF Quick Guide</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">HWPF Format</div>
+</div>
+<div class="menuitem">
+<a href="../../components/document/projectplan.html">HWPF Project plan</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hsmf/index.html">Outlook (HSMF)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/diagram/index.html">Visio (HDGF+XDGF)</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.8', '../../skin/')" id="menu_1.1.8Title" class="menutitle">Publisher (HPBF)</div>
+<div id="menu_1.1.8" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpbf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpbf/file-format.html">File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.9', '../../skin/')" id="menu_1.1.9Title" class="menutitle">OLE2 Filesystem (POIFS)</div>
+<div id="menu_1.1.9" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/poifs/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/embeded.html">Embedded Documents</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/fileformat.html">File System Documentation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/usecases.html">Use Cases</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/design.html">Design</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.10', '../../skin/')" id="menu_1.1.10Title" class="menutitle">OLE2 Document Props (HPSF)</div>
+<div id="menu_1.1.10" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpsf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/thumbnails.html">Thumbnails</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/internals.html">Internals</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/todo.html">To Do</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hmef/index.html">TNEF (HMEF) for winmail.dat</a>
+</div>
+<div class="menuitem">
+<a href="../../components/oxml4j/index.html">OpenXML4J (OOXML)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/logging.html">Logging framework</a>
+</div>
+<div class="menuitem">
+<a href="../../components/configuration.html">Configuration</a>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>Apache POI&trade; - HWPF - Java API to Handle Microsoft Word Files</h1>
+<h3>Word File Format</h3>
+<div id="front-matter"></div>
+  
+<a name="The+Word+97+File+Format+in+semi-plain+English"></a>
+<h2 class="boxed">The Word 97 File Format in semi-plain English</h2>
+<div class="section">
+<p>The purpose of this document is to give a brief high level overview of the
+      HWPF document format. This document does not go into in-depth technical
+      detail and is only meant as a supplement to the Microsoft Word 97-2007 
+      Binary File Format freely available from 
+      <a href="https://msdn.microsoft.com/en-us/library/cc313153%28v=office.12%29.aspx">Microsoft</a>.</p>
+<p>The OLE file format is not discussed in this document. It is assumed that
+      the reader has a working knowledge of the POIFS API. </p>
+<a name="Word+file+structure"></a>
+<h3 class="boxed">Word file structure</h3>
+<p>A Word file is made up of the document text and data structures
+       containing formatting information about the text. Of course, this is a
+       very simplified illustration. There are fields and macros and other
+       things that have not been considered. At this stage, HWPF is mainly
+       concerned with formatted text.</p>
+<a name="Reading+Word+files"></a>
+<h3 class="boxed">Reading Word files</h3>
+<p>The entry point for HWPF's reading of a Word file is the File Information
+       Block (FIB). This structure is the entry point for the locations and size
+       of a document's text and data structures. The FIB is located at the
+       beginning of the main stream.</p>
+<a name="Text"></a>
+<h4>Text</h4>
+<p>The document's text is also located in the main stream. Its starting
+        location is given as FIB.fcMin and its length is given in bytes by
+        FIB.ccpText. These two values are not very useful in getting the text
+        because of unicode. There may be unicode text intermingled with ASCII
+        text. That brings us to the piece table.</p>
+<p>The piece table is used to divide the text into non-unicode and unicode
+        pieces. The size and offset are given in FIB.fcClx and FIB.lcbClx
+        respectively. The piece table may contain Property Modifiers (prm).
+        These are for complex(fast-saved) files and are skipped. Each text piece
+        contains offsets in the main stream that contain text for that piece.
+        If the piece uses unicode, the file offset is masked with a certain bit.
+        Then you have to unmask the bit and divide by 2 to get the real file
+        offset. </p>
+<a name="Text+Formatting"></a>
+<h4>Text Formatting</h4>
+<a name="Stylesheet"></a>
+<h5>Stylesheet</h5>
+<p>All text formatting is based on styles contained in the StyleSheet.
+         The StyleSheet is a data structure containing among other things, style
+         descriptions. Each style description can contain a paragraph style and
+         a character style or simply a character style. Each style description
+         is stored in a compressed version on file. Basically these are deltas
+         from another style.</p>
+<p>Eventually, you have to chain back to the nil style which is an
+         imaginary style with certain implied values.</p>
+<a name="Paragraph+and+Character+styles"></a>
+<h5>Paragraph and Character styles</h5>
+<p>Paragraph and Character formatting properties for a document's text are
+         stored on file as deltas from some base style in the Stylesheet. The
+         deltas are used to create a complete uncompressed style in memory.</p>
+<p>Uncompressed paragraph styles are represented by the Pargraph
+         Properties(PAP) data structure. Uncompressed character styles are
+         represented by the Character Properties(CHP) data structure. The styles
+         for the document text are stored in compressed format in the
+         corresponding Formatted Disk Pages (FKP). A compressed PAP is referred
+         to as a PAPX and a compressed CHP is a CHPX. The FKP locations are
+         stored in the bin table. There are separate bin tables for CHPXs and
+         PAPXs. The bin tables' locations and sizes are stored in the FIB.</p>
+<p>A FKP is a 512 byte OLE page. It contains the offsets of the beginning
+         and end of each paragraph/character run in the main stream and the
+         compressed properties for that interval. The compressed PAPX is based on
+         its base style in the StyleSheet. The compressed CHPX is based on the
+         enclosing paragraph's base style in the Stylesheet.</p>
+<a name="Uncompressing+styles+and+other+data+structures"></a>
+<h5>Uncompressing styles and other data structures</h5>
+<p>All compressed properties(CHPX, PAPX, SEPX) contain a grpprl. A grpprl
+         is an array of sprms. A sprm defines a delta from some base property.
+         There is a table of possible sprms in the Word 97 spec. Each sprm is a
+         two byte operand followed by a parameter. The parameter size depends on
+         the sprm. Each sprm describes an operation that should be performed on
+         the base style. After every sprm in the grpprl is performed on the base
+         style you will have the style for the paragraph, character run,
+         section, etc.</p>
+</div>
+ 
+<p align="right">
+<font size="-2">by&nbsp;S. Ryan Ackley</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0components/document/docoverview.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

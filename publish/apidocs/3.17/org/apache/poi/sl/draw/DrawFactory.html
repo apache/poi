@@ -1,0 +1,688 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+DrawFactory (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="DrawFactory (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawConnectorShape.html" title="class in org.apache.poi.sl.draw"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawFontManager.html" title="interface in org.apache.poi.sl.draw"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/draw/DrawFactory.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DrawFactory.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.draw</FONT>
+<BR>
+Class DrawFactory</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.sl.draw.DrawFactory</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>DrawFactory</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;java.lang.ThreadLocal&lt;<A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html" title="class in org.apache.poi.sl.draw">DrawFactory</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#defaultFactory">defaultFactory</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#DrawFactory()">DrawFactory</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#drawShape(java.awt.Graphics2D, org.apache.poi.sl.usermodel.Shape, java.awt.geom.Rectangle2D)">drawShape</A></B>(java.awt.Graphics2D&nbsp;graphics,
+          <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;?,?&gt;&nbsp;shape,
+          java.awt.geom.Rectangle2D&nbsp;bounds)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method for drawing single shapes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#fixFonts(java.awt.Graphics2D)">fixFonts</A></B>(java.awt.Graphics2D&nbsp;graphics)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Replace font families for Windows JVM 6, which contains a font rendering error.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawBackground.html" title="class in org.apache.poi.sl.draw">DrawBackground</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.Background)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/Background.html" title="interface in org.apache.poi.sl.usermodel">Background</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawConnectorShape.html" title="class in org.apache.poi.sl.draw">DrawConnectorShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.ConnectorShape)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/ConnectorShape.html" title="interface in org.apache.poi.sl.usermodel">ConnectorShape</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawFreeformShape.html" title="class in org.apache.poi.sl.draw">DrawFreeformShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.FreeformShape)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/FreeformShape.html" title="interface in org.apache.poi.sl.usermodel">FreeformShape</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawGraphicalFrame.html" title="class in org.apache.poi.sl.draw">DrawGraphicalFrame</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.GraphicalFrame)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/GraphicalFrame.html" title="interface in org.apache.poi.sl.usermodel">GraphicalFrame</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawGroupShape.html" title="class in org.apache.poi.sl.draw">DrawGroupShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.GroupShape)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/GroupShape.html" title="interface in org.apache.poi.sl.usermodel">GroupShape</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawMasterSheet.html" title="class in org.apache.poi.sl.draw">DrawMasterSheet</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.MasterSheet)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/MasterSheet.html" title="interface in org.apache.poi.sl.usermodel">MasterSheet</A>&lt;?,?&gt;&nbsp;sheet)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawPictureShape.html" title="class in org.apache.poi.sl.draw">DrawPictureShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.PictureShape)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PictureShape.html" title="interface in org.apache.poi.sl.usermodel">PictureShape</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/Drawable.html" title="interface in org.apache.poi.sl.draw">Drawable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.Shape)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawSheet.html" title="class in org.apache.poi.sl.draw">DrawSheet</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.Sheet)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/Sheet.html" title="interface in org.apache.poi.sl.usermodel">Sheet</A>&lt;?,?&gt;&nbsp;sheet)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawSlide.html" title="class in org.apache.poi.sl.draw">DrawSlide</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.Slide)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/Slide.html" title="interface in org.apache.poi.sl.usermodel">Slide</A>&lt;?,?&gt;&nbsp;sheet)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawTableShape.html" title="class in org.apache.poi.sl.draw">DrawTableShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.TableShape)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/TableShape.html" title="interface in org.apache.poi.sl.usermodel">TableShape</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawTextBox.html" title="class in org.apache.poi.sl.draw">DrawTextBox</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.TextBox)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/TextBox.html" title="interface in org.apache.poi.sl.usermodel">TextBox</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawTextParagraph.html" title="class in org.apache.poi.sl.draw">DrawTextParagraph</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.TextParagraph)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph</A>&lt;?,?,?&gt;&nbsp;paragraph)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawTextShape.html" title="class in org.apache.poi.sl.draw">DrawTextShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getDrawable(org.apache.poi.sl.usermodel.TextShape)">getDrawable</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/TextShape.html" title="interface in org.apache.poi.sl.usermodel">TextShape</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawFontManager.html" title="interface in org.apache.poi.sl.draw">DrawFontManager</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getFontManager(java.awt.Graphics2D)">getFontManager</A></B>(java.awt.Graphics2D&nbsp;graphics)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a FontManager, either registered beforehand or a default implementation</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html" title="class in org.apache.poi.sl.draw">DrawFactory</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getInstance(java.awt.Graphics2D)">getInstance</A></B>(java.awt.Graphics2D&nbsp;graphics)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the DrawFactory, preferably via a graphics instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html" title="class in org.apache.poi.sl.draw">DrawPaint</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getPaint(org.apache.poi.sl.usermodel.PlaceableShape)">getPaint</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="interface in org.apache.poi.sl.usermodel">PlaceableShape</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawTextFragment.html" title="class in org.apache.poi.sl.draw">DrawTextFragment</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#getTextFragment(java.awt.font.TextLayout, java.text.AttributedString)">getTextFragment</A></B>(java.awt.font.TextLayout&nbsp;layout,
+                java.text.AttributedString&nbsp;str)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html#setDefaultFactory(org.apache.poi.sl.draw.DrawFactory)">setDefaultFactory</A></B>(<A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html" title="class in org.apache.poi.sl.draw">DrawFactory</A>&nbsp;factory)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set a custom draw factory for the current thread.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="defaultFactory"><!-- --></A><H3>
+defaultFactory</H3>
+<PRE>
+protected static final java.lang.ThreadLocal&lt;<A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html" title="class in org.apache.poi.sl.draw">DrawFactory</A>&gt; <B>defaultFactory</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DrawFactory()"><!-- --></A><H3>
+DrawFactory</H3>
+<PRE>
+public <B>DrawFactory</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="setDefaultFactory(org.apache.poi.sl.draw.DrawFactory)"><!-- --></A><H3>
+setDefaultFactory</H3>
+<PRE>
+public static void <B>setDefaultFactory</B>(<A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html" title="class in org.apache.poi.sl.draw">DrawFactory</A>&nbsp;factory)</PRE>
+<DL>
+<DD>Set a custom draw factory for the current thread.
+ This is a fallback, for operations where usercode can't set a graphics context.
+ Preferably use the rendering hint <A HREF="../../../../../org/apache/poi/sl/draw/Drawable.html#DRAW_FACTORY"><CODE>Drawable.DRAW_FACTORY</CODE></A> to set the factory.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>factory</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getInstance(java.awt.Graphics2D)"><!-- --></A><H3>
+getInstance</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/sl/draw/DrawFactory.html" title="class in org.apache.poi.sl.draw">DrawFactory</A> <B>getInstance</B>(java.awt.Graphics2D&nbsp;graphics)</PRE>
+<DL>
+<DD>Returns the DrawFactory, preferably via a graphics instance.
+ If graphics is null, the current thread local is checked or
+ if it is not set, a new factory is created.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>graphics</CODE> - the current graphics context or null
+<DT><B>Returns:</B><DD>the draw factory</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.Shape)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/Drawable.html" title="interface in org.apache.poi.sl.draw">Drawable</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.Slide)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawSlide.html" title="class in org.apache.poi.sl.draw">DrawSlide</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/Slide.html" title="interface in org.apache.poi.sl.usermodel">Slide</A>&lt;?,?&gt;&nbsp;sheet)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.Sheet)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawSheet.html" title="class in org.apache.poi.sl.draw">DrawSheet</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/Sheet.html" title="interface in org.apache.poi.sl.usermodel">Sheet</A>&lt;?,?&gt;&nbsp;sheet)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.MasterSheet)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawMasterSheet.html" title="class in org.apache.poi.sl.draw">DrawMasterSheet</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/MasterSheet.html" title="interface in org.apache.poi.sl.usermodel">MasterSheet</A>&lt;?,?&gt;&nbsp;sheet)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.TextBox)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawTextBox.html" title="class in org.apache.poi.sl.draw">DrawTextBox</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/TextBox.html" title="interface in org.apache.poi.sl.usermodel">TextBox</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.FreeformShape)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawFreeformShape.html" title="class in org.apache.poi.sl.draw">DrawFreeformShape</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/FreeformShape.html" title="interface in org.apache.poi.sl.usermodel">FreeformShape</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.ConnectorShape)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawConnectorShape.html" title="class in org.apache.poi.sl.draw">DrawConnectorShape</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/ConnectorShape.html" title="interface in org.apache.poi.sl.usermodel">ConnectorShape</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.TableShape)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawTableShape.html" title="class in org.apache.poi.sl.draw">DrawTableShape</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/TableShape.html" title="interface in org.apache.poi.sl.usermodel">TableShape</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.TextShape)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawTextShape.html" title="class in org.apache.poi.sl.draw">DrawTextShape</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/TextShape.html" title="interface in org.apache.poi.sl.usermodel">TextShape</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.GroupShape)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawGroupShape.html" title="class in org.apache.poi.sl.draw">DrawGroupShape</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/GroupShape.html" title="interface in org.apache.poi.sl.usermodel">GroupShape</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.PictureShape)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawPictureShape.html" title="class in org.apache.poi.sl.draw">DrawPictureShape</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PictureShape.html" title="interface in org.apache.poi.sl.usermodel">PictureShape</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.GraphicalFrame)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawGraphicalFrame.html" title="class in org.apache.poi.sl.draw">DrawGraphicalFrame</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/GraphicalFrame.html" title="interface in org.apache.poi.sl.usermodel">GraphicalFrame</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.TextParagraph)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawTextParagraph.html" title="class in org.apache.poi.sl.draw">DrawTextParagraph</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph</A>&lt;?,?,?&gt;&nbsp;paragraph)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawable(org.apache.poi.sl.usermodel.Background)"><!-- --></A><H3>
+getDrawable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawBackground.html" title="class in org.apache.poi.sl.draw">DrawBackground</A> <B>getDrawable</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/Background.html" title="interface in org.apache.poi.sl.usermodel">Background</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTextFragment(java.awt.font.TextLayout, java.text.AttributedString)"><!-- --></A><H3>
+getTextFragment</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawTextFragment.html" title="class in org.apache.poi.sl.draw">DrawTextFragment</A> <B>getTextFragment</B>(java.awt.font.TextLayout&nbsp;layout,
+                                        java.text.AttributedString&nbsp;str)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPaint(org.apache.poi.sl.usermodel.PlaceableShape)"><!-- --></A><H3>
+getPaint</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawPaint.html" title="class in org.apache.poi.sl.draw">DrawPaint</A> <B>getPaint</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="interface in org.apache.poi.sl.usermodel">PlaceableShape</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawShape(java.awt.Graphics2D, org.apache.poi.sl.usermodel.Shape, java.awt.geom.Rectangle2D)"><!-- --></A><H3>
+drawShape</H3>
+<PRE>
+public void <B>drawShape</B>(java.awt.Graphics2D&nbsp;graphics,
+                      <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;?,?&gt;&nbsp;shape,
+                      java.awt.geom.Rectangle2D&nbsp;bounds)</PRE>
+<DL>
+<DD>Convenience method for drawing single shapes.
+ For drawing whole slides, use <A HREF="../../../../../org/apache/poi/sl/usermodel/Sheet.html#draw(java.awt.Graphics2D)"><CODE>Sheet.draw(Graphics2D)</CODE></A>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>graphics</CODE> - the graphics context to draw to<DD><CODE>shape</CODE> - the shape<DD><CODE>bounds</CODE> - the bounds within the graphics context to draw to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="fixFonts(java.awt.Graphics2D)"><!-- --></A><H3>
+fixFonts</H3>
+<PRE>
+public void <B>fixFonts</B>(java.awt.Graphics2D&nbsp;graphics)</PRE>
+<DL>
+<DD>Replace font families for Windows JVM 6, which contains a font rendering error.
+ This is likely to be removed, when POI upgrades to JDK 7
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>graphics</CODE> - the graphics context which will contain the font mapping</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFontManager(java.awt.Graphics2D)"><!-- --></A><H3>
+getFontManager</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/draw/DrawFontManager.html" title="interface in org.apache.poi.sl.draw">DrawFontManager</A> <B>getFontManager</B>(java.awt.Graphics2D&nbsp;graphics)</PRE>
+<DL>
+<DD>Return a FontManager, either registered beforehand or a default implementation
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>graphics</CODE> - the graphics context holding potentially a font manager
+<DT><B>Returns:</B><DD>the font manager</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawConnectorShape.html" title="class in org.apache.poi.sl.draw"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawFontManager.html" title="interface in org.apache.poi.sl.draw"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/draw/DrawFactory.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DrawFactory.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

@@ -1,0 +1,839 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+EncryptionInfo (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="EncryptionInfo (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionHeader.html" title="class in org.apache.poi.poifs.crypt"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfoBuilder.html" title="interface in org.apache.poi.poifs.crypt"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/crypt/EncryptionInfo.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EncryptionInfo.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.poifs.crypt</FONT>
+<BR>
+Class EncryptionInfo</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.poifs.crypt.EncryptionInfo</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>EncryptionInfo</B><DT>extends java.lang.Object<DT>implements java.lang.Cloneable</DL>
+</PRE>
+
+<P>
+This class may require <code>poi-ooxml</code> to be on the classpath to load
+ some <A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html" title="enum in org.apache.poi.poifs.crypt"><CODE>EncryptionMode</CODE></A>s.
+<P>
+
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#getBuilder(org.apache.poi.poifs.crypt.EncryptionMode)"><CODE>getBuilder(EncryptionMode)</CODE></A></DL>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/util/BitField.html" title="class in org.apache.poi.util">BitField</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#flagAES">flagAES</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A value that MUST be 1 if the protected content is an ECMA-376 document
+ ECMA-376.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/util/BitField.html" title="class in org.apache.poi.util">BitField</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#flagCryptoAPI">flagCryptoAPI</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A flag that specifies whether CryptoAPI RC4 or ECMA-376 encryption
+ ECMA-376 is used.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/util/BitField.html" title="class in org.apache.poi.util">BitField</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#flagDocProps">flagDocProps</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A value that MUST be 0 if document properties are encrypted.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/util/BitField.html" title="class in org.apache.poi.util">BitField</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#flagExternal">flagExternal</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A value that MUST be 1 if extensible encryption is used.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#EncryptionInfo(org.apache.poi.poifs.filesystem.DirectoryNode)">EncryptionInfo</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryNode.html" title="class in org.apache.poi.poifs.filesystem">DirectoryNode</A>&nbsp;dir)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Opens for decryption</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#EncryptionInfo(org.apache.poi.poifs.crypt.EncryptionMode)">EncryptionInfo</A></B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html" title="enum in org.apache.poi.poifs.crypt">EncryptionMode</A>&nbsp;encryptionMode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Prepares for encryption, using the given Encryption Mode, and
+  all other parameters as default.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#EncryptionInfo(org.apache.poi.poifs.crypt.EncryptionMode, org.apache.poi.poifs.crypt.CipherAlgorithm, org.apache.poi.poifs.crypt.HashAlgorithm, int, int, org.apache.poi.poifs.crypt.ChainingMode)">EncryptionInfo</A></B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html" title="enum in org.apache.poi.poifs.crypt">EncryptionMode</A>&nbsp;encryptionMode,
+               <A HREF="../../../../../org/apache/poi/poifs/crypt/CipherAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">CipherAlgorithm</A>&nbsp;cipherAlgorithm,
+               <A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm,
+               int&nbsp;keyBits,
+               int&nbsp;blockSize,
+               <A HREF="../../../../../org/apache/poi/poifs/crypt/ChainingMode.html" title="enum in org.apache.poi.poifs.crypt">ChainingMode</A>&nbsp;chainingMode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constructs an EncryptionInfo from scratch</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#EncryptionInfo(org.apache.poi.util.LittleEndianInput, org.apache.poi.poifs.crypt.EncryptionMode)">EncryptionInfo</A></B>(<A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;dis,
+               <A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html" title="enum in org.apache.poi.poifs.crypt">EncryptionMode</A>&nbsp;preferredEncryptionMode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#EncryptionInfo(org.apache.poi.poifs.filesystem.NPOIFSFileSystem)">EncryptionInfo</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A>&nbsp;fs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Opens for decryption</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#EncryptionInfo(org.apache.poi.poifs.filesystem.OPOIFSFileSystem)">EncryptionInfo</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/OPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">OPOIFSFileSystem</A>&nbsp;fs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Opens for decryption</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#EncryptionInfo(org.apache.poi.poifs.filesystem.POIFSFileSystem)">EncryptionInfo</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">POIFSFileSystem</A>&nbsp;fs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Opens for decryption</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html" title="class in org.apache.poi.poifs.crypt">EncryptionInfo</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#clone()">clone</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfoBuilder.html" title="interface in org.apache.poi.poifs.crypt">EncryptionInfoBuilder</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#getBuilder(org.apache.poi.poifs.crypt.EncryptionMode)">getBuilder</A></B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html" title="enum in org.apache.poi.poifs.crypt">EncryptionMode</A>&nbsp;encryptionMode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method loads the builder class with reflection, which may generate
+ a <code>ClassNotFoundException</code> if the class is not on the classpath.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html" title="class in org.apache.poi.poifs.crypt">Decryptor</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#getDecryptor()">getDecryptor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#getEncryptionFlags()">getEncryptionFlags</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html" title="enum in org.apache.poi.poifs.crypt">EncryptionMode</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#getEncryptionMode()">getEncryptionMode</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/Encryptor.html" title="class in org.apache.poi.poifs.crypt">Encryptor</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#getEncryptor()">getEncryptor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionHeader.html" title="class in org.apache.poi.poifs.crypt">EncryptionHeader</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#getHeader()">getHeader</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionVerifier.html" title="class in org.apache.poi.poifs.crypt">EncryptionVerifier</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#getVerifier()">getVerifier</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#getVersionMajor()">getVersionMajor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#getVersionMinor()">getVersionMinor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#isDocPropsEncrypted()">isDocPropsEncrypted</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#setDecryptor(org.apache.poi.poifs.crypt.Decryptor)">setDecryptor</A></B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html" title="class in org.apache.poi.poifs.crypt">Decryptor</A>&nbsp;decryptor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#setEncryptor(org.apache.poi.poifs.crypt.Encryptor)">setEncryptor</A></B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/Encryptor.html" title="class in org.apache.poi.poifs.crypt">Encryptor</A>&nbsp;encryptor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#setHeader(org.apache.poi.poifs.crypt.EncryptionHeader)">setHeader</A></B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionHeader.html" title="class in org.apache.poi.poifs.crypt">EncryptionHeader</A>&nbsp;header)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#setVerifier(org.apache.poi.poifs.crypt.EncryptionVerifier)">setVerifier</A></B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionVerifier.html" title="class in org.apache.poi.poifs.crypt">EncryptionVerifier</A>&nbsp;verifier)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="flagCryptoAPI"><!-- --></A><H3>
+flagCryptoAPI</H3>
+<PRE>
+public static final <A HREF="../../../../../org/apache/poi/util/BitField.html" title="class in org.apache.poi.util">BitField</A> <B>flagCryptoAPI</B></PRE>
+<DL>
+<DD>A flag that specifies whether CryptoAPI RC4 or ECMA-376 encryption
+ ECMA-376 is used. It MUST be 1 unless flagExternal is 1. If flagExternal is 1, it MUST be 0.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="flagDocProps"><!-- --></A><H3>
+flagDocProps</H3>
+<PRE>
+public static final <A HREF="../../../../../org/apache/poi/util/BitField.html" title="class in org.apache.poi.util">BitField</A> <B>flagDocProps</B></PRE>
+<DL>
+<DD>A value that MUST be 0 if document properties are encrypted.
+ The encryption of document properties is specified in section 2.3.5.4.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="flagExternal"><!-- --></A><H3>
+flagExternal</H3>
+<PRE>
+public static final <A HREF="../../../../../org/apache/poi/util/BitField.html" title="class in org.apache.poi.util">BitField</A> <B>flagExternal</B></PRE>
+<DL>
+<DD>A value that MUST be 1 if extensible encryption is used. If this value is 1,
+ the value of every other field in this structure MUST be 0.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="flagAES"><!-- --></A><H3>
+flagAES</H3>
+<PRE>
+public static final <A HREF="../../../../../org/apache/poi/util/BitField.html" title="class in org.apache.poi.util">BitField</A> <B>flagAES</B></PRE>
+<DL>
+<DD>A value that MUST be 1 if the protected content is an ECMA-376 document
+ ECMA-376. If the fAES bit is 1, the fCryptoAPI bit MUST also be 1.
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="EncryptionInfo(org.apache.poi.poifs.filesystem.POIFSFileSystem)"><!-- --></A><H3>
+EncryptionInfo</H3>
+<PRE>
+public <B>EncryptionInfo</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">POIFSFileSystem</A>&nbsp;fs)
+               throws java.io.IOException</PRE>
+<DL>
+<DD>Opens for decryption
+<P>
+<DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DL>
+<HR>
+
+<A NAME="EncryptionInfo(org.apache.poi.poifs.filesystem.OPOIFSFileSystem)"><!-- --></A><H3>
+EncryptionInfo</H3>
+<PRE>
+public <B>EncryptionInfo</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/OPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">OPOIFSFileSystem</A>&nbsp;fs)
+               throws java.io.IOException</PRE>
+<DL>
+<DD>Opens for decryption
+<P>
+<DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DL>
+<HR>
+
+<A NAME="EncryptionInfo(org.apache.poi.poifs.filesystem.NPOIFSFileSystem)"><!-- --></A><H3>
+EncryptionInfo</H3>
+<PRE>
+public <B>EncryptionInfo</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A>&nbsp;fs)
+               throws java.io.IOException</PRE>
+<DL>
+<DD>Opens for decryption
+<P>
+<DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DL>
+<HR>
+
+<A NAME="EncryptionInfo(org.apache.poi.poifs.filesystem.DirectoryNode)"><!-- --></A><H3>
+EncryptionInfo</H3>
+<PRE>
+public <B>EncryptionInfo</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryNode.html" title="class in org.apache.poi.poifs.filesystem">DirectoryNode</A>&nbsp;dir)
+               throws java.io.IOException</PRE>
+<DL>
+<DD>Opens for decryption
+<P>
+<DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DL>
+<HR>
+
+<A NAME="EncryptionInfo(org.apache.poi.util.LittleEndianInput, org.apache.poi.poifs.crypt.EncryptionMode)"><!-- --></A><H3>
+EncryptionInfo</H3>
+<PRE>
+public <B>EncryptionInfo</B>(<A HREF="../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;dis,
+                      <A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html" title="enum in org.apache.poi.poifs.crypt">EncryptionMode</A>&nbsp;preferredEncryptionMode)
+               throws java.io.IOException</PRE>
+<DL>
+<DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DL>
+<HR>
+
+<A NAME="EncryptionInfo(org.apache.poi.poifs.crypt.EncryptionMode)"><!-- --></A><H3>
+EncryptionInfo</H3>
+<PRE>
+public <B>EncryptionInfo</B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html" title="enum in org.apache.poi.poifs.crypt">EncryptionMode</A>&nbsp;encryptionMode)</PRE>
+<DL>
+<DD>Prepares for encryption, using the given Encryption Mode, and
+  all other parameters as default.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html#EncryptionInfo(org.apache.poi.poifs.crypt.EncryptionMode, org.apache.poi.poifs.crypt.CipherAlgorithm, org.apache.poi.poifs.crypt.HashAlgorithm, int, int, org.apache.poi.poifs.crypt.ChainingMode)"><CODE>EncryptionInfo(EncryptionMode, CipherAlgorithm, HashAlgorithm, int, int, ChainingMode)</CODE></A></DL>
+</DL>
+<HR>
+
+<A NAME="EncryptionInfo(org.apache.poi.poifs.crypt.EncryptionMode, org.apache.poi.poifs.crypt.CipherAlgorithm, org.apache.poi.poifs.crypt.HashAlgorithm, int, int, org.apache.poi.poifs.crypt.ChainingMode)"><!-- --></A><H3>
+EncryptionInfo</H3>
+<PRE>
+public <B>EncryptionInfo</B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html" title="enum in org.apache.poi.poifs.crypt">EncryptionMode</A>&nbsp;encryptionMode,
+                      <A HREF="../../../../../org/apache/poi/poifs/crypt/CipherAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">CipherAlgorithm</A>&nbsp;cipherAlgorithm,
+                      <A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm,
+                      int&nbsp;keyBits,
+                      int&nbsp;blockSize,
+                      <A HREF="../../../../../org/apache/poi/poifs/crypt/ChainingMode.html" title="enum in org.apache.poi.poifs.crypt">ChainingMode</A>&nbsp;chainingMode)</PRE>
+<DL>
+<DD>Constructs an EncryptionInfo from scratch
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>encryptionMode</CODE> - see <A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html" title="enum in org.apache.poi.poifs.crypt"><CODE>EncryptionMode</CODE></A> for values, <A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html#cryptoAPI"><CODE>EncryptionMode.cryptoAPI</CODE></A> is for
+   internal use only, as it's record based<DD><CODE>cipherAlgorithm</CODE> - <DD><CODE>hashAlgorithm</CODE> - <DD><CODE>keyBits</CODE> - <DD><CODE>blockSize</CODE> - <DD><CODE>chainingMode</CODE> - 
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../../org/apache/poi/EncryptedDocumentException.html" title="class in org.apache.poi">EncryptedDocumentException</A></CODE> - if the given parameters mismatch, e.g. only certain combinations
+   of keyBits, blockSize are allowed for a given <A HREF="../../../../../org/apache/poi/poifs/crypt/CipherAlgorithm.html" title="enum in org.apache.poi.poifs.crypt"><CODE>CipherAlgorithm</CODE></A></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getBuilder(org.apache.poi.poifs.crypt.EncryptionMode)"><!-- --></A><H3>
+getBuilder</H3>
+<PRE>
+protected static <A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfoBuilder.html" title="interface in org.apache.poi.poifs.crypt">EncryptionInfoBuilder</A> <B>getBuilder</B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html" title="enum in org.apache.poi.poifs.crypt">EncryptionMode</A>&nbsp;encryptionMode)
+                                           throws java.lang.ClassNotFoundException,
+                                                  java.lang.IllegalAccessException,
+                                                  java.lang.InstantiationException</PRE>
+<DL>
+<DD>This method loads the builder class with reflection, which may generate
+ a <code>ClassNotFoundException</code> if the class is not on the classpath.
+ For example, <A HREF="https://poi.apache.org/apidocs/org/apache/poi/poifs/crypt/agile/AgileEncryptionInfoBuilder.html?is-external=true" title="class or interface in org.apache.poi.poifs.crypt.agile"><CODE>AgileEncryptionInfoBuilder</CODE></A>
+ is contained in the <code>poi-ooxml</code> package since the class makes use of some OOXML
+ classes rather than using the <code>poi</code> package and plain XML DOM calls.
+ As such, you may need to include <code>poi-ooxml</code> and <code>poi-ooxml-schemas</code> to load
+ some encryption mode builders. See bug #60021 for more information.
+ https://bz.apache.org/bugzilla/show_bug.cgi?id=60021
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>encryptionMode</CODE> - the encryption mode
+<DT><B>Returns:</B><DD>an encryption info builder
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.ClassNotFoundException</CODE>
+<DD><CODE>java.lang.IllegalAccessException</CODE>
+<DD><CODE>java.lang.InstantiationException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVersionMajor()"><!-- --></A><H3>
+getVersionMajor</H3>
+<PRE>
+public int <B>getVersionMajor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVersionMinor()"><!-- --></A><H3>
+getVersionMinor</H3>
+<PRE>
+public int <B>getVersionMinor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getEncryptionFlags()"><!-- --></A><H3>
+getEncryptionFlags</H3>
+<PRE>
+public int <B>getEncryptionFlags</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHeader()"><!-- --></A><H3>
+getHeader</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionHeader.html" title="class in org.apache.poi.poifs.crypt">EncryptionHeader</A> <B>getHeader</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVerifier()"><!-- --></A><H3>
+getVerifier</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionVerifier.html" title="class in org.apache.poi.poifs.crypt">EncryptionVerifier</A> <B>getVerifier</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDecryptor()"><!-- --></A><H3>
+getDecryptor</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html" title="class in org.apache.poi.poifs.crypt">Decryptor</A> <B>getDecryptor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getEncryptor()"><!-- --></A><H3>
+getEncryptor</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/crypt/Encryptor.html" title="class in org.apache.poi.poifs.crypt">Encryptor</A> <B>getEncryptor</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHeader(org.apache.poi.poifs.crypt.EncryptionHeader)"><!-- --></A><H3>
+setHeader</H3>
+<PRE>
+public void <B>setHeader</B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionHeader.html" title="class in org.apache.poi.poifs.crypt">EncryptionHeader</A>&nbsp;header)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setVerifier(org.apache.poi.poifs.crypt.EncryptionVerifier)"><!-- --></A><H3>
+setVerifier</H3>
+<PRE>
+public void <B>setVerifier</B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionVerifier.html" title="class in org.apache.poi.poifs.crypt">EncryptionVerifier</A>&nbsp;verifier)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDecryptor(org.apache.poi.poifs.crypt.Decryptor)"><!-- --></A><H3>
+setDecryptor</H3>
+<PRE>
+public void <B>setDecryptor</B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/Decryptor.html" title="class in org.apache.poi.poifs.crypt">Decryptor</A>&nbsp;decryptor)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setEncryptor(org.apache.poi.poifs.crypt.Encryptor)"><!-- --></A><H3>
+setEncryptor</H3>
+<PRE>
+public void <B>setEncryptor</B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/Encryptor.html" title="class in org.apache.poi.poifs.crypt">Encryptor</A>&nbsp;encryptor)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getEncryptionMode()"><!-- --></A><H3>
+getEncryptionMode</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionMode.html" title="enum in org.apache.poi.poifs.crypt">EncryptionMode</A> <B>getEncryptionMode</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDocPropsEncrypted()"><!-- --></A><H3>
+isDocPropsEncrypted</H3>
+<PRE>
+public boolean <B>isDocPropsEncrypted</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true, if Document Summary / Summary are encrypted and stored in the <code>EncryptedStream</code> stream,
+ otherwise the Summaries aren't encrypted and located in their usual streams</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clone()"><!-- --></A><H3>
+clone</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfo.html" title="class in org.apache.poi.poifs.crypt">EncryptionInfo</A> <B>clone</B>()
+                     throws java.lang.CloneNotSupportedException</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>clone</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.CloneNotSupportedException</CODE></DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionHeader.html" title="class in org.apache.poi.poifs.crypt"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/EncryptionInfoBuilder.html" title="interface in org.apache.poi.poifs.crypt"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/crypt/EncryptionInfo.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EncryptionInfo.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

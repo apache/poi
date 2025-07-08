@@ -1,0 +1,724 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+WorkbookEvaluator (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="WorkbookEvaluator (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/WorkbookDependentFormula.html" title="interface in org.apache.poi.ss.formula"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluatorProvider.html" title="interface in org.apache.poi.ss.formula"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/formula/WorkbookEvaluator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="WorkbookEvaluator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.formula</FONT>
+<BR>
+Class WorkbookEvaluator</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.formula.WorkbookEvaluator</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE><FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">@Internal</A>
+</FONT>public final class <B>WorkbookEvaluator</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Evaluates formula cells.<p/>
+
+ For performance reasons, this class keeps a cache of all previously calculated intermediate
+ cell values.  Be sure to call <A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#clearAllCachedResultValues()"><CODE>clearAllCachedResultValues()</CODE></A> if any workbook cells are changed between
+ calls to evaluate~ methods on this class.<br/>
+
+ For POI internal use only
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#WorkbookEvaluator(org.apache.poi.ss.formula.EvaluationWorkbook, org.apache.poi.ss.formula.IStabilityClassifier, org.apache.poi.ss.formula.udf.UDFFinder)">WorkbookEvaluator</A></B>(<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationWorkbook.html" title="interface in org.apache.poi.ss.formula">EvaluationWorkbook</A>&nbsp;workbook,
+                  <A HREF="../../../../../org/apache/poi/ss/formula/IStabilityClassifier.html" title="interface in org.apache.poi.ss.formula">IStabilityClassifier</A>&nbsp;stabilityClassifier,
+                  <A HREF="../../../../../org/apache/poi/ss/formula/udf/UDFFinder.html" title="interface in org.apache.poi.ss.formula.udf">UDFFinder</A>&nbsp;udfFinder)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#adjustRegionRelativeReference(org.apache.poi.ss.formula.ptg.Ptg[], org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellRangeAddressBase)">adjustRegionRelativeReference</A></B>(<A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]&nbsp;ptgs,
+                              <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;target,
+                              <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressBase.html" title="class in org.apache.poi.ss.util">CellRangeAddressBase</A>&nbsp;region)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adjust formula relative references by the offset between the start of the given region and the given target cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#adjustRegionRelativeReference(org.apache.poi.ss.formula.ptg.Ptg[], int, int)">adjustRegionRelativeReference</A></B>(<A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]&nbsp;ptgs,
+                              int&nbsp;deltaRow,
+                              int&nbsp;deltaColumn)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adjust the formula relative cell references by a given delta</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#clearAllCachedResultValues()">clearAllCachedResultValues</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should be called whenever there are changes to input cells in the evaluated workbook.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#dereferenceResult(org.apache.poi.ss.formula.eval.ValueEval, int, int)">dereferenceResult</A></B>(<A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;evaluationResult,
+                  int&nbsp;srcRowNum,
+                  int&nbsp;srcColNum)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dereferences a single value from any AreaEval or RefEval evaluation
+ result.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#evaluate(org.apache.poi.ss.formula.EvaluationCell)">evaluate</A></B>(<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationCell.html" title="interface in org.apache.poi.ss.formula">EvaluationCell</A>&nbsp;srcCell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#evaluate(java.lang.String, org.apache.poi.ss.util.CellReference)">evaluate</A></B>(java.lang.String&nbsp;formula,
+         <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;ref)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluate a formula outside a cell value, e.g.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#evaluate(java.lang.String, org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellRangeAddressBase)">evaluate</A></B>(java.lang.String&nbsp;formula,
+         <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;target,
+         <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressBase.html" title="class in org.apache.poi.ss.util">CellRangeAddressBase</A>&nbsp;region)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Some expressions need to be evaluated in terms of an offset from the top left corner of a region,
+ such as some data validation and conditional format expressions, when those constraints apply
+ to contiguous cells.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#evaluateList(java.lang.String, org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellRangeAddressBase)">evaluateList</A></B>(java.lang.String&nbsp;formula,
+             <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;target,
+             <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressBase.html" title="class in org.apache.poi.ss.util">CellRangeAddressBase</A>&nbsp;region)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Some expressions need to be evaluated in terms of an offset from the top left corner of a region,
+ such as some data validation and conditional format expressions, when those constraints apply
+ to contiguous cells.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/functions/FreeRefFunction.html" title="interface in org.apache.poi.ss.formula.functions">FreeRefFunction</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#findUserDefinedFunction(java.lang.String)">findUserDefinedFunction</A></B>(java.lang.String&nbsp;functionName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Collection&lt;java.lang.String&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#getNotSupportedFunctionNames()">getNotSupportedFunctionNames</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a collection of functions that POI does not support</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.Collection&lt;java.lang.String&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#getSupportedFunctionNames()">getSupportedFunctionNames</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a collection of functions that POI can evaluate</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#isDebugEvaluationOutputForNextEval()">isDebugEvaluationOutputForNextEval</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#isIgnoreMissingWorkbooks()">isIgnoreMissingWorkbooks</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#notifyDeleteCell(org.apache.poi.ss.formula.EvaluationCell)">notifyDeleteCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationCell.html" title="interface in org.apache.poi.ss.formula">EvaluationCell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should be called to tell the cell value cache that the specified cell has just been
+ deleted.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#notifyUpdateCell(org.apache.poi.ss.formula.EvaluationCell)">notifyUpdateCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationCell.html" title="interface in org.apache.poi.ss.formula">EvaluationCell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should be called to tell the cell value cache that the specified (value or formula) cell
+ has changed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#registerFunction(java.lang.String, org.apache.poi.ss.formula.functions.FreeRefFunction)">registerFunction</A></B>(java.lang.String&nbsp;name,
+                 <A HREF="../../../../../org/apache/poi/ss/formula/functions/FreeRefFunction.html" title="interface in org.apache.poi.ss.formula.functions">FreeRefFunction</A>&nbsp;func)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Register a ATP function in runtime.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#registerFunction(java.lang.String, org.apache.poi.ss.formula.functions.Function)">registerFunction</A></B>(java.lang.String&nbsp;name,
+                 <A HREF="../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A>&nbsp;func)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Register a function in runtime.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#setDebugEvaluationOutputForNextEval(boolean)">setDebugEvaluationOutputForNextEval</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#setIgnoreMissingWorkbooks(boolean)">setIgnoreMissingWorkbooks</A></B>(boolean&nbsp;ignore)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to ignore missing references to external workbooks and
+ use cached formula results in the main workbook instead.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="WorkbookEvaluator(org.apache.poi.ss.formula.EvaluationWorkbook, org.apache.poi.ss.formula.IStabilityClassifier, org.apache.poi.ss.formula.udf.UDFFinder)"><!-- --></A><H3>
+WorkbookEvaluator</H3>
+<PRE>
+public <B>WorkbookEvaluator</B>(<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationWorkbook.html" title="interface in org.apache.poi.ss.formula">EvaluationWorkbook</A>&nbsp;workbook,
+                         <A HREF="../../../../../org/apache/poi/ss/formula/IStabilityClassifier.html" title="interface in org.apache.poi.ss.formula">IStabilityClassifier</A>&nbsp;stabilityClassifier,
+                         <A HREF="../../../../../org/apache/poi/ss/formula/udf/UDFFinder.html" title="interface in org.apache.poi.ss.formula.udf">UDFFinder</A>&nbsp;udfFinder)</PRE>
+<DL>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>udfFinder</CODE> - pass <code>null</code> for default (AnalysisToolPak only)</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="clearAllCachedResultValues()"><!-- --></A><H3>
+clearAllCachedResultValues</H3>
+<PRE>
+public void <B>clearAllCachedResultValues</B>()</PRE>
+<DL>
+<DD>Should be called whenever there are changes to input cells in the evaluated workbook.
+ Failure to call this method after changing cell values will cause incorrect behaviour
+ of the evaluate~ methods of this class
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="notifyUpdateCell(org.apache.poi.ss.formula.EvaluationCell)"><!-- --></A><H3>
+notifyUpdateCell</H3>
+<PRE>
+public void <B>notifyUpdateCell</B>(<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationCell.html" title="interface in org.apache.poi.ss.formula">EvaluationCell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Should be called to tell the cell value cache that the specified (value or formula) cell
+ has changed.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="notifyDeleteCell(org.apache.poi.ss.formula.EvaluationCell)"><!-- --></A><H3>
+notifyDeleteCell</H3>
+<PRE>
+public void <B>notifyDeleteCell</B>(<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationCell.html" title="interface in org.apache.poi.ss.formula">EvaluationCell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Should be called to tell the cell value cache that the specified cell has just been
+ deleted.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluate(org.apache.poi.ss.formula.EvaluationCell)"><!-- --></A><H3>
+evaluate</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A> <B>evaluate</B>(<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationCell.html" title="interface in org.apache.poi.ss.formula">EvaluationCell</A>&nbsp;srcCell)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dereferenceResult(org.apache.poi.ss.formula.eval.ValueEval, int, int)"><!-- --></A><H3>
+dereferenceResult</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A> <B>dereferenceResult</B>(<A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;evaluationResult,
+                                          int&nbsp;srcRowNum,
+                                          int&nbsp;srcColNum)</PRE>
+<DL>
+<DD>Dereferences a single value from any AreaEval or RefEval evaluation
+ result. If the supplied evaluationResult is just a plain value, it is
+ returned as-is.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a <A HREF="../../../../../org/apache/poi/ss/formula/eval/NumberEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>NumberEval</CODE></A>, <A HREF="../../../../../org/apache/poi/ss/formula/eval/StringEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>StringEval</CODE></A>, <A HREF="../../../../../org/apache/poi/ss/formula/eval/BoolEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>BoolEval</CODE></A>, or
+         <A HREF="../../../../../org/apache/poi/ss/formula/eval/ErrorEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>ErrorEval</CODE></A>. Never <code>null</code>. <A HREF="../../../../../org/apache/poi/ss/formula/eval/BlankEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>BlankEval</CODE></A> is
+         converted to <A HREF="../../../../../org/apache/poi/ss/formula/eval/NumberEval.html#ZERO"><CODE>NumberEval.ZERO</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="findUserDefinedFunction(java.lang.String)"><!-- --></A><H3>
+findUserDefinedFunction</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/formula/functions/FreeRefFunction.html" title="interface in org.apache.poi.ss.formula.functions">FreeRefFunction</A> <B>findUserDefinedFunction</B>(java.lang.String&nbsp;functionName)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluate(java.lang.String, org.apache.poi.ss.util.CellReference)"><!-- --></A><H3>
+evaluate</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A> <B>evaluate</B>(java.lang.String&nbsp;formula,
+                          <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;ref)</PRE>
+<DL>
+<DD>Evaluate a formula outside a cell value, e.g. conditional format rules or data validation expressions
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>formula</CODE> - to evaluate<DD><CODE>ref</CODE> - defines the optional sheet and row/column base for the formula, if it is relative
+<DT><B>Returns:</B><DD>value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluate(java.lang.String, org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellRangeAddressBase)"><!-- --></A><H3>
+evaluate</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A> <B>evaluate</B>(java.lang.String&nbsp;formula,
+                          <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;target,
+                          <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressBase.html" title="class in org.apache.poi.ss.util">CellRangeAddressBase</A>&nbsp;region)</PRE>
+<DL>
+<DD>Some expressions need to be evaluated in terms of an offset from the top left corner of a region,
+ such as some data validation and conditional format expressions, when those constraints apply
+ to contiguous cells.  When a relative formula is used, it must be evaluated by shifting by the target
+ offset position relative to the top left of the range.
+ <p>
+ Returns a single value e.g. a cell formula result or boolean value for conditional formatting.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>formula</CODE> - <DD><CODE>target</CODE> - cell context for the operation<DD><CODE>region</CODE> - containing the cell
+<DT><B>Returns:</B><DD>value
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if target does not define a sheet name to evaluate the formula on.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluateList(java.lang.String, org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellRangeAddressBase)"><!-- --></A><H3>
+evaluateList</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A> <B>evaluateList</B>(java.lang.String&nbsp;formula,
+                              <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;target,
+                              <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressBase.html" title="class in org.apache.poi.ss.util">CellRangeAddressBase</A>&nbsp;region)</PRE>
+<DL>
+<DD>Some expressions need to be evaluated in terms of an offset from the top left corner of a region,
+ such as some data validation and conditional format expressions, when those constraints apply
+ to contiguous cells.  When a relative formula is used, it must be evaluated by shifting by the target
+ offset position relative to the top left of the range.
+ <p>
+ Returns a ValueEval that may be one or more values, such as the allowed values for a data validation constraint.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>formula</CODE> - <DD><CODE>target</CODE> - cell context for the operation<DD><CODE>region</CODE> - containing the cell
+<DT><B>Returns:</B><DD>ValueEval for one or more values
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if target does not define a sheet name to evaluate the formula on.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="adjustRegionRelativeReference(org.apache.poi.ss.formula.ptg.Ptg[], org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellRangeAddressBase)"><!-- --></A><H3>
+adjustRegionRelativeReference</H3>
+<PRE>
+protected boolean <B>adjustRegionRelativeReference</B>(<A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]&nbsp;ptgs,
+                                                <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;target,
+                                                <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressBase.html" title="class in org.apache.poi.ss.util">CellRangeAddressBase</A>&nbsp;region)</PRE>
+<DL>
+<DD>Adjust formula relative references by the offset between the start of the given region and the given target cell.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ptgs</CODE> - <DD><CODE>target</CODE> - cell within the region to use.<DD><CODE>region</CODE> - containing the cell
+<DT><B>Returns:</B><DD>true if any Ptg references were shifted
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IndexOutOfBoundsException</CODE> - if the resulting shifted row/column indexes are over the document format limits
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if target is not within region.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="adjustRegionRelativeReference(org.apache.poi.ss.formula.ptg.Ptg[], int, int)"><!-- --></A><H3>
+adjustRegionRelativeReference</H3>
+<PRE>
+protected boolean <B>adjustRegionRelativeReference</B>(<A HREF="../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A>[]&nbsp;ptgs,
+                                                int&nbsp;deltaRow,
+                                                int&nbsp;deltaColumn)</PRE>
+<DL>
+<DD>Adjust the formula relative cell references by a given delta
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ptgs</CODE> - <DD><CODE>deltaRow</CODE> - target row offset from the top left cell of a region<DD><CODE>deltaColumn</CODE> - target column offset from the top left cell of a region
+<DT><B>Returns:</B><DD>true if any Ptg references were shifted
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IndexOutOfBoundsException</CODE> - if the resulting shifted row/column indexes are over the document format limits
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if either of the deltas are negative, as the assumption is we are shifting formulas
+ relative to the top left cell of a region.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setIgnoreMissingWorkbooks(boolean)"><!-- --></A><H3>
+setIgnoreMissingWorkbooks</H3>
+<PRE>
+public void <B>setIgnoreMissingWorkbooks</B>(boolean&nbsp;ignore)</PRE>
+<DL>
+<DD>Whether to ignore missing references to external workbooks and
+ use cached formula results in the main workbook instead.
+ <p>
+ In some cases exetrnal workbooks referenced by formulas in the main workbook are not avaiable.
+ With this method you can control how POI handles such missing references:
+ <ul>
+     <li>by default ignoreMissingWorkbooks=false and POI throws <A HREF="../../../../../org/apache/poi/ss/formula/CollaboratingWorkbooksEnvironment.WorkbookNotFoundException.html" title="class in org.apache.poi.ss.formula"><CODE>CollaboratingWorkbooksEnvironment.WorkbookNotFoundException</CODE></A>
+     if an external reference cannot be resolved</li>
+     <li>if ignoreMissingWorkbooks=true then POI uses cached formula result
+     that already exists in the main workbook</li>
+ </ul>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ignore</CODE> - whether to ignore missing references to external workbooks<DT><B>See Also:</B><DD><a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=52575">Bug 52575 for details</a></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isIgnoreMissingWorkbooks()"><!-- --></A><H3>
+isIgnoreMissingWorkbooks</H3>
+<PRE>
+public boolean <B>isIgnoreMissingWorkbooks</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSupportedFunctionNames()"><!-- --></A><H3>
+getSupportedFunctionNames</H3>
+<PRE>
+public static java.util.Collection&lt;java.lang.String&gt; <B>getSupportedFunctionNames</B>()</PRE>
+<DL>
+<DD>Return a collection of functions that POI can evaluate
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>names of functions supported by POI</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNotSupportedFunctionNames()"><!-- --></A><H3>
+getNotSupportedFunctionNames</H3>
+<PRE>
+public static java.util.Collection&lt;java.lang.String&gt; <B>getNotSupportedFunctionNames</B>()</PRE>
+<DL>
+<DD>Return a collection of functions that POI does not support
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>names of functions NOT supported by POI</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="registerFunction(java.lang.String, org.apache.poi.ss.formula.functions.FreeRefFunction)"><!-- --></A><H3>
+registerFunction</H3>
+<PRE>
+public static void <B>registerFunction</B>(java.lang.String&nbsp;name,
+                                    <A HREF="../../../../../org/apache/poi/ss/formula/functions/FreeRefFunction.html" title="interface in org.apache.poi.ss.formula.functions">FreeRefFunction</A>&nbsp;func)</PRE>
+<DL>
+<DD>Register a ATP function in runtime.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the function name<DD><CODE>func</CODE> - the functoin to register
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if the function is unknown or already registered.<DT><B>Since:</B></DT>
+  <DD>3.8 beta6</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="registerFunction(java.lang.String, org.apache.poi.ss.formula.functions.Function)"><!-- --></A><H3>
+registerFunction</H3>
+<PRE>
+public static void <B>registerFunction</B>(java.lang.String&nbsp;name,
+                                    <A HREF="../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A>&nbsp;func)</PRE>
+<DL>
+<DD>Register a function in runtime.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the function name<DD><CODE>func</CODE> - the functoin to register
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if the function is unknown or already registered.<DT><B>Since:</B></DT>
+  <DD>3.8 beta6</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDebugEvaluationOutputForNextEval(boolean)"><!-- --></A><H3>
+setDebugEvaluationOutputForNextEval</H3>
+<PRE>
+public void <B>setDebugEvaluationOutputForNextEval</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDebugEvaluationOutputForNextEval()"><!-- --></A><H3>
+isDebugEvaluationOutputForNextEval</H3>
+<PRE>
+public boolean <B>isDebugEvaluationOutputForNextEval</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/WorkbookDependentFormula.html" title="interface in org.apache.poi.ss.formula"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluatorProvider.html" title="interface in org.apache.poi.ss.formula"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/formula/WorkbookEvaluator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="WorkbookEvaluator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

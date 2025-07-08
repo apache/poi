@@ -1,0 +1,703 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+CryptoFunctions (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="CryptoFunctions (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/CipherProvider.html" title="enum in org.apache.poi.poifs.crypt"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/DataSpaceMapUtils.html" title="class in org.apache.poi.poifs.crypt"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/crypt/CryptoFunctions.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CryptoFunctions.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.poifs.crypt</FONT>
+<BR>
+Class CryptoFunctions</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.poifs.crypt.CryptoFunctions</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE><FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">@Internal</A>
+</FONT>public class <B>CryptoFunctions</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Helper functions used for standard and agile encryption
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#CryptoFunctions()">CryptoFunctions</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#createXorArray1(java.lang.String)">createXorArray1</A></B>(java.lang.String&nbsp;password)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an byte array for xor obfuscation (method 1)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#createXorKey1(java.lang.String)">createXorKey1</A></B>(java.lang.String&nbsp;password)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create the xor key for xor obfuscation, which is used to create the xor array (method 1)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#createXorVerifier1(java.lang.String)">createXorVerifier1</A></B>(java.lang.String&nbsp;password)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create the verifier for xor obfuscation (method 1)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#createXorVerifier2(java.lang.String)">createXorVerifier2</A></B>(java.lang.String&nbsp;password)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method generates the xor verifier for word documents &lt; 2007 (method 2).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#generateIv(org.apache.poi.poifs.crypt.HashAlgorithm, byte[], byte[], int)">generateIv</A></B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm,
+           byte[]&nbsp;salt,
+           byte[]&nbsp;blockKey,
+           int&nbsp;blockSize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<cite>2.3.4.12 Initialization Vector Generation (Agile Encryption)</cite></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#generateKey(byte[], org.apache.poi.poifs.crypt.HashAlgorithm, byte[], int)">generateKey</A></B>(byte[]&nbsp;passwordHash,
+            <A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm,
+            byte[]&nbsp;blockKey,
+            int&nbsp;keySize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<cite>2.3.4.11 Encryption Key Generation (Agile Encryption)</cite></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#getBlock0(byte[], int)">getBlock0</A></B>(byte[]&nbsp;hash,
+          int&nbsp;size)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a new byte array with a truncated to the given size.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;javax.crypto.Cipher</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#getCipher(java.security.Key, org.apache.poi.poifs.crypt.CipherAlgorithm, org.apache.poi.poifs.crypt.ChainingMode, byte[], int, java.lang.String)">getCipher</A></B>(java.security.Key&nbsp;key,
+          <A HREF="../../../../../org/apache/poi/poifs/crypt/CipherAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">CipherAlgorithm</A>&nbsp;cipherAlgorithm,
+          <A HREF="../../../../../org/apache/poi/poifs/crypt/ChainingMode.html" title="enum in org.apache.poi.poifs.crypt">ChainingMode</A>&nbsp;chain,
+          byte[]&nbsp;vec,
+          int&nbsp;cipherMode,
+          java.lang.String&nbsp;padding)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initialize a new cipher object with the given cipher properties
+ If the given algorithm is not implemented in the JCE, it will try to load it from the bouncy castle
+ provider.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;javax.crypto.Cipher</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#getCipher(javax.crypto.SecretKey, org.apache.poi.poifs.crypt.CipherAlgorithm, org.apache.poi.poifs.crypt.ChainingMode, byte[], int)">getCipher</A></B>(javax.crypto.SecretKey&nbsp;key,
+          <A HREF="../../../../../org/apache/poi/poifs/crypt/CipherAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">CipherAlgorithm</A>&nbsp;cipherAlgorithm,
+          <A HREF="../../../../../org/apache/poi/poifs/crypt/ChainingMode.html" title="enum in org.apache.poi.poifs.crypt">ChainingMode</A>&nbsp;chain,
+          byte[]&nbsp;vec,
+          int&nbsp;cipherMode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initialize a new cipher object with the given cipher properties and no padding
+ If the given algorithm is not implemented in the JCE, it will try to load it from the bouncy castle
+ provider.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;javax.crypto.Mac</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#getMac(org.apache.poi.poifs.crypt.HashAlgorithm)">getMac</A></B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.security.MessageDigest</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#getMessageDigest(org.apache.poi.poifs.crypt.HashAlgorithm)">getMessageDigest</A></B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#hashPassword(java.lang.String, org.apache.poi.poifs.crypt.HashAlgorithm, byte[], int)">hashPassword</A></B>(java.lang.String&nbsp;password,
+             <A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm,
+             byte[]&nbsp;salt,
+             int&nbsp;spinCount)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<cite>2.3.4.7 ECMA-376 Document Encryption Key Generation (Standard Encryption)<br>
+ 2.3.4.11 Encryption Key Generation (Agile Encryption)</cite></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#hashPassword(java.lang.String, org.apache.poi.poifs.crypt.HashAlgorithm, byte[], int, boolean)">hashPassword</A></B>(java.lang.String&nbsp;password,
+             <A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm,
+             byte[]&nbsp;salt,
+             int&nbsp;spinCount,
+             boolean&nbsp;iteratorFirst)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Generalized method for read and write protection hash generation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#registerBouncyCastle()">registerBouncyCastle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#xorHashPassword(java.lang.String)">xorHashPassword</A></B>(java.lang.String&nbsp;password)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method generates the xored-hashed password for word documents &lt; 2007.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#xorHashPasswordReversed(java.lang.String)">xorHashPasswordReversed</A></B>(java.lang.String&nbsp;password)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience function which returns the reversed xored-hashed password for further 
+ processing in word documents 2007 and newer, which utilize a real hashing algorithm like sha1.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="CryptoFunctions()"><!-- --></A><H3>
+CryptoFunctions</H3>
+<PRE>
+public <B>CryptoFunctions</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="hashPassword(java.lang.String, org.apache.poi.poifs.crypt.HashAlgorithm, byte[], int)"><!-- --></A><H3>
+hashPassword</H3>
+<PRE>
+public static byte[] <B>hashPassword</B>(java.lang.String&nbsp;password,
+                                  <A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm,
+                                  byte[]&nbsp;salt,
+                                  int&nbsp;spinCount)</PRE>
+<DL>
+<DD><p><cite>2.3.4.7 ECMA-376 Document Encryption Key Generation (Standard Encryption)<br>
+ 2.3.4.11 Encryption Key Generation (Agile Encryption)</cite></p>
+ 
+ <p>The encryption key for ECMA-376 document encryption [ECMA-376] using agile
+ encryption MUST be generated by using the following method, which is derived from PKCS #5:
+ <a href="https://www.ietf.org/rfc/rfc2898.txt">Password-Based Cryptography Version 2.0 [RFC2898]</a>.</p>
+ 
+ <p>Let H() be a hashing algorithm as determined by the PasswordKeyEncryptor.hashAlgorithm
+ element, H_n be the hash data of the n-th iteration, and a plus sign (+) represent concatenation.
+ The password MUST be provided as an array of Unicode characters. Limitations on the length of the
+ password and the characters used by the password are implementation-dependent.
+ The initial password hash is generated as follows:</p>
+ 
+ 
+ <pre>H_0 = H(salt + password)</pre>
+ 
+ <p>The salt used MUST be generated randomly. The salt MUST be stored in the
+ PasswordKeyEncryptor.saltValue element contained within the \EncryptionInfo stream as
+ specified in section 2.3.4.10. The hash is then iterated by using the following approach:</p>
+ 
+ <pre>H_n = H(iterator + H_n-1)</pre>
+ 
+ <p>where iterator is an unsigned 32-bit value that is initially set to 0x00000000 and then incremented
+ monotonically on each iteration until PasswordKey.spinCount iterations have been performed.
+ The value of iterator on the last iteration MUST be one less than PasswordKey.spinCount.</p>
+ 
+ <p>For POI, H_final will be calculated by <A HREF="../../../../../org/apache/poi/poifs/crypt/CryptoFunctions.html#generateKey(byte[], org.apache.poi.poifs.crypt.HashAlgorithm, byte[], int)"><CODE>generateKey(byte[],HashAlgorithm,byte[],int)</CODE></A></p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>password</CODE> - <DD><CODE>hashAlgorithm</CODE> - <DD><CODE>salt</CODE> - <DD><CODE>spinCount</CODE> - 
+<DT><B>Returns:</B><DD>the hashed password</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hashPassword(java.lang.String, org.apache.poi.poifs.crypt.HashAlgorithm, byte[], int, boolean)"><!-- --></A><H3>
+hashPassword</H3>
+<PRE>
+public static byte[] <B>hashPassword</B>(java.lang.String&nbsp;password,
+                                  <A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm,
+                                  byte[]&nbsp;salt,
+                                  int&nbsp;spinCount,
+                                  boolean&nbsp;iteratorFirst)</PRE>
+<DL>
+<DD>Generalized method for read and write protection hash generation.
+ The difference is, read protection uses the order iterator then hash in the hash loop, whereas write protection
+ uses first the last hash value and then the current iterator value
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>password</CODE> - <DD><CODE>hashAlgorithm</CODE> - <DD><CODE>salt</CODE> - <DD><CODE>spinCount</CODE> - <DD><CODE>iteratorFirst</CODE> - if true, the iterator is hashed before the n-1 hash value,
+        if false the n-1 hash value is applied first
+<DT><B>Returns:</B><DD>the hashed password</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="generateIv(org.apache.poi.poifs.crypt.HashAlgorithm, byte[], byte[], int)"><!-- --></A><H3>
+generateIv</H3>
+<PRE>
+public static byte[] <B>generateIv</B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm,
+                                byte[]&nbsp;salt,
+                                byte[]&nbsp;blockKey,
+                                int&nbsp;blockSize)</PRE>
+<DL>
+<DD><p><cite>2.3.4.12 Initialization Vector Generation (Agile Encryption)</cite></p>
+ 
+ <p>Initialization vectors are used in all cases for agile encryption. An initialization vector MUST be
+ generated by using the following method, where H() is a hash function that MUST be the same as
+ specified in section 2.3.4.11 and a plus sign (+) represents concatenation:</p>
+ <ul>
+ <li>If a blockKey is provided, let IV be a hash of the KeySalt and the following value:<br>
+     <code>blockKey: IV = H(KeySalt + blockKey)</code></li>
+ <li>If a blockKey is not provided, let IV be equal to the following value:<br>
+     <code>KeySalt:IV = KeySalt</code></li>
+ <li>If the number of bytes in the value of IV is less than the the value of the blockSize attribute
+     corresponding to the cipherAlgorithm attribute, pad the array of bytes by appending 0x36 until
+     the array is blockSize bytes. If the array of bytes is larger than blockSize bytes, truncate the
+     array to blockSize bytes.</li>
+ </ul>
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="generateKey(byte[], org.apache.poi.poifs.crypt.HashAlgorithm, byte[], int)"><!-- --></A><H3>
+generateKey</H3>
+<PRE>
+public static byte[] <B>generateKey</B>(byte[]&nbsp;passwordHash,
+                                 <A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm,
+                                 byte[]&nbsp;blockKey,
+                                 int&nbsp;keySize)</PRE>
+<DL>
+<DD><p><cite>2.3.4.11 Encryption Key Generation (Agile Encryption)</cite></p>
+ 
+ <p>The final hash data that is used for an encryption key is then generated by using the following
+ method:</p>
+ 
+ <pre>H_final = H(H_n + blockKey)</pre>
+ 
+ <p>where blockKey represents an array of bytes used to prevent two different blocks from encrypting
+ to the same cipher text.</p>
+ 
+ <p>If the size of the resulting H_final is smaller than that of PasswordKeyEncryptor.keyBits, the key
+ MUST be padded by appending bytes with a value of 0x36. If the hash value is larger in size than
+ PasswordKeyEncryptor.keyBits, the key is obtained by truncating the hash value.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>passwordHash</CODE> - <DD><CODE>hashAlgorithm</CODE> - <DD><CODE>blockKey</CODE> - <DD><CODE>keySize</CODE> - 
+<DT><B>Returns:</B><DD>intermediate key</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCipher(javax.crypto.SecretKey, org.apache.poi.poifs.crypt.CipherAlgorithm, org.apache.poi.poifs.crypt.ChainingMode, byte[], int)"><!-- --></A><H3>
+getCipher</H3>
+<PRE>
+public static javax.crypto.Cipher <B>getCipher</B>(javax.crypto.SecretKey&nbsp;key,
+                                            <A HREF="../../../../../org/apache/poi/poifs/crypt/CipherAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">CipherAlgorithm</A>&nbsp;cipherAlgorithm,
+                                            <A HREF="../../../../../org/apache/poi/poifs/crypt/ChainingMode.html" title="enum in org.apache.poi.poifs.crypt">ChainingMode</A>&nbsp;chain,
+                                            byte[]&nbsp;vec,
+                                            int&nbsp;cipherMode)</PRE>
+<DL>
+<DD>Initialize a new cipher object with the given cipher properties and no padding
+ If the given algorithm is not implemented in the JCE, it will try to load it from the bouncy castle
+ provider.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>key</CODE> - the secret key<DD><CODE>cipherAlgorithm</CODE> - the cipher algorithm<DD><CODE>chain</CODE> - the chaining mode<DD><CODE>vec</CODE> - the initialization vector (IV), can be null<DD><CODE>cipherMode</CODE> - Cipher.DECRYPT_MODE or Cipher.ENCRYPT_MODE
+<DT><B>Returns:</B><DD>the requested cipher
+<DT><B>Throws:</B>
+<DD><CODE>java.security.GeneralSecurityException</CODE>
+<DD><CODE><A HREF="../../../../../org/apache/poi/EncryptedDocumentException.html" title="class in org.apache.poi">EncryptedDocumentException</A></CODE> - if the initialization failed or if an algorithm was specified,
+   which depends on a missing bouncy castle provider</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCipher(java.security.Key, org.apache.poi.poifs.crypt.CipherAlgorithm, org.apache.poi.poifs.crypt.ChainingMode, byte[], int, java.lang.String)"><!-- --></A><H3>
+getCipher</H3>
+<PRE>
+public static javax.crypto.Cipher <B>getCipher</B>(java.security.Key&nbsp;key,
+                                            <A HREF="../../../../../org/apache/poi/poifs/crypt/CipherAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">CipherAlgorithm</A>&nbsp;cipherAlgorithm,
+                                            <A HREF="../../../../../org/apache/poi/poifs/crypt/ChainingMode.html" title="enum in org.apache.poi.poifs.crypt">ChainingMode</A>&nbsp;chain,
+                                            byte[]&nbsp;vec,
+                                            int&nbsp;cipherMode,
+                                            java.lang.String&nbsp;padding)</PRE>
+<DL>
+<DD>Initialize a new cipher object with the given cipher properties
+ If the given algorithm is not implemented in the JCE, it will try to load it from the bouncy castle
+ provider.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>key</CODE> - the secret key<DD><CODE>cipherAlgorithm</CODE> - the cipher algorithm<DD><CODE>chain</CODE> - the chaining mode<DD><CODE>vec</CODE> - the initialization vector (IV), can be null<DD><CODE>cipherMode</CODE> - Cipher.DECRYPT_MODE or Cipher.ENCRYPT_MODE<DD><CODE>padding</CODE> - the padding (null = NOPADDING, ANSIX923Padding, PKCS5Padding, PKCS7Padding, ISO10126Padding, ...)
+<DT><B>Returns:</B><DD>the requested cipher
+<DT><B>Throws:</B>
+<DD><CODE>java.security.GeneralSecurityException</CODE>
+<DD><CODE><A HREF="../../../../../org/apache/poi/EncryptedDocumentException.html" title="class in org.apache.poi">EncryptedDocumentException</A></CODE> - if the initialization failed or if an algorithm was specified,
+   which depends on a missing bouncy castle provider</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBlock0(byte[], int)"><!-- --></A><H3>
+getBlock0</H3>
+<PRE>
+public static byte[] <B>getBlock0</B>(byte[]&nbsp;hash,
+                               int&nbsp;size)</PRE>
+<DL>
+<DD>Returns a new byte array with a truncated to the given size. 
+ If the hash has less then size bytes, it will be filled with 0-bytes
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hash</CODE> - the to be truncated/filled hash byte array<DD><CODE>size</CODE> - the size of the returned byte array
+<DT><B>Returns:</B><DD>the padded hash</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMessageDigest(org.apache.poi.poifs.crypt.HashAlgorithm)"><!-- --></A><H3>
+getMessageDigest</H3>
+<PRE>
+public static java.security.MessageDigest <B>getMessageDigest</B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMac(org.apache.poi.poifs.crypt.HashAlgorithm)"><!-- --></A><H3>
+getMac</H3>
+<PRE>
+public static javax.crypto.Mac <B>getMac</B>(<A HREF="../../../../../org/apache/poi/poifs/crypt/HashAlgorithm.html" title="enum in org.apache.poi.poifs.crypt">HashAlgorithm</A>&nbsp;hashAlgorithm)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="registerBouncyCastle()"><!-- --></A><H3>
+registerBouncyCastle</H3>
+<PRE>
+public static void <B>registerBouncyCastle</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createXorVerifier1(java.lang.String)"><!-- --></A><H3>
+createXorVerifier1</H3>
+<PRE>
+public static int <B>createXorVerifier1</B>(java.lang.String&nbsp;password)</PRE>
+<DL>
+<DD>Create the verifier for xor obfuscation (method 1)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>password</CODE> - the password
+<DT><B>Returns:</B><DD>the verifier (actually a short value)<DT><B>See Also:</B><DD><a href="http://msdn.microsoft.com/en-us/library/dd926947.aspx">2.3.7.1 Binary Document Password Verifier Derivation Method 1</a>, 
+<a href="http://msdn.microsoft.com/en-us/library/dd905229.aspx">2.3.7.4 Binary Document Password Verifier Derivation Method 2</a>, 
+<a href="http://www.ecma-international.org/news/TC45_current_work/Office Open XML Part 4 - Markup Language Reference.pdf">Part 4 - Markup Language Reference - Ecma International - 3.2.12 fileSharing</a></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createXorVerifier2(java.lang.String)"><!-- --></A><H3>
+createXorVerifier2</H3>
+<PRE>
+public static int <B>createXorVerifier2</B>(java.lang.String&nbsp;password)</PRE>
+<DL>
+<DD>This method generates the xor verifier for word documents &lt; 2007 (method 2).
+ Its output will be used as password input for the newer word generations which
+ utilize a real hashing algorithm like sha1.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>password</CODE> - the password
+<DT><B>Returns:</B><DD>the hashed password<DT><B>See Also:</B><DD><a href="http://msdn.microsoft.com/en-us/library/dd905229.aspx">2.3.7.4 Binary Document Password Verifier Derivation Method 2</a>, 
+<a href="http://blogs.msdn.com/b/vsod/archive/2010/04/05/how-to-set-the-editing-restrictions-in-word-using-open-xml-sdk-2-0.aspx">How to set the editing restrictions in Word using Open XML SDK 2.0</a>, 
+<a href="http://www.aspose.com/blogs/aspose-blogs/vladimir-averkin/archive/2007/08/20/funny-how-the-new-powerful-cryptography-implemented-in-word-2007-turns-it-into-a-perfect-tool-for-document-password-removal.html">Funny: How the new powerful cryptography implemented in Word 2007 turns it into a perfect tool for document password removal.</a></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="xorHashPassword(java.lang.String)"><!-- --></A><H3>
+xorHashPassword</H3>
+<PRE>
+public static java.lang.String <B>xorHashPassword</B>(java.lang.String&nbsp;password)</PRE>
+<DL>
+<DD>This method generates the xored-hashed password for word documents &lt; 2007.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="xorHashPasswordReversed(java.lang.String)"><!-- --></A><H3>
+xorHashPasswordReversed</H3>
+<PRE>
+public static java.lang.String <B>xorHashPasswordReversed</B>(java.lang.String&nbsp;password)</PRE>
+<DL>
+<DD>Convenience function which returns the reversed xored-hashed password for further 
+ processing in word documents 2007 and newer, which utilize a real hashing algorithm like sha1.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createXorKey1(java.lang.String)"><!-- --></A><H3>
+createXorKey1</H3>
+<PRE>
+public static int <B>createXorKey1</B>(java.lang.String&nbsp;password)</PRE>
+<DL>
+<DD>Create the xor key for xor obfuscation, which is used to create the xor array (method 1)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>password</CODE> - the password
+<DT><B>Returns:</B><DD>the xor key<DT><B>See Also:</B><DD><a href="http://msdn.microsoft.com/en-us/library/dd924704.aspx">2.3.7.2 Binary Document XOR Array Initialization Method 1</a>, 
+<a href="http://msdn.microsoft.com/en-us/library/dd905229.aspx">2.3.7.4 Binary Document Password Verifier Derivation Method 2</a></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createXorArray1(java.lang.String)"><!-- --></A><H3>
+createXorArray1</H3>
+<PRE>
+public static byte[] <B>createXorArray1</B>(java.lang.String&nbsp;password)</PRE>
+<DL>
+<DD>Creates an byte array for xor obfuscation (method 1)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>password</CODE> - the password
+<DT><B>Returns:</B><DD>the byte array for xor obfuscation<DT><B>See Also:</B><DD><a href="http://msdn.microsoft.com/en-us/library/dd924704.aspx">2.3.7.2 Binary Document XOR Array Initialization Method 1</a>, 
+<a href="http://docs.libreoffice.org/oox/html/binarycodec_8cxx_source.html">Libre Office implementation</a></DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/CipherProvider.html" title="enum in org.apache.poi.poifs.crypt"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/DataSpaceMapUtils.html" title="class in org.apache.poi.poifs.crypt"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/crypt/CryptoFunctions.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CryptoFunctions.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

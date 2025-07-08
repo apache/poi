@@ -1,0 +1,1251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+LegendRecord (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="LegendRecord (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/chart/FrameRecord.html" title="class in org.apache.poi.hssf.record.chart"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/chart/LineFormatRecord.html" title="class in org.apache.poi.hssf.record.chart"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/hssf/record/chart/LegendRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="LegendRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.record.chart</FONT>
+<BR>
+Class LegendRecord</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.RecordBase</A>
+      <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.Record</A>
+          <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.StandardRecord</A>
+              <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.record.chart.LegendRecord</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>LegendRecord</B><DT>extends <A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A><DT>implements java.lang.Cloneable</DL>
+</PRE>
+
+<P>
+Defines a legend for a chart.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#sid">sid</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#SPACING_CLOSE">SPACING_CLOSE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#SPACING_MEDIUM">SPACING_MEDIUM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#SPACING_OPEN">SPACING_OPEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#TYPE_BOTTOM">TYPE_BOTTOM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#TYPE_CORNER">TYPE_CORNER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#TYPE_LEFT">TYPE_LEFT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#TYPE_RIGHT">TYPE_RIGHT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#TYPE_TOP">TYPE_TOP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#TYPE_UNDOCKED">TYPE_UNDOCKED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#LegendRecord()">LegendRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#LegendRecord(org.apache.poi.hssf.record.RecordInputStream)">LegendRecord</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/record/RecordInputStream.html" title="class in org.apache.poi.hssf.record">RecordInputStream</A>&nbsp;in)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html" title="class in org.apache.poi.hssf.record.chart">LegendRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#clone()">clone</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#getDataSize()">getDataSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#getOptions()">getOptions</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the options field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#getSid()">getSid</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return the non static version of the id for this record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#getSpacing()">getSpacing</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the spacing field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#getType()">getType</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the type field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#getXAxisUpperLeft()">getXAxisUpperLeft</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the x axis upper left field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#getXSize()">getXSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the x size field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#getYAxisUpperLeft()">getYAxisUpperLeft</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the y axis upper left field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#getYSize()">getYSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the y size field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#isAutoPosition()">isAutoPosition</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;automatic positioning (1=docked)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#isAutoSeries()">isAutoSeries</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;excel 5 only (true)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#isAutoXPositioning()">isAutoXPositioning</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;position of legend on the x axis is automatic</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#isAutoYPositioning()">isAutoYPositioning</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;position of legend on the y axis is automatic</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#isDataTable()">isDataTable</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 if chart contains data table</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#isVertical()">isVertical</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vertical or horizontal legend (1 or 0 respectively).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">serialize</A></B>(<A HREF="../../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write the data content of this BIFF record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setAutoPosition(boolean)">setAutoPosition</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the auto position field value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setAutoSeries(boolean)">setAutoSeries</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the auto series field value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setAutoXPositioning(boolean)">setAutoXPositioning</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the auto x positioning field value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setAutoYPositioning(boolean)">setAutoYPositioning</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the auto y positioning field value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setDataTable(boolean)">setDataTable</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the data table field value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setOptions(short)">setOptions</A></B>(short&nbsp;field_7_options)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the options field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setSpacing(byte)">setSpacing</A></B>(byte&nbsp;field_6_spacing)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the spacing field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setType(byte)">setType</A></B>(byte&nbsp;field_5_type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the type field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setVertical(boolean)">setVertical</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the vertical field value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setXAxisUpperLeft(int)">setXAxisUpperLeft</A></B>(int&nbsp;field_1_xAxisUpperLeft)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the x axis upper left field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setXSize(int)">setXSize</A></B>(int&nbsp;field_3_xSize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the x size field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setYAxisUpperLeft(int)">setYAxisUpperLeft</A></B>(int&nbsp;field_2_yAxisUpperLeft)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the y axis upper left field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#setYSize(int)">setYSize</A></B>(int&nbsp;field_4_ySize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the y size field for the Legend record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a string representation of the record (for biffview/debugging)</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.StandardRecord"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.<A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html#getRecordSize()">getRecordSize</A>, <A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(int, byte[])">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.Record"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.<A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#cloneViaReserialise()">cloneViaReserialise</A>, <A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#serialize()">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="sid"><!-- --></A><H3>
+sid</H3>
+<PRE>
+public static final short <B>sid</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.chart.LegendRecord.sid">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TYPE_BOTTOM"><!-- --></A><H3>
+TYPE_BOTTOM</H3>
+<PRE>
+public static final byte <B>TYPE_BOTTOM</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.chart.LegendRecord.TYPE_BOTTOM">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TYPE_CORNER"><!-- --></A><H3>
+TYPE_CORNER</H3>
+<PRE>
+public static final byte <B>TYPE_CORNER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.chart.LegendRecord.TYPE_CORNER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TYPE_TOP"><!-- --></A><H3>
+TYPE_TOP</H3>
+<PRE>
+public static final byte <B>TYPE_TOP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.chart.LegendRecord.TYPE_TOP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TYPE_RIGHT"><!-- --></A><H3>
+TYPE_RIGHT</H3>
+<PRE>
+public static final byte <B>TYPE_RIGHT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.chart.LegendRecord.TYPE_RIGHT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TYPE_LEFT"><!-- --></A><H3>
+TYPE_LEFT</H3>
+<PRE>
+public static final byte <B>TYPE_LEFT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.chart.LegendRecord.TYPE_LEFT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TYPE_UNDOCKED"><!-- --></A><H3>
+TYPE_UNDOCKED</H3>
+<PRE>
+public static final byte <B>TYPE_UNDOCKED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.chart.LegendRecord.TYPE_UNDOCKED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SPACING_CLOSE"><!-- --></A><H3>
+SPACING_CLOSE</H3>
+<PRE>
+public static final byte <B>SPACING_CLOSE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.chart.LegendRecord.SPACING_CLOSE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SPACING_MEDIUM"><!-- --></A><H3>
+SPACING_MEDIUM</H3>
+<PRE>
+public static final byte <B>SPACING_MEDIUM</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.chart.LegendRecord.SPACING_MEDIUM">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SPACING_OPEN"><!-- --></A><H3>
+SPACING_OPEN</H3>
+<PRE>
+public static final byte <B>SPACING_OPEN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.chart.LegendRecord.SPACING_OPEN">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="LegendRecord()"><!-- --></A><H3>
+LegendRecord</H3>
+<PRE>
+public <B>LegendRecord</B>()</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="LegendRecord(org.apache.poi.hssf.record.RecordInputStream)"><!-- --></A><H3>
+LegendRecord</H3>
+<PRE>
+public <B>LegendRecord</B>(<A HREF="../../../../../../org/apache/poi/hssf/record/RecordInputStream.html" title="class in org.apache.poi.hssf.record">RecordInputStream</A>&nbsp;in)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#toString()">Record</A></CODE></B></DD>
+<DD>get a string representation of the record (for biffview/debugging)
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#toString()">toString</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="serialize(org.apache.poi.util.LittleEndianOutput)"><!-- --></A><H3>
+serialize</H3>
+<PRE>
+public void <B>serialize</B>(<A HREF="../../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">StandardRecord</A></CODE></B></DD>
+<DD>Write the data content of this BIFF record.  The 'ushort sid' and 'ushort size' header fields
+ have already been written by the superclass.
+ <p>
+ The number of bytes written must equal the record size reported by
+  <A HREF="../../../../../../org/apache/poi/hssf/record/RecordBase.html#getRecordSize()"><CODE>RecordBase.getRecordSize()</CODE></A>} minus four
+  ( record header consisting of a 'ushort sid' and 'ushort reclength' has already been written
+  by their superclass).
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html#serialize(org.apache.poi.util.LittleEndianOutput)">serialize</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>out</CODE> - the output object</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataSize()"><!-- --></A><H3>
+getDataSize</H3>
+<PRE>
+protected int <B>getDataSize</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html#getDataSize()">getDataSize</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/StandardRecord.html" title="class in org.apache.poi.hssf.record">StandardRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSid()"><!-- --></A><H3>
+getSid</H3>
+<PRE>
+public short <B>getSid</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#getSid()">Record</A></CODE></B></DD>
+<DD>return the non static version of the id for this record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#getSid()">getSid</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>he id for this record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clone()"><!-- --></A><H3>
+clone</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/hssf/record/chart/LegendRecord.html" title="class in org.apache.poi.hssf.record.chart">LegendRecord</A> <B>clone</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html#clone()">clone</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getXAxisUpperLeft()"><!-- --></A><H3>
+getXAxisUpperLeft</H3>
+<PRE>
+public int <B>getXAxisUpperLeft</B>()</PRE>
+<DL>
+<DD>Get the x axis upper left field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setXAxisUpperLeft(int)"><!-- --></A><H3>
+setXAxisUpperLeft</H3>
+<PRE>
+public void <B>setXAxisUpperLeft</B>(int&nbsp;field_1_xAxisUpperLeft)</PRE>
+<DL>
+<DD>Set the x axis upper left field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getYAxisUpperLeft()"><!-- --></A><H3>
+getYAxisUpperLeft</H3>
+<PRE>
+public int <B>getYAxisUpperLeft</B>()</PRE>
+<DL>
+<DD>Get the y axis upper left field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setYAxisUpperLeft(int)"><!-- --></A><H3>
+setYAxisUpperLeft</H3>
+<PRE>
+public void <B>setYAxisUpperLeft</B>(int&nbsp;field_2_yAxisUpperLeft)</PRE>
+<DL>
+<DD>Set the y axis upper left field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getXSize()"><!-- --></A><H3>
+getXSize</H3>
+<PRE>
+public int <B>getXSize</B>()</PRE>
+<DL>
+<DD>Get the x size field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setXSize(int)"><!-- --></A><H3>
+setXSize</H3>
+<PRE>
+public void <B>setXSize</B>(int&nbsp;field_3_xSize)</PRE>
+<DL>
+<DD>Set the x size field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getYSize()"><!-- --></A><H3>
+getYSize</H3>
+<PRE>
+public int <B>getYSize</B>()</PRE>
+<DL>
+<DD>Get the y size field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setYSize(int)"><!-- --></A><H3>
+setYSize</H3>
+<PRE>
+public void <B>setYSize</B>(int&nbsp;field_4_ySize)</PRE>
+<DL>
+<DD>Set the y size field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getType()"><!-- --></A><H3>
+getType</H3>
+<PRE>
+public byte <B>getType</B>()</PRE>
+<DL>
+<DD>Get the type field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>One of 
+        TYPE_BOTTOM
+        TYPE_CORNER
+        TYPE_TOP
+        TYPE_RIGHT
+        TYPE_LEFT
+        TYPE_UNDOCKED</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setType(byte)"><!-- --></A><H3>
+setType</H3>
+<PRE>
+public void <B>setType</B>(byte&nbsp;field_5_type)</PRE>
+<DL>
+<DD>Set the type field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>field_5_type</CODE> - One of 
+        TYPE_BOTTOM
+        TYPE_CORNER
+        TYPE_TOP
+        TYPE_RIGHT
+        TYPE_LEFT
+        TYPE_UNDOCKED</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSpacing()"><!-- --></A><H3>
+getSpacing</H3>
+<PRE>
+public byte <B>getSpacing</B>()</PRE>
+<DL>
+<DD>Get the spacing field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>One of 
+        SPACING_CLOSE
+        SPACING_MEDIUM
+        SPACING_OPEN</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setSpacing(byte)"><!-- --></A><H3>
+setSpacing</H3>
+<PRE>
+public void <B>setSpacing</B>(byte&nbsp;field_6_spacing)</PRE>
+<DL>
+<DD>Set the spacing field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>field_6_spacing</CODE> - One of 
+        SPACING_CLOSE
+        SPACING_MEDIUM
+        SPACING_OPEN</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOptions()"><!-- --></A><H3>
+getOptions</H3>
+<PRE>
+public short <B>getOptions</B>()</PRE>
+<DL>
+<DD>Get the options field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setOptions(short)"><!-- --></A><H3>
+setOptions</H3>
+<PRE>
+public void <B>setOptions</B>(short&nbsp;field_7_options)</PRE>
+<DL>
+<DD>Set the options field for the Legend record.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAutoPosition(boolean)"><!-- --></A><H3>
+setAutoPosition</H3>
+<PRE>
+public void <B>setAutoPosition</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Sets the auto position field value.
+ automatic positioning (1=docked)
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isAutoPosition()"><!-- --></A><H3>
+isAutoPosition</H3>
+<PRE>
+public boolean <B>isAutoPosition</B>()</PRE>
+<DL>
+<DD>automatic positioning (1=docked)
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the auto position field value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAutoSeries(boolean)"><!-- --></A><H3>
+setAutoSeries</H3>
+<PRE>
+public void <B>setAutoSeries</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Sets the auto series field value.
+ excel 5 only (true)
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isAutoSeries()"><!-- --></A><H3>
+isAutoSeries</H3>
+<PRE>
+public boolean <B>isAutoSeries</B>()</PRE>
+<DL>
+<DD>excel 5 only (true)
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the auto series field value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAutoXPositioning(boolean)"><!-- --></A><H3>
+setAutoXPositioning</H3>
+<PRE>
+public void <B>setAutoXPositioning</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Sets the auto x positioning field value.
+ position of legend on the x axis is automatic
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isAutoXPositioning()"><!-- --></A><H3>
+isAutoXPositioning</H3>
+<PRE>
+public boolean <B>isAutoXPositioning</B>()</PRE>
+<DL>
+<DD>position of legend on the x axis is automatic
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the auto x positioning field value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAutoYPositioning(boolean)"><!-- --></A><H3>
+setAutoYPositioning</H3>
+<PRE>
+public void <B>setAutoYPositioning</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Sets the auto y positioning field value.
+ position of legend on the y axis is automatic
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isAutoYPositioning()"><!-- --></A><H3>
+isAutoYPositioning</H3>
+<PRE>
+public boolean <B>isAutoYPositioning</B>()</PRE>
+<DL>
+<DD>position of legend on the y axis is automatic
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the auto y positioning field value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setVertical(boolean)"><!-- --></A><H3>
+setVertical</H3>
+<PRE>
+public void <B>setVertical</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Sets the vertical field value.
+ vertical or horizontal legend (1 or 0 respectively).  Always 0 if not automatic.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isVertical()"><!-- --></A><H3>
+isVertical</H3>
+<PRE>
+public boolean <B>isVertical</B>()</PRE>
+<DL>
+<DD>vertical or horizontal legend (1 or 0 respectively).  Always 0 if not automatic.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the vertical field value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDataTable(boolean)"><!-- --></A><H3>
+setDataTable</H3>
+<PRE>
+public void <B>setDataTable</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Sets the data table field value.
+ 1 if chart contains data table
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDataTable()"><!-- --></A><H3>
+isDataTable</H3>
+<PRE>
+public boolean <B>isDataTable</B>()</PRE>
+<DL>
+<DD>1 if chart contains data table
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the data table field value.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/chart/FrameRecord.html" title="class in org.apache.poi.hssf.record.chart"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/chart/LineFormatRecord.html" title="class in org.apache.poi.hssf.record.chart"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/hssf/record/chart/LegendRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="LegendRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

@@ -1,0 +1,733 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+ChunkedCipherOutputStream (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ChunkedCipherOutputStream (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherInputStream.html" title="class in org.apache.poi.poifs.crypt"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/CipherAlgorithm.html" title="enum in org.apache.poi.poifs.crypt"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ChunkedCipherOutputStream.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_java.io.FilterOutputStream">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.poifs.crypt</FONT>
+<BR>
+Class ChunkedCipherOutputStream</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by ">java.io.OutputStream
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by ">java.io.FilterOutputStream
+          <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.poifs.crypt.ChunkedCipherOutputStream</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.io.Closeable, java.io.Flushable</DD>
+</DL>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../org/apache/poi/poifs/crypt/binaryrc4/BinaryRC4Encryptor.BinaryRC4CipherOutputStream.html" title="class in org.apache.poi.poifs.crypt.binaryrc4">BinaryRC4Encryptor.BinaryRC4CipherOutputStream</A>, <A HREF="../../../../../org/apache/poi/poifs/crypt/cryptoapi/CryptoAPIEncryptor.CryptoAPICipherOutputStream.html" title="class in org.apache.poi.poifs.crypt.cryptoapi">CryptoAPIEncryptor.CryptoAPICipherOutputStream</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE><FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">@Internal</A>
+</FONT>public abstract class <B>ChunkedCipherOutputStream</B><DT>extends java.io.FilterOutputStream</DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_java.io.FilterOutputStream"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class java.io.FilterOutputStream</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>out</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#ChunkedCipherOutputStream(org.apache.poi.poifs.filesystem.DirectoryNode, int)">ChunkedCipherOutputStream</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryNode.html" title="class in org.apache.poi.poifs.filesystem">DirectoryNode</A>&nbsp;dir,
+                          int&nbsp;chunkSize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#ChunkedCipherOutputStream(java.io.OutputStream, int)">ChunkedCipherOutputStream</A></B>(java.io.OutputStream&nbsp;stream,
+                          int&nbsp;chunkSize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected abstract &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#calculateChecksum(java.io.File, int)">calculateChecksum</A></B>(java.io.File&nbsp;fileOut,
+                  int&nbsp;oleStreamSize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#close()">close</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected abstract &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#createEncryptionInfoEntry(org.apache.poi.poifs.filesystem.DirectoryNode, java.io.File)">createEncryptionInfoEntry</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryNode.html" title="class in org.apache.poi.poifs.filesystem">DirectoryNode</A>&nbsp;dir,
+                          java.io.File&nbsp;tmpFile)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#getChunk()">getChunk</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#getChunkMask()">getChunkMask</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.util.BitSet</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#getPlainByteFlags()">getPlainByteFlags</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#getPos()">getPos</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#getTotalPos()">getTotalPos</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected abstract &nbsp;javax.crypto.Cipher</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#initCipherForBlock(javax.crypto.Cipher, int, boolean)">initCipherForBlock</A></B>(javax.crypto.Cipher&nbsp;existing,
+                   int&nbsp;block,
+                   boolean&nbsp;lastChunk)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;javax.crypto.Cipher</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#initCipherForBlock(int, boolean)">initCipherForBlock</A></B>(int&nbsp;block,
+                   boolean&nbsp;lastChunk)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#invokeCipher(int, boolean)">invokeCipher</A></B>(int&nbsp;posInChunk,
+             boolean&nbsp;doFinal)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Helper function for overriding the cipher invocation, i.e.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#setNextRecordSize(int, boolean)">setNextRecordSize</A></B>(int&nbsp;recordSize,
+                  boolean&nbsp;isPlain)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Some ciphers (actually just XOR) are based on the record size,
+ which needs to be set before encryption</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#write(byte[])">write</A></B>(byte[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#write(byte[], int, int)">write</A></B>(byte[]&nbsp;b,
+      int&nbsp;off,
+      int&nbsp;len)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#write(byte[], int, int, boolean)">write</A></B>(byte[]&nbsp;b,
+      int&nbsp;off,
+      int&nbsp;len,
+      boolean&nbsp;writePlain)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#write(int)">write</A></B>(int&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#writeChunk(boolean)">writeChunk</A></B>(boolean&nbsp;continued)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html#writePlain(byte[], int, int)">writePlain</A></B>(byte[]&nbsp;b,
+           int&nbsp;off,
+           int&nbsp;len)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.io.FilterOutputStream"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.io.FilterOutputStream</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>flush</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="ChunkedCipherOutputStream(org.apache.poi.poifs.filesystem.DirectoryNode, int)"><!-- --></A><H3>
+ChunkedCipherOutputStream</H3>
+<PRE>
+public <B>ChunkedCipherOutputStream</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryNode.html" title="class in org.apache.poi.poifs.filesystem">DirectoryNode</A>&nbsp;dir,
+                                 int&nbsp;chunkSize)
+                          throws java.io.IOException,
+                                 java.security.GeneralSecurityException</PRE>
+<DL>
+<DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DL>
+<HR>
+
+<A NAME="ChunkedCipherOutputStream(java.io.OutputStream, int)"><!-- --></A><H3>
+ChunkedCipherOutputStream</H3>
+<PRE>
+public <B>ChunkedCipherOutputStream</B>(java.io.OutputStream&nbsp;stream,
+                                 int&nbsp;chunkSize)
+                          throws java.io.IOException,
+                                 java.security.GeneralSecurityException</PRE>
+<DL>
+<DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="initCipherForBlock(int, boolean)"><!-- --></A><H3>
+initCipherForBlock</H3>
+<PRE>
+public final javax.crypto.Cipher <B>initCipherForBlock</B>(int&nbsp;block,
+                                                    boolean&nbsp;lastChunk)
+                                             throws java.io.IOException,
+                                                    java.security.GeneralSecurityException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="initCipherForBlock(javax.crypto.Cipher, int, boolean)"><!-- --></A><H3>
+initCipherForBlock</H3>
+<PRE>
+protected abstract javax.crypto.Cipher <B>initCipherForBlock</B>(javax.crypto.Cipher&nbsp;existing,
+                                                          int&nbsp;block,
+                                                          boolean&nbsp;lastChunk)
+                                                   throws java.io.IOException,
+                                                          java.security.GeneralSecurityException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="calculateChecksum(java.io.File, int)"><!-- --></A><H3>
+calculateChecksum</H3>
+<PRE>
+protected abstract void <B>calculateChecksum</B>(java.io.File&nbsp;fileOut,
+                                          int&nbsp;oleStreamSize)
+                                   throws java.security.GeneralSecurityException,
+                                          java.io.IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.security.GeneralSecurityException</CODE>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createEncryptionInfoEntry(org.apache.poi.poifs.filesystem.DirectoryNode, java.io.File)"><!-- --></A><H3>
+createEncryptionInfoEntry</H3>
+<PRE>
+protected abstract void <B>createEncryptionInfoEntry</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryNode.html" title="class in org.apache.poi.poifs.filesystem">DirectoryNode</A>&nbsp;dir,
+                                                  java.io.File&nbsp;tmpFile)
+                                           throws java.io.IOException,
+                                                  java.security.GeneralSecurityException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(int&nbsp;b)
+           throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>write</CODE> in class <CODE>java.io.FilterOutputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(byte[])"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(byte[]&nbsp;b)
+           throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>write</CODE> in class <CODE>java.io.FilterOutputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(byte[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(byte[]&nbsp;b,
+                  int&nbsp;off,
+                  int&nbsp;len)
+           throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>write</CODE> in class <CODE>java.io.FilterOutputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writePlain(byte[], int, int)"><!-- --></A><H3>
+writePlain</H3>
+<PRE>
+public void <B>writePlain</B>(byte[]&nbsp;b,
+                       int&nbsp;off,
+                       int&nbsp;len)
+                throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(byte[], int, int, boolean)"><!-- --></A><H3>
+write</H3>
+<PRE>
+protected void <B>write</B>(byte[]&nbsp;b,
+                     int&nbsp;off,
+                     int&nbsp;len,
+                     boolean&nbsp;writePlain)
+              throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getChunkMask()"><!-- --></A><H3>
+getChunkMask</H3>
+<PRE>
+protected int <B>getChunkMask</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeChunk(boolean)"><!-- --></A><H3>
+writeChunk</H3>
+<PRE>
+protected void <B>writeChunk</B>(boolean&nbsp;continued)
+                   throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invokeCipher(int, boolean)"><!-- --></A><H3>
+invokeCipher</H3>
+<PRE>
+protected int <B>invokeCipher</B>(int&nbsp;posInChunk,
+                           boolean&nbsp;doFinal)
+                    throws java.security.GeneralSecurityException</PRE>
+<DL>
+<DD>Helper function for overriding the cipher invocation, i.e. XOR doesn't use a cipher
+ and uses it's own implementation
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>javax.crypto.BadPaddingException</CODE>
+<DD><CODE>javax.crypto.IllegalBlockSizeException</CODE>
+<DD><CODE>javax.crypto.ShortBufferException</CODE>
+<DD><CODE>java.security.GeneralSecurityException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="close()"><!-- --></A><H3>
+close</H3>
+<PRE>
+public void <B>close</B>()
+           throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>close</CODE> in interface <CODE>java.io.Closeable</CODE><DT><B>Overrides:</B><DD><CODE>close</CODE> in class <CODE>java.io.FilterOutputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getChunk()"><!-- --></A><H3>
+getChunk</H3>
+<PRE>
+protected byte[] <B>getChunk</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPlainByteFlags()"><!-- --></A><H3>
+getPlainByteFlags</H3>
+<PRE>
+protected java.util.BitSet <B>getPlainByteFlags</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPos()"><!-- --></A><H3>
+getPos</H3>
+<PRE>
+protected long <B>getPos</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTotalPos()"><!-- --></A><H3>
+getTotalPos</H3>
+<PRE>
+protected long <B>getTotalPos</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setNextRecordSize(int, boolean)"><!-- --></A><H3>
+setNextRecordSize</H3>
+<PRE>
+public void <B>setNextRecordSize</B>(int&nbsp;recordSize,
+                              boolean&nbsp;isPlain)</PRE>
+<DL>
+<DD>Some ciphers (actually just XOR) are based on the record size,
+ which needs to be set before encryption
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>recordSize</CODE> - the size of the next record<DD><CODE>isPlain</CODE> - <code>true</code> if the record is unencrypted</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/ChunkedCipherInputStream.html" title="class in org.apache.poi.poifs.crypt"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/crypt/CipherAlgorithm.html" title="enum in org.apache.poi.poifs.crypt"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ChunkedCipherOutputStream.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_java.io.FilterOutputStream">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

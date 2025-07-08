@@ -1,0 +1,807 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>Apache POI&trade; - Component Overview</title>
+<link type="text/css" href="../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../skin/profile.css" rel="stylesheet">
+<script src="../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../help/index.html">Help</a>
+</li>
+<li class="current">
+<a class="selected" href="../components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../skin/images/chapter_open.gif');">Component APIs</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menupage">
+<div class="menupagetitle">Overview</div>
+</div>
+<div class="menuitem">
+<a href="../apidocs/index.html">Javadocs</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.3', '../skin/')" id="menu_1.1.3Title" class="menutitle">Excel (HSSF/XSSF)</div>
+<div id="menu_1.1.3" class="menuitemgroup">
+<div class="menuitem">
+<a href="../components/spreadsheet/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/how-to.html">HOWTO</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/converting.html">HSSF to SS Converting</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/formula.html">Formula Support</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/eval.html">Formula Evaluation</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/eval-devguide.html">Eval Dev Guide</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/examples.html">Examples</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/use-case.html">Use Case</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/diagrams.html">Pictorial Docs</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/limitations.html">Limitations</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/user-defined-functions.html">User Defined Functions</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/excelant.html">ExcelAnt Tests</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/hacking-hssf.html">Hacking HSSF</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/record-generator.html">Record Generator</a>
+</div>
+<div class="menuitem">
+<a href="../components/spreadsheet/chart.html">Charts</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.4', '../skin/')" id="menu_1.1.4Title" class="menutitle">PowerPoint (HSLF/XSLF)</div>
+<div id="menu_1.1.4" class="menuitemgroup">
+<div class="menuitem">
+<a href="../components/slideshow/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../components/slideshow/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../components/slideshow/how-to-shapes.html">HSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../components/slideshow/xslf-cookbook.html">XSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../components/slideshow/ppt-wmf-emf-renderer.html">Render SL/WMF/EMF</a>
+</div>
+<div class="menuitem">
+<a href="../components/slideshow/ppt-file-format.html">PPT File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.5', '../skin/')" id="menu_1.1.5Title" class="menutitle">Word (HWPF/XWPF)</div>
+<div id="menu_1.1.5" class="menuitemgroup">
+<div class="menuitem">
+<a href="../components/document/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../components/document/quick-guide.html">HWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../components/document/quick-guide-xwpf.html">XWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../components/document/docoverview.html">HWPF Format</a>
+</div>
+<div class="menuitem">
+<a href="../components/document/projectplan.html">HWPF Project plan</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../components/hsmf/index.html">Outlook (HSMF)</a>
+</div>
+<div class="menuitem">
+<a href="../components/diagram/index.html">Visio (HDGF+XDGF)</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.8', '../skin/')" id="menu_1.1.8Title" class="menutitle">Publisher (HPBF)</div>
+<div id="menu_1.1.8" class="menuitemgroup">
+<div class="menuitem">
+<a href="../components/hpbf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../components/hpbf/file-format.html">File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.9', '../skin/')" id="menu_1.1.9Title" class="menutitle">OLE2 Filesystem (POIFS)</div>
+<div id="menu_1.1.9" class="menuitemgroup">
+<div class="menuitem">
+<a href="../components/poifs/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../components/poifs/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../components/poifs/embeded.html">Embedded Documents</a>
+</div>
+<div class="menuitem">
+<a href="../components/poifs/fileformat.html">File System Documentation</a>
+</div>
+<div class="menuitem">
+<a href="../components/poifs/usecases.html">Use Cases</a>
+</div>
+<div class="menuitem">
+<a href="../components/poifs/design.html">Design</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.10', '../skin/')" id="menu_1.1.10Title" class="menutitle">OLE2 Document Props (HPSF)</div>
+<div id="menu_1.1.10" class="menuitemgroup">
+<div class="menuitem">
+<a href="../components/hpsf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../components/hpsf/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../components/hpsf/thumbnails.html">Thumbnails</a>
+</div>
+<div class="menuitem">
+<a href="../components/hpsf/internals.html">Internals</a>
+</div>
+<div class="menuitem">
+<a href="../components/hpsf/todo.html">To Do</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../components/hmef/index.html">TNEF (HMEF) for winmail.dat</a>
+</div>
+<div class="menuitem">
+<a href="../components/oxml4j/index.html">OpenXML4J (OOXML)</a>
+</div>
+<div class="menuitem">
+<a href="../components/logging.html">Logging framework</a>
+</div>
+<div class="menuitem">
+<a href="../components/configuration.html">Configuration</a>
+</div>
+</div>
+<div id="credit">
+<hr>
+<a href="https://www.apache.org/events/current-event.html"><img border="0" title="Apache Event" alt="Apache Event - logo" src="https://www.apache.org/events/current-event-125x125.png" style="width: 125px;height: 125px;"></a>
+</div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>Apache POI&trade; - Component Overview</h1>
+<div id="front-matter"></div>
+    
+<a name="Apache+POI+Project+Components"></a>
+<h2 class="boxed">Apache POI Project Components</h2>
+<div class="section">
+<p>The Apache POI project is the master project for developing pure
+        Java ports of file formats based on Microsoft's OLE 2 Compound
+        Document Format.  OLE 2 Compound Document Format is used by
+        Microsoft Office Documents, as well as by programs using MFC
+        property sets to serialize their document objects.
+      </p>
+<p>Apache POI is also the master project for developing pure
+        Java ports of file formats based on Office Open XML (ooxml).
+        OOXML is part of an ECMA / ISO standardisation effort. This
+        documentation is quite large, but you can normally find the bit you
+        need without too much effort!
+        <a href="https://ecma-international.org/publications-and-standards/standards/ecma-376/">ECMA-376 standard is here</a>,
+        and is also under the
+        <a href="https://msdn.microsoft.com/en-us/openspecifications/default">Microsoft OSP</a>.
+      </p>
+<a name="POIFS+for+OLE+2+Documents"></a>
+<h3 class="boxed">POIFS for OLE 2 Documents</h3>
+<p>
+	  POIFS is the oldest and most stable part of POI.  It is our port of the OLE 2 Compound Document Format to
+          pure Java.  It supports both read and write functionality.  All of our components for the binary (non-XML)
+          Microsoft Office formats ultimately rely on it by
+          definition.  Please see <a href="./poifs/index.html">the POIFS project page</a> for more information.
+	</p>
+<a name="HSSF+and+XSSF+for+Excel+Documents"></a>
+<h3 class="boxed">HSSF and XSSF for Excel Documents</h3>
+<p>
+	  HSSF is our port of the Microsoft Excel 97 (-2003) file format (BIFF8) to pure
+          Java. XSSF is our port of the Microsoft Excel XML (2007+) file format (OOXML) to
+          pure Java. SS is a package that provides common support for both formats with a common API.
+	  They both support read and write capability. Please see
+          <a href="../components/spreadsheet/">the HSSF+XSSF project page</a> for more
+          information.
+	</p>
+<a name="HWPF+and+XWPF+for+Word+Documents"></a>
+<h3 class="boxed">HWPF and XWPF for Word Documents</h3>
+<p>
+	  HWPF is our port of the Microsoft Word 97 (-2003) file format to pure
+	  Java.  It supports read, and limited write capabilities. It also provides
+      simple text extraction support for the older Word 6 and Word 95 formats.
+      Please see <a href="../components/document/">the HWPF project page for more
+	    information</a>.  This component remains in early stages of
+	  development. It can already read and write simple files.
+	</p>
+<p>
+	  We are also working on the XWPF for the WordprocessingML (2007+) format from the
+	  OOXML specification. This provides read and write support for simpler
+      files, along with text extraction capabilities.
+	</p>
+<a name="HSLF+and+XSLF+for+PowerPoint+Documents"></a>
+<h3 class="boxed">HSLF and XSLF for PowerPoint Documents</h3>
+<p>
+	  HSLF is our port of the Microsoft PowerPoint 97(-2003) file format to pure
+	  Java. It supports read and write capabilities. Please see <a href="../components/slideshow/">the HSLF project page for more
+	    information</a>.
+	</p>
+<p>
+	  We are also working on the XSLF for the PresentationML (2007+) format from the
+	  OOXML specification.
+	</p>
+<a name="HPSF+for+OLE+2+Document+Properties"></a>
+<h3 class="boxed">HPSF for OLE 2 Document Properties</h3>
+<p>
+	  HPSF is our port of the OLE 2 property set format to pure
+	  Java. Property sets are mostly use to store a document's properties
+	  (title, author, date of last modification etc.), but they can be used
+	  for application-specific purposes as well.
+	</p>
+<p>
+	  HPSF supports both reading and writing of properties.
+	</p>
+<p>
+	  Please see <a href="./hpsf/index.html">the HPSF project
+	    page</a> for more information.
+	</p>
+<a name="HDGF+and+XDGF+for+Visio+Documents"></a>
+<h3 class="boxed">HDGF and XDGF for Visio Documents</h3>
+<p>
+	  HDGF is our port of the Microsoft Visio 97(-2003) file format to pure
+	  Java. It currently only supports reading at a very low level, and
+	  simple text extraction. Please see <a href="./diagram/index.html">the HDGF / Diagram project page for more
+	    information</a>.
+	</p>
+<p>
+	  XDGF is our port of the Microsoft Visio XML (.vsdx) file format to pure
+	  Java. It has slightly more support than HDGF. Please see <a href="./diagram/index.html">the XDGF / Diagram project page for more
+	    information</a>.
+	</p>
+<a name="HPBF+for+Publisher+Documents"></a>
+<h3 class="boxed">HPBF for Publisher Documents</h3>
+<p>
+	  HPBF is our port of the Microsoft Publisher 98(-2007) file format to pure
+	  Java. It currently only supports reading at a low level for around
+	  half of the file parts, and simple text extraction.  Please see <a href="./hpbf/index.html">the HPBF project page for more
+	    information</a>.
+	</p>
+<a name="HMEF+for+TNEF+%28winmail.dat%29+Outlook+Attachments"></a>
+<h3 class="boxed">HMEF for TNEF (winmail.dat) Outlook Attachments</h3>
+<p>
+     HMEF is our port of the Microsoft TNEF (Transport Neutral Encoding
+     Format) file format to pure Java. TNEF is sometimes used by Outlook
+     for encoding the message, and will typically come through as
+     winmail.dat. HMEF currently only supports reading at a low level, but
+     we hope to add text and attachment extraction. Please see <a href="./hmef/index.html">the HMEF project page for more
+	    information</a>.
+	</p>
+<a name="HSMF+for+Outlook+Messages"></a>
+<h3 class="boxed">HSMF for Outlook Messages</h3>
+<p>
+	  HSMF is our port of the Microsoft Outlook message file format to pure
+	  Java. It currently only some of the textual content of MSG files, and
+      some attachments. Further support and documentation is coming in slowly.
+	  For now, users are advised to consult the unit tests for example use.
+	  Please see <a href="./hsmf/index.html">the HSMF project page for more
+	    information</a>.
+	</p>
+<p>
+	  Microsoft has recently added the Outlook file format to its OSP. More information
+	  is now available making implementing this API an easier task.
+	</p>
+</div>
+    
+<a name="components"></a>
+<h2 class="boxed">Component Map</h2>
+<div class="section">
+<p>
+        The Apache POI distribution consists of support for many document file formats. This support is provided
+        in several Jar files. Not all of the Jars are needed for every format. The following tables
+        show the relationships between POI components, Maven repository tags, and the project's Jar files.
+      </p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+        
+<tr>
+          
+<th colspan="1" rowspan="1">Component</th>
+          <th colspan="1" rowspan="1">Application type</th>
+          <th colspan="1" rowspan="1">Maven artifactId</th>
+          <th colspan="1" rowspan="1">Notes</th>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="./poifs/index.html">POIFS</a></td>
+          <td colspan="1" rowspan="1">OLE2 Filesystem</td>
+          <td colspan="1" rowspan="1"><em>poi</em></td>
+          <td colspan="1" rowspan="1">Required to work with OLE2 / POIFS based files</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="./hpsf/index.html">HPSF</a></td>
+          <td colspan="1" rowspan="1">OLE2 Property Sets</td>
+          <td colspan="1" rowspan="1"><em>poi</em></td>
+          <td colspan="1" rowspan="1">&nbsp;</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="../components/spreadsheet/">HSSF</a></td>
+          <td colspan="1" rowspan="1">Excel XLS</td>
+          <td colspan="1" rowspan="1"><em>poi</em></td>
+          <td colspan="1" rowspan="1">For HSSF only, if common SS is needed see below</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="../components/slideshow/">HSLF</a></td>
+          <td colspan="1" rowspan="1">PowerPoint PPT</td>
+          <td colspan="1" rowspan="1"><em>poi-scratchpad</em></td>
+          <td colspan="1" rowspan="1">&nbsp;</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="../components/document/">HWPF</a></td>
+          <td colspan="1" rowspan="1">Word DOC</td>
+          <td colspan="1" rowspan="1"><em>poi-scratchpad</em></td>
+          <td colspan="1" rowspan="1">&nbsp;</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="./diagram/index.html">HDGF</a></td>
+          <td colspan="1" rowspan="1">Visio VSD</td>
+          <td colspan="1" rowspan="1"><em>poi-scratchpad</em></td>
+          <td colspan="1" rowspan="1">&nbsp;</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="./hpbf/index.html">HPBF</a></td>
+          <td colspan="1" rowspan="1">Publisher PUB</td>
+          <td colspan="1" rowspan="1"><em>poi-scratchpad</em></td>
+          <td colspan="1" rowspan="1">&nbsp;</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="./hsmf/index.html">HSMF</a></td>
+          <td colspan="1" rowspan="1">Outlook MSG</td>
+          <td colspan="1" rowspan="1"><em>poi-scratchpad</em></td>
+          <td colspan="1" rowspan="1">&nbsp;</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1">DDF</td>
+          <td colspan="1" rowspan="1">Escher common drawings</td>
+          <td colspan="1" rowspan="1"><em>poi</em></td>
+          <td colspan="1" rowspan="1">&nbsp;</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1">HWMF</td>
+          <td colspan="1" rowspan="1">WMF drawings</td>
+          <td colspan="1" rowspan="1"><em>poi-scratchpad</em></td>
+          <td colspan="1" rowspan="1">&nbsp;</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="./oxml4j/index.html">OpenXML4J</a></td>
+          <td colspan="1" rowspan="1">OOXML</td>
+          <td colspan="1" rowspan="1"><em>poi-ooxml</em> plus either <em>poi-ooxml-lite</em> or<br>
+              
+<em>poi-ooxml-full</em></td>
+          <td colspan="1" rowspan="1">See notes below for differences between these options</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="../components/spreadsheet/">XSSF</a></td>
+          <td colspan="1" rowspan="1">Excel XLSX</td>
+          <td colspan="1" rowspan="1"><em>poi-ooxml</em></td>
+          <td colspan="1" rowspan="1">&nbsp;</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="../components/slideshow/">XSLF</a></td>
+          <td colspan="1" rowspan="1">PowerPoint PPTX</td>
+          <td colspan="1" rowspan="1"><em>poi-ooxml</em></td>
+          <td colspan="1" rowspan="1">&nbsp;</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="../components/document/">XWPF</a></td>
+          <td colspan="1" rowspan="1">Word DOCX</td>
+          <td colspan="1" rowspan="1"><em>poi-ooxml</em></td>
+          <td colspan="1" rowspan="1">&nbsp;</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="./diagram/index.html">XDGF</a></td>
+          <td colspan="1" rowspan="1">Visio VSDX</td>
+          <td colspan="1" rowspan="1"><em>poi-ooxml</em></td>
+          <td colspan="1" rowspan="1">&nbsp;</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="./slideshow/index.html">Common SL</a></td>
+          <td colspan="1" rowspan="1">PowerPoint PPT and PPTX</td>
+          <td colspan="1" rowspan="1"><em>poi-scratchpad</em> and <em>poi-ooxml</em></td>
+          <td colspan="1" rowspan="1">SL code is in the core POI jar, but implementations are in poi-scratchpad
+              and poi-ooxml.</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1"><a href="../components/spreadsheet/">Common SS</a></td>
+          <td colspan="1" rowspan="1">Excel XLS and XLSX</td>
+          <td colspan="1" rowspan="1"><em>poi-ooxml</em></td>
+          <td colspan="1" rowspan="1">WorkbookFactory and friends all require poi-ooxml, not just core poi</td>
+        
+</tr>
+      
+</table>
+<p>
+<br>
+</p>
+<p>
+        This table maps artifacts into the jar file name. "version-yyyymmdd" is
+        the POI version stamp. You can see what the latest stamp is on the
+        <a href="../download.html">downloads page</a>.
+      </p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+        
+<tr>
+          
+<th colspan="1" rowspan="1">Maven artifactId</th>
+          <th colspan="1" rowspan="1">Prerequisites</th>
+          <th colspan="1" rowspan="1">JAR</th>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1">poi</td>
+          <td colspan="1" rowspan="1"><a href="https://search.maven.org/#artifactdetails|org.apache.logging.log4j|log4j-api|2.24.3|jar">log4j 2.x</a>,
+              <a href="https://search.maven.org/#artifactdetails|commons-codec|commons-codec|1.17.1|jar">commons-codec</a>,
+              <a href="https://search.maven.org/#artifactdetails|org.apache.commons|commons-collections4|4.4|jar">commons-collections</a>,
+              <a href="https://search.maven.org/#artifactdetails|org.apache.commons|commons-math3|3.6.1|jar">commons-math3</a>
+              <a href="https://search.maven.org/#artifactdetails|commons-io|commons-io|2.18.0|jar">commons-io</a>
+          </td>
+          <td colspan="1" rowspan="1">poi-version-yyyymmdd.jar</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1">poi-scratchpad</td>
+          <td colspan="1" rowspan="1"><a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi">poi</a></td>
+          <td colspan="1" rowspan="1">poi-scratchpad-version-yyyymmdd.jar</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1">poi-ooxml</td>
+          <td colspan="1" rowspan="1"><a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi">poi</a>,
+              <a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi-ooxml-lite">poi-ooxml-lite</a>,
+              <a href="https://search.maven.org/#artifactdetails|org.apache.commons|commons-compress|1.23.0|jar">commons-compress</a>,
+              <a href="https://search.maven.org/#artifactdetails|com.zaxxer|SparseBitSet|1.2|jar">SparseBitSet</a>
+<br>
+              For SVG support:
+              <a href="https://search.maven.org/#search|gav|1|g:org.apache.xmlgraphics AND a:batik-all">batik-all</a>,
+              <a href="https://search.maven.org/#search|gav|1|g:xml-apis AND a:xml-apis-ext">xml-apis-ext</a>,
+              <a href="https://search.maven.org/#search|gav|1|g:org.apache.xmlgraphics AND a:xmlgraphics-commons">xmlgraphics-commons</a>
+<br>
+              For PDF support:
+            <a href="https://search.maven.org/#search|gav|1|g:org.apache.pdfbox AND a:pdfbox">pdfbox</a>,
+            <a href="https://search.maven.org/#search|gav|1|g:org.apache.pdfbox AND a:fontbox">fontbox</a>,
+            <a href="https://search.maven.org/#search|gav|1|g:de.rototor.pdfbox AND a:graphics2d">rototor graphics2d</a>
+          </td>
+          <td colspan="1" rowspan="1">poi-ooxml-version-yyyymmdd.jar</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1">poi-ooxml-lite</td>
+          <td colspan="1" rowspan="1"><a href="https://search.maven.org/#artifactdetails|org.apache.xmlbeans|xmlbeans|5.3.0|jar">xmlbeans</a></td>
+          <td colspan="1" rowspan="1">poi-ooxml-lite-version-yyyymmdd.jar</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1">poi-examples</td>
+          <td colspan="1" rowspan="1"><a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi">poi</a>,
+              <a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi-scratchpad">poi-scratchpad</a>,
+              <a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi-ooxml">poi-ooxml</a>
+          </td>
+          <td colspan="1" rowspan="1">poi-examples-version-yyyymmdd.jar</td>
+        
+</tr>
+        
+<tr>
+          
+<td colspan="1" rowspan="1">poi-ooxml-full (known as ooxml-schemas)</td>
+          <td colspan="1" rowspan="1"><a href="https://search.maven.org/#artifactdetails|org.apache.xmlbeans|xmlbeans|5.3.0|jar">xmlbeans</a>
+<br>
+            For signing:
+            <a href="https://search.maven.org/#artifactdetails|org.bouncycastle|bcpkix-jdk18on|1.80|jar">bcpkix-jdk18on</a>,
+            <a href="https://search.maven.org/#artifactdetails|org.bouncycastle|bcutil-jdk18on|1.80|jar">bcprov-jdk18on</a>,
+            <a href="https://search.maven.org/#artifactdetails|org.apache.santuario|xmlsec|3.0.5|bundle">xmlsec</a>,
+            <a href="https://search.maven.org/#artifactdetails|org.slf4j|slf4j-api|2.0.17|jar">slf4j-api</a>
+          </td>
+          <td colspan="1" rowspan="1">poi-ooxml-full-version-yyyymmdd.jar</td>
+        
+</tr>
+      
+</table>
+<p>&nbsp;</p>
+<div class="note">
+<div class="label">Note</div>
+<div class="content">
+        Apache commons-math3 and commons-compress were added as a dependency in POI 4.0.0.<br>
+        Zaxxer SparseBitSet was added as a dependency in POI 4.1.2<br>
+        Apache commons-io was added as a dependency in POI 5.1.0
+      </div>
+</div>
+<p>
+        poi-ooxml requires poi-ooxml-lite. This is a substantially smaller
+        version of the poi-ooxml-full jar (ooxml-schemas-1.4.jar for POI 4.0.0,
+        ooxml-schemas-1.3.jar for POI 3.14 or to POI 3.17,
+        ooxml-schemas-1.1.jar for POI 3.7 up to POI 3.13, ooxml-schemas-1.0.jar
+        for POI 3.5 and 3.6).
+        The larger poi-ooxml-full (formerly, ooxml-schemas) jar is <a href="../help/index.html#faq-N10025">normally</a>
+        only required for features that are not fully implemented in poi-ooxml.
+        There used to also be an ooxml-security jar, which contained
+        all of the classes relating to encryption and signing. POI 5 no longer needs this jar.
+        The equivalent classes are now in poi-ooxml-full and poi-ooxml-lite.
+        This JAR was ooxml-security-1.1.jar for POI 3.14 and POI 4. ooxml-security-1.0.jar
+        was used prior to that.
+      </p>
+<p>
+        The OOXML jars require a stax implementation, but now that Apache
+        POI requires Java 8, that dependency is provided by the JRE and no additional
+        stax jars are required. The OOXML jars used to require DOM4J, but
+        the code has now been changed to use JAXP and no additional dom4j
+        jars are required. By the way, look at this <a href="../help/index.html#faq-N1017E">FAQ</a>
+        if you have problems when using a non-Oracle JDK.
+      </p>
+<p>
+        The ooxml schemas jars are compiled with <a href="https://xmlbeans.apache.org/">Apache XMLBeans</a>.
+        It is recommended that you use the XMLBeans version that was used to build the POI OOXML schemas.
+        It may be possible to use newer XMLBeans jars but there are no guarantees, especially if the XMLBeans version
+        numbers differ a lot.
+      </p>
+</div>
+    
+<a name="Examples"></a>
+<h2 class="boxed">Examples</h2>
+<div class="section">
+<p>
+	    Small sample programs using the POI API are available in the
+        <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples">src/examples</a>
+        (<a href="https://svn.apache.org/viewvc/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples">viewvc</a>) directory of the source distribution.
+      </p>
+<p>
+        All of the examples are included in POI distributions as a poi-examples artifact.
+      </p>
+</div>
+    
+<a name="Running+POI+on+other+JVM+languages"></a>
+<h2 class="boxed">Running POI on other JVM languages</h2>
+<div class="section">
+<p>
+        POI can be run on most languages that run on the JVM. For code examples,
+        see <a href="poi-jvm-languages.html">Running POI on other JVM languages</a>
+      
+</p>
+</div>
+    
+<a name="Contributed+Software"></a>
+<h2 class="boxed">Contributed Software</h2>
+<div class="section">
+<p>
+	    Besides the "official" components outlined above there is some further
+	    software distributed with POI. This is called "contributed" software. It
+        is not explicitly recommended or even maintained by the POI team, but
+        it might still be useful to you.
+      </p>
+<p>
+          See <a href="poi-ruby.html">POI Ruby Bindings</a>  and other code in the
+          <a href="https://svn.apache.org/repos/asf/poi/trunk/src/contrib/">poi-contrib module</a>
+      
+</p>
+</div>
+  
+<p align="right">
+<font size="-2">by&nbsp;Andrew C. Oliver,&nbsp;Rainer Klute,&nbsp;David Fisher</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="logos">
+<a href="https://validator.w3.org/check/referer"><img style="height: 31px; width: 88px;" title="Valid HTML 4.01!" alt="Valid HTML 4.01!" src="../skin/images/valid-html401.png" class="logoImage"></a><a href="https://jigsaw.w3.org/css-validator/check/referer"><img style="height: 31px; width: 88px;" title="Valid CSS!" alt="Valid CSS!" src="../skin/images/vcss.png" class="logoImage"></a>
+</div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0components/index.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

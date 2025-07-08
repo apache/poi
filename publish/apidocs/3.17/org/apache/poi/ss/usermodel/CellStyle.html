@@ -1,0 +1,1489 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+CellStyle (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="CellStyle (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellRange.html" title="interface in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/CellStyle.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CellStyle.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.usermodel</FONT>
+<BR>
+Interface CellStyle</H2>
+<DL>
+<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel">HSSFCellStyle</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>CellStyle</B></DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#cloneStyleFrom(org.apache.poi.ss.usermodel.CellStyle)">cloneStyleFrom</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A>&nbsp;source)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clones all the style information from another
+  CellStyle, onto this one.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getAlignment()">getAlignment</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getAlignmentEnum()"><CODE>getAlignmentEnum()</CODE></A> instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/HorizontalAlignment.html" title="enum in org.apache.poi.ss.usermodel">HorizontalAlignment</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getAlignmentEnum()">getAlignmentEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of horizontal alignment for the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderBottom()">getBorderBottom</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderBottomEnum()"><CODE>getBorderBottomEnum()</CODE></A> instead.
+ This will return a BorderStyle enum in the future.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderBottomEnum()">getBorderBottomEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the bottom border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderLeft()">getBorderLeft</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderLeftEnum()"><CODE>getBorderLeftEnum()</CODE></A> instead.
+ This will return a BorderStyle enum in the future.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderLeftEnum()">getBorderLeftEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the left border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderRight()">getBorderRight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderRightEnum()"><CODE>getBorderRightEnum()</CODE></A> instead.
+ This will return a BorderStyle enum in the future.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderRightEnum()">getBorderRightEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the right border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderTop()">getBorderTop</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderTopEnum()"><CODE>getBorderTopEnum()</CODE></A> instead.
+ This will return a BorderStyle enum in the future.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderTopEnum()">getBorderTopEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the top border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBottomBorderColor()">getBottomBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the left border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getDataFormat()">getDataFormat</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the index of the data format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getDataFormatString()">getDataFormatString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the format string</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillBackgroundColor()">getFillBackgroundColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the background fill color, if the fill
+  is defined with an indexed color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillBackgroundColorColor()">getFillBackgroundColorColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the color object representing the current
+  background fill, resolving indexes using
+  the supplied workbook.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillForegroundColor()">getFillForegroundColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the foreground fill color, if the fill  
+  is defined with an indexed color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillForegroundColorColor()">getFillForegroundColorColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the color object representing the current
+  foreground fill, resolving indexes using
+  the supplied workbook.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillPattern()">getFillPattern</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. This method will return <A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>FillPatternType</CODE></A> in the future. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setFillPattern(org.apache.poi.ss.usermodel.FillPatternType)"><CODE>setFillPattern(FillPatternType)</CODE></A> instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel">FillPatternType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillPatternEnum()">getFillPatternEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the fill pattern (??) - set to 1 to fill with foreground color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFontIndex()">getFontIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gets the index of the font for this style</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getHidden()">getHidden</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether the cell's using this style are to be hidden</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getIndention()">getIndention</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the number of spaces to indent the text in the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getIndex()">getIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the index within the Workbook (sequence within the collection of ExtnededFormat objects)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getLeftBorderColor()">getLeftBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the left border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getLocked()">getLocked</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether the cell's using this style are to be locked</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getQuotePrefixed()">getQuotePrefixed</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is "Quote Prefix" or "123 Prefix" enabled for the cell?
+ Having this on is somewhat (but not completely, see <A HREF="../../../../../org/apache/poi/ss/usermodel/IgnoredErrorType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>IgnoredErrorType</CODE></A>)
+  like prefixing the cell value with a ' in Excel</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getRightBorderColor()">getRightBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the left border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getRotation()">getRotation</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the degree of rotation for the text in the cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getShrinkToFit()">getShrinkToFit</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should the Cell be auto-sized by Excel to shrink
+  it to fit if this text is too long?</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getTopBorderColor()">getTopBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the top border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getVerticalAlignment()">getVerticalAlignment</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getVerticalAlignmentEnum()"><CODE>getVerticalAlignmentEnum()</CODE></A> instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel">VerticalAlignment</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getVerticalAlignmentEnum()">getVerticalAlignmentEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of vertical alignment for the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getWrapText()">getWrapText</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether the text should be wrapped</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment)">setAlignment</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/HorizontalAlignment.html" title="enum in org.apache.poi.ss.usermodel">HorizontalAlignment</A>&nbsp;align)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of horizontal alignment for the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setBorderBottom(org.apache.poi.ss.usermodel.BorderStyle)">setBorderBottom</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the bottom border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle)">setBorderLeft</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the left border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setBorderRight(org.apache.poi.ss.usermodel.BorderStyle)">setBorderRight</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the right border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setBorderTop(org.apache.poi.ss.usermodel.BorderStyle)">setBorderTop</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the top border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setBottomBorderColor(short)">setBottomBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the bottom border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setDataFormat(short)">setDataFormat</A></B>(short&nbsp;fmt)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the data format (must be a valid format).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setFillBackgroundColor(short)">setFillBackgroundColor</A></B>(short&nbsp;bg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the background fill color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setFillForegroundColor(short)">setFillForegroundColor</A></B>(short&nbsp;bg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the foreground fill color
+ <i>Note: Ensure Foreground color is set prior to background color.</i></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setFillPattern(org.apache.poi.ss.usermodel.FillPatternType)">setFillPattern</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel">FillPatternType</A>&nbsp;fp)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setting to one fills the cell with the foreground color...</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setFont(org.apache.poi.ss.usermodel.Font)">setFont</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html" title="interface in org.apache.poi.ss.usermodel">Font</A>&nbsp;font)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the font for this style</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setHidden(boolean)">setHidden</A></B>(boolean&nbsp;hidden)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the cell's using this style to be hidden</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setIndention(short)">setIndention</A></B>(short&nbsp;indent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the number of spaces to indent the text in the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setLeftBorderColor(short)">setLeftBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the left border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setLocked(boolean)">setLocked</A></B>(boolean&nbsp;locked)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the cell's using this style to be locked</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setQuotePrefixed(boolean)">setQuotePrefixed</A></B>(boolean&nbsp;quotePrefix)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Turn on or off "Quote Prefix" or "123 Prefix" for the style,
+  which is used to tell Excel that the thing which looks like
+  a number or a formula shouldn't be treated as on.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setRightBorderColor(short)">setRightBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the right border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setRotation(short)">setRotation</A></B>(short&nbsp;rotation)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the degree of rotation for the text in the cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setShrinkToFit(boolean)">setShrinkToFit</A></B>(boolean&nbsp;shrinkToFit)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Controls if the Cell should be auto-sized
+  to shrink to fit if the text is too long</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setTopBorderColor(short)">setTopBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the top border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment)">setVerticalAlignment</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel">VerticalAlignment</A>&nbsp;align)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of vertical alignment for the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setWrapText(boolean)">setWrapText</A></B>(boolean&nbsp;wrapped)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set whether the text should be wrapped.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getIndex()"><!-- --></A><H3>
+getIndex</H3>
+<PRE>
+short <B>getIndex</B>()</PRE>
+<DL>
+<DD>get the index within the Workbook (sequence within the collection of ExtnededFormat objects)
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>unique index number of the underlying record this style represents (probably you don't care
+  unless you're comparing which one is which)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDataFormat(short)"><!-- --></A><H3>
+setDataFormat</H3>
+<PRE>
+void <B>setDataFormat</B>(short&nbsp;fmt)</PRE>
+<DL>
+<DD>set the data format (must be a valid format). Built in formats are defined at <A HREF="../../../../../org/apache/poi/ss/usermodel/BuiltinFormats.html" title="class in org.apache.poi.ss.usermodel"><CODE>BuiltinFormats</CODE></A>.
+<P>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormat.html" title="interface in org.apache.poi.ss.usermodel"><CODE>DataFormat</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataFormat()"><!-- --></A><H3>
+getDataFormat</H3>
+<PRE>
+short <B>getDataFormat</B>()</PRE>
+<DL>
+<DD>get the index of the data format. Built in formats are defined at <A HREF="../../../../../org/apache/poi/ss/usermodel/BuiltinFormats.html" title="class in org.apache.poi.ss.usermodel"><CODE>BuiltinFormats</CODE></A>.
+<P>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormat.html" title="interface in org.apache.poi.ss.usermodel"><CODE>DataFormat</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataFormatString()"><!-- --></A><H3>
+getDataFormatString</H3>
+<PRE>
+java.lang.String <B>getDataFormatString</B>()</PRE>
+<DL>
+<DD>Get the format string
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFont(org.apache.poi.ss.usermodel.Font)"><!-- --></A><H3>
+setFont</H3>
+<PRE>
+void <B>setFont</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html" title="interface in org.apache.poi.ss.usermodel">Font</A>&nbsp;font)</PRE>
+<DL>
+<DD>set the font for this style
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>font</CODE> - a font object created or retrieved from the Workbook object<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html#createFont()"><CODE>Workbook.createFont()</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html#getFontAt(short)"><CODE>Workbook.getFontAt(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFontIndex()"><!-- --></A><H3>
+getFontIndex</H3>
+<PRE>
+short <B>getFontIndex</B>()</PRE>
+<DL>
+<DD>gets the index of the font for this style
+<P>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html#getFontAt(short)"><CODE>Workbook.getFontAt(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHidden(boolean)"><!-- --></A><H3>
+setHidden</H3>
+<PRE>
+void <B>setHidden</B>(boolean&nbsp;hidden)</PRE>
+<DL>
+<DD>set the cell's using this style to be hidden
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hidden</CODE> - - whether the cell using this style should be hidden</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHidden()"><!-- --></A><H3>
+getHidden</H3>
+<PRE>
+boolean <B>getHidden</B>()</PRE>
+<DL>
+<DD>get whether the cell's using this style are to be hidden
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>hidden - whether the cell using this style should be hidden</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLocked(boolean)"><!-- --></A><H3>
+setLocked</H3>
+<PRE>
+void <B>setLocked</B>(boolean&nbsp;locked)</PRE>
+<DL>
+<DD>set the cell's using this style to be locked
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>locked</CODE> - - whether the cell using this style should be locked</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLocked()"><!-- --></A><H3>
+getLocked</H3>
+<PRE>
+boolean <B>getLocked</B>()</PRE>
+<DL>
+<DD>get whether the cell's using this style are to be locked
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>hidden - whether the cell using this style should be locked</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setQuotePrefixed(boolean)"><!-- --></A><H3>
+setQuotePrefixed</H3>
+<PRE>
+void <B>setQuotePrefixed</B>(boolean&nbsp;quotePrefix)</PRE>
+<DL>
+<DD>Turn on or off "Quote Prefix" or "123 Prefix" for the style,
+  which is used to tell Excel that the thing which looks like
+  a number or a formula shouldn't be treated as on.
+ Turning this on is somewhat (but not completely, see <A HREF="../../../../../org/apache/poi/ss/usermodel/IgnoredErrorType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>IgnoredErrorType</CODE></A>)
+  like prefixing the cell value with a ' in Excel
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getQuotePrefixed()"><!-- --></A><H3>
+getQuotePrefixed</H3>
+<PRE>
+boolean <B>getQuotePrefixed</B>()</PRE>
+<DL>
+<DD>Is "Quote Prefix" or "123 Prefix" enabled for the cell?
+ Having this on is somewhat (but not completely, see <A HREF="../../../../../org/apache/poi/ss/usermodel/IgnoredErrorType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>IgnoredErrorType</CODE></A>)
+  like prefixing the cell value with a ' in Excel
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment)"><!-- --></A><H3>
+setAlignment</H3>
+<PRE>
+void <B>setAlignment</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/HorizontalAlignment.html" title="enum in org.apache.poi.ss.usermodel">HorizontalAlignment</A>&nbsp;align)</PRE>
+<DL>
+<DD>set the type of horizontal alignment for the cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>align</CODE> - - the type of alignment</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAlignment()"><!-- --></A><H3>
+getAlignment</H3>
+<PRE>
+short <B>getAlignment</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getAlignmentEnum()"><CODE>getAlignmentEnum()</CODE></A> instead.</I>
+<P>
+<DD>get the type of horizontal alignment for the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>align - the type of alignment</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAlignmentEnum()"><!-- --></A><H3>
+getAlignmentEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/HorizontalAlignment.html" title="enum in org.apache.poi.ss.usermodel">HorizontalAlignment</A> <B>getAlignmentEnum</B>()</PRE>
+<DL>
+<DD>get the type of horizontal alignment for the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>align - the type of alignment</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setWrapText(boolean)"><!-- --></A><H3>
+setWrapText</H3>
+<PRE>
+void <B>setWrapText</B>(boolean&nbsp;wrapped)</PRE>
+<DL>
+<DD>Set whether the text should be wrapped.
+ Setting this flag to <code>true</code> make all content visible
+ within a cell by displaying it on multiple lines
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>wrapped</CODE> - wrap text or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getWrapText()"><!-- --></A><H3>
+getWrapText</H3>
+<PRE>
+boolean <B>getWrapText</B>()</PRE>
+<DL>
+<DD>get whether the text should be wrapped
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>wrap text or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment)"><!-- --></A><H3>
+setVerticalAlignment</H3>
+<PRE>
+void <B>setVerticalAlignment</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel">VerticalAlignment</A>&nbsp;align)</PRE>
+<DL>
+<DD>set the type of vertical alignment for the cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>align</CODE> - the type of alignment</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVerticalAlignment()"><!-- --></A><H3>
+getVerticalAlignment</H3>
+<PRE>
+short <B>getVerticalAlignment</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getVerticalAlignmentEnum()"><CODE>getVerticalAlignmentEnum()</CODE></A> instead.</I>
+<P>
+<DD>get the type of vertical alignment for the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>align the type of alignment</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVerticalAlignmentEnum()"><!-- --></A><H3>
+getVerticalAlignmentEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel">VerticalAlignment</A> <B>getVerticalAlignmentEnum</B>()</PRE>
+<DL>
+<DD>get the type of vertical alignment for the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>align the type of alignment</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRotation(short)"><!-- --></A><H3>
+setRotation</H3>
+<PRE>
+void <B>setRotation</B>(short&nbsp;rotation)</PRE>
+<DL>
+<DD>set the degree of rotation for the text in the cell.
+
+ Note: HSSF uses values from -90 to 90 degrees, whereas XSSF 
+ uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges 
+ accordingly, however the corresponding getter is returning values in the range mandated by the current type
+ of Excel file-format that this CellStyle is applied to.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rotation</CODE> - degrees (see note above)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRotation()"><!-- --></A><H3>
+getRotation</H3>
+<PRE>
+short <B>getRotation</B>()</PRE>
+<DL>
+<DD>get the degree of rotation for the text in the cell.
+
+ Note: HSSF uses values from -90 to 90 degrees, whereas XSSF 
+ uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges 
+ value-range as used by the type of Excel file-format that this CellStyle is applied to.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>rotation degrees (see note above)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setIndention(short)"><!-- --></A><H3>
+setIndention</H3>
+<PRE>
+void <B>setIndention</B>(short&nbsp;indent)</PRE>
+<DL>
+<DD>set the number of spaces to indent the text in the cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>indent</CODE> - - number of spaces</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIndention()"><!-- --></A><H3>
+getIndention</H3>
+<PRE>
+short <B>getIndention</B>()</PRE>
+<DL>
+<DD>get the number of spaces to indent the text in the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>indent - number of spaces</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderLeft</H3>
+<PRE>
+void <B>setBorderLeft</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the left border of the cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderLeft()"><!-- --></A><H3>
+getBorderLeft</H3>
+<PRE>
+short <B>getBorderLeft</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderLeftEnum()"><CODE>getBorderLeftEnum()</CODE></A> instead.
+ This will return a BorderStyle enum in the future.</I>
+<P>
+<DD>get the type of border to use for the left border of the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderLeftEnum()"><!-- --></A><H3>
+getBorderLeftEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderLeftEnum</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the left border of the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderRight(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderRight</H3>
+<PRE>
+void <B>setBorderRight</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the right border of the cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderRight()"><!-- --></A><H3>
+getBorderRight</H3>
+<PRE>
+short <B>getBorderRight</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderRightEnum()"><CODE>getBorderRightEnum()</CODE></A> instead.
+ This will return a BorderStyle enum in the future.</I>
+<P>
+<DD>get the type of border to use for the right border of the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderRightEnum()"><!-- --></A><H3>
+getBorderRightEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderRightEnum</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the right border of the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderTop(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderTop</H3>
+<PRE>
+void <B>setBorderTop</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the top border of the cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderTop()"><!-- --></A><H3>
+getBorderTop</H3>
+<PRE>
+short <B>getBorderTop</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderTopEnum()"><CODE>getBorderTopEnum()</CODE></A> instead.
+ This will return a BorderStyle enum in the future.</I>
+<P>
+<DD>get the type of border to use for the top border of the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderTopEnum()"><!-- --></A><H3>
+getBorderTopEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderTopEnum</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the top border of the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderBottom(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderBottom</H3>
+<PRE>
+void <B>setBorderBottom</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the bottom border of the cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderBottom()"><!-- --></A><H3>
+getBorderBottom</H3>
+<PRE>
+short <B>getBorderBottom</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderBottomEnum()"><CODE>getBorderBottomEnum()</CODE></A> instead.
+ This will return a BorderStyle enum in the future.</I>
+<P>
+<DD>get the type of border to use for the bottom border of the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderBottomEnum()"><!-- --></A><H3>
+getBorderBottomEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderBottomEnum</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the bottom border of the cell
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLeftBorderColor(short)"><!-- --></A><H3>
+setLeftBorderColor</H3>
+<PRE>
+void <B>setLeftBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the left border
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLeftBorderColor()"><!-- --></A><H3>
+getLeftBorderColor</H3>
+<PRE>
+short <B>getLeftBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the left border
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRightBorderColor(short)"><!-- --></A><H3>
+setRightBorderColor</H3>
+<PRE>
+void <B>setRightBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the right border
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRightBorderColor()"><!-- --></A><H3>
+getRightBorderColor</H3>
+<PRE>
+short <B>getRightBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the left border
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTopBorderColor(short)"><!-- --></A><H3>
+setTopBorderColor</H3>
+<PRE>
+void <B>setTopBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the top border
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTopBorderColor()"><!-- --></A><H3>
+getTopBorderColor</H3>
+<PRE>
+short <B>getTopBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the top border
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBottomBorderColor(short)"><!-- --></A><H3>
+setBottomBorderColor</H3>
+<PRE>
+void <B>setBottomBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the bottom border
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBottomBorderColor()"><!-- --></A><H3>
+getBottomBorderColor</H3>
+<PRE>
+short <B>getBottomBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the left border
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFillPattern(org.apache.poi.ss.usermodel.FillPatternType)"><!-- --></A><H3>
+setFillPattern</H3>
+<PRE>
+void <B>setFillPattern</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel">FillPatternType</A>&nbsp;fp)</PRE>
+<DL>
+<DD>setting to one fills the cell with the foreground color... No idea about
+ other values
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>fp</CODE> - fill pattern (set to <A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html#SOLID_FOREGROUND"><CODE>FillPatternType.SOLID_FOREGROUND</CODE></A> to fill w/foreground color)<DT><B>Since:</B></DT>
+  <DD>POI 3.15 beta 3</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillPattern()"><!-- --></A><H3>
+getFillPattern</H3>
+<PRE>
+short <B>getFillPattern</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. This method will return <A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>FillPatternType</CODE></A> in the future. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setFillPattern(org.apache.poi.ss.usermodel.FillPatternType)"><CODE>setFillPattern(FillPatternType)</CODE></A> instead.</I>
+<P>
+<DD>get the fill pattern (??) - set to 1 to fill with foreground color
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>fill pattern</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillPatternEnum()"><!-- --></A><H3>
+getFillPatternEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel">FillPatternType</A> <B>getFillPatternEnum</B>()</PRE>
+<DL>
+<DD>get the fill pattern (??) - set to 1 to fill with foreground color
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>fill pattern<DT><B>Since:</B></DT>
+  <DD>POI 3.15 beta 3</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFillBackgroundColor(short)"><!-- --></A><H3>
+setFillBackgroundColor</H3>
+<PRE>
+void <B>setFillBackgroundColor</B>(short&nbsp;bg)</PRE>
+<DL>
+<DD>set the background fill color.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bg</CODE> - color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillBackgroundColor()"><!-- --></A><H3>
+getFillBackgroundColor</H3>
+<PRE>
+short <B>getFillBackgroundColor</B>()</PRE>
+<DL>
+<DD>get the background fill color, if the fill
+  is defined with an indexed color.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>fill color index, or 0 if not indexed (XSSF only)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillBackgroundColorColor()"><!-- --></A><H3>
+getFillBackgroundColorColor</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A> <B>getFillBackgroundColorColor</B>()</PRE>
+<DL>
+<DD>Gets the color object representing the current
+  background fill, resolving indexes using
+  the supplied workbook.
+ This will work for both indexed and rgb
+  defined colors.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFillForegroundColor(short)"><!-- --></A><H3>
+setFillForegroundColor</H3>
+<PRE>
+void <B>setFillForegroundColor</B>(short&nbsp;bg)</PRE>
+<DL>
+<DD>set the foreground fill color
+ <i>Note: Ensure Foreground color is set prior to background color.</i>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bg</CODE> - color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillForegroundColor()"><!-- --></A><H3>
+getFillForegroundColor</H3>
+<PRE>
+short <B>getFillForegroundColor</B>()</PRE>
+<DL>
+<DD>get the foreground fill color, if the fill  
+  is defined with an indexed color.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>fill color, or 0 if not indexed (XSSF only)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillForegroundColorColor()"><!-- --></A><H3>
+getFillForegroundColorColor</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Color.html" title="interface in org.apache.poi.ss.usermodel">Color</A> <B>getFillForegroundColorColor</B>()</PRE>
+<DL>
+<DD>Gets the color object representing the current
+  foreground fill, resolving indexes using
+  the supplied workbook.
+ This will work for both indexed and rgb
+  defined colors.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="cloneStyleFrom(org.apache.poi.ss.usermodel.CellStyle)"><!-- --></A><H3>
+cloneStyleFrom</H3>
+<PRE>
+void <B>cloneStyleFrom</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A>&nbsp;source)</PRE>
+<DL>
+<DD>Clones all the style information from another
+  CellStyle, onto this one. This 
+  CellStyle will then have all the same
+  properties as the source, but the two may
+  be edited independently.
+ Any stylings on this CellStyle will be lost! 
+  
+ The source CellStyle could be from another
+  Workbook if you like. This allows you to
+  copy styles from one Workbook to another.
+
+ However, both of the CellStyles will need
+  to be of the same type (HSSFCellStyle or
+  XSSFCellStyle)
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setShrinkToFit(boolean)"><!-- --></A><H3>
+setShrinkToFit</H3>
+<PRE>
+void <B>setShrinkToFit</B>(boolean&nbsp;shrinkToFit)</PRE>
+<DL>
+<DD>Controls if the Cell should be auto-sized
+  to shrink to fit if the text is too long
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShrinkToFit()"><!-- --></A><H3>
+getShrinkToFit</H3>
+<PRE>
+boolean <B>getShrinkToFit</B>()</PRE>
+<DL>
+<DD>Should the Cell be auto-sized by Excel to shrink
+  it to fit if this text is too long?
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellRange.html" title="interface in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/CellStyle.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CellStyle.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

@@ -1,0 +1,617 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+CellFormatPart (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="CellFormatPart (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/format/CellFormatCondition.html" title="class in org.apache.poi.ss.format"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/format/CellFormatResult.html" title="class in org.apache.poi.ss.format"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/format/CellFormatPart.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CellFormatPart.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.format</FONT>
+<BR>
+Class CellFormatPart</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.format.CellFormatPart</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>CellFormatPart</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Objects of this class represent a single part of a cell format expression.
+ Each cell can have up to four of these for positive, zero, negative, and text
+ values.
+ <p>
+ Each format part can contain a color, a condition, and will always contain a
+ format specification.  For example <tt>"[Red][>=10]#"</tt> has a color
+ (<tt>[Red]</tt>), a condition (<tt>>=10</tt>) and a format specification
+ (<tt>#</tt>).
+ <p>
+ This class also contains patterns for matching the subparts of format
+ specification.  These are used internally, but are made public in case other
+ code has use for them.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#COLOR_GROUP">COLOR_GROUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Within <A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#FORMAT_PAT"><CODE>FORMAT_PAT</CODE></A>, the group number for the matched color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.regex.Pattern</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#COLOR_PAT">COLOR_PAT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pattern for the color part of a cell format part.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#CONDITION_OPERATOR_GROUP">CONDITION_OPERATOR_GROUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Within <A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#FORMAT_PAT"><CODE>FORMAT_PAT</CODE></A>, the group number for the operator in the
+ condition.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.regex.Pattern</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#CONDITION_PAT">CONDITION_PAT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pattern for the condition part of a cell format part.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#CONDITION_VALUE_GROUP">CONDITION_VALUE_GROUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Within <A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#FORMAT_PAT"><CODE>FORMAT_PAT</CODE></A>, the group number for the value in the
+ condition.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.regex.Pattern</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#CURRENCY_PAT">CURRENCY_PAT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pattern for the currency symbol part of a cell format part</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.regex.Pattern</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#FORMAT_PAT">FORMAT_PAT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pattern for an entire cell single part.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#SPECIFICATION_GROUP">SPECIFICATION_GROUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Within <A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#FORMAT_PAT"><CODE>FORMAT_PAT</CODE></A>, the group number for the format
+ specification.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.util.regex.Pattern</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#SPECIFICATION_PAT">SPECIFICATION_PAT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pattern for the format specification part of a cell format part.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#CellFormatPart(java.util.Locale, java.lang.String)">CellFormatPart</A></B>(java.util.Locale&nbsp;locale,
+               java.lang.String&nbsp;desc)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an object to represent a format part.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#CellFormatPart(java.lang.String)">CellFormatPart</A></B>(java.lang.String&nbsp;desc)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an object to represent a format part.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#applies(java.lang.Object)">applies</A></B>(java.lang.Object&nbsp;valueObject)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns <tt>true</tt> if this format part applies to the given value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/format/CellFormatResult.html" title="class in org.apache.poi.ss.format">CellFormatResult</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#apply(javax.swing.JLabel, java.lang.Object)">apply</A></B>(javax.swing.JLabel&nbsp;label,
+      java.lang.Object&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Apply this format part to the given value, applying the result to the
+ given label.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/format/CellFormatResult.html" title="class in org.apache.poi.ss.format">CellFormatResult</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#apply(java.lang.Object)">apply</A></B>(java.lang.Object&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Apply this format part to the given value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#group(java.util.regex.Matcher, int)">group</A></B>(java.util.regex.Matcher&nbsp;m,
+      int&nbsp;g)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the string from the group, or <tt>""</tt> if the group is
+ <tt>null</tt>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.StringBuffer</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#parseFormat(java.lang.String, org.apache.poi.ss.format.CellFormatType, org.apache.poi.ss.format.CellFormatPart.PartHandler)">parseFormat</A></B>(java.lang.String&nbsp;fdesc,
+            <A HREF="../../../../../org/apache/poi/ss/format/CellFormatType.html" title="enum in org.apache.poi.ss.format">CellFormatType</A>&nbsp;type,
+            <A HREF="https://poi.apache.org/apidocs/org/apache/poi/ss/format/CellFormatPart.PartHandler.html?is-external=true" title="class or interface in org.apache.poi.ss.format">org.apache.poi.ss.format.CellFormatPart.PartHandler</A>&nbsp;partHandler)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="COLOR_PAT"><!-- --></A><H3>
+COLOR_PAT</H3>
+<PRE>
+public static final java.util.regex.Pattern <B>COLOR_PAT</B></PRE>
+<DL>
+<DD>Pattern for the color part of a cell format part.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CONDITION_PAT"><!-- --></A><H3>
+CONDITION_PAT</H3>
+<PRE>
+public static final java.util.regex.Pattern <B>CONDITION_PAT</B></PRE>
+<DL>
+<DD>Pattern for the condition part of a cell format part.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SPECIFICATION_PAT"><!-- --></A><H3>
+SPECIFICATION_PAT</H3>
+<PRE>
+public static final java.util.regex.Pattern <B>SPECIFICATION_PAT</B></PRE>
+<DL>
+<DD>Pattern for the format specification part of a cell format part.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CURRENCY_PAT"><!-- --></A><H3>
+CURRENCY_PAT</H3>
+<PRE>
+public static final java.util.regex.Pattern <B>CURRENCY_PAT</B></PRE>
+<DL>
+<DD>Pattern for the currency symbol part of a cell format part
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FORMAT_PAT"><!-- --></A><H3>
+FORMAT_PAT</H3>
+<PRE>
+public static final java.util.regex.Pattern <B>FORMAT_PAT</B></PRE>
+<DL>
+<DD>Pattern for an entire cell single part.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="COLOR_GROUP"><!-- --></A><H3>
+COLOR_GROUP</H3>
+<PRE>
+public static final int <B>COLOR_GROUP</B></PRE>
+<DL>
+<DD>Within <A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#FORMAT_PAT"><CODE>FORMAT_PAT</CODE></A>, the group number for the matched color.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CONDITION_OPERATOR_GROUP"><!-- --></A><H3>
+CONDITION_OPERATOR_GROUP</H3>
+<PRE>
+public static final int <B>CONDITION_OPERATOR_GROUP</B></PRE>
+<DL>
+<DD>Within <A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#FORMAT_PAT"><CODE>FORMAT_PAT</CODE></A>, the group number for the operator in the
+ condition.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CONDITION_VALUE_GROUP"><!-- --></A><H3>
+CONDITION_VALUE_GROUP</H3>
+<PRE>
+public static final int <B>CONDITION_VALUE_GROUP</B></PRE>
+<DL>
+<DD>Within <A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#FORMAT_PAT"><CODE>FORMAT_PAT</CODE></A>, the group number for the value in the
+ condition.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SPECIFICATION_GROUP"><!-- --></A><H3>
+SPECIFICATION_GROUP</H3>
+<PRE>
+public static final int <B>SPECIFICATION_GROUP</B></PRE>
+<DL>
+<DD>Within <A HREF="../../../../../org/apache/poi/ss/format/CellFormatPart.html#FORMAT_PAT"><CODE>FORMAT_PAT</CODE></A>, the group number for the format
+ specification.
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="CellFormatPart(java.lang.String)"><!-- --></A><H3>
+CellFormatPart</H3>
+<PRE>
+public <B>CellFormatPart</B>(java.lang.String&nbsp;desc)</PRE>
+<DL>
+<DD>Create an object to represent a format part.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>desc</CODE> - The string to parse.</DL>
+</DL>
+<HR>
+
+<A NAME="CellFormatPart(java.util.Locale, java.lang.String)"><!-- --></A><H3>
+CellFormatPart</H3>
+<PRE>
+public <B>CellFormatPart</B>(java.util.Locale&nbsp;locale,
+                      java.lang.String&nbsp;desc)</PRE>
+<DL>
+<DD>Create an object to represent a format part.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>locale</CODE> - The locale to use.<DD><CODE>desc</CODE> - The string to parse.</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="applies(java.lang.Object)"><!-- --></A><H3>
+applies</H3>
+<PRE>
+public boolean <B>applies</B>(java.lang.Object&nbsp;valueObject)</PRE>
+<DL>
+<DD>Returns <tt>true</tt> if this format part applies to the given value. If
+ the value is a number and this is part has a condition, returns
+ <tt>true</tt> only if the number passes the condition.  Otherwise, this
+ always return <tt>true</tt>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>valueObject</CODE> - The value to evaluate.
+<DT><B>Returns:</B><DD><tt>true</tt> if this format part applies to the given value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="apply(java.lang.Object)"><!-- --></A><H3>
+apply</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/format/CellFormatResult.html" title="class in org.apache.poi.ss.format">CellFormatResult</A> <B>apply</B>(java.lang.Object&nbsp;value)</PRE>
+<DL>
+<DD>Apply this format part to the given value.  This returns a <A HREF="../../../../../org/apache/poi/ss/format/CellFormatResult.html" title="class in org.apache.poi.ss.format"><CODE>CellFormatResult</CODE></A> object with the results.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - The value to apply this format part to.
+<DT><B>Returns:</B><DD>A <A HREF="../../../../../org/apache/poi/ss/format/CellFormatResult.html" title="class in org.apache.poi.ss.format"><CODE>CellFormatResult</CODE></A> object containing the results of
+         applying the format to the value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="apply(javax.swing.JLabel, java.lang.Object)"><!-- --></A><H3>
+apply</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/format/CellFormatResult.html" title="class in org.apache.poi.ss.format">CellFormatResult</A> <B>apply</B>(javax.swing.JLabel&nbsp;label,
+                              java.lang.Object&nbsp;value)</PRE>
+<DL>
+<DD>Apply this format part to the given value, applying the result to the
+ given label.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>label</CODE> - The label<DD><CODE>value</CODE> - The value to apply this format part to.
+<DT><B>Returns:</B><DD><tt>true</tt> if the</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="parseFormat(java.lang.String, org.apache.poi.ss.format.CellFormatType, org.apache.poi.ss.format.CellFormatPart.PartHandler)"><!-- --></A><H3>
+parseFormat</H3>
+<PRE>
+public static java.lang.StringBuffer <B>parseFormat</B>(java.lang.String&nbsp;fdesc,
+                                                 <A HREF="../../../../../org/apache/poi/ss/format/CellFormatType.html" title="enum in org.apache.poi.ss.format">CellFormatType</A>&nbsp;type,
+                                                 <A HREF="https://poi.apache.org/apidocs/org/apache/poi/ss/format/CellFormatPart.PartHandler.html?is-external=true" title="class or interface in org.apache.poi.ss.format">org.apache.poi.ss.format.CellFormatPart.PartHandler</A>&nbsp;partHandler)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="group(java.util.regex.Matcher, int)"><!-- --></A><H3>
+group</H3>
+<PRE>
+public static java.lang.String <B>group</B>(java.util.regex.Matcher&nbsp;m,
+                                     int&nbsp;g)</PRE>
+<DL>
+<DD>Returns the string from the group, or <tt>""</tt> if the group is
+ <tt>null</tt>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>m</CODE> - The matcher.<DD><CODE>g</CODE> - The group number.
+<DT><B>Returns:</B><DD>The group or <tt>""</tt>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/format/CellFormatCondition.html" title="class in org.apache.poi.ss.format"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/format/CellFormatResult.html" title="class in org.apache.poi.ss.format"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/format/CellFormatPart.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CellFormatPart.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

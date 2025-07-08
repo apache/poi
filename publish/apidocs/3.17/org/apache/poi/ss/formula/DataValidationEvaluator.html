@@ -1,0 +1,491 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+DataValidationEvaluator (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="DataValidationEvaluator (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html" title="class in org.apache.poi.ss.formula"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.DataValidationContext.html" title="class in org.apache.poi.ss.formula"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/formula/DataValidationEvaluator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DataValidationEvaluator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.formula</FONT>
+<BR>
+Class DataValidationEvaluator</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.formula.DataValidationEvaluator</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>DataValidationEvaluator</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Evaluates Data Validation constraints.<p>
+
+ For performance reasons, this class keeps a cache of all previously retrieved <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html" title="interface in org.apache.poi.ss.usermodel"><CODE>DataValidation</CODE></A> instances.  
+ Be sure to call <A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#clearAllCachedValues()"><CODE>clearAllCachedValues()</CODE></A> if any workbook validation definitions are 
+ added, modified, or deleted.
+ <p>
+ Changing cell values should be fine, as long as the corresponding <A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#clearAllCachedResultValues()"><CODE>WorkbookEvaluator.clearAllCachedResultValues()</CODE></A>
+ is called as well.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.DataValidationContext.html" title="class in org.apache.poi.ss.formula">DataValidationEvaluator.DataValidationContext</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This class organizes and encapsulates all the pieces of information related to a single
+ data validation configuration for a single cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.OperatorEnum.html" title="enum in org.apache.poi.ss.formula">DataValidationEvaluator.OperatorEnum</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Not calling it OperatorType to avoid confusion for now with DataValidationConstraint.OperatorType.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.ValidationEnum.html" title="enum in org.apache.poi.ss.formula">DataValidationEvaluator.ValidationEnum</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Not calling it ValidationType to avoid confusion for now with DataValidationConstraint.ValidationType.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#DataValidationEvaluator(org.apache.poi.ss.usermodel.Workbook, org.apache.poi.ss.formula.WorkbookEvaluatorProvider)">DataValidationEvaluator</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;wb,
+                        <A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluatorProvider.html" title="interface in org.apache.poi.ss.formula">WorkbookEvaluatorProvider</A>&nbsp;provider)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the same formula evaluation context used for other operations, so cell value
+ changes are automatically noticed</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#clearAllCachedValues()">clearAllCachedValues</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Call this whenever validation structures change,
+ so future results stay in sync with the Workbook state.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.DataValidationContext.html" title="class in org.apache.poi.ss.formula">DataValidationEvaluator.DataValidationContext</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#getValidationContextForCell(org.apache.poi.ss.util.CellReference)">getValidationContextForCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Finds and returns the <A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.DataValidationContext.html" title="class in org.apache.poi.ss.formula"><CODE>DataValidationEvaluator.DataValidationContext</CODE></A> for the cell, if there is
+ one.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html" title="interface in org.apache.poi.ss.usermodel">DataValidation</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#getValidationForCell(org.apache.poi.ss.util.CellReference)">getValidationForCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Finds and returns the <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html" title="interface in org.apache.poi.ss.usermodel"><CODE>DataValidation</CODE></A> for the cell, if there is
+ one.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#getValidationValuesForCell(org.apache.poi.ss.util.CellReference)">getValidationValuesForCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If <A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#getValidationForCell(org.apache.poi.ss.util.CellReference)"><CODE>getValidationForCell(CellReference)</CODE></A> returns an instance, and the
+ <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.ValidationType.html" title="class in org.apache.poi.ss.usermodel"><CODE>DataValidationConstraint.ValidationType</CODE></A> is <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.ValidationType.html#LIST"><CODE>DataValidationConstraint.ValidationType.LIST</CODE></A>, return the valid
+ values, whether they are from a static list or cell range.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#getValidationValuesForConstraint(org.apache.poi.ss.formula.DataValidationEvaluator.DataValidationContext)">getValidationValuesForConstraint</A></B>(<A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.DataValidationContext.html" title="class in org.apache.poi.ss.formula">DataValidationEvaluator.DataValidationContext</A>&nbsp;context)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static so enums can reference it without creating a whole instance</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html" title="class in org.apache.poi.ss.formula">WorkbookEvaluator</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#getWorkbookEvaluator()">getWorkbookEvaluator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#isType(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.CellType)">isType</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+       <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A>&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note that this assumes the cell cached value is up to date and in sync with data edits</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#isValidCell(org.apache.poi.ss.util.CellReference)">isValidCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;cellRef)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the validation returned by <A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#getValidationForCell(org.apache.poi.ss.util.CellReference)"><CODE>getValidationForCell(CellReference)</CODE></A> if you
+ want the error display details.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DataValidationEvaluator(org.apache.poi.ss.usermodel.Workbook, org.apache.poi.ss.formula.WorkbookEvaluatorProvider)"><!-- --></A><H3>
+DataValidationEvaluator</H3>
+<PRE>
+public <B>DataValidationEvaluator</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;wb,
+                               <A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluatorProvider.html" title="interface in org.apache.poi.ss.formula">WorkbookEvaluatorProvider</A>&nbsp;provider)</PRE>
+<DL>
+<DD>Use the same formula evaluation context used for other operations, so cell value
+ changes are automatically noticed
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>wb</CODE> - the workbook this operates on<DD><CODE>provider</CODE> - provider for formula evaluation</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getWorkbookEvaluator()"><!-- --></A><H3>
+getWorkbookEvaluator</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html" title="class in org.apache.poi.ss.formula">WorkbookEvaluator</A> <B>getWorkbookEvaluator</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>evaluator</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clearAllCachedValues()"><!-- --></A><H3>
+clearAllCachedValues</H3>
+<PRE>
+public void <B>clearAllCachedValues</B>()</PRE>
+<DL>
+<DD>Call this whenever validation structures change,
+ so future results stay in sync with the Workbook state.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getValidationForCell(org.apache.poi.ss.util.CellReference)"><!-- --></A><H3>
+getValidationForCell</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html" title="interface in org.apache.poi.ss.usermodel">DataValidation</A> <B>getValidationForCell</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Finds and returns the <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html" title="interface in org.apache.poi.ss.usermodel"><CODE>DataValidation</CODE></A> for the cell, if there is
+ one. Lookup is based on the first match from
+ <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html#getRegions()"><CODE>DataValidation.getRegions()</CODE></A> for the cell's sheet. DataValidation
+ regions must be in the same sheet as the DataValidation. Allowed values
+ expressions may reference other sheets, however.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - reference to check - use this in case the cell does not actually exist yet
+<DT><B>Returns:</B><DD>the DataValidation applicable to the given cell, or null if no
+         validation applies</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getValidationContextForCell(org.apache.poi.ss.util.CellReference)"><!-- --></A><H3>
+getValidationContextForCell</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.DataValidationContext.html" title="class in org.apache.poi.ss.formula">DataValidationEvaluator.DataValidationContext</A> <B>getValidationContextForCell</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Finds and returns the <A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.DataValidationContext.html" title="class in org.apache.poi.ss.formula"><CODE>DataValidationEvaluator.DataValidationContext</CODE></A> for the cell, if there is
+ one. Lookup is based on the first match from
+ <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html#getRegions()"><CODE>DataValidation.getRegions()</CODE></A> for the cell's sheet. DataValidation
+ regions must be in the same sheet as the DataValidation. Allowed values
+ expressions may reference other sheets, however.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - reference to check
+<DT><B>Returns:</B><DD>the DataValidationContext applicable to the given cell, or null if no
+         validation applies</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getValidationValuesForCell(org.apache.poi.ss.util.CellReference)"><!-- --></A><H3>
+getValidationValuesForCell</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&gt; <B>getValidationValuesForCell</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;cell)</PRE>
+<DL>
+<DD>If <A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#getValidationForCell(org.apache.poi.ss.util.CellReference)"><CODE>getValidationForCell(CellReference)</CODE></A> returns an instance, and the
+ <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.ValidationType.html" title="class in org.apache.poi.ss.usermodel"><CODE>DataValidationConstraint.ValidationType</CODE></A> is <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.ValidationType.html#LIST"><CODE>DataValidationConstraint.ValidationType.LIST</CODE></A>, return the valid
+ values, whether they are from a static list or cell range.
+ <p>
+ For all other validation types, or no validation at all, this method
+ returns null.
+ <p>
+ This method could throw an exception if the validation type is not LIST,
+ but since this method is mostly useful in UI contexts, null seems the
+ easier path.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - reference to check - use this in case the cell does not actually exist yet
+<DT><B>Returns:</B><DD>returns an unmodifiable <CODE>List</CODE> of <A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval"><CODE>ValueEval</CODE></A>s if applicable, or
+         null</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getValidationValuesForConstraint(org.apache.poi.ss.formula.DataValidationEvaluator.DataValidationContext)"><!-- --></A><H3>
+getValidationValuesForConstraint</H3>
+<PRE>
+protected static java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&gt; <B>getValidationValuesForConstraint</B>(<A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.DataValidationContext.html" title="class in org.apache.poi.ss.formula">DataValidationEvaluator.DataValidationContext</A>&nbsp;context)</PRE>
+<DL>
+<DD>static so enums can reference it without creating a whole instance
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>returns an unmodifiable <CODE>List</CODE> of <A HREF="../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval"><CODE>ValueEval</CODE></A>s, which may be empty</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isValidCell(org.apache.poi.ss.util.CellReference)"><!-- --></A><H3>
+isValidCell</H3>
+<PRE>
+public boolean <B>isValidCell</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;cellRef)</PRE>
+<DL>
+<DD>Use the validation returned by <A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html#getValidationForCell(org.apache.poi.ss.util.CellReference)"><CODE>getValidationForCell(CellReference)</CODE></A> if you
+ want the error display details. This is the validation checked by this
+ method, which attempts to replicate Excel's data validation rules.
+ <p>
+ Note that to properly apply some validations, care must be taken to
+ offset the base validation formula by the relative position of the
+ current cell, or the wrong value is checked.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cellRef</CODE> - The reference of the cell to evaluate
+<DT><B>Returns:</B><DD>true if the cell has no validation or the cell value passes the
+         defined validation, false if it fails</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isType(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.CellType)"><!-- --></A><H3>
+isType</H3>
+<PRE>
+public static boolean <B>isType</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                             <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A>&nbsp;type)</PRE>
+<DL>
+<DD>Note that this assumes the cell cached value is up to date and in sync with data edits
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - <DD><CODE>type</CODE> - 
+<DT><B>Returns:</B><DD>true if the cell or cached cell formula result type match the given type</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html" title="class in org.apache.poi.ss.formula"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.DataValidationContext.html" title="class in org.apache.poi.ss.formula"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/formula/DataValidationEvaluator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DataValidationEvaluator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

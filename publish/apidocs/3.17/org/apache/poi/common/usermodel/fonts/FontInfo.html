@@ -1,0 +1,410 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+FontInfo (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="FontInfo (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontGroup.FontGroupRange.html" title="class in org.apache.poi.common.usermodel.fonts"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontPitch.html" title="enum in org.apache.poi.common.usermodel.fonts"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/common/usermodel/fonts/FontInfo.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="FontInfo.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.common.usermodel.fonts</FONT>
+<BR>
+Interface FontInfo</H2>
+<HR>
+<DL>
+<DT><PRE>public interface <B>FontInfo</B></DL>
+</PRE>
+
+<P>
+A FontInfo object holds information about a font configuration.
+ It is roughly an equivalent to the LOGFONT structure in Windows GDI.<p>
+
+ If an implementation doesn't provide a property, the getter will return <code>null</code> -
+ if the value is unset, a default value will be returned.<p>
+
+ Setting a unsupported property results in an <CODE>UnsupportedOperationException</CODE>.
+<P>
+
+<P>
+<DL>
+<DT><B>Since:</B></DT>
+  <DD>POI 3.17-beta2</DD>
+<DT><B>See Also:</B><DD><a href="https://msdn.microsoft.com/en-us/library/dd145037.aspx">LOGFONT structure</a></DL>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontCharset.html" title="enum in org.apache.poi.common.usermodel.fonts">FontCharset</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html#getCharset()">getCharset</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontFamily.html" title="enum in org.apache.poi.common.usermodel.fonts">FontFamily</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html#getFamily()">getFamily</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Integer</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html#getIndex()">getIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the index within the collection of Font objects</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontPitch.html" title="enum in org.apache.poi.common.usermodel.fonts">FontPitch</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html#getPitch()">getPitch</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html#getTypeface()">getTypeface</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html#setCharset(org.apache.poi.common.usermodel.fonts.FontCharset)">setCharset</A></B>(<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontCharset.html" title="enum in org.apache.poi.common.usermodel.fonts">FontCharset</A>&nbsp;charset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the charset</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html#setFamily(org.apache.poi.common.usermodel.fonts.FontFamily)">setFamily</A></B>(<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontFamily.html" title="enum in org.apache.poi.common.usermodel.fonts">FontFamily</A>&nbsp;family)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the font family class</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html#setIndex(int)">setIndex</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the index within the collection of Font objects</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html#setPitch(org.apache.poi.common.usermodel.fonts.FontPitch)">setPitch</A></B>(<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontPitch.html" title="enum in org.apache.poi.common.usermodel.fonts">FontPitch</A>&nbsp;pitch)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the font pitch</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontInfo.html#setTypeface(java.lang.String)">setTypeface</A></B>(java.lang.String&nbsp;typeface)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the font name</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getIndex()"><!-- --></A><H3>
+getIndex</H3>
+<PRE>
+java.lang.Integer <B>getIndex</B>()</PRE>
+<DL>
+<DD>Get the index within the collection of Font objects
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>unique index number of the underlying record this Font represents
+   (probably you don't care unless you're comparing which one is which)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setIndex(int)"><!-- --></A><H3>
+setIndex</H3>
+<PRE>
+void <B>setIndex</B>(int&nbsp;index)</PRE>
+<DL>
+<DD>Sets the index within the collection of Font objects
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>index</CODE> - the index within the collection of Font objects
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.UnsupportedOperationException</CODE> - if unsupported</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTypeface()"><!-- --></A><H3>
+getTypeface</H3>
+<PRE>
+java.lang.String <B>getTypeface</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the full name of the font, i.e. font family + type face</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTypeface(java.lang.String)"><!-- --></A><H3>
+setTypeface</H3>
+<PRE>
+void <B>setTypeface</B>(java.lang.String&nbsp;typeface)</PRE>
+<DL>
+<DD>Sets the font name
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>typeface</CODE> - the full name of the font, when <code>null</code> removes the font definition -
+    removal is implementation specific</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCharset()"><!-- --></A><H3>
+getCharset</H3>
+<PRE>
+<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontCharset.html" title="enum in org.apache.poi.common.usermodel.fonts">FontCharset</A> <B>getCharset</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the font charset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCharset(org.apache.poi.common.usermodel.fonts.FontCharset)"><!-- --></A><H3>
+setCharset</H3>
+<PRE>
+void <B>setCharset</B>(<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontCharset.html" title="enum in org.apache.poi.common.usermodel.fonts">FontCharset</A>&nbsp;charset)</PRE>
+<DL>
+<DD>Sets the charset
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>charset</CODE> - the charset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFamily()"><!-- --></A><H3>
+getFamily</H3>
+<PRE>
+<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontFamily.html" title="enum in org.apache.poi.common.usermodel.fonts">FontFamily</A> <B>getFamily</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the family class</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFamily(org.apache.poi.common.usermodel.fonts.FontFamily)"><!-- --></A><H3>
+setFamily</H3>
+<PRE>
+void <B>setFamily</B>(<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontFamily.html" title="enum in org.apache.poi.common.usermodel.fonts">FontFamily</A>&nbsp;family)</PRE>
+<DL>
+<DD>Sets the font family class
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>family</CODE> - the font family class</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPitch()"><!-- --></A><H3>
+getPitch</H3>
+<PRE>
+<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontPitch.html" title="enum in org.apache.poi.common.usermodel.fonts">FontPitch</A> <B>getPitch</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the font pitch or <code>null</code> if unsupported</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPitch(org.apache.poi.common.usermodel.fonts.FontPitch)"><!-- --></A><H3>
+setPitch</H3>
+<PRE>
+void <B>setPitch</B>(<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontPitch.html" title="enum in org.apache.poi.common.usermodel.fonts">FontPitch</A>&nbsp;pitch)</PRE>
+<DL>
+<DD>Set the font pitch
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pitch</CODE> - the font pitch
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.UnsupportedOperationException</CODE> - if unsupported</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontGroup.FontGroupRange.html" title="class in org.apache.poi.common.usermodel.fonts"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/common/usermodel/fonts/FontPitch.html" title="enum in org.apache.poi.common.usermodel.fonts"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/common/usermodel/fonts/FontInfo.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="FontInfo.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

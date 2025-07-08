@@ -1,0 +1,434 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+CellRangeUtil (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="CellRangeUtil (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressList.html" title="class in org.apache.poi.ss.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/util/CellRangeUtil.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CellRangeUtil.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.util</FONT>
+<BR>
+Class CellRangeUtil</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.util.CellRangeUtil</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>CellRangeUtil</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Utility class that builds on <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddress</CODE></A>
+ 
+ Portions of this class may be moved to <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressBase.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddressBase</CODE></A>
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#ENCLOSES">ENCLOSES</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;first range encloses or is equal to the second</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#INSIDE">INSIDE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;first range is within the second range</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#NO_INTERSECTION">NO_INTERSECTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#OVERLAP">OVERLAP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#contains(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.util.CellRangeAddress)">contains</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crA,
+         <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crB)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check if cell range A contains cell range B (B <= A)
+ 
+ TODO: move this into <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressBase.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddressBase</CODE></A></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#createEnclosingCellRange(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.util.CellRangeAddress)">createEnclosingCellRange</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crA,
+                         <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crB)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an enclosing CellRange for the two cell ranges.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#hasExactSharedBorder(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.util.CellRangeAddress)">hasExactSharedBorder</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crA,
+                     <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crB)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check if the two cell ranges have a shared border.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#intersect(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.util.CellRangeAddress)">intersect</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crA,
+          <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crB)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the type of intersection between two cell ranges</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#mergeCellRanges(org.apache.poi.ss.util.CellRangeAddress[])">mergeCellRanges</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>[]&nbsp;cellRanges)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Do all possible cell merges between cells of the list so that:<br>
+ 
+   if a cell range is completely inside of another cell range, it gets removed from the list
+   if two cells have a shared border, merge them into one bigger cell range
+ </TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="NO_INTERSECTION"><!-- --></A><H3>
+NO_INTERSECTION</H3>
+<PRE>
+public static final int <B>NO_INTERSECTION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellRangeUtil.NO_INTERSECTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="OVERLAP"><!-- --></A><H3>
+OVERLAP</H3>
+<PRE>
+public static final int <B>OVERLAP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellRangeUtil.OVERLAP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSIDE"><!-- --></A><H3>
+INSIDE</H3>
+<PRE>
+public static final int <B>INSIDE</B></PRE>
+<DL>
+<DD>first range is within the second range
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellRangeUtil.INSIDE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENCLOSES"><!-- --></A><H3>
+ENCLOSES</H3>
+<PRE>
+public static final int <B>ENCLOSES</B></PRE>
+<DL>
+<DD>first range encloses or is equal to the second
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.util.CellRangeUtil.ENCLOSES">Constant Field Values</A></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="intersect(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.util.CellRangeAddress)"><!-- --></A><H3>
+intersect</H3>
+<PRE>
+public static int <B>intersect</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crA,
+                            <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crB)</PRE>
+<DL>
+<DD>Get the type of intersection between two cell ranges
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>crB</CODE> - - the specified range
+<DT><B>Returns:</B><DD>code which reflects how the specified range is related to this range.<br>
+ Possible return codes are:
+ <ul>
+     <li><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#NO_INTERSECTION"><CODE>NO_INTERSECTION</CODE></A> - the specified range is outside of this range;</li> 
+     <li><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#OVERLAP"><CODE>OVERLAP</CODE></A> - both ranges partially overlap</li>
+     <li><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#INSIDE"><CODE>INSIDE</CODE></A> - the specified range is inside of this one</li>
+     <li><A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html#ENCLOSES"><CODE>ENCLOSES</CODE></A> - the specified range encloses (possibly exactly the same as) this range</li>
+ </ul><DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressBase.html#intersects(org.apache.poi.ss.util.CellRangeAddressBase)"><CODE>CellRangeAddressBase.intersects(CellRangeAddressBase)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="mergeCellRanges(org.apache.poi.ss.util.CellRangeAddress[])"><!-- --></A><H3>
+mergeCellRanges</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>[] <B>mergeCellRanges</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>[]&nbsp;cellRanges)</PRE>
+<DL>
+<DD>Do all possible cell merges between cells of the list so that:<br>
+ <ul>
+   <li>if a cell range is completely inside of another cell range, it gets removed from the list</li>
+   <li>if two cells have a shared border, merge them into one bigger cell range</li>
+ </ul>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cellRanges</CODE> - the ranges to merge
+<DT><B>Returns:</B><DD>list of merged cell ranges</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="contains(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.util.CellRangeAddress)"><!-- --></A><H3>
+contains</H3>
+<PRE>
+public static boolean <B>contains</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crA,
+                               <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crB)</PRE>
+<DL>
+<DD>Check if cell range A contains cell range B (B <= A)
+ 
+ TODO: move this into <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressBase.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddressBase</CODE></A>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>crA</CODE> - cell range A<DD><CODE>crB</CODE> - cell range B
+<DT><B>Returns:</B><DD>true if cell range A contains cell range B</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hasExactSharedBorder(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.util.CellRangeAddress)"><!-- --></A><H3>
+hasExactSharedBorder</H3>
+<PRE>
+public static boolean <B>hasExactSharedBorder</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crA,
+                                           <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crB)</PRE>
+<DL>
+<DD>Check if the two cell ranges have a shared border.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if the ranges have a complete shared border (i.e.
+ the two ranges together make a simple rectangular region.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createEnclosingCellRange(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.util.CellRangeAddress)"><!-- --></A><H3>
+createEnclosingCellRange</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A> <B>createEnclosingCellRange</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crA,
+                                                        <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;crB)</PRE>
+<DL>
+<DD>Create an enclosing CellRange for the two cell ranges.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>enclosing CellRange</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressList.html" title="class in org.apache.poi.ss.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/util/CellRangeUtil.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CellRangeUtil.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

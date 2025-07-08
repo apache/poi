@@ -1,0 +1,1057 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+NumericFunction (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="NumericFunction (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Npv.html" title="class in org.apache.poi.ss.formula.functions"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.OneArg.html" title="class in org.apache.poi.ss.formula.functions"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/functions/NumericFunction.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="NumericFunction.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.formula.functions</FONT>
+<BR>
+Class NumericFunction</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.formula.functions.NumericFunction</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></DD>
+</DL>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../../org/apache/poi/ss/formula/functions/IPMT.html" title="class in org.apache.poi.ss.formula.functions">IPMT</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/functions/PPMT.html" title="class in org.apache.poi.ss.formula.functions">PPMT</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public abstract class <B>NumericFunction</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.OneArg.html" title="class in org.apache.poi.ss.formula.functions">NumericFunction.OneArg</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.TwoArg.html" title="class in org.apache.poi.ss.formula.functions">NumericFunction.TwoArg</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#ABS">ABS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#ACOS">ACOS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#ACOSH">ACOSH</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#ASIN">ASIN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#ASINH">ASINH</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#ATAN">ATAN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#ATAN2">ATAN2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#ATANH">ATANH</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#CEILING">CEILING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#COMBIN">COMBIN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#COS">COS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#COSH">COSH</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#DEGREES">DEGREES</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#DOLLAR">DOLLAR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#EXP">EXP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#FACT">FACT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#FLOOR">FLOOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#INT">INT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#LN">LN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#LOG">LOG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#LOG10">LOG10</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#MOD">MOD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#PI">PI</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#POISSON">POISSON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#POWER">POWER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#RADIANS">RADIANS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#RAND">RAND</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#ROUND">ROUND</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#ROUNDDOWN">ROUNDDOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#ROUNDUP">ROUNDUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#SIGN">SIGN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#SIN">SIN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#SINH">SINH</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#SQRT">SQRT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#TAN">TAN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#TANH">TANH</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#TRUNC">TRUNC</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#NumericFunction()">NumericFunction</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#checkValue(double)">checkValue</A></B>(double&nbsp;result)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected abstract &nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#eval(org.apache.poi.ss.formula.eval.ValueEval[], int, int)">eval</A></B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>[]&nbsp;args,
+     int&nbsp;srcCellRow,
+     int&nbsp;srcCellCol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#evaluate(org.apache.poi.ss.formula.eval.ValueEval[], int, int)">evaluate</A></B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>[]&nbsp;args,
+         int&nbsp;srcCellRow,
+         int&nbsp;srcCellCol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.html#singleOperandEvaluate(org.apache.poi.ss.formula.eval.ValueEval, int, int)">singleOperandEvaluate</A></B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;arg,
+                      int&nbsp;srcRowIndex,
+                      int&nbsp;srcColumnIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="ABS"><!-- --></A><H3>
+ABS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>ABS</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACOS"><!-- --></A><H3>
+ACOS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>ACOS</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACOSH"><!-- --></A><H3>
+ACOSH</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>ACOSH</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ASIN"><!-- --></A><H3>
+ASIN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>ASIN</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ASINH"><!-- --></A><H3>
+ASINH</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>ASINH</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ATAN"><!-- --></A><H3>
+ATAN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>ATAN</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ATANH"><!-- --></A><H3>
+ATANH</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>ATANH</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="COS"><!-- --></A><H3>
+COS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>COS</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="COSH"><!-- --></A><H3>
+COSH</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>COSH</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DEGREES"><!-- --></A><H3>
+DEGREES</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>DEGREES</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DOLLAR"><!-- --></A><H3>
+DOLLAR</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>DOLLAR</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="EXP"><!-- --></A><H3>
+EXP</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>EXP</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FACT"><!-- --></A><H3>
+FACT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>FACT</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="INT"><!-- --></A><H3>
+INT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>INT</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LN"><!-- --></A><H3>
+LN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>LN</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LOG10"><!-- --></A><H3>
+LOG10</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>LOG10</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RADIANS"><!-- --></A><H3>
+RADIANS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>RADIANS</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SIGN"><!-- --></A><H3>
+SIGN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>SIGN</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SIN"><!-- --></A><H3>
+SIN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>SIN</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SINH"><!-- --></A><H3>
+SINH</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>SINH</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SQRT"><!-- --></A><H3>
+SQRT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>SQRT</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="TAN"><!-- --></A><H3>
+TAN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>TAN</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="TANH"><!-- --></A><H3>
+TANH</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>TANH</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ATAN2"><!-- --></A><H3>
+ATAN2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>ATAN2</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CEILING"><!-- --></A><H3>
+CEILING</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>CEILING</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="COMBIN"><!-- --></A><H3>
+COMBIN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>COMBIN</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOOR"><!-- --></A><H3>
+FLOOR</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>FLOOR</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MOD"><!-- --></A><H3>
+MOD</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>MOD</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="POWER"><!-- --></A><H3>
+POWER</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>POWER</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ROUND"><!-- --></A><H3>
+ROUND</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>ROUND</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ROUNDDOWN"><!-- --></A><H3>
+ROUNDDOWN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>ROUNDDOWN</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ROUNDUP"><!-- --></A><H3>
+ROUNDUP</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>ROUNDUP</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="TRUNC"><!-- --></A><H3>
+TRUNC</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>TRUNC</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LOG"><!-- --></A><H3>
+LOG</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>LOG</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PI"><!-- --></A><H3>
+PI</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>PI</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RAND"><!-- --></A><H3>
+RAND</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>RAND</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="POISSON"><!-- --></A><H3>
+POISSON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A> <B>POISSON</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="NumericFunction()"><!-- --></A><H3>
+NumericFunction</H3>
+<PRE>
+public <B>NumericFunction</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="singleOperandEvaluate(org.apache.poi.ss.formula.eval.ValueEval, int, int)"><!-- --></A><H3>
+singleOperandEvaluate</H3>
+<PRE>
+protected static final double <B>singleOperandEvaluate</B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;arg,
+                                                    int&nbsp;srcRowIndex,
+                                                    int&nbsp;srcColumnIndex)
+                                             throws <A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="checkValue(double)"><!-- --></A><H3>
+checkValue</H3>
+<PRE>
+public static final void <B>checkValue</B>(double&nbsp;result)
+                             throws <A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></CODE> - (#NUM!) if <tt>result</tt> is <tt>NaN</> or <tt>Infinity</tt></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluate(org.apache.poi.ss.formula.eval.ValueEval[], int, int)"><!-- --></A><H3>
+evaluate</H3>
+<PRE>
+public final <A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A> <B>evaluate</B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>[]&nbsp;args,
+                                int&nbsp;srcCellRow,
+                                int&nbsp;srcCellCol)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html#evaluate(org.apache.poi.ss.formula.eval.ValueEval[], int, int)">evaluate</A></CODE> in interface <CODE><A HREF="../../../../../../org/apache/poi/ss/formula/functions/Function.html" title="interface in org.apache.poi.ss.formula.functions">Function</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>args</CODE> - the evaluated function arguments.  Empty values are represented with
+ <A HREF="../../../../../../org/apache/poi/ss/formula/eval/BlankEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>BlankEval</CODE></A> or <A HREF="../../../../../../org/apache/poi/ss/formula/eval/MissingArgEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>MissingArgEval</CODE></A>, never <code>null</code>.<DD><CODE>srcCellRow</CODE> - row index of the cell containing the formula under evaluation<DD><CODE>srcCellCol</CODE> - column index of the cell containing the formula under evaluation
+<DT><B>Returns:</B><DD>The evaluated result, possibly an <A HREF="../../../../../../org/apache/poi/ss/formula/eval/ErrorEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>ErrorEval</CODE></A>, never <code>null</code>.
+ <b>Note</b> - Excel uses the error code <i>#NUM!</i> instead of IEEE <i>NaN</i>, so when
+ numeric functions evaluate to <CODE>Double.NaN</CODE> be sure to translate the result to <A HREF="../../../../../../org/apache/poi/ss/formula/eval/ErrorEval.html#NUM_ERROR"><CODE>ErrorEval.NUM_ERROR</CODE></A>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="eval(org.apache.poi.ss.formula.eval.ValueEval[], int, int)"><!-- --></A><H3>
+eval</H3>
+<PRE>
+protected abstract double <B>eval</B>(<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>[]&nbsp;args,
+                               int&nbsp;srcCellRow,
+                               int&nbsp;srcCellCol)
+                        throws <A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/eval/EvaluationException.html" title="class in org.apache.poi.ss.formula.eval">EvaluationException</A></CODE></DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/Npv.html" title="class in org.apache.poi.ss.formula.functions"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/NumericFunction.OneArg.html" title="class in org.apache.poi.ss.formula.functions"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/functions/NumericFunction.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="NumericFunction.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

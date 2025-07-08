@@ -1,0 +1,1583 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+HSSFCell (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="HSSFCell (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFBorderFormatting.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFCell.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFCell.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.usermodel</FONT>
+<BR>
+Class HSSFCell</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.usermodel.HSSFCell</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>HSSFCell</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></DL>
+</PRE>
+
+<P>
+High level representation of a cell in a row of a spreadsheet.
+ Cells can be numeric, formula-based or string-based (text).  The cell type
+ specifies this.  String cells cannot contain numbers and numeric cells cannot
+ contain strings (at least according to our model).  Client apps should do the
+ conversions themselves.  Formula cells have the formula string, as well as
+ the formula result, which can be numeric or string.
+ <p>
+ Cells should have their number (0 based) before being added to a row.  Only
+ cells that have values should be added.
+ <p>
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#ENCODING_COMPRESSED_UNICODE">ENCODING_COMPRESSED_UNICODE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#ENCODING_UNCHANGED">ENCODING_UNCHANGED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#ENCODING_UTF_16">ENCODING_UTF_16</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#LAST_COLUMN_NUMBER">LAST_COLUMN_NUMBER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The maximum  number of columns in BIFF8</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_org.apache.poi.ss.usermodel.Cell"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface org.apache.poi.ss.usermodel.<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#CELL_TYPE_BLANK">CELL_TYPE_BLANK</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#CELL_TYPE_BOOLEAN">CELL_TYPE_BOOLEAN</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#CELL_TYPE_ERROR">CELL_TYPE_ERROR</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#CELL_TYPE_FORMULA">CELL_TYPE_FORMULA</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#CELL_TYPE_NUMERIC">CELL_TYPE_NUMERIC</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#CELL_TYPE_STRING">CELL_TYPE_STRING</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#HSSFCell(org.apache.poi.hssf.usermodel.HSSFWorkbook, org.apache.poi.hssf.usermodel.HSSFSheet, org.apache.poi.hssf.record.CellValueRecordInterface)">HSSFCell</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;book,
+         <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheet</A>&nbsp;sheet,
+         <A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&nbsp;cval)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an HSSFCell from a CellValueRecordInterface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#HSSFCell(org.apache.poi.hssf.usermodel.HSSFWorkbook, org.apache.poi.hssf.usermodel.HSSFSheet, int, short)">HSSFCell</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;book,
+         <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheet</A>&nbsp;sheet,
+         int&nbsp;row,
+         short&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates new Cell - Should only be called by HSSFRow.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#HSSFCell(org.apache.poi.hssf.usermodel.HSSFWorkbook, org.apache.poi.hssf.usermodel.HSSFSheet, int, short, org.apache.poi.ss.usermodel.CellType)">HSSFCell</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;book,
+         <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheet</A>&nbsp;sheet,
+         int&nbsp;row,
+         short&nbsp;col,
+         <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A>&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates new Cell - Should only be called by HSSFRow.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getAddress()">getAddress</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the address of this cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getArrayFormulaRange()">getArrayFormulaRange</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only valid for array formula cells</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getBooleanCellValue()">getBooleanCellValue</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the value of the cell as a boolean.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/model/InternalWorkbook.html" title="class in org.apache.poi.hssf.model">InternalWorkbook</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getBoundWorkbook()">getBoundWorkbook</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the Workbook that this Cell is bound to</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getCachedFormulaResultType()">getCachedFormulaResultType</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>3.15. Will return a <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>CellType</CODE></A> enum in the future.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getCachedFormulaResultTypeEnum()">getCachedFormulaResultTypeEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only valid for formula cells</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFComment.html" title="class in org.apache.poi.hssf.usermodel">HSSFComment</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getCellComment()">getCellComment</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns comment associated with this cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getCellFormula()">getCellFormula</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a formula for the cell, for example, <code>SUM(C4:E4)</code></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel">HSSFCellStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getCellStyle()">getCellStyle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the style for the cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getCellType()">getCellType</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>3.15. Will be return a <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>CellType</CODE></A> enum in the future.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getCellTypeEnum()">getCellTypeEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the cells type (numeric, formula or string)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getCellValueRecord()">getCellValueRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should only be used by HSSFSheet and friends.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getColumnIndex()">getColumnIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns column index of this cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Date</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getDateCellValue()">getDateCellValue</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the value of the cell as a date.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getErrorCellValue()">getErrorCellValue</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the value of the cell as an error code.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHyperlink.html" title="class in org.apache.poi.hssf.usermodel">HSSFHyperlink</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getHyperlink()">getHyperlink</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getNumericCellValue()">getNumericCellValue</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the value of the cell as a number.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html" title="class in org.apache.poi.hssf.usermodel">HSSFRichTextString</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getRichStringCellValue()">getRichStringCellValue</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the value of the cell as a string - for numeric cells we throw an exception.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html" title="class in org.apache.poi.hssf.usermodel">HSSFRow</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getRow()">getRow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the HSSFRow this cell belongs to</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getRowIndex()">getRowIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns row index of a row in the sheet that contains this cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheet</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getSheet()">getSheet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the HSSFSheet this cell belongs to</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#getStringCellValue()">getStringCellValue</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the value of the cell as a string - for numeric cells we throw an exception.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#isPartOfArrayFormulaGroup()">isPartOfArrayFormulaGroup</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#removeCellComment()">removeCellComment</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the comment for this cell, if
+  there is one.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#removeHyperlink()">removeHyperlink</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the hyperlink for this cell, if there is one.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setAsActiveCell()">setAsActiveCell</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets this cell as the active cell for the worksheet</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellComment(org.apache.poi.ss.usermodel.Comment)">setCellComment</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Comment.html" title="interface in org.apache.poi.ss.usermodel">Comment</A>&nbsp;comment)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Assign a comment to this cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellErrorValue(byte)">setCellErrorValue</A></B>(byte&nbsp;errorCode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellErrorValue(org.apache.poi.ss.usermodel.FormulaError)"><CODE>setCellErrorValue(FormulaError)</CODE></A> instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellErrorValue(org.apache.poi.ss.usermodel.FormulaError)">setCellErrorValue</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaError.html" title="enum in org.apache.poi.ss.usermodel">FormulaError</A>&nbsp;error)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set a error value for the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellFormula(java.lang.String)">setCellFormula</A></B>(java.lang.String&nbsp;formula)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets formula for this cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellStyle(org.apache.poi.ss.usermodel.CellStyle)">setCellStyle</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A>&nbsp;style)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the style for the cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellStyle(org.apache.poi.hssf.usermodel.HSSFCellStyle)">setCellStyle</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel">HSSFCellStyle</A>&nbsp;style)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellType(org.apache.poi.ss.usermodel.CellType)">setCellType</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A>&nbsp;cellType)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the cells type (numeric, formula or string).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellType(int)">setCellType</A></B>(int&nbsp;cellType)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellType(org.apache.poi.ss.usermodel.CellType)"><CODE>setCellType(CellType)</CODE></A> instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellValue(boolean)">setCellValue</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set a boolean value for the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellValue(java.util.Calendar)">setCellValue</A></B>(java.util.Calendar&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set a date value for the cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellValue(java.util.Date)">setCellValue</A></B>(java.util.Date&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set a date value for the cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellValue(double)">setCellValue</A></B>(double&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set a numeric value for the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellValue(org.apache.poi.ss.usermodel.RichTextString)">setCellValue</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set a string value for the cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellValue(java.lang.String)">setCellValue</A></B>(java.lang.String&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set a string value for the cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setHyperlink(org.apache.poi.ss.usermodel.Hyperlink)">setHyperlink</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Hyperlink.html" title="interface in org.apache.poi.ss.usermodel">Hyperlink</A>&nbsp;hyperlink)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Assign a hyperlink to this cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string representation of the cell
+
+ This method returns a simple representation,
+ anything more complex should be in user code, with
+ knowledge of the semantics of the sheet being processed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#updateCellNum(short)">updateCellNum</A></B>(short&nbsp;num)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Updates the cell record's idea of what
+  column it belongs in (0 based)</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="LAST_COLUMN_NUMBER"><!-- --></A><H3>
+LAST_COLUMN_NUMBER</H3>
+<PRE>
+public static final int <B>LAST_COLUMN_NUMBER</B></PRE>
+<DL>
+<DD>The maximum  number of columns in BIFF8
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ENCODING_UNCHANGED"><!-- --></A><H3>
+ENCODING_UNCHANGED</H3>
+<PRE>
+public static final short <B>ENCODING_UNCHANGED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFCell.ENCODING_UNCHANGED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENCODING_COMPRESSED_UNICODE"><!-- --></A><H3>
+ENCODING_COMPRESSED_UNICODE</H3>
+<PRE>
+public static final short <B>ENCODING_COMPRESSED_UNICODE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFCell.ENCODING_COMPRESSED_UNICODE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ENCODING_UTF_16"><!-- --></A><H3>
+ENCODING_UTF_16</H3>
+<PRE>
+public static final short <B>ENCODING_UTF_16</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.usermodel.HSSFCell.ENCODING_UTF_16">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="HSSFCell(org.apache.poi.hssf.usermodel.HSSFWorkbook, org.apache.poi.hssf.usermodel.HSSFSheet, int, short)"><!-- --></A><H3>
+HSSFCell</H3>
+<PRE>
+protected <B>HSSFCell</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;book,
+                   <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheet</A>&nbsp;sheet,
+                   int&nbsp;row,
+                   short&nbsp;col)</PRE>
+<DL>
+<DD>Creates new Cell - Should only be called by HSSFRow.  This creates a cell
+ from scratch.
+ <p>
+ When the cell is initially created it is set to <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#BLANK"><CODE>CellType.BLANK</CODE></A>. Cell types
+ can be changed/overwritten by calling setCellValue with the appropriate
+ type as a parameter although conversions from one type to another may be
+ prohibited.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>book</CODE> - - Workbook record of the workbook containing this cell<DD><CODE>sheet</CODE> - - Sheet record of the sheet containing this cell<DD><CODE>row</CODE> - - the row of this cell<DD><CODE>col</CODE> - - the column for this cell<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html#createCell(int)"><CODE>HSSFRow.createCell(int)</CODE></A></DL>
+</DL>
+<HR>
+
+<A NAME="HSSFCell(org.apache.poi.hssf.usermodel.HSSFWorkbook, org.apache.poi.hssf.usermodel.HSSFSheet, int, short, org.apache.poi.ss.usermodel.CellType)"><!-- --></A><H3>
+HSSFCell</H3>
+<PRE>
+protected <B>HSSFCell</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;book,
+                   <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheet</A>&nbsp;sheet,
+                   int&nbsp;row,
+                   short&nbsp;col,
+                   <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A>&nbsp;type)</PRE>
+<DL>
+<DD>Creates new Cell - Should only be called by HSSFRow.  This creates a cell
+ from scratch.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>book</CODE> - - Workbook record of the workbook containing this cell<DD><CODE>sheet</CODE> - - Sheet record of the sheet containing this cell<DD><CODE>row</CODE> - - the row of this cell<DD><CODE>col</CODE> - - the column for this cell<DD><CODE>type</CODE> - - Type of cell<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html#createCell(int, int)"><CODE>HSSFRow.createCell(int,int)</CODE></A></DL>
+</DL>
+<HR>
+
+<A NAME="HSSFCell(org.apache.poi.hssf.usermodel.HSSFWorkbook, org.apache.poi.hssf.usermodel.HSSFSheet, org.apache.poi.hssf.record.CellValueRecordInterface)"><!-- --></A><H3>
+HSSFCell</H3>
+<PRE>
+protected <B>HSSFCell</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;book,
+                   <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheet</A>&nbsp;sheet,
+                   <A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&nbsp;cval)</PRE>
+<DL>
+<DD>Creates an HSSFCell from a CellValueRecordInterface.  HSSFSheet uses this when
+ reading in cells from an existing sheet.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>book</CODE> - - Workbook record of the workbook containing this cell<DD><CODE>sheet</CODE> - - Sheet record of the sheet containing this cell<DD><CODE>cval</CODE> - - the Cell Value Record we wish to represent</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getSheet()"><!-- --></A><H3>
+getSheet</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheet</A> <B>getSheet</B>()</PRE>
+<DL>
+<DD>Returns the HSSFSheet this cell belongs to
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getSheet()">getSheet</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the HSSFSheet that owns this cell</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRow()"><!-- --></A><H3>
+getRow</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html" title="class in org.apache.poi.hssf.usermodel">HSSFRow</A> <B>getRow</B>()</PRE>
+<DL>
+<DD>Returns the HSSFRow this cell belongs to
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getRow()">getRow</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the HSSFRow that owns this cell</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBoundWorkbook()"><!-- --></A><H3>
+getBoundWorkbook</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/model/InternalWorkbook.html" title="class in org.apache.poi.hssf.model">InternalWorkbook</A> <B>getBoundWorkbook</B>()</PRE>
+<DL>
+<DD>Returns the Workbook that this Cell is bound to
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRowIndex()"><!-- --></A><H3>
+getRowIndex</H3>
+<PRE>
+public int <B>getRowIndex</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getRowIndex()">Cell</A></CODE></B></DD>
+<DD>Returns row index of a row in the sheet that contains this cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getRowIndex()">getRowIndex</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the (zero based) index of the row containing this cell</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="updateCellNum(short)"><!-- --></A><H3>
+updateCellNum</H3>
+<PRE>
+protected void <B>updateCellNum</B>(short&nbsp;num)</PRE>
+<DL>
+<DD>Updates the cell record's idea of what
+  column it belongs in (0 based)
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>num</CODE> - the new cell number</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColumnIndex()"><!-- --></A><H3>
+getColumnIndex</H3>
+<PRE>
+public int <B>getColumnIndex</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getColumnIndex()">Cell</A></CODE></B></DD>
+<DD>Returns column index of this cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getColumnIndex()">getColumnIndex</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>zero-based column index of a column in a sheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAddress()"><!-- --></A><H3>
+getAddress</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A> <B>getAddress</B>()</PRE>
+<DL>
+<DD>Gets the address of this cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getAddress()">getAddress</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>A1</code> style address of this cell</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellType(int)"><!-- --></A><H3>
+setCellType</H3>
+<PRE>
+public void <B>setCellType</B>(int&nbsp;cellType)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellType(org.apache.poi.ss.usermodel.CellType)"><CODE>setCellType(CellType)</CODE></A> instead.</I>
+<P>
+<DD>Set the cells type (numeric, formula or string).
+ If the cell currently contains a value, the value will
+  be converted to match the new type, if possible.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellType(int)">setCellType</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#NUMERIC"><CODE>CellType.NUMERIC</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#STRING"><CODE>CellType.STRING</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#FORMULA"><CODE>CellType.FORMULA</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#BLANK"><CODE>CellType.BLANK</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#BOOLEAN"><CODE>CellType.BOOLEAN</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#ERROR"><CODE>CellType.ERROR</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellType(org.apache.poi.ss.usermodel.CellType)"><!-- --></A><H3>
+setCellType</H3>
+<PRE>
+public void <B>setCellType</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A>&nbsp;cellType)</PRE>
+<DL>
+<DD>Set the cells type (numeric, formula or string).
+ If the cell currently contains a value, the value will
+  be converted to match the new type, if possible.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellType(org.apache.poi.ss.usermodel.CellType)">setCellType</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellType()"><!-- --></A><H3>
+getCellType</H3>
+<PRE>
+public int <B>getCellType</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>3.15. Will be return a <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>CellType</CODE></A> enum in the future.</I>
+<P>
+<DD>get the cells type (numeric, formula or string)
+ 
+ Will return <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>CellType</CODE></A> in a future version of POI.
+ For forwards compatibility, do not hard-code cell type literals in your code.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getCellType()">getCellType</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the cell type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellTypeEnum()"><!-- --></A><H3>
+getCellTypeEnum</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A> <B>getCellTypeEnum</B>()</PRE>
+<DL>
+<DD>get the cells type (numeric, formula or string)
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getCellTypeEnum()">getCellTypeEnum</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the cell type<DT><B>Since:</B></DT>
+  <DD>POI 3.15 beta 3
+ Will be deleted when we make the CellType enum transition. See bug 59791.</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellValue(double)"><!-- --></A><H3>
+setCellValue</H3>
+<PRE>
+public void <B>setCellValue</B>(double&nbsp;value)</PRE>
+<DL>
+<DD>set a numeric value for the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellValue(double)">setCellValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - the numeric value to set this cell to.  For formulas we'll set the
+        precalculated value, for numerics we'll set its value. For other types we
+        will change the cell to a numeric cell and set its value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellValue(java.util.Date)"><!-- --></A><H3>
+setCellValue</H3>
+<PRE>
+public void <B>setCellValue</B>(java.util.Date&nbsp;value)</PRE>
+<DL>
+<DD>set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
+ a date.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellValue(java.util.Date)">setCellValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - the date value to set this cell to.  For formulas we'll set the
+        precalculated value, for numerics we'll set its value. For other types we
+        will change the cell to a numeric cell and set its value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellValue(java.util.Calendar)"><!-- --></A><H3>
+setCellValue</H3>
+<PRE>
+public void <B>setCellValue</B>(java.util.Calendar&nbsp;value)</PRE>
+<DL>
+<DD>set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
+ a date.
+
+ This will set the cell value based on the Calendar's timezone. As Excel
+ does not support timezones this means that both 20:00+03:00 and
+ 20:00-03:00 will be reported as the same value (20:00) even that there
+ are 6 hours difference between the two times. This difference can be
+ preserved by using <code>setCellValue(value.getTime())</code> which will
+ automatically shift the times to the default timezone.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellValue(java.util.Calendar)">setCellValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - the date value to set this cell to.  For formulas we'll set the
+        precalculated value, for numerics we'll set its value. For othertypes we
+        will change the cell to a numeric cell and set its value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellValue(java.lang.String)"><!-- --></A><H3>
+setCellValue</H3>
+<PRE>
+public void <B>setCellValue</B>(java.lang.String&nbsp;value)</PRE>
+<DL>
+<DD>set a string value for the cell.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellValue(java.lang.String)">setCellValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - value to set the cell to.  For formulas we'll set the formula
+ cached string result, for String cells we'll set its value. For other types we will
+ change the cell to a string cell and set its value.
+ If value is null then we will change the cell to a Blank cell.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellValue(org.apache.poi.ss.usermodel.RichTextString)"><!-- --></A><H3>
+setCellValue</H3>
+<PRE>
+public void <B>setCellValue</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A>&nbsp;value)</PRE>
+<DL>
+<DD>Set a string value for the cell.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellValue(org.apache.poi.ss.usermodel.RichTextString)">setCellValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - value to set the cell to.  For formulas we'll set the formula
+ string, for String cells we'll set its value.  For other types we will
+ change the cell to a string cell and set its value.
+ If value is <code>null</code> then we will change the cell to a Blank cell.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellFormula(java.lang.String)"><!-- --></A><H3>
+setCellFormula</H3>
+<PRE>
+public void <B>setCellFormula</B>(java.lang.String&nbsp;formula)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellFormula(java.lang.String)">Cell</A></CODE></B></DD>
+<DD>Sets formula for this cell.
+ <p>
+ Note, this method only sets the formula string and does not calculate the formula value.
+ To set the precalculated value use <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellValue(double)"><CODE>Cell.setCellValue(double)</CODE></A> or <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellValue(java.lang.String)"><CODE>Cell.setCellValue(String)</CODE></A>
+ </p>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellFormula(java.lang.String)">setCellFormula</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>formula</CODE> - the formula to set, e.g. <code>"SUM(C4:E4)"</code>.
+  If the argument is <code>null</code> then the current formula is removed.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellFormula()"><!-- --></A><H3>
+getCellFormula</H3>
+<PRE>
+public java.lang.String <B>getCellFormula</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getCellFormula()">Cell</A></CODE></B></DD>
+<DD>Return a formula for the cell, for example, <code>SUM(C4:E4)</code>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getCellFormula()">getCellFormula</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a formula for the cell</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNumericCellValue()"><!-- --></A><H3>
+getNumericCellValue</H3>
+<PRE>
+public double <B>getNumericCellValue</B>()</PRE>
+<DL>
+<DD>Get the value of the cell as a number.
+ For strings we throw an exception.
+ For blank cells we return a 0.
+ See <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataFormatter.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFDataFormatter</CODE></A> for turning this
+  number into a string similar to that which
+  Excel would render this number as.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getNumericCellValue()">getNumericCellValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the value of the cell as a number<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html" title="class in org.apache.poi.ss.usermodel"><CODE>for turning this number into a string similar to that which Excel would render this number as.</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDateCellValue()"><!-- --></A><H3>
+getDateCellValue</H3>
+<PRE>
+public java.util.Date <B>getDateCellValue</B>()</PRE>
+<DL>
+<DD>Get the value of the cell as a date.
+ For strings we throw an exception.
+ For blank cells we return a null.
+ See <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataFormatter.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFDataFormatter</CODE></A> for formatting
+  this date into a string similar to how excel does.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getDateCellValue()">getDateCellValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the value of the cell as a date<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html" title="class in org.apache.poi.ss.usermodel"><CODE>for formatting  this date into a string similar to how excel does.</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStringCellValue()"><!-- --></A><H3>
+getStringCellValue</H3>
+<PRE>
+public java.lang.String <B>getStringCellValue</B>()</PRE>
+<DL>
+<DD>get the value of the cell as a string - for numeric cells we throw an exception.
+ For blank cells we return an empty string.
+ For formulaCells that are not string Formulas, we throw an exception
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getStringCellValue()">getStringCellValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the value of the cell as a string</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRichStringCellValue()"><!-- --></A><H3>
+getRichStringCellValue</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRichTextString.html" title="class in org.apache.poi.hssf.usermodel">HSSFRichTextString</A> <B>getRichStringCellValue</B>()</PRE>
+<DL>
+<DD>get the value of the cell as a string - for numeric cells we throw an exception.
+ For blank cells we return an empty string.
+ For formulaCells that are not string Formulas, we throw an exception
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getRichStringCellValue()">getRichStringCellValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the value of the cell as a XSSFRichTextString</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellValue(boolean)"><!-- --></A><H3>
+setCellValue</H3>
+<PRE>
+public void <B>setCellValue</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>set a boolean value for the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellValue(boolean)">setCellValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - the boolean value to set this cell to.  For formulas we'll set the
+        precalculated value, for booleans we'll set its value. For other types we
+        will change the cell to a boolean cell and set its value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellErrorValue(byte)"><!-- --></A><H3>
+setCellErrorValue</H3>
+<PRE>
+public void <B>setCellErrorValue</B>(byte&nbsp;errorCode)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellErrorValue(org.apache.poi.ss.usermodel.FormulaError)"><CODE>setCellErrorValue(FormulaError)</CODE></A> instead.</I>
+<P>
+<DD>set a error value for the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellErrorValue(byte)">setCellErrorValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>errorCode</CODE> - the error value to set this cell to.  For formulas we'll set the
+        precalculated value , for errors we'll set
+        its value. For other types we will change the cell to an error
+        cell and set its value.
+        For error code byte, see <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaError.html" title="enum in org.apache.poi.ss.usermodel"><CODE>FormulaError</CODE></A>.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaError.html" title="enum in org.apache.poi.ss.usermodel"><CODE>FormulaError</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellErrorValue(org.apache.poi.ss.usermodel.FormulaError)"><!-- --></A><H3>
+setCellErrorValue</H3>
+<PRE>
+public void <B>setCellErrorValue</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaError.html" title="enum in org.apache.poi.ss.usermodel">FormulaError</A>&nbsp;error)</PRE>
+<DL>
+<DD>set a error value for the cell
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>error</CODE> - the error value to set this cell to.  For formulas we'll set the
+        precalculated value , for errors we'll set
+        its value. For other types we will change the cell to an error
+        cell and set its value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBooleanCellValue()"><!-- --></A><H3>
+getBooleanCellValue</H3>
+<PRE>
+public boolean <B>getBooleanCellValue</B>()</PRE>
+<DL>
+<DD>get the value of the cell as a boolean.  For strings, numbers, and errors, we throw an exception.
+ For blank cells we return a false.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getBooleanCellValue()">getBooleanCellValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the value of the cell as a boolean</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getErrorCellValue()"><!-- --></A><H3>
+getErrorCellValue</H3>
+<PRE>
+public byte <B>getErrorCellValue</B>()</PRE>
+<DL>
+<DD>get the value of the cell as an error code.  For strings, numbers, and booleans, we throw an exception.
+ For blank cells we return a 0.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getErrorCellValue()">getErrorCellValue</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the value of the cell as an error code<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaError.html" title="enum in org.apache.poi.ss.usermodel"><CODE>for error codes</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellStyle(org.apache.poi.ss.usermodel.CellStyle)"><!-- --></A><H3>
+setCellStyle</H3>
+<PRE>
+public void <B>setCellStyle</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A>&nbsp;style)</PRE>
+<DL>
+<DD><p>Set the style for the cell.  The style should be an HSSFCellStyle created/retreived from
+ the HSSFWorkbook.</p>
+ 
+ <p>To change the style of a cell without affecting other cells that use the same style,
+ use <A HREF="../../../../../org/apache/poi/ss/util/CellUtil.html#setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, java.util.Map)"><CODE>CellUtil.setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, java.util.Map)</CODE></A></p>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellStyle(org.apache.poi.ss.usermodel.CellStyle)">setCellStyle</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>style</CODE> - reference contained in the workbook<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html#createCellStyle()"><CODE>HSSFWorkbook.createCellStyle()</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html#getCellStyleAt(int)"><CODE>HSSFWorkbook.getCellStyleAt(int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellStyle(org.apache.poi.hssf.usermodel.HSSFCellStyle)"><!-- --></A><H3>
+setCellStyle</H3>
+<PRE>
+public void <B>setCellStyle</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel">HSSFCellStyle</A>&nbsp;style)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellStyle()"><!-- --></A><H3>
+getCellStyle</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel">HSSFCellStyle</A> <B>getCellStyle</B>()</PRE>
+<DL>
+<DD>get the style for the cell.  This is a reference to a cell style contained in the workbook
+ object.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getCellStyle()">getCellStyle</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the cell's style. Always not-null. Default cell style has zero index and can be obtained as
+ <code>workbook.getCellStyleAt(0)</code><DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html#getCellStyleAt(int)"><CODE>HSSFWorkbook.getCellStyleAt(int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellValueRecord()"><!-- --></A><H3>
+getCellValueRecord</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A> <B>getCellValueRecord</B>()</PRE>
+<DL>
+<DD>Should only be used by HSSFSheet and friends.  Returns the low level CellValueRecordInterface record
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>CellValueRecordInterface representing the cell via the low level api.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAsActiveCell()"><!-- --></A><H3>
+setAsActiveCell</H3>
+<PRE>
+public void <B>setAsActiveCell</B>()</PRE>
+<DL>
+<DD>Sets this cell as the active cell for the worksheet
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setAsActiveCell()">setAsActiveCell</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD>Returns a string representation of the cell
+
+ This method returns a simple representation,
+ anything more complex should be in user code, with
+ knowledge of the semantics of the sheet being processed.
+
+ Formula cells return the formula string,
+ rather than the formula result.
+ Dates are displayed in dd-MMM-yyyy format
+ Errors are displayed as #ERR&lt;errIdx&gt;
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCellComment(org.apache.poi.ss.usermodel.Comment)"><!-- --></A><H3>
+setCellComment</H3>
+<PRE>
+public void <B>setCellComment</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Comment.html" title="interface in org.apache.poi.ss.usermodel">Comment</A>&nbsp;comment)</PRE>
+<DL>
+<DD>Assign a comment to this cell. If the supplied
+  comment is null, the comment for this cell
+  will be removed.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setCellComment(org.apache.poi.ss.usermodel.Comment)">setCellComment</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>comment</CODE> - comment associated with this cell</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellComment()"><!-- --></A><H3>
+getCellComment</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFComment.html" title="class in org.apache.poi.hssf.usermodel">HSSFComment</A> <B>getCellComment</B>()</PRE>
+<DL>
+<DD>Returns comment associated with this cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getCellComment()">getCellComment</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>comment associated with this cell</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeCellComment()"><!-- --></A><H3>
+removeCellComment</H3>
+<PRE>
+public void <B>removeCellComment</B>()</PRE>
+<DL>
+<DD>Removes the comment for this cell, if
+  there is one.
+ WARNING - some versions of excel will loose
+  all comments after performing this action!
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#removeCellComment()">removeCellComment</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHyperlink()"><!-- --></A><H3>
+getHyperlink</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHyperlink.html" title="class in org.apache.poi.hssf.usermodel">HSSFHyperlink</A> <B>getHyperlink</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getHyperlink()">getHyperlink</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>hyperlink associated with this cell or <code>null</code> if not found</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHyperlink(org.apache.poi.ss.usermodel.Hyperlink)"><!-- --></A><H3>
+setHyperlink</H3>
+<PRE>
+public void <B>setHyperlink</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Hyperlink.html" title="interface in org.apache.poi.ss.usermodel">Hyperlink</A>&nbsp;hyperlink)</PRE>
+<DL>
+<DD>Assign a hyperlink to this cell. If the supplied hyperlink is null, the
+ hyperlink for this cell will be removed.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#setHyperlink(org.apache.poi.ss.usermodel.Hyperlink)">setHyperlink</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hyperlink</CODE> - hyperlink associated with this cell</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeHyperlink()"><!-- --></A><H3>
+removeHyperlink</H3>
+<PRE>
+public void <B>removeHyperlink</B>()</PRE>
+<DL>
+<DD>Removes the hyperlink for this cell, if there is one.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#removeHyperlink()">removeHyperlink</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCachedFormulaResultType()"><!-- --></A><H3>
+getCachedFormulaResultType</H3>
+<PRE>
+public int <B>getCachedFormulaResultType</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>3.15. Will return a <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>CellType</CODE></A> enum in the future.</I>
+<P>
+<DD>Only valid for formula cells
+ 
+ Will return <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>CellType</CODE></A> in a future version of POI.
+ For forwards compatibility, do not hard-code cell type literals in your code.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getCachedFormulaResultType()">getCachedFormulaResultType</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>one of (<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#NUMERIC"><CODE>CellType.NUMERIC</CODE></A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#STRING"><CODE>CellType.STRING</CODE></A>,
+     <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#BOOLEAN"><CODE>CellType.BOOLEAN</CODE></A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#ERROR"><CODE>CellType.ERROR</CODE></A>) depending
+ on the cached value of the formula</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCachedFormulaResultTypeEnum()"><!-- --></A><H3>
+getCachedFormulaResultTypeEnum</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A> <B>getCachedFormulaResultTypeEnum</B>()</PRE>
+<DL>
+<DD>Only valid for formula cells
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getCachedFormulaResultTypeEnum()">getCachedFormulaResultTypeEnum</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>one of (<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#NUMERIC"><CODE>CellType.NUMERIC</CODE></A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#STRING"><CODE>CellType.STRING</CODE></A>,
+     <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#BOOLEAN"><CODE>CellType.BOOLEAN</CODE></A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#ERROR"><CODE>CellType.ERROR</CODE></A>) depending
+ on the cached value of the formula<DT><B>Since:</B></DT>
+  <DD>POI 3.15 beta 3
+ Will be deleted when we make the CellType enum transition. See bug 59791.</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getArrayFormulaRange()"><!-- --></A><H3>
+getArrayFormulaRange</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A> <B>getArrayFormulaRange</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getArrayFormulaRange()">Cell</A></CODE></B></DD>
+<DD>Only valid for array formula cells
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#getArrayFormulaRange()">getArrayFormulaRange</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>range of the array formula group that the cell belongs to.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isPartOfArrayFormulaGroup()"><!-- --></A><H3>
+isPartOfArrayFormulaGroup</H3>
+<PRE>
+public boolean <B>isPartOfArrayFormulaGroup</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html#isPartOfArrayFormulaGroup()">isPartOfArrayFormulaGroup</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if this cell is part of group of cells having a common array formula.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFBorderFormatting.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFCell.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFCell.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

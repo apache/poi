@@ -1,0 +1,418 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+ImageRenderer (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ImageRenderer (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawTextShape.html" title="class in org.apache.poi.sl.draw"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html" title="class in org.apache.poi.sl.draw"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/draw/ImageRenderer.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ImageRenderer.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.draw</FONT>
+<BR>
+Interface ImageRenderer</H2>
+<DL>
+<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../../../../../org/apache/poi/sl/draw/BitmapImageRenderer.html" title="class in org.apache.poi.sl.draw">BitmapImageRenderer</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>ImageRenderer</B></DL>
+</PRE>
+
+<P>
+Classes can implement this interfaces to support other formats, for
+ example, use Apache Batik to render WMF, PICT can be rendered using Apple QuickTime API for Java:
+
+ <pre>
+ <code>
+ public class MyImageRendener implements ImageRendener {
+     InputStream data;
+
+     public boolean drawImage(Graphics2D graphics,Rectangle2D anchor,Insets clip) {
+         // draw image
+       DataInputStream is = new DataInputStream(data);
+       org.apache.batik.transcoder.wmf.tosvg.WMFRecordStore wmfStore =
+               new org.apache.batik.transcoder.wmf.tosvg.WMFRecordStore();
+       try {
+           wmfStore.read(is);
+       } catch (IOException e){
+           return;
+       }
+
+       float scale = (float)anchor.width/wmfStore.getWidthPixels();
+
+       org.apache.batik.transcoder.wmf.tosvg.WMFPainter painter =
+               new org.apache.batik.transcoder.wmf.tosvg.WMFPainter(wmfStore, 0, 0, scale);
+       graphics.translate(anchor.x, anchor.y);
+       painter.paint(graphics);
+     }
+
+     public void loadImage(InputStream data, String contentType) throws IOException {
+         if ("image/wmf".equals(contentType)) {
+             this.data = data;
+             // use Apache Batik to handle WMF
+         } else {
+             super.loadImage(data,contentType);
+         }
+     }
+ }
+ </code>
+ </pre>
+
+ and then pass this class to your instance of java.awt.Graphics2D:
+
+ <pre>
+ <code>
+ graphics.setRenderingHint(Drawable.IMAGE_RENDERER, new MyImageRendener());
+ </code>
+ </pre>
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#drawImage(java.awt.Graphics2D, java.awt.geom.Rectangle2D)">drawImage</A></B>(java.awt.Graphics2D&nbsp;graphics,
+          java.awt.geom.Rectangle2D&nbsp;anchor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Render picture data into the supplied graphics</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#drawImage(java.awt.Graphics2D, java.awt.geom.Rectangle2D, java.awt.Insets)">drawImage</A></B>(java.awt.Graphics2D&nbsp;graphics,
+          java.awt.geom.Rectangle2D&nbsp;anchor,
+          java.awt.Insets&nbsp;clip)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Render picture data into the supplied graphics</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Dimension</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#getDimension()">getDimension</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.image.BufferedImage</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#getImage()">getImage</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.image.BufferedImage</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#getImage(java.awt.Dimension)">getImage</A></B>(java.awt.Dimension&nbsp;dim)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#loadImage(byte[], java.lang.String)">loadImage</A></B>(byte[]&nbsp;data,
+          java.lang.String&nbsp;contentType)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load and buffer the image</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#loadImage(java.io.InputStream, java.lang.String)">loadImage</A></B>(java.io.InputStream&nbsp;data,
+          java.lang.String&nbsp;contentType)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load and buffer the image</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html#setAlpha(double)">setAlpha</A></B>(double&nbsp;alpha)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="loadImage(java.io.InputStream, java.lang.String)"><!-- --></A><H3>
+loadImage</H3>
+<PRE>
+void <B>loadImage</B>(java.io.InputStream&nbsp;data,
+               java.lang.String&nbsp;contentType)
+               throws java.io.IOException</PRE>
+<DL>
+<DD>Load and buffer the image
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the raw image stream<DD><CODE>contentType</CODE> - the content type
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadImage(byte[], java.lang.String)"><!-- --></A><H3>
+loadImage</H3>
+<PRE>
+void <B>loadImage</B>(byte[]&nbsp;data,
+               java.lang.String&nbsp;contentType)
+               throws java.io.IOException</PRE>
+<DL>
+<DD>Load and buffer the image
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the raw image bytes<DD><CODE>contentType</CODE> - the content type
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDimension()"><!-- --></A><H3>
+getDimension</H3>
+<PRE>
+java.awt.Dimension <B>getDimension</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the dimension of the buffered image</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAlpha(double)"><!-- --></A><H3>
+setAlpha</H3>
+<PRE>
+void <B>setAlpha</B>(double&nbsp;alpha)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>alpha</CODE> - the alpha [0..1] to be added to the image (possibly already containing an alpha channel)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getImage()"><!-- --></A><H3>
+getImage</H3>
+<PRE>
+java.awt.image.BufferedImage <B>getImage</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the image as buffered image</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getImage(java.awt.Dimension)"><!-- --></A><H3>
+getImage</H3>
+<PRE>
+java.awt.image.BufferedImage <B>getImage</B>(java.awt.Dimension&nbsp;dim)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dim</CODE> - the dimension in pixels of the returned image
+<DT><B>Returns:</B><DD>the image as buffered image<DT><B>Since:</B></DT>
+  <DD>POI 3.15-beta2</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawImage(java.awt.Graphics2D, java.awt.geom.Rectangle2D)"><!-- --></A><H3>
+drawImage</H3>
+<PRE>
+boolean <B>drawImage</B>(java.awt.Graphics2D&nbsp;graphics,
+                  java.awt.geom.Rectangle2D&nbsp;anchor)</PRE>
+<DL>
+<DD>Render picture data into the supplied graphics
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if the picture data was successfully rendered</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawImage(java.awt.Graphics2D, java.awt.geom.Rectangle2D, java.awt.Insets)"><!-- --></A><H3>
+drawImage</H3>
+<PRE>
+boolean <B>drawImage</B>(java.awt.Graphics2D&nbsp;graphics,
+                  java.awt.geom.Rectangle2D&nbsp;anchor,
+                  java.awt.Insets&nbsp;clip)</PRE>
+<DL>
+<DD>Render picture data into the supplied graphics
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if the picture data was successfully rendered</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/DrawTextShape.html" title="class in org.apache.poi.sl.draw"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html" title="class in org.apache.poi.sl.draw"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/draw/ImageRenderer.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ImageRenderer.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

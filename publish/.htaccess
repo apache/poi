@@ -1,0 +1,36 @@
+# Redirect the older H##F pages to their new common locations
+RewriteEngine On
+RewriteRule ^hssf/(.*)$ http://poi.apache.org/components/spreadsheet/$1 [R=permanent]
+RewriteRule ^hslf/(.*)$ http://poi.apache.org/components/slideshow/$1 [R=permanent]
+RewriteRule ^hwpf/(.*)$ http://poi.apache.org/components/document/$1 [R=permanent]
+RewriteRule ^hdgf/(.*)$ http://poi.apache.org/components/diagram/$1 [R=permanent]
+# Redirect the medium-aged component pages to the new common locations
+RewriteRule ^spreadsheet/(.*)$ http://poi.apache.org/components/spreadsheet/$1 [R=permanent]
+RewriteRule ^slideshow/(.*)$   http://poi.apache.org/components/slideshow/$1 [R=permanent]
+RewriteRule ^document/(.*)$    http://poi.apache.org/components/document/$1 [R=permanent]
+RewriteRule ^diagram/(.*)$     http://poi.apache.org/components/diagram/$1 [R=permanent]
+# Redirects for commonly linked pages to their new locations
+RewriteRule ^faq.html$          /help/faq.html [R=permanent]
+RewriteRule ^mailinglists.html$ /help/index.html [R=permanent]
+RewriteRule ^logging.html$      /components/logging.html [R=permanent]
+RewriteRule ^overview.html$     /components/index.html [R=permanent]
+RewriteRule ^poi-jvm-languages.html$ /components/poi-jvm-languages.html [R=permanent]
+RewriteRule ^poi-ruby.html$     /components/poi-ruby.html [R=permanent]
+RewriteRule ^guidelines.html$   /devel/guidelines.html [R=permanent]
+RewriteRule ^howtobuild.html$   /devel/howtobuild.html [R=permanent]
+RewriteRule ^subversion.html$   /devel/subversion.html [R=permanent]
+# Redirects for the latest/dev JavaDocs to the new versioned location
+RewriteRule ^apidocs/org/(.*)$    /apidocs/dev/org/$1 [R=permanent]
+RewriteRule ^apidocs/(overview*)$ /apidocs/dev/$1 [R=permanent]
+
+# Security Headers
+Header set Strict-Transport-Security "max-age=31536000"
+# long term CSP header but not detailed enough
+Header set Content-Security-Policy "frame-src 'self'"
+# CSP header based on the default applied by ASF Infra team
+# Header set Content-Security-Policy "default-src 'self' data: blob: 'unsafe-inline' 'unsafe-eval' https://www.apachecon.com/ https://www.communityovercode.org/ https://*.apache.org/ https://apache.org/ https://*.scarf.sh/ ; script-src 'self' data: blob: 'unsafe-inline' 'unsafe-eval' https://www.apachecon.com/ https://www.communityovercode.org/ https://*.apache.org/ https://apache.org/ https://*.scarf.sh/ ; style-src 'self' data: blob: 'unsafe-inline' 'unsafe-eval' https://www.apachecon.com/ https://www.communityovercode.org/ https://*.apache.org/ https://apache.org/ https://*.scarf.sh/ ; frame-ancestors 'self'; frame-src 'self' data: blob: 'unsafe-inline' 'unsafe-eval' https://www.apachecon.com/ https://www.communityovercode.org/ https://*.apache.org/ https://apache.org/ https://*.scarf.sh/ ; worker-src 'self' data: blob:;"
+Header always set X-Frame-Options SAMEORIGIN
+Header set X-Content-Type-Options nosniff
+Header set X-XSS-Protection "1; mode=block"
+Header set Referrer-Policy: strict-origin
+

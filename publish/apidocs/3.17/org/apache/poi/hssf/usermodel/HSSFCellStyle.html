@@ -1,0 +1,2077 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+HSSFCellStyle (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="HSSFCellStyle (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFCellStyle.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFCellStyle.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.usermodel</FONT>
+<BR>
+Class HSSFCellStyle</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.usermodel.HSSFCellStyle</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>HSSFCellStyle</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></DL>
+</PRE>
+
+<P>
+High level representation of the style of a cell in a sheet of a workbook.
+<P>
+
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html#createCellStyle()"><CODE>HSSFWorkbook.createCellStyle()</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html#getCellStyleAt(int)"><CODE>HSSFWorkbook.getCellStyleAt(int)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html#setCellStyle(org.apache.poi.hssf.usermodel.HSSFCellStyle)"><CODE>HSSFCell.setCellStyle(HSSFCellStyle)</CODE></A></DL>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#HSSFCellStyle(short, org.apache.poi.hssf.record.ExtendedFormatRecord, org.apache.poi.hssf.usermodel.HSSFWorkbook)">HSSFCellStyle</A></B>(short&nbsp;index,
+              <A HREF="../../../../../org/apache/poi/hssf/record/ExtendedFormatRecord.html" title="class in org.apache.poi.hssf.record">ExtendedFormatRecord</A>&nbsp;rec,
+              <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates new HSSFCellStyle why would you want to do this??</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#HSSFCellStyle(short, org.apache.poi.hssf.record.ExtendedFormatRecord, org.apache.poi.hssf.model.InternalWorkbook)">HSSFCellStyle</A></B>(short&nbsp;index,
+              <A HREF="../../../../../org/apache/poi/hssf/record/ExtendedFormatRecord.html" title="class in org.apache.poi.hssf.record">ExtendedFormatRecord</A>&nbsp;rec,
+              <A HREF="../../../../../org/apache/poi/hssf/model/InternalWorkbook.html" title="class in org.apache.poi.hssf.model">InternalWorkbook</A>&nbsp;workbook)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#cloneStyleFrom(org.apache.poi.ss.usermodel.CellStyle)">cloneStyleFrom</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A>&nbsp;source)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clones all the style information from another
+  HSSFCellStyle, onto this one.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#cloneStyleFrom(org.apache.poi.hssf.usermodel.HSSFCellStyle)">cloneStyleFrom</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel">HSSFCellStyle</A>&nbsp;source)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#equals(java.lang.Object)">equals</A></B>(java.lang.Object&nbsp;obj)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getAlignment()">getAlignment</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getAlignmentEnum()"><CODE>getAlignmentEnum()</CODE></A> instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/HorizontalAlignment.html" title="enum in org.apache.poi.ss.usermodel">HorizontalAlignment</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getAlignmentEnum()">getAlignmentEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of horizontal alignment for the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderBottom()">getBorderBottom</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Will return a BorderStyle enum in the future. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderBottomEnum()"><CODE>getBorderBottomEnum()</CODE></A>.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderBottomEnum()">getBorderBottomEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the bottom border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderLeft()">getBorderLeft</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Will return a BorderStyle enum in the future. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderLeftEnum()"><CODE>getBorderLeftEnum()</CODE></A>.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderLeftEnum()">getBorderLeftEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the left border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderRight()">getBorderRight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Will return a BorderStyle enum in the future. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderRightEnum()"><CODE>getBorderRightEnum()</CODE></A>.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderRightEnum()">getBorderRightEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the right border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderTop()">getBorderTop</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15. Will return a BorderStyle enum in the future. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderTopEnum()"><CODE>getBorderTopEnum()</CODE></A>.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderTopEnum()">getBorderTopEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the top border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBottomBorderColor()">getBottomBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the left border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getDataFormat()">getDataFormat</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the index of the format</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getDataFormatString()">getDataFormatString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the contents of the format string, by looking up
+  the DataFormat against the bound workbook</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getDataFormatString(org.apache.poi.hssf.model.InternalWorkbook)">getDataFormatString</A></B>(<A HREF="../../../../../org/apache/poi/hssf/model/InternalWorkbook.html" title="class in org.apache.poi.hssf.model">InternalWorkbook</A>&nbsp;workbook)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the contents of the format string, by looking up
+  the DataFormat against the supplied low level workbook</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getDataFormatString(org.apache.poi.ss.usermodel.Workbook)">getDataFormatString</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;workbook)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the contents of the format string, by looking up
+  the DataFormat against the supplied workbook</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getFillBackgroundColor()">getFillBackgroundColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the background fill color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html" title="class in org.apache.poi.hssf.util">HSSFColor</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getFillBackgroundColorColor()">getFillBackgroundColorColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the color object representing the current
+  background fill, resolving indexes using
+  the supplied workbook.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getFillForegroundColor()">getFillForegroundColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the foreground fill color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html" title="class in org.apache.poi.hssf.util">HSSFColor</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getFillForegroundColorColor()">getFillForegroundColorColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the color object representing the current
+  foreground fill, resolving indexes using
+  the supplied workbook.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getFillPattern()">getFillPattern</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. This method will return <A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>FillPatternType</CODE></A> in the future. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setFillPattern(org.apache.poi.ss.usermodel.FillPatternType)"><CODE>setFillPattern(FillPatternType)</CODE></A> instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel">FillPatternType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getFillPatternEnum()">getFillPatternEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the fill pattern</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFont.html" title="class in org.apache.poi.hssf.usermodel">HSSFFont</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getFont(org.apache.poi.ss.usermodel.Workbook)">getFont</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;parentWorkbook)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gets the font for this style</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getFontIndex()">getFontIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gets the index of the font for this style</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getHidden()">getHidden</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether the cell's using this style are to be hidden</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getIndention()">getIndention</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the number of spaces to indent the text in the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getIndex()">getIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the index within the HSSFWorkbook (sequence within the collection of ExtnededFormat objects)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getLeftBorderColor()">getLeftBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the left border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getLocked()">getLocked</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether the cell's using this style are to be locked</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel">HSSFCellStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getParentStyle()">getParentStyle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the parent style for this cell style.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getQuotePrefixed()">getQuotePrefixed</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is "Quote Prefix" or "123 Prefix" enabled for the cell?</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getReadingOrder()">getReadingOrder</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the reading order, for RTL/LTR ordering of
+  the text.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getRightBorderColor()">getRightBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the left border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getRotation()">getRotation</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the degree of rotation for the text in the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getShrinkToFit()">getShrinkToFit</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should the Cell be auto-sized by Excel to shrink
+  it to fit if this text is too long?</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getTopBorderColor()">getTopBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the top border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getUserStyleName()">getUserStyleName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the name of the user defined style.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getVerticalAlignment()">getVerticalAlignment</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getVerticalAlignmentEnum()"><CODE>getVerticalAlignmentEnum()</CODE></A> instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel">VerticalAlignment</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getVerticalAlignmentEnum()">getVerticalAlignmentEnum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of vertical alignment for the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getWrapText()">getWrapText</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether the text should be wrapped</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#hashCode()">hashCode</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment)">setAlignment</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/HorizontalAlignment.html" title="enum in org.apache.poi.ss.usermodel">HorizontalAlignment</A>&nbsp;align)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of horizontal alignment for the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setBorderBottom(org.apache.poi.ss.usermodel.BorderStyle)">setBorderBottom</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the bottom border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle)">setBorderLeft</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the left border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setBorderRight(org.apache.poi.ss.usermodel.BorderStyle)">setBorderRight</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the right border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setBorderTop(org.apache.poi.ss.usermodel.BorderStyle)">setBorderTop</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the top border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setBottomBorderColor(short)">setBottomBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the bottom border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setDataFormat(short)">setDataFormat</A></B>(short&nbsp;fmt)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the data format (must be a valid format)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setFillBackgroundColor(short)">setFillBackgroundColor</A></B>(short&nbsp;bg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the background fill color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setFillForegroundColor(short)">setFillForegroundColor</A></B>(short&nbsp;bg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the foreground fill color
+ <i>Note: Ensure Foreground color is set prior to background color.</i></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setFillPattern(org.apache.poi.ss.usermodel.FillPatternType)">setFillPattern</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel">FillPatternType</A>&nbsp;fp)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setting to one fills the cell with the foreground color...</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setFont(org.apache.poi.ss.usermodel.Font)">setFont</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html" title="interface in org.apache.poi.ss.usermodel">Font</A>&nbsp;font)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the font for this style</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setFont(org.apache.poi.hssf.usermodel.HSSFFont)">setFont</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFont.html" title="class in org.apache.poi.hssf.usermodel">HSSFFont</A>&nbsp;font)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setHidden(boolean)">setHidden</A></B>(boolean&nbsp;hidden)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the cell's using this style to be hidden</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setIndention(short)">setIndention</A></B>(short&nbsp;indent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the number of spaces to indent the text in the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setLeftBorderColor(short)">setLeftBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the left border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setLocked(boolean)">setLocked</A></B>(boolean&nbsp;locked)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the cell's using this style to be locked</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setQuotePrefixed(boolean)">setQuotePrefixed</A></B>(boolean&nbsp;quotePrefix)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Turn on or off "Quote Prefix" or "123 Prefix" for the style,
+  which is used to tell Excel that the thing which looks like
+  a number or a formula shouldn't be treated as on.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setReadingOrder(short)">setReadingOrder</A></B>(short&nbsp;order)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the reading order, for RTL/LTR ordering of
+  the text.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setRightBorderColor(short)">setRightBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the right border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setRotation(short)">setRotation</A></B>(short&nbsp;rotation)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the degree of rotation for the text in the cell
+
+ Note: HSSF uses values from -90 to 90 degrees, whereas XSSF 
+ uses values from 0 to 180 degrees.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setShrinkToFit(boolean)">setShrinkToFit</A></B>(boolean&nbsp;shrinkToFit)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Controls if the Cell should be auto-sized
+  to shrink to fit if the text is too long</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setTopBorderColor(short)">setTopBorderColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the top border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setUserStyleName(java.lang.String)">setUserStyleName</A></B>(java.lang.String&nbsp;styleName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the name of the user defined style.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment)">setVerticalAlignment</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel">VerticalAlignment</A>&nbsp;align)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of vertical alignment for the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setWrapText(boolean)">setWrapText</A></B>(boolean&nbsp;wrapped)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether the text should be wrapped</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#verifyBelongsToWorkbook(org.apache.poi.hssf.usermodel.HSSFWorkbook)">verifyBelongsToWorkbook</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;wb)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Verifies that this style belongs to the supplied Workbook.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, finalize, getClass, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="HSSFCellStyle(short, org.apache.poi.hssf.record.ExtendedFormatRecord, org.apache.poi.hssf.usermodel.HSSFWorkbook)"><!-- --></A><H3>
+HSSFCellStyle</H3>
+<PRE>
+protected <B>HSSFCellStyle</B>(short&nbsp;index,
+                        <A HREF="../../../../../org/apache/poi/hssf/record/ExtendedFormatRecord.html" title="class in org.apache.poi.hssf.record">ExtendedFormatRecord</A>&nbsp;rec,
+                        <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook)</PRE>
+<DL>
+<DD>Creates new HSSFCellStyle why would you want to do this??
+<P>
+</DL>
+<HR>
+
+<A NAME="HSSFCellStyle(short, org.apache.poi.hssf.record.ExtendedFormatRecord, org.apache.poi.hssf.model.InternalWorkbook)"><!-- --></A><H3>
+HSSFCellStyle</H3>
+<PRE>
+protected <B>HSSFCellStyle</B>(short&nbsp;index,
+                        <A HREF="../../../../../org/apache/poi/hssf/record/ExtendedFormatRecord.html" title="class in org.apache.poi.hssf.record">ExtendedFormatRecord</A>&nbsp;rec,
+                        <A HREF="../../../../../org/apache/poi/hssf/model/InternalWorkbook.html" title="class in org.apache.poi.hssf.model">InternalWorkbook</A>&nbsp;workbook)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getIndex()"><!-- --></A><H3>
+getIndex</H3>
+<PRE>
+public short <B>getIndex</B>()</PRE>
+<DL>
+<DD>get the index within the HSSFWorkbook (sequence within the collection of ExtnededFormat objects)
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getIndex()">getIndex</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>unique index number of the underlying record this style represents (probably you don't care
+  unless you're comparing which one is which)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getParentStyle()"><!-- --></A><H3>
+getParentStyle</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel">HSSFCellStyle</A> <B>getParentStyle</B>()</PRE>
+<DL>
+<DD>Return the parent style for this cell style.
+ In most cases this will be null, but in a few
+  cases there'll be a fully defined parent.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDataFormat(short)"><!-- --></A><H3>
+setDataFormat</H3>
+<PRE>
+public void <B>setDataFormat</B>(short&nbsp;fmt)</PRE>
+<DL>
+<DD>set the data format (must be a valid format)
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setDataFormat(short)">setDataFormat</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataFormat.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFDataFormat</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataFormat()"><!-- --></A><H3>
+getDataFormat</H3>
+<PRE>
+public short <B>getDataFormat</B>()</PRE>
+<DL>
+<DD>get the index of the format
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getDataFormat()">getDataFormat</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataFormat.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFDataFormat</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataFormatString()"><!-- --></A><H3>
+getDataFormatString</H3>
+<PRE>
+public java.lang.String <B>getDataFormatString</B>()</PRE>
+<DL>
+<DD>Get the contents of the format string, by looking up
+  the DataFormat against the bound workbook
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getDataFormatString()">getDataFormatString</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the format string or "General" if not found<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataFormat.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFDataFormat</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataFormatString(org.apache.poi.ss.usermodel.Workbook)"><!-- --></A><H3>
+getDataFormatString</H3>
+<PRE>
+public java.lang.String <B>getDataFormatString</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;workbook)</PRE>
+<DL>
+<DD>Get the contents of the format string, by looking up
+  the DataFormat against the supplied workbook
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the format string or "General" if not found<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataFormat.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFDataFormat</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataFormatString(org.apache.poi.hssf.model.InternalWorkbook)"><!-- --></A><H3>
+getDataFormatString</H3>
+<PRE>
+public java.lang.String <B>getDataFormatString</B>(<A HREF="../../../../../org/apache/poi/hssf/model/InternalWorkbook.html" title="class in org.apache.poi.hssf.model">InternalWorkbook</A>&nbsp;workbook)</PRE>
+<DL>
+<DD>Get the contents of the format string, by looking up
+  the DataFormat against the supplied low level workbook
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataFormat.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFDataFormat</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFont(org.apache.poi.ss.usermodel.Font)"><!-- --></A><H3>
+setFont</H3>
+<PRE>
+public void <B>setFont</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html" title="interface in org.apache.poi.ss.usermodel">Font</A>&nbsp;font)</PRE>
+<DL>
+<DD>set the font for this style
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setFont(org.apache.poi.ss.usermodel.Font)">setFont</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>font</CODE> - a font object created or retrieved from the HSSFWorkbook object<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html#createFont()"><CODE>HSSFWorkbook.createFont()</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html#getFontAt(short)"><CODE>HSSFWorkbook.getFontAt(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFont(org.apache.poi.hssf.usermodel.HSSFFont)"><!-- --></A><H3>
+setFont</H3>
+<PRE>
+public void <B>setFont</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFont.html" title="class in org.apache.poi.hssf.usermodel">HSSFFont</A>&nbsp;font)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFontIndex()"><!-- --></A><H3>
+getFontIndex</H3>
+<PRE>
+public short <B>getFontIndex</B>()</PRE>
+<DL>
+<DD>gets the index of the font for this style
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFontIndex()">getFontIndex</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html#getFontAt(short)"><CODE>HSSFWorkbook.getFontAt(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFont(org.apache.poi.ss.usermodel.Workbook)"><!-- --></A><H3>
+getFont</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFont.html" title="class in org.apache.poi.hssf.usermodel">HSSFFont</A> <B>getFont</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;parentWorkbook)</PRE>
+<DL>
+<DD>gets the font for this style
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>parentWorkbook</CODE> - The HSSFWorkbook that this style belongs to<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getFontIndex()"><CODE>getFontIndex()</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html#getFontAt(short)"><CODE>HSSFWorkbook.getFontAt(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHidden(boolean)"><!-- --></A><H3>
+setHidden</H3>
+<PRE>
+public void <B>setHidden</B>(boolean&nbsp;hidden)</PRE>
+<DL>
+<DD>set the cell's using this style to be hidden
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setHidden(boolean)">setHidden</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hidden</CODE> - - whether the cell using this style should be hidden</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHidden()"><!-- --></A><H3>
+getHidden</H3>
+<PRE>
+public boolean <B>getHidden</B>()</PRE>
+<DL>
+<DD>get whether the cell's using this style are to be hidden
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getHidden()">getHidden</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>hidden - whether the cell using this style should be hidden</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLocked(boolean)"><!-- --></A><H3>
+setLocked</H3>
+<PRE>
+public void <B>setLocked</B>(boolean&nbsp;locked)</PRE>
+<DL>
+<DD>set the cell's using this style to be locked
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setLocked(boolean)">setLocked</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>locked</CODE> - - whether the cell using this style should be locked</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLocked()"><!-- --></A><H3>
+getLocked</H3>
+<PRE>
+public boolean <B>getLocked</B>()</PRE>
+<DL>
+<DD>get whether the cell's using this style are to be locked
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getLocked()">getLocked</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>hidden - whether the cell using this style should be locked</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setQuotePrefixed(boolean)"><!-- --></A><H3>
+setQuotePrefixed</H3>
+<PRE>
+public void <B>setQuotePrefixed</B>(boolean&nbsp;quotePrefix)</PRE>
+<DL>
+<DD>Turn on or off "Quote Prefix" or "123 Prefix" for the style,
+  which is used to tell Excel that the thing which looks like
+  a number or a formula shouldn't be treated as on.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setQuotePrefixed(boolean)">setQuotePrefixed</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getQuotePrefixed()"><!-- --></A><H3>
+getQuotePrefixed</H3>
+<PRE>
+public boolean <B>getQuotePrefixed</B>()</PRE>
+<DL>
+<DD>Is "Quote Prefix" or "123 Prefix" enabled for the cell?
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getQuotePrefixed()">getQuotePrefixed</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment)"><!-- --></A><H3>
+setAlignment</H3>
+<PRE>
+public void <B>setAlignment</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/HorizontalAlignment.html" title="enum in org.apache.poi.ss.usermodel">HorizontalAlignment</A>&nbsp;align)</PRE>
+<DL>
+<DD>set the type of horizontal alignment for the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment)">setAlignment</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>align</CODE> - - the type of alignment</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAlignment()"><!-- --></A><H3>
+getAlignment</H3>
+<PRE>
+<FONT SIZE="-1">@Deprecated
+</FONT>public short <B>getAlignment</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getAlignmentEnum()"><CODE>getAlignmentEnum()</CODE></A> instead.</I>
+<P>
+<DD>get the type of horizontal alignment for the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getAlignment()">getAlignment</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>align - the type of alignment</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAlignmentEnum()"><!-- --></A><H3>
+getAlignmentEnum</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/HorizontalAlignment.html" title="enum in org.apache.poi.ss.usermodel">HorizontalAlignment</A> <B>getAlignmentEnum</B>()</PRE>
+<DL>
+<DD>get the type of horizontal alignment for the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getAlignmentEnum()">getAlignmentEnum</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>align - the type of alignment</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setWrapText(boolean)"><!-- --></A><H3>
+setWrapText</H3>
+<PRE>
+public void <B>setWrapText</B>(boolean&nbsp;wrapped)</PRE>
+<DL>
+<DD>set whether the text should be wrapped
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setWrapText(boolean)">setWrapText</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>wrapped</CODE> - wrap text or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getWrapText()"><!-- --></A><H3>
+getWrapText</H3>
+<PRE>
+public boolean <B>getWrapText</B>()</PRE>
+<DL>
+<DD>get whether the text should be wrapped
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getWrapText()">getWrapText</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>wrap text or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment)"><!-- --></A><H3>
+setVerticalAlignment</H3>
+<PRE>
+public void <B>setVerticalAlignment</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel">VerticalAlignment</A>&nbsp;align)</PRE>
+<DL>
+<DD>set the type of vertical alignment for the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment)">setVerticalAlignment</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>align</CODE> - the type of alignment</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVerticalAlignment()"><!-- --></A><H3>
+getVerticalAlignment</H3>
+<PRE>
+<FONT SIZE="-1">@Deprecated
+</FONT>public short <B>getVerticalAlignment</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getVerticalAlignmentEnum()"><CODE>getVerticalAlignmentEnum()</CODE></A> instead.</I>
+<P>
+<DD>get the type of vertical alignment for the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getVerticalAlignment()">getVerticalAlignment</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>align the type of alignment<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel"><CODE>VerticalAlignment</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVerticalAlignmentEnum()"><!-- --></A><H3>
+getVerticalAlignmentEnum</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/VerticalAlignment.html" title="enum in org.apache.poi.ss.usermodel">VerticalAlignment</A> <B>getVerticalAlignmentEnum</B>()</PRE>
+<DL>
+<DD>get the type of vertical alignment for the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getVerticalAlignmentEnum()">getVerticalAlignmentEnum</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>align the type of alignment</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRotation(short)"><!-- --></A><H3>
+setRotation</H3>
+<PRE>
+public void <B>setRotation</B>(short&nbsp;rotation)</PRE>
+<DL>
+<DD>set the degree of rotation for the text in the cell
+
+ Note: HSSF uses values from -90 to 90 degrees, whereas XSSF 
+ uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges 
+ accordingly, however the corresponding getter is returning values in the range mandated by the current type
+ of Excel file-format that this CellStyle is applied to.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setRotation(short)">setRotation</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rotation</CODE> - degrees (between -90 and 90 degrees, of 0xff for vertical)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRotation()"><!-- --></A><H3>
+getRotation</H3>
+<PRE>
+public short <B>getRotation</B>()</PRE>
+<DL>
+<DD>get the degree of rotation for the text in the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getRotation()">getRotation</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>rotation degrees (between -90 and 90 degrees, or 0xff for vertical)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setIndention(short)"><!-- --></A><H3>
+setIndention</H3>
+<PRE>
+public void <B>setIndention</B>(short&nbsp;indent)</PRE>
+<DL>
+<DD>set the number of spaces to indent the text in the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setIndention(short)">setIndention</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>indent</CODE> - - number of spaces</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIndention()"><!-- --></A><H3>
+getIndention</H3>
+<PRE>
+public short <B>getIndention</B>()</PRE>
+<DL>
+<DD>get the number of spaces to indent the text in the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getIndention()">getIndention</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>indent - number of spaces</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderLeft</H3>
+<PRE>
+public void <B>setBorderLeft</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the left border of the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle)">setBorderLeft</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderLeft()"><!-- --></A><H3>
+getBorderLeft</H3>
+<PRE>
+<FONT SIZE="-1">@Deprecated
+</FONT>public short <B>getBorderLeft</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Will return a BorderStyle enum in the future. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderLeftEnum()"><CODE>getBorderLeftEnum()</CODE></A>.</I>
+<P>
+<DD>get the type of border to use for the left border of the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderLeft()">getBorderLeft</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderLeftEnum()"><!-- --></A><H3>
+getBorderLeftEnum</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderLeftEnum</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the left border of the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderLeftEnum()">getBorderLeftEnum</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderRight(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderRight</H3>
+<PRE>
+public void <B>setBorderRight</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the right border of the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setBorderRight(org.apache.poi.ss.usermodel.BorderStyle)">setBorderRight</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderRight()"><!-- --></A><H3>
+getBorderRight</H3>
+<PRE>
+<FONT SIZE="-1">@Deprecated
+</FONT>public short <B>getBorderRight</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Will return a BorderStyle enum in the future. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderRightEnum()"><CODE>getBorderRightEnum()</CODE></A>.</I>
+<P>
+<DD>get the type of border to use for the right border of the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderRight()">getBorderRight</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderRightEnum()"><!-- --></A><H3>
+getBorderRightEnum</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderRightEnum</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the right border of the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderRightEnum()">getBorderRightEnum</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderTop(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderTop</H3>
+<PRE>
+public void <B>setBorderTop</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the top border of the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setBorderTop(org.apache.poi.ss.usermodel.BorderStyle)">setBorderTop</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>Since:</B></DT>
+  <DD>POI 3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderTop()"><!-- --></A><H3>
+getBorderTop</H3>
+<PRE>
+<FONT SIZE="-1">@Deprecated
+</FONT>public short <B>getBorderTop</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Will return a BorderStyle enum in the future. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderTopEnum()"><CODE>getBorderTopEnum()</CODE></A>.</I>
+<P>
+<DD>get the type of border to use for the top border of the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderTop()">getBorderTop</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderTopEnum()"><!-- --></A><H3>
+getBorderTopEnum</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderTopEnum</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the top border of the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderTopEnum()">getBorderTopEnum</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>Since:</B></DT>
+  <DD>3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderBottom(org.apache.poi.ss.usermodel.BorderStyle)"><!-- --></A><H3>
+setBorderBottom</H3>
+<PRE>
+public void <B>setBorderBottom</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the bottom border of the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setBorderBottom(org.apache.poi.ss.usermodel.BorderStyle)">setBorderBottom</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>Since:</B></DT>
+  <DD>3.15 beta 2</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderBottom()"><!-- --></A><H3>
+getBorderBottom</H3>
+<PRE>
+<FONT SIZE="-1">@Deprecated
+</FONT>public short <B>getBorderBottom</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15. Will return a BorderStyle enum in the future. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getBorderBottomEnum()"><CODE>getBorderBottomEnum()</CODE></A>.</I>
+<P>
+<DD>get the type of border to use for the bottom border of the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderBottom()">getBorderBottom</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderBottomEnum()"><!-- --></A><H3>
+getBorderBottomEnum</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderBottomEnum</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the bottom border of the cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBorderBottomEnum()">getBorderBottomEnum</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>Since:</B></DT>
+  <DD>3.15</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLeftBorderColor(short)"><!-- --></A><H3>
+setLeftBorderColor</H3>
+<PRE>
+public void <B>setLeftBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the left border
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setLeftBorderColor(short)">setLeftBorderColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLeftBorderColor()"><!-- --></A><H3>
+getLeftBorderColor</H3>
+<PRE>
+public short <B>getLeftBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the left border
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getLeftBorderColor()">getLeftBorderColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The index of the color definition<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPalette.html#getColor(short)"><CODE>HSSFPalette.getColor(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRightBorderColor(short)"><!-- --></A><H3>
+setRightBorderColor</H3>
+<PRE>
+public void <B>setRightBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the right border
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setRightBorderColor(short)">setRightBorderColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRightBorderColor()"><!-- --></A><H3>
+getRightBorderColor</H3>
+<PRE>
+public short <B>getRightBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the left border
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getRightBorderColor()">getRightBorderColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The index of the color definition<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPalette.html#getColor(short)"><CODE>HSSFPalette.getColor(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTopBorderColor(short)"><!-- --></A><H3>
+setTopBorderColor</H3>
+<PRE>
+public void <B>setTopBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the top border
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setTopBorderColor(short)">setTopBorderColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTopBorderColor()"><!-- --></A><H3>
+getTopBorderColor</H3>
+<PRE>
+public short <B>getTopBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the top border
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getTopBorderColor()">getTopBorderColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The index of the color definition<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPalette.html#getColor(short)"><CODE>HSSFPalette.getColor(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBottomBorderColor(short)"><!-- --></A><H3>
+setBottomBorderColor</H3>
+<PRE>
+public void <B>setBottomBorderColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the bottom border
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setBottomBorderColor(short)">setBottomBorderColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBottomBorderColor()"><!-- --></A><H3>
+getBottomBorderColor</H3>
+<PRE>
+public short <B>getBottomBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the left border
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getBottomBorderColor()">getBottomBorderColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The index of the color definition<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPalette.html#getColor(short)"><CODE>HSSFPalette.getColor(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFillPattern(org.apache.poi.ss.usermodel.FillPatternType)"><!-- --></A><H3>
+setFillPattern</H3>
+<PRE>
+public void <B>setFillPattern</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel">FillPatternType</A>&nbsp;fp)</PRE>
+<DL>
+<DD>setting to one fills the cell with the foreground color... No idea about
+ other values
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setFillPattern(org.apache.poi.ss.usermodel.FillPatternType)">setFillPattern</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>fp</CODE> - fill pattern (set to <A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html#SOLID_FOREGROUND"><CODE>FillPatternType.SOLID_FOREGROUND</CODE></A> to fill w/foreground color)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillPattern()"><!-- --></A><H3>
+getFillPattern</H3>
+<PRE>
+<FONT SIZE="-1">@Deprecated
+</FONT>public short <B>getFillPattern</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. This method will return <A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>FillPatternType</CODE></A> in the future. Use <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#setFillPattern(org.apache.poi.ss.usermodel.FillPatternType)"><CODE>setFillPattern(FillPatternType)</CODE></A> instead.</I>
+<P>
+<DD>get the fill pattern
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillPattern()">getFillPattern</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>fill pattern</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillPatternEnum()"><!-- --></A><H3>
+getFillPatternEnum</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel">FillPatternType</A> <B>getFillPatternEnum</B>()</PRE>
+<DL>
+<DD>get the fill pattern
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillPatternEnum()">getFillPatternEnum</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>fill pattern</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFillBackgroundColor(short)"><!-- --></A><H3>
+setFillBackgroundColor</H3>
+<PRE>
+public void <B>setFillBackgroundColor</B>(short&nbsp;bg)</PRE>
+<DL>
+<DD>set the background fill color.
+ <p>
+ For example:
+ <pre>
+ cs.setFillPattern(HSSFCellStyle.FINE_DOTS );
+ cs.setFillBackgroundColor(new HSSFColor.RED().getIndex());
+ </pre>
+ optionally a Foreground and background fill can be applied:
+ <i>Note: Ensure Foreground color is set prior to background</i>
+ <pre>
+ cs.setFillPattern(HSSFCellStyle.FINE_DOTS );
+ cs.setFillForegroundColor(new HSSFColor.BLUE().getIndex());
+ cs.setFillBackgroundColor(new HSSFColor.RED().getIndex());
+ </pre>
+ or, for the special case of SOLID_FILL:
+ <pre>
+ cs.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND );
+ cs.setFillForegroundColor(new HSSFColor.RED().getIndex());
+ </pre>
+ It is necessary to set the fill style in order
+ for the color to be shown in the cell.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setFillBackgroundColor(short)">setFillBackgroundColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bg</CODE> - color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillBackgroundColor()"><!-- --></A><H3>
+getFillBackgroundColor</H3>
+<PRE>
+public short <B>getFillBackgroundColor</B>()</PRE>
+<DL>
+<DD>Get the background fill color.
+ Note - many cells are actually filled with a foreground
+  fill, not a background fill - see <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getFillForegroundColor()"><CODE>getFillForegroundColor()</CODE></A>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillBackgroundColor()">getFillBackgroundColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>fill color<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPalette.html#getColor(short)"><CODE>HSSFPalette.getColor(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillBackgroundColorColor()"><!-- --></A><H3>
+getFillBackgroundColorColor</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html" title="class in org.apache.poi.hssf.util">HSSFColor</A> <B>getFillBackgroundColorColor</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillBackgroundColorColor()">CellStyle</A></CODE></B></DD>
+<DD>Gets the color object representing the current
+  background fill, resolving indexes using
+  the supplied workbook.
+ This will work for both indexed and rgb
+  defined colors.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillBackgroundColorColor()">getFillBackgroundColorColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFillForegroundColor(short)"><!-- --></A><H3>
+setFillForegroundColor</H3>
+<PRE>
+public void <B>setFillForegroundColor</B>(short&nbsp;bg)</PRE>
+<DL>
+<DD>set the foreground fill color
+ <i>Note: Ensure Foreground color is set prior to background color.</i>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setFillForegroundColor(short)">setFillForegroundColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bg</CODE> - color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillForegroundColor()"><!-- --></A><H3>
+getFillForegroundColor</H3>
+<PRE>
+public short <B>getFillForegroundColor</B>()</PRE>
+<DL>
+<DD>Get the foreground fill color.
+ Many cells are filled with this, instead of a
+  background color (<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html#getFillBackgroundColor()"><CODE>getFillBackgroundColor()</CODE></A>)
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillForegroundColor()">getFillForegroundColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>fill color<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPalette.html#getColor(short)"><CODE>HSSFPalette.getColor(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillForegroundColorColor()"><!-- --></A><H3>
+getFillForegroundColorColor</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/util/HSSFColor.html" title="class in org.apache.poi.hssf.util">HSSFColor</A> <B>getFillForegroundColorColor</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillForegroundColorColor()">CellStyle</A></CODE></B></DD>
+<DD>Gets the color object representing the current
+  foreground fill, resolving indexes using
+  the supplied workbook.
+ This will work for both indexed and rgb
+  defined colors.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getFillForegroundColorColor()">getFillForegroundColorColor</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUserStyleName()"><!-- --></A><H3>
+getUserStyleName</H3>
+<PRE>
+public java.lang.String <B>getUserStyleName</B>()</PRE>
+<DL>
+<DD>Gets the name of the user defined style.
+ Returns null for built in styles, and
+  styles where no name has been defined
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setUserStyleName(java.lang.String)"><!-- --></A><H3>
+setUserStyleName</H3>
+<PRE>
+public void <B>setUserStyleName</B>(java.lang.String&nbsp;styleName)</PRE>
+<DL>
+<DD>Sets the name of the user defined style.
+ Will complain if you try this on a built in style.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setShrinkToFit(boolean)"><!-- --></A><H3>
+setShrinkToFit</H3>
+<PRE>
+public void <B>setShrinkToFit</B>(boolean&nbsp;shrinkToFit)</PRE>
+<DL>
+<DD>Controls if the Cell should be auto-sized
+  to shrink to fit if the text is too long
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#setShrinkToFit(boolean)">setShrinkToFit</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShrinkToFit()"><!-- --></A><H3>
+getShrinkToFit</H3>
+<PRE>
+public boolean <B>getShrinkToFit</B>()</PRE>
+<DL>
+<DD>Should the Cell be auto-sized by Excel to shrink
+  it to fit if this text is too long?
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#getShrinkToFit()">getShrinkToFit</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getReadingOrder()"><!-- --></A><H3>
+getReadingOrder</H3>
+<PRE>
+public short <B>getReadingOrder</B>()</PRE>
+<DL>
+<DD>Get the reading order, for RTL/LTR ordering of
+  the text.
+ <p>0 means Context (Default), 1 means Left To Right,
+  and 2 means Right to Left</p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>order - the reading order (0,1,2)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setReadingOrder(short)"><!-- --></A><H3>
+setReadingOrder</H3>
+<PRE>
+public void <B>setReadingOrder</B>(short&nbsp;order)</PRE>
+<DL>
+<DD>Sets the reading order, for RTL/LTR ordering of
+  the text.
+ <p>0 means Context (Default), 1 means Left To Right,
+  and 2 means Right to Left</p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>order</CODE> - - the reading order (0,1,2)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="verifyBelongsToWorkbook(org.apache.poi.hssf.usermodel.HSSFWorkbook)"><!-- --></A><H3>
+verifyBelongsToWorkbook</H3>
+<PRE>
+public void <B>verifyBelongsToWorkbook</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;wb)</PRE>
+<DL>
+<DD>Verifies that this style belongs to the supplied Workbook.
+ Will throw an exception if it belongs to a different one.
+ This is normally called when trying to assign a style to a
+  cell, to ensure the cell and the style are from the same
+  workbook (if they're not, it won't work)
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if there's a workbook mis-match</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="cloneStyleFrom(org.apache.poi.ss.usermodel.CellStyle)"><!-- --></A><H3>
+cloneStyleFrom</H3>
+<PRE>
+public void <B>cloneStyleFrom</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A>&nbsp;source)</PRE>
+<DL>
+<DD>Clones all the style information from another
+  HSSFCellStyle, onto this one. This
+  HSSFCellStyle will then have all the same
+  properties as the source, but the two may
+  be edited independently.
+ Any stylings on this HSSFCellStyle will be lost!
+
+ The source HSSFCellStyle could be from another
+  HSSFWorkbook if you like. This allows you to
+  copy styles from one HSSFWorkbook to another.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html#cloneStyleFrom(org.apache.poi.ss.usermodel.CellStyle)">cloneStyleFrom</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="cloneStyleFrom(org.apache.poi.hssf.usermodel.HSSFCellStyle)"><!-- --></A><H3>
+cloneStyleFrom</H3>
+<PRE>
+public void <B>cloneStyleFrom</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel">HSSFCellStyle</A>&nbsp;source)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hashCode()"><!-- --></A><H3>
+hashCode</H3>
+<PRE>
+public int <B>hashCode</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>hashCode</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="equals(java.lang.Object)"><!-- --></A><H3>
+equals</H3>
+<PRE>
+public boolean <B>equals</B>(java.lang.Object&nbsp;obj)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>equals</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFCellStyle.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFCellStyle.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

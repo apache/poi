@@ -1,0 +1,2278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+InternalSheet (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="InternalSheet (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/model/HSSFFormulaParser.html" title="class in org.apache.poi.hssf.model"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.UnsupportedBOFType.html" title="class in org.apache.poi.hssf.model"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/model/InternalSheet.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="InternalSheet.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.model</FONT>
+<BR>
+Class InternalSheet</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.model.InternalSheet</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE><FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">@Internal</A>
+</FONT>public final class <B>InternalSheet</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Low level model implementation of a Sheet (one workbook contains many sheets)
+ This file contains the low level binary records starting at the sheets BOF and
+ ending with the sheets EOF.  Use HSSFSheet for a high level representation.
+ <P>
+ The structures of the highlevel API use references to this to perform most of their
+ operations.  Its probably unwise to use these low level structures directly unless you
+ really know what you're doing.  I recommend you read the Microsoft Excel 97 Developer's
+ Kit (Microsoft Press) and the documentation at http://sc.openoffice.org/excelfileformat.pdf
+ before even attempting to use this.
+<P>
+
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/model/InternalWorkbook.html" title="class in org.apache.poi.hssf.model"><CODE>InternalWorkbook</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFSheet</CODE></A></DL>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.UnsupportedBOFType.html" title="class in org.apache.poi.hssf.model">InternalSheet.UnsupportedBOFType</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#_isUncalced">_isUncalced</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add an UncalcedRecord if not true indicating formulas have not been calculated</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">RowRecordsAggregate</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#_rowsAggregate">_rowsAggregate</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;always present</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/SelectionRecord.html" title="class in org.apache.poi.hssf.record">SelectionRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#_selection">_selection</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#BottomMargin">BottomMargin</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/DefaultColWidthRecord.html" title="class in org.apache.poi.hssf.record">DefaultColWidthRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#defaultcolwidth">defaultcolwidth</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/DefaultRowHeightRecord.html" title="class in org.apache.poi.hssf.record">DefaultRowHeightRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#defaultrowheight">defaultrowheight</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/GridsetRecord.html" title="class in org.apache.poi.hssf.record">GridsetRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#gridset">gridset</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#LeftMargin">LeftMargin</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#PANE_LOWER_LEFT">PANE_LOWER_LEFT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#PANE_LOWER_RIGHT">PANE_LOWER_RIGHT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#PANE_UPPER_LEFT">PANE_UPPER_LEFT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#PANE_UPPER_RIGHT">PANE_UPPER_RIGHT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/PrintGridlinesRecord.html" title="class in org.apache.poi.hssf.record">PrintGridlinesRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#printGridlines">printGridlines</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/PrintHeadersRecord.html" title="class in org.apache.poi.hssf.record">PrintHeadersRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#printHeaders">printHeaders</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#RightMargin">RightMargin</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#TopMargin">TopMargin</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/WindowTwoRecord.html" title="class in org.apache.poi.hssf.record">WindowTwoRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#windowTwo">windowTwo</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#addMergedRegion(int, int, int, int)">addMergedRegion</A></B>(int&nbsp;rowFrom,
+                int&nbsp;colFrom,
+                int&nbsp;rowTo,
+                int&nbsp;colTo)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#addRow(org.apache.poi.hssf.record.RowRecord)">addRow</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A>&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds a row record to the sheet</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#addValueRecord(int, org.apache.poi.hssf.record.CellValueRecordInterface)">addValueRecord</A></B>(int&nbsp;row,
+               <A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds a value record to the sheet's contained binary records
+ (i.e.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#aggregateDrawingRecords(org.apache.poi.hssf.model.DrawingManager2, boolean)">aggregateDrawingRecords</A></B>(<A HREF="../../../../../org/apache/poi/hssf/model/DrawingManager2.html" title="class in org.apache.poi.hssf.model">DrawingManager2</A>&nbsp;drawingManager,
+                        boolean&nbsp;createIfMissing)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Finds the DrawingRecord for our sheet, and
+  attaches it to the DrawingManager (which knows about
+  the overall DrawingGroup for our workbook).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html" title="class in org.apache.poi.hssf.model">InternalSheet</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#cloneSheet()">cloneSheet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clones the low level records of this sheet and returns the new sheet instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#createFreezePane(int, int, int, int)">createFreezePane</A></B>(int&nbsp;colSplit,
+                 int&nbsp;rowSplit,
+                 int&nbsp;topRow,
+                 int&nbsp;leftmostColumn)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a split (freezepane).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html" title="class in org.apache.poi.hssf.model">InternalSheet</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#createSheet()">createSheet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a sheet with all the usual records minus values and the "index"
+ record (not required).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html" title="class in org.apache.poi.hssf.model">InternalSheet</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#createSheet(org.apache.poi.hssf.model.RecordStream)">createSheet</A></B>(<A HREF="../../../../../org/apache/poi/hssf/model/RecordStream.html" title="class in org.apache.poi.hssf.model">RecordStream</A>&nbsp;rs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;read support  (offset used as starting point for search) for low level
+ API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#createSplitPane(int, int, int, int, int)">createSplitPane</A></B>(int&nbsp;xSplitPos,
+                int&nbsp;ySplitPos,
+                int&nbsp;topRow,
+                int&nbsp;leftmostColumn,
+                int&nbsp;activePane)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a split pane.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#findFirstRecordBySid(short)">findFirstRecordBySid</A></B>(short&nbsp;sid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the first occurrence of a record matching a particular sid.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#findFirstRecordLocBySid(short)">findFirstRecordLocBySid</A></B>(short&nbsp;sid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Finds the first occurrence of a record matching a particular sid and
+ returns it's position.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getActiveCellCol()">getActiveCellCol</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getActiveCellRow()">getActiveCellRow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the active row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getCellValueIterator()">getCellValueIterator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get all the value records (from LOC).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getColumnOutlineLevel(int)">getColumnOutlineLevel</A></B>(int&nbsp;columnIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getColumnWidth(int)">getColumnWidth</A></B>(int&nbsp;columnIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the width of a given column in units of 1/256th of a character width</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/aggregates/ConditionalFormattingTable.html" title="class in org.apache.poi.hssf.record.aggregates">ConditionalFormattingTable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getConditionalFormattingTable()">getConditionalFormattingTable</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getDefaultColumnWidth()">getDefaultColumnWidth</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the default column width for the sheet (if the columns do not define their own width)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getDefaultRowHeight()">getDefaultRowHeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the default row height for the sheet (if the rows do not define their own height)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/GridsetRecord.html" title="class in org.apache.poi.hssf.record">GridsetRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getGridsetRecord()">getGridsetRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the gridset record for this sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getLeftCol()">getLeftCol</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getMergedRegionAt(int)">getMergedRegionAt</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getNextRow()">getNextRow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the NEXT RowRecord (from LOC).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/NoteRecord.html" title="class in org.apache.poi.hssf.record">NoteRecord</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getNoteRecords()">getNoteRecords</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the <A HREF="../../../../../org/apache/poi/hssf/record/NoteRecord.html" title="class in org.apache.poi.hssf.record"><CODE>NoteRecord</CODE></A>s (related to cell comments) for this sheet</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getNumMergedRegions()">getNumMergedRegions</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/aggregates/DataValidityTable.html" title="class in org.apache.poi.hssf.record.aggregates">DataValidityTable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getOrCreateDataValidityTable()">getOrCreateDataValidityTable</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html" title="class in org.apache.poi.hssf.record.aggregates">PageSettingsBlock</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getPageSettings()">getPageSettings</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/PaneInformation.html" title="class in org.apache.poi.ss.util">PaneInformation</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getPaneInformation()">getPaneInformation</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the information regarding the currently configured pane (split or freeze).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/PrintGridlinesRecord.html" title="class in org.apache.poi.hssf.record">PrintGridlinesRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getPrintGridlines()">getPrintGridlines</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the PrintGridlinesRecord.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/PrintHeadersRecord.html" title="class in org.apache.poi.hssf.record">PrintHeadersRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getPrintHeaders()">getPrintHeaders</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the PrintHeadersRecord.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/aggregates/WorksheetProtectionBlock.html" title="class in org.apache.poi.hssf.record.aggregates">WorksheetProtectionBlock</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getProtectionBlock()">getProtectionBlock</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">RecordBase</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getRecords()">getRecords</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getRow(int)">getRow</A></B>(int&nbsp;rownum)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the NEXT (from LOC) RowRecord where rownumber matches the given rownum.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">RowRecordsAggregate</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getRowsAggregate()">getRowsAggregate</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/SelectionRecord.html" title="class in org.apache.poi.hssf.record">SelectionRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getSelection()">getSelection</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getTopRow()">getTopRow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getUncalced()">getUncalced</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/WindowTwoRecord.html" title="class in org.apache.poi.hssf.record">WindowTwoRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getWindowTwo()">getWindowTwo</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#getXFIndexForColAt(short)">getXFIndexForColAt</A></B>(short&nbsp;columnIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the index to the ExtendedFormatRecord "associated" with
+ the column at specified 0-based index.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#groupColumnRange(int, int, boolean)">groupColumnRange</A></B>(int&nbsp;fromColumn,
+                 int&nbsp;toColumn,
+                 boolean&nbsp;indent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an outline group for the specified columns.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#groupRowRange(int, int, boolean)">groupRowRange</A></B>(int&nbsp;fromRow,
+              int&nbsp;toRow,
+              boolean&nbsp;indent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#isColumnHidden(int)">isColumnHidden</A></B>(int&nbsp;columnIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the hidden property for a given column.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#isDisplayFormulas()">isDisplayFormulas</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns if formulas are displayed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#isDisplayGridlines()">isDisplayGridlines</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#isDisplayRowColHeadings()">isDisplayRowColHeadings</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns if RowColHeadings are displayed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#isGridsPrinted()">isGridsPrinted</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#isPrintRowColHeadings()">isPrintRowColHeadings</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns if RowColHeadings are displayed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#preSerialize()">preSerialize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Perform any work necessary before the sheet is about to be serialized.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#removeMergedRegion(int)">removeMergedRegion</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#removeRow(org.apache.poi.hssf.record.RowRecord)">removeRow</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A>&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes a row record
+
+ This method is not loc sensitive, it resets loc to = dimsloc so no worries.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#removeValueRecord(int, org.apache.poi.hssf.record.CellValueRecordInterface)">removeValueRecord</A></B>(int&nbsp;row,
+                  <A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;remove a value record from the records array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#replaceValueRecord(org.apache.poi.hssf.record.CellValueRecordInterface)">replaceValueRecord</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&nbsp;newval)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;replace a value record from the records array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setActiveCellCol(short)">setActiveCellCol</A></B>(short&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the active column</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setActiveCellRow(int)">setActiveCellRow</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the active row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setColumnGroupCollapsed(int, boolean)">setColumnGroupCollapsed</A></B>(int&nbsp;columnNumber,
+                        boolean&nbsp;collapsed)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setColumnHidden(int, boolean)">setColumnHidden</A></B>(int&nbsp;column,
+                boolean&nbsp;hidden)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the hidden property for a given column.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setColumnWidth(int, int)">setColumnWidth</A></B>(int&nbsp;column,
+               int&nbsp;width)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the width for a given column in 1/256th of a character width units</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setDefaultColumnStyle(int, int)">setDefaultColumnStyle</A></B>(int&nbsp;column,
+                      int&nbsp;styleIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setDefaultColumnWidth(int)">setDefaultColumnWidth</A></B>(int&nbsp;dcw)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the default column width for the sheet (if the columns do not define their own width)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setDefaultRowHeight(short)">setDefaultRowHeight</A></B>(short&nbsp;dch)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the default row height for the sheet (if the rows do not define their own height)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setDimensions(int, short, int, short)">setDimensions</A></B>(int&nbsp;firstrow,
+              short&nbsp;firstcol,
+              int&nbsp;lastrow,
+              short&nbsp;lastcol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Per an earlier reported bug in working with Andy Khan's excel read library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setDisplayFormulas(boolean)">setDisplayFormulas</A></B>(boolean&nbsp;show)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether the formulas are shown in a viewer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setDisplayGridlines(boolean)">setDisplayGridlines</A></B>(boolean&nbsp;show)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether the gridlines are shown in a viewer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setDisplayRowColHeadings(boolean)">setDisplayRowColHeadings</A></B>(boolean&nbsp;show)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether the RowColHeadings are shown in a viewer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setGridsPrinted(boolean)">setGridsPrinted</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether gridlines printed or not.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setLeftCol(short)">setLeftCol</A></B>(short&nbsp;leftCol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the left column to show in desktop window pane.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setPrintGridlines(org.apache.poi.hssf.record.PrintGridlinesRecord)">setPrintGridlines</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/PrintGridlinesRecord.html" title="class in org.apache.poi.hssf.record">PrintGridlinesRecord</A>&nbsp;newPrintGridlines)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the PrintGridlinesRecord.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setPrintHeaders(org.apache.poi.hssf.record.PrintHeadersRecord)">setPrintHeaders</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/PrintHeadersRecord.html" title="class in org.apache.poi.hssf.record">PrintHeadersRecord</A>&nbsp;newPrintHeaders)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the PrintHeadersRecord.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setPrintRowColHeadings(boolean)">setPrintRowColHeadings</A></B>(boolean&nbsp;show)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether the RowColHeadings are shown in a viewer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setSCLRecord(org.apache.poi.hssf.record.SCLRecord)">setSCLRecord</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/SCLRecord.html" title="class in org.apache.poi.hssf.record">SCLRecord</A>&nbsp;sclRecord)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the SCL record or creates it in the correct place if it does not
+ already exist.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setSelected(boolean)">setSelected</A></B>(boolean&nbsp;sel)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether the sheet is selected</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setSelection(org.apache.poi.hssf.record.SelectionRecord)">setSelection</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/SelectionRecord.html" title="class in org.apache.poi.hssf.record">SelectionRecord</A>&nbsp;selection)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setTopRow(short)">setTopRow</A></B>(short&nbsp;topRow)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setUncalced(boolean)">setUncalced</A></B>(boolean&nbsp;uncalced)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#updateFormulasAfterCellShift(org.apache.poi.ss.formula.FormulaShifter, int)">updateFormulasAfterCellShift</A></B>(<A HREF="../../../../../org/apache/poi/ss/formula/FormulaShifter.html" title="class in org.apache.poi.ss.formula">FormulaShifter</A>&nbsp;shifter,
+                             int&nbsp;externSheetIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Updates formulas in cells and conditional formats due to moving of cells</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#visitContainedRecords(org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor, int)">visitContainedRecords</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.RecordVisitor.html" title="interface in org.apache.poi.hssf.record.aggregates">RecordAggregate.RecordVisitor</A>&nbsp;rv,
+                      int&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="LeftMargin"><!-- --></A><H3>
+LeftMargin</H3>
+<PRE>
+public static final short <B>LeftMargin</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.model.InternalSheet.LeftMargin">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RightMargin"><!-- --></A><H3>
+RightMargin</H3>
+<PRE>
+public static final short <B>RightMargin</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.model.InternalSheet.RightMargin">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TopMargin"><!-- --></A><H3>
+TopMargin</H3>
+<PRE>
+public static final short <B>TopMargin</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.model.InternalSheet.TopMargin">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BottomMargin"><!-- --></A><H3>
+BottomMargin</H3>
+<PRE>
+public static final short <B>BottomMargin</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.model.InternalSheet.BottomMargin">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="printGridlines"><!-- --></A><H3>
+printGridlines</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/record/PrintGridlinesRecord.html" title="class in org.apache.poi.hssf.record">PrintGridlinesRecord</A> <B>printGridlines</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="printHeaders"><!-- --></A><H3>
+printHeaders</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/record/PrintHeadersRecord.html" title="class in org.apache.poi.hssf.record">PrintHeadersRecord</A> <B>printHeaders</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="gridset"><!-- --></A><H3>
+gridset</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/record/GridsetRecord.html" title="class in org.apache.poi.hssf.record">GridsetRecord</A> <B>gridset</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="defaultcolwidth"><!-- --></A><H3>
+defaultcolwidth</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/record/DefaultColWidthRecord.html" title="class in org.apache.poi.hssf.record">DefaultColWidthRecord</A> <B>defaultcolwidth</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="defaultrowheight"><!-- --></A><H3>
+defaultrowheight</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/record/DefaultRowHeightRecord.html" title="class in org.apache.poi.hssf.record">DefaultRowHeightRecord</A> <B>defaultrowheight</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="windowTwo"><!-- --></A><H3>
+windowTwo</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/record/WindowTwoRecord.html" title="class in org.apache.poi.hssf.record">WindowTwoRecord</A> <B>windowTwo</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="_selection"><!-- --></A><H3>
+_selection</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/record/SelectionRecord.html" title="class in org.apache.poi.hssf.record">SelectionRecord</A> <B>_selection</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="_rowsAggregate"><!-- --></A><H3>
+_rowsAggregate</H3>
+<PRE>
+protected final <A HREF="../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">RowRecordsAggregate</A> <B>_rowsAggregate</B></PRE>
+<DL>
+<DD>always present
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="_isUncalced"><!-- --></A><H3>
+_isUncalced</H3>
+<PRE>
+protected boolean <B>_isUncalced</B></PRE>
+<DL>
+<DD>Add an UncalcedRecord if not true indicating formulas have not been calculated
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PANE_LOWER_RIGHT"><!-- --></A><H3>
+PANE_LOWER_RIGHT</H3>
+<PRE>
+public static final byte <B>PANE_LOWER_RIGHT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.model.InternalSheet.PANE_LOWER_RIGHT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PANE_UPPER_RIGHT"><!-- --></A><H3>
+PANE_UPPER_RIGHT</H3>
+<PRE>
+public static final byte <B>PANE_UPPER_RIGHT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.model.InternalSheet.PANE_UPPER_RIGHT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PANE_LOWER_LEFT"><!-- --></A><H3>
+PANE_LOWER_LEFT</H3>
+<PRE>
+public static final byte <B>PANE_LOWER_LEFT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.model.InternalSheet.PANE_LOWER_LEFT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PANE_UPPER_LEFT"><!-- --></A><H3>
+PANE_UPPER_LEFT</H3>
+<PRE>
+public static final byte <B>PANE_UPPER_LEFT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.model.InternalSheet.PANE_UPPER_LEFT">Constant Field Values</A></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="createSheet(org.apache.poi.hssf.model.RecordStream)"><!-- --></A><H3>
+createSheet</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html" title="class in org.apache.poi.hssf.model">InternalSheet</A> <B>createSheet</B>(<A HREF="../../../../../org/apache/poi/hssf/model/RecordStream.html" title="class in org.apache.poi.hssf.model">RecordStream</A>&nbsp;rs)</PRE>
+<DL>
+<DD>read support  (offset used as starting point for search) for low level
+ API.  Pass in an array of Record objects, the sheet number (0 based) and
+ a record offset (should be the location of the sheets BOF record).  A Sheet
+ object is constructed and passed back with all of its initialization set
+ to the passed in records and references to those records held. This function
+ is normally called via Workbook.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rs</CODE> - the stream to read records from
+<DT><B>Returns:</B><DD>Sheet object with all values set to those read from the file<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/model/InternalWorkbook.html" title="class in org.apache.poi.hssf.model"><CODE>InternalWorkbook</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record"><CODE>Record</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="cloneSheet()"><!-- --></A><H3>
+cloneSheet</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html" title="class in org.apache.poi.hssf.model">InternalSheet</A> <B>cloneSheet</B>()</PRE>
+<DL>
+<DD>Clones the low level records of this sheet and returns the new sheet instance.
+ This method is implemented by adding methods for deep cloning to all records that
+ can be added to a sheet. The <b>Record</b> object does not implement cloneable.
+ When adding a new record, implement a public clone method if and only if the record
+ belongs to a sheet.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the cloned sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createSheet()"><!-- --></A><H3>
+createSheet</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html" title="class in org.apache.poi.hssf.model">InternalSheet</A> <B>createSheet</B>()</PRE>
+<DL>
+<DD>Creates a sheet with all the usual records minus values and the "index"
+ record (not required).  Sets the location pointer to where the first value
+ records should go.  Use this to create a sheet from "scratch".
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>Sheet object with all values set to defaults</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRowsAggregate()"><!-- --></A><H3>
+getRowsAggregate</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">RowRecordsAggregate</A> <B>getRowsAggregate</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="updateFormulasAfterCellShift(org.apache.poi.ss.formula.FormulaShifter, int)"><!-- --></A><H3>
+updateFormulasAfterCellShift</H3>
+<PRE>
+public void <B>updateFormulasAfterCellShift</B>(<A HREF="../../../../../org/apache/poi/ss/formula/FormulaShifter.html" title="class in org.apache.poi.ss.formula">FormulaShifter</A>&nbsp;shifter,
+                                         int&nbsp;externSheetIndex)</PRE>
+<DL>
+<DD>Updates formulas in cells and conditional formats due to moving of cells
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>shifter</CODE> - the formular shifter<DD><CODE>externSheetIndex</CODE> - the externSheet index of this sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addMergedRegion(int, int, int, int)"><!-- --></A><H3>
+addMergedRegion</H3>
+<PRE>
+public int <B>addMergedRegion</B>(int&nbsp;rowFrom,
+                           int&nbsp;colFrom,
+                           int&nbsp;rowTo,
+                           int&nbsp;colTo)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeMergedRegion(int)"><!-- --></A><H3>
+removeMergedRegion</H3>
+<PRE>
+public void <B>removeMergedRegion</B>(int&nbsp;index)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMergedRegionAt(int)"><!-- --></A><H3>
+getMergedRegionAt</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A> <B>getMergedRegionAt</B>(int&nbsp;index)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNumMergedRegions()"><!-- --></A><H3>
+getNumMergedRegions</H3>
+<PRE>
+public int <B>getNumMergedRegions</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getConditionalFormattingTable()"><!-- --></A><H3>
+getConditionalFormattingTable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/aggregates/ConditionalFormattingTable.html" title="class in org.apache.poi.hssf.record.aggregates">ConditionalFormattingTable</A> <B>getConditionalFormattingTable</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDimensions(int, short, int, short)"><!-- --></A><H3>
+setDimensions</H3>
+<PRE>
+public void <B>setDimensions</B>(int&nbsp;firstrow,
+                          short&nbsp;firstcol,
+                          int&nbsp;lastrow,
+                          short&nbsp;lastcol)</PRE>
+<DL>
+<DD>Per an earlier reported bug in working with Andy Khan's excel read library.  This
+ sets the values in the sheet's DimensionsRecord object to be correct.  Excel doesn't
+ really care, but we want to play nice with other libraries.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>firstrow</CODE> - the first row index<DD><CODE>firstcol</CODE> - the first column index<DD><CODE>lastrow</CODE> - the last row index<DD><CODE>lastcol</CODE> - the last column index<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/DimensionsRecord.html" title="class in org.apache.poi.hssf.record"><CODE>DimensionsRecord</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="visitContainedRecords(org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor, int)"><!-- --></A><H3>
+visitContainedRecords</H3>
+<PRE>
+public void <B>visitContainedRecords</B>(<A HREF="../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.RecordVisitor.html" title="interface in org.apache.poi.hssf.record.aggregates">RecordAggregate.RecordVisitor</A>&nbsp;rv,
+                                  int&nbsp;offset)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addValueRecord(int, org.apache.poi.hssf.record.CellValueRecordInterface)"><!-- --></A><H3>
+addValueRecord</H3>
+<PRE>
+public void <B>addValueRecord</B>(int&nbsp;row,
+                           <A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&nbsp;col)</PRE>
+<DL>
+<DD>Adds a value record to the sheet's contained binary records
+ (i.e. LabelSSTRecord or NumberRecord).
+ <P>
+ This method is "loc" sensitive.  Meaning you need to set LOC to where you
+ want it to start searching.  If you don't know do this: setLoc(getDimsLoc).
+ When adding several rows you can just start at the last one by leaving loc
+ at what this sets it to.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - the row to add the cell value to<DD><CODE>col</CODE> - the cell value record itself.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeValueRecord(int, org.apache.poi.hssf.record.CellValueRecordInterface)"><!-- --></A><H3>
+removeValueRecord</H3>
+<PRE>
+public void <B>removeValueRecord</B>(int&nbsp;row,
+                              <A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&nbsp;col)</PRE>
+<DL>
+<DD>remove a value record from the records array.
+
+ This method is not loc sensitive, it resets loc to = dimsloc so no worries.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - - the row of the value record you wish to remove<DD><CODE>col</CODE> - - a record supporting the CellValueRecordInterface.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record"><CODE>CellValueRecordInterface</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="replaceValueRecord(org.apache.poi.hssf.record.CellValueRecordInterface)"><!-- --></A><H3>
+replaceValueRecord</H3>
+<PRE>
+public void <B>replaceValueRecord</B>(<A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&nbsp;newval)</PRE>
+<DL>
+<DD>replace a value record from the records array.
+
+ This method is not loc sensitive, it resets loc to = dimsloc so no worries.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>newval</CODE> - - a record supporting the CellValueRecordInterface.  this will replace
+                the cell value with the same row and column.  If there isn't one, one will
+                be added.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addRow(org.apache.poi.hssf.record.RowRecord)"><!-- --></A><H3>
+addRow</H3>
+<PRE>
+public void <B>addRow</B>(<A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A>&nbsp;row)</PRE>
+<DL>
+<DD>Adds a row record to the sheet
+
+ <P>
+ This method is "loc" sensitive.  Meaning you need to set LOC to where you
+ want it to start searching.  If you don't know do this: setLoc(getDimsLoc).
+ When adding several rows you can just start at the last one by leaving loc
+ at what this sets it to.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - the row record to be added</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeRow(org.apache.poi.hssf.record.RowRecord)"><!-- --></A><H3>
+removeRow</H3>
+<PRE>
+public void <B>removeRow</B>(<A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A>&nbsp;row)</PRE>
+<DL>
+<DD>Removes a row record
+
+ This method is not loc sensitive, it resets loc to = dimsloc so no worries.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - the row record to remove</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellValueIterator()"><!-- --></A><H3>
+getCellValueIterator</H3>
+<PRE>
+public java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&gt; <B>getCellValueIterator</B>()</PRE>
+<DL>
+<DD>Get all the value records (from LOC). Records will be returned from the first
+  record (starting at LOC) which is a value record.
+
+ <P>
+ This method is "loc" sensitive.  Meaning you need to set LOC to where you
+ want it to start searching.  If you don't know do this: setLoc(getDimsLoc).
+ When adding several rows you can just start at the last one by leaving loc
+ at what this sets it to.  For this method, set loc to dimsloc to start with,
+ subsequent calls will return values in (physical) sequence or NULL when you get to the end.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>Iterator of CellValueRecordInterface representing the value records</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNextRow()"><!-- --></A><H3>
+getNextRow</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A> <B>getNextRow</B>()</PRE>
+<DL>
+<DD>get the NEXT RowRecord (from LOC).  The first record that is a Row record
+ (starting at LOC) will be returned.
+ <P>
+ This method is "loc" sensitive.  Meaning you need to set LOC to where you
+ want it to start searching.  If you don't know do this: setLoc(getDimsLoc).
+ When adding several rows you can just start at the last one by leaving loc
+ at what this sets it to.  For this method, set loc to dimsloc to start with.
+ subsequent calls will return rows in (physical) sequence or NULL when you get to the end.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>RowRecord representing the next row record or NULL if there are no more</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRow(int)"><!-- --></A><H3>
+getRow</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A> <B>getRow</B>(int&nbsp;rownum)</PRE>
+<DL>
+<DD>get the NEXT (from LOC) RowRecord where rownumber matches the given rownum.
+ The first record that is a Row record (starting at LOC) that has the
+ same rownum as the given rownum will be returned.
+ <P>
+ This method is "loc" sensitive.  Meaning you need to set LOC to where you
+ want it to start searching.  If you don't know do this: setLoc(getDimsLoc).
+ When adding several rows you can just start at the last one by leaving loc
+ at what this sets it to.  For this method, set loc to dimsloc to start with.
+ subsequent calls will return rows in (physical) sequence or NULL when you get to the end.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rownum</CODE> - which row to return (careful with LOC)
+<DT><B>Returns:</B><DD>RowRecord representing the next row record or NULL if there are no more</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDefaultColumnWidth()"><!-- --></A><H3>
+getDefaultColumnWidth</H3>
+<PRE>
+public int <B>getDefaultColumnWidth</B>()</PRE>
+<DL>
+<DD>get the default column width for the sheet (if the columns do not define their own width)
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>default column width</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isGridsPrinted()"><!-- --></A><H3>
+isGridsPrinted</H3>
+<PRE>
+public boolean <B>isGridsPrinted</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if gridlines are printed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setGridsPrinted(boolean)"><!-- --></A><H3>
+setGridsPrinted</H3>
+<PRE>
+public void <B>setGridsPrinted</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>set whether gridlines printed or not.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - True if gridlines printed.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDefaultColumnWidth(int)"><!-- --></A><H3>
+setDefaultColumnWidth</H3>
+<PRE>
+public void <B>setDefaultColumnWidth</B>(int&nbsp;dcw)</PRE>
+<DL>
+<DD>set the default column width for the sheet (if the columns do not define their own width)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dcw</CODE> - default column width</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDefaultRowHeight(short)"><!-- --></A><H3>
+setDefaultRowHeight</H3>
+<PRE>
+public void <B>setDefaultRowHeight</B>(short&nbsp;dch)</PRE>
+<DL>
+<DD>set the default row height for the sheet (if the rows do not define their own height)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dch</CODE> - the default row height</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDefaultRowHeight()"><!-- --></A><H3>
+getDefaultRowHeight</H3>
+<PRE>
+public short <B>getDefaultRowHeight</B>()</PRE>
+<DL>
+<DD>get the default row height for the sheet (if the rows do not define their own height)
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>default row height</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColumnWidth(int)"><!-- --></A><H3>
+getColumnWidth</H3>
+<PRE>
+public int <B>getColumnWidth</B>(int&nbsp;columnIndex)</PRE>
+<DL>
+<DD>get the width of a given column in units of 1/256th of a character width
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>columnIndex</CODE> - index
+<DT><B>Returns:</B><DD>column width in units of 1/256th of a character width<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/DefaultColWidthRecord.html" title="class in org.apache.poi.hssf.record"><CODE>DefaultColWidthRecord</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html" title="class in org.apache.poi.hssf.record"><CODE>ColumnInfoRecord</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setColumnWidth(int, int)"><CODE>setColumnWidth(int, int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getXFIndexForColAt(short)"><!-- --></A><H3>
+getXFIndexForColAt</H3>
+<PRE>
+public short <B>getXFIndexForColAt</B>(short&nbsp;columnIndex)</PRE>
+<DL>
+<DD>get the index to the ExtendedFormatRecord "associated" with
+ the column at specified 0-based index. (In this case, an
+ ExtendedFormatRecord index is actually associated with a
+ ColumnInfoRecord which spans 1 or more columns)
+ <p>
+ Returns the index to the default ExtendedFormatRecord (0xF)
+ if no ColumnInfoRecord exists that includes the column
+ index specified.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>columnIndex</CODE> - the column index
+<DT><B>Returns:</B><DD>index of ExtendedFormatRecord associated with
+ ColumnInfoRecord that includes the column index or the
+ index of the default ExtendedFormatRecord (0xF)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColumnWidth(int, int)"><!-- --></A><H3>
+setColumnWidth</H3>
+<PRE>
+public void <B>setColumnWidth</B>(int&nbsp;column,
+                           int&nbsp;width)</PRE>
+<DL>
+<DD>set the width for a given column in 1/256th of a character width units
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - -
+            the column number<DD><CODE>width</CODE> - (in units of 1/256th of a character width)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isColumnHidden(int)"><!-- --></A><H3>
+isColumnHidden</H3>
+<PRE>
+public boolean <B>isColumnHidden</B>(int&nbsp;columnIndex)</PRE>
+<DL>
+<DD>Get the hidden property for a given column.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>columnIndex</CODE> - column index
+<DT><B>Returns:</B><DD>whether the column is hidden or not.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/DefaultColWidthRecord.html" title="class in org.apache.poi.hssf.record"><CODE>DefaultColWidthRecord</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/record/ColumnInfoRecord.html" title="class in org.apache.poi.hssf.record"><CODE>ColumnInfoRecord</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#setColumnHidden(int, boolean)"><CODE>setColumnHidden(int, boolean)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColumnHidden(int, boolean)"><!-- --></A><H3>
+setColumnHidden</H3>
+<PRE>
+public void <B>setColumnHidden</B>(int&nbsp;column,
+                            boolean&nbsp;hidden)</PRE>
+<DL>
+<DD>Get the hidden property for a given column.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - - the column number<DD><CODE>hidden</CODE> - - whether the column is hidden or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDefaultColumnStyle(int, int)"><!-- --></A><H3>
+setDefaultColumnStyle</H3>
+<PRE>
+public void <B>setDefaultColumnStyle</B>(int&nbsp;column,
+                                  int&nbsp;styleIndex)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="groupColumnRange(int, int, boolean)"><!-- --></A><H3>
+groupColumnRange</H3>
+<PRE>
+public void <B>groupColumnRange</B>(int&nbsp;fromColumn,
+                             int&nbsp;toColumn,
+                             boolean&nbsp;indent)</PRE>
+<DL>
+<DD>Creates an outline group for the specified columns.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>fromColumn</CODE> - group from this column (inclusive)<DD><CODE>toColumn</CODE> - group to this column (inclusive)<DD><CODE>indent</CODE> - if true the group will be indented by one level,
+                      if false indenting will be removed by one level.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTopRow()"><!-- --></A><H3>
+getTopRow</H3>
+<PRE>
+public short <B>getTopRow</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTopRow(short)"><!-- --></A><H3>
+setTopRow</H3>
+<PRE>
+public void <B>setTopRow</B>(short&nbsp;topRow)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLeftCol(short)"><!-- --></A><H3>
+setLeftCol</H3>
+<PRE>
+public void <B>setLeftCol</B>(short&nbsp;leftCol)</PRE>
+<DL>
+<DD>Sets the left column to show in desktop window pane.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>leftCol</CODE> - the left column to show in desktop window pane</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLeftCol()"><!-- --></A><H3>
+getLeftCol</H3>
+<PRE>
+public short <B>getLeftCol</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getActiveCellRow()"><!-- --></A><H3>
+getActiveCellRow</H3>
+<PRE>
+public int <B>getActiveCellRow</B>()</PRE>
+<DL>
+<DD>Returns the active row
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>row the active row index<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/SelectionRecord.html" title="class in org.apache.poi.hssf.record"><CODE>SelectionRecord</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setActiveCellRow(int)"><!-- --></A><H3>
+setActiveCellRow</H3>
+<PRE>
+public void <B>setActiveCellRow</B>(int&nbsp;row)</PRE>
+<DL>
+<DD>Sets the active row
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - the row index<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/SelectionRecord.html" title="class in org.apache.poi.hssf.record"><CODE>SelectionRecord</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getActiveCellCol()"><!-- --></A><H3>
+getActiveCellCol</H3>
+<PRE>
+public short <B>getActiveCellCol</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>column of the active cell<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/SelectionRecord.html" title="class in org.apache.poi.hssf.record"><CODE>SelectionRecord</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setActiveCellCol(short)"><!-- --></A><H3>
+setActiveCellCol</H3>
+<PRE>
+public void <B>setActiveCellCol</B>(short&nbsp;col)</PRE>
+<DL>
+<DD>Sets the active column
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>col</CODE> - the column index<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/record/SelectionRecord.html" title="class in org.apache.poi.hssf.record"><CODE>SelectionRecord</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRecords()"><!-- --></A><H3>
+getRecords</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">RecordBase</A>&gt; <B>getRecords</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getGridsetRecord()"><!-- --></A><H3>
+getGridsetRecord</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/GridsetRecord.html" title="class in org.apache.poi.hssf.record">GridsetRecord</A> <B>getGridsetRecord</B>()</PRE>
+<DL>
+<DD>Gets the gridset record for this sheet.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the gridset record for this sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="findFirstRecordBySid(short)"><!-- --></A><H3>
+findFirstRecordBySid</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A> <B>findFirstRecordBySid</B>(short&nbsp;sid)</PRE>
+<DL>
+<DD>Returns the first occurrence of a record matching a particular sid.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sid</CODE> - the sid to search for
+<DT><B>Returns:</B><DD>the matching record or <code>null</code> if it wasn't found</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setSCLRecord(org.apache.poi.hssf.record.SCLRecord)"><!-- --></A><H3>
+setSCLRecord</H3>
+<PRE>
+public void <B>setSCLRecord</B>(<A HREF="../../../../../org/apache/poi/hssf/record/SCLRecord.html" title="class in org.apache.poi.hssf.record">SCLRecord</A>&nbsp;sclRecord)</PRE>
+<DL>
+<DD>Sets the SCL record or creates it in the correct place if it does not
+ already exist.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sclRecord</CODE> - The record to set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="findFirstRecordLocBySid(short)"><!-- --></A><H3>
+findFirstRecordLocBySid</H3>
+<PRE>
+public int <B>findFirstRecordLocBySid</B>(short&nbsp;sid)</PRE>
+<DL>
+<DD>Finds the first occurrence of a record matching a particular sid and
+ returns it's position.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sid</CODE> - the sid to search for
+<DT><B>Returns:</B><DD>the record position of the matching record or -1 if no match
+          is made.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getWindowTwo()"><!-- --></A><H3>
+getWindowTwo</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/WindowTwoRecord.html" title="class in org.apache.poi.hssf.record">WindowTwoRecord</A> <B>getWindowTwo</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPrintGridlines()"><!-- --></A><H3>
+getPrintGridlines</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/PrintGridlinesRecord.html" title="class in org.apache.poi.hssf.record">PrintGridlinesRecord</A> <B>getPrintGridlines</B>()</PRE>
+<DL>
+<DD>Returns the PrintGridlinesRecord.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>PrintGridlinesRecord for the sheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPrintGridlines(org.apache.poi.hssf.record.PrintGridlinesRecord)"><!-- --></A><H3>
+setPrintGridlines</H3>
+<PRE>
+public void <B>setPrintGridlines</B>(<A HREF="../../../../../org/apache/poi/hssf/record/PrintGridlinesRecord.html" title="class in org.apache.poi.hssf.record">PrintGridlinesRecord</A>&nbsp;newPrintGridlines)</PRE>
+<DL>
+<DD>Sets the PrintGridlinesRecord.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>newPrintGridlines</CODE> - The new PrintGridlinesRecord for the sheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPrintHeaders()"><!-- --></A><H3>
+getPrintHeaders</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/PrintHeadersRecord.html" title="class in org.apache.poi.hssf.record">PrintHeadersRecord</A> <B>getPrintHeaders</B>()</PRE>
+<DL>
+<DD>Returns the PrintHeadersRecord.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>PrintHeadersRecord for the sheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPrintHeaders(org.apache.poi.hssf.record.PrintHeadersRecord)"><!-- --></A><H3>
+setPrintHeaders</H3>
+<PRE>
+public void <B>setPrintHeaders</B>(<A HREF="../../../../../org/apache/poi/hssf/record/PrintHeadersRecord.html" title="class in org.apache.poi.hssf.record">PrintHeadersRecord</A>&nbsp;newPrintHeaders)</PRE>
+<DL>
+<DD>Sets the PrintHeadersRecord.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>newPrintHeaders</CODE> - The new PrintHeadersRecord for the sheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setSelected(boolean)"><!-- --></A><H3>
+setSelected</H3>
+<PRE>
+public void <B>setSelected</B>(boolean&nbsp;sel)</PRE>
+<DL>
+<DD>Sets whether the sheet is selected
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sel</CODE> - True to select the sheet, false otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createFreezePane(int, int, int, int)"><!-- --></A><H3>
+createFreezePane</H3>
+<PRE>
+public void <B>createFreezePane</B>(int&nbsp;colSplit,
+                             int&nbsp;rowSplit,
+                             int&nbsp;topRow,
+                             int&nbsp;leftmostColumn)</PRE>
+<DL>
+<DD>Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
+
+ <p>If both colSplit and rowSplit are zero then the existing freeze pane is removed</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>colSplit</CODE> - Horizonatal position of split.<DD><CODE>rowSplit</CODE> - Vertical position of split.<DD><CODE>topRow</CODE> - Top row visible in bottom pane<DD><CODE>leftmostColumn</CODE> - Left column visible in right pane.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createSplitPane(int, int, int, int, int)"><!-- --></A><H3>
+createSplitPane</H3>
+<PRE>
+public void <B>createSplitPane</B>(int&nbsp;xSplitPos,
+                            int&nbsp;ySplitPos,
+                            int&nbsp;topRow,
+                            int&nbsp;leftmostColumn,
+                            int&nbsp;activePane)</PRE>
+<DL>
+<DD>Creates a split pane. Any existing freezepane or split pane is overwritten.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>xSplitPos</CODE> - Horizonatal position of split (in 1/20th of a point).<DD><CODE>ySplitPos</CODE> - Vertical position of split (in 1/20th of a point).<DD><CODE>topRow</CODE> - Top row visible in bottom pane<DD><CODE>leftmostColumn</CODE> - Left column visible in right pane.<DD><CODE>activePane</CODE> - Active pane.  One of: PANE_LOWER_RIGHT,
+                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#PANE_LOWER_LEFT"><CODE>PANE_LOWER_LEFT</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#PANE_LOWER_RIGHT"><CODE>PANE_LOWER_RIGHT</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#PANE_UPPER_LEFT"><CODE>PANE_UPPER_LEFT</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html#PANE_UPPER_RIGHT"><CODE>PANE_UPPER_RIGHT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPaneInformation()"><!-- --></A><H3>
+getPaneInformation</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/PaneInformation.html" title="class in org.apache.poi.ss.util">PaneInformation</A> <B>getPaneInformation</B>()</PRE>
+<DL>
+<DD>Returns the information regarding the currently configured pane (split or freeze).
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>null</code> if no pane configured, or the pane information.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSelection()"><!-- --></A><H3>
+getSelection</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/SelectionRecord.html" title="class in org.apache.poi.hssf.record">SelectionRecord</A> <B>getSelection</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setSelection(org.apache.poi.hssf.record.SelectionRecord)"><!-- --></A><H3>
+setSelection</H3>
+<PRE>
+public void <B>setSelection</B>(<A HREF="../../../../../org/apache/poi/hssf/record/SelectionRecord.html" title="class in org.apache.poi.hssf.record">SelectionRecord</A>&nbsp;selection)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getProtectionBlock()"><!-- --></A><H3>
+getProtectionBlock</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/aggregates/WorksheetProtectionBlock.html" title="class in org.apache.poi.hssf.record.aggregates">WorksheetProtectionBlock</A> <B>getProtectionBlock</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the <A HREF="../../../../../org/apache/poi/hssf/record/aggregates/WorksheetProtectionBlock.html" title="class in org.apache.poi.hssf.record.aggregates"><CODE>WorksheetProtectionBlock</CODE></A> for this sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDisplayGridlines(boolean)"><!-- --></A><H3>
+setDisplayGridlines</H3>
+<PRE>
+public void <B>setDisplayGridlines</B>(boolean&nbsp;show)</PRE>
+<DL>
+<DD>Sets whether the gridlines are shown in a viewer.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>show</CODE> - whether to show gridlines or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDisplayGridlines()"><!-- --></A><H3>
+isDisplayGridlines</H3>
+<PRE>
+public boolean <B>isDisplayGridlines</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if gridlines are displayed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDisplayFormulas(boolean)"><!-- --></A><H3>
+setDisplayFormulas</H3>
+<PRE>
+public void <B>setDisplayFormulas</B>(boolean&nbsp;show)</PRE>
+<DL>
+<DD>Sets whether the formulas are shown in a viewer.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>show</CODE> - whether to show formulas or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDisplayFormulas()"><!-- --></A><H3>
+isDisplayFormulas</H3>
+<PRE>
+public boolean <B>isDisplayFormulas</B>()</PRE>
+<DL>
+<DD>Returns if formulas are displayed.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether formulas are displayed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDisplayRowColHeadings(boolean)"><!-- --></A><H3>
+setDisplayRowColHeadings</H3>
+<PRE>
+public void <B>setDisplayRowColHeadings</B>(boolean&nbsp;show)</PRE>
+<DL>
+<DD>Sets whether the RowColHeadings are shown in a viewer.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>show</CODE> - whether to show RowColHeadings or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDisplayRowColHeadings()"><!-- --></A><H3>
+isDisplayRowColHeadings</H3>
+<PRE>
+public boolean <B>isDisplayRowColHeadings</B>()</PRE>
+<DL>
+<DD>Returns if RowColHeadings are displayed.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether RowColHeadings are displayed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPrintRowColHeadings(boolean)"><!-- --></A><H3>
+setPrintRowColHeadings</H3>
+<PRE>
+public void <B>setPrintRowColHeadings</B>(boolean&nbsp;show)</PRE>
+<DL>
+<DD>Sets whether the RowColHeadings are shown in a viewer.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>show</CODE> - whether to show RowColHeadings or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isPrintRowColHeadings()"><!-- --></A><H3>
+isPrintRowColHeadings</H3>
+<PRE>
+public boolean <B>isPrintRowColHeadings</B>()</PRE>
+<DL>
+<DD>Returns if RowColHeadings are displayed.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether RowColHeadings are displayed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUncalced()"><!-- --></A><H3>
+getUncalced</H3>
+<PRE>
+public boolean <B>getUncalced</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether an uncalced record must be inserted or not at generation</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setUncalced(boolean)"><!-- --></A><H3>
+setUncalced</H3>
+<PRE>
+public void <B>setUncalced</B>(boolean&nbsp;uncalced)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>uncalced</CODE> - whether an uncalced record must be inserted or not at generation</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="aggregateDrawingRecords(org.apache.poi.hssf.model.DrawingManager2, boolean)"><!-- --></A><H3>
+aggregateDrawingRecords</H3>
+<PRE>
+public int <B>aggregateDrawingRecords</B>(<A HREF="../../../../../org/apache/poi/hssf/model/DrawingManager2.html" title="class in org.apache.poi.hssf.model">DrawingManager2</A>&nbsp;drawingManager,
+                                   boolean&nbsp;createIfMissing)</PRE>
+<DL>
+<DD>Finds the DrawingRecord for our sheet, and
+  attaches it to the DrawingManager (which knows about
+  the overall DrawingGroup for our workbook).
+ If requested, will create a new DrawRecord
+  if none currently exist
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>drawingManager</CODE> - The DrawingManager2 for our workbook<DD><CODE>createIfMissing</CODE> - Should one be created if missing?
+<DT><B>Returns:</B><DD>location of EscherAggregate record. if no EscherAggregate record is found return -1</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="preSerialize()"><!-- --></A><H3>
+preSerialize</H3>
+<PRE>
+public void <B>preSerialize</B>()</PRE>
+<DL>
+<DD>Perform any work necessary before the sheet is about to be serialized.
+ For instance the escher aggregates size needs to be calculated before
+ serialization so that the dgg record (which occurs first) can be written.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPageSettings()"><!-- --></A><H3>
+getPageSettings</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html" title="class in org.apache.poi.hssf.record.aggregates">PageSettingsBlock</A> <B>getPageSettings</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColumnGroupCollapsed(int, boolean)"><!-- --></A><H3>
+setColumnGroupCollapsed</H3>
+<PRE>
+public void <B>setColumnGroupCollapsed</B>(int&nbsp;columnNumber,
+                                    boolean&nbsp;collapsed)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="groupRowRange(int, int, boolean)"><!-- --></A><H3>
+groupRowRange</H3>
+<PRE>
+public void <B>groupRowRange</B>(int&nbsp;fromRow,
+                          int&nbsp;toRow,
+                          boolean&nbsp;indent)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOrCreateDataValidityTable()"><!-- --></A><H3>
+getOrCreateDataValidityTable</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/aggregates/DataValidityTable.html" title="class in org.apache.poi.hssf.record.aggregates">DataValidityTable</A> <B>getOrCreateDataValidityTable</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNoteRecords()"><!-- --></A><H3>
+getNoteRecords</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/NoteRecord.html" title="class in org.apache.poi.hssf.record">NoteRecord</A>[] <B>getNoteRecords</B>()</PRE>
+<DL>
+<DD>Get the <A HREF="../../../../../org/apache/poi/hssf/record/NoteRecord.html" title="class in org.apache.poi.hssf.record"><CODE>NoteRecord</CODE></A>s (related to cell comments) for this sheet
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>never <code>null</code>, typically empty array</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColumnOutlineLevel(int)"><!-- --></A><H3>
+getColumnOutlineLevel</H3>
+<PRE>
+public int <B>getColumnOutlineLevel</B>(int&nbsp;columnIndex)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/model/HSSFFormulaParser.html" title="class in org.apache.poi.hssf.model"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.UnsupportedBOFType.html" title="class in org.apache.poi.hssf.model"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/model/InternalSheet.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="InternalSheet.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

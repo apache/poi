@@ -1,0 +1,475 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>Apache POI&trade; - Text Extraction</title>
+<link type="text/css" href="skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="skin/print.css" rel="stylesheet">
+<link type="text/css" href="skin/profile.css" rel="stylesheet">
+<script src="skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li class="current">
+<a class="selected" href="index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="help/index.html">Help</a>
+</li>
+<li>
+<a class="unselected" href="components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', 'skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('skin/images/chapter_open.gif');">Overview</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="index.html">Home</a>
+</div>
+<div class="menuitem">
+<a href="download.html">Download</a>
+</div>
+<div class="menuitem">
+<a href="changes.html">Changelog</a>
+</div>
+<div class="menuitem">
+<a href="apidocs/index.html">Javadocs</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">Text Extraction</div>
+</div>
+<div class="menuitem">
+<a href="encryption.html">Encryption support</a>
+</div>
+<div class="menuitem">
+<a href="security.html">Secure processing</a>
+</div>
+<div class="menuitem">
+<a href="casestudies.html">Case Studies</a>
+</div>
+<div class="menuitem">
+<a href="related-projects.html">Related projects</a>
+</div>
+<div class="menuitem">
+<a href="legal.html">Legal</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.2', 'skin/')" id="menu_1.2Title" class="menutitle">Apache Wide</div>
+<div id="menu_1.2" class="menuitemgroup">
+<div class="menuitem">
+<a href="https://www.apache.org/">Apache Software Foundation</a>
+</div>
+<div class="menuitem">
+<a href="https://www.apache.org/licenses/">License</a>
+</div>
+<div class="menuitem">
+<a href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+</div>
+<div class="menuitem">
+<a href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+</div>
+<div class="menuitem">
+<a href="https://www.apache.org/security/">Security</a>
+</div>
+<div class="menuitem">
+<a href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>Apache POI&trade; - Text Extraction</h1>
+<div id="front-matter"></div>
+    
+<a name="Overview"></a>
+<h2 class="boxed">Overview</h2>
+<div class="section">
+<p>For a number of years now, Apache POI has provided basic 
+       text extraction for all the project supported file formats. In 
+       addition, as well as the (plain) text, these provides access to 
+       the metadata associated with a given file, such as title and 
+       author.</p>
+<p>For more advanced text extraction needs, including Rich Text
+       extraction (such as formatting and styling), along with XML and
+       HTML output, Apache POI works closely with 
+       <a href="https://tika.apache.org/">Apache Tika</a> to deliver 
+       POI-powered Tika Parsers for all the project supported file formats.</p>
+<p>If you are after turn-key text extraction, including the latest
+       support, styles etc, you are strongly advised to make use of 
+       <a href="https://tika.apache.org/">Apache Tika</a>, which builds 
+       on top of POI to provide Text and Metadata extraction. If you wish
+       to have something very simple and stand-alone, or you wish to make
+       heavy modifications, then the POI provided text extractors documented
+       below might be a better fit for your needs.</p>
+</div>
+
+    
+<a name="Common+functionality"></a>
+<h2 class="boxed">Common functionality</h2>
+<div class="section">
+<p>All of the POI text extractors extend from
+      <em>org.apache.poi.extractor.POITextExtractor</em>. This provides a common
+      method across all extractors, getText(). For many cases, the text
+      returned will be all you need. However, many extractors do provide
+      more targeted text extraction methods, so you may wish to use
+      these in some cases.</p>
+<p>All POIFS / OLE 2 based text extractors also extend from
+      <em>org.apache.poi.extractor.POIOLE2TextExtractor</em>. This additionally
+      provides common methods to get at the <a href="hpfs/">HPFS
+      document metadata</a>.</p>
+<p>All OOXML based text extractors also extend from
+      <em>org.apache.poi.POIOOXMLTextExtractor</em>. This additionally
+      provides common methods to get at the OOXML metadata.</p>
+</div>
+
+    
+<a name="Text+Extractor+Factory"></a>
+<h2 class="boxed">Text Extractor Factory</h2>
+<div class="section">
+<p>POI provides a common class to select the appropriate text extractor
+      for you, based on the supplied document's contents. 
+      <em>ExtractorFactory</em> provides a
+      similar function to WorkbookFactory. You simply pass it an
+      InputStream, a File, a POIFSFileSystem or a OOXML Package. It
+      figures out the correct text extractor for you, and returns it.</p>
+<p>For complete detection and text extractor auto-selection, users
+      are strongly encouraged to investigate
+      <a href="https://tika.apache.org/">Apache Tika</a>.</p>
+</div>
+
+    
+<a name="Excel"></a>
+<h2 class="boxed">Excel</h2>
+<div class="section">
+<p>For .xls files, there is 
+      <em>org.apache.poi.hssf.extractor.ExcelExtractor</em>, which will 
+      return text, optionally with formulas instead of their contents. 
+      Similarly, for .xlsx files there is
+      <em>org.apache.poi.xssf.extractor.XSSFExcelExtractor</em>, which 
+      provides the same functionality.</p>
+<p>For those working in constrained memory footprints, there are
+      two more Excel text extractors available. For .xls files, it's
+      <em>org.apache.poi.hssf.extractor.EventBasedExcelExtractor</em>,
+      based on the streaming EventUserModel code, and will generally
+      deliver a lower memory footprint for extraction. However, it will
+      have problems correctly outputting more complex formulas, as it 
+      works with records as they pass, and so doesn't have access to all
+      parts of complex and shared formulas. For .xlsx files the equivalent is
+      <em>org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor</em>, 
+      which is based on the XSSF SAX Event codebase.</p>
+</div>
+
+    
+<a name="Word"></a>
+<h2 class="boxed">Word</h2>
+<div class="section">
+<p>For .doc files from Word 97 - Word 2003, in scratchpad there is 
+      <em>org.apache.poi.hwpf.extractor.WordExtractor</em>, which will 
+      return text for your document.</p>
+<p>You can also extract simple textual content from
+      older Word 6 and Word 95 files, using the scratchpad class
+      <em>org.apache.poi.hwpf.extractor.Word6Extractor</em>.</p>
+<p>For .docx files, the relevant class is 
+      <em>org.apache.poi.xwpf.extractor.XWPFWordExtractor</em>
+</p>
+</div>
+
+    
+<a name="PowerPoint"></a>
+<h2 class="boxed">PowerPoint</h2>
+<div class="section">
+<p>For .ppt and .pptx files, there is common extractor
+      <em>org.apache.poi.sl.extractor.SlideShowExtractor.SlideShowExtractor</em>, which
+      will return text for your slideshow, optionally restricted to just
+      slides text or notes text. For .ppt you need to add the poi-scratchpad.jar
+      and for .pptx the poi-ooxml.jar and its dependencies are needed</p>
+</div>
+
+    
+<a name="Publisher"></a>
+<h2 class="boxed">Publisher</h2>
+<div class="section">
+<p>For .pub files, in scratchpad there is 
+      <em>org.apache.poi.hpbf.extractor.PublisherExtractor</em>, which 
+      will return text for your file.</p>
+</div>
+
+    
+<a name="Visio"></a>
+<h2 class="boxed">Visio</h2>
+<div class="section">
+<p>For .vsd files, in scratchpad there is 
+      <em>org.apache.poi.hdgf.extractor.VisioTextExtractor</em>, which 
+      will return text for your file.</p>
+</div>
+
+    
+<a name="Embedded+Objects"></a>
+<h2 class="boxed">Embedded Objects</h2>
+<div class="section">
+<p>Extractors already exist for Excel, Word, PowerPoint and Visio; 
+        if one of these objects is embedded into a worksheet, the ExtractorFactory class can be used to recover an extractor for it.     
+      </p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FileInputStream fis = new FileInputStream(inputFile);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">POIFSFileSystem fileSystem = new POIFSFileSystem(fis);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// Firstly, get an extractor for the Workbook</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">POIOLE2TextExtractor oleTextExtractor = </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   ExtractorFactory.createExtractor(fileSystem);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// Then a List of extractors for any embedded Excel, Word, PowerPoint</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// or Visio objects embedded into it.</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">POITextExtractor[] embeddedExtractors =</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   ExtractorFactory.getEmbededDocsTextExtractors(oleTextExtractor);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for (POITextExtractor textExtractor : embeddedExtractors) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   // If the embedded object was an Excel spreadsheet.</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   if (textExtractor instanceof ExcelExtractor) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      ExcelExtractor excelExtractor = (ExcelExtractor) textExtractor;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      System.out.println(excelExtractor.getText());</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   // A Word Document</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   else if (textExtractor instanceof WordExtractor) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      WordExtractor wordExtractor = (WordExtractor) textExtractor;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      String[] paragraphText = wordExtractor.getParagraphText();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      for (String paragraph : paragraphText) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">         System.out.println(paragraph);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      // Display the document's header and footer text</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      System.out.println("Footer text: " + wordExtractor.getFooterText());</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      System.out.println("Header text: " + wordExtractor.getHeaderText());</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   // PowerPoint Presentation.</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   else if (textExtractor instanceof PowerPointExtractor) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      PowerPointExtractor powerPointExtractor =</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">         (PowerPointExtractor) textExtractor;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      System.out.println("Text: " + powerPointExtractor.getText());</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      System.out.println("Notes: " + powerPointExtractor.getNotes());</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   // Visio Drawing</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   else if (textExtractor instanceof VisioTextExtractor) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      VisioTextExtractor visioTextExtractor = </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">         (VisioTextExtractor) textExtractor;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      System.out.println("Text: " + visioTextExtractor.getText());</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      </span>
+</div>
+</div>
+</div>
+  
+<p align="right">
+<font size="-2">by&nbsp;Nick Burch</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0text-extraction.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

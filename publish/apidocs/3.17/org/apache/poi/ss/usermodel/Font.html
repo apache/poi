@@ -1,0 +1,962 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Font (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Font (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/FontCharset.html" title="enum in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/Font.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Font.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.usermodel</FONT>
+<BR>
+Interface Font</H2>
+<DL>
+<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFont.html" title="class in org.apache.poi.hssf.usermodel">HSSFFont</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>Font</B></DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#ANSI_CHARSET">ANSI_CHARSET</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ANSI character set</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#COLOR_NORMAL">COLOR_NORMAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;normal type of black color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#COLOR_RED">COLOR_RED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Red color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#DEFAULT_CHARSET">DEFAULT_CHARSET</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default character set.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SS_NONE">SS_NONE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no type offsetting (not super or subscript)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SS_SUB">SS_SUB</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;subscript</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SS_SUPER">SS_SUPER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;superscript</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SYMBOL_CHARSET">SYMBOL_CHARSET</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Symbol character set</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_DOUBLE">U_DOUBLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double underlined</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_DOUBLE_ACCOUNTING">U_DOUBLE_ACCOUNTING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;accounting style double underline</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_NONE">U_NONE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not underlined</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_SINGLE">U_SINGLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;single (normal) underline</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_SINGLE_ACCOUNTING">U_SINGLE_ACCOUNTING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;accounting style single underline</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getBold()">getBold</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getCharSet()">getCharSet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get character-set to use.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getColor()">getColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color for the font</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getFontHeight()">getFontHeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the font height in unit's of 1/20th of a point.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getFontHeightInPoints()">getFontHeightInPoints</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the font height in points.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getFontName()">getFontName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the name for the font (i.e.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getIndex()">getIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the index within the XSSFWorkbook (sequence within the collection of Font objects)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getItalic()">getItalic</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether to use italics or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getStrikeout()">getStrikeout</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether to use a strikeout horizontal line through the text or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getTypeOffset()">getTypeOffset</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get normal,super or subscript.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getUnderline()">getUnderline</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get type of text underlining to use</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setBold(boolean)">setBold</A></B>(boolean&nbsp;bold)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setCharSet(byte)">setCharSet</A></B>(byte&nbsp;charset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set character-set to use.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setCharSet(int)">setCharSet</A></B>(int&nbsp;charset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set character-set to use.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setColor(short)">setColor</A></B>(short&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color for the font</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setFontHeight(short)">setFontHeight</A></B>(short&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the font height in unit's of 1/20th of a point.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setFontHeightInPoints(short)">setFontHeightInPoints</A></B>(short&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the font height</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setFontName(java.lang.String)">setFontName</A></B>(java.lang.String&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the name for the font (i.e.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setItalic(boolean)">setItalic</A></B>(boolean&nbsp;italic)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether to use italics or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setStrikeout(boolean)">setStrikeout</A></B>(boolean&nbsp;strikeout)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether to use a strikeout horizontal line through the text or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setTypeOffset(short)">setTypeOffset</A></B>(short&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set normal,super or subscript.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setUnderline(byte)">setUnderline</A></B>(byte&nbsp;underline)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set type of text underlining to use</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="COLOR_NORMAL"><!-- --></A><H3>
+COLOR_NORMAL</H3>
+<PRE>
+static final short <B>COLOR_NORMAL</B></PRE>
+<DL>
+<DD>normal type of black color.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.COLOR_NORMAL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="COLOR_RED"><!-- --></A><H3>
+COLOR_RED</H3>
+<PRE>
+static final short <B>COLOR_RED</B></PRE>
+<DL>
+<DD>Dark Red color
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.COLOR_RED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SS_NONE"><!-- --></A><H3>
+SS_NONE</H3>
+<PRE>
+static final short <B>SS_NONE</B></PRE>
+<DL>
+<DD>no type offsetting (not super or subscript)
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.SS_NONE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SS_SUPER"><!-- --></A><H3>
+SS_SUPER</H3>
+<PRE>
+static final short <B>SS_SUPER</B></PRE>
+<DL>
+<DD>superscript
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.SS_SUPER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SS_SUB"><!-- --></A><H3>
+SS_SUB</H3>
+<PRE>
+static final short <B>SS_SUB</B></PRE>
+<DL>
+<DD>subscript
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.SS_SUB">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="U_NONE"><!-- --></A><H3>
+U_NONE</H3>
+<PRE>
+static final byte <B>U_NONE</B></PRE>
+<DL>
+<DD>not underlined
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.U_NONE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="U_SINGLE"><!-- --></A><H3>
+U_SINGLE</H3>
+<PRE>
+static final byte <B>U_SINGLE</B></PRE>
+<DL>
+<DD>single (normal) underline
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.U_SINGLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="U_DOUBLE"><!-- --></A><H3>
+U_DOUBLE</H3>
+<PRE>
+static final byte <B>U_DOUBLE</B></PRE>
+<DL>
+<DD>double underlined
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.U_DOUBLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="U_SINGLE_ACCOUNTING"><!-- --></A><H3>
+U_SINGLE_ACCOUNTING</H3>
+<PRE>
+static final byte <B>U_SINGLE_ACCOUNTING</B></PRE>
+<DL>
+<DD>accounting style single underline
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.U_SINGLE_ACCOUNTING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="U_DOUBLE_ACCOUNTING"><!-- --></A><H3>
+U_DOUBLE_ACCOUNTING</H3>
+<PRE>
+static final byte <B>U_DOUBLE_ACCOUNTING</B></PRE>
+<DL>
+<DD>accounting style double underline
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.U_DOUBLE_ACCOUNTING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ANSI_CHARSET"><!-- --></A><H3>
+ANSI_CHARSET</H3>
+<PRE>
+static final byte <B>ANSI_CHARSET</B></PRE>
+<DL>
+<DD>ANSI character set
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.ANSI_CHARSET">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DEFAULT_CHARSET"><!-- --></A><H3>
+DEFAULT_CHARSET</H3>
+<PRE>
+static final byte <B>DEFAULT_CHARSET</B></PRE>
+<DL>
+<DD>Default character set.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.DEFAULT_CHARSET">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SYMBOL_CHARSET"><!-- --></A><H3>
+SYMBOL_CHARSET</H3>
+<PRE>
+static final byte <B>SYMBOL_CHARSET</B></PRE>
+<DL>
+<DD>Symbol character set
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.Font.SYMBOL_CHARSET">Constant Field Values</A></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="setFontName(java.lang.String)"><!-- --></A><H3>
+setFontName</H3>
+<PRE>
+void <B>setFontName</B>(java.lang.String&nbsp;name)</PRE>
+<DL>
+<DD>set the name for the font (i.e. Arial)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - String representing the name of the font to use</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFontName()"><!-- --></A><H3>
+getFontName</H3>
+<PRE>
+java.lang.String <B>getFontName</B>()</PRE>
+<DL>
+<DD>get the name for the font (i.e. Arial)
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>String representing the name of the font to use</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFontHeight(short)"><!-- --></A><H3>
+setFontHeight</H3>
+<PRE>
+void <B>setFontHeight</B>(short&nbsp;height)</PRE>
+<DL>
+<DD>set the font height in unit's of 1/20th of a point.  Maybe you might want to
+ use the setFontHeightInPoints which matches to the familiar 10, 12, 14 etc..
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>height</CODE> - height in 1/20ths of a point<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setFontHeightInPoints(short)"><CODE>setFontHeightInPoints(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFontHeightInPoints(short)"><!-- --></A><H3>
+setFontHeightInPoints</H3>
+<PRE>
+void <B>setFontHeightInPoints</B>(short&nbsp;height)</PRE>
+<DL>
+<DD>set the font height
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>height</CODE> - height in the familiar unit of measure - points<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#setFontHeight(short)"><CODE>setFontHeight(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFontHeight()"><!-- --></A><H3>
+getFontHeight</H3>
+<PRE>
+short <B>getFontHeight</B>()</PRE>
+<DL>
+<DD>Get the font height in unit's of 1/20th of a point.
+ <p>
+ For many users, the related <A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getFontHeightInPoints()"><CODE>getFontHeightInPoints()</CODE></A>
+  will be more helpful, as that returns font heights in the
+  more familiar points units, eg 10, 12, 14.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>short - height in 1/20ths of a point<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getFontHeightInPoints()"><CODE>getFontHeightInPoints()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFontHeightInPoints()"><!-- --></A><H3>
+getFontHeightInPoints</H3>
+<PRE>
+short <B>getFontHeightInPoints</B>()</PRE>
+<DL>
+<DD>Get the font height in points.
+ <p>
+ This will return the same font height that is shown in Excel,
+  such as 10 or 14 or 28.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>short - height in the familiar unit of measure - points<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#getFontHeight()"><CODE>getFontHeight()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setItalic(boolean)"><!-- --></A><H3>
+setItalic</H3>
+<PRE>
+void <B>setItalic</B>(boolean&nbsp;italic)</PRE>
+<DL>
+<DD>set whether to use italics or not
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>italic</CODE> - italics or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getItalic()"><!-- --></A><H3>
+getItalic</H3>
+<PRE>
+boolean <B>getItalic</B>()</PRE>
+<DL>
+<DD>get whether to use italics or not
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>italics or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setStrikeout(boolean)"><!-- --></A><H3>
+setStrikeout</H3>
+<PRE>
+void <B>setStrikeout</B>(boolean&nbsp;strikeout)</PRE>
+<DL>
+<DD>set whether to use a strikeout horizontal line through the text or not
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>strikeout</CODE> - or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStrikeout()"><!-- --></A><H3>
+getStrikeout</H3>
+<PRE>
+boolean <B>getStrikeout</B>()</PRE>
+<DL>
+<DD>get whether to use a strikeout horizontal line through the text or not
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>strikeout or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColor(short)"><!-- --></A><H3>
+setColor</H3>
+<PRE>
+void <B>setColor</B>(short&nbsp;color)</PRE>
+<DL>
+<DD>set the color for the font
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - to use<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#COLOR_NORMAL"><CODE>Note: Use this rather than HSSFColor.AUTOMATIC for default font color</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#COLOR_RED"><CODE>COLOR_RED</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColor()"><!-- --></A><H3>
+getColor</H3>
+<PRE>
+short <B>getColor</B>()</PRE>
+<DL>
+<DD>get the color for the font
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>color to use<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#COLOR_NORMAL"><CODE>COLOR_NORMAL</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#COLOR_RED"><CODE>COLOR_RED</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPalette.html#getColor(short)"><CODE>HSSFPalette.getColor(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTypeOffset(short)"><!-- --></A><H3>
+setTypeOffset</H3>
+<PRE>
+void <B>setTypeOffset</B>(short&nbsp;offset)</PRE>
+<DL>
+<DD>set normal,super or subscript.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - type to use (none,super,sub)<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SS_NONE"><CODE>SS_NONE</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SS_SUPER"><CODE>SS_SUPER</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SS_SUB"><CODE>SS_SUB</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTypeOffset()"><!-- --></A><H3>
+getTypeOffset</H3>
+<PRE>
+short <B>getTypeOffset</B>()</PRE>
+<DL>
+<DD>get normal,super or subscript.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>offset type to use (none,super,sub)<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SS_NONE"><CODE>SS_NONE</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SS_SUPER"><CODE>SS_SUPER</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SS_SUB"><CODE>SS_SUB</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setUnderline(byte)"><!-- --></A><H3>
+setUnderline</H3>
+<PRE>
+void <B>setUnderline</B>(byte&nbsp;underline)</PRE>
+<DL>
+<DD>set type of text underlining to use
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>underline</CODE> - type<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_NONE"><CODE>U_NONE</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_SINGLE"><CODE>U_SINGLE</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_DOUBLE"><CODE>U_DOUBLE</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_SINGLE_ACCOUNTING"><CODE>U_SINGLE_ACCOUNTING</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_DOUBLE_ACCOUNTING"><CODE>U_DOUBLE_ACCOUNTING</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUnderline()"><!-- --></A><H3>
+getUnderline</H3>
+<PRE>
+byte <B>getUnderline</B>()</PRE>
+<DL>
+<DD>get type of text underlining to use
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>underlining type<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_NONE"><CODE>U_NONE</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_SINGLE"><CODE>U_SINGLE</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_DOUBLE"><CODE>U_DOUBLE</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_SINGLE_ACCOUNTING"><CODE>U_SINGLE_ACCOUNTING</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#U_DOUBLE_ACCOUNTING"><CODE>U_DOUBLE_ACCOUNTING</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCharSet()"><!-- --></A><H3>
+getCharSet</H3>
+<PRE>
+int <B>getCharSet</B>()</PRE>
+<DL>
+<DD>get character-set to use.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>character-set<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#ANSI_CHARSET"><CODE>ANSI_CHARSET</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#DEFAULT_CHARSET"><CODE>DEFAULT_CHARSET</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SYMBOL_CHARSET"><CODE>SYMBOL_CHARSET</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCharSet(byte)"><!-- --></A><H3>
+setCharSet</H3>
+<PRE>
+void <B>setCharSet</B>(byte&nbsp;charset)</PRE>
+<DL>
+<DD>set character-set to use.
+<P>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#ANSI_CHARSET"><CODE>ANSI_CHARSET</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#DEFAULT_CHARSET"><CODE>DEFAULT_CHARSET</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SYMBOL_CHARSET"><CODE>SYMBOL_CHARSET</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCharSet(int)"><!-- --></A><H3>
+setCharSet</H3>
+<PRE>
+void <B>setCharSet</B>(int&nbsp;charset)</PRE>
+<DL>
+<DD>set character-set to use.
+<P>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#ANSI_CHARSET"><CODE>ANSI_CHARSET</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#DEFAULT_CHARSET"><CODE>DEFAULT_CHARSET</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html#SYMBOL_CHARSET"><CODE>SYMBOL_CHARSET</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIndex()"><!-- --></A><H3>
+getIndex</H3>
+<PRE>
+short <B>getIndex</B>()</PRE>
+<DL>
+<DD>get the index within the XSSFWorkbook (sequence within the collection of Font objects)
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>unique index number of the underlying record this Font represents (probably you don't care
+  unless you're comparing which one is which)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBold(boolean)"><!-- --></A><H3>
+setBold</H3>
+<PRE>
+void <B>setBold</B>(boolean&nbsp;bold)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBold()"><!-- --></A><H3>
+getBold</H3>
+<PRE>
+boolean <B>getBold</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/FillPatternType.html" title="enum in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/FontCharset.html" title="enum in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/Font.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Font.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

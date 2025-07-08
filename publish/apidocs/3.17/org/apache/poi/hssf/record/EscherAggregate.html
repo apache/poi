@@ -1,0 +1,4416 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+EscherAggregate (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="EscherAggregate (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/EOFRecord.html" title="class in org.apache.poi.hssf.record"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/ExtendedFormatRecord.html" title="class in org.apache.poi.hssf.record"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/record/EscherAggregate.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EscherAggregate.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.record</FONT>
+<BR>
+Class EscherAggregate</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.RecordBase</A>
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.Record</A>
+          <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.AbstractEscherHolderRecord</A>
+              <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.record.EscherAggregate</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>EscherAggregate</B><DT>extends <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html" title="class in org.apache.poi.hssf.record">AbstractEscherHolderRecord</A></DL>
+</PRE>
+
+<P>
+This class is used to aggregate the MSODRAWING and OBJ record
+ combinations.  This is necessary due to the bizare way in which
+ these records are serialized.  What happens is that you get a
+ combination of MSODRAWING -&gt; OBJ -&gt; MSODRAWING -&gt; OBJ records
+ but the escher records are serialized _across_ the MSODRAWING
+ records.
+ <p>
+ It gets even worse when you start looking at TXO records.
+ <p>
+ So what we do with this class is aggregate lazily.  That is
+ we don't aggregate the MSODRAWING -&gt; OBJ records unless we
+ need to modify them.
+ <p>
+ At first document contains 4 types of records which belong to drawing layer.
+ There are can be such sequence of record:
+ <p>
+ DrawingRecord
+ ContinueRecord
+ ...
+ ContinueRecord
+ ObjRecord | TextObjectRecord
+ .....
+ ContinueRecord
+ ...
+ ContinueRecord
+ ObjRecord | TextObjectRecord
+ NoteRecord
+ ...
+ NoteRecord
+ <p>
+ To work with shapes we have to read data from Drawing and Continue records into single array of bytes and
+ build escher(office art) records tree from this array.
+ Each shape in drawing layer matches corresponding ObjRecord
+ Each textbox matches corresponding TextObjectRecord
+ <p>
+ ObjRecord contains information about shape. Thus each ObjRecord corresponds EscherContainerRecord(SPGR)
+ <p>
+ EscherAggrefate contains also NoteRecords
+ NoteRecords must be serial
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#sid">sid</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACCENTBORDERCALLOUT1">ST_ACCENTBORDERCALLOUT1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACCENTBORDERCALLOUT2">ST_ACCENTBORDERCALLOUT2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACCENTBORDERCALLOUT3">ST_ACCENTBORDERCALLOUT3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACCENTBORDERCALLOUT90">ST_ACCENTBORDERCALLOUT90</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACCENTCALLOUT1">ST_ACCENTCALLOUT1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACCENTCALLOUT2">ST_ACCENTCALLOUT2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACCENTCALLOUT3">ST_ACCENTCALLOUT3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACCENTCALLOUT90">ST_ACCENTCALLOUT90</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACTIONBUTTONBACKPREVIOUS">ST_ACTIONBUTTONBACKPREVIOUS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACTIONBUTTONBEGINNING">ST_ACTIONBUTTONBEGINNING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACTIONBUTTONBLANK">ST_ACTIONBUTTONBLANK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACTIONBUTTONDOCUMENT">ST_ACTIONBUTTONDOCUMENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACTIONBUTTONEND">ST_ACTIONBUTTONEND</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACTIONBUTTONFORWARDNEXT">ST_ACTIONBUTTONFORWARDNEXT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACTIONBUTTONHELP">ST_ACTIONBUTTONHELP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACTIONBUTTONHOME">ST_ACTIONBUTTONHOME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACTIONBUTTONINFORMATION">ST_ACTIONBUTTONINFORMATION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACTIONBUTTONMOVIE">ST_ACTIONBUTTONMOVIE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACTIONBUTTONRETURN">ST_ACTIONBUTTONRETURN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ACTIONBUTTONSOUND">ST_ACTIONBUTTONSOUND</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ARC">ST_ARC</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ARROW">ST_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BALLOON">ST_BALLOON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BENTARROW">ST_BENTARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BENTCONNECTOR2">ST_BENTCONNECTOR2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BENTCONNECTOR3">ST_BENTCONNECTOR3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BENTCONNECTOR4">ST_BENTCONNECTOR4</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BENTCONNECTOR5">ST_BENTCONNECTOR5</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BENTUPARROW">ST_BENTUPARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BEVEL">ST_BEVEL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BLOCKARC">ST_BLOCKARC</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BORDERCALLOUT1">ST_BORDERCALLOUT1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BORDERCALLOUT2">ST_BORDERCALLOUT2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BORDERCALLOUT3">ST_BORDERCALLOUT3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BORDERCALLOUT90">ST_BORDERCALLOUT90</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BRACEPAIR">ST_BRACEPAIR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_BRACKETPAIR">ST_BRACKETPAIR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CALLOUT1">ST_CALLOUT1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CALLOUT2">ST_CALLOUT2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CALLOUT3">ST_CALLOUT3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CALLOUT90">ST_CALLOUT90</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CAN">ST_CAN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CHEVRON">ST_CHEVRON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CIRCULARARROW">ST_CIRCULARARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CLOUDCALLOUT">ST_CLOUDCALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CUBE">ST_CUBE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CURVEDCONNECTOR2">ST_CURVEDCONNECTOR2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CURVEDCONNECTOR3">ST_CURVEDCONNECTOR3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CURVEDCONNECTOR4">ST_CURVEDCONNECTOR4</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CURVEDCONNECTOR5">ST_CURVEDCONNECTOR5</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CURVEDDOWNARROW">ST_CURVEDDOWNARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CURVEDLEFTARROW">ST_CURVEDLEFTARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CURVEDRIGHTARROW">ST_CURVEDRIGHTARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_CURVEDUPARROW">ST_CURVEDUPARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_DIAMOND">ST_DIAMOND</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_DONUT">ST_DONUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_DOUBLEWAVE">ST_DOUBLEWAVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_DOWNARROW">ST_DOWNARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_DOWNARROWCALLOUT">ST_DOWNARROWCALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ELLIPSE">ST_ELLIPSE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ELLIPSERIBBON">ST_ELLIPSERIBBON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ELLIPSERIBBON2">ST_ELLIPSERIBBON2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTALTERNATEPROCESS">ST_FLOWCHARTALTERNATEPROCESS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTCOLLATE">ST_FLOWCHARTCOLLATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTCONNECTOR">ST_FLOWCHARTCONNECTOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTDECISION">ST_FLOWCHARTDECISION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTDELAY">ST_FLOWCHARTDELAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTDISPLAY">ST_FLOWCHARTDISPLAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTDOCUMENT">ST_FLOWCHARTDOCUMENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTEXTRACT">ST_FLOWCHARTEXTRACT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTINPUTOUTPUT">ST_FLOWCHARTINPUTOUTPUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTINTERNALSTORAGE">ST_FLOWCHARTINTERNALSTORAGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTMAGNETICDISK">ST_FLOWCHARTMAGNETICDISK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTMAGNETICDRUM">ST_FLOWCHARTMAGNETICDRUM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTMAGNETICTAPE">ST_FLOWCHARTMAGNETICTAPE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTMANUALINPUT">ST_FLOWCHARTMANUALINPUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTMANUALOPERATION">ST_FLOWCHARTMANUALOPERATION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTMERGE">ST_FLOWCHARTMERGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTMULTIDOCUMENT">ST_FLOWCHARTMULTIDOCUMENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTOFFLINESTORAGE">ST_FLOWCHARTOFFLINESTORAGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTOFFPAGECONNECTOR">ST_FLOWCHARTOFFPAGECONNECTOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTONLINESTORAGE">ST_FLOWCHARTONLINESTORAGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTOR">ST_FLOWCHARTOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTPREDEFINEDPROCESS">ST_FLOWCHARTPREDEFINEDPROCESS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTPREPARATION">ST_FLOWCHARTPREPARATION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTPROCESS">ST_FLOWCHARTPROCESS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTPUNCHEDCARD">ST_FLOWCHARTPUNCHEDCARD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTPUNCHEDTAPE">ST_FLOWCHARTPUNCHEDTAPE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTSORT">ST_FLOWCHARTSORT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTSUMMINGJUNCTION">ST_FLOWCHARTSUMMINGJUNCTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FLOWCHARTTERMINATOR">ST_FLOWCHARTTERMINATOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_FOLDEDCORNER">ST_FOLDEDCORNER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_HEART">ST_HEART</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_HEXAGON">ST_HEXAGON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_HOMEPLATE">ST_HOMEPLATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_HORIZONTALSCROLL">ST_HORIZONTALSCROLL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_HOSTCONTROL">ST_HOSTCONTROL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_IRREGULARSEAL1">ST_IRREGULARSEAL1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_IRREGULARSEAL2">ST_IRREGULARSEAL2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ISOCELESTRIANGLE">ST_ISOCELESTRIANGLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_LEFTARROW">ST_LEFTARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_LEFTARROWCALLOUT">ST_LEFTARROWCALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_LEFTBRACE">ST_LEFTBRACE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_LEFTBRACKET">ST_LEFTBRACKET</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_LEFTRIGHTARROW">ST_LEFTRIGHTARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_LEFTRIGHTARROWCALLOUT">ST_LEFTRIGHTARROWCALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_LEFTRIGHTUPARROW">ST_LEFTRIGHTUPARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_LEFTUPARROW">ST_LEFTUPARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_LIGHTNINGBOLT">ST_LIGHTNINGBOLT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_LINE">ST_LINE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_MIN">ST_MIN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_MOON">ST_MOON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_NIL">ST_NIL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_NOSMOKING">ST_NOSMOKING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_NOT_PRIMATIVE">ST_NOT_PRIMATIVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_NOTCHEDCIRCULARARROW">ST_NOTCHEDCIRCULARARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_NOTCHEDRIGHTARROW">ST_NOTCHEDRIGHTARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_OCTAGON">ST_OCTAGON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_PARALLELOGRAM">ST_PARALLELOGRAM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_PENTAGON">ST_PENTAGON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_PICTUREFRAME">ST_PICTUREFRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_PLAQUE">ST_PLAQUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_PLUS">ST_PLUS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_QUADARROW">ST_QUADARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_QUADARROWCALLOUT">ST_QUADARROWCALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_RECTANGLE">ST_RECTANGLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_RIBBON">ST_RIBBON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_RIBBON2">ST_RIBBON2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_RIGHTARROWCALLOUT">ST_RIGHTARROWCALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_RIGHTBRACE">ST_RIGHTBRACE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_RIGHTBRACKET">ST_RIGHTBRACKET</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_RIGHTTRIANGLE">ST_RIGHTTRIANGLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_ROUNDRECTANGLE">ST_ROUNDRECTANGLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_SEAL">ST_SEAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_SEAL16">ST_SEAL16</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_SEAL24">ST_SEAL24</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_SEAL32">ST_SEAL32</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_SEAL4">ST_SEAL4</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_SEAL8">ST_SEAL8</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_SMILEYFACE">ST_SMILEYFACE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_STAR">ST_STAR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_STRAIGHTCONNECTOR1">ST_STRAIGHTCONNECTOR1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_STRIPEDRIGHTARROW">ST_STRIPEDRIGHTARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_SUN">ST_SUN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTARCHDOWNCURVE">ST_TEXTARCHDOWNCURVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTARCHDOWNPOUR">ST_TEXTARCHDOWNPOUR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTARCHUPCURVE">ST_TEXTARCHUPCURVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTARCHUPPOUR">ST_TEXTARCHUPPOUR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTBOX">ST_TEXTBOX</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTBUTTONCURVE">ST_TEXTBUTTONCURVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTBUTTONPOUR">ST_TEXTBUTTONPOUR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTCANDOWN">ST_TEXTCANDOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTCANUP">ST_TEXTCANUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTCASCADEDOWN">ST_TEXTCASCADEDOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTCASCADEUP">ST_TEXTCASCADEUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTCHEVRON">ST_TEXTCHEVRON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTCHEVRONINVERTED">ST_TEXTCHEVRONINVERTED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTCIRCLECURVE">ST_TEXTCIRCLECURVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTCIRCLEPOUR">ST_TEXTCIRCLEPOUR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTCURVE">ST_TEXTCURVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTCURVEDOWN">ST_TEXTCURVEDOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTCURVEUP">ST_TEXTCURVEUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTDEFLATE">ST_TEXTDEFLATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTDEFLATEBOTTOM">ST_TEXTDEFLATEBOTTOM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTDEFLATEINFLATE">ST_TEXTDEFLATEINFLATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTDEFLATEINFLATEDEFLATE">ST_TEXTDEFLATEINFLATEDEFLATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTDEFLATETOP">ST_TEXTDEFLATETOP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTFADEDOWN">ST_TEXTFADEDOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTFADELEFT">ST_TEXTFADELEFT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTFADERIGHT">ST_TEXTFADERIGHT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTFADEUP">ST_TEXTFADEUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTHEXAGON">ST_TEXTHEXAGON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTINFLATE">ST_TEXTINFLATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTINFLATEBOTTOM">ST_TEXTINFLATEBOTTOM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTINFLATETOP">ST_TEXTINFLATETOP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTOCTAGON">ST_TEXTOCTAGON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTONCURVE">ST_TEXTONCURVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTONRING">ST_TEXTONRING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTPLAINTEXT">ST_TEXTPLAINTEXT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTRING">ST_TEXTRING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTRINGINSIDE">ST_TEXTRINGINSIDE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTRINGOUTSIDE">ST_TEXTRINGOUTSIDE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTSIMPLE">ST_TEXTSIMPLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTSLANTDOWN">ST_TEXTSLANTDOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTSLANTUP">ST_TEXTSLANTUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTSTOP">ST_TEXTSTOP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTTRIANGLE">ST_TEXTTRIANGLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTTRIANGLEINVERTED">ST_TEXTTRIANGLEINVERTED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTWAVE">ST_TEXTWAVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTWAVE1">ST_TEXTWAVE1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTWAVE2">ST_TEXTWAVE2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTWAVE3">ST_TEXTWAVE3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TEXTWAVE4">ST_TEXTWAVE4</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_THICKARROW">ST_THICKARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_TRAPEZOID">ST_TRAPEZOID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_UPARROW">ST_UPARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_UPARROWCALLOUT">ST_UPARROWCALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_UPDOWNARROW">ST_UPDOWNARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_UPDOWNARROWCALLOUT">ST_UPDOWNARROWCALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_UTURNARROW">ST_UTURNARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_VERTICALSCROLL">ST_VERTICALSCROLL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_WAVE">ST_WAVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_WEDGEELLIPSECALLOUT">ST_WEDGEELLIPSECALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_WEDGERECTCALLOUT">ST_WEDGERECTCALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#ST_WEDGERRECTCALLOUT">ST_WEDGERRECTCALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#EscherAggregate(boolean)">EscherAggregate</A></B>(boolean&nbsp;createDefaultTree)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create new EscherAggregate</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#addTailRecord(org.apache.poi.hssf.record.NoteRecord)">addTailRecord</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/NoteRecord.html" title="class in org.apache.poi.hssf.record">NoteRecord</A>&nbsp;note)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add tail record to existing map</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#associateShapeToObjRecord(org.apache.poi.ddf.EscherRecord, org.apache.poi.hssf.record.Record)">associateShapeToObjRecord</A></B>(<A HREF="../../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&nbsp;r,
+                          <A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A>&nbsp;objRecord)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Associates an escher record to an OBJ record or a TXO record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html" title="class in org.apache.poi.hssf.record">EscherAggregate</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#createAggregate(java.util.List, int)">createAggregate</A></B>(java.util.List&lt;<A HREF="../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">RecordBase</A>&gt;&nbsp;records,
+                int&nbsp;locFirstDrawingRecord)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Collapses the drawing records into an aggregate.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/NoteRecord.html" title="class in org.apache.poi.hssf.record">NoteRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#getNoteRecordByObj(org.apache.poi.hssf.record.ObjRecord)">getNoteRecordByObj</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record">ObjRecord</A>&nbsp;obj)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#getRecordName()">getRecordName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#getRecordSize()">getRecordSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gives the current serialized size of the record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Map&lt;<A HREF="../../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>,<A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#getShapeToObjMapping()">getShapeToObjMapping</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#getSid()">getSid</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return the non static version of the id for this record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Map&lt;java.lang.Integer,<A HREF="../../../../../org/apache/poi/hssf/record/NoteRecord.html" title="class in org.apache.poi.hssf.record">NoteRecord</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#getTailRecords()">getTailRecords</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#removeShapeToObjRecord(org.apache.poi.ddf.EscherRecord)">removeShapeToObjRecord</A></B>(<A HREF="../../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&nbsp;rec)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove echerRecord and associated to it Obj or TextObj record</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#removeTailRecord(org.apache.poi.hssf.record.NoteRecord)">removeTailRecord</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/NoteRecord.html" title="class in org.apache.poi.hssf.record">NoteRecord</A>&nbsp;note)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove tail record from the existing map</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#serialize(int, byte[])">serialize</A></B>(int&nbsp;offset,
+          byte[]&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serializes this aggregate to a byte array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#setDgId(short)">setDgId</A></B>(short&nbsp;dgId)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EscherDgContainer
+ -EscherSpgrContainer
+ -EscherDgRecord - set id for this record
+ set id for DgRecord of DgContainer</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#setMainSpRecordId(int)">setMainSpRecordId</A></B>(int&nbsp;shapeId)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EscherDgContainer
+ -EscherSpgrContainer
+ --EscherSpContainer
+ ---EscherSpRecord -set id for this record
+ ---***
+ --***
+ -EscherDgRecord
+ set id for the sp record of the first spContainer in main spgrConatiner</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates the string representation of this record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html#toXml(java.lang.String)">toXml</A></B>(java.lang.String&nbsp;tab)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates the xml representation of this record.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.AbstractEscherHolderRecord"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.<A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html" title="class in org.apache.poi.hssf.record">AbstractEscherHolderRecord</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#addEscherRecord(org.apache.poi.ddf.EscherRecord)">addEscherRecord</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#addEscherRecord(int, org.apache.poi.ddf.EscherRecord)">addEscherRecord</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#clearEscherRecords()">clearEscherRecords</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#clone()">clone</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#convertRawBytesToEscherRecords()">convertRawBytesToEscherRecords</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#decode()">decode</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#findFirstWithId(short)">findFirstWithId</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#getEscherContainer()">getEscherContainer</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#getEscherRecord(int)">getEscherRecord</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#getEscherRecords()">getEscherRecords</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#getRawData()">getRawData</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#join(org.apache.poi.hssf.record.AbstractEscherHolderRecord)">join</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#processContinueRecord(byte[])">processContinueRecord</A>, <A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#setRawData(byte[])">setRawData</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.Record"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.<A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#cloneViaReserialise()">cloneViaReserialise</A>, <A HREF="../../../../../org/apache/poi/hssf/record/Record.html#serialize()">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="sid"><!-- --></A><H3>
+sid</H3>
+<PRE>
+public static final short <B>sid</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.sid">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_MIN"><!-- --></A><H3>
+ST_MIN</H3>
+<PRE>
+public static final short <B>ST_MIN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_MIN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_NOT_PRIMATIVE"><!-- --></A><H3>
+ST_NOT_PRIMATIVE</H3>
+<PRE>
+public static final short <B>ST_NOT_PRIMATIVE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_NOT_PRIMATIVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_RECTANGLE"><!-- --></A><H3>
+ST_RECTANGLE</H3>
+<PRE>
+public static final short <B>ST_RECTANGLE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_RECTANGLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ROUNDRECTANGLE"><!-- --></A><H3>
+ST_ROUNDRECTANGLE</H3>
+<PRE>
+public static final short <B>ST_ROUNDRECTANGLE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ROUNDRECTANGLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ELLIPSE"><!-- --></A><H3>
+ST_ELLIPSE</H3>
+<PRE>
+public static final short <B>ST_ELLIPSE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ELLIPSE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_DIAMOND"><!-- --></A><H3>
+ST_DIAMOND</H3>
+<PRE>
+public static final short <B>ST_DIAMOND</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_DIAMOND">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ISOCELESTRIANGLE"><!-- --></A><H3>
+ST_ISOCELESTRIANGLE</H3>
+<PRE>
+public static final short <B>ST_ISOCELESTRIANGLE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ISOCELESTRIANGLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_RIGHTTRIANGLE"><!-- --></A><H3>
+ST_RIGHTTRIANGLE</H3>
+<PRE>
+public static final short <B>ST_RIGHTTRIANGLE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_RIGHTTRIANGLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_PARALLELOGRAM"><!-- --></A><H3>
+ST_PARALLELOGRAM</H3>
+<PRE>
+public static final short <B>ST_PARALLELOGRAM</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_PARALLELOGRAM">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TRAPEZOID"><!-- --></A><H3>
+ST_TRAPEZOID</H3>
+<PRE>
+public static final short <B>ST_TRAPEZOID</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TRAPEZOID">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_HEXAGON"><!-- --></A><H3>
+ST_HEXAGON</H3>
+<PRE>
+public static final short <B>ST_HEXAGON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_HEXAGON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_OCTAGON"><!-- --></A><H3>
+ST_OCTAGON</H3>
+<PRE>
+public static final short <B>ST_OCTAGON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_OCTAGON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_PLUS"><!-- --></A><H3>
+ST_PLUS</H3>
+<PRE>
+public static final short <B>ST_PLUS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_PLUS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_STAR"><!-- --></A><H3>
+ST_STAR</H3>
+<PRE>
+public static final short <B>ST_STAR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_STAR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ARROW"><!-- --></A><H3>
+ST_ARROW</H3>
+<PRE>
+public static final short <B>ST_ARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_THICKARROW"><!-- --></A><H3>
+ST_THICKARROW</H3>
+<PRE>
+public static final short <B>ST_THICKARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_THICKARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_HOMEPLATE"><!-- --></A><H3>
+ST_HOMEPLATE</H3>
+<PRE>
+public static final short <B>ST_HOMEPLATE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_HOMEPLATE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CUBE"><!-- --></A><H3>
+ST_CUBE</H3>
+<PRE>
+public static final short <B>ST_CUBE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CUBE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BALLOON"><!-- --></A><H3>
+ST_BALLOON</H3>
+<PRE>
+public static final short <B>ST_BALLOON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BALLOON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_SEAL"><!-- --></A><H3>
+ST_SEAL</H3>
+<PRE>
+public static final short <B>ST_SEAL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_SEAL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ARC"><!-- --></A><H3>
+ST_ARC</H3>
+<PRE>
+public static final short <B>ST_ARC</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ARC">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_LINE"><!-- --></A><H3>
+ST_LINE</H3>
+<PRE>
+public static final short <B>ST_LINE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_LINE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_PLAQUE"><!-- --></A><H3>
+ST_PLAQUE</H3>
+<PRE>
+public static final short <B>ST_PLAQUE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_PLAQUE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CAN"><!-- --></A><H3>
+ST_CAN</H3>
+<PRE>
+public static final short <B>ST_CAN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CAN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_DONUT"><!-- --></A><H3>
+ST_DONUT</H3>
+<PRE>
+public static final short <B>ST_DONUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_DONUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTSIMPLE"><!-- --></A><H3>
+ST_TEXTSIMPLE</H3>
+<PRE>
+public static final short <B>ST_TEXTSIMPLE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTSIMPLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTOCTAGON"><!-- --></A><H3>
+ST_TEXTOCTAGON</H3>
+<PRE>
+public static final short <B>ST_TEXTOCTAGON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTOCTAGON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTHEXAGON"><!-- --></A><H3>
+ST_TEXTHEXAGON</H3>
+<PRE>
+public static final short <B>ST_TEXTHEXAGON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTHEXAGON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTCURVE"><!-- --></A><H3>
+ST_TEXTCURVE</H3>
+<PRE>
+public static final short <B>ST_TEXTCURVE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTCURVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTWAVE"><!-- --></A><H3>
+ST_TEXTWAVE</H3>
+<PRE>
+public static final short <B>ST_TEXTWAVE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTWAVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTRING"><!-- --></A><H3>
+ST_TEXTRING</H3>
+<PRE>
+public static final short <B>ST_TEXTRING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTRING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTONCURVE"><!-- --></A><H3>
+ST_TEXTONCURVE</H3>
+<PRE>
+public static final short <B>ST_TEXTONCURVE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTONCURVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTONRING"><!-- --></A><H3>
+ST_TEXTONRING</H3>
+<PRE>
+public static final short <B>ST_TEXTONRING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTONRING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_STRAIGHTCONNECTOR1"><!-- --></A><H3>
+ST_STRAIGHTCONNECTOR1</H3>
+<PRE>
+public static final short <B>ST_STRAIGHTCONNECTOR1</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_STRAIGHTCONNECTOR1">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BENTCONNECTOR2"><!-- --></A><H3>
+ST_BENTCONNECTOR2</H3>
+<PRE>
+public static final short <B>ST_BENTCONNECTOR2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BENTCONNECTOR2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BENTCONNECTOR3"><!-- --></A><H3>
+ST_BENTCONNECTOR3</H3>
+<PRE>
+public static final short <B>ST_BENTCONNECTOR3</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BENTCONNECTOR3">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BENTCONNECTOR4"><!-- --></A><H3>
+ST_BENTCONNECTOR4</H3>
+<PRE>
+public static final short <B>ST_BENTCONNECTOR4</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BENTCONNECTOR4">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BENTCONNECTOR5"><!-- --></A><H3>
+ST_BENTCONNECTOR5</H3>
+<PRE>
+public static final short <B>ST_BENTCONNECTOR5</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BENTCONNECTOR5">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CURVEDCONNECTOR2"><!-- --></A><H3>
+ST_CURVEDCONNECTOR2</H3>
+<PRE>
+public static final short <B>ST_CURVEDCONNECTOR2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CURVEDCONNECTOR2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CURVEDCONNECTOR3"><!-- --></A><H3>
+ST_CURVEDCONNECTOR3</H3>
+<PRE>
+public static final short <B>ST_CURVEDCONNECTOR3</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CURVEDCONNECTOR3">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CURVEDCONNECTOR4"><!-- --></A><H3>
+ST_CURVEDCONNECTOR4</H3>
+<PRE>
+public static final short <B>ST_CURVEDCONNECTOR4</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CURVEDCONNECTOR4">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CURVEDCONNECTOR5"><!-- --></A><H3>
+ST_CURVEDCONNECTOR5</H3>
+<PRE>
+public static final short <B>ST_CURVEDCONNECTOR5</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CURVEDCONNECTOR5">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CALLOUT1"><!-- --></A><H3>
+ST_CALLOUT1</H3>
+<PRE>
+public static final short <B>ST_CALLOUT1</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CALLOUT1">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CALLOUT2"><!-- --></A><H3>
+ST_CALLOUT2</H3>
+<PRE>
+public static final short <B>ST_CALLOUT2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CALLOUT2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CALLOUT3"><!-- --></A><H3>
+ST_CALLOUT3</H3>
+<PRE>
+public static final short <B>ST_CALLOUT3</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CALLOUT3">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACCENTCALLOUT1"><!-- --></A><H3>
+ST_ACCENTCALLOUT1</H3>
+<PRE>
+public static final short <B>ST_ACCENTCALLOUT1</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACCENTCALLOUT1">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACCENTCALLOUT2"><!-- --></A><H3>
+ST_ACCENTCALLOUT2</H3>
+<PRE>
+public static final short <B>ST_ACCENTCALLOUT2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACCENTCALLOUT2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACCENTCALLOUT3"><!-- --></A><H3>
+ST_ACCENTCALLOUT3</H3>
+<PRE>
+public static final short <B>ST_ACCENTCALLOUT3</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACCENTCALLOUT3">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BORDERCALLOUT1"><!-- --></A><H3>
+ST_BORDERCALLOUT1</H3>
+<PRE>
+public static final short <B>ST_BORDERCALLOUT1</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BORDERCALLOUT1">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BORDERCALLOUT2"><!-- --></A><H3>
+ST_BORDERCALLOUT2</H3>
+<PRE>
+public static final short <B>ST_BORDERCALLOUT2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BORDERCALLOUT2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BORDERCALLOUT3"><!-- --></A><H3>
+ST_BORDERCALLOUT3</H3>
+<PRE>
+public static final short <B>ST_BORDERCALLOUT3</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BORDERCALLOUT3">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACCENTBORDERCALLOUT1"><!-- --></A><H3>
+ST_ACCENTBORDERCALLOUT1</H3>
+<PRE>
+public static final short <B>ST_ACCENTBORDERCALLOUT1</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACCENTBORDERCALLOUT1">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACCENTBORDERCALLOUT2"><!-- --></A><H3>
+ST_ACCENTBORDERCALLOUT2</H3>
+<PRE>
+public static final short <B>ST_ACCENTBORDERCALLOUT2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACCENTBORDERCALLOUT2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACCENTBORDERCALLOUT3"><!-- --></A><H3>
+ST_ACCENTBORDERCALLOUT3</H3>
+<PRE>
+public static final short <B>ST_ACCENTBORDERCALLOUT3</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACCENTBORDERCALLOUT3">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_RIBBON"><!-- --></A><H3>
+ST_RIBBON</H3>
+<PRE>
+public static final short <B>ST_RIBBON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_RIBBON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_RIBBON2"><!-- --></A><H3>
+ST_RIBBON2</H3>
+<PRE>
+public static final short <B>ST_RIBBON2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_RIBBON2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CHEVRON"><!-- --></A><H3>
+ST_CHEVRON</H3>
+<PRE>
+public static final short <B>ST_CHEVRON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CHEVRON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_PENTAGON"><!-- --></A><H3>
+ST_PENTAGON</H3>
+<PRE>
+public static final short <B>ST_PENTAGON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_PENTAGON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_NOSMOKING"><!-- --></A><H3>
+ST_NOSMOKING</H3>
+<PRE>
+public static final short <B>ST_NOSMOKING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_NOSMOKING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_SEAL8"><!-- --></A><H3>
+ST_SEAL8</H3>
+<PRE>
+public static final short <B>ST_SEAL8</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_SEAL8">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_SEAL16"><!-- --></A><H3>
+ST_SEAL16</H3>
+<PRE>
+public static final short <B>ST_SEAL16</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_SEAL16">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_SEAL32"><!-- --></A><H3>
+ST_SEAL32</H3>
+<PRE>
+public static final short <B>ST_SEAL32</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_SEAL32">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_WEDGERECTCALLOUT"><!-- --></A><H3>
+ST_WEDGERECTCALLOUT</H3>
+<PRE>
+public static final short <B>ST_WEDGERECTCALLOUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_WEDGERECTCALLOUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_WEDGERRECTCALLOUT"><!-- --></A><H3>
+ST_WEDGERRECTCALLOUT</H3>
+<PRE>
+public static final short <B>ST_WEDGERRECTCALLOUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_WEDGERRECTCALLOUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_WEDGEELLIPSECALLOUT"><!-- --></A><H3>
+ST_WEDGEELLIPSECALLOUT</H3>
+<PRE>
+public static final short <B>ST_WEDGEELLIPSECALLOUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_WEDGEELLIPSECALLOUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_WAVE"><!-- --></A><H3>
+ST_WAVE</H3>
+<PRE>
+public static final short <B>ST_WAVE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_WAVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FOLDEDCORNER"><!-- --></A><H3>
+ST_FOLDEDCORNER</H3>
+<PRE>
+public static final short <B>ST_FOLDEDCORNER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FOLDEDCORNER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_LEFTARROW"><!-- --></A><H3>
+ST_LEFTARROW</H3>
+<PRE>
+public static final short <B>ST_LEFTARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_LEFTARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_DOWNARROW"><!-- --></A><H3>
+ST_DOWNARROW</H3>
+<PRE>
+public static final short <B>ST_DOWNARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_DOWNARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_UPARROW"><!-- --></A><H3>
+ST_UPARROW</H3>
+<PRE>
+public static final short <B>ST_UPARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_UPARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_LEFTRIGHTARROW"><!-- --></A><H3>
+ST_LEFTRIGHTARROW</H3>
+<PRE>
+public static final short <B>ST_LEFTRIGHTARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_LEFTRIGHTARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_UPDOWNARROW"><!-- --></A><H3>
+ST_UPDOWNARROW</H3>
+<PRE>
+public static final short <B>ST_UPDOWNARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_UPDOWNARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_IRREGULARSEAL1"><!-- --></A><H3>
+ST_IRREGULARSEAL1</H3>
+<PRE>
+public static final short <B>ST_IRREGULARSEAL1</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_IRREGULARSEAL1">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_IRREGULARSEAL2"><!-- --></A><H3>
+ST_IRREGULARSEAL2</H3>
+<PRE>
+public static final short <B>ST_IRREGULARSEAL2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_IRREGULARSEAL2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_LIGHTNINGBOLT"><!-- --></A><H3>
+ST_LIGHTNINGBOLT</H3>
+<PRE>
+public static final short <B>ST_LIGHTNINGBOLT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_LIGHTNINGBOLT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_HEART"><!-- --></A><H3>
+ST_HEART</H3>
+<PRE>
+public static final short <B>ST_HEART</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_HEART">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_PICTUREFRAME"><!-- --></A><H3>
+ST_PICTUREFRAME</H3>
+<PRE>
+public static final short <B>ST_PICTUREFRAME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_PICTUREFRAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_QUADARROW"><!-- --></A><H3>
+ST_QUADARROW</H3>
+<PRE>
+public static final short <B>ST_QUADARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_QUADARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_LEFTARROWCALLOUT"><!-- --></A><H3>
+ST_LEFTARROWCALLOUT</H3>
+<PRE>
+public static final short <B>ST_LEFTARROWCALLOUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_LEFTARROWCALLOUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_RIGHTARROWCALLOUT"><!-- --></A><H3>
+ST_RIGHTARROWCALLOUT</H3>
+<PRE>
+public static final short <B>ST_RIGHTARROWCALLOUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_RIGHTARROWCALLOUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_UPARROWCALLOUT"><!-- --></A><H3>
+ST_UPARROWCALLOUT</H3>
+<PRE>
+public static final short <B>ST_UPARROWCALLOUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_UPARROWCALLOUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_DOWNARROWCALLOUT"><!-- --></A><H3>
+ST_DOWNARROWCALLOUT</H3>
+<PRE>
+public static final short <B>ST_DOWNARROWCALLOUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_DOWNARROWCALLOUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_LEFTRIGHTARROWCALLOUT"><!-- --></A><H3>
+ST_LEFTRIGHTARROWCALLOUT</H3>
+<PRE>
+public static final short <B>ST_LEFTRIGHTARROWCALLOUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_LEFTRIGHTARROWCALLOUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_UPDOWNARROWCALLOUT"><!-- --></A><H3>
+ST_UPDOWNARROWCALLOUT</H3>
+<PRE>
+public static final short <B>ST_UPDOWNARROWCALLOUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_UPDOWNARROWCALLOUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_QUADARROWCALLOUT"><!-- --></A><H3>
+ST_QUADARROWCALLOUT</H3>
+<PRE>
+public static final short <B>ST_QUADARROWCALLOUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_QUADARROWCALLOUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BEVEL"><!-- --></A><H3>
+ST_BEVEL</H3>
+<PRE>
+public static final short <B>ST_BEVEL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BEVEL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_LEFTBRACKET"><!-- --></A><H3>
+ST_LEFTBRACKET</H3>
+<PRE>
+public static final short <B>ST_LEFTBRACKET</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_LEFTBRACKET">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_RIGHTBRACKET"><!-- --></A><H3>
+ST_RIGHTBRACKET</H3>
+<PRE>
+public static final short <B>ST_RIGHTBRACKET</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_RIGHTBRACKET">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_LEFTBRACE"><!-- --></A><H3>
+ST_LEFTBRACE</H3>
+<PRE>
+public static final short <B>ST_LEFTBRACE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_LEFTBRACE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_RIGHTBRACE"><!-- --></A><H3>
+ST_RIGHTBRACE</H3>
+<PRE>
+public static final short <B>ST_RIGHTBRACE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_RIGHTBRACE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_LEFTUPARROW"><!-- --></A><H3>
+ST_LEFTUPARROW</H3>
+<PRE>
+public static final short <B>ST_LEFTUPARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_LEFTUPARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BENTUPARROW"><!-- --></A><H3>
+ST_BENTUPARROW</H3>
+<PRE>
+public static final short <B>ST_BENTUPARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BENTUPARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BENTARROW"><!-- --></A><H3>
+ST_BENTARROW</H3>
+<PRE>
+public static final short <B>ST_BENTARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BENTARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_SEAL24"><!-- --></A><H3>
+ST_SEAL24</H3>
+<PRE>
+public static final short <B>ST_SEAL24</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_SEAL24">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_STRIPEDRIGHTARROW"><!-- --></A><H3>
+ST_STRIPEDRIGHTARROW</H3>
+<PRE>
+public static final short <B>ST_STRIPEDRIGHTARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_STRIPEDRIGHTARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_NOTCHEDRIGHTARROW"><!-- --></A><H3>
+ST_NOTCHEDRIGHTARROW</H3>
+<PRE>
+public static final short <B>ST_NOTCHEDRIGHTARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_NOTCHEDRIGHTARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BLOCKARC"><!-- --></A><H3>
+ST_BLOCKARC</H3>
+<PRE>
+public static final short <B>ST_BLOCKARC</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BLOCKARC">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_SMILEYFACE"><!-- --></A><H3>
+ST_SMILEYFACE</H3>
+<PRE>
+public static final short <B>ST_SMILEYFACE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_SMILEYFACE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_VERTICALSCROLL"><!-- --></A><H3>
+ST_VERTICALSCROLL</H3>
+<PRE>
+public static final short <B>ST_VERTICALSCROLL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_VERTICALSCROLL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_HORIZONTALSCROLL"><!-- --></A><H3>
+ST_HORIZONTALSCROLL</H3>
+<PRE>
+public static final short <B>ST_HORIZONTALSCROLL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_HORIZONTALSCROLL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CIRCULARARROW"><!-- --></A><H3>
+ST_CIRCULARARROW</H3>
+<PRE>
+public static final short <B>ST_CIRCULARARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CIRCULARARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_NOTCHEDCIRCULARARROW"><!-- --></A><H3>
+ST_NOTCHEDCIRCULARARROW</H3>
+<PRE>
+public static final short <B>ST_NOTCHEDCIRCULARARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_NOTCHEDCIRCULARARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_UTURNARROW"><!-- --></A><H3>
+ST_UTURNARROW</H3>
+<PRE>
+public static final short <B>ST_UTURNARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_UTURNARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CURVEDRIGHTARROW"><!-- --></A><H3>
+ST_CURVEDRIGHTARROW</H3>
+<PRE>
+public static final short <B>ST_CURVEDRIGHTARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CURVEDRIGHTARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CURVEDLEFTARROW"><!-- --></A><H3>
+ST_CURVEDLEFTARROW</H3>
+<PRE>
+public static final short <B>ST_CURVEDLEFTARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CURVEDLEFTARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CURVEDUPARROW"><!-- --></A><H3>
+ST_CURVEDUPARROW</H3>
+<PRE>
+public static final short <B>ST_CURVEDUPARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CURVEDUPARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CURVEDDOWNARROW"><!-- --></A><H3>
+ST_CURVEDDOWNARROW</H3>
+<PRE>
+public static final short <B>ST_CURVEDDOWNARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CURVEDDOWNARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CLOUDCALLOUT"><!-- --></A><H3>
+ST_CLOUDCALLOUT</H3>
+<PRE>
+public static final short <B>ST_CLOUDCALLOUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CLOUDCALLOUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ELLIPSERIBBON"><!-- --></A><H3>
+ST_ELLIPSERIBBON</H3>
+<PRE>
+public static final short <B>ST_ELLIPSERIBBON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ELLIPSERIBBON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ELLIPSERIBBON2"><!-- --></A><H3>
+ST_ELLIPSERIBBON2</H3>
+<PRE>
+public static final short <B>ST_ELLIPSERIBBON2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ELLIPSERIBBON2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTPROCESS"><!-- --></A><H3>
+ST_FLOWCHARTPROCESS</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTPROCESS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTPROCESS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTDECISION"><!-- --></A><H3>
+ST_FLOWCHARTDECISION</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTDECISION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTDECISION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTINPUTOUTPUT"><!-- --></A><H3>
+ST_FLOWCHARTINPUTOUTPUT</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTINPUTOUTPUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTINPUTOUTPUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTPREDEFINEDPROCESS"><!-- --></A><H3>
+ST_FLOWCHARTPREDEFINEDPROCESS</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTPREDEFINEDPROCESS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTPREDEFINEDPROCESS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTINTERNALSTORAGE"><!-- --></A><H3>
+ST_FLOWCHARTINTERNALSTORAGE</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTINTERNALSTORAGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTINTERNALSTORAGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTDOCUMENT"><!-- --></A><H3>
+ST_FLOWCHARTDOCUMENT</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTDOCUMENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTDOCUMENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTMULTIDOCUMENT"><!-- --></A><H3>
+ST_FLOWCHARTMULTIDOCUMENT</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTMULTIDOCUMENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTMULTIDOCUMENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTTERMINATOR"><!-- --></A><H3>
+ST_FLOWCHARTTERMINATOR</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTTERMINATOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTTERMINATOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTPREPARATION"><!-- --></A><H3>
+ST_FLOWCHARTPREPARATION</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTPREPARATION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTPREPARATION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTMANUALINPUT"><!-- --></A><H3>
+ST_FLOWCHARTMANUALINPUT</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTMANUALINPUT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTMANUALINPUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTMANUALOPERATION"><!-- --></A><H3>
+ST_FLOWCHARTMANUALOPERATION</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTMANUALOPERATION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTMANUALOPERATION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTCONNECTOR"><!-- --></A><H3>
+ST_FLOWCHARTCONNECTOR</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTCONNECTOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTCONNECTOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTPUNCHEDCARD"><!-- --></A><H3>
+ST_FLOWCHARTPUNCHEDCARD</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTPUNCHEDCARD</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTPUNCHEDCARD">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTPUNCHEDTAPE"><!-- --></A><H3>
+ST_FLOWCHARTPUNCHEDTAPE</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTPUNCHEDTAPE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTPUNCHEDTAPE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTSUMMINGJUNCTION"><!-- --></A><H3>
+ST_FLOWCHARTSUMMINGJUNCTION</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTSUMMINGJUNCTION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTSUMMINGJUNCTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTOR"><!-- --></A><H3>
+ST_FLOWCHARTOR</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTCOLLATE"><!-- --></A><H3>
+ST_FLOWCHARTCOLLATE</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTCOLLATE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTCOLLATE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTSORT"><!-- --></A><H3>
+ST_FLOWCHARTSORT</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTSORT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTSORT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTEXTRACT"><!-- --></A><H3>
+ST_FLOWCHARTEXTRACT</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTEXTRACT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTEXTRACT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTMERGE"><!-- --></A><H3>
+ST_FLOWCHARTMERGE</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTMERGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTMERGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTOFFLINESTORAGE"><!-- --></A><H3>
+ST_FLOWCHARTOFFLINESTORAGE</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTOFFLINESTORAGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTOFFLINESTORAGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTONLINESTORAGE"><!-- --></A><H3>
+ST_FLOWCHARTONLINESTORAGE</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTONLINESTORAGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTONLINESTORAGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTMAGNETICTAPE"><!-- --></A><H3>
+ST_FLOWCHARTMAGNETICTAPE</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTMAGNETICTAPE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTMAGNETICTAPE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTMAGNETICDISK"><!-- --></A><H3>
+ST_FLOWCHARTMAGNETICDISK</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTMAGNETICDISK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTMAGNETICDISK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTMAGNETICDRUM"><!-- --></A><H3>
+ST_FLOWCHARTMAGNETICDRUM</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTMAGNETICDRUM</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTMAGNETICDRUM">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTDISPLAY"><!-- --></A><H3>
+ST_FLOWCHARTDISPLAY</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTDISPLAY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTDISPLAY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTDELAY"><!-- --></A><H3>
+ST_FLOWCHARTDELAY</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTDELAY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTDELAY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTPLAINTEXT"><!-- --></A><H3>
+ST_TEXTPLAINTEXT</H3>
+<PRE>
+public static final short <B>ST_TEXTPLAINTEXT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTPLAINTEXT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTSTOP"><!-- --></A><H3>
+ST_TEXTSTOP</H3>
+<PRE>
+public static final short <B>ST_TEXTSTOP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTSTOP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTTRIANGLE"><!-- --></A><H3>
+ST_TEXTTRIANGLE</H3>
+<PRE>
+public static final short <B>ST_TEXTTRIANGLE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTTRIANGLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTTRIANGLEINVERTED"><!-- --></A><H3>
+ST_TEXTTRIANGLEINVERTED</H3>
+<PRE>
+public static final short <B>ST_TEXTTRIANGLEINVERTED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTTRIANGLEINVERTED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTCHEVRON"><!-- --></A><H3>
+ST_TEXTCHEVRON</H3>
+<PRE>
+public static final short <B>ST_TEXTCHEVRON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTCHEVRON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTCHEVRONINVERTED"><!-- --></A><H3>
+ST_TEXTCHEVRONINVERTED</H3>
+<PRE>
+public static final short <B>ST_TEXTCHEVRONINVERTED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTCHEVRONINVERTED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTRINGINSIDE"><!-- --></A><H3>
+ST_TEXTRINGINSIDE</H3>
+<PRE>
+public static final short <B>ST_TEXTRINGINSIDE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTRINGINSIDE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTRINGOUTSIDE"><!-- --></A><H3>
+ST_TEXTRINGOUTSIDE</H3>
+<PRE>
+public static final short <B>ST_TEXTRINGOUTSIDE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTRINGOUTSIDE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTARCHUPCURVE"><!-- --></A><H3>
+ST_TEXTARCHUPCURVE</H3>
+<PRE>
+public static final short <B>ST_TEXTARCHUPCURVE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTARCHUPCURVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTARCHDOWNCURVE"><!-- --></A><H3>
+ST_TEXTARCHDOWNCURVE</H3>
+<PRE>
+public static final short <B>ST_TEXTARCHDOWNCURVE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTARCHDOWNCURVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTCIRCLECURVE"><!-- --></A><H3>
+ST_TEXTCIRCLECURVE</H3>
+<PRE>
+public static final short <B>ST_TEXTCIRCLECURVE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTCIRCLECURVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTBUTTONCURVE"><!-- --></A><H3>
+ST_TEXTBUTTONCURVE</H3>
+<PRE>
+public static final short <B>ST_TEXTBUTTONCURVE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTBUTTONCURVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTARCHUPPOUR"><!-- --></A><H3>
+ST_TEXTARCHUPPOUR</H3>
+<PRE>
+public static final short <B>ST_TEXTARCHUPPOUR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTARCHUPPOUR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTARCHDOWNPOUR"><!-- --></A><H3>
+ST_TEXTARCHDOWNPOUR</H3>
+<PRE>
+public static final short <B>ST_TEXTARCHDOWNPOUR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTARCHDOWNPOUR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTCIRCLEPOUR"><!-- --></A><H3>
+ST_TEXTCIRCLEPOUR</H3>
+<PRE>
+public static final short <B>ST_TEXTCIRCLEPOUR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTCIRCLEPOUR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTBUTTONPOUR"><!-- --></A><H3>
+ST_TEXTBUTTONPOUR</H3>
+<PRE>
+public static final short <B>ST_TEXTBUTTONPOUR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTBUTTONPOUR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTCURVEUP"><!-- --></A><H3>
+ST_TEXTCURVEUP</H3>
+<PRE>
+public static final short <B>ST_TEXTCURVEUP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTCURVEUP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTCURVEDOWN"><!-- --></A><H3>
+ST_TEXTCURVEDOWN</H3>
+<PRE>
+public static final short <B>ST_TEXTCURVEDOWN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTCURVEDOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTCASCADEUP"><!-- --></A><H3>
+ST_TEXTCASCADEUP</H3>
+<PRE>
+public static final short <B>ST_TEXTCASCADEUP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTCASCADEUP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTCASCADEDOWN"><!-- --></A><H3>
+ST_TEXTCASCADEDOWN</H3>
+<PRE>
+public static final short <B>ST_TEXTCASCADEDOWN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTCASCADEDOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTWAVE1"><!-- --></A><H3>
+ST_TEXTWAVE1</H3>
+<PRE>
+public static final short <B>ST_TEXTWAVE1</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTWAVE1">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTWAVE2"><!-- --></A><H3>
+ST_TEXTWAVE2</H3>
+<PRE>
+public static final short <B>ST_TEXTWAVE2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTWAVE2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTWAVE3"><!-- --></A><H3>
+ST_TEXTWAVE3</H3>
+<PRE>
+public static final short <B>ST_TEXTWAVE3</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTWAVE3">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTWAVE4"><!-- --></A><H3>
+ST_TEXTWAVE4</H3>
+<PRE>
+public static final short <B>ST_TEXTWAVE4</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTWAVE4">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTINFLATE"><!-- --></A><H3>
+ST_TEXTINFLATE</H3>
+<PRE>
+public static final short <B>ST_TEXTINFLATE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTINFLATE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTDEFLATE"><!-- --></A><H3>
+ST_TEXTDEFLATE</H3>
+<PRE>
+public static final short <B>ST_TEXTDEFLATE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTDEFLATE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTINFLATEBOTTOM"><!-- --></A><H3>
+ST_TEXTINFLATEBOTTOM</H3>
+<PRE>
+public static final short <B>ST_TEXTINFLATEBOTTOM</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTINFLATEBOTTOM">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTDEFLATEBOTTOM"><!-- --></A><H3>
+ST_TEXTDEFLATEBOTTOM</H3>
+<PRE>
+public static final short <B>ST_TEXTDEFLATEBOTTOM</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTDEFLATEBOTTOM">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTINFLATETOP"><!-- --></A><H3>
+ST_TEXTINFLATETOP</H3>
+<PRE>
+public static final short <B>ST_TEXTINFLATETOP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTINFLATETOP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTDEFLATETOP"><!-- --></A><H3>
+ST_TEXTDEFLATETOP</H3>
+<PRE>
+public static final short <B>ST_TEXTDEFLATETOP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTDEFLATETOP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTDEFLATEINFLATE"><!-- --></A><H3>
+ST_TEXTDEFLATEINFLATE</H3>
+<PRE>
+public static final short <B>ST_TEXTDEFLATEINFLATE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTDEFLATEINFLATE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTDEFLATEINFLATEDEFLATE"><!-- --></A><H3>
+ST_TEXTDEFLATEINFLATEDEFLATE</H3>
+<PRE>
+public static final short <B>ST_TEXTDEFLATEINFLATEDEFLATE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTDEFLATEINFLATEDEFLATE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTFADERIGHT"><!-- --></A><H3>
+ST_TEXTFADERIGHT</H3>
+<PRE>
+public static final short <B>ST_TEXTFADERIGHT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTFADERIGHT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTFADELEFT"><!-- --></A><H3>
+ST_TEXTFADELEFT</H3>
+<PRE>
+public static final short <B>ST_TEXTFADELEFT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTFADELEFT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTFADEUP"><!-- --></A><H3>
+ST_TEXTFADEUP</H3>
+<PRE>
+public static final short <B>ST_TEXTFADEUP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTFADEUP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTFADEDOWN"><!-- --></A><H3>
+ST_TEXTFADEDOWN</H3>
+<PRE>
+public static final short <B>ST_TEXTFADEDOWN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTFADEDOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTSLANTUP"><!-- --></A><H3>
+ST_TEXTSLANTUP</H3>
+<PRE>
+public static final short <B>ST_TEXTSLANTUP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTSLANTUP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTSLANTDOWN"><!-- --></A><H3>
+ST_TEXTSLANTDOWN</H3>
+<PRE>
+public static final short <B>ST_TEXTSLANTDOWN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTSLANTDOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTCANUP"><!-- --></A><H3>
+ST_TEXTCANUP</H3>
+<PRE>
+public static final short <B>ST_TEXTCANUP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTCANUP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTCANDOWN"><!-- --></A><H3>
+ST_TEXTCANDOWN</H3>
+<PRE>
+public static final short <B>ST_TEXTCANDOWN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTCANDOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTALTERNATEPROCESS"><!-- --></A><H3>
+ST_FLOWCHARTALTERNATEPROCESS</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTALTERNATEPROCESS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTALTERNATEPROCESS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_FLOWCHARTOFFPAGECONNECTOR"><!-- --></A><H3>
+ST_FLOWCHARTOFFPAGECONNECTOR</H3>
+<PRE>
+public static final short <B>ST_FLOWCHARTOFFPAGECONNECTOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_FLOWCHARTOFFPAGECONNECTOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_CALLOUT90"><!-- --></A><H3>
+ST_CALLOUT90</H3>
+<PRE>
+public static final short <B>ST_CALLOUT90</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_CALLOUT90">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACCENTCALLOUT90"><!-- --></A><H3>
+ST_ACCENTCALLOUT90</H3>
+<PRE>
+public static final short <B>ST_ACCENTCALLOUT90</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACCENTCALLOUT90">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BORDERCALLOUT90"><!-- --></A><H3>
+ST_BORDERCALLOUT90</H3>
+<PRE>
+public static final short <B>ST_BORDERCALLOUT90</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BORDERCALLOUT90">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACCENTBORDERCALLOUT90"><!-- --></A><H3>
+ST_ACCENTBORDERCALLOUT90</H3>
+<PRE>
+public static final short <B>ST_ACCENTBORDERCALLOUT90</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACCENTBORDERCALLOUT90">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_LEFTRIGHTUPARROW"><!-- --></A><H3>
+ST_LEFTRIGHTUPARROW</H3>
+<PRE>
+public static final short <B>ST_LEFTRIGHTUPARROW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_LEFTRIGHTUPARROW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_SUN"><!-- --></A><H3>
+ST_SUN</H3>
+<PRE>
+public static final short <B>ST_SUN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_SUN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_MOON"><!-- --></A><H3>
+ST_MOON</H3>
+<PRE>
+public static final short <B>ST_MOON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_MOON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BRACKETPAIR"><!-- --></A><H3>
+ST_BRACKETPAIR</H3>
+<PRE>
+public static final short <B>ST_BRACKETPAIR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BRACKETPAIR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_BRACEPAIR"><!-- --></A><H3>
+ST_BRACEPAIR</H3>
+<PRE>
+public static final short <B>ST_BRACEPAIR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_BRACEPAIR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_SEAL4"><!-- --></A><H3>
+ST_SEAL4</H3>
+<PRE>
+public static final short <B>ST_SEAL4</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_SEAL4">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_DOUBLEWAVE"><!-- --></A><H3>
+ST_DOUBLEWAVE</H3>
+<PRE>
+public static final short <B>ST_DOUBLEWAVE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_DOUBLEWAVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACTIONBUTTONBLANK"><!-- --></A><H3>
+ST_ACTIONBUTTONBLANK</H3>
+<PRE>
+public static final short <B>ST_ACTIONBUTTONBLANK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACTIONBUTTONBLANK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACTIONBUTTONHOME"><!-- --></A><H3>
+ST_ACTIONBUTTONHOME</H3>
+<PRE>
+public static final short <B>ST_ACTIONBUTTONHOME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACTIONBUTTONHOME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACTIONBUTTONHELP"><!-- --></A><H3>
+ST_ACTIONBUTTONHELP</H3>
+<PRE>
+public static final short <B>ST_ACTIONBUTTONHELP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACTIONBUTTONHELP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACTIONBUTTONINFORMATION"><!-- --></A><H3>
+ST_ACTIONBUTTONINFORMATION</H3>
+<PRE>
+public static final short <B>ST_ACTIONBUTTONINFORMATION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACTIONBUTTONINFORMATION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACTIONBUTTONFORWARDNEXT"><!-- --></A><H3>
+ST_ACTIONBUTTONFORWARDNEXT</H3>
+<PRE>
+public static final short <B>ST_ACTIONBUTTONFORWARDNEXT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACTIONBUTTONFORWARDNEXT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACTIONBUTTONBACKPREVIOUS"><!-- --></A><H3>
+ST_ACTIONBUTTONBACKPREVIOUS</H3>
+<PRE>
+public static final short <B>ST_ACTIONBUTTONBACKPREVIOUS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACTIONBUTTONBACKPREVIOUS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACTIONBUTTONEND"><!-- --></A><H3>
+ST_ACTIONBUTTONEND</H3>
+<PRE>
+public static final short <B>ST_ACTIONBUTTONEND</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACTIONBUTTONEND">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACTIONBUTTONBEGINNING"><!-- --></A><H3>
+ST_ACTIONBUTTONBEGINNING</H3>
+<PRE>
+public static final short <B>ST_ACTIONBUTTONBEGINNING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACTIONBUTTONBEGINNING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACTIONBUTTONRETURN"><!-- --></A><H3>
+ST_ACTIONBUTTONRETURN</H3>
+<PRE>
+public static final short <B>ST_ACTIONBUTTONRETURN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACTIONBUTTONRETURN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACTIONBUTTONDOCUMENT"><!-- --></A><H3>
+ST_ACTIONBUTTONDOCUMENT</H3>
+<PRE>
+public static final short <B>ST_ACTIONBUTTONDOCUMENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACTIONBUTTONDOCUMENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACTIONBUTTONSOUND"><!-- --></A><H3>
+ST_ACTIONBUTTONSOUND</H3>
+<PRE>
+public static final short <B>ST_ACTIONBUTTONSOUND</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACTIONBUTTONSOUND">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_ACTIONBUTTONMOVIE"><!-- --></A><H3>
+ST_ACTIONBUTTONMOVIE</H3>
+<PRE>
+public static final short <B>ST_ACTIONBUTTONMOVIE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_ACTIONBUTTONMOVIE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_HOSTCONTROL"><!-- --></A><H3>
+ST_HOSTCONTROL</H3>
+<PRE>
+public static final short <B>ST_HOSTCONTROL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_HOSTCONTROL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_TEXTBOX"><!-- --></A><H3>
+ST_TEXTBOX</H3>
+<PRE>
+public static final short <B>ST_TEXTBOX</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_TEXTBOX">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ST_NIL"><!-- --></A><H3>
+ST_NIL</H3>
+<PRE>
+public static final short <B>ST_NIL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hssf.record.EscherAggregate.ST_NIL">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="EscherAggregate(boolean)"><!-- --></A><H3>
+EscherAggregate</H3>
+<PRE>
+public <B>EscherAggregate</B>(boolean&nbsp;createDefaultTree)</PRE>
+<DL>
+<DD>create new EscherAggregate
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>createDefaultTree</CODE> - if true creates base tree of the escher records, see EscherAggregate.buildBaseTree()
+                          else return empty escher aggregate</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getSid()"><!-- --></A><H3>
+getSid</H3>
+<PRE>
+public short <B>getSid</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/hssf/record/Record.html#getSid()">Record</A></CODE></B></DD>
+<DD>return the non static version of the id for this record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#getSid()">getSid</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html" title="class in org.apache.poi.hssf.record">AbstractEscherHolderRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>Returns the current sid.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD>Calculates the string representation of this record.  This is
+ simply a dump of all the records.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#toString()">toString</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html" title="class in org.apache.poi.hssf.record">AbstractEscherHolderRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toXml(java.lang.String)"><!-- --></A><H3>
+toXml</H3>
+<PRE>
+public java.lang.String <B>toXml</B>(java.lang.String&nbsp;tab)</PRE>
+<DL>
+<DD>Calculates the xml representation of this record.  This is
+ simply a dump of all the records.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>tab</CODE> - - string which must be added before each line (used by default '\t')
+<DT><B>Returns:</B><DD>xml representation of the all aggregated records</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createAggregate(java.util.List, int)"><!-- --></A><H3>
+createAggregate</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html" title="class in org.apache.poi.hssf.record">EscherAggregate</A> <B>createAggregate</B>(java.util.List&lt;<A HREF="../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">RecordBase</A>&gt;&nbsp;records,
+                                              int&nbsp;locFirstDrawingRecord)</PRE>
+<DL>
+<DD>Collapses the drawing records into an aggregate.
+ read Drawing, Obj, TxtObj, Note and Continue records into single byte array,
+ create Escher tree from byte array, create map &lt;EscherRecord, Record&gt;
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>records</CODE> - - list of all records inside sheet<DD><CODE>locFirstDrawingRecord</CODE> - - location of the first DrawingRecord inside sheet
+<DT><B>Returns:</B><DD>new EscherAggregate create from all aggregated records which belong to drawing layer</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="serialize(int, byte[])"><!-- --></A><H3>
+serialize</H3>
+<PRE>
+public int <B>serialize</B>(int&nbsp;offset,
+                     byte[]&nbsp;data)</PRE>
+<DL>
+<DD>Serializes this aggregate to a byte array.  Since this is an aggregate
+ record it will effectively serialize the aggregated records.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#serialize(int, byte[])">serialize</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html" title="class in org.apache.poi.hssf.record">AbstractEscherHolderRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - The offset into the start of the array.<DD><CODE>data</CODE> - The byte array to serialize to.
+<DT><B>Returns:</B><DD>The number of bytes serialized.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRecordSize()"><!-- --></A><H3>
+getRecordSize</H3>
+<PRE>
+public int <B>getRecordSize</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/hssf/record/RecordBase.html#getRecordSize()">RecordBase</A></CODE></B></DD>
+<DD>gives the current serialized size of the record. Should include the sid
+ and reclength (4 bytes).
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#getRecordSize()">getRecordSize</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html" title="class in org.apache.poi.hssf.record">AbstractEscherHolderRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>record size, including header size of obj, text, note, drawing, continue records</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="associateShapeToObjRecord(org.apache.poi.ddf.EscherRecord, org.apache.poi.hssf.record.Record)"><!-- --></A><H3>
+associateShapeToObjRecord</H3>
+<PRE>
+public void <B>associateShapeToObjRecord</B>(<A HREF="../../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&nbsp;r,
+                                      <A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A>&nbsp;objRecord)</PRE>
+<DL>
+<DD>Associates an escher record to an OBJ record or a TXO record.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>r</CODE> - - ClientData or Textbox record<DD><CODE>objRecord</CODE> - - Obj or TextObj record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeShapeToObjRecord(org.apache.poi.ddf.EscherRecord)"><!-- --></A><H3>
+removeShapeToObjRecord</H3>
+<PRE>
+public void <B>removeShapeToObjRecord</B>(<A HREF="../../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&nbsp;rec)</PRE>
+<DL>
+<DD>Remove echerRecord and associated to it Obj or TextObj record
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rec</CODE> - - clientData or textbox record to be removed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRecordName()"><!-- --></A><H3>
+getRecordName</H3>
+<PRE>
+protected java.lang.String <B>getRecordName</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html#getRecordName()">getRecordName</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/record/AbstractEscherHolderRecord.html" title="class in org.apache.poi.hssf.record">AbstractEscherHolderRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>"ESCHERAGGREGATE"</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDgId(short)"><!-- --></A><H3>
+setDgId</H3>
+<PRE>
+public void <B>setDgId</B>(short&nbsp;dgId)</PRE>
+<DL>
+<DD>EscherDgContainer
+ -EscherSpgrContainer
+ -EscherDgRecord - set id for this record
+ set id for DgRecord of DgContainer
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dgId</CODE> - - id which must be set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setMainSpRecordId(int)"><!-- --></A><H3>
+setMainSpRecordId</H3>
+<PRE>
+public void <B>setMainSpRecordId</B>(int&nbsp;shapeId)</PRE>
+<DL>
+<DD>EscherDgContainer
+ -EscherSpgrContainer
+ --EscherSpContainer
+ ---EscherSpRecord -set id for this record
+ ---***
+ --***
+ -EscherDgRecord
+ set id for the sp record of the first spContainer in main spgrConatiner
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>shapeId</CODE> - - id which must be set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShapeToObjMapping()"><!-- --></A><H3>
+getShapeToObjMapping</H3>
+<PRE>
+public java.util.Map&lt;<A HREF="../../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>,<A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A>&gt; <B>getShapeToObjMapping</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>unmodifiable copy of the mapping  of <A HREF="../../../../../org/apache/poi/ddf/EscherClientDataRecord.html" title="class in org.apache.poi.ddf"><CODE>EscherClientDataRecord</CODE></A> and <A HREF="../../../../../org/apache/poi/ddf/EscherTextboxRecord.html" title="class in org.apache.poi.ddf"><CODE>EscherTextboxRecord</CODE></A>
+ to their <A HREF="../../../../../org/apache/poi/hssf/record/TextObjectRecord.html" title="class in org.apache.poi.hssf.record"><CODE>TextObjectRecord</CODE></A> or <A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record"><CODE>ObjRecord</CODE></A> .
+ <p>
+ We need to access it outside of EscherAggregate when building shapes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTailRecords()"><!-- --></A><H3>
+getTailRecords</H3>
+<PRE>
+public java.util.Map&lt;java.lang.Integer,<A HREF="../../../../../org/apache/poi/hssf/record/NoteRecord.html" title="class in org.apache.poi.hssf.record">NoteRecord</A>&gt; <B>getTailRecords</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>unmodifiable copy of tail records. We need to access them when building shapes.
+         Every HSSFComment shape has a link to a NoteRecord from the tailRec collection.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNoteRecordByObj(org.apache.poi.hssf.record.ObjRecord)"><!-- --></A><H3>
+getNoteRecordByObj</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/NoteRecord.html" title="class in org.apache.poi.hssf.record">NoteRecord</A> <B>getNoteRecordByObj</B>(<A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record">ObjRecord</A>&nbsp;obj)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>obj</CODE> - - ObjRecord with id == NoteRecord.id
+<DT><B>Returns:</B><DD>null if note record is not found else returns note record with id == obj.id</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addTailRecord(org.apache.poi.hssf.record.NoteRecord)"><!-- --></A><H3>
+addTailRecord</H3>
+<PRE>
+public void <B>addTailRecord</B>(<A HREF="../../../../../org/apache/poi/hssf/record/NoteRecord.html" title="class in org.apache.poi.hssf.record">NoteRecord</A>&nbsp;note)</PRE>
+<DL>
+<DD>Add tail record to existing map
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>note</CODE> - to be added</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeTailRecord(org.apache.poi.hssf.record.NoteRecord)"><!-- --></A><H3>
+removeTailRecord</H3>
+<PRE>
+public void <B>removeTailRecord</B>(<A HREF="../../../../../org/apache/poi/hssf/record/NoteRecord.html" title="class in org.apache.poi.hssf.record">NoteRecord</A>&nbsp;note)</PRE>
+<DL>
+<DD>Remove tail record from the existing map
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>note</CODE> - to be removed</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/EOFRecord.html" title="class in org.apache.poi.hssf.record"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/ExtendedFormatRecord.html" title="class in org.apache.poi.hssf.record"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/record/EscherAggregate.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EscherAggregate.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

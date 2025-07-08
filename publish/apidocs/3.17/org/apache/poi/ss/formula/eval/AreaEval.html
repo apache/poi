@@ -1,0 +1,532 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+AreaEval (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="AreaEval (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEvalBase.html" title="class in org.apache.poi.ss.formula.eval"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/eval/AreaEval.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="AreaEval.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.formula.eval</FONT>
+<BR>
+Interface AreaEval</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../../org/apache/poi/ss/formula/SheetRange.html" title="interface in org.apache.poi.ss.formula">SheetRange</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ThreeDEval.html" title="interface in org.apache.poi.ss.formula">ThreeDEval</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html" title="interface in org.apache.poi.ss.formula">TwoDEval</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></DD>
+</DL>
+<DL>
+<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEvalBase.html" title="class in org.apache.poi.ss.formula.eval">AreaEvalBase</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>AreaEval</B><DT>extends <A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html" title="interface in org.apache.poi.ss.formula">TwoDEval</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/ThreeDEval.html" title="interface in org.apache.poi.ss.formula">ThreeDEval</A></DL>
+</PRE>
+
+<P>
+Evaluation of 2D (Row+Column) and 3D (Sheet+Row+Column) areas
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html#contains(int, int)">contains</A></B>(int&nbsp;row,
+         int&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns true if the cell at row and col specified
+ as absolute indexes in the sheet is contained in
+ this area.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html#containsColumn(int)">containsColumn</A></B>(int&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns true if the specified col is in range</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html#containsRow(int)">containsRow</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns true if the specified row is in range</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html#getAbsoluteValue(int, int)">getAbsoluteValue</A></B>(int&nbsp;row,
+                 int&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html#getFirstColumn()">getFirstColumn</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns the 0-based index of the first col in
+ this area.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html#getFirstRow()">getFirstRow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns the 0-based index of the first row in
+ this area.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html#getHeight()">getHeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html#getLastColumn()">getLastColumn</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns the 0-based index of the last col in
+ this area.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html#getLastRow()">getLastRow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns the 0-based index of the last row in
+ this area.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html#getRelativeValue(int, int)">getRelativeValue</A></B>(int&nbsp;relativeRowIndex,
+                 int&nbsp;relativeColumnIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html#getWidth()">getWidth</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html" title="interface in org.apache.poi.ss.formula.eval">AreaEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html#offset(int, int, int, int)">offset</A></B>(int&nbsp;relFirstRowIx,
+       int&nbsp;relLastRowIx,
+       int&nbsp;relFirstColIx,
+       int&nbsp;relLastColIx)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an <A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html" title="interface in org.apache.poi.ss.formula.eval"><CODE>AreaEval</CODE></A> offset by a relative amount from from the upper left cell
+ of this area</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.ss.formula.ThreeDEval"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from interface org.apache.poi.ss.formula.<A HREF="../../../../../../org/apache/poi/ss/formula/ThreeDEval.html" title="interface in org.apache.poi.ss.formula">ThreeDEval</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/ThreeDEval.html#getValue(int, int, int)">getValue</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.ss.formula.TwoDEval"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from interface org.apache.poi.ss.formula.<A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html" title="interface in org.apache.poi.ss.formula">TwoDEval</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html#getColumn(int)">getColumn</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html#getRow(int)">getRow</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html#getValue(int, int)">getValue</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html#isColumn()">isColumn</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html#isRow()">isRow</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html#isSubTotal(int, int)">isSubTotal</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.ss.formula.SheetRange"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from interface org.apache.poi.ss.formula.<A HREF="../../../../../../org/apache/poi/ss/formula/SheetRange.html" title="interface in org.apache.poi.ss.formula">SheetRange</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/SheetRange.html#getFirstSheetIndex()">getFirstSheetIndex</A>, <A HREF="../../../../../../org/apache/poi/ss/formula/SheetRange.html#getLastSheetIndex()">getLastSheetIndex</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getFirstRow()"><!-- --></A><H3>
+getFirstRow</H3>
+<PRE>
+int <B>getFirstRow</B>()</PRE>
+<DL>
+<DD>returns the 0-based index of the first row in
+ this area.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastRow()"><!-- --></A><H3>
+getLastRow</H3>
+<PRE>
+int <B>getLastRow</B>()</PRE>
+<DL>
+<DD>returns the 0-based index of the last row in
+ this area.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstColumn()"><!-- --></A><H3>
+getFirstColumn</H3>
+<PRE>
+int <B>getFirstColumn</B>()</PRE>
+<DL>
+<DD>returns the 0-based index of the first col in
+ this area.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastColumn()"><!-- --></A><H3>
+getLastColumn</H3>
+<PRE>
+int <B>getLastColumn</B>()</PRE>
+<DL>
+<DD>returns the 0-based index of the last col in
+ this area.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAbsoluteValue(int, int)"><!-- --></A><H3>
+getAbsoluteValue</H3>
+<PRE>
+<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A> <B>getAbsoluteValue</B>(int&nbsp;row,
+                           int&nbsp;col)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the ValueEval from within this area at the specified row and col index. Never
+ <code>null</code> (possibly <A HREF="../../../../../../org/apache/poi/ss/formula/eval/BlankEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>BlankEval</CODE></A>).  The specified indexes should be absolute
+ indexes in the sheet and not relative indexes within the area.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="contains(int, int)"><!-- --></A><H3>
+contains</H3>
+<PRE>
+boolean <B>contains</B>(int&nbsp;row,
+                 int&nbsp;col)</PRE>
+<DL>
+<DD>returns true if the cell at row and col specified
+ as absolute indexes in the sheet is contained in
+ this area.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - <DD><CODE>col</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="containsColumn(int)"><!-- --></A><H3>
+containsColumn</H3>
+<PRE>
+boolean <B>containsColumn</B>(int&nbsp;col)</PRE>
+<DL>
+<DD>returns true if the specified col is in range
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>col</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="containsRow(int)"><!-- --></A><H3>
+containsRow</H3>
+<PRE>
+boolean <B>containsRow</B>(int&nbsp;row)</PRE>
+<DL>
+<DD>returns true if the specified row is in range
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getWidth()"><!-- --></A><H3>
+getWidth</H3>
+<PRE>
+int <B>getWidth</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html#getWidth()">getWidth</A></CODE> in interface <CODE><A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html" title="interface in org.apache.poi.ss.formula">TwoDEval</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHeight()"><!-- --></A><H3>
+getHeight</H3>
+<PRE>
+int <B>getHeight</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html#getHeight()">getHeight</A></CODE> in interface <CODE><A HREF="../../../../../../org/apache/poi/ss/formula/TwoDEval.html" title="interface in org.apache.poi.ss.formula">TwoDEval</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRelativeValue(int, int)"><!-- --></A><H3>
+getRelativeValue</H3>
+<PRE>
+<A HREF="../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A> <B>getRelativeValue</B>(int&nbsp;relativeRowIndex,
+                           int&nbsp;relativeColumnIndex)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the ValueEval from within this area at the specified relativeRowIndex and
+ relativeColumnIndex. Never <code>null</code> (possibly <A HREF="../../../../../../org/apache/poi/ss/formula/eval/BlankEval.html" title="class in org.apache.poi.ss.formula.eval"><CODE>BlankEval</CODE></A>). The
+ specified indexes should relative to the top left corner of this area.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="offset(int, int, int, int)"><!-- --></A><H3>
+offset</H3>
+<PRE>
+<A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html" title="interface in org.apache.poi.ss.formula.eval">AreaEval</A> <B>offset</B>(int&nbsp;relFirstRowIx,
+                int&nbsp;relLastRowIx,
+                int&nbsp;relFirstColIx,
+                int&nbsp;relLastColIx)</PRE>
+<DL>
+<DD>Creates an <A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEval.html" title="interface in org.apache.poi.ss.formula.eval"><CODE>AreaEval</CODE></A> offset by a relative amount from from the upper left cell
+ of this area
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/eval/AreaEvalBase.html" title="class in org.apache.poi.ss.formula.eval"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/eval/AreaEval.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="AreaEval.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

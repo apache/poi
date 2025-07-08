@@ -1,0 +1,536 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Name (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Name (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/IndexedColors.html" title="enum in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/ObjectData.html" title="interface in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/Name.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Name.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.usermodel</FONT>
+<BR>
+Interface Name</H2>
+<DL>
+<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFName.html" title="class in org.apache.poi.hssf.usermodel">HSSFName</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>Name</B></DL>
+</PRE>
+
+<P>
+Represents a defined name for a range of cells.
+ <p>
+ A name is a meaningful shorthand that makes it easier to understand the purpose of a
+ cell reference, constant or a formula.
+ </p>
+ Examples:
+ <pre><blockquote>
+  Sheet sheet = workbook.createSheet("Loan Calculator");
+  Name name;
+
+  name = workbook.createName();
+  name.setNameName("Interest_Rate");
+  name.setRefersToFormula("'Loan Calculator'!$E$5");
+
+  name = wb.createName();
+  name.setNameName("Loan_Amount");
+  name.setRefersToFormula("'Loan Calculator'!$E$4");
+
+  name = wb.createName();
+  name.setNameName("Number_of_Payments");
+  name.setRefersToFormula("'Loan Calculator'!$E$10");
+
+  name = wb.createName();
+  name.setNameName("Monthly_Payment");
+  name.setRefersToFormula("-PMT(Interest_Rate/12,Number_of_Payments,Loan_Amount)");
+
+  name = wb.createName();
+  name.setNameName("Values_Entered");
+  name.setRefersToFormula("IF(Loan_Amount*Interest_Rate>0,1,0)");
+
+ </blockquote></pre>
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#getComment()">getComment</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the comment the user provided when the name was created.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#getNameName()">getNameName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the name of the named range</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#getRefersToFormula()">getRefersToFormula</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the formula that the name is defined to refer to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#getSheetIndex()">getSheetIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the sheet index this name applies to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#getSheetName()">getSheetName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the sheets name which this named range is referenced to</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#isDeleted()">isDeleted</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks if this name points to a cell that no longer exists</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#isFunctionName()">isFunctionName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks if this name is a function name</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#setComment(java.lang.String)">setComment</A></B>(java.lang.String&nbsp;comment)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the comment the user provided when the name was created.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#setFunction(boolean)">setFunction</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates that the defined name refers to a user-defined function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#setNameName(java.lang.String)">setNameName</A></B>(java.lang.String&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the name of the named range</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#setRefersToFormula(java.lang.String)">setRefersToFormula</A></B>(java.lang.String&nbsp;formulaText)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the formula that the name is defined to refer to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#setSheetIndex(int)">setSheetIndex</A></B>(int&nbsp;sheetId)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tell Excel that this name applies to the worksheet with the specified index instead of the entire workbook.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getSheetName()"><!-- --></A><H3>
+getSheetName</H3>
+<PRE>
+java.lang.String <B>getSheetName</B>()</PRE>
+<DL>
+<DD>Get the sheets name which this named range is referenced to
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>sheet name, which this named range referred to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNameName()"><!-- --></A><H3>
+getNameName</H3>
+<PRE>
+java.lang.String <B>getNameName</B>()</PRE>
+<DL>
+<DD>Gets the name of the named range
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>named range name</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setNameName(java.lang.String)"><!-- --></A><H3>
+setNameName</H3>
+<PRE>
+void <B>setNameName</B>(java.lang.String&nbsp;name)</PRE>
+<DL>
+<DD>Sets the name of the named range
+
+ <p>The following is a list of syntax rules that you need to be aware of when you create and edit names.</p>
+ <ul>
+   <li><strong>Valid characters</strong>
+   The first character of a name must be a letter, an underscore character (_), or a backslash (\).
+   Remaining characters in the name can be letters, numbers, periods, and underscore characters.
+   </li>
+   <li><strong>Cell references disallowed</strong>
+   Names cannot be the same as a cell reference, such as Z$100 or R1C1.</li>
+   <li><strong>Spaces are not valid</strong>
+   Spaces are not allowed as part of a name. Use the underscore character (_) and period (.) as word separators, such as, Sales_Tax or First.Quarter.
+   </li>
+   <li><strong>Name length</strong>
+    A name can contain up to 255 characters.
+   </li>
+   <li><strong>Case sensitivity</strong>
+   Names can contain uppercase and lowercase letters.
+   </li>
+ </ul>
+ <p>
+ A name must always be unique within its scope. POI prevents you from defining a name that is not unique
+ within its scope. However you can use the same name in different scopes. Example:
+ <pre><blockquote>
+ //by default names are workbook-global
+ Name name;
+ name = workbook.createName();
+ name.setNameName("sales_08");
+
+ name = workbook.createName();
+ name.setNameName("sales_08"); //will throw an exception: "The workbook already contains this name (case-insensitive)"
+
+ //create sheet-level name
+ name = workbook.createName();
+ name.setSheetIndex(0); //the scope of the name is the first sheet
+ name.setNameName("sales_08");  //ok
+
+ name = workbook.createName();
+ name.setSheetIndex(0);
+ name.setNameName("sales_08");  //will throw an exception: "The sheet already contains this name (case-insensitive)"
+
+ </blockquote></pre>
+ </p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - named range name to set
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if the name is invalid or the already exists within its scope (case-insensitive)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRefersToFormula()"><!-- --></A><H3>
+getRefersToFormula</H3>
+<PRE>
+java.lang.String <B>getRefersToFormula</B>()</PRE>
+<DL>
+<DD>Returns the formula that the name is defined to refer to.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the reference for this name, <code>null</code> if it has not been set yet. Never empty string<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Name.html#setRefersToFormula(java.lang.String)"><CODE>setRefersToFormula(String)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRefersToFormula(java.lang.String)"><!-- --></A><H3>
+setRefersToFormula</H3>
+<PRE>
+void <B>setRefersToFormula</B>(java.lang.String&nbsp;formulaText)</PRE>
+<DL>
+<DD>Sets the formula that the name is defined to refer to. The following are representative examples:
+
+ <ul>
+  <li><code>'My Sheet'!$A$3</code></li>
+  <li><code>8.3</code></li>
+  <li><code>HR!$A$1:$Z$345</code></li>
+  <li><code>SUM(Sheet1!A1,Sheet2!B2)</li>
+  <li><code>-PMT(Interest_Rate/12,Number_of_Payments,Loan_Amount)</li>
+ </ul>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>formulaText</CODE> - the reference for this name
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if the specified formulaText is unparsable</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isFunctionName()"><!-- --></A><H3>
+isFunctionName</H3>
+<PRE>
+boolean <B>isFunctionName</B>()</PRE>
+<DL>
+<DD>Checks if this name is a function name
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if this name is a function name</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDeleted()"><!-- --></A><H3>
+isDeleted</H3>
+<PRE>
+boolean <B>isDeleted</B>()</PRE>
+<DL>
+<DD>Checks if this name points to a cell that no longer exists
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if the name refers to a deleted cell, <code>false</code> otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setSheetIndex(int)"><!-- --></A><H3>
+setSheetIndex</H3>
+<PRE>
+void <B>setSheetIndex</B>(int&nbsp;sheetId)</PRE>
+<DL>
+<DD>Tell Excel that this name applies to the worksheet with the specified index instead of the entire workbook.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheetId</CODE> - the sheet index this name applies to, -1 unsets this property making the name workbook-global
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if the sheet index is invalid.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSheetIndex()"><!-- --></A><H3>
+getSheetIndex</H3>
+<PRE>
+int <B>getSheetIndex</B>()</PRE>
+<DL>
+<DD>Returns the sheet index this name applies to.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the sheet index this name applies to, -1 if this name applies to the entire workbook</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getComment()"><!-- --></A><H3>
+getComment</H3>
+<PRE>
+java.lang.String <B>getComment</B>()</PRE>
+<DL>
+<DD>Returns the comment the user provided when the name was created.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the user comment for this named range</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setComment(java.lang.String)"><!-- --></A><H3>
+setComment</H3>
+<PRE>
+void <B>setComment</B>(java.lang.String&nbsp;comment)</PRE>
+<DL>
+<DD>Sets the comment the user provided when the name was created.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>comment</CODE> - the user comment for this named range</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFunction(boolean)"><!-- --></A><H3>
+setFunction</H3>
+<PRE>
+void <B>setFunction</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Indicates that the defined name refers to a user-defined function.
+ This attribute is used when there is an add-in or other code project associated with the file.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - <code>true</code> indicates the name refers to a function.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/IndexedColors.html" title="enum in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/ObjectData.html" title="interface in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/Name.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Name.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

@@ -1,0 +1,804 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+HSSFShapeGroup (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="HSSFShapeGroup (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeFactory.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeTypes.html" title="interface in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFShapeGroup.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFShapeGroup.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_org.apache.poi.hssf.usermodel.HSSFShape">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.usermodel</FONT>
+<BR>
+Class HSSFShapeGroup</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">org.apache.poi.hssf.usermodel.HSSFShape</A>
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.usermodel.HSSFShapeGroup</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Iterable&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&gt;, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel">HSSFShapeContainer</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Shape.html" title="interface in org.apache.poi.ss.usermodel">Shape</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/ShapeContainer.html" title="interface in org.apache.poi.ss.usermodel">ShapeContainer</A>&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&gt;</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>HSSFShapeGroup</B><DT>extends <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A><DT>implements <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel">HSSFShapeContainer</A></DL>
+</PRE>
+
+<P>
+A shape group may contain other shapes.  It was no actual form on the
+ sheet.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_org.apache.poi.hssf.usermodel.HSSFShape"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class org.apache.poi.hssf.usermodel.<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#FILL__FILLCOLOR_DEFAULT">FILL__FILLCOLOR_DEFAULT</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE__COLOR_DEFAULT">LINESTYLE__COLOR_DEFAULT</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DASHDOTDOTSYS">LINESTYLE_DASHDOTDOTSYS</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DASHDOTGEL">LINESTYLE_DASHDOTGEL</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DASHDOTSYS">LINESTYLE_DASHDOTSYS</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DASHGEL">LINESTYLE_DASHGEL</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DASHSYS">LINESTYLE_DASHSYS</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DEFAULT">LINESTYLE_DEFAULT</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DOTGEL">LINESTYLE_DOTGEL</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_DOTSYS">LINESTYLE_DOTSYS</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_LONGDASHDOTDOTGEL">LINESTYLE_LONGDASHDOTDOTGEL</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_LONGDASHDOTGEL">LINESTYLE_LONGDASHDOTGEL</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_LONGDASHGEL">LINESTYLE_LONGDASHGEL</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_NONE">LINESTYLE_NONE</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINESTYLE_SOLID">LINESTYLE_SOLID</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINEWIDTH_DEFAULT">LINEWIDTH_DEFAULT</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#LINEWIDTH_ONE_PT">LINEWIDTH_ONE_PT</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#NO_FILL_DEFAULT">NO_FILL_DEFAULT</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#NO_FILLHITTEST_FALSE">NO_FILLHITTEST_FALSE</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#NO_FILLHITTEST_TRUE">NO_FILLHITTEST_TRUE</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#HSSFShapeGroup(org.apache.poi.ddf.EscherContainerRecord, org.apache.poi.hssf.record.ObjRecord)">HSSFShapeGroup</A></B>(<A HREF="../../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf">EscherContainerRecord</A>&nbsp;spgrContainer,
+               <A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record">ObjRecord</A>&nbsp;objRecord)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#HSSFShapeGroup(org.apache.poi.hssf.usermodel.HSSFShape, org.apache.poi.hssf.usermodel.HSSFAnchor)">HSSFShapeGroup</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&nbsp;parent,
+               <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFAnchor</A>&nbsp;anchor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#addShape(org.apache.poi.hssf.usermodel.HSSFShape)">addShape</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;add shape to the list of child records</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#afterRemove(org.apache.poi.hssf.usermodel.HSSFPatriarch)">afterRemove</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A>&nbsp;patriarch)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;remove escher container from the patriarch.escherAggregate
+ remove obj, textObj and note records if it's necessary
+ in case of ShapeGroup remove all contained shapes</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#clear()">clear</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#cloneShape()">cloneShape</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#cloneShape(org.apache.poi.hssf.usermodel.HSSFPatriarch)">cloneShape</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A>&nbsp;patriarch)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#countOfAllChildren()">countOfAllChildren</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Count of all children and their childrens children.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html" title="class in org.apache.poi.hssf.usermodel">HSSFShapeGroup</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#createGroup(org.apache.poi.hssf.usermodel.HSSFChildAnchor)">createGroup</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFChildAnchor</A>&nbsp;anchor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create another group under this group.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record">ObjRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#createObjRecord()">createObjRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPicture.html" title="class in org.apache.poi.hssf.usermodel">HSSFPicture</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#createPicture(org.apache.poi.hssf.usermodel.HSSFChildAnchor, int)">createPicture</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFChildAnchor</A>&nbsp;anchor,
+              int&nbsp;pictureIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a picture.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPolygon.html" title="class in org.apache.poi.hssf.usermodel">HSSFPolygon</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#createPolygon(org.apache.poi.hssf.usermodel.HSSFChildAnchor)">createPolygon</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFChildAnchor</A>&nbsp;anchor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a polygon</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSimpleShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFSimpleShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#createShape(org.apache.poi.hssf.usermodel.HSSFChildAnchor)">createShape</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFChildAnchor</A>&nbsp;anchor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new simple shape under this group.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf">EscherContainerRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#createSpContainer()">createSpContainer</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFTextbox.html" title="class in org.apache.poi.hssf.usermodel">HSSFTextbox</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#createTextbox(org.apache.poi.hssf.usermodel.HSSFChildAnchor)">createTextbox</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFChildAnchor</A>&nbsp;anchor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new textbox under this group.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#getChildren()">getChildren</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return all children contained by this shape.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#getX1()">getX1</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The top left x coordinate of this group.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#getX2()">getX2</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The bottom right x coordinate of this group.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#getY1()">getY1</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The top left y coordinate of this group.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#getY2()">getY2</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The bottom right y coordinate of this group.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#iterator()">iterator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#removeShape(org.apache.poi.hssf.usermodel.HSSFShape)">removeShape</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;remove first level shapes</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html#setCoordinates(int, int, int, int)">setCoordinates</A></B>(int&nbsp;x1,
+               int&nbsp;y1,
+               int&nbsp;x2,
+               int&nbsp;y2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the coordinate space of this group.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.usermodel.HSSFShape"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.usermodel.<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getAnchor()">getAnchor</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getEscherContainer()">getEscherContainer</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getFillColor()">getFillColor</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getLineStyle()">getLineStyle</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getLineStyleColor()">getLineStyleColor</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getLineWidth()">getLineWidth</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getObjRecord()">getObjRecord</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getOptRecord()">getOptRecord</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getParent()">getParent</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getPatriarch()">getPatriarch</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getRotationDegree()">getRotationDegree</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#getShapeName()">getShapeName</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#isFlipHorizontal()">isFlipHorizontal</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#isFlipVertical()">isFlipVertical</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#isNoFill()">isNoFill</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setAnchor(org.apache.poi.hssf.usermodel.HSSFAnchor)">setAnchor</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setFillColor(int)">setFillColor</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setFillColor(int, int, int)">setFillColor</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setFlipHorizontal(boolean)">setFlipHorizontal</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setFlipVertical(boolean)">setFlipVertical</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setLineStyle(int)">setLineStyle</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setLineStyleColor(int)">setLineStyleColor</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setLineStyleColor(int, int, int)">setLineStyleColor</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setLineWidth(int)">setLineWidth</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setNoFill(boolean)">setNoFill</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setParent(org.apache.poi.hssf.usermodel.HSSFShape)">setParent</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setPatriarch(org.apache.poi.hssf.usermodel.HSSFPatriarch)">setPatriarch</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setPropertyValue(org.apache.poi.ddf.EscherProperty)">setPropertyValue</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#setRotationDegree(short)">setRotationDegree</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="HSSFShapeGroup(org.apache.poi.ddf.EscherContainerRecord, org.apache.poi.hssf.record.ObjRecord)"><!-- --></A><H3>
+HSSFShapeGroup</H3>
+<PRE>
+public <B>HSSFShapeGroup</B>(<A HREF="../../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf">EscherContainerRecord</A>&nbsp;spgrContainer,
+                      <A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record">ObjRecord</A>&nbsp;objRecord)</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="HSSFShapeGroup(org.apache.poi.hssf.usermodel.HSSFShape, org.apache.poi.hssf.usermodel.HSSFAnchor)"><!-- --></A><H3>
+HSSFShapeGroup</H3>
+<PRE>
+public <B>HSSFShapeGroup</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&nbsp;parent,
+                      <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFAnchor</A>&nbsp;anchor)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="createSpContainer()"><!-- --></A><H3>
+createSpContainer</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf">EscherContainerRecord</A> <B>createSpContainer</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#createSpContainer()">createSpContainer</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createObjRecord()"><!-- --></A><H3>
+createObjRecord</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/record/ObjRecord.html" title="class in org.apache.poi.hssf.record">ObjRecord</A> <B>createObjRecord</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#createObjRecord()">createObjRecord</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="afterRemove(org.apache.poi.hssf.usermodel.HSSFPatriarch)"><!-- --></A><H3>
+afterRemove</H3>
+<PRE>
+protected void <B>afterRemove</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A>&nbsp;patriarch)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#afterRemove(org.apache.poi.hssf.usermodel.HSSFPatriarch)">HSSFShape</A></CODE></B></DD>
+<DD>remove escher container from the patriarch.escherAggregate
+ remove obj, textObj and note records if it's necessary
+ in case of ShapeGroup remove all contained shapes
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#afterRemove(org.apache.poi.hssf.usermodel.HSSFPatriarch)">afterRemove</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createGroup(org.apache.poi.hssf.usermodel.HSSFChildAnchor)"><!-- --></A><H3>
+createGroup</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeGroup.html" title="class in org.apache.poi.hssf.usermodel">HSSFShapeGroup</A> <B>createGroup</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFChildAnchor</A>&nbsp;anchor)</PRE>
+<DL>
+<DD>Create another group under this group.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>anchor</CODE> - the position of the new group.
+<DT><B>Returns:</B><DD>the group</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addShape(org.apache.poi.hssf.usermodel.HSSFShape)"><!-- --></A><H3>
+addShape</H3>
+<PRE>
+public void <B>addShape</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&nbsp;shape)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html#addShape(org.apache.poi.hssf.usermodel.HSSFShape)">HSSFShapeContainer</A></CODE></B></DD>
+<DD>add shape to the list of child records
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html#addShape(org.apache.poi.hssf.usermodel.HSSFShape)">addShape</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel">HSSFShapeContainer</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createShape(org.apache.poi.hssf.usermodel.HSSFChildAnchor)"><!-- --></A><H3>
+createShape</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSimpleShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFSimpleShape</A> <B>createShape</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFChildAnchor</A>&nbsp;anchor)</PRE>
+<DL>
+<DD>Create a new simple shape under this group.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>anchor</CODE> - the position of the shape.
+<DT><B>Returns:</B><DD>the shape</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createTextbox(org.apache.poi.hssf.usermodel.HSSFChildAnchor)"><!-- --></A><H3>
+createTextbox</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFTextbox.html" title="class in org.apache.poi.hssf.usermodel">HSSFTextbox</A> <B>createTextbox</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFChildAnchor</A>&nbsp;anchor)</PRE>
+<DL>
+<DD>Create a new textbox under this group.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>anchor</CODE> - the position of the shape.
+<DT><B>Returns:</B><DD>the textbox</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createPolygon(org.apache.poi.hssf.usermodel.HSSFChildAnchor)"><!-- --></A><H3>
+createPolygon</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPolygon.html" title="class in org.apache.poi.hssf.usermodel">HSSFPolygon</A> <B>createPolygon</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFChildAnchor</A>&nbsp;anchor)</PRE>
+<DL>
+<DD>Creates a polygon
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>anchor</CODE> - the client anchor describes how this group is attached
+               to the sheet.
+<DT><B>Returns:</B><DD>the newly created shape.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createPicture(org.apache.poi.hssf.usermodel.HSSFChildAnchor, int)"><!-- --></A><H3>
+createPicture</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPicture.html" title="class in org.apache.poi.hssf.usermodel">HSSFPicture</A> <B>createPicture</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFChildAnchor.html" title="class in org.apache.poi.hssf.usermodel">HSSFChildAnchor</A>&nbsp;anchor,
+                                 int&nbsp;pictureIndex)</PRE>
+<DL>
+<DD>Creates a picture.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>anchor</CODE> - the client anchor describes how this group is attached
+               to the sheet.
+<DT><B>Returns:</B><DD>the newly created shape.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getChildren()"><!-- --></A><H3>
+getChildren</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&gt; <B>getChildren</B>()</PRE>
+<DL>
+<DD>Return all children contained by this shape.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html#getChildren()">getChildren</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel">HSSFShapeContainer</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>Any children contained by this shape.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCoordinates(int, int, int, int)"><!-- --></A><H3>
+setCoordinates</H3>
+<PRE>
+public void <B>setCoordinates</B>(int&nbsp;x1,
+                           int&nbsp;y1,
+                           int&nbsp;x2,
+                           int&nbsp;y2)</PRE>
+<DL>
+<DD>Sets the coordinate space of this group.  All children are constrained
+ to these coordinates.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html#setCoordinates(int, int, int, int)">setCoordinates</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel">HSSFShapeContainer</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clear()"><!-- --></A><H3>
+clear</H3>
+<PRE>
+public void <B>clear</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html#clear()">clear</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel">HSSFShapeContainer</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getX1()"><!-- --></A><H3>
+getX1</H3>
+<PRE>
+public int <B>getX1</B>()</PRE>
+<DL>
+<DD>The top left x coordinate of this group.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html#getX1()">getX1</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel">HSSFShapeContainer</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The top left x coordinate of this group.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getY1()"><!-- --></A><H3>
+getY1</H3>
+<PRE>
+public int <B>getY1</B>()</PRE>
+<DL>
+<DD>The top left y coordinate of this group.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html#getY1()">getY1</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel">HSSFShapeContainer</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The top left y coordinate of this group.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getX2()"><!-- --></A><H3>
+getX2</H3>
+<PRE>
+public int <B>getX2</B>()</PRE>
+<DL>
+<DD>The bottom right x coordinate of this group.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html#getX2()">getX2</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel">HSSFShapeContainer</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The bottom right x coordinate of this group.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getY2()"><!-- --></A><H3>
+getY2</H3>
+<PRE>
+public int <B>getY2</B>()</PRE>
+<DL>
+<DD>The bottom right y coordinate of this group.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html#getY2()">getY2</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel">HSSFShapeContainer</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The bottom right y coordinate of this group.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="countOfAllChildren()"><!-- --></A><H3>
+countOfAllChildren</H3>
+<PRE>
+public int <B>countOfAllChildren</B>()</PRE>
+<DL>
+<DD>Count of all children and their childrens children.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#countOfAllChildren()">countOfAllChildren</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="cloneShape()"><!-- --></A><H3>
+cloneShape</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A> <B>cloneShape</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html#cloneShape()">cloneShape</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="cloneShape(org.apache.poi.hssf.usermodel.HSSFPatriarch)"><!-- --></A><H3>
+cloneShape</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A> <B>cloneShape</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A>&nbsp;patriarch)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeShape(org.apache.poi.hssf.usermodel.HSSFShape)"><!-- --></A><H3>
+removeShape</H3>
+<PRE>
+public boolean <B>removeShape</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&nbsp;shape)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html#removeShape(org.apache.poi.hssf.usermodel.HSSFShape)">HSSFShapeContainer</A></CODE></B></DD>
+<DD>remove first level shapes
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html#removeShape(org.apache.poi.hssf.usermodel.HSSFShape)">removeShape</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeContainer.html" title="interface in org.apache.poi.hssf.usermodel">HSSFShapeContainer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>shape</CODE> - to be removed
+<DT><B>Returns:</B><DD>true if shape is removed else return false</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="iterator()"><!-- --></A><H3>
+iterator</H3>
+<PRE>
+public java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&gt; <B>iterator</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>iterator</CODE> in interface <CODE>java.lang.Iterable&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShape.html" title="class in org.apache.poi.hssf.usermodel">HSSFShape</A>&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeFactory.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeTypes.html" title="interface in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFShapeGroup.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFShapeGroup.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_org.apache.poi.hssf.usermodel.HSSFShape">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

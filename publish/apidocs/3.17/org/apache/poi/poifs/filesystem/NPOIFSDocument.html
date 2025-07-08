@@ -1,0 +1,471 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+NPOIFSDocument (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="NPOIFSDocument (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/NotOLE2FileException.html" title="class in org.apache.poi.poifs.filesystem"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/filesystem/NPOIFSDocument.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="NPOIFSDocument.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.poifs.filesystem</FONT>
+<BR>
+Class NPOIFSDocument</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.poifs.filesystem.NPOIFSDocument</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html" title="interface in org.apache.poi.poifs.dev">POIFSViewable</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>NPOIFSDocument</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html" title="interface in org.apache.poi.poifs.dev">POIFSViewable</A></DL>
+</PRE>
+
+<P>
+This class manages a document in the NIO POIFS filesystem.
+ This is the <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>NPOIFSFileSystem</CODE></A> version.
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html#NPOIFSDocument(org.apache.poi.poifs.filesystem.DocumentNode)">NPOIFSDocument</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentNode.html" title="class in org.apache.poi.poifs.filesystem">DocumentNode</A>&nbsp;document)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constructor for an existing Document</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html#NPOIFSDocument(org.apache.poi.poifs.property.DocumentProperty, org.apache.poi.poifs.filesystem.NPOIFSFileSystem)">NPOIFSDocument</A></B>(<A HREF="../../../../../org/apache/poi/poifs/property/DocumentProperty.html" title="class in org.apache.poi.poifs.property">DocumentProperty</A>&nbsp;property,
+               <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A>&nbsp;filesystem)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constructor for an existing Document</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html#NPOIFSDocument(java.lang.String, int, org.apache.poi.poifs.filesystem.NPOIFSFileSystem, org.apache.poi.poifs.filesystem.POIFSWriterListener)">NPOIFSDocument</A></B>(java.lang.String&nbsp;name,
+               int&nbsp;size,
+               <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A>&nbsp;filesystem,
+               <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSWriterListener.html" title="interface in org.apache.poi.poifs.filesystem">POIFSWriterListener</A>&nbsp;writer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html#NPOIFSDocument(java.lang.String, org.apache.poi.poifs.filesystem.NPOIFSFileSystem, java.io.InputStream)">NPOIFSDocument</A></B>(java.lang.String&nbsp;name,
+               <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A>&nbsp;filesystem,
+               java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constructor for a new Document</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html#getShortDescription()">getShortDescription</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provides a short description of the object, to be used when a
+ POIFSViewable object has not provided its contents.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html#getSize()">getSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Object[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html#getViewableArray()">getViewableArray</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get an array of objects, some of which may implement POIFSViewable</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Iterator&lt;java.lang.Object&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html#getViewableIterator()">getViewableIterator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get an Iterator of objects, some of which may implement POIFSViewable</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html#preferArray()">preferArray</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Give viewers a hint as to whether to call getViewableArray or
+ getViewableIterator</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSDocument.html#replaceContents(java.io.InputStream)">replaceContents</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="NPOIFSDocument(org.apache.poi.poifs.filesystem.DocumentNode)"><!-- --></A><H3>
+NPOIFSDocument</H3>
+<PRE>
+public <B>NPOIFSDocument</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentNode.html" title="class in org.apache.poi.poifs.filesystem">DocumentNode</A>&nbsp;document)
+               throws java.io.IOException</PRE>
+<DL>
+<DD>Constructor for an existing Document
+<P>
+<DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DL>
+<HR>
+
+<A NAME="NPOIFSDocument(org.apache.poi.poifs.property.DocumentProperty, org.apache.poi.poifs.filesystem.NPOIFSFileSystem)"><!-- --></A><H3>
+NPOIFSDocument</H3>
+<PRE>
+public <B>NPOIFSDocument</B>(<A HREF="../../../../../org/apache/poi/poifs/property/DocumentProperty.html" title="class in org.apache.poi.poifs.property">DocumentProperty</A>&nbsp;property,
+                      <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A>&nbsp;filesystem)
+               throws java.io.IOException</PRE>
+<DL>
+<DD>Constructor for an existing Document
+<P>
+<DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DL>
+<HR>
+
+<A NAME="NPOIFSDocument(java.lang.String, org.apache.poi.poifs.filesystem.NPOIFSFileSystem, java.io.InputStream)"><!-- --></A><H3>
+NPOIFSDocument</H3>
+<PRE>
+public <B>NPOIFSDocument</B>(java.lang.String&nbsp;name,
+                      <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A>&nbsp;filesystem,
+                      java.io.InputStream&nbsp;stream)
+               throws java.io.IOException</PRE>
+<DL>
+<DD>Constructor for a new Document
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the POIFSDocument<DD><CODE>stream</CODE> - the InputStream we read data from
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DL>
+<HR>
+
+<A NAME="NPOIFSDocument(java.lang.String, int, org.apache.poi.poifs.filesystem.NPOIFSFileSystem, org.apache.poi.poifs.filesystem.POIFSWriterListener)"><!-- --></A><H3>
+NPOIFSDocument</H3>
+<PRE>
+public <B>NPOIFSDocument</B>(java.lang.String&nbsp;name,
+                      int&nbsp;size,
+                      <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A>&nbsp;filesystem,
+                      <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSWriterListener.html" title="interface in org.apache.poi.poifs.filesystem">POIFSWriterListener</A>&nbsp;writer)
+               throws java.io.IOException</PRE>
+<DL>
+<DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getSize()"><!-- --></A><H3>
+getSize</H3>
+<PRE>
+public int <B>getSize</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>size of the document</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="replaceContents(java.io.InputStream)"><!-- --></A><H3>
+replaceContents</H3>
+<PRE>
+public void <B>replaceContents</B>(java.io.InputStream&nbsp;stream)
+                     throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getViewableArray()"><!-- --></A><H3>
+getViewableArray</H3>
+<PRE>
+public java.lang.Object[] <B>getViewableArray</B>()</PRE>
+<DL>
+<DD>Get an array of objects, some of which may implement POIFSViewable
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html#getViewableArray()">getViewableArray</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html" title="interface in org.apache.poi.poifs.dev">POIFSViewable</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an array of Object; may not be null, but may be empty</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getViewableIterator()"><!-- --></A><H3>
+getViewableIterator</H3>
+<PRE>
+public java.util.Iterator&lt;java.lang.Object&gt; <B>getViewableIterator</B>()</PRE>
+<DL>
+<DD>Get an Iterator of objects, some of which may implement POIFSViewable
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html#getViewableIterator()">getViewableIterator</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html" title="interface in org.apache.poi.poifs.dev">POIFSViewable</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an Iterator; may not be null, but may have an empty back end
+                 store</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="preferArray()"><!-- --></A><H3>
+preferArray</H3>
+<PRE>
+public boolean <B>preferArray</B>()</PRE>
+<DL>
+<DD>Give viewers a hint as to whether to call getViewableArray or
+ getViewableIterator
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html#preferArray()">preferArray</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html" title="interface in org.apache.poi.poifs.dev">POIFSViewable</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if a viewer should call getViewableArray,
+                 <code>false</code> if a viewer should call getViewableIterator</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShortDescription()"><!-- --></A><H3>
+getShortDescription</H3>
+<PRE>
+public java.lang.String <B>getShortDescription</B>()</PRE>
+<DL>
+<DD>Provides a short description of the object, to be used when a
+ POIFSViewable object has not provided its contents.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html#getShortDescription()">getShortDescription</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html" title="interface in org.apache.poi.poifs.dev">POIFSViewable</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>short description</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/NotOLE2FileException.html" title="class in org.apache.poi.poifs.filesystem"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/filesystem/NPOIFSDocument.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="NPOIFSDocument.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

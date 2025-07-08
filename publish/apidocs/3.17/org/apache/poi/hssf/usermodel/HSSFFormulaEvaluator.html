@@ -1,0 +1,734 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+HSSFFormulaEvaluator (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="HSSFFormulaEvaluator (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFooter.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHeader.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFFormulaEvaluator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_org.apache.poi.ss.formula.BaseFormulaEvaluator">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.usermodel</FONT>
+<BR>
+Class HSSFFormulaEvaluator</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html" title="class in org.apache.poi.ss.formula">org.apache.poi.ss.formula.BaseFormulaEvaluator</A>
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluatorProvider.html" title="interface in org.apache.poi.ss.formula">WorkbookEvaluatorProvider</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>HSSFFormulaEvaluator</B><DT>extends <A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html" title="class in org.apache.poi.ss.formula">BaseFormulaEvaluator</A></DL>
+</PRE>
+
+<P>
+Evaluates formula cells.<p>
+
+ For performance reasons, this class keeps a cache of all previously calculated intermediate
+ cell values.  Be sure to call <A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#clearAllCachedResultValues()"><CODE>BaseFormulaEvaluator.clearAllCachedResultValues()</CODE></A> if any workbook cells are changed between
+ calls to evaluate~ methods on this class.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_org.apache.poi.ss.formula.BaseFormulaEvaluator"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class org.apache.poi.ss.formula.<A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html" title="class in org.apache.poi.ss.formula">BaseFormulaEvaluator</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#_bookEvaluator">_bookEvaluator</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#HSSFFormulaEvaluator(org.apache.poi.hssf.usermodel.HSSFWorkbook)">HSSFFormulaEvaluator</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#HSSFFormulaEvaluator(org.apache.poi.hssf.usermodel.HSSFWorkbook, org.apache.poi.ss.formula.IStabilityClassifier)">HSSFFormulaEvaluator</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook,
+                     <A HREF="../../../../../org/apache/poi/ss/formula/IStabilityClassifier.html" title="interface in org.apache.poi.ss.formula">IStabilityClassifier</A>&nbsp;stabilityClassifier)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html" title="class in org.apache.poi.hssf.usermodel">HSSFFormulaEvaluator</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#create(org.apache.poi.hssf.usermodel.HSSFWorkbook, org.apache.poi.ss.formula.IStabilityClassifier, org.apache.poi.ss.formula.udf.UDFFinder)">create</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook,
+       <A HREF="../../../../../org/apache/poi/ss/formula/IStabilityClassifier.html" title="interface in org.apache.poi.ss.formula">IStabilityClassifier</A>&nbsp;stabilityClassifier,
+       <A HREF="../../../../../org/apache/poi/ss/formula/udf/UDFFinder.html" title="interface in org.apache.poi.ss.formula.udf">UDFFinder</A>&nbsp;udfFinder)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#createRichTextString(java.lang.String)">createRichTextString</A></B>(java.lang.String&nbsp;str)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#evaluateAll()">evaluateAll</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loops over all cells in all sheets of the supplied
+  workbook.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#evaluateAllFormulaCells(org.apache.poi.hssf.usermodel.HSSFWorkbook)">evaluateAllFormulaCells</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;wb)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loops over all cells in all sheets of the supplied
+  workbook.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#evaluateAllFormulaCells(org.apache.poi.ss.usermodel.Workbook)">evaluateAllFormulaCells</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;wb)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loops over all cells in all sheets of the supplied
+  workbook.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellValue.html" title="class in org.apache.poi.ss.usermodel">CellValue</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#evaluateFormulaCellValue(org.apache.poi.ss.usermodel.Cell)">evaluateFormulaCellValue</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a CellValue wrapper around the supplied ValueEval instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html" title="class in org.apache.poi.hssf.usermodel">HSSFCell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#evaluateInCell(org.apache.poi.ss.usermodel.Cell)">evaluateInCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If cell contains formula, it evaluates the formula, and
+  puts the formula result back into the cell, in place
+  of the old formula.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#notifyDeleteCell(org.apache.poi.ss.usermodel.Cell)">notifyDeleteCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should be called to tell the cell value cache that the specified cell has just become a
+ formula cell, or the formula text has changed</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#notifyDeleteCell(org.apache.poi.hssf.usermodel.HSSFCell)">notifyDeleteCell</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html" title="class in org.apache.poi.hssf.usermodel">HSSFCell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should be called to tell the cell value cache that the specified cell has just been
+ deleted.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#notifySetFormula(org.apache.poi.ss.usermodel.Cell)">notifySetFormula</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should be called to tell the cell value cache that the specified (value or formula) cell
+ has changed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#notifyUpdateCell(org.apache.poi.ss.usermodel.Cell)">notifyUpdateCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should be called to tell the cell value cache that the specified (value or formula) cell
+ has changed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#notifyUpdateCell(org.apache.poi.hssf.usermodel.HSSFCell)">notifyUpdateCell</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html" title="class in org.apache.poi.hssf.usermodel">HSSFCell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should be called to tell the cell value cache that the specified (value or formula) cell
+ has changed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#setDebugEvaluationOutputForNextEval(boolean)">setDebugEvaluationOutputForNextEval</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Perform detailed output of formula evaluation for next evaluation only?
+ Is for developer use only (also developers using POI for their XLS files).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#setIgnoreMissingWorkbooks(boolean)">setIgnoreMissingWorkbooks</A></B>(boolean&nbsp;ignore)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to ignore missing references to external workbooks and
+ use cached formula results in the main workbook instead.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#setupEnvironment(java.lang.String[], org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator[])">setupEnvironment</A></B>(java.lang.String[]&nbsp;workbookNames,
+                 <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html" title="class in org.apache.poi.hssf.usermodel">HSSFFormulaEvaluator</A>[]&nbsp;evaluators)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Coordinates several formula evaluators together so that formulas that involve external
+ references can be evaluated.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html#setupReferencedWorkbooks(java.util.Map)">setupReferencedWorkbooks</A></B>(java.util.Map&lt;java.lang.String,<A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A>&gt;&nbsp;evaluators)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets up the Formula Evaluator to be able to reference and resolve
+  links to other workbooks, eg [Test.xls]Sheet1!A1.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.ss.formula.BaseFormulaEvaluator"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.ss.formula.<A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html" title="class in org.apache.poi.ss.formula">BaseFormulaEvaluator</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#_getWorkbookEvaluator()">_getWorkbookEvaluator</A>, <A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#clearAllCachedResultValues()">clearAllCachedResultValues</A>, <A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#evaluate(org.apache.poi.ss.usermodel.Cell)">evaluate</A>, <A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#evaluateAllFormulaCells(org.apache.poi.ss.usermodel.Workbook, org.apache.poi.ss.usermodel.FormulaEvaluator)">evaluateAllFormulaCells</A>, <A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#evaluateFormulaCell(org.apache.poi.ss.usermodel.Cell)">evaluateFormulaCell</A>, <A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#evaluateFormulaCellEnum(org.apache.poi.ss.usermodel.Cell)">evaluateFormulaCellEnum</A>, <A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#setCellType(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.CellValue)">setCellType</A>, <A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#setCellValue(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.CellValue)">setCellValue</A>, <A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#setupEnvironment(java.lang.String[], org.apache.poi.ss.formula.BaseFormulaEvaluator[])">setupEnvironment</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="HSSFFormulaEvaluator(org.apache.poi.hssf.usermodel.HSSFWorkbook)"><!-- --></A><H3>
+HSSFFormulaEvaluator</H3>
+<PRE>
+public <B>HSSFFormulaEvaluator</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook)</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="HSSFFormulaEvaluator(org.apache.poi.hssf.usermodel.HSSFWorkbook, org.apache.poi.ss.formula.IStabilityClassifier)"><!-- --></A><H3>
+HSSFFormulaEvaluator</H3>
+<PRE>
+public <B>HSSFFormulaEvaluator</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook,
+                            <A HREF="../../../../../org/apache/poi/ss/formula/IStabilityClassifier.html" title="interface in org.apache.poi.ss.formula">IStabilityClassifier</A>&nbsp;stabilityClassifier)</PRE>
+<DL>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>workbook</CODE> - The workbook to perform the formula evaluations in<DD><CODE>stabilityClassifier</CODE> - used to optimise caching performance. Pass <code>null</code>
+ for the (conservative) assumption that any cell may have its definition changed after
+ evaluation begins.</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="create(org.apache.poi.hssf.usermodel.HSSFWorkbook, org.apache.poi.ss.formula.IStabilityClassifier, org.apache.poi.ss.formula.udf.UDFFinder)"><!-- --></A><H3>
+create</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html" title="class in org.apache.poi.hssf.usermodel">HSSFFormulaEvaluator</A> <B>create</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook,
+                                          <A HREF="../../../../../org/apache/poi/ss/formula/IStabilityClassifier.html" title="interface in org.apache.poi.ss.formula">IStabilityClassifier</A>&nbsp;stabilityClassifier,
+                                          <A HREF="../../../../../org/apache/poi/ss/formula/udf/UDFFinder.html" title="interface in org.apache.poi.ss.formula.udf">UDFFinder</A>&nbsp;udfFinder)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>workbook</CODE> - The workbook to perform the formula evaluations in<DD><CODE>stabilityClassifier</CODE> - used to optimise caching performance. Pass <code>null</code>
+ for the (conservative) assumption that any cell may have its definition changed after
+ evaluation begins.<DD><CODE>udfFinder</CODE> - pass <code>null</code> for default (AnalysisToolPak only)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createRichTextString(java.lang.String)"><!-- --></A><H3>
+createRichTextString</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel">RichTextString</A> <B>createRichTextString</B>(java.lang.String&nbsp;str)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#createRichTextString(java.lang.String)">createRichTextString</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html" title="class in org.apache.poi.ss.formula">BaseFormulaEvaluator</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setupEnvironment(java.lang.String[], org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator[])"><!-- --></A><H3>
+setupEnvironment</H3>
+<PRE>
+public static void <B>setupEnvironment</B>(java.lang.String[]&nbsp;workbookNames,
+                                    <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html" title="class in org.apache.poi.hssf.usermodel">HSSFFormulaEvaluator</A>[]&nbsp;evaluators)</PRE>
+<DL>
+<DD>Coordinates several formula evaluators together so that formulas that involve external
+ references can be evaluated.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>workbookNames</CODE> - the simple file names used to identify the workbooks in formulas
+ with external links (for example "MyData.xls" as used in a formula "[MyData.xls]Sheet1!A1")<DD><CODE>evaluators</CODE> - all evaluators for the full set of workbooks required by the formulas.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setupReferencedWorkbooks(java.util.Map)"><!-- --></A><H3>
+setupReferencedWorkbooks</H3>
+<PRE>
+public void <B>setupReferencedWorkbooks</B>(java.util.Map&lt;java.lang.String,<A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A>&gt;&nbsp;evaluators)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#setupReferencedWorkbooks(java.util.Map)">FormulaEvaluator</A></CODE></B></DD>
+<DD>Sets up the Formula Evaluator to be able to reference and resolve
+  links to other workbooks, eg [Test.xls]Sheet1!A1.
+ <p>For a workbook referenced as [Test.xls]Sheet1!A1, you should
+  supply a map containing the key Test.xls (no square brackets),
+  and an open FormulaEvaluator onto that Workbook.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#setupReferencedWorkbooks(java.util.Map)">setupReferencedWorkbooks</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A></CODE><DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#setupReferencedWorkbooks(java.util.Map)">setupReferencedWorkbooks</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html" title="class in org.apache.poi.ss.formula">BaseFormulaEvaluator</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>evaluators</CODE> - Map of workbook names (no square brackets) to an evaluator on that workbook</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="notifyUpdateCell(org.apache.poi.hssf.usermodel.HSSFCell)"><!-- --></A><H3>
+notifyUpdateCell</H3>
+<PRE>
+public void <B>notifyUpdateCell</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html" title="class in org.apache.poi.hssf.usermodel">HSSFCell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Should be called to tell the cell value cache that the specified (value or formula) cell
+ has changed.
+ Failure to call this method after changing cell values will cause incorrect behaviour
+ of the evaluate~ methods of this class
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="notifyUpdateCell(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+notifyUpdateCell</H3>
+<PRE>
+public void <B>notifyUpdateCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#notifyUpdateCell(org.apache.poi.ss.usermodel.Cell)">FormulaEvaluator</A></CODE></B></DD>
+<DD>Should be called to tell the cell value cache that the specified (value or formula) cell
+ has changed.
+ Failure to call this method after changing cell values will cause incorrect behaviour
+ of the evaluate~ methods of this class
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="notifyDeleteCell(org.apache.poi.hssf.usermodel.HSSFCell)"><!-- --></A><H3>
+notifyDeleteCell</H3>
+<PRE>
+public void <B>notifyDeleteCell</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html" title="class in org.apache.poi.hssf.usermodel">HSSFCell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Should be called to tell the cell value cache that the specified cell has just been
+ deleted.
+ Failure to call this method after changing cell values will cause incorrect behaviour
+ of the evaluate~ methods of this class
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="notifyDeleteCell(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+notifyDeleteCell</H3>
+<PRE>
+public void <B>notifyDeleteCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#notifyDeleteCell(org.apache.poi.ss.usermodel.Cell)">FormulaEvaluator</A></CODE></B></DD>
+<DD>Should be called to tell the cell value cache that the specified cell has just become a
+ formula cell, or the formula text has changed
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="notifySetFormula(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+notifySetFormula</H3>
+<PRE>
+public void <B>notifySetFormula</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Should be called to tell the cell value cache that the specified (value or formula) cell
+ has changed.
+ Failure to call this method after changing cell values will cause incorrect behaviour
+ of the evaluate~ methods of this class
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluateInCell(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+evaluateInCell</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html" title="class in org.apache.poi.hssf.usermodel">HSSFCell</A> <B>evaluateInCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#evaluateInCell(org.apache.poi.ss.usermodel.Cell)">BaseFormulaEvaluator</A></CODE></B></DD>
+<DD>If cell contains formula, it evaluates the formula, and
+  puts the formula result back into the cell, in place
+  of the old formula.
+ Else if cell does not contain formula, this method leaves
+  the cell unchanged.
+ Note that the same instance of HSSFCell is returned to
+ allow chained calls like:
+ <pre>
+ int evaluatedCellType = evaluator.evaluateInCell(cell).getCellType();
+ </pre>
+ Be aware that your cell value will be changed to hold the
+  result of the formula. If you simply want the formula
+  value computed for you, use <A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#evaluateFormulaCellEnum(org.apache.poi.ss.usermodel.Cell)"><CODE>BaseFormulaEvaluator.evaluateFormulaCellEnum(Cell)</CODE></A>}
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#evaluateInCell(org.apache.poi.ss.usermodel.Cell)">evaluateInCell</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A></CODE><DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#evaluateInCell(org.apache.poi.ss.usermodel.Cell)">evaluateInCell</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html" title="class in org.apache.poi.ss.formula">BaseFormulaEvaluator</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the <code>cell</code> that was passed in, allowing for chained calls</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluateAllFormulaCells(org.apache.poi.hssf.usermodel.HSSFWorkbook)"><!-- --></A><H3>
+evaluateAllFormulaCells</H3>
+<PRE>
+public static void <B>evaluateAllFormulaCells</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;wb)</PRE>
+<DL>
+<DD>Loops over all cells in all sheets of the supplied
+  workbook.
+ For cells that contain formulas, their formulas are
+  evaluated, and the results are saved. These cells
+  remain as formula cells.
+ For cells that do not contain formulas, no changes
+  are made.
+ This is a helpful wrapper around looping over all
+  cells, and calling evaluateFormulaCell on each one.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluateAllFormulaCells(org.apache.poi.ss.usermodel.Workbook)"><!-- --></A><H3>
+evaluateAllFormulaCells</H3>
+<PRE>
+public static void <B>evaluateAllFormulaCells</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;wb)</PRE>
+<DL>
+<DD>Loops over all cells in all sheets of the supplied
+  workbook.
+ For cells that contain formulas, their formulas are
+  evaluated, and the results are saved. These cells
+  remain as formula cells.
+ For cells that do not contain formulas, no changes
+  are made.
+ This is a helpful wrapper around looping over all
+  cells, and calling evaluateFormulaCell on each one.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluateAll()"><!-- --></A><H3>
+evaluateAll</H3>
+<PRE>
+public void <B>evaluateAll</B>()</PRE>
+<DL>
+<DD>Loops over all cells in all sheets of the supplied
+  workbook.
+ For cells that contain formulas, their formulas are
+  evaluated, and the results are saved. These cells
+  remain as formula cells.
+ For cells that do not contain formulas, no changes
+  are made.
+ This is a helpful wrapper around looping over all
+  cells, and calling evaluateFormulaCell on each one.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluateFormulaCellValue(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+evaluateFormulaCellValue</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/ss/usermodel/CellValue.html" title="class in org.apache.poi.ss.usermodel">CellValue</A> <B>evaluateFormulaCellValue</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Returns a CellValue wrapper around the supplied ValueEval instance.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#evaluateFormulaCellValue(org.apache.poi.ss.usermodel.Cell)">evaluateFormulaCellValue</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html" title="class in org.apache.poi.ss.formula">BaseFormulaEvaluator</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setIgnoreMissingWorkbooks(boolean)"><!-- --></A><H3>
+setIgnoreMissingWorkbooks</H3>
+<PRE>
+public void <B>setIgnoreMissingWorkbooks</B>(boolean&nbsp;ignore)</PRE>
+<DL>
+<DD>Whether to ignore missing references to external workbooks and
+ use cached formula results in the main workbook instead.
+ <p>
+ In some cases external workbooks referenced by formulas in the main workbook are not available.
+ With this method you can control how POI handles such missing references:
+ <ul>
+     <li>by default ignoreMissingWorkbooks=false and POI throws 
+     <A HREF="../../../../../org/apache/poi/ss/formula/CollaboratingWorkbooksEnvironment.WorkbookNotFoundException.html" title="class in org.apache.poi.ss.formula"><CODE>CollaboratingWorkbooksEnvironment.WorkbookNotFoundException</CODE></A>
+     if an external reference cannot be resolved</li>
+     <li>if ignoreMissingWorkbooks=true then POI uses cached formula result
+     that already exists in the main workbook</li>
+ </ul>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#setIgnoreMissingWorkbooks(boolean)">setIgnoreMissingWorkbooks</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A></CODE><DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#setIgnoreMissingWorkbooks(boolean)">setIgnoreMissingWorkbooks</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html" title="class in org.apache.poi.ss.formula">BaseFormulaEvaluator</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ignore</CODE> - whether to ignore missing references to external workbooks</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDebugEvaluationOutputForNextEval(boolean)"><!-- --></A><H3>
+setDebugEvaluationOutputForNextEval</H3>
+<PRE>
+public void <B>setDebugEvaluationOutputForNextEval</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Perform detailed output of formula evaluation for next evaluation only?
+ Is for developer use only (also developers using POI for their XLS files).
+ Log-Level WARN is for basic info, INFO for detailed information. These quite
+ high levels are used because you have to explicitly enable this specific logging.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#setDebugEvaluationOutputForNextEval(boolean)">setDebugEvaluationOutputForNextEval</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A></CODE><DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html#setDebugEvaluationOutputForNextEval(boolean)">setDebugEvaluationOutputForNextEval</A></CODE> in class <CODE><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html" title="class in org.apache.poi.ss.formula">BaseFormulaEvaluator</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - whether to perform detailed output</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFooter.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHeader.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFFormulaEvaluator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_org.apache.poi.ss.formula.BaseFormulaEvaluator">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

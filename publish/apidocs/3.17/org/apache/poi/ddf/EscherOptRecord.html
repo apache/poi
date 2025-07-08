@@ -1,0 +1,442 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+EscherOptRecord (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="EscherOptRecord (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherMetafileBlip.html" title="class in org.apache.poi.ddf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherPictBlip.html" title="class in org.apache.poi.ddf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/ddf/EscherOptRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EscherOptRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ddf</FONT>
+<BR>
+Class EscherOptRecord</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">org.apache.poi.ddf.EscherRecord</A>
+      <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html" title="class in org.apache.poi.ddf">org.apache.poi.ddf.AbstractEscherOptRecord</A>
+          <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ddf.EscherOptRecord</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>EscherOptRecord</B><DT>extends <A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html" title="class in org.apache.poi.ddf">AbstractEscherOptRecord</A></DL>
+</PRE>
+
+<P>
+The opt record is used to store property values for a shape. It is the key to
+ determining the attributes of a shape. Properties can be of two types: simple
+ or complex. Simple types are fixed length. Complex properties are variable
+ length.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherOptRecord.html#RECORD_DESCRIPTION">RECORD_DESCRIPTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherOptRecord.html#RECORD_ID">RECORD_ID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherOptRecord.html#EscherOptRecord()">EscherOptRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherOptRecord.html#getInstance()">getInstance</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the instance part of the option record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherOptRecord.html#getOptions()">getOptions</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Automatically recalculate the correct option</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherOptRecord.html#getRecordName()">getRecordName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subclasses should return the short name for this escher record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherOptRecord.html#getVersion()">getVersion</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the version part of the option record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherOptRecord.html#setVersion(short)">setVersion</A></B>(short&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the version part of record</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.ddf.AbstractEscherOptRecord"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.ddf.<A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html" title="class in org.apache.poi.ddf">AbstractEscherOptRecord</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html#addEscherProperty(org.apache.poi.ddf.EscherProperty)">addEscherProperty</A>, <A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html#fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)">fillFields</A>, <A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html#getAttributeMap()">getAttributeMap</A>, <A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html#getEscherProperties()">getEscherProperties</A>, <A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html#getEscherProperty(int)">getEscherProperty</A>, <A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html#getRecordSize()">getRecordSize</A>, <A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html#lookup(int)">lookup</A>, <A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html#removeEscherProperty(int)">removeEscherProperty</A>, <A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html#serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)">serialize</A>, <A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html#setEscherProperty(org.apache.poi.ddf.EscherProperty)">setEscherProperty</A>, <A HREF="../../../../org/apache/poi/ddf/AbstractEscherOptRecord.html#sortProperties()">sortProperties</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.ddf.EscherRecord"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.ddf.<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#clone()">clone</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#display(java.io.PrintWriter, int)">display</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#fillFields(byte[], org.apache.poi.ddf.EscherRecordFactory)">fillFields</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getChild(int)">getChild</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getChildRecords()">getChildRecords</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordId()">getRecordId</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#isContainerRecord()">isContainerRecord</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#readHeader(byte[], int)">readHeader</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#readInstance(byte[], int)">readInstance</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize()">serialize</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize(int, byte[])">serialize</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setChildRecords(java.util.List)">setChildRecords</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setInstance(short)">setInstance</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setOptions(short)">setOptions</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setRecordId(short)">setRecordId</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#toString()">toString</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#toXml()">toXml</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#toXml(java.lang.String)">toXml</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="RECORD_DESCRIPTION"><!-- --></A><H3>
+RECORD_DESCRIPTION</H3>
+<PRE>
+public static final java.lang.String <B>RECORD_DESCRIPTION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherOptRecord.RECORD_DESCRIPTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RECORD_ID"><!-- --></A><H3>
+RECORD_ID</H3>
+<PRE>
+public static final short <B>RECORD_ID</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherOptRecord.RECORD_ID">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="EscherOptRecord()"><!-- --></A><H3>
+EscherOptRecord</H3>
+<PRE>
+public <B>EscherOptRecord</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getInstance()"><!-- --></A><H3>
+getInstance</H3>
+<PRE>
+public short <B>getInstance</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getInstance()">EscherRecord</A></CODE></B></DD>
+<DD>Returns the instance part of the option record.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getInstance()">getInstance</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The instance part of the record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOptions()"><!-- --></A><H3>
+getOptions</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">@Internal</A>
+</FONT>public short <B>getOptions</B>()</PRE>
+<DL>
+<DD>Automatically recalculate the correct option
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getOptions()">getOptions</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The options field for this record. All records have one.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRecordName()"><!-- --></A><H3>
+getRecordName</H3>
+<PRE>
+public java.lang.String <B>getRecordName</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordName()">EscherRecord</A></CODE></B></DD>
+<DD>Subclasses should return the short name for this escher record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordName()">getRecordName</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the short name for this escher record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVersion()"><!-- --></A><H3>
+getVersion</H3>
+<PRE>
+public short <B>getVersion</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getVersion()">EscherRecord</A></CODE></B></DD>
+<DD>Returns the version part of the option record.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getVersion()">getVersion</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The version part of the option record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setVersion(short)"><!-- --></A><H3>
+setVersion</H3>
+<PRE>
+public void <B>setVersion</B>(short&nbsp;value)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setVersion(short)">EscherRecord</A></CODE></B></DD>
+<DD>Sets the version part of record
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setVersion(short)">setVersion</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - version part value</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherMetafileBlip.html" title="class in org.apache.poi.ddf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherPictBlip.html" title="class in org.apache.poi.ddf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/ddf/EscherOptRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EscherOptRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

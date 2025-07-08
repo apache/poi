@@ -1,0 +1,1351 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+PropertySet (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PropertySet (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/Property.html" title="class in org.apache.poi.hpsf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/PropertySetFactory.html" title="class in org.apache.poi.hpsf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/hpsf/PropertySet.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PropertySet.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hpsf</FONT>
+<BR>
+Class PropertySet</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hpsf.PropertySet</B>
+</PRE>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../org/apache/poi/hpsf/MutablePropertySet.html" title="class in org.apache.poi.hpsf">MutablePropertySet</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>PropertySet</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Represents a property set in the Horrible Property Set Format
+ (HPSF). These are usually metadata of a Microsoft Office
+ document.<p>
+
+ An application that wants to access these metadata should create
+ an instance of this class or one of its subclasses by calling the
+ factory method <A HREF="../../../../org/apache/poi/hpsf/PropertySetFactory.html#create(org.apache.poi.poifs.filesystem.DirectoryEntry, java.lang.String)"><CODE>PropertySetFactory.create(org.apache.poi.poifs.filesystem.DirectoryEntry, java.lang.String)</CODE></A> and then retrieve
+ the information its needs by calling appropriate methods.<p>
+
+ <A HREF="../../../../org/apache/poi/hpsf/PropertySetFactory.html#create(org.apache.poi.poifs.filesystem.DirectoryEntry, java.lang.String)"><CODE>PropertySetFactory.create(org.apache.poi.poifs.filesystem.DirectoryEntry, java.lang.String)</CODE></A> does its work by calling one
+ of the constructors <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#PropertySet(java.io.InputStream)"><CODE>PropertySet(InputStream)</CODE></A> or
+ <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#PropertySet(byte[])"><CODE>PropertySet(byte[])</CODE></A>. If the constructor's
+ argument is not in the Horrible Property Set Format, i.e. not a
+ property set stream, or if any other error occurs, an appropriate
+ exception is thrown.<p>
+
+ A <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> has a list of <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>s, and each
+ <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A> has a <A HREF="../../../../org/apache/poi/hpsf/Property.html" title="class in org.apache.poi.hpsf"><CODE>Property</CODE></A> array. Use <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getSections()"><CODE>getSections()</CODE></A> to retrieve the <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>s, then call <A HREF="../../../../org/apache/poi/hpsf/Section.html#getProperties()"><CODE>Section.getProperties()</CODE></A> for each <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A> to get hold of the
+ <A HREF="../../../../org/apache/poi/hpsf/Property.html" title="class in org.apache.poi.hpsf"><CODE>Property</CODE></A> arrays.<p>
+ 
+ Since the vast majority of <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A>s contains only a single
+ <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>, the convenience method <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getProperties()"><CODE>getProperties()</CODE></A> returns
+ the properties of a <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A>'s <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A> (throwing a
+ <A HREF="../../../../org/apache/poi/hpsf/NoSingleSectionException.html" title="class in org.apache.poi.hpsf"><CODE>NoSingleSectionException</CODE></A> if the <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> contains
+ more (or less) than exactly one <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>).
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#OS_MACINTOSH">OS_MACINTOSH</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the OS version field holds this value the property set stream was
+ created on a Macintosh system.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#OS_WIN16">OS_WIN16</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the OS version field holds this value the property set stream was
+ created on a 16-bit Windows system.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#OS_WIN32">OS_WIN32</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the OS version field holds this value the property set stream was
+ created on a 32-bit Windows system.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#PropertySet()">PropertySet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constructs a <code>PropertySet</code> instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#PropertySet(byte[])">PropertySet</A></B>(byte[]&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> instance from a byte array
+ that represents a stream in the Horrible Property Set Format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#PropertySet(byte[], int, int)">PropertySet</A></B>(byte[]&nbsp;stream,
+            int&nbsp;offset,
+            int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> instance from a byte array that
+ represents a stream in the Horrible Property Set Format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#PropertySet(java.io.InputStream)">PropertySet</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> instance from an <CODE>InputStream</CODE> in the Horrible Property Set Format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#PropertySet(org.apache.poi.hpsf.PropertySet)">PropertySet</A></B>(<A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">PropertySet</A>&nbsp;ps)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constructs a <code>PropertySet</code> by doing a deep copy of
+ an existing <code>PropertySet</code>.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#addSection(org.apache.poi.hpsf.Section)">addSection</A></B>(<A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf">Section</A>&nbsp;section)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds a section to this property set.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#clearSections()">clearSections</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes all sections from this property set.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#equals(java.lang.Object)">equals</A></B>(java.lang.Object&nbsp;o)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns <code>true</code> if the <code>PropertySet</code> is equal
+ to the specified parameter, else <code>false</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getByteOrder()">getByteOrder</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getClassID()">getClassID</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf">Section</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getFirstSection()">getFirstSection</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A>'s first section.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getFormat()">getFormat</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getOSVersion()">getOSVersion</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../org/apache/poi/hpsf/Property.html" title="class in org.apache.poi.hpsf">Property</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getProperties()">getProperties</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method returning the <A HREF="../../../../org/apache/poi/hpsf/Property.html" title="class in org.apache.poi.hpsf"><CODE>Property</CODE></A> array contained in this
+ property set.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.lang.Object</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getProperty(int)">getProperty</A></B>(int&nbsp;id)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method returning the value of the property with the specified ID.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyBooleanValue(int)">getPropertyBooleanValue</A></B>(int&nbsp;id)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method returning the value of a boolean property with the
+ specified ID.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyIntValue(int)">getPropertyIntValue</A></B>(int&nbsp;id)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method returning the value of the numeric
+ property with the specified ID.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertySetIDMap()">getPropertySetIDMap</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The id to name mapping of the properties in this set.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyStringValue(int)">getPropertyStringValue</A></B>(int&nbsp;propertyId)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fetches the property with the given ID, then does its
+  best to return it as a String</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyStringValue(java.lang.Object)">getPropertyStringValue</A></B>(java.lang.Object&nbsp;propertyValue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the string representation of a property value</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getSectionCount()">getSectionCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf">Section</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getSections()">getSections</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf">Section</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getSingleSection()">getSingleSection</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> has only a single section this method returns it.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#hashCode()">hashCode</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#isDocumentSummaryInformation()">isDocumentSummaryInformation</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks whether this <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> is a Document Summary Information.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#isPropertySetStream(byte[], int, int)">isPropertySetStream</A></B>(byte[]&nbsp;src,
+                    int&nbsp;offset,
+                    int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks whether a byte array is in the Horrible Property Set Format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#isPropertySetStream(java.io.InputStream)">isPropertySetStream</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks whether an <CODE>InputStream</CODE> is in the Horrible
+ Property Set Format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#isSummaryInformation()">isSummaryInformation</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks whether this <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> represents a Summary Information.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#remove1stProperty(long)">remove1stProperty</A></B>(long&nbsp;id)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#set1stProperty(long, boolean)">set1stProperty</A></B>(long&nbsp;id,
+               boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#set1stProperty(long, byte[])">set1stProperty</A></B>(long&nbsp;id,
+               byte[]&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#set1stProperty(long, int)">set1stProperty</A></B>(long&nbsp;id,
+               int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#set1stProperty(long, java.lang.String)">set1stProperty</A></B>(long&nbsp;id,
+               java.lang.String&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#setByteOrder(int)">setByteOrder</A></B>(int&nbsp;byteOrder)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the property set stream's low-level "byte order" field.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#setClassID(org.apache.poi.hpsf.ClassID)">setClassID</A></B>(<A HREF="../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A>&nbsp;classID)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the property set stream's low-level "class ID" field.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#setFormat(int)">setFormat</A></B>(int&nbsp;format)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the property set stream's low-level "format" field.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#setOSVersion(int)">setOSVersion</A></B>(int&nbsp;osVersion)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the property set stream's low-level "OS version" field.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.io.InputStream</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#toInputStream()">toInputStream</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the contents of this property set stream as an input stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#wasNull()">wasNull</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks whether the property which the last call to <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyIntValue(int)"><CODE>getPropertyIntValue(int)</CODE></A> or <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getProperty(int)"><CODE>getProperty(int)</CODE></A> tried to access
+ was available or not.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#write(org.apache.poi.poifs.filesystem.DirectoryEntry, java.lang.String)">write</A></B>(<A HREF="../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A>&nbsp;dir,
+      java.lang.String&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Writes a property set to a document in a POI filesystem directory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#write(java.io.OutputStream)">write</A></B>(java.io.OutputStream&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Writes the property set to an output stream.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="OS_WIN16"><!-- --></A><H3>
+OS_WIN16</H3>
+<PRE>
+public static final int <B>OS_WIN16</B></PRE>
+<DL>
+<DD>If the OS version field holds this value the property set stream was
+ created on a 16-bit Windows system.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.PropertySet.OS_WIN16">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="OS_MACINTOSH"><!-- --></A><H3>
+OS_MACINTOSH</H3>
+<PRE>
+public static final int <B>OS_MACINTOSH</B></PRE>
+<DL>
+<DD>If the OS version field holds this value the property set stream was
+ created on a Macintosh system.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.PropertySet.OS_MACINTOSH">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="OS_WIN32"><!-- --></A><H3>
+OS_WIN32</H3>
+<PRE>
+public static final int <B>OS_WIN32</B></PRE>
+<DL>
+<DD>If the OS version field holds this value the property set stream was
+ created on a 32-bit Windows system.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.hpsf.PropertySet.OS_WIN32">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="PropertySet()"><!-- --></A><H3>
+PropertySet</H3>
+<PRE>
+public <B>PropertySet</B>()</PRE>
+<DL>
+<DD>Constructs a <code>PropertySet</code> instance. Its
+ primary task is to initialize the field with their proper values.
+ It also sets fields that might change to reasonable defaults.
+<P>
+</DL>
+<HR>
+
+<A NAME="PropertySet(java.io.InputStream)"><!-- --></A><H3>
+PropertySet</H3>
+<PRE>
+public <B>PropertySet</B>(java.io.InputStream&nbsp;stream)
+            throws <A HREF="../../../../org/apache/poi/hpsf/NoPropertySetStreamException.html" title="class in org.apache.poi.hpsf">NoPropertySetStreamException</A>,
+                   <A HREF="../../../../org/apache/poi/hpsf/MarkUnsupportedException.html" title="class in org.apache.poi.hpsf">MarkUnsupportedException</A>,
+                   java.io.IOException,
+                   java.io.UnsupportedEncodingException</PRE>
+<DL>
+<DD>Creates a <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> instance from an <CODE>InputStream</CODE> in the Horrible Property Set Format.<p>
+
+ The constructor reads the first few bytes from the stream
+ and determines whether it is really a property set stream. If
+ it is, it parses the rest of the stream. If it is not, it
+ resets the stream to its beginning in order to let other
+ components mess around with the data and throws an
+ exception.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - Holds the data making out the property set
+ stream.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/MarkUnsupportedException.html" title="class in org.apache.poi.hpsf">MarkUnsupportedException</A></CODE> - if the stream does not support the <CODE>InputStream.markSupported()</CODE> method.
+<DD><CODE>java.io.IOException</CODE> - if the <CODE>InputStream</CODE> cannot be accessed as needed.
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/NoPropertySetStreamException.html" title="class in org.apache.poi.hpsf">NoPropertySetStreamException</A></CODE> - if the input stream does not contain a property set.
+<DD><CODE>java.io.UnsupportedEncodingException</CODE> - if a character encoding is not supported.</DL>
+</DL>
+<HR>
+
+<A NAME="PropertySet(byte[], int, int)"><!-- --></A><H3>
+PropertySet</H3>
+<PRE>
+public <B>PropertySet</B>(byte[]&nbsp;stream,
+                   int&nbsp;offset,
+                   int&nbsp;length)
+            throws <A HREF="../../../../org/apache/poi/hpsf/NoPropertySetStreamException.html" title="class in org.apache.poi.hpsf">NoPropertySetStreamException</A>,
+                   java.io.UnsupportedEncodingException</PRE>
+<DL>
+<DD>Creates a <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> instance from a byte array that
+ represents a stream in the Horrible Property Set Format.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - The byte array holding the stream data.<DD><CODE>offset</CODE> - The offset in <code>stream</code> where the stream
+ data begin. If the stream data begin with the first byte in the
+ array, the <code>offset</code> is 0.<DD><CODE>length</CODE> - The length of the stream data.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/NoPropertySetStreamException.html" title="class in org.apache.poi.hpsf">NoPropertySetStreamException</A></CODE> - if the byte array is not a
+ property set stream.
+<DD><CODE>java.io.UnsupportedEncodingException</CODE> - if the codepage is not supported.</DL>
+</DL>
+<HR>
+
+<A NAME="PropertySet(byte[])"><!-- --></A><H3>
+PropertySet</H3>
+<PRE>
+public <B>PropertySet</B>(byte[]&nbsp;stream)
+            throws <A HREF="../../../../org/apache/poi/hpsf/NoPropertySetStreamException.html" title="class in org.apache.poi.hpsf">NoPropertySetStreamException</A>,
+                   java.io.UnsupportedEncodingException</PRE>
+<DL>
+<DD>Creates a <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> instance from a byte array
+ that represents a stream in the Horrible Property Set Format.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - The byte array holding the stream data. The
+ complete byte array contents is the stream data.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/NoPropertySetStreamException.html" title="class in org.apache.poi.hpsf">NoPropertySetStreamException</A></CODE> - if the byte array is not a
+ property set stream.
+<DD><CODE>java.io.UnsupportedEncodingException</CODE> - if the codepage is not supported.</DL>
+</DL>
+<HR>
+
+<A NAME="PropertySet(org.apache.poi.hpsf.PropertySet)"><!-- --></A><H3>
+PropertySet</H3>
+<PRE>
+public <B>PropertySet</B>(<A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf">PropertySet</A>&nbsp;ps)</PRE>
+<DL>
+<DD>Constructs a <code>PropertySet</code> by doing a deep copy of
+ an existing <code>PropertySet</code>. All nested elements, i.e.
+ <code>Section</code>s and <code>Property</code> instances, will be their
+ counterparts in the new <code>PropertySet</code>.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>ps</CODE> - The property set to copy</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getByteOrder()"><!-- --></A><H3>
+getByteOrder</H3>
+<PRE>
+public int <B>getByteOrder</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The property set stream's low-level "byte order" field. It is always <code>0xFFFE</code>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setByteOrder(int)"><!-- --></A><H3>
+setByteOrder</H3>
+<PRE>
+public void <B>setByteOrder</B>(int&nbsp;byteOrder)</PRE>
+<DL>
+<DD>Returns the property set stream's low-level "byte order" field.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>byteOrder</CODE> - The property set stream's low-level "byte order" field.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFormat()"><!-- --></A><H3>
+getFormat</H3>
+<PRE>
+public int <B>getFormat</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The property set stream's low-level "format" field. It is always <code>0x0000</code>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFormat(int)"><!-- --></A><H3>
+setFormat</H3>
+<PRE>
+public void <B>setFormat</B>(int&nbsp;format)</PRE>
+<DL>
+<DD>Sets the property set stream's low-level "format" field.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>format</CODE> - The property set stream's low-level "format" field.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOSVersion()"><!-- --></A><H3>
+getOSVersion</H3>
+<PRE>
+public int <B>getOSVersion</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The property set stream's low-level "OS version" field.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setOSVersion(int)"><!-- --></A><H3>
+setOSVersion</H3>
+<PRE>
+public void <B>setOSVersion</B>(int&nbsp;osVersion)</PRE>
+<DL>
+<DD>Sets the property set stream's low-level "OS version" field.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>osVersion</CODE> - The property set stream's low-level "OS version" field.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getClassID()"><!-- --></A><H3>
+getClassID</H3>
+<PRE>
+public <A HREF="../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A> <B>getClassID</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The property set stream's low-level "class ID" field.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setClassID(org.apache.poi.hpsf.ClassID)"><!-- --></A><H3>
+setClassID</H3>
+<PRE>
+public void <B>setClassID</B>(<A HREF="../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A>&nbsp;classID)</PRE>
+<DL>
+<DD>Sets the property set stream's low-level "class ID" field.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>classID</CODE> - The property set stream's low-level "class ID" field.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSectionCount()"><!-- --></A><H3>
+getSectionCount</H3>
+<PRE>
+public int <B>getSectionCount</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The number of <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>s in the property set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSections()"><!-- --></A><H3>
+getSections</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf">Section</A>&gt; <B>getSections</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The unmodifiable list of <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>s in the property set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addSection(org.apache.poi.hpsf.Section)"><!-- --></A><H3>
+addSection</H3>
+<PRE>
+public void <B>addSection</B>(<A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf">Section</A>&nbsp;section)</PRE>
+<DL>
+<DD>Adds a section to this property set.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>section</CODE> - The <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A> to add. It will be appended
+ after any sections that are already present in the property set
+ and thus become the last section.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clearSections()"><!-- --></A><H3>
+clearSections</H3>
+<PRE>
+public void <B>clearSections</B>()</PRE>
+<DL>
+<DD>Removes all sections from this property set.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPropertySetIDMap()"><!-- --></A><H3>
+getPropertySetIDMap</H3>
+<PRE>
+public <A HREF="../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A> <B>getPropertySetIDMap</B>()</PRE>
+<DL>
+<DD>The id to name mapping of the properties in this set.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the id to name mapping of the properties in this set or <code>null</code> if not applicable</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isPropertySetStream(java.io.InputStream)"><!-- --></A><H3>
+isPropertySetStream</H3>
+<PRE>
+public static boolean <B>isPropertySetStream</B>(java.io.InputStream&nbsp;stream)
+                                   throws <A HREF="../../../../org/apache/poi/hpsf/MarkUnsupportedException.html" title="class in org.apache.poi.hpsf">MarkUnsupportedException</A>,
+                                          java.io.IOException</PRE>
+<DL>
+<DD>Checks whether an <CODE>InputStream</CODE> is in the Horrible
+ Property Set Format.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - The <CODE>InputStream</CODE> to check. In order to
+ perform the check, the method reads the first bytes from the
+ stream. After reading, the stream is reset to the position it
+ had before reading. The <CODE>InputStream</CODE> must support the
+ <CODE>InputStream.mark(int)</CODE> method.
+<DT><B>Returns:</B><DD><code>true</code> if the stream is a property set
+ stream, else <code>false</code>.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/MarkUnsupportedException.html" title="class in org.apache.poi.hpsf">MarkUnsupportedException</A></CODE> - if the <CODE>InputStream</CODE>
+ does not support the <CODE>InputStream.mark(int)</CODE> method.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isPropertySetStream(byte[], int, int)"><!-- --></A><H3>
+isPropertySetStream</H3>
+<PRE>
+public static boolean <B>isPropertySetStream</B>(byte[]&nbsp;src,
+                                          int&nbsp;offset,
+                                          int&nbsp;length)</PRE>
+<DL>
+<DD>Checks whether a byte array is in the Horrible Property Set Format.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>src</CODE> - The byte array to check.<DD><CODE>offset</CODE> - The offset in the byte array.<DD><CODE>length</CODE> - The significant number of bytes in the byte
+ array. Only this number of bytes will be checked.
+<DT><B>Returns:</B><DD><code>true</code> if the byte array is a property set
+ stream, <code>false</code> if not.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(java.io.OutputStream)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(java.io.OutputStream&nbsp;out)
+           throws <A HREF="../../../../org/apache/poi/hpsf/WritingNotSupportedException.html" title="class in org.apache.poi.hpsf">WritingNotSupportedException</A>,
+                  java.io.IOException</PRE>
+<DL>
+<DD>Writes the property set to an output stream.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>out</CODE> - the output stream to write the section to
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an error when writing to the output stream
+ occurs
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/WritingNotSupportedException.html" title="class in org.apache.poi.hpsf">WritingNotSupportedException</A></CODE> - if HPSF does not yet support
+ writing a property's variant type.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(org.apache.poi.poifs.filesystem.DirectoryEntry, java.lang.String)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(<A HREF="../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A>&nbsp;dir,
+                  java.lang.String&nbsp;name)
+           throws <A HREF="../../../../org/apache/poi/hpsf/WritingNotSupportedException.html" title="class in org.apache.poi.hpsf">WritingNotSupportedException</A>,
+                  java.io.IOException</PRE>
+<DL>
+<DD>Writes a property set to a document in a POI filesystem directory.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dir</CODE> - The directory in the POI filesystem to write the document to.<DD><CODE>name</CODE> - The document's name. If there is already a document with the
+ same name in the directory the latter will be overwritten.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/WritingNotSupportedException.html" title="class in org.apache.poi.hpsf">WritingNotSupportedException</A></CODE> - if the filesystem doesn't support writing
+<DD><CODE>java.io.IOException</CODE> - if the old entry can't be deleted or the new entry be written</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toInputStream()"><!-- --></A><H3>
+toInputStream</H3>
+<PRE>
+public java.io.InputStream <B>toInputStream</B>()
+                                  throws java.io.IOException,
+                                         <A HREF="../../../../org/apache/poi/hpsf/WritingNotSupportedException.html" title="class in org.apache.poi.hpsf">WritingNotSupportedException</A></PRE>
+<DL>
+<DD>Returns the contents of this property set stream as an input stream.
+ The latter can be used for example to write the property set into a POIFS
+ document. The input stream represents a snapshot of the property set.
+ If the latter is modified while the input stream is still being
+ read, the modifications will not be reflected in the input stream but in
+ the <A HREF="../../../../org/apache/poi/hpsf/MutablePropertySet.html" title="class in org.apache.poi.hpsf"><CODE>MutablePropertySet</CODE></A> only.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the contents of this property set stream
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/WritingNotSupportedException.html" title="class in org.apache.poi.hpsf">WritingNotSupportedException</A></CODE> - if HPSF does not yet support writing
+ of a property's variant type.
+<DD><CODE>java.io.IOException</CODE> - if an I/O exception occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPropertyStringValue(int)"><!-- --></A><H3>
+getPropertyStringValue</H3>
+<PRE>
+protected java.lang.String <B>getPropertyStringValue</B>(int&nbsp;propertyId)</PRE>
+<DL>
+<DD>Fetches the property with the given ID, then does its
+  best to return it as a String
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>propertyId</CODE> - the property id
+<DT><B>Returns:</B><DD>The property as a String, or null if unavailable</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPropertyStringValue(java.lang.Object)"><!-- --></A><H3>
+getPropertyStringValue</H3>
+<PRE>
+public static java.lang.String <B>getPropertyStringValue</B>(java.lang.Object&nbsp;propertyValue)</PRE>
+<DL>
+<DD>Return the string representation of a property value
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>propertyValue</CODE> - the property value
+<DT><B>Returns:</B><DD>The property value as a String, or null if unavailable</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isSummaryInformation()"><!-- --></A><H3>
+isSummaryInformation</H3>
+<PRE>
+public boolean <B>isSummaryInformation</B>()</PRE>
+<DL>
+<DD>Checks whether this <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> represents a Summary Information.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if this <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A>
+ represents a Summary Information, else <code>false</code>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDocumentSummaryInformation()"><!-- --></A><H3>
+isDocumentSummaryInformation</H3>
+<PRE>
+public boolean <B>isDocumentSummaryInformation</B>()</PRE>
+<DL>
+<DD>Checks whether this <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> is a Document Summary Information.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if this <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A>
+ represents a Document Summary Information, else <code>false</code>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getProperties()"><!-- --></A><H3>
+getProperties</H3>
+<PRE>
+public <A HREF="../../../../org/apache/poi/hpsf/Property.html" title="class in org.apache.poi.hpsf">Property</A>[] <B>getProperties</B>()
+                         throws <A HREF="../../../../org/apache/poi/hpsf/NoSingleSectionException.html" title="class in org.apache.poi.hpsf">NoSingleSectionException</A></PRE>
+<DL>
+<DD>Convenience method returning the <A HREF="../../../../org/apache/poi/hpsf/Property.html" title="class in org.apache.poi.hpsf"><CODE>Property</CODE></A> array contained in this
+ property set. It is a shortcut for getting he <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A>'s
+ <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>s list and then getting the <A HREF="../../../../org/apache/poi/hpsf/Property.html" title="class in org.apache.poi.hpsf"><CODE>Property</CODE></A> array from the
+ first <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The properties of the only <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A> of this
+ <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A>.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/NoSingleSectionException.html" title="class in org.apache.poi.hpsf">NoSingleSectionException</A></CODE> - if the <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> has
+ more or less than one <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getProperty(int)"><!-- --></A><H3>
+getProperty</H3>
+<PRE>
+protected java.lang.Object <B>getProperty</B>(int&nbsp;id)
+                                throws <A HREF="../../../../org/apache/poi/hpsf/NoSingleSectionException.html" title="class in org.apache.poi.hpsf">NoSingleSectionException</A></PRE>
+<DL>
+<DD>Convenience method returning the value of the property with the specified ID.
+ If the property is not available, <code>null</code> is returned and a subsequent
+ call to <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#wasNull()"><CODE>wasNull()</CODE></A> will return <code>true</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>id</CODE> - The property ID
+<DT><B>Returns:</B><DD>The property value
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/NoSingleSectionException.html" title="class in org.apache.poi.hpsf">NoSingleSectionException</A></CODE> - if the <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> has
+ more or less than one <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPropertyBooleanValue(int)"><!-- --></A><H3>
+getPropertyBooleanValue</H3>
+<PRE>
+protected boolean <B>getPropertyBooleanValue</B>(int&nbsp;id)
+                                   throws <A HREF="../../../../org/apache/poi/hpsf/NoSingleSectionException.html" title="class in org.apache.poi.hpsf">NoSingleSectionException</A></PRE>
+<DL>
+<DD>Convenience method returning the value of a boolean property with the
+ specified ID. If the property is not available, <code>false</code> is returned.
+ A subsequent call to <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#wasNull()"><CODE>wasNull()</CODE></A> will return <code>true</code> to let the
+ caller distinguish that case from a real property value of <code>false</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>id</CODE> - The property ID
+<DT><B>Returns:</B><DD>The property value
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/NoSingleSectionException.html" title="class in org.apache.poi.hpsf">NoSingleSectionException</A></CODE> - if the <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> has
+ more or less than one <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPropertyIntValue(int)"><!-- --></A><H3>
+getPropertyIntValue</H3>
+<PRE>
+protected int <B>getPropertyIntValue</B>(int&nbsp;id)
+                           throws <A HREF="../../../../org/apache/poi/hpsf/NoSingleSectionException.html" title="class in org.apache.poi.hpsf">NoSingleSectionException</A></PRE>
+<DL>
+<DD>Convenience method returning the value of the numeric
+ property with the specified ID. If the property is not
+ available, 0 is returned. A subsequent call to <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#wasNull()"><CODE>wasNull()</CODE></A>
+ will return <code>true</code> to let the caller distinguish
+ that case from a real property value of 0.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>id</CODE> - The property ID
+<DT><B>Returns:</B><DD>The propertyIntValue value
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/NoSingleSectionException.html" title="class in org.apache.poi.hpsf">NoSingleSectionException</A></CODE> - if the <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> has
+ more or less than one <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="wasNull()"><!-- --></A><H3>
+wasNull</H3>
+<PRE>
+public boolean <B>wasNull</B>()
+                throws <A HREF="../../../../org/apache/poi/hpsf/NoSingleSectionException.html" title="class in org.apache.poi.hpsf">NoSingleSectionException</A></PRE>
+<DL>
+<DD>Checks whether the property which the last call to <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyIntValue(int)"><CODE>getPropertyIntValue(int)</CODE></A> or <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getProperty(int)"><CODE>getProperty(int)</CODE></A> tried to access
+ was available or not. This information might be important for
+ callers of <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyIntValue(int)"><CODE>getPropertyIntValue(int)</CODE></A> since the latter
+ returns 0 if the property does not exist. Using <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#wasNull()"><CODE>wasNull()</CODE></A>, the caller can distiguish this case from a
+ property's real value of 0.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if the last call to <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getPropertyIntValue(int)"><CODE>getPropertyIntValue(int)</CODE></A> or <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html#getProperty(int)"><CODE>getProperty(int)</CODE></A> tried to access a
+ property that was not available, else <code>false</code>.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/NoSingleSectionException.html" title="class in org.apache.poi.hpsf">NoSingleSectionException</A></CODE> - if the <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> has
+ more than one <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf"><CODE>Section</CODE></A>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstSection()"><!-- --></A><H3>
+getFirstSection</H3>
+<PRE>
+public <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf">Section</A> <B>getFirstSection</B>()</PRE>
+<DL>
+<DD>Gets the <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A>'s first section.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A>'s first section.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSingleSection()"><!-- --></A><H3>
+getSingleSection</H3>
+<PRE>
+public <A HREF="../../../../org/apache/poi/hpsf/Section.html" title="class in org.apache.poi.hpsf">Section</A> <B>getSingleSection</B>()</PRE>
+<DL>
+<DD>If the <A HREF="../../../../org/apache/poi/hpsf/PropertySet.html" title="class in org.apache.poi.hpsf"><CODE>PropertySet</CODE></A> has only a single section this method returns it.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The singleSection value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="equals(java.lang.Object)"><!-- --></A><H3>
+equals</H3>
+<PRE>
+public boolean <B>equals</B>(java.lang.Object&nbsp;o)</PRE>
+<DL>
+<DD>Returns <code>true</code> if the <code>PropertySet</code> is equal
+ to the specified parameter, else <code>false</code>.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>equals</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>o</CODE> - the object to compare this <code>PropertySet</code> with
+<DT><B>Returns:</B><DD><code>true</code> if the objects are equal, <code>false</code>
+ if not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hashCode()"><!-- --></A><H3>
+hashCode</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public int <B>hashCode</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>hashCode</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>See Also:</B><DD><CODE>Object.hashCode()</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>See Also:</B><DD><CODE>Object.toString()</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="remove1stProperty(long)"><!-- --></A><H3>
+remove1stProperty</H3>
+<PRE>
+protected void <B>remove1stProperty</B>(long&nbsp;id)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="set1stProperty(long, java.lang.String)"><!-- --></A><H3>
+set1stProperty</H3>
+<PRE>
+protected void <B>set1stProperty</B>(long&nbsp;id,
+                              java.lang.String&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="set1stProperty(long, int)"><!-- --></A><H3>
+set1stProperty</H3>
+<PRE>
+protected void <B>set1stProperty</B>(long&nbsp;id,
+                              int&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="set1stProperty(long, boolean)"><!-- --></A><H3>
+set1stProperty</H3>
+<PRE>
+protected void <B>set1stProperty</B>(long&nbsp;id,
+                              boolean&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="set1stProperty(long, byte[])"><!-- --></A><H3>
+set1stProperty</H3>
+<PRE>
+protected void <B>set1stProperty</B>(long&nbsp;id,
+                              byte[]&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/Property.html" title="class in org.apache.poi.hpsf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/PropertySetFactory.html" title="class in org.apache.poi.hpsf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/hpsf/PropertySet.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PropertySet.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

@@ -1,0 +1,997 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+StringUtil (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="StringUtil (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/util/StaxHelper.html" title="class in org.apache.poi.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/util/StringUtil.StringsIterator.html" title="class in org.apache.poi.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/util/StringUtil.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="StringUtil.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.util</FONT>
+<BR>
+Class StringUtil</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.util.StringUtil</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE><FONT SIZE="-1"><A HREF="../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">@Internal</A>
+</FONT>public class <B>StringUtil</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Collection of string handling utilities
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.StringsIterator.html" title="class in org.apache.poi.util">StringUtil.StringsIterator</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An Iterator over an array of Strings.</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.nio.charset.Charset</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#BIG5">BIG5</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;java.nio.charset.Charset</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#ISO_8859_1">ISO_8859_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.nio.charset.Charset</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#UTF16LE">UTF16LE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.nio.charset.Charset</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#UTF8">UTF8</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.nio.charset.Charset</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#WIN_1252">WIN_1252</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#countMatches(java.lang.CharSequence, char)">countMatches</A></B>(java.lang.CharSequence&nbsp;haystack,
+             char&nbsp;needle)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Count number of occurrences of needle in haystack
+ Has same signature as org.apache.commons.lang3.StringUtils#countMatches</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#endsWithIgnoreCase(java.lang.String, java.lang.String)">endsWithIgnoreCase</A></B>(java.lang.String&nbsp;haystack,
+                   java.lang.String&nbsp;suffix)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tests if the string ends with the specified suffix, ignoring case consideration.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#getEncodedSize(java.lang.String)">getEncodedSize</A></B>(java.lang.String&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#getFromCompressedUnicode(byte[], int, int)">getFromCompressedUnicode</A></B>(byte[]&nbsp;string,
+                         int&nbsp;offset,
+                         int&nbsp;len)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read 8 bit data (in ISO-8859-1 codepage) into a (unicode) Java
+ String and return.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#getFromUnicodeLE(byte[])">getFromUnicodeLE</A></B>(byte[]&nbsp;string)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given a byte array of 16-bit unicode characters in little endian
+  format (most important byte last), return a Java String representation
+  of it.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#getFromUnicodeLE(byte[], int, int)">getFromUnicodeLE</A></B>(byte[]&nbsp;string,
+                 int&nbsp;offset,
+                 int&nbsp;len)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given a byte array of 16-bit unicode characters in Little Endian
+  format (most important byte last), return a Java String representation
+  of it.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#getPreferredEncoding()">getPreferredEncoding</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#getToUnicodeLE(java.lang.String)">getToUnicodeLE</A></B>(java.lang.String&nbsp;string)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert String to 16-bit unicode characters in little endian format</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#hasMultibyte(java.lang.String)">hasMultibyte</A></B>(java.lang.String&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check the parameter has multibyte character</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#isUnicodeString(java.lang.String)">isUnicodeString</A></B>(java.lang.String&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks to see if a given String needs to be represented as Unicode</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#join(java.lang.Object[])">join</A></B>(java.lang.Object[]&nbsp;array)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#join(java.lang.Object[], java.lang.String)">join</A></B>(java.lang.Object[]&nbsp;array,
+     java.lang.String&nbsp;separator)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#join(java.lang.String, java.lang.Object...)">join</A></B>(java.lang.String&nbsp;separator,
+     java.lang.Object...&nbsp;array)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#mapMsCodepoint(int, int)">mapMsCodepoint</A></B>(int&nbsp;msCodepoint,
+               int&nbsp;unicodeCodepoint)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#mapMsCodepointString(java.lang.String)">mapMsCodepointString</A></B>(java.lang.String&nbsp;string)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Some strings may contain encoded characters of the unicode private use area.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#putCompressedUnicode(java.lang.String, byte[], int)">putCompressedUnicode</A></B>(java.lang.String&nbsp;input,
+                     byte[]&nbsp;output,
+                     int&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Takes a unicode (java) string, and returns it as 8 bit data (in ISO-8859-1
+ codepage).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#putCompressedUnicode(java.lang.String, org.apache.poi.util.LittleEndianOutput)">putCompressedUnicode</A></B>(java.lang.String&nbsp;input,
+                     <A HREF="../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#putUnicodeLE(java.lang.String, byte[], int)">putUnicodeLE</A></B>(java.lang.String&nbsp;input,
+             byte[]&nbsp;output,
+             int&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Takes a unicode string, and returns it as little endian (most
+ important byte last) bytes in the supplied byte array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#putUnicodeLE(java.lang.String, org.apache.poi.util.LittleEndianOutput)">putUnicodeLE</A></B>(java.lang.String&nbsp;input,
+             <A HREF="../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#readCompressedUnicode(org.apache.poi.util.LittleEndianInput, int)">readCompressedUnicode</A></B>(<A HREF="../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;in,
+                      int&nbsp;nChars)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#readUnicodeLE(org.apache.poi.util.LittleEndianInput, int)">readUnicodeLE</A></B>(<A HREF="../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;in,
+              int&nbsp;nChars)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#readUnicodeString(org.apache.poi.util.LittleEndianInput)">readUnicodeString</A></B>(<A HREF="../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;in)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;InputStream <tt>in</tt> is expected to contain:
+ 
+ ushort nChars
+ byte is16BitFlag
+ byte[]/char[] characterData
+ 
+ For this encoding, the is16BitFlag is always present even if nChars==0.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#readUnicodeString(org.apache.poi.util.LittleEndianInput, int)">readUnicodeString</A></B>(<A HREF="../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;in,
+                  int&nbsp;nChars)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;InputStream <tt>in</tt> is expected to contain:
+ 
+ byte is16BitFlag
+ byte[]/char[] characterData
+ 
+ For this encoding, the is16BitFlag is always present even if nChars==0.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#startsWithIgnoreCase(java.lang.String, java.lang.String)">startsWithIgnoreCase</A></B>(java.lang.String&nbsp;haystack,
+                     java.lang.String&nbsp;prefix)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tests if the string starts with the specified prefix, ignoring case consideration.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#writeUnicodeString(org.apache.poi.util.LittleEndianOutput, java.lang.String)">writeUnicodeString</A></B>(<A HREF="../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out,
+                   java.lang.String&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OutputStream <tt>out</tt> will get:
+ 
+ ushort nChars
+ byte is16BitFlag
+ byte[]/char[] characterData
+ 
+ For this encoding, the is16BitFlag is always present even if nChars==0.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/StringUtil.html#writeUnicodeStringFlagAndData(org.apache.poi.util.LittleEndianOutput, java.lang.String)">writeUnicodeStringFlagAndData</A></B>(<A HREF="../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out,
+                              java.lang.String&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OutputStream <tt>out</tt> will get:
+ 
+ byte is16BitFlag
+ byte[]/char[] characterData
+ 
+ For this encoding, the is16BitFlag is always present even if nChars==0.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="ISO_8859_1"><!-- --></A><H3>
+ISO_8859_1</H3>
+<PRE>
+protected static final java.nio.charset.Charset <B>ISO_8859_1</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="UTF16LE"><!-- --></A><H3>
+UTF16LE</H3>
+<PRE>
+public static final java.nio.charset.Charset <B>UTF16LE</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="UTF8"><!-- --></A><H3>
+UTF8</H3>
+<PRE>
+public static final java.nio.charset.Charset <B>UTF8</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="WIN_1252"><!-- --></A><H3>
+WIN_1252</H3>
+<PRE>
+public static final java.nio.charset.Charset <B>WIN_1252</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BIG5"><!-- --></A><H3>
+BIG5</H3>
+<PRE>
+public static final java.nio.charset.Charset <B>BIG5</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getFromUnicodeLE(byte[], int, int)"><!-- --></A><H3>
+getFromUnicodeLE</H3>
+<PRE>
+public static java.lang.String <B>getFromUnicodeLE</B>(byte[]&nbsp;string,
+                                                int&nbsp;offset,
+                                                int&nbsp;len)
+                                         throws java.lang.ArrayIndexOutOfBoundsException,
+                                                java.lang.IllegalArgumentException</PRE>
+<DL>
+<DD>Given a byte array of 16-bit unicode characters in Little Endian
+  format (most important byte last), return a Java String representation
+  of it.
+
+ { 0x16, 0x00 } -0x16
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>string</CODE> - the byte array to be converted<DD><CODE>offset</CODE> - the initial offset into the
+                 byte array. it is assumed that string[ offset ] and string[ offset +
+                 1 ] contain the first 16-bit unicode character<DD><CODE>len</CODE> - the length of the final string
+<DT><B>Returns:</B><DD>the converted string, never <code>null</code>.
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.ArrayIndexOutOfBoundsException</CODE> - if offset is out of bounds for
+      the byte array (i.e., is negative or is greater than or equal to
+      string.length)
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if len is too large (i.e.,
+      there is not enough data in string to create a String of that
+      length)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFromUnicodeLE(byte[])"><!-- --></A><H3>
+getFromUnicodeLE</H3>
+<PRE>
+public static java.lang.String <B>getFromUnicodeLE</B>(byte[]&nbsp;string)</PRE>
+<DL>
+<DD>Given a byte array of 16-bit unicode characters in little endian
+  format (most important byte last), return a Java String representation
+  of it.
+
+ { 0x16, 0x00 } -0x16
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>string</CODE> - the byte array to be converted
+<DT><B>Returns:</B><DD>the converted string, never <code>null</code></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getToUnicodeLE(java.lang.String)"><!-- --></A><H3>
+getToUnicodeLE</H3>
+<PRE>
+public static byte[] <B>getToUnicodeLE</B>(java.lang.String&nbsp;string)</PRE>
+<DL>
+<DD>Convert String to 16-bit unicode characters in little endian format
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>string</CODE> - the string
+<DT><B>Returns:</B><DD>the byte array of 16-bit unicode characters</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFromCompressedUnicode(byte[], int, int)"><!-- --></A><H3>
+getFromCompressedUnicode</H3>
+<PRE>
+public static java.lang.String <B>getFromCompressedUnicode</B>(byte[]&nbsp;string,
+                                                        int&nbsp;offset,
+                                                        int&nbsp;len)</PRE>
+<DL>
+<DD>Read 8 bit data (in ISO-8859-1 codepage) into a (unicode) Java
+ String and return.
+ (In Excel terms, read compressed 8 bit unicode as a string)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>string</CODE> - byte array to read<DD><CODE>offset</CODE> - offset to read byte array<DD><CODE>len</CODE> - length to read byte array
+<DT><B>Returns:</B><DD>String generated String instance by reading byte array</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readCompressedUnicode(org.apache.poi.util.LittleEndianInput, int)"><!-- --></A><H3>
+readCompressedUnicode</H3>
+<PRE>
+public static java.lang.String <B>readCompressedUnicode</B>(<A HREF="../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;in,
+                                                     int&nbsp;nChars)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUnicodeString(org.apache.poi.util.LittleEndianInput)"><!-- --></A><H3>
+readUnicodeString</H3>
+<PRE>
+public static java.lang.String <B>readUnicodeString</B>(<A HREF="../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;in)</PRE>
+<DL>
+<DD>InputStream <tt>in</tt> is expected to contain:
+ <ol>
+ <li>ushort nChars</li>
+ <li>byte is16BitFlag</li>
+ <li>byte[]/char[] characterData</li>
+ </ol>
+ For this encoding, the is16BitFlag is always present even if nChars==0.
+ 
+ This structure is also known as a XLUnicodeString.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUnicodeString(org.apache.poi.util.LittleEndianInput, int)"><!-- --></A><H3>
+readUnicodeString</H3>
+<PRE>
+public static java.lang.String <B>readUnicodeString</B>(<A HREF="../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;in,
+                                                 int&nbsp;nChars)</PRE>
+<DL>
+<DD>InputStream <tt>in</tt> is expected to contain:
+ <ol>
+ <li>byte is16BitFlag</li>
+ <li>byte[]/char[] characterData</li>
+ </ol>
+ For this encoding, the is16BitFlag is always present even if nChars==0.
+ <br>
+ This method should be used when the nChars field is <em>not</em> stored
+ as a ushort immediately before the is16BitFlag. Otherwise, <A HREF="../../../../org/apache/poi/util/StringUtil.html#readUnicodeString(org.apache.poi.util.LittleEndianInput)"><CODE>readUnicodeString(LittleEndianInput)</CODE></A> can be used.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeUnicodeString(org.apache.poi.util.LittleEndianOutput, java.lang.String)"><!-- --></A><H3>
+writeUnicodeString</H3>
+<PRE>
+public static void <B>writeUnicodeString</B>(<A HREF="../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out,
+                                      java.lang.String&nbsp;value)</PRE>
+<DL>
+<DD>OutputStream <tt>out</tt> will get:
+ <ol>
+ <li>ushort nChars</li>
+ <li>byte is16BitFlag</li>
+ <li>byte[]/char[] characterData</li>
+ </ol>
+ For this encoding, the is16BitFlag is always present even if nChars==0.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeUnicodeStringFlagAndData(org.apache.poi.util.LittleEndianOutput, java.lang.String)"><!-- --></A><H3>
+writeUnicodeStringFlagAndData</H3>
+<PRE>
+public static void <B>writeUnicodeStringFlagAndData</B>(<A HREF="../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out,
+                                                 java.lang.String&nbsp;value)</PRE>
+<DL>
+<DD>OutputStream <tt>out</tt> will get:
+ <ol>
+ <li>byte is16BitFlag</li>
+ <li>byte[]/char[] characterData</li>
+ </ol>
+ For this encoding, the is16BitFlag is always present even if nChars==0.
+ <br>
+ This method should be used when the nChars field is <em>not</em> stored
+ as a ushort immediately before the is16BitFlag. Otherwise, <A HREF="../../../../org/apache/poi/util/StringUtil.html#writeUnicodeString(org.apache.poi.util.LittleEndianOutput, java.lang.String)"><CODE>writeUnicodeString(LittleEndianOutput, String)</CODE></A> can be used.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getEncodedSize(java.lang.String)"><!-- --></A><H3>
+getEncodedSize</H3>
+<PRE>
+public static int <B>getEncodedSize</B>(java.lang.String&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the number of bytes that would be written by <A HREF="../../../../org/apache/poi/util/StringUtil.html#writeUnicodeString(org.apache.poi.util.LittleEndianOutput, java.lang.String)"><CODE>writeUnicodeString(LittleEndianOutput, String)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putCompressedUnicode(java.lang.String, byte[], int)"><!-- --></A><H3>
+putCompressedUnicode</H3>
+<PRE>
+public static void <B>putCompressedUnicode</B>(java.lang.String&nbsp;input,
+                                        byte[]&nbsp;output,
+                                        int&nbsp;offset)</PRE>
+<DL>
+<DD>Takes a unicode (java) string, and returns it as 8 bit data (in ISO-8859-1
+ codepage).
+ (In Excel terms, write compressed 8 bit unicode)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>input</CODE> - the String containing the data to be written<DD><CODE>output</CODE> - the byte array to which the data is to be written<DD><CODE>offset</CODE> - an offset into the byte arrat at which the data is start
+      when written</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putCompressedUnicode(java.lang.String, org.apache.poi.util.LittleEndianOutput)"><!-- --></A><H3>
+putCompressedUnicode</H3>
+<PRE>
+public static void <B>putCompressedUnicode</B>(java.lang.String&nbsp;input,
+                                        <A HREF="../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putUnicodeLE(java.lang.String, byte[], int)"><!-- --></A><H3>
+putUnicodeLE</H3>
+<PRE>
+public static void <B>putUnicodeLE</B>(java.lang.String&nbsp;input,
+                                byte[]&nbsp;output,
+                                int&nbsp;offset)</PRE>
+<DL>
+<DD>Takes a unicode string, and returns it as little endian (most
+ important byte last) bytes in the supplied byte array.
+ (In Excel terms, write uncompressed unicode)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>input</CODE> - the String containing the unicode data to be written<DD><CODE>output</CODE> - the byte array to hold the uncompressed unicode, should be twice the length of the String<DD><CODE>offset</CODE> - the offset to start writing into the byte array</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putUnicodeLE(java.lang.String, org.apache.poi.util.LittleEndianOutput)"><!-- --></A><H3>
+putUnicodeLE</H3>
+<PRE>
+public static void <B>putUnicodeLE</B>(java.lang.String&nbsp;input,
+                                <A HREF="../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUnicodeLE(org.apache.poi.util.LittleEndianInput, int)"><!-- --></A><H3>
+readUnicodeLE</H3>
+<PRE>
+public static java.lang.String <B>readUnicodeLE</B>(<A HREF="../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;in,
+                                             int&nbsp;nChars)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPreferredEncoding()"><!-- --></A><H3>
+getPreferredEncoding</H3>
+<PRE>
+public static java.lang.String <B>getPreferredEncoding</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the encoding we want to use, currently hardcoded to ISO-8859-1</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hasMultibyte(java.lang.String)"><!-- --></A><H3>
+hasMultibyte</H3>
+<PRE>
+public static boolean <B>hasMultibyte</B>(java.lang.String&nbsp;value)</PRE>
+<DL>
+<DD>check the parameter has multibyte character
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - string to check
+<DT><B>Returns:</B><DD>boolean result true:string has at least one multibyte character</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isUnicodeString(java.lang.String)"><!-- --></A><H3>
+isUnicodeString</H3>
+<PRE>
+public static boolean <B>isUnicodeString</B>(java.lang.String&nbsp;value)</PRE>
+<DL>
+<DD>Checks to see if a given String needs to be represented as Unicode
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - The string to look at.
+<DT><B>Returns:</B><DD>true if string needs Unicode to be represented.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="startsWithIgnoreCase(java.lang.String, java.lang.String)"><!-- --></A><H3>
+startsWithIgnoreCase</H3>
+<PRE>
+public static boolean <B>startsWithIgnoreCase</B>(java.lang.String&nbsp;haystack,
+                                           java.lang.String&nbsp;prefix)</PRE>
+<DL>
+<DD>Tests if the string starts with the specified prefix, ignoring case consideration.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="endsWithIgnoreCase(java.lang.String, java.lang.String)"><!-- --></A><H3>
+endsWithIgnoreCase</H3>
+<PRE>
+public static boolean <B>endsWithIgnoreCase</B>(java.lang.String&nbsp;haystack,
+                                         java.lang.String&nbsp;suffix)</PRE>
+<DL>
+<DD>Tests if the string ends with the specified suffix, ignoring case consideration.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="mapMsCodepointString(java.lang.String)"><!-- --></A><H3>
+mapMsCodepointString</H3>
+<PRE>
+public static java.lang.String <B>mapMsCodepointString</B>(java.lang.String&nbsp;string)</PRE>
+<DL>
+<DD>Some strings may contain encoded characters of the unicode private use area.
+ Currently the characters of the symbol fonts are mapped to the corresponding
+ characters in the normal unicode range.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>string</CODE> - the original string
+<DT><B>Returns:</B><DD>the string with mapped characters<DT><B>See Also:</B><DD><a href="http://www.alanwood.net/unicode/private_use_area.html#symbol">Private Use Area (symbol)</a>, 
+<a href="http://www.alanwood.net/demos/symbol.html">Symbol font - Unicode alternatives for Greek and special characters in HTML</a></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="mapMsCodepoint(int, int)"><!-- --></A><H3>
+mapMsCodepoint</H3>
+<PRE>
+public static void <B>mapMsCodepoint</B>(int&nbsp;msCodepoint,
+                                  int&nbsp;unicodeCodepoint)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="join(java.lang.Object[], java.lang.String)"><!-- --></A><H3>
+join</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">@Internal</A>
+</FONT>public static java.lang.String <B>join</B>(java.lang.Object[]&nbsp;array,
+                                             java.lang.String&nbsp;separator)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="join(java.lang.Object[])"><!-- --></A><H3>
+join</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">@Internal</A>
+</FONT>public static java.lang.String <B>join</B>(java.lang.Object[]&nbsp;array)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="join(java.lang.String, java.lang.Object...)"><!-- --></A><H3>
+join</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">@Internal</A>
+</FONT>public static java.lang.String <B>join</B>(java.lang.String&nbsp;separator,
+                                             java.lang.Object...&nbsp;array)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="countMatches(java.lang.CharSequence, char)"><!-- --></A><H3>
+countMatches</H3>
+<PRE>
+public static int <B>countMatches</B>(java.lang.CharSequence&nbsp;haystack,
+                               char&nbsp;needle)</PRE>
+<DL>
+<DD>Count number of occurrences of needle in haystack
+ Has same signature as org.apache.commons.lang3.StringUtils#countMatches
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>haystack</CODE> - the CharSequence to check, may be null<DD><CODE>needle</CODE> - the character to count the quantity of
+<DT><B>Returns:</B><DD>the number of occurrences, 0 if the CharSequence is null</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/util/StaxHelper.html" title="class in org.apache.poi.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/util/StringUtil.StringsIterator.html" title="class in org.apache.poi.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/util/StringUtil.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="StringUtil.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

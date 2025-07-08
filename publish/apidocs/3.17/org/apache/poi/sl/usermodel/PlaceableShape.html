@@ -1,0 +1,401 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+PlaceableShape (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PlaceableShape (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/PictureShape.html" title="interface in org.apache.poi.sl.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Placeholder.html" title="enum in org.apache.poi.sl.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/usermodel/PlaceableShape.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PlaceableShape.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.usermodel</FONT>
+<BR>
+Interface PlaceableShape&lt;S extends <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;S,P&gt;,P extends <A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph</A>&lt;S,P,?&gt;&gt;</H2>
+<DL>
+<DT><B>All Known Subinterfaces:</B> <DD><A HREF="../../../../../org/apache/poi/sl/usermodel/AutoShape.html" title="interface in org.apache.poi.sl.usermodel">AutoShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/ConnectorShape.html" title="interface in org.apache.poi.sl.usermodel">ConnectorShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/FreeformShape.html" title="interface in org.apache.poi.sl.usermodel">FreeformShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/GraphicalFrame.html" title="interface in org.apache.poi.sl.usermodel">GraphicalFrame</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/GroupShape.html" title="interface in org.apache.poi.sl.usermodel">GroupShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/Line.html" title="interface in org.apache.poi.sl.usermodel">Line</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/PictureShape.html" title="interface in org.apache.poi.sl.usermodel">PictureShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="interface in org.apache.poi.sl.usermodel">SimpleShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/TableCell.html" title="interface in org.apache.poi.sl.usermodel">TableCell</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/TableShape.html" title="interface in org.apache.poi.sl.usermodel">TableShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/TextBox.html" title="interface in org.apache.poi.sl.usermodel">TextBox</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/TextShape.html" title="interface in org.apache.poi.sl.usermodel">TextShape</A>&lt;S,P&gt;</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>PlaceableShape&lt;S extends <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;S,P&gt;,P extends <A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph</A>&lt;S,P,?&gt;&gt;</B></DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.geom.Rectangle2D</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#getAnchor()">getAnchor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#getFlipHorizontal()">getFlipHorizontal</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether the shape is horizontally flipped</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#getFlipVertical()">getFlipVertical</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether the shape is vertically flipped</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="interface in org.apache.poi.sl.usermodel">ShapeContainer</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="type parameter in PlaceableShape">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="type parameter in PlaceableShape">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#getParent()">getParent</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#getRotation()">getRotation</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rotation angle in degrees</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Sheet.html" title="interface in org.apache.poi.sl.usermodel">Sheet</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="type parameter in PlaceableShape">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="type parameter in PlaceableShape">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#getSheet()">getSheet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#setAnchor(java.awt.geom.Rectangle2D)">setAnchor</A></B>(java.awt.geom.Rectangle2D&nbsp;anchor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#setFlipHorizontal(boolean)">setFlipHorizontal</A></B>(boolean&nbsp;flip)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#setFlipVertical(boolean)">setFlipVertical</A></B>(boolean&nbsp;flip)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether the shape is vertically flipped</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#setRotation(double)">setRotation</A></B>(double&nbsp;theta)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rotate this shape.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getParent()"><!-- --></A><H3>
+getParent</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="interface in org.apache.poi.sl.usermodel">ShapeContainer</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="type parameter in PlaceableShape">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="type parameter in PlaceableShape">P</A>&gt; <B>getParent</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSheet()"><!-- --></A><H3>
+getSheet</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/Sheet.html" title="interface in org.apache.poi.sl.usermodel">Sheet</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="type parameter in PlaceableShape">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="type parameter in PlaceableShape">P</A>&gt; <B>getSheet</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the sheet this shape belongs to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAnchor()"><!-- --></A><H3>
+getAnchor</H3>
+<PRE>
+java.awt.geom.Rectangle2D <B>getAnchor</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the position of this shape within the drawing canvas.
+         The coordinates are expressed in points</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAnchor(java.awt.geom.Rectangle2D)"><!-- --></A><H3>
+setAnchor</H3>
+<PRE>
+void <B>setAnchor</B>(java.awt.geom.Rectangle2D&nbsp;anchor)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>anchor</CODE> - the position of this shape within the drawing canvas.
+               The coordinates are expressed in points</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRotation()"><!-- --></A><H3>
+getRotation</H3>
+<PRE>
+double <B>getRotation</B>()</PRE>
+<DL>
+<DD>Rotation angle in degrees
+ <p>
+ Positive angles are clockwise (i.e., towards the positive y axis);
+ negative angles are counter-clockwise (i.e., towards the negative y axis).
+ </p>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>rotation angle in degrees</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRotation(double)"><!-- --></A><H3>
+setRotation</H3>
+<PRE>
+void <B>setRotation</B>(double&nbsp;theta)</PRE>
+<DL>
+<DD>Rotate this shape.
+ <p>
+ Positive angles are clockwise (i.e., towards the positive y axis);
+ negative angles are counter-clockwise (i.e., towards the negative y axis).
+ </p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>theta</CODE> - the rotation angle in degrees.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFlipHorizontal(boolean)"><!-- --></A><H3>
+setFlipHorizontal</H3>
+<PRE>
+void <B>setFlipHorizontal</B>(boolean&nbsp;flip)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>flip</CODE> - whether the shape is horizontally flipped</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFlipVertical(boolean)"><!-- --></A><H3>
+setFlipVertical</H3>
+<PRE>
+void <B>setFlipVertical</B>(boolean&nbsp;flip)</PRE>
+<DL>
+<DD>Whether the shape is vertically flipped
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>flip</CODE> - whether the shape is vertically flipped</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFlipHorizontal()"><!-- --></A><H3>
+getFlipHorizontal</H3>
+<PRE>
+boolean <B>getFlipHorizontal</B>()</PRE>
+<DL>
+<DD>Whether the shape is horizontally flipped
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether the shape is horizontally flipped</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFlipVertical()"><!-- --></A><H3>
+getFlipVertical</H3>
+<PRE>
+boolean <B>getFlipVertical</B>()</PRE>
+<DL>
+<DD>Whether the shape is vertically flipped
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether the shape is vertically flipped</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/PictureShape.html" title="interface in org.apache.poi.sl.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Placeholder.html" title="enum in org.apache.poi.sl.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/usermodel/PlaceableShape.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PlaceableShape.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

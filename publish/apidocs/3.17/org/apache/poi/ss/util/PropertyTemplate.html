@@ -1,0 +1,568 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+PropertyTemplate (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PropertyTemplate (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/PaneInformation.html" title="class in org.apache.poi.ss.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/RegionUtil.html" title="class in org.apache.poi.ss.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/util/PropertyTemplate.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PropertyTemplate.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.util</FONT>
+<BR>
+Class PropertyTemplate</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.util.PropertyTemplate</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>PropertyTemplate</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+<p>
+ A <A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html" title="class in org.apache.poi.ss.util"><CODE>PropertyTemplate</CODE></A> is a template that can be applied to any sheet in
+ a project. It contains all the border type and color attributes needed to
+ draw all the borders for a single sheet. That template can be applied to any
+ sheet in any workbook.
+ 
+ This class requires the full spreadsheet to be in memory, so 
+ <A HREF="https://poi.apache.org/apidocs/org/apache/poi/xssf/streaming/SXSSFWorkbook.html?is-external=true" title="class or interface in org.apache.poi.xssf.streaming"><CODE>SXSSFWorkbook</CODE></A> Spreadsheets are not
+ supported. The same <A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html" title="class in org.apache.poi.ss.util"><CODE>PropertyTemplate</CODE></A> can, however, be applied to both
+ <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFWorkbook</CODE></A> and <A HREF="https://poi.apache.org/apidocs/org/apache/poi/xssf/usermodel/XSSFWorkbook.html?is-external=true" title="class or interface in org.apache.poi.xssf.usermodel"><CODE>XSSFWorkbook</CODE></A>
+ objects if necessary. Portions of the border that fall outside the max range
+ of the <A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel"><CODE>Workbook</CODE></A> sheet are ignored.
+ </p>
+ 
+ <p>
+ This would replace <A HREF="../../../../../org/apache/poi/ss/util/RegionUtil.html" title="class in org.apache.poi.ss.util"><CODE>RegionUtil</CODE></A>.
+ </p>
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#PropertyTemplate()">PropertyTemplate</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a PropertyTemplate object</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#PropertyTemplate(org.apache.poi.ss.util.PropertyTemplate)">PropertyTemplate</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html" title="class in org.apache.poi.ss.util">PropertyTemplate</A>&nbsp;template)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a PropertyTemplate object from another PropertyTemplate</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#applyBorders(org.apache.poi.ss.usermodel.Sheet)">applyBorders</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Applies the drawn borders to a Sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#drawBorderColors(org.apache.poi.ss.util.CellRangeAddress, short, org.apache.poi.ss.usermodel.BorderExtent)">drawBorderColors</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;range,
+                 short&nbsp;color,
+                 <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderExtent.html" title="enum in org.apache.poi.ss.usermodel">BorderExtent</A>&nbsp;extent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the color for a group of cell borders for a cell range.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#drawBorders(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.usermodel.BorderStyle, org.apache.poi.ss.usermodel.BorderExtent)">drawBorders</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;range,
+            <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;borderType,
+            <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderExtent.html" title="enum in org.apache.poi.ss.usermodel">BorderExtent</A>&nbsp;extent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws a group of cell borders for a cell range.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#drawBorders(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.usermodel.BorderStyle, short, org.apache.poi.ss.usermodel.BorderExtent)">drawBorders</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;range,
+            <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;borderType,
+            short&nbsp;color,
+            <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderExtent.html" title="enum in org.apache.poi.ss.usermodel">BorderExtent</A>&nbsp;extent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws a group of cell borders for a cell range.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#getBorderStyle(org.apache.poi.ss.util.CellAddress, java.lang.String)">getBorderStyle</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;cell,
+               java.lang.String&nbsp;property)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the border style for a given cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#getBorderStyle(int, int, java.lang.String)">getBorderStyle</A></B>(int&nbsp;row,
+               int&nbsp;col,
+               java.lang.String&nbsp;property)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the border style for a given cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#getNumBorderColors(org.apache.poi.ss.util.CellAddress)">getNumBorderColors</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the number of border colors assigned to a cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#getNumBorderColors(int, int)">getNumBorderColors</A></B>(int&nbsp;row,
+                   int&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the number of border colors assigned to a cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#getNumBorders(org.apache.poi.ss.util.CellAddress)">getNumBorders</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the number of borders assigned to a cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#getNumBorders(int, int)">getNumBorders</A></B>(int&nbsp;row,
+              int&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the number of borders assigned to a cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#getTemplateProperty(org.apache.poi.ss.util.CellAddress, java.lang.String)">getTemplateProperty</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;cell,
+                    java.lang.String&nbsp;property)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the border style for a given cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#getTemplateProperty(int, int, java.lang.String)">getTemplateProperty</A></B>(int&nbsp;row,
+                    int&nbsp;col,
+                    java.lang.String&nbsp;property)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the border style for a given cell</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="PropertyTemplate()"><!-- --></A><H3>
+PropertyTemplate</H3>
+<PRE>
+public <B>PropertyTemplate</B>()</PRE>
+<DL>
+<DD>Create a PropertyTemplate object
+<P>
+</DL>
+<HR>
+
+<A NAME="PropertyTemplate(org.apache.poi.ss.util.PropertyTemplate)"><!-- --></A><H3>
+PropertyTemplate</H3>
+<PRE>
+public <B>PropertyTemplate</B>(<A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html" title="class in org.apache.poi.ss.util">PropertyTemplate</A>&nbsp;template)</PRE>
+<DL>
+<DD>Create a PropertyTemplate object from another PropertyTemplate
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>template</CODE> - a PropertyTemplate object</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="drawBorders(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.usermodel.BorderStyle, org.apache.poi.ss.usermodel.BorderExtent)"><!-- --></A><H3>
+drawBorders</H3>
+<PRE>
+public void <B>drawBorders</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;range,
+                        <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;borderType,
+                        <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderExtent.html" title="enum in org.apache.poi.ss.usermodel">BorderExtent</A>&nbsp;extent)</PRE>
+<DL>
+<DD>Draws a group of cell borders for a cell range. The borders are not
+ applied to the cells at this time, just the template is drawn. To apply
+ the drawn borders to a sheet, use <A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#applyBorders(org.apache.poi.ss.usermodel.Sheet)"><CODE>applyBorders(org.apache.poi.ss.usermodel.Sheet)</CODE></A>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>range</CODE> - - <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddress</CODE></A> range of cells on which borders are
+            drawn.<DD><CODE>borderType</CODE> - - Type of border to draw. <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel"><CODE>BorderStyle</CODE></A>.<DD><CODE>extent</CODE> - - <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderExtent.html" title="enum in org.apache.poi.ss.usermodel"><CODE>BorderExtent</CODE></A> of the borders to be
+            applied.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawBorders(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.usermodel.BorderStyle, short, org.apache.poi.ss.usermodel.BorderExtent)"><!-- --></A><H3>
+drawBorders</H3>
+<PRE>
+public void <B>drawBorders</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;range,
+                        <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A>&nbsp;borderType,
+                        short&nbsp;color,
+                        <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderExtent.html" title="enum in org.apache.poi.ss.usermodel">BorderExtent</A>&nbsp;extent)</PRE>
+<DL>
+<DD>Draws a group of cell borders for a cell range. The borders are not
+ applied to the cells at this time, just the template is drawn. To apply
+ the drawn borders to a sheet, use <A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#applyBorders(org.apache.poi.ss.usermodel.Sheet)"><CODE>applyBorders(org.apache.poi.ss.usermodel.Sheet)</CODE></A>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>range</CODE> - - <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddress</CODE></A> range of cells on which borders are
+            drawn.<DD><CODE>borderType</CODE> - - Type of border to draw. <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel"><CODE>BorderStyle</CODE></A>.<DD><CODE>color</CODE> - - Color index from <A HREF="../../../../../org/apache/poi/ss/usermodel/IndexedColors.html" title="enum in org.apache.poi.ss.usermodel"><CODE>IndexedColors</CODE></A> used to draw the
+            borders.<DD><CODE>extent</CODE> - - <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderExtent.html" title="enum in org.apache.poi.ss.usermodel"><CODE>BorderExtent</CODE></A> of the borders to be
+            applied.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="applyBorders(org.apache.poi.ss.usermodel.Sheet)"><!-- --></A><H3>
+applyBorders</H3>
+<PRE>
+public void <B>applyBorders</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet)</PRE>
+<DL>
+<DD>Applies the drawn borders to a Sheet. The borders that are applied are
+ the ones that have been drawn by the <A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#drawBorders(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.usermodel.BorderStyle, org.apache.poi.ss.usermodel.BorderExtent)"><CODE>drawBorders(org.apache.poi.ss.util.CellRangeAddress, org.apache.poi.ss.usermodel.BorderStyle, org.apache.poi.ss.usermodel.BorderExtent)</CODE></A> and
+ <A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#drawBorderColors(org.apache.poi.ss.util.CellRangeAddress, short, org.apache.poi.ss.usermodel.BorderExtent)"><CODE>drawBorderColors(org.apache.poi.ss.util.CellRangeAddress, short, org.apache.poi.ss.usermodel.BorderExtent)</CODE></A> methods.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheet</CODE> - - <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel"><CODE>Sheet</CODE></A> on which to apply borders</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawBorderColors(org.apache.poi.ss.util.CellRangeAddress, short, org.apache.poi.ss.usermodel.BorderExtent)"><!-- --></A><H3>
+drawBorderColors</H3>
+<PRE>
+public void <B>drawBorderColors</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;range,
+                             short&nbsp;color,
+                             <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderExtent.html" title="enum in org.apache.poi.ss.usermodel">BorderExtent</A>&nbsp;extent)</PRE>
+<DL>
+<DD>Sets the color for a group of cell borders for a cell range. The borders
+ are not applied to the cells at this time, just the template is drawn. If
+ the borders do not exist, a BORDER_THIN border is used. To apply the
+ drawn borders to a sheet, use <A HREF="../../../../../org/apache/poi/ss/util/PropertyTemplate.html#applyBorders(org.apache.poi.ss.usermodel.Sheet)"><CODE>applyBorders(org.apache.poi.ss.usermodel.Sheet)</CODE></A>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>range</CODE> - - <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddress</CODE></A> range of cells on which colors are
+            set.<DD><CODE>color</CODE> - - Color index from <A HREF="../../../../../org/apache/poi/ss/usermodel/IndexedColors.html" title="enum in org.apache.poi.ss.usermodel"><CODE>IndexedColors</CODE></A> used to draw the
+            borders.<DD><CODE>extent</CODE> - - <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderExtent.html" title="enum in org.apache.poi.ss.usermodel"><CODE>BorderExtent</CODE></A> of the borders for which
+            colors are set.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNumBorders(org.apache.poi.ss.util.CellAddress)"><!-- --></A><H3>
+getNumBorders</H3>
+<PRE>
+public int <B>getNumBorders</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Retrieves the number of borders assigned to a cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNumBorders(int, int)"><!-- --></A><H3>
+getNumBorders</H3>
+<PRE>
+public int <B>getNumBorders</B>(int&nbsp;row,
+                         int&nbsp;col)</PRE>
+<DL>
+<DD>Retrieves the number of borders assigned to a cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - <DD><CODE>col</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNumBorderColors(org.apache.poi.ss.util.CellAddress)"><!-- --></A><H3>
+getNumBorderColors</H3>
+<PRE>
+public int <B>getNumBorderColors</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Retrieves the number of border colors assigned to a cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNumBorderColors(int, int)"><!-- --></A><H3>
+getNumBorderColors</H3>
+<PRE>
+public int <B>getNumBorderColors</B>(int&nbsp;row,
+                              int&nbsp;col)</PRE>
+<DL>
+<DD>Retrieves the number of border colors assigned to a cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - <DD><CODE>col</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderStyle(org.apache.poi.ss.util.CellAddress, java.lang.String)"><!-- --></A><H3>
+getBorderStyle</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderStyle</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;cell,
+                                  java.lang.String&nbsp;property)</PRE>
+<DL>
+<DD>Retrieves the border style for a given cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - <DD><CODE>property</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderStyle(int, int, java.lang.String)"><!-- --></A><H3>
+getBorderStyle</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/BorderStyle.html" title="enum in org.apache.poi.ss.usermodel">BorderStyle</A> <B>getBorderStyle</B>(int&nbsp;row,
+                                  int&nbsp;col,
+                                  java.lang.String&nbsp;property)</PRE>
+<DL>
+<DD>Retrieves the border style for a given cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - <DD><CODE>col</CODE> - <DD><CODE>property</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTemplateProperty(org.apache.poi.ss.util.CellAddress, java.lang.String)"><!-- --></A><H3>
+getTemplateProperty</H3>
+<PRE>
+public short <B>getTemplateProperty</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;cell,
+                                 java.lang.String&nbsp;property)</PRE>
+<DL>
+<DD>Retrieves the border style for a given cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - <DD><CODE>property</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTemplateProperty(int, int, java.lang.String)"><!-- --></A><H3>
+getTemplateProperty</H3>
+<PRE>
+public short <B>getTemplateProperty</B>(int&nbsp;row,
+                                 int&nbsp;col,
+                                 java.lang.String&nbsp;property)</PRE>
+<DL>
+<DD>Retrieves the border style for a given cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - <DD><CODE>col</CODE> - <DD><CODE>property</CODE> - </DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/PaneInformation.html" title="class in org.apache.poi.ss.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/RegionUtil.html" title="class in org.apache.poi.ss.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/util/PropertyTemplate.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PropertyTemplate.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

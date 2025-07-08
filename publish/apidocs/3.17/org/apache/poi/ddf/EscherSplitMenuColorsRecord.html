@@ -1,0 +1,651 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+EscherSplitMenuColorsRecord (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="EscherSplitMenuColorsRecord (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherSpgrRecord.html" title="class in org.apache.poi.ddf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherSpRecord.html" title="class in org.apache.poi.ddf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/ddf/EscherSplitMenuColorsRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EscherSplitMenuColorsRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ddf</FONT>
+<BR>
+Class EscherSplitMenuColorsRecord</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">org.apache.poi.ddf.EscherRecord</A>
+      <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ddf.EscherSplitMenuColorsRecord</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>EscherSplitMenuColorsRecord</B><DT>extends <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></DL>
+</PRE>
+
+<P>
+A list of the most recently used colours for the drawings contained in
+ this document.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#RECORD_DESCRIPTION">RECORD_DESCRIPTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#RECORD_ID">RECORD_ID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#EscherSplitMenuColorsRecord()">EscherSplitMenuColorsRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)">fillFields</A></B>(byte[]&nbsp;data,
+           int&nbsp;offset,
+           <A HREF="../../../../org/apache/poi/ddf/EscherRecordFactory.html" title="interface in org.apache.poi.ddf">EscherRecordFactory</A>&nbsp;recordFactory)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The contract of this method is to deserialize an escher record including
+ it's children.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.lang.Object[][]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#getAttributeMap()">getAttributeMap</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For the purpose of providing toString() and toXml() a subclass can either override those methods
+ or provide a Object[][] array in the form { { "Attribute Name (Header)", value, "optional attribute", value }, ...</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#getColor1()">getColor1</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the fill color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#getColor2()">getColor2</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the line color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#getColor3()">getColor3</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the shadow color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#getColor4()">getColor4</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the 3-D color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#getRecordId()">getRecordId</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the current record id.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#getRecordName()">getRecordName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subclasses should return the short name for this escher record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#getRecordSize()">getRecordSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subclasses should effeciently return the number of bytes required to
+ serialize the record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)">serialize</A></B>(int&nbsp;offset,
+          byte[]&nbsp;data,
+          <A HREF="../../../../org/apache/poi/ddf/EscherSerializationListener.html" title="interface in org.apache.poi.ddf">EscherSerializationListener</A>&nbsp;listener)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serializes the record to an existing byte array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#setColor1(int)">setColor1</A></B>(int&nbsp;field_1_color1)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the fill color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#setColor2(int)">setColor2</A></B>(int&nbsp;field_2_color2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the line color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#setColor3(int)">setColor3</A></B>(int&nbsp;field_3_color3)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the shadow color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherSplitMenuColorsRecord.html#setColor4(int)">setColor4</A></B>(int&nbsp;field_4_color4)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the 3-D color</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.ddf.EscherRecord"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.ddf.<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#clone()">clone</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#display(java.io.PrintWriter, int)">display</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#fillFields(byte[], org.apache.poi.ddf.EscherRecordFactory)">fillFields</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getChild(int)">getChild</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getChildRecords()">getChildRecords</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getInstance()">getInstance</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getOptions()">getOptions</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getVersion()">getVersion</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#isContainerRecord()">isContainerRecord</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#readHeader(byte[], int)">readHeader</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#readInstance(byte[], int)">readInstance</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize()">serialize</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize(int, byte[])">serialize</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setChildRecords(java.util.List)">setChildRecords</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setInstance(short)">setInstance</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setOptions(short)">setOptions</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setRecordId(short)">setRecordId</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setVersion(short)">setVersion</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#toString()">toString</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#toXml()">toXml</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#toXml(java.lang.String)">toXml</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="RECORD_ID"><!-- --></A><H3>
+RECORD_ID</H3>
+<PRE>
+public static final short <B>RECORD_ID</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherSplitMenuColorsRecord.RECORD_ID">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RECORD_DESCRIPTION"><!-- --></A><H3>
+RECORD_DESCRIPTION</H3>
+<PRE>
+public static final java.lang.String <B>RECORD_DESCRIPTION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherSplitMenuColorsRecord.RECORD_DESCRIPTION">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="EscherSplitMenuColorsRecord()"><!-- --></A><H3>
+EscherSplitMenuColorsRecord</H3>
+<PRE>
+public <B>EscherSplitMenuColorsRecord</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)"><!-- --></A><H3>
+fillFields</H3>
+<PRE>
+public int <B>fillFields</B>(byte[]&nbsp;data,
+                      int&nbsp;offset,
+                      <A HREF="../../../../org/apache/poi/ddf/EscherRecordFactory.html" title="interface in org.apache.poi.ddf">EscherRecordFactory</A>&nbsp;recordFactory)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)">EscherRecord</A></CODE></B></DD>
+<DD>The contract of this method is to deserialize an escher record including
+ it's children.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)">fillFields</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - The byte array containing the serialized escher
+                  records.<DD><CODE>offset</CODE> - The offset into the byte array.<DD><CODE>recordFactory</CODE> - A factory for creating new escher records.
+<DT><B>Returns:</B><DD>The number of bytes written.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)"><!-- --></A><H3>
+serialize</H3>
+<PRE>
+public int <B>serialize</B>(int&nbsp;offset,
+                     byte[]&nbsp;data,
+                     <A HREF="../../../../org/apache/poi/ddf/EscherSerializationListener.html" title="interface in org.apache.poi.ddf">EscherSerializationListener</A>&nbsp;listener)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)">EscherRecord</A></CODE></B></DD>
+<DD>Serializes the record to an existing byte array.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)">serialize</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - the offset within the byte array<DD><CODE>data</CODE> - the data array to serialize to<DD><CODE>listener</CODE> - a listener for begin and end serialization events.  This
+                  is useful because the serialization is
+                  hierarchical/recursive and sometimes you need to be able
+                  break into that.
+<DT><B>Returns:</B><DD>the number of bytes written.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRecordSize()"><!-- --></A><H3>
+getRecordSize</H3>
+<PRE>
+public int <B>getRecordSize</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordSize()">EscherRecord</A></CODE></B></DD>
+<DD>Subclasses should effeciently return the number of bytes required to
+ serialize the record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordSize()">getRecordSize</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>number of bytes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRecordId()"><!-- --></A><H3>
+getRecordId</H3>
+<PRE>
+public short <B>getRecordId</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordId()">EscherRecord</A></CODE></B></DD>
+<DD>Return the current record id.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordId()">getRecordId</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The 16 bit record id.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRecordName()"><!-- --></A><H3>
+getRecordName</H3>
+<PRE>
+public java.lang.String <B>getRecordName</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordName()">EscherRecord</A></CODE></B></DD>
+<DD>Subclasses should return the short name for this escher record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordName()">getRecordName</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the short name for this escher record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColor1()"><!-- --></A><H3>
+getColor1</H3>
+<PRE>
+public int <B>getColor1</B>()</PRE>
+<DL>
+<DD>Gets the fill color
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the fill color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColor1(int)"><!-- --></A><H3>
+setColor1</H3>
+<PRE>
+public void <B>setColor1</B>(int&nbsp;field_1_color1)</PRE>
+<DL>
+<DD>Sets the fill color
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>field_1_color1</CODE> - the fill color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColor2()"><!-- --></A><H3>
+getColor2</H3>
+<PRE>
+public int <B>getColor2</B>()</PRE>
+<DL>
+<DD>Gets the line color
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the line color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColor2(int)"><!-- --></A><H3>
+setColor2</H3>
+<PRE>
+public void <B>setColor2</B>(int&nbsp;field_2_color2)</PRE>
+<DL>
+<DD>Sets the line color
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>field_2_color2</CODE> - the line color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColor3()"><!-- --></A><H3>
+getColor3</H3>
+<PRE>
+public int <B>getColor3</B>()</PRE>
+<DL>
+<DD>Gets the shadow color
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the shadow color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColor3(int)"><!-- --></A><H3>
+setColor3</H3>
+<PRE>
+public void <B>setColor3</B>(int&nbsp;field_3_color3)</PRE>
+<DL>
+<DD>Sets the shadow color
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>field_3_color3</CODE> - the shadow color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColor4()"><!-- --></A><H3>
+getColor4</H3>
+<PRE>
+public int <B>getColor4</B>()</PRE>
+<DL>
+<DD>Gets the 3-D color
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the 3-D color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColor4(int)"><!-- --></A><H3>
+setColor4</H3>
+<PRE>
+public void <B>setColor4</B>(int&nbsp;field_4_color4)</PRE>
+<DL>
+<DD>Sets the 3-D color
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>field_4_color4</CODE> - the 3-D color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAttributeMap()"><!-- --></A><H3>
+getAttributeMap</H3>
+<PRE>
+protected java.lang.Object[][] <B>getAttributeMap</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getAttributeMap()">EscherRecord</A></CODE></B></DD>
+<DD>For the purpose of providing toString() and toXml() a subclass can either override those methods
+ or provide a Object[][] array in the form <code>{ { "Attribute Name (Header)", value, "optional attribute", value }, ... } </code>.<p>
+
+ Null values won't be printed.<p>
+
+ The attributes record, version, instance, options must not be returned.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getAttributeMap()">getAttributeMap</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the attribute map</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherSpgrRecord.html" title="class in org.apache.poi.ddf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherSpRecord.html" title="class in org.apache.poi.ddf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/ddf/EscherSplitMenuColorsRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EscherSplitMenuColorsRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>
