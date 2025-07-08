@@ -952,7 +952,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                 } else if (ostyle instanceof String) {
                     setBulletFont((String)ostyle);
                 } else if (ostyle instanceof AutoNumberingScheme) {
-                    setBulletAutoNumber((AutoNumberingScheme)ostyle, 0);
+                    setBulletAutoNumber((AutoNumberingScheme)ostyle, 1);
                 }
             }
         }
