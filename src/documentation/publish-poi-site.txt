@@ -47,15 +47,28 @@ Building and Deploying the Site
 It is recommended that you open a command prompt and set up Java 8 as your default. The web site build will fail
 if you use a very recent Java version.
 
-In your local copy of the POI svn (https://github.com/apache/poi/tree/trunk), run:
+In your local copy of the POI git (https://github.com/apache/poi/tree/trunk), run using Java 8:
 
 ant site
 
-After this completes, you can copy the files in `build/site` to the `publish` directory in your poi-site checkout
-(https://github.com/apache/poi/tree/asf-site).
+If you use a newer version, you will get warnings and the output will have issues.
+
+After this completes, you can switch to the `asf-site` branch.
+
+The `ant site` command will have created a directory called `build/site` in your local POI git checkout.
+You can copy the files in `build/site` to the `content` directory.
+This `content` directory is where the files for the web site are stored
+and only appears in the `asf-site` branch.
 
 A command like this might work.
 
-cp -r ~/poi/build/site/* ~/poi-site/publish/
+cp -R build/site/* content/
 
-I would recommend that you use `git status` and `git diff` before committing the changes to poi-site.
+I would recommend that you use `git status` and `git diff` before committing the changes to asf-site.
+
+It is probably a good idea to check the site locally before committing the changes by opening the
+content/index.html file in a browser.
+
+Once you are happy with the changes, you can commit them to the `asf-site` branch.
+
+It is probably a good idea to merge the changes to the `trunk` branch as well but that won't affect the web site.
