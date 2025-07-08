@@ -64,8 +64,8 @@
 
          <note>
             This code currently lives the
-            <a href="https://svn.apache.org/viewvc/poi/trunk/poi-scratchpad/">scratchpad area</a>
-            of the POI SVN repository. To use this component, ensure
+            <a href="https://github.com/apache/poi/tree/trunk/poi-scratchpad/">scratchpad area</a>
+            of the POI Git repository. To use this component, ensure
             you have the Scratchpad Jar on your classpath, or a dependency
             defined on the <em>poi-scratchpad</em> artifact - the main POI
             jar is not enough! See the

@@ -123,7 +123,7 @@
                 First make sure that Java is set up properly and that you can execute the 'javac' executable in your shell.
             </p>
             <p>
-                Next, open Eclipse and create either a local SVN repository, or a copy of the Git repository,
+                Next, open Eclipse and create a copy of the Git repository,
                 and import the project into Eclipse.
             </p>
             <p>

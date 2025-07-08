@@ -51,8 +51,8 @@
 
          <note>
             This code currently lives the
-            <a href="https://svn.apache.org/viewvc/poi/trunk/poi-scratchpad/">scratchpad area</a>
-            of the POI SVN repository. To use this component, ensure
+            <a href="https://github.com/apache/poi/tree/trunk/poi-scratchpad/">scratchpad area</a>
+            of the POI Git repository. To use this component, ensure
             you have the Scratchpad Jar on your classpath, or a dependency
             defined on the <em>poi-scratchpad</em> artifact - the main POI
             jar is not enough! See the
@@ -190,7 +190,7 @@ for(Attachment attach : msg.getAttachments()) {
 
 			<p>To get a feel for the contents of a file, and to track down
 			 where data of interest is stored, HMEF comes with
-			 <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-scratchpad/src/main/java/org/apache/poi/hmef/dev/">HMEFDumper</a>
+			 <a href="https://github.com/apache/poi/tree/trunk/poi-scratchpad/src/main/java/org/apache/poi/hmef/dev/">HMEFDumper</a>
 			 to print out the contents of the file.</p>
        </section>
 

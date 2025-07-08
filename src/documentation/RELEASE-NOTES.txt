@@ -29,7 +29,7 @@ This release comes in source form:
 All release artifacts are accompanied by SHA checksums and PGP signatures
 that you can use to verify the authenticity of your download.
 The public key used for the PGP signature can be found at 
-https://svn.apache.org/repos/asf/poi/tags/@RELEASE_TAG@/KEYS
+https://downloads.apache.org/poi/KEYS
 
 About Apache POI
 -----------------------

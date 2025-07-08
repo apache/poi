@@ -60,9 +60,9 @@ Requires Java 1.8 or later.
 Contributing
 ------------------
 
-* Download and install svn or git, Java JDK 1.8+, and Apache Ant 1.8+ or Gradle
+* Download and install git, Java JDK 1.8+, and Apache Ant 1.8+ or Gradle
 
-* Check out the code from svn or git
+* Check out the code from git
 
 * Import the project into Eclipse or your favorite IDE
 

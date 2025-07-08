@@ -95,7 +95,7 @@ svn update --set-depth infinity dist/release/poi/
 
 
 (II) Making release artifacts
-  Run these commands from a clean checkout of https://svn.apache.org/repos/asf/poi/trunk
+  Run these commands from a clean checkout of https://github.com/apache/poi/tree/trunk
 
   1. Update the version number in these files and commit the changes to svn.
      - build.xml (version.id)
@@ -357,7 +357,7 @@ Note, announcements should be sent from your @apache.org e-mail address.
 10. In Bugzilla, add a new version and the next "...-dev" version. Also close the n-2 -dev version to new bugs.
 
 11. Add the version to the DOAP file too
-  https://svn.apache.org/repos/asf/poi/trunk/doap_POI.rdf
+  https://github.com/apache/poi/tree/trunk/doap_POI.rdf
 
 12. Delete directory that held RC.
 

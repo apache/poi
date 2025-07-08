@@ -30,7 +30,7 @@
 
     <body>
 		<p>HWPF is still in early development. It is in the <a
-     	href="https://svn.apache.org/viewvc/poi/trunk/poi-scratchpad/">
+     	href="https://github.com/apache/poi/tree/trunk/poi-scratchpad/">
 		scratchpad section of the SVN.</a> You will need to ensure you
 		either have a recent SVN checkout, or a recent SVN nightly build
 		(including the scratchpad jar!)</p>
@@ -80,7 +80,7 @@ do end up with macros in them.</p>
 		<section><title>Further Examples</title>
 		<p>For now, the best source of additional examples is in the unit
 		tests. <a
-     	href="https://svn.apache.org/viewvc/poi/trunk/poi-scratchpad/src/test/java/org/apache/poi/hwpf/">
+     	href="https://github.com/apache/poi/tree/trunk/poi-scratchpad/src/test/java/org/apache/poi/hwpf/">
 		Browse the HWPF unit tests.</a>
 		</p>
 		</section>

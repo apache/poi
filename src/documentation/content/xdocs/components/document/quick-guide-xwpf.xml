@@ -79,9 +79,9 @@ document.</p>
 
 		<section><title>Further Examples</title>
 		<p>For now, there are a limited number of XWPF examples in the
-      <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples/xwpf">Examples Package</a>.
+      <a href="https://github.com/apache/poi/tree/trunk/poi-examples/src/main/java/org/apache/poi/examples/xwpf">Examples Package</a>.
       Beyond those, the best source of additional examples is in the unit
-		tests. <a href="https://svn.apache.org/viewvc/poi/trunk/poi-ooxml/src/test/java/org/apache/poi/xwpf/">
+		tests. <a href="https://github.com/apache/poi/tree/trunk/poi-ooxml/src/test/java/org/apache/poi/xwpf/">
 		Browse the XWPF unit tests.</a>
 		</p>
 		</section>

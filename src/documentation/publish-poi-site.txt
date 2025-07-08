@@ -22,11 +22,11 @@
 
 The Apache POI web site is https://poi.apache.org/
 
-The HTML and other files for the web site are stored in svn at https://svn.apache.org/repos/asf/poi/site
+The HTML and other files for the web site are stored in git at https://github.com/apache/poi/tree/asf-site
 Committing files to the `publish` directory of this repo will automatically lead to the web site being updated.
 There may be a small delay and you might need to force a refresh in your browser.
 
-The site is built from using the main POI svn at https://svn.apache.org/repos/asf/poi/trunk
+The site is built from using the main POI git at https://github.com/apache/poi/tree/trunk
 
 Prerequisites
 -------------
@@ -47,15 +47,15 @@ Building and Deploying the Site
 It is recommended that you open a command prompt and set up Java 8 as your default. The web site build will fail
 if you use a very recent Java version.
 
-In your local copy of the POI svn (https://svn.apache.org/repos/asf/poi/trunk), run:
+In your local copy of the POI svn (https://github.com/apache/poi/tree/trunk), run:
 
 ant site
 
 After this completes, you can copy the files in `build/site` to the `publish` directory in your poi-site checkout
-(https://svn.apache.org/repos/asf/poi/site).
+(https://github.com/apache/poi/tree/asf-site).
 
 A command like this might work.
 
-cp -r ~/svn/poi/build/site/* ~/svn/poi-site/publish/
+cp -r ~/poi/build/site/* ~/poi-site/publish/
 
-I would recommend that you use `svn stat` and `svn diff` before committing the changes to poi-site.
+I would recommend that you use `git status` and `git diff` before committing the changes to poi-site.

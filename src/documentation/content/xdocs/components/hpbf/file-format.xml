@@ -189,7 +189,7 @@ PL   62 1a 00 00 48 00 00 00 // PL   from: 1a62 (6754), len: 48 (72)
            <p>Type 8 has 7 2 byte unsigned ints, then a pair of 4 byte
             unsigned ints for each entry.</p>
            <p>Type 12 holds hyperlinks, and is very much more complex.
-            See <a href="https://svn.apache.org/viewvc/poi/trunk/poi-scratchpad/src/main/java/org/apache/poi/hpbf/model/qcbits/QCPLCBit.java?view=markup"><code>org.apache.poi.hpbf.model.qcbits.QCPLCBit</code></a>
+            See <a href="https://github.com/apache/poi/tree/trunk/poi-scratchpad/src/main/java/org/apache/poi/hpbf/model/qcbits/QCPLCBit.java?view=markup"><code>org.apache.poi.hpbf.model.qcbits.QCPLCBit</code></a>
             for our best guess as to how the contents match up.</p>
            </section>
 		</section>
