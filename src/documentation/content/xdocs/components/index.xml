@@ -385,8 +385,8 @@
     <section><title>Examples</title>
       <p>
 	    Small sample programs using the POI API are available in the
-        <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples">src/examples</a>
-        (<a href="https://svn.apache.org/viewvc/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples">viewvc</a>) directory of the source distribution.
+        <a href="https://github.com/apache/poi/tree/trunk/poi-examples/src/main/java/org/apache/poi/examples">src/examples</a>
+        (<a href="https://github.com/apache/poi/tree/trunk/poi-examples/src/main/java/org/apache/poi/examples">viewvc</a>) directory of the source distribution.
       </p>
       <p>
         All of the examples are included in POI distributions as a poi-examples artifact.
@@ -408,7 +408,7 @@
       <p>
           See <a href="poi-ruby.html">POI Ruby Bindings</a>  and other code in the
           <a
-         href="https://svn.apache.org/repos/asf/poi/trunk/src/contrib/">poi-contrib module</a>
+         href="https://github.com/apache/poi/tree/trunk/src/contrib/">poi-contrib module</a>
       </p>
     </section>
   </body>

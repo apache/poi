@@ -51,8 +51,8 @@
 	</section>
 	<section><title>Subversion</title>
 	<p>
-	The POI-Ruby module sits under the POI <a href="https://svn.apache.org/repos/asf/poi/trunk/src/contrib/poi-ruby/">Subversion</a>
-	<a href="https://svn.apache.org/viewvc/poi/trunk/src/contrib/poi-ruby/">(viewvc)</a>. Running <em>make</em>
+	The POI-Ruby module sits under the POI <a href="https://github.com/apache/poi/tree/trunk/src/contrib/poi-ruby/">Subversion</a>
+	<a href="https://github.com/apache/poi/tree/trunk/src/contrib/poi-ruby/">(viewvc)</a>. Running <em>make</em>
 	inside that directory will create a loadable ruby extension <em>poi4r.so</em> in the release subdirectory. Tests
 	are in the <em>tests/</em> subdirectory, and should be run from the <em>poi-ruby</em> directory. Please read the tests to figure out the usage.
 	</p>

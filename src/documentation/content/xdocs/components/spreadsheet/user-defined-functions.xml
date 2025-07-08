@@ -406,7 +406,7 @@ cell: Sheet1!B4
 returns value: org.apache.poi.ss.usermodel.CellValue [790.7936267415464]
         ]]></source>
             <p>That is it!  Now you can create Java code and register it, allowing your POI based appliction to run spreadsheets that previously were inaccessible.</p>
-            <p>This example can be found in the <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples/ss/formula">poi-examples/src/main/java/org/apache/poi/examples/ss/formula</a> folder in the source.</p>
+            <p>This example can be found in the <a href="https://github.com/apache/poi/tree/trunk/poi-examples/src/main/java/org/apache/poi/examples/ss/formula">poi-examples/src/main/java/org/apache/poi/examples/ss/formula</a> folder in the source.</p>
     </section>
   </section>
 </body>

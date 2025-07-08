@@ -131,7 +131,7 @@
      Ideally, patches should be submitted early and often. This is for
      two key reasons. Firstly, it's much easier to review smaller patches
      than large ones. This means that smaller patches are much more likely
-     to be applied to SVN in a timely fashion. Secondly, by sending in your
+     to be applied to Git in a timely fashion. Secondly, by sending in your
      patches earlier rather than later, it's much easier to get feedback
      on your coding and direction. If you've missed an easier way to do something,
      or are duplicating some (probably hidden) existing code, or taking things

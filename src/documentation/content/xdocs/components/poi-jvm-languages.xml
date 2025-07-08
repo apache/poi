@@ -118,7 +118,7 @@
     from org.apache.poi.ss.usermodel import <a href="../apidocs/dev/org/apache/poi/ss/usermodel/WorkbookFactory.html">WorkbookFactory</a>, <a href="../apidocs/dev/org/apache/poi/ss/usermodel/DataFormatter.html">DataFormatter</a>
 
     # Read the contents of the workbook
-    wb = WorkbookFactory.create(File('<a href="https://svn.apache.org/viewvc/poi/trunk/test-data/spreadsheet/SampleSS.xlsx">SampleSS.xlsx</a>'))
+    wb = WorkbookFactory.create(File('<a href="https://github.com/apache/poi/tree/trunk/test-data/spreadsheet/SampleSS.xlsx">SampleSS.xlsx</a>'))
     formatter = DataFormatter()
     for i, sheet in enumerate(wb, start=1):
         print('Sheet %d of %d: %s'.format(i, wb.numberOfSheets, sheet.sheetName))
@@ -168,7 +168,7 @@
         import scala.collection.JavaConversions._
 
         // Read the contents of the workbook
-        val workbook = WorkbookFactory.create(new File("<a href="https://svn.apache.org/viewvc/poi/trunk/test-data/spreadsheet/SampleSS.xlsx">SampleSS.xlsx</a>"))
+        val workbook = WorkbookFactory.create(new File("<a href="https://github.com/apache/poi/tree/trunk/test-data/spreadsheet/SampleSS.xlsx">SampleSS.xlsx</a>"))
         val formatter = new DataFormatter()
         for {
             // Iterate and print the sheets

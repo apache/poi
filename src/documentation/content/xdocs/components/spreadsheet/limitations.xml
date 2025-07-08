@@ -55,7 +55,7 @@
 								</li>
 								<li>
 									For reading very huge files, take a look at the sample 
-									<a href="https://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples/xssf/eventusermodel/XLSX2CSV.java">XLSX2CSV</a>
+									<a href="https://github.com/apache/poi/tree/trunk/poi-examples/src/main/java/org/apache/poi/examples/xssf/eventusermodel/XLSX2CSV.java">XLSX2CSV</a>
 									which shows how you can read a file in streaming fashion (again with some limitations on what information you 
 									can read out of the file, but there are ways to get at most of it if necessary).
 								</li>
