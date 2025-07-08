@@ -2008,6 +2008,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         assert(0 <= index && index < size);
         if (size > 1) {
             ctMergeCells.removeMergeCell(index);
+            ctMergeCells.setCount(ctMergeCells.getCount() - 1);
         } else {
             worksheet.unsetMergeCells();
         }
@@ -2043,6 +2044,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         } else {
             CTMergeCell[] newMergeCellsArray = new CTMergeCell[newMergeCells.size()];
             ctMergeCells.setMergeCellArray(newMergeCells.toArray(newMergeCellsArray));
+            ctMergeCells.setCount(newMergeCells.size());
         }
     }
 
