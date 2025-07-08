@@ -44,4 +44,4 @@ notifications:
 
 publish:
   whoami: asf-site
-  subdir: publish
+
