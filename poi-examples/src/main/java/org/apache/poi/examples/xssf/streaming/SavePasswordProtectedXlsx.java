@@ -58,8 +58,7 @@ public final class SavePasswordProtectedXlsx {
         TempFileUtils.checkTempFiles();
         String filename = args[0];
         String password = args[1];
-        SXSSFWorkbookWithCustomZipEntrySource wb = new SXSSFWorkbookWithCustomZipEntrySource();
-        try {
+        try (SXSSFWorkbookWithCustomZipEntrySource wb = new SXSSFWorkbookWithCustomZipEntrySource()) {
             for(int i = 0; i < 10; i++) {
                 SXSSFSheet sheet = wb.createSheet("Sheet" + i);
                 for(int r = 0; r < 1000; r++) {
@@ -78,10 +77,6 @@ public final class SavePasswordProtectedXlsx {
             } finally {
                 tempData.dispose();
             }
-        } finally {
-            wb.close();
-            //the dispose call is necessary to ensure temp files are removed
-            wb.dispose();
         }
         TempFileUtils.checkTempFiles();
     }
