@@ -32,7 +32,7 @@
   <p>
    The Javadocs for the latest (development) version of Apache POI
    can be <a href="dev/index.html">accessed online here</a>, or build
-   from a <a href="site:subversion">source code checkout</a>
+   from a <a href="site:git">source code checkout</a>
    by running the <em>javadocs</em> Ant task. The
    <a href="dev/index.html">latest (development) Javadocs</a> are generally
    updated every few weeks, so may lag the most recent development slightly.
