@@ -41,3 +41,7 @@ notifications:
   pullrequests:         dev@poi.apache.org
   discussions:          dev@poi.apache.org
   jobs:                 dev@poi.apache.org
+
+publish:
+  whoami: asf-site
+  subdir: publish
