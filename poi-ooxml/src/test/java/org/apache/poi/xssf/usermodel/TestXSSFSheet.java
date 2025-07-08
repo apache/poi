@@ -358,15 +358,18 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             sheet.removeMergedRegion(1);
             assertEquals("E5:F6", ctWorksheet.getMergeCells().getMergeCellArray(1).getRef());
             assertEquals(2, sheet.getNumMergedRegions());
+            assertEquals(2, ctWorksheet.getMergeCells().getCount());
             sheet.removeMergedRegion(1);
             sheet.removeMergedRegion(0);
             assertEquals(0, sheet.getNumMergedRegions());
+            assertEquals(0, ctWorksheet.getMergeCells().getCount());
             assertNull(sheet.getCTWorksheet().getMergeCells(),
                     "CTMergeCells should be deleted after removing the last merged region on the sheet.");
             assertEquals(0, sheet.addMergedRegion(region_1));
             assertEquals(1, sheet.addMergedRegion(region_2));
             assertEquals(2, sheet.addMergedRegion(region_3));
             assertEquals(3, sheet.addMergedRegion(region_4));
+            assertEquals(3, ctWorksheet.getMergeCells().getCount());
             // test invalid indexes OOBE
             Set<Integer> rmIdx = new HashSet<>(Arrays.asList(5, 6));
             sheet.removeMergedRegions(rmIdx);
@@ -374,6 +377,8 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             sheet.removeMergedRegions(rmIdx);
             assertEquals("A1:B2", ctWorksheet.getMergeCells().getMergeCellArray(0).getRef());
             assertEquals("E5:F6", ctWorksheet.getMergeCells().getMergeCellArray(1).getRef());
+            assertEquals(2, sheet.getNumMergedRegions());
+            assertEquals(2, ctWorksheet.getMergeCells().getCount());
         }
     }
 

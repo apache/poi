@@ -2042,9 +2042,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         if (newMergeCells.isEmpty()) {
             worksheet.unsetMergeCells();
+            ctMergeCells.setCount(0);
         } else {
             CTMergeCell[] newMergeCellsArray = new CTMergeCell[newMergeCells.size()];
             ctMergeCells.setMergeCellArray(newMergeCells.toArray(newMergeCellsArray));
+            ctMergeCells.setCount(newMergeCells.size());
         }
     }
 
