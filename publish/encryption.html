@@ -568,7 +568,7 @@ document.write("Last Published: " + document.lastModified);
         <a href="components/">default dependencies</a>:</p>
 <ul>
             
-<li>BouncyCastle bcpkix, bcprov and bcutil (tested against 1.80)</li>
+<li>BouncyCastle bcpkix, bcprov and bcutil (tested against 1.81)</li>
             
 <li>Apache Santuario "xmlsec" (tested against 3.0.5)</li>
             
@@ -581,7 +581,7 @@ document.write("Last Published: " + document.lastModified);
         depend on supporting services and although the code is adopted, the integration is not well tested ... please support us on
         integration (testing) with timestamp and revocation (OCSP) services.
         </p>
-<p>Further test examples can be found in the corresponding <a href="https://svn.apache.org/viewvc/poi/trunk/poi-ooxml/src/test/java/org/apache/poi/poifs/crypt/dsig/TestSignatureInfo.java?view=markup">test class</a>.</p>
+<p>Further test examples can be found in the corresponding <a href="https://github.com/apache/poi/tree/trunk/poi-ooxml/src/test/java/org/apache/poi/poifs/crypt/dsig/TestSignatureInfo.java?view=markup">test class</a>.</p>
 <p>If you want to use a hash algorithm with 64 bytes (currently only applies to SHA512),
         <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=42061">a base64 "feature"</a> in xmlsec
         leads to line breaks in the digest values, which won't be accepted by Office. To workaround this, you
@@ -823,7 +823,7 @@ document.write("Last Published: " + document.lastModified);
 <p>The code example, written by PJ Fanning, modifies the behavior of SXSSFWorkbook
         to extract an OOXML spreadsheet zipped container and write the contents to disk using AES
         encryption.</p>
-<p>See <a href="https://svn.apache.org/viewvc/poi/trunk/poi-ooxml/src/main/java/org/apache/poi/poifs/crypt/temp/SXSSFWorkbookWithCustomZipEntrySource.java?view=markup">SXSSFWorkbookWithCustomZipEntrySource.java</a>
+<p>See <a href="https://github.com/apache/poi/tree/trunk/poi-ooxml/src/main/java/org/apache/poi/poifs/crypt/temp/SXSSFWorkbookWithCustomZipEntrySource.java?view=markup">SXSSFWorkbookWithCustomZipEntrySource.java</a>
         and other <a href="https://svn.apache.org/viewvc?view=revision&amp;revision=1768744">files</a>
         that are needed for this example.</p>
 </div>
