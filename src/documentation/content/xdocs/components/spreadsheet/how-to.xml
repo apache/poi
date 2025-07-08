@@ -469,13 +469,13 @@ some of the rows or cells. It can be found at
 <code>/poi-examples/src/main/java/org/apache/poi/examples/hssf/eventusermodel/XLS2CSVmra.java</code>,
 and may be called on the command line, or from within your own code.
 The latest version is always available from
-<a href="https://github.com/apache/poi/tree/trunk/poi-examples/src/main/java/org/apache/poi/examples/hssf/eventusermodel/">subversion</a>.
+<a href="https://github.com/apache/poi/tree/trunk/poi-examples/src/main/java/org/apache/poi/examples/hssf/eventusermodel/">git</a>.
 </p>
 <p>
 <em>In POI versions before 3.0.3, this code lived in the scratchpad section.
  If you're using one of these older versions of POI, you will either
  need to include the scratchpad jar on your classpath, or build from a</em>
- <a href="site:subversion">subversion checkout</a>.
+ <a href="site:git">git checkout</a>.
 </p>
      </section>
 
