@@ -513,10 +513,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *              be null to unset it and fall back to the style hierarchy.
      */
     public void setAlignment(ParagraphAlignment align) {
-        CTPPr pr = getCTPPr();
         if (align == null) {
-            pr.unsetJc();
+            CTPPr pr = getCTPPr(false);
+            if (pr != null)
+                pr.unsetJc();
         } else {
+            CTPPr pr = getCTPPr(true);
             CTJc jc = pr.isSetJc() ? pr.getJc() : pr.addNewJc();
             STJc.Enum en = STJc.Enum.forInt(align.getValue());
             jc.setVal(en);
@@ -568,7 +570,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return the vertical alignment of this paragraph.
      */
     public TextAlignment getVerticalAlignment() {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(false);
         return (pr == null || !pr.isSetTextAlignment()) ? TextAlignment.AUTO
                 : TextAlignment.valueOf(pr.getTextAlignment().getVal()
                 .intValue());
@@ -884,7 +886,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return boolean - if page break is set
      */
     public boolean isPageBreak() {
-        final CTPPr ppr = getCTPPr();
+        final CTPPr ppr = getCTPPr(false);
+        if (ppr == null) {
+            return false;
+        }
         final CTOnOff ctPageBreak = ppr.isSetPageBreakBefore() ? ppr.getPageBreakBefore() : null;
         if (ctPageBreak == null) {
             return false;
@@ -1373,7 +1378,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     @Override
     public boolean isWordWrapped() {
-        return getCTPPr().isSetWordWrap() && POIXMLUnits.parseOnOff(getCTPPr().getWordWrap());
+        CTPPr ppr = getCTPPr(false);
+        return ppr != null && ppr.isSetWordWrap() && POIXMLUnits.parseOnOff(ppr.getWordWrap());
     }
 
     /**
@@ -1410,7 +1416,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return the style of the paragraph
      */
     public String getStyle() {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(false);
+        if (pr == null {
+            return null;
+        }
         CTString style = pr.isSetPStyle() ? pr.getPStyle() : null;
         return style != null ? style.getVal() : null;
     }
@@ -1431,7 +1440,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * a new instance.
      */
     private CTPBdr getCTPBrd(boolean create) {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(create);
+        if (pr == null) {
+            return null;
+        }
         CTPBdr ct = pr.isSetPBdr() ? pr.getPBdr() : null;
         if (create && ct == null) {
             ct = pr.addNewPBdr();
@@ -1444,7 +1456,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * return a new instance.
      */
     private CTSpacing getCTSpacing(boolean create) {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(create);
         CTSpacing ct = pr.getSpacing();
         if (create && ct == null) {
             ct = pr.addNewSpacing();
@@ -1457,7 +1469,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * a new instance.
      */
     private CTInd getCTInd(boolean create) {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(create);
+        if (pr == null) {
+           return null;
+        }
         CTInd ct = pr.getInd();
         if (create && ct == null) {
             ct = pr.addNewInd();
