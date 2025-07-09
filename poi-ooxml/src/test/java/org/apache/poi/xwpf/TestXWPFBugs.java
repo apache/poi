@@ -245,7 +245,7 @@ class TestXWPFBugs {
 
             XWPFParagraph leftParagraph = document.getParagraphArray(1);
             assertTrue(leftParagraph.isAlignmentSet());
-            assertEquals(ParagraphAlignment.START, leftParagraph.getAlignment());
+            assertEquals(ParagraphAlignment.LEFT, leftParagraph.getAlignment()); // LEFT is the real alignment value.
         }
     }
 }
