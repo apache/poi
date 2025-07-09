@@ -482,17 +482,20 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Returns the paragraph alignment which shall be applied to text in this
      * paragraph.
      * <p>
-     * If this element is not set on a given paragraph, its value is determined
+     * If this element is not set on a given paragraph, this function returns
+     * ParagraphAlignment.LEFT as a placeholder value, and isAlignmentSet()
+     * returns false. In such case, the alignment value must be determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
      * specified in the style hierarchy, then no alignment is applied to the
      * paragraph.
      *
-     * @return the paragraph alignment of this paragraph. Can be null if not set.
+     * @see #isAlignmentSet()
+     * @return the paragraph alignment of this paragraph.
      */
     public ParagraphAlignment getAlignment() {
         CTPPr pr = getCTPPr();
-        return pr == null || !pr.isSetJc() ? null
+        return pr == null || !pr.isSetJc() ? ParagraphAlignment.LEFT
                 : ParagraphAlignment.valueOf(pr.getJc().getVal().intValue());
     }
 
@@ -518,6 +521,18 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             STJc.Enum en = STJc.Enum.forInt(align.getValue());
             jc.setVal(en);
         }
+    }
+
+    /**
+     * Returns true if the paragraph has a paragraph alignment value of its own
+     * or false in case it should fall back to the alignment value set by the
+     * paragraph style.
+     *
+     * @return boolean
+     */
+    public boolean isAlignmentSet() {
+        CTPPr pr = getCTPPr();
+        return pr != null && pr.isSetJc();
     }
 
     /**

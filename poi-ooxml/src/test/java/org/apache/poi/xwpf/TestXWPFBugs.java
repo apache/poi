@@ -39,15 +39,11 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
-import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.*;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 
 class TestXWPFBugs {
     private static final POIDataSamples samples = POIDataSamples.getDocumentInstance();
@@ -244,9 +240,12 @@ class TestXWPFBugs {
     void correctParagraphAlignment() throws IOException {
         try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug-paragraph-alignment.docx"))) {
             XWPFParagraph centeredParagraph = document.getParagraphArray(0);
+            assertFalse(centeredParagraph.isAlignmentSet());
+            assertEquals(ParagraphAlignment.LEFT, centeredParagraph.getAlignment()); // LEFT is a fallback value here.
+
             XWPFParagraph leftParagraph = document.getParagraphArray(1);
-            assertNull(centeredParagraph.getAlignment());
-            assertEquals(STJc.START.intValue(), leftParagraph.getAlignment().getValue());
+            assertTrue(leftParagraph.isAlignmentSet());
+            assertEquals(ParagraphAlignment.START, leftParagraph.getAlignment());
         }
     }
 }
