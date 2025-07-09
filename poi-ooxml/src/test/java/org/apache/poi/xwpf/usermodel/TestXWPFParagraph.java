@@ -132,6 +132,7 @@ public final class TestXWPFParagraph {
             XWPFParagraph p = doc.createParagraph();
 
             assertEquals(STJc.LEFT.intValue(), p.getAlignment().getValue());
+            assertFalse(p.isAlignmentSet());
 
             CTP ctp = p.getCTP();
             CTPPr ppr = ctp.getPPr() == null ? ctp.addNewPPr() : ctp.getPPr();
@@ -139,9 +140,15 @@ public final class TestXWPFParagraph {
             CTJc align = ppr.addNewJc();
             align.setVal(STJc.CENTER);
             assertEquals(ParagraphAlignment.CENTER, p.getAlignment());
+            assertTrue(p.isAlignmentSet());
 
             p.setAlignment(ParagraphAlignment.BOTH);
             assertEquals(STJc.BOTH, ppr.getJc().getVal());
+            assertTrue(p.isAlignmentSet());
+
+            p.setAlignment(null);
+            assertEquals(STJc.LEFT.intValue(), p.getAlignment().getValue());
+            assertFalse(p.isAlignmentSet());
         }
     }
 
