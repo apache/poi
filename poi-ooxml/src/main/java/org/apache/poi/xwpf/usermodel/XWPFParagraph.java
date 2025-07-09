@@ -494,7 +494,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return the paragraph alignment of this paragraph.
      */
     public ParagraphAlignment getAlignment() {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(false);
         return pr == null || !pr.isSetJc() ? ParagraphAlignment.LEFT
                 : ParagraphAlignment.valueOf(pr.getJc().getVal().intValue());
     }
@@ -531,7 +531,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return boolean
      */
     public boolean isAlignmentSet() {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(false);
         return pr != null && pr.isSetJc();
     }
 
@@ -1471,8 +1471,19 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     @Internal
     public CTPPr getCTPPr() {
-        return paragraph.getPPr() == null ? paragraph.addNewPPr()
-                : paragraph.getPPr();
+        return getCTPPr(true);
+    }
+
+    /**
+     * Get a <b>copy</b> of the currently used CTPPr. If none is used, return
+     * a new instance when create is true, or null when create is false.
+     *
+     * @param create create a new instance if none exists.
+     */
+    @Internal
+    public CTPPr getCTPPr(final boolean create) {
+        return (paragraph.isSetPPr() || !create) ? paragraph.getPPr()
+                : paragraph.addNewPPr();
     }
 
 
