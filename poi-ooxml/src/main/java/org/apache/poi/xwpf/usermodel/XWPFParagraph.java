@@ -1417,7 +1417,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public String getStyle() {
         CTPPr pr = getCTPPr(false);
-        if (pr == null {
+        if (pr == null) {
             return null;
         }
         CTString style = pr.isSetPStyle() ? pr.getPStyle() : null;
@@ -1495,8 +1495,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *
      * @param create create a new instance if none exists.
      */
-    @Internal
-    public CTPPr getCTPPr(final boolean create) {
+    private CTPPr getCTPPr(final boolean create) {
         return (paragraph.isSetPPr() || !create) ? paragraph.getPPr()
                 : paragraph.addNewPPr();
     }
