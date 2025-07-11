@@ -16,10 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
@@ -42,10 +39,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
-import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.*;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Test;
@@ -240,5 +234,18 @@ class TestXWPFBugs {
         XmlCursor xmlCursor = xwpfParagraph.getCTP().newCursor();
         XWPFTable xwpfTable = document.insertNewTbl(xmlCursor);
         xwpfTable.getRow(0).getCell(0).setText("Hello");
+    }
+
+    @Test
+    void correctParagraphAlignment() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug-paragraph-alignment.docx"))) {
+            XWPFParagraph centeredParagraph = document.getParagraphArray(0);
+            assertFalse(centeredParagraph.isAlignmentSet());
+            assertEquals(ParagraphAlignment.LEFT, centeredParagraph.getAlignment()); // LEFT is a fallback value here.
+
+            XWPFParagraph leftParagraph = document.getParagraphArray(1);
+            assertTrue(leftParagraph.isAlignmentSet());
+            assertEquals(ParagraphAlignment.LEFT, leftParagraph.getAlignment()); // LEFT is the real alignment value.
+        }
     }
 }

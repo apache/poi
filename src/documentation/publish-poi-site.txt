@@ -64,11 +64,12 @@ A command like this might work.
 
 cp -R build/site/* content/
 
-I would recommend that you use `git status` and `git diff` before committing the changes to asf-site.
+It is recommended that you use `git status` and `git diff` before committing the changes to asf-site.
 
 It is probably a good idea to check the site locally before committing the changes by opening the
 content/index.html file in a browser.
 
 Once you are happy with the changes, you can commit them to the `asf-site` branch.
 
-It is probably a good idea to merge the changes to the `trunk` branch as well but that won't affect the web site.
+It is probably a good idea to merge the changes from the `trunk` branch into the `asf-site` branch as well
+but that won't affect the web site.

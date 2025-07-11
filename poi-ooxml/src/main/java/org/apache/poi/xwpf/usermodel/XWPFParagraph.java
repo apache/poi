@@ -482,16 +482,19 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Returns the paragraph alignment which shall be applied to text in this
      * paragraph.
      * <p>
-     * If this element is not set on a given paragraph, its value is determined
+     * If this element is not set on a given paragraph, this function returns
+     * ParagraphAlignment.LEFT as a placeholder value, and isAlignmentSet()
+     * returns false. In such case, the alignment value must be determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
      * specified in the style hierarchy, then no alignment is applied to the
      * paragraph.
      *
+     * @see #isAlignmentSet()
      * @return the paragraph alignment of this paragraph.
      */
     public ParagraphAlignment getAlignment() {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(false);
         return pr == null || !pr.isSetJc() ? ParagraphAlignment.LEFT
                 : ParagraphAlignment.valueOf(pr.getJc().getVal().intValue());
     }
@@ -506,13 +509,32 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * specified in the style hierarchy, then no alignment is applied to the
      * paragraph.
      *
-     * @param align the paragraph alignment to apply to this paragraph.
+     * @param align the paragraph alignment to apply to this paragraph. It can
+     *              be null to unset it and fall back to the style hierarchy.
      */
     public void setAlignment(ParagraphAlignment align) {
-        CTPPr pr = getCTPPr();
-        CTJc jc = pr.isSetJc() ? pr.getJc() : pr.addNewJc();
-        STJc.Enum en = STJc.Enum.forInt(align.getValue());
-        jc.setVal(en);
+        if (align == null) {
+            CTPPr pr = getCTPPr(false);
+            if (pr != null)
+                pr.unsetJc();
+        } else {
+            CTPPr pr = getCTPPr(true);
+            CTJc jc = pr.isSetJc() ? pr.getJc() : pr.addNewJc();
+            STJc.Enum en = STJc.Enum.forInt(align.getValue());
+            jc.setVal(en);
+        }
+    }
+
+    /**
+     * Returns true if the paragraph has a paragraph alignment value of its own
+     * or false in case it should fall back to the alignment value set by the
+     * paragraph style.
+     *
+     * @return boolean
+     */
+    public boolean isAlignmentSet() {
+        CTPPr pr = getCTPPr(false);
+        return pr != null && pr.isSetJc();
     }
 
     /**
@@ -548,7 +570,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return the vertical alignment of this paragraph.
      */
     public TextAlignment getVerticalAlignment() {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(false);
         return (pr == null || !pr.isSetTextAlignment()) ? TextAlignment.AUTO
                 : TextAlignment.valueOf(pr.getTextAlignment().getVal()
                 .intValue());
@@ -864,7 +886,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return boolean - if page break is set
      */
     public boolean isPageBreak() {
-        final CTPPr ppr = getCTPPr();
+        final CTPPr ppr = getCTPPr(false);
+        if (ppr == null) {
+            return false;
+        }
         final CTOnOff ctPageBreak = ppr.isSetPageBreakBefore() ? ppr.getPageBreakBefore() : null;
         if (ctPageBreak == null) {
             return false;
@@ -1353,7 +1378,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     @Override
     public boolean isWordWrapped() {
-        return getCTPPr().isSetWordWrap() && POIXMLUnits.parseOnOff(getCTPPr().getWordWrap());
+        CTPPr ppr = getCTPPr(false);
+        return ppr != null && ppr.isSetWordWrap() && POIXMLUnits.parseOnOff(ppr.getWordWrap());
     }
 
     /**
@@ -1390,7 +1416,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return the style of the paragraph
      */
     public String getStyle() {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(false);
+        if (pr == null) {
+            return null;
+        }
         CTString style = pr.isSetPStyle() ? pr.getPStyle() : null;
         return style != null ? style.getVal() : null;
     }
@@ -1411,7 +1440,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * a new instance.
      */
     private CTPBdr getCTPBrd(boolean create) {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(create);
+        if (pr == null) {
+            return null;
+        }
         CTPBdr ct = pr.isSetPBdr() ? pr.getPBdr() : null;
         if (create && ct == null) {
             ct = pr.addNewPBdr();
@@ -1424,7 +1456,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * return a new instance.
      */
     private CTSpacing getCTSpacing(boolean create) {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(create);
         CTSpacing ct = pr.getSpacing();
         if (create && ct == null) {
             ct = pr.addNewSpacing();
@@ -1437,7 +1469,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * a new instance.
      */
     private CTInd getCTInd(boolean create) {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(create);
+        if (pr == null) {
+           return null;
+        }
         CTInd ct = pr.getInd();
         if (create && ct == null) {
             ct = pr.addNewInd();
@@ -1451,8 +1486,18 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     @Internal
     public CTPPr getCTPPr() {
-        return paragraph.getPPr() == null ? paragraph.addNewPPr()
-                : paragraph.getPPr();
+        return getCTPPr(true);
+    }
+
+    /**
+     * Get a <b>copy</b> of the currently used CTPPr. If none is used, return
+     * a new instance when create is true, or null when create is false.
+     *
+     * @param create create a new instance if none exists.
+     */
+    private CTPPr getCTPPr(final boolean create) {
+        return (paragraph.isSetPPr() || !create) ? paragraph.getPPr()
+                : paragraph.addNewPPr();
     }
 
 

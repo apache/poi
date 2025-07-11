@@ -81,9 +81,13 @@
             <summary-item>Upgrade JaCoCo code-coverage tooling to 0.8.13</summary-item>
         </summary>
         <actions>
+            <action type="fix" fixes-bug="66687" context="SXSSF">Combination of XSSF and SXSSF may result in invalid files</action>
             <action type="fix" fixes-bug="69646" context="SXSSF">SXSSF: check for null _fd instance in dispose call</action>
             <action type="fix" fixes-bug="69667" context="HSSF">Handle slightly broken WriteAccessRecord gracefully</action>
             <action type="fix" fixes-bug="69669" context="HSLF">Fix issue where Slide addTitle corrupts the ppt file</action>
+            <action type="fix" fixes-bug="69720" context="XWPF">Support null alignment values in XWPFParagraph</action>
+            <action type="fix" fixes-bug="69727" context="XSSF">Decrease count when we remove merged regions</action>
+            <action type="fix" fixes-bug="github-770" context="XSLF">Issue in setBulletStyle in XSLFTextParagraph</action>
             <action type="add" fixes-bug="github-803" context="SS_Common">Add support for SHEET function</action>
         </actions>
     </release>

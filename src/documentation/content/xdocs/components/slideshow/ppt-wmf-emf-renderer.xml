@@ -82,7 +82,6 @@
                     <li>Alternatively, download the jars from https://repo1.maven.org/maven2/org/apache/poi/</li>
                     <li>Exclude poi-ooxml-full-5.4.1.jar,poi-javadoc-5.4.1.jar and auxiliary/xml-apis-1.4.01.jar (Java 11+) into new subdirectory "unused"</li>
                     <li>Move all other jars in current directory into a new subdirectory "poi"</li>
-                    <li>Remove auxiliary/batik-script-1.14.jar:/META-INF/services/org.apache.batik.script.InterpreterFactory - see <a href="https://issues.apache.org/jira/browse/BATIK-1260">BATIK-1260</a></li>
                     <li>Invoke PPTX2PNG:
                         <source>
                             java --module-path poi:lib:auxiliary:ooxml-lib --module org.apache.poi.ooxml/org.apache.poi.xslf.util.PPTX2PNG -format png -fixside long -scale 1000 file.pptx
