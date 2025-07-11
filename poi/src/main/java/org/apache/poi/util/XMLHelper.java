@@ -253,8 +253,24 @@ public final class XMLHelper {
         return factory;
     }
 
+    private static Object _xercesSecurityManager;
+    private static volatile boolean _xercesSecurityManagerSet = false;
 
     private static Object getXercesSecurityManager() {
+        if (_xercesSecurityManagerSet) {
+            return _xercesSecurityManager;
+        } else {
+            synchronized (XMLHelper.class) {
+                if (!_xercesSecurityManagerSet) {
+                    _xercesSecurityManager = tryGetXercesSecurityManager();
+                    _xercesSecurityManagerSet = true;
+                }
+            }
+            return _xercesSecurityManager;
+        }
+    }
+
+    private static Object tryGetXercesSecurityManager() {
         // Try built-in JVM one first, standalone if not
         for (String securityManagerClassName : SECURITY_MANAGERS) {
             try {
@@ -272,7 +288,6 @@ public final class XMLHelper {
                 logThrowable(e, "SAX Feature unsupported", securityManagerClassName);
             }
         }
-
         return null;
     }
 
