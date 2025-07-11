@@ -1,5 +1,3 @@
-import java.util.regex.Pattern
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,6 +14,8 @@ import java.util.regex.Pattern
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
+import java.util.regex.Pattern
 
 final String TEST9_SRC = 'src/test/java9'
 final String TEST9_OUT = layout.buildDirectory.dir('classes/java9/test/').get().asFile.absolutePath
