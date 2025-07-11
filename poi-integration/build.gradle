@@ -18,7 +18,7 @@ import java.util.regex.Pattern
 ==================================================================== */
 
 final String TEST9_SRC = 'src/test/java9'
-final String TEST9_OUT = "${layout.buildDirectory}/classes/java9/test/"
+final String TEST9_OUT = layout.buildDirectory.dir('classes/java9/test/').get().asFile.absolutePath
 final String VERSIONS9 = 'META-INF/versions/9'
 final boolean IBMVM = System.getProperty("java.vendor").contains("IBM")
 

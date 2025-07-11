@@ -17,8 +17,8 @@ import java.util.regex.Pattern
    limitations under the License.
 ==================================================================== */
 
-final String BEANS_SRC = "${layout.buildDirectory}/generated-sources"
-final String BEANS_RES = "${layout.buildDirectory}/generated-resources"
+final String BEANS_SRC = layout.buildDirectory.dir('generated-sources').get().asFile.absolutePath
+final String BEANS_RES = layout.buildDirectory.dir('generated-resources').get().asFile.absolutePath
 
 sourceSets {
     main {
@@ -72,12 +72,12 @@ tasks.register('compileOoxmlLite', Copy) {
     // (as in AlternateContentDocument$AlternateContent$Choice.class) are always stale
 
     // copy re-/sources to modules own directory to pacify IntelliJ, which doesn't like the same source dir in multiple modules
-    from(project(':poi-ooxml-full').layout.buildDirectory) {
+    from(project(':poi-ooxml-full').layout.buildDirectory.asFile) {
         include 'generated-sources/**'
         include 'generated-resources/**'
         include 'classes/java/main/**'
     }
-    into(layout.buildDirectory)
+    into(layout.buildDirectory.asFile)
 }
 
 compileJava {
