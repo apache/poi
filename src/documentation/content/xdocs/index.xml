@@ -27,6 +27,29 @@
   <body>
     <section><title>Project News</title>
 
+      <section><title>7 July 2025 - Source repository switched from Subversion to Git</title>
+        <p>
+			Apache POI switched hosting of the source repository from Subversion to Git.
+		</p>
+		  <p>
+			After Subversion served the project well for many years, it was time to enable more
+			up-to-date workflows by using more of the features offered by Git-based platforms like
+			GitHub.
+		  </p>
+		  <p>
+			Therefore the source-code is now officially available at the previous
+			read-only mirror at <a href="https://github.com/apache/poi">https://github.com/apache/poi</a>.
+		  </p>
+		  <p>
+			This hopefully allows a smooth transition for anybody already using Git via
+			the read-only mirror.
+		  </p>
+		  <p>
+			Users who still used the Subversion-based repository will need to checkout a
+			fresh copy and migrate any pending changes.
+        </p>
+      </section>
+
       <section><title>8 April 2025 - CVE-2025-31672 - Improper Input Validation vulnerability in Apache POI before 5.4.0</title>
         <p>
           While parsing of OOXML format files like xlsx, docx and pptx, a specially crafted file could
