@@ -34,7 +34,9 @@ sourceSets {
 }
 
 dependencies {
-    api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+    api ("com.pjfanning.github:xmlbeans:${xmlbeansVersion}") {
+        transitive: false
+    }
 }
 
 idea {

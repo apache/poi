@@ -44,6 +44,9 @@ plugins {
 repositories {
     mavenCentral()
     // maven { url 'https://repository.apache.org/content/repositories/staging' }
+    maven {
+        url 'https://central.sonatype.com/repository/maven-snapshots/'
+    }
 }
 
 // Only add the plugin for Sonar if enabled
@@ -116,7 +119,7 @@ subprojects {
         log4jVersion = '2.24.3'
         mockitoVersion = '4.11.0'
         hamcrestVersion = '3.0'
-        xmlbeansVersion = '5.3.0'
+        xmlbeansVersion = '5.4.0-SNAPSHOT'
         batikVersion = '1.19'
         graphics2dVersion = '3.0.3'
         pdfboxVersion = '3.0.5'
@@ -168,6 +171,9 @@ subprojects {
     repositories {
         mavenCentral()
         // maven { url 'https://repository.apache.org/content/repositories/staging' }
+        maven {
+            url 'https://central.sonatype.com/repository/maven-snapshots/'
+        }
     }
 
     dependencies {

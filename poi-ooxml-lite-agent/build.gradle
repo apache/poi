@@ -24,7 +24,9 @@ sourceSets {
 dependencies {
     api 'net.bytebuddy:byte-buddy:1.17.5'
     api 'net.bytebuddy:byte-buddy-agent:1.17.5'
-    api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+    api ("com.pjfanning.github:xmlbeans:${xmlbeansVersion}") {
+        transitive: false
+    }
 }
 
 final MODULE_NAME = 'org.apache.poi.ooxml_lite'
