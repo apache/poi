@@ -16,9 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -584,6 +582,68 @@ class TestXWPFTable {
             assertEquals(STJcTable.INT_END, tbl.getTableAlignment().getValue());
             tbl.removeTableAlignment();
             assertNull(tbl.getTableAlignment());
+        }
+    }
+
+    @Test
+    public void testGetTableIndent() throws Exception {
+        // open an empty document
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("table-indent.docx")) {
+
+            XWPFTable table1 = doc.getTableArray(0);
+            // Indent not present in the document
+            assertFalse(table1.hasIndent());
+            assertEquals(0, table1.getIndent());
+
+            XWPFTable table2 = doc.getTableArray(1);
+            // Valid indent value with type dxa
+            assertTrue(table2.hasIndent());
+            assertEquals(732, table2.getIndent());
+
+            XWPFTable table3 = doc.getTableArray(2);
+            // Indent is of type "nil"
+            assertTrue(table3.hasIndent());
+            assertEquals(0, table3.getIndent());
+
+            XWPFTable table4 = doc.getTableArray(3);
+            // Indent is of type "pct" which should be ignored
+            assertFalse(table4.hasIndent());
+            assertEquals(0, table4.getIndent());
+
+            XWPFTable table5 = doc.getTableArray(4);
+            // Indent is of type "auto" which should be ignored
+            assertFalse(table5.hasIndent());
+            assertEquals(0, table5.getIndent());
+
+            XWPFTable table6 = doc.getTableArray(5);
+            // Valid indent value with empty type (defaults to dxa)
+            assertTrue(table6.hasIndent());
+            assertEquals(732, table6.getIndent());
+
+            XWPFTable table7 = doc.getTableArray(6);
+            // Valid indent value, negative values are allowed
+            assertTrue(table7.hasIndent());
+            assertEquals(-500, table7.getIndent());
+        }
+    }
+
+    @Test
+    void testSetGetTableIndent() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFTable tbl = doc.createTable(1, 1);
+            assertFalse(tbl.hasIndent());
+            tbl.setIndent(100);
+            assertTrue(tbl.hasIndent());
+            assertEquals(100, tbl.getIndent());
+            tbl.setIndent(0);
+            assertTrue(tbl.hasIndent());
+            assertEquals(0, tbl.getIndent());
+            tbl.setIndent(-100);
+            assertTrue(tbl.hasIndent());
+            assertEquals(-100, tbl.getIndent());
+            tbl.removeIndent();
+            assertFalse(tbl.hasIndent());
+            assertEquals(0, tbl.getIndent());
         }
     }
 }

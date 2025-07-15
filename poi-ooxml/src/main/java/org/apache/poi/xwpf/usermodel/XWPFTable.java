@@ -295,7 +295,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     public void setWidth(int width) {
         CTTblPr tblPr = getTblPr();
         CTTblWidth tblWidth = tblPr.isSetTblW() ? tblPr.getTblW() : tblPr.addNewTblW();
-        tblWidth.setW(new BigInteger(Integer.toString(width)));
+        tblWidth.setW(BigInteger.valueOf(width));
         tblWidth.setType(STTblWidth.DXA);
     }
 
@@ -304,6 +304,80 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     public int getNumberOfRows() {
         return ctTbl.sizeOfTrArray();
+    }
+
+    /**
+     * Get the indentation value in 20ths of a point (twips).
+     *
+     * <p>This element specifies the indentation which shall be added before the leading edge of
+     * the current table in the document (the left edge in a left-to-right table, and the right
+     * edge in a right-to-left table).</p>
+     * <p>If the table alignment is not left/start, this property shall be ignored.</p>
+     *
+     * @see boolean hasIndent()
+     * @return indentation value as an integer (20ths of a point)
+     */
+    public int getIndent() {
+        CTTblPr tblPr = getTblPr(false);
+        if (tblPr.isSetTblInd()) {
+            STTblWidth.Enum typeValue = tblPr.getTblInd().getType();
+            if (typeValue == null) {
+                // "§17.4.87: If [type] is omitted, then its value shall be assumed to be dxa"
+                typeValue = STTblWidth.DXA;
+            }
+            switch (typeValue.intValue()) {
+                case STTblWidth.INT_DXA:
+                    return (int) Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblInd().xgetW()));
+                case STTblWidth.INT_NIL:
+                    // "§17.18.90: [nil] Specifies that the current width is zero, regardless of
+                    // any width value specified on the parent element"
+                    return 0;
+                case STTblWidth.INT_PCT:
+                case STTblWidth.INT_AUTO:
+                    // "§17.4.50: Any width value of type pct or auto for this element shall be ignored"
+                    return 0;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Set the indentation in 20ths of a point (twips).
+     * @see int getIndent()
+     * @param indent Indentation value (20ths of a point)
+     */
+    public void setIndent(int indent) {
+        CTTblPr tblPr = getTblPr();
+        CTTblWidth tblInd = tblPr.isSetTblInd() ? tblPr.getTblInd() : tblPr.addNewTblInd();
+        tblInd.setW(BigInteger.valueOf(indent));
+        tblInd.setType(STTblWidth.DXA);
+    }
+
+    /**
+     * Check if some indentation value is set for the table.
+     *
+     * <p>If this attribute is omitted, then the table shall inherit the table indentation from
+     * the associated table style. If table indentation is never specified in the style hierarchy,
+     * no indentation shall be added to the parent table.</p>
+     *
+     * @return true if the indent value is set and is valid, false if it is not set or shall be
+     * ignored (e.g. due to invalid type).
+     */
+    public boolean hasIndent() {
+        CTTblPr tblPr = getTblPr(false);
+        // According to §17.4.50, values with type pct or auto shall be ignored.
+        return tblPr.isSetTblInd() && tblPr.getTblInd().getType() != STTblWidth.PCT
+                && tblPr.getTblInd().getType() != STTblWidth.AUTO;
+    }
+
+    /**
+     * Removes the table indentation attribute from a table
+     */
+    public void removeIndent() {
+        CTTblPr tPr = getTblPr(false);
+        if (tPr != null && tPr.isSetTblInd()) {
+            tPr.unsetTblInd();
+        }
     }
 
     /**
