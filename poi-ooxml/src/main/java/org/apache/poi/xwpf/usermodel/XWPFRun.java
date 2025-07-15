@@ -600,16 +600,17 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @since 4.0.0
      */
     public String getUnderlineColor() {
-        CTUnderline underline = getCTUnderline(true);
-        assert(underline != null);
         String colorName = "auto";
-        Object rawValue = underline.getColor();
-        if (rawValue != null) {
-            if (rawValue instanceof String) {
-                colorName = (String)rawValue;
-            } else {
-                byte[] rgbColor = (byte[])rawValue;
-                colorName = HexDump.toHex(rgbColor[0]) + HexDump.toHex(rgbColor[1]) + HexDump.toHex(rgbColor[2]);
+        CTUnderline underline = getCTUnderline(false);
+        if (underline != null) {
+            Object rawValue = underline.getColor();
+            if (rawValue != null) {
+                if (rawValue instanceof String) {
+                    colorName = (String) rawValue;
+                } else {
+                    byte[] rgbColor = (byte[]) rawValue;
+                    colorName = HexDump.toHex(rgbColor[0]) + HexDump.toHex(rgbColor[1]) + HexDump.toHex(rgbColor[2]);
+                }
             }
         }
         return colorName;
