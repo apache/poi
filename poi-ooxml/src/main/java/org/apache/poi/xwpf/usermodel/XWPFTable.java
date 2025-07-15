@@ -284,8 +284,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return width value as an integer
      */
     public int getWidth() {
-        CTTblPr tblPr = getTblPr();
-        return tblPr.isSetTblW() ? (int)Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblW().xgetW())) : -1;
+        CTTblPr tblPr = getTblPr(false);
+        return tblPr != null && tblPr.isSetTblW() ? (int)Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblW().xgetW())) : -1;
     }
 
     /**
@@ -516,7 +516,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     public String getStyleID() {
         String styleId = null;
-        CTTblPr tblPr = ctTbl.getTblPr();
+        CTTblPr tblPr = getTblPr(false);
         if (tblPr != null) {
             CTString styleStr = tblPr.getTblStyle();
             if (styleStr != null) {
@@ -797,8 +797,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     public int getRowBandSize() {
         int size = 0;
-        CTTblPr tblPr = getTblPr();
-        if (tblPr.isSetTblStyleRowBandSize()) {
+        CTTblPr tblPr = getTblPr(false);
+        if (tblPr != null && tblPr.isSetTblStyleRowBandSize()) {
             CTDecimalNumber rowSize = tblPr.getTblStyleRowBandSize();
             size = rowSize.getVal().intValue();
         }
@@ -813,8 +813,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     public int getColBandSize() {
         int size = 0;
-        CTTblPr tblPr = getTblPr();
-        if (tblPr.isSetTblStyleColBandSize()) {
+        CTTblPr tblPr = getTblPr(false);
+        if (tblPr != null && tblPr.isSetTblStyleColBandSize()) {
             CTDecimalNumber colSize = tblPr.getTblStyleColBandSize();
             size = colSize.getVal().intValue();
         }
@@ -1060,12 +1060,14 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     private int getCellMargin(Function<CTTblCellMar,CTTblWidth> margin) {
-        CTTblPr tblPr = getTblPr();
-        CTTblCellMar tcm = tblPr.getTblCellMar();
-        if (tcm != null) {
-            CTTblWidth tw = margin.apply(tcm);
-            if (tw != null) {
-                return (int) Units.toDXA(POIXMLUnits.parseLength(tw.xgetW()));
+        CTTblPr tblPr = getTblPr(false);
+        if (tblPr != null) {
+            CTTblCellMar tcm = tblPr.getTblCellMar();
+            if (tcm != null) {
+                CTTblWidth tw = margin.apply(tcm);
+                if (tw != null) {
+                    return (int) Units.toDXA(POIXMLUnits.parseLength(tw.xgetW()));
+                }
             }
         }
         return 0;
@@ -1215,7 +1217,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @since 4.0.0
      */
     public double getWidthDecimal() {
-        return getWidthDecimal(getTblPr().getTblW());
+        CTTblPr pr = getTblPr(false);
+        return pr == null ? 0.0 : getWidthDecimal(pr.getTblW());
     }
 
     /**
@@ -1247,11 +1250,12 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * A table width can be specified as an absolute measurement (an integer
      * number of twips), a percentage, or the value "AUTO".
      *
-     * @return The width type.
+     * @return The width type. Returns {@link TableWidthType#NIL} as a default.
      * @since 4.0.0
      */
     public TableWidthType getWidthType() {
-        return getWidthType(getTblPr().getTblW());
+        CTTblPr pr = getTblPr(false);
+        return pr == null ? TableWidthType.NIL : getWidthType(pr.getTblW());
     }
 
     /**
