@@ -37,6 +37,7 @@ dependencies {
     api ("com.github.pjfanning:xmlbeans:${xmlbeansVersion}") {
         transitive = false
     }
+    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
     compileOnly project(':poi-ooxml-full')
 }
 
