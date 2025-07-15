@@ -295,7 +295,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     public void setWidth(int width) {
         CTTblPr tblPr = getTblPr();
         CTTblWidth tblWidth = tblPr.isSetTblW() ? tblPr.getTblW() : tblPr.addNewTblW();
-        tblWidth.setW(new BigInteger(Integer.toString(width)));
+        tblWidth.setW(BigInteger.valueOf(width));
         tblWidth.setType(STTblWidth.DXA);
     }
 
@@ -314,11 +314,11 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * edge in a right-to-left table).</p>
      * <p>If the table alignment is not left/start, this property shall be ignored.</p>
      *
-     * @see boolean isSetIndent()
+     * @see boolean hasIndent()
      * @return indentation value as an integer (20ths of a point)
      */
     public int getIndent() {
-        CTTblPr tblPr = getTblPr();
+        CTTblPr tblPr = getTblPr(false);
         if (tblPr.isSetTblInd()) {
             STTblWidth.Enum typeValue = tblPr.getTblInd().getType();
             if (typeValue == null) {
@@ -349,7 +349,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     public void setIndent(int indent) {
         CTTblPr tblPr = getTblPr();
         CTTblWidth tblInd = tblPr.isSetTblInd() ? tblPr.getTblInd() : tblPr.addNewTblInd();
-        tblInd.setW(new BigInteger(Integer.toString(indent)));
+        tblInd.setW(BigInteger.valueOf(indent));
         tblInd.setType(STTblWidth.DXA);
     }
 
@@ -363,8 +363,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return true if the indent value is set and is valid, false if it is not set or shall be
      * ignored (e.g. due to invalid type).
      */
-    public boolean isSetIndent() {
-        CTTblPr tblPr = getTblPr();
+    public boolean hasIndent() {
+        CTTblPr tblPr = getTblPr(false);
         // According to §17.4.50, values with type pct or auto shall be ignored.
         return tblPr.isSetTblInd() && tblPr.getTblInd().getType() != STTblWidth.PCT
                 && tblPr.getTblInd().getType() != STTblWidth.AUTO;
