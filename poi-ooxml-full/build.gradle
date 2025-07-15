@@ -34,7 +34,7 @@ sourceSets {
 }
 
 dependencies {
-    api ("com.pjfanning.github:xmlbeans:${xmlbeansVersion}") {
+    api ("com.github.pjfanning:xmlbeans:${xmlbeansVersion}") {
         transitive = false
     }
 }

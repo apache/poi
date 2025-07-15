@@ -58,7 +58,7 @@ dependencies {
     api project(':poi-ooxml-full')
     api project(path: ':poi-ooxml-full', configuration: 'archives')
 
-    api ("com.pjfanning.github:xmlbeans:${xmlbeansVersion}") {
+    api ("com.github.pjfanning:xmlbeans:${xmlbeansVersion}") {
         transitive = false
     }
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
