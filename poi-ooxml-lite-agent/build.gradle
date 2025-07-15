@@ -25,7 +25,7 @@ dependencies {
     api 'net.bytebuddy:byte-buddy:1.17.5'
     api 'net.bytebuddy:byte-buddy-agent:1.17.5'
     api ("com.pjfanning.github:xmlbeans:${xmlbeansVersion}") {
-        transitive: false
+        transitive = false
     }
 }
 

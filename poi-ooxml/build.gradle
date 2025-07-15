@@ -59,7 +59,7 @@ dependencies {
     api project(path: ':poi-ooxml-full', configuration: 'archives')
 
     api ("com.pjfanning.github:xmlbeans:${xmlbeansVersion}") {
-        transitive: false
+        transitive = false
     }
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"

@@ -35,7 +35,7 @@ sourceSets {
 
 dependencies {
     api ("com.pjfanning.github:xmlbeans:${xmlbeansVersion}") {
-        transitive: false
+        transitive = false
     }
     compileOnly project(':poi-ooxml-full')
 }
