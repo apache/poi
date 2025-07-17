@@ -26,10 +26,12 @@ import java.util.Map;
  * Sets alignment values allowed for Tables and Table Rows
  */
 public enum TableRowAlign {
-    
-    LEFT(STJcTable.INT_START),
+
+    LEFT(STJcTable.INT_LEFT),
+    START(STJcTable.INT_START),
     CENTER(STJcTable.INT_CENTER),
-    RIGHT(STJcTable.INT_END);
+    RIGHT(STJcTable.INT_RIGHT),
+    END(STJcTable.INT_END);
 
     private static final Map<Integer, TableRowAlign> imap;
 

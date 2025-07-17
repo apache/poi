@@ -44,6 +44,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJcTable;
 
 class TestXWPFBugs {
     private static final POIDataSamples samples = POIDataSamples.getDocumentInstance();
@@ -246,6 +247,31 @@ class TestXWPFBugs {
             XWPFParagraph leftParagraph = document.getParagraphArray(1);
             assertTrue(leftParagraph.isAlignmentSet());
             assertEquals(ParagraphAlignment.LEFT, leftParagraph.getAlignment()); // LEFT is the real alignment value.
+        }
+    }
+
+    @Test
+    public void testTableRightAlign() throws Exception {
+        // Document contains all possible values for table alignment, including null.
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("table-alignment.docx")) {
+            XWPFTable tbl0 = doc.getTableArray(0);
+            assertNull(tbl0.getTableAlignment());
+            assertFalse(tbl0.getCTTbl().getTblPr().isSetJc());
+            XWPFTable tbl1 = doc.getTableArray(1);
+            assertEquals(TableRowAlign.LEFT, tbl1.getTableAlignment());
+            assertEquals(STJcTable.LEFT, tbl1.getCTTbl().getTblPr().getJc().xgetVal().getEnumValue());
+            XWPFTable tbl2 = doc.getTableArray(2);
+            assertEquals(TableRowAlign.START, tbl2.getTableAlignment());
+            assertEquals(STJcTable.START, tbl2.getCTTbl().getTblPr().getJc().xgetVal().getEnumValue());
+            XWPFTable tbl3 = doc.getTableArray(3);
+            assertEquals(TableRowAlign.CENTER, tbl3.getTableAlignment());
+            assertEquals(STJcTable.CENTER, tbl3.getCTTbl().getTblPr().getJc().xgetVal().getEnumValue());
+            XWPFTable tbl4 = doc.getTableArray(4);
+            assertEquals(TableRowAlign.RIGHT, tbl4.getTableAlignment());
+            assertEquals(STJcTable.RIGHT, tbl4.getCTTbl().getTblPr().getJc().xgetVal().getEnumValue());
+            XWPFTable tbl5 = doc.getTableArray(5);
+            assertEquals(TableRowAlign.END, tbl5.getTableAlignment());
+            assertEquals(STJcTable.END, tbl5.getCTTbl().getTblPr().getJc().xgetVal().getEnumValue());
         }
     }
 }
