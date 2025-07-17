@@ -571,14 +571,20 @@ class TestXWPFTable {
     void testSetGetTableAlignment() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFTable tbl = doc.createTable(1, 1);
+            tbl.setTableAlignment(TableRowAlign.START);
+            assertEquals(TableRowAlign.START, tbl.getTableAlignment());
+            assertEquals(STJcTable.INT_START, tbl.getTableAlignment().getValue());
             tbl.setTableAlignment(TableRowAlign.LEFT);
             assertEquals(TableRowAlign.LEFT, tbl.getTableAlignment());
-            assertEquals(STJcTable.INT_START, tbl.getTableAlignment().getValue());
+            assertEquals(STJcTable.INT_LEFT, tbl.getTableAlignment().getValue());
             tbl.setTableAlignment(TableRowAlign.CENTER);
             assertEquals(TableRowAlign.CENTER, tbl.getTableAlignment());
             assertEquals(STJcTable.INT_CENTER, tbl.getTableAlignment().getValue());
             tbl.setTableAlignment(TableRowAlign.RIGHT);
             assertEquals(TableRowAlign.RIGHT, tbl.getTableAlignment());
+            assertEquals(STJcTable.INT_RIGHT, tbl.getTableAlignment().getValue());
+            tbl.setTableAlignment(TableRowAlign.END);
+            assertEquals(TableRowAlign.END, tbl.getTableAlignment());
             assertEquals(STJcTable.INT_END, tbl.getTableAlignment().getValue());
             tbl.removeTableAlignment();
             assertNull(tbl.getTableAlignment());
