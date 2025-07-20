@@ -75,7 +75,7 @@
             <summary-item>Upgrade batik dependency to 1.19</summary-item>
             <summary-item>Upgrade bouncycastle dependency to 1.80</summary-item>
             <summary-item>Upgrade commons-collections4 dependency to 4.5.0</summary-item>
-            <summary-item>Upgrade commons-io dependency to 2.19.0</summary-item>
+            <summary-item>Upgrade commons-io dependency to 2.20.0</summary-item>
             <summary-item>Upgrade pdfbox dependency to 3.0.5</summary-item>
             <summary-item>Upgrade xmlsec dependency to 3.0.6</summary-item>
             <summary-item>Upgrade JaCoCo code-coverage tooling to 0.8.13</summary-item>
