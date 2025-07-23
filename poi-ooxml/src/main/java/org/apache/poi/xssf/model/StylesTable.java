@@ -176,7 +176,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
                     Locale.ROOT,
                     "StylesTable part size (%s) exceeds the read limit (%s)",
                     part.getSize(),
-                    getInputStreamReadLimit()));
+                    INPUT_STREAM_READ_LIMIT));
         }
         try (InputStream stream = part.getInputStream()) {
             readFrom(stream);

@@ -28,12 +28,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LimitInputStream;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -63,6 +65,28 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
  * </p>
  */
 public class SharedStringsTable extends POIXMLDocumentPart implements SharedStrings, Closeable {
+
+    private static long INPUT_STREAM_READ_LIMIT = -1; // negative means no limit
+
+    /**
+     * Sets the read limit for input streams used to read shared strings.
+     * Negative values mean no limit. The default is -1 (no limit).
+     * @param limit
+     * @since POI 5.4.2
+     */
+    public static void setInputStreamReadLimit(long limit) {
+        INPUT_STREAM_READ_LIMIT = limit;
+    }
+
+    /**
+     * Gets the read limit for input streams used to read styles.
+     * Negative values mean no limit. The default is -1 (no limit).
+     * @return the read limit
+     * @since POI 5.4.2
+     */
+    public static long getInputStreamReadLimit() {
+        return INPUT_STREAM_READ_LIMIT;
+    }
 
     /**
      *  Array of individual string items in the Shared String table.
@@ -108,6 +132,13 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
      */
     public SharedStringsTable(PackagePart part) throws IOException {
         super(part);
+        if (INPUT_STREAM_READ_LIMIT >= 0 && part.getSize() > INPUT_STREAM_READ_LIMIT) {
+            throw new IOException(String.format(
+                    Locale.ROOT,
+                    "SharedStrings part size (%s) exceeds the read limit (%s)",
+                    part.getSize(),
+                    INPUT_STREAM_READ_LIMIT));
+        }
         try (InputStream stream = part.getInputStream()) {
             readFrom(stream);
         }
@@ -119,10 +150,12 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
      * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
      */
-    public void readFrom(InputStream is) throws IOException {
+    public void readFrom(final InputStream is) throws IOException {
+        final InputStream stream = INPUT_STREAM_READ_LIMIT >= 0 ?
+                new LimitInputStream(is, INPUT_STREAM_READ_LIMIT) : is;
         try {
             int cnt = 0;
-            _sstDoc = SstDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
+            _sstDoc = SstDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
             CTSst sst = _sstDoc.getSst();
             count = (int)sst.getCount();
             uniqueCount = (int)sst.getUniqueCount();

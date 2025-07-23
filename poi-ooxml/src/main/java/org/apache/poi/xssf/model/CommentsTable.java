@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import com.microsoft.schemas.vml.CTShape;
@@ -32,6 +33,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LimitInputStream;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.usermodel.OoxmlSheetExtensions;
@@ -49,6 +51,28 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
 
     public static final String DEFAULT_AUTHOR = "";
     public static final int DEFAULT_AUTHOR_ID = 0;
+
+    private static long INPUT_STREAM_READ_LIMIT = -1; // negative means no limit
+
+    /**
+     * Sets the read limit for input streams used to read comments table.
+     * Negative values mean no limit. The default is -1 (no limit).
+     * @param limit
+     * @since POI 5.4.2
+     */
+    public static void setInputStreamReadLimit(long limit) {
+        INPUT_STREAM_READ_LIMIT = limit;
+    }
+
+    /**
+     * Gets the read limit for input streams used to read styles.
+     * Negative values mean no limit. The default is -1 (no limit).
+     * @return the read limit
+     * @since POI 5.4.2
+     */
+    public static long getInputStreamReadLimit() {
+        return INPUT_STREAM_READ_LIMIT;
+    }
 
     private Sheet sheet;
     private XSSFVMLDrawing vmlDrawing;
@@ -76,14 +100,24 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      */
     public CommentsTable(PackagePart part) throws IOException {
         super(part);
+        if (INPUT_STREAM_READ_LIMIT >= 0 && part.getSize() > INPUT_STREAM_READ_LIMIT) {
+            throw new IOException(String.format(
+                    Locale.ROOT,
+                    "SharedStrings part size (%s) exceeds the read limit (%s)",
+                    part.getSize(),
+                    INPUT_STREAM_READ_LIMIT));
+        }
         try (InputStream stream = part.getInputStream()) {
             readFrom(stream);
         }
     }
     
-    public void readFrom(InputStream is) throws IOException {
+    public void readFrom(final InputStream is) throws IOException {
+        final InputStream stream = INPUT_STREAM_READ_LIMIT >= 0
+                ? new LimitInputStream(is, INPUT_STREAM_READ_LIMIT)
+                : is;
         try {
-            CommentsDocument doc = CommentsDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
+            CommentsDocument doc = CommentsDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
             comments = doc.getComments();
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());

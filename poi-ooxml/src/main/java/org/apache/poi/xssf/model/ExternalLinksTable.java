@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -31,6 +32,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LimitInputStream;
 import org.apache.poi.util.Removal;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalBook;
@@ -49,6 +51,29 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.ExternalLinkDocument;
  *  along with the most recently seen values for what they point to.
  */
 public class ExternalLinksTable extends POIXMLDocumentPart {
+
+    private static long INPUT_STREAM_READ_LIMIT = -1; // negative means no limit
+
+    /**
+     * Sets the read limit for input streams used to read external links table.
+     * Negative values mean no limit. The default is -1 (no limit).
+     * @param limit
+     * @since POI 5.4.2
+     */
+    public static void setInputStreamReadLimit(long limit) {
+        INPUT_STREAM_READ_LIMIT = limit;
+    }
+
+    /**
+     * Gets the read limit for input streams used to read styles.
+     * Negative values mean no limit. The default is -1 (no limit).
+     * @return the read limit
+     * @since POI 5.4.2
+     */
+    public static long getInputStreamReadLimit() {
+        return INPUT_STREAM_READ_LIMIT;
+    }
+
     private CTExternalLink link;
 
     public ExternalLinksTable() {
@@ -62,14 +87,24 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
      */
     public ExternalLinksTable(PackagePart part) throws IOException {
         super(part);
+        if (INPUT_STREAM_READ_LIMIT >= 0 && part.getSize() > INPUT_STREAM_READ_LIMIT) {
+            throw new IOException(String.format(
+                    Locale.ROOT,
+                    "SharedStrings part size (%s) exceeds the read limit (%s)",
+                    part.getSize(),
+                    INPUT_STREAM_READ_LIMIT));
+        }
         try (InputStream stream = part.getInputStream()) {
             readFrom(stream);
         }
     }
 
-    public void readFrom(InputStream is) throws IOException {
+    public void readFrom(final InputStream is) throws IOException {
+        final InputStream stream = INPUT_STREAM_READ_LIMIT >= 0
+                ? new LimitInputStream(is, INPUT_STREAM_READ_LIMIT)
+                : is;
         try {
-            ExternalLinkDocument doc = ExternalLinkDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
+            ExternalLinkDocument doc = ExternalLinkDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
             link = doc.getExternalLink();
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
