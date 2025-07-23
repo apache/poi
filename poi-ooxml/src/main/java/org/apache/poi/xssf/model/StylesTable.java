@@ -171,7 +171,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      */
     public StylesTable(PackagePart part) throws IOException {
         super(part);
-        if (part.getSize() > getInputStreamReadLimit()) {
+        if (INPUT_STREAM_READ_LIMIT >= 0 && part.getSize() > INPUT_STREAM_READ_LIMIT) {
             throw new IOException(String.format(
                     Locale.ROOT,
                     "StylesTable part size (%s) exceeds the read limit (%s)",
@@ -238,8 +238,8 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * @throws IOException if an error occurs while reading.
      */
     public void readFrom(final InputStream is) throws IOException {
-        final InputStream stream = getInputStreamReadLimit() >= 0 ?
-                new LimitInputStream(is, getInputStreamReadLimit()) : is;
+        final InputStream stream = INPUT_STREAM_READ_LIMIT >= 0 ?
+                new LimitInputStream(is, INPUT_STREAM_READ_LIMIT) : is;
         try {
             doc = StyleSheetDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
 
