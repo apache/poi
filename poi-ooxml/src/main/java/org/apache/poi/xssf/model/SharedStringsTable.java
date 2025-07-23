@@ -124,8 +124,8 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
             int cnt = 0;
             _sstDoc = SstDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             CTSst sst = _sstDoc.getSst();
-            count = Math.toIntExact(sst.getCount());
-            uniqueCount = Math.toIntExact(sst.getUniqueCount());
+            count = (int)sst.getCount();
+            uniqueCount = (int)sst.getUniqueCount();
             //noinspection deprecation
             for (CTRst st : sst.getSiArray()) {
                 stmap.put(xmlText(st), cnt);
