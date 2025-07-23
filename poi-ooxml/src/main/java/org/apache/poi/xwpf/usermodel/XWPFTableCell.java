@@ -537,7 +537,7 @@ public class XWPFTableCell implements IBody, ICell {
             throw new IllegalStateException("Recursion depth exceeded while trying to get XWPFDocument from XWPFTableCell");
         }
         if (cell.part instanceof XWPFTableCell) {
-            getCellDocument(cell, depth + 1);
+            return getCellDocument(cell, depth + 1);
         }
         return cell.part.getXWPFDocument();
     }
