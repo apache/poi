@@ -21,9 +21,11 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.util.LimitInputStream;
 import org.apache.poi.xssf.usermodel.IndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.xmlbeans.XmlException;
@@ -65,6 +67,28 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
         public final String name;
     }
 
+    private static long INPUT_STREAM_READ_LIMIT = -1; // negative means no limit
+
+    /**
+     * Sets the read limit for input streams used to read themes table.
+     * Negative values mean no limit. The default is -1 (no limit).
+     * @param limit
+     * @since POI 5.4.2
+     */
+    public static void setInputStreamReadLimit(long limit) {
+        INPUT_STREAM_READ_LIMIT = limit;
+    }
+
+    /**
+     * Gets the read limit for input streams used to read styles.
+     * Negative values mean no limit. The default is -1 (no limit).
+     * @return the read limit
+     * @since POI 5.4.2
+     */
+    public static long getInputStreamReadLimit() {
+        return INPUT_STREAM_READ_LIMIT;
+    }
+
     private IndexedColorMap colorMap;
     private ThemeDocument theme;
 
@@ -85,6 +109,13 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
      */
     public ThemesTable(PackagePart part) throws IOException {
         super(part);
+        if (INPUT_STREAM_READ_LIMIT >= 0 && part.getSize() > INPUT_STREAM_READ_LIMIT) {
+            throw new IOException(String.format(
+                    Locale.ROOT,
+                    "Themes Table part size (%s) exceeds the read limit (%s)",
+                    part.getSize(),
+                    INPUT_STREAM_READ_LIMIT));
+        }
         try (InputStream stream = part.getInputStream()) {
             readFrom(stream);
         }
@@ -116,9 +147,12 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
      * @throws IOException if an error occurs while reading.
      * @since POI 5.2.0
      */
-    public void readFrom(InputStream is) throws IOException {
+    public void readFrom(final InputStream is) throws IOException {
+        final InputStream stream = INPUT_STREAM_READ_LIMIT >= 0
+                ? new LimitInputStream(is, INPUT_STREAM_READ_LIMIT)
+                : is;
         try {
-            theme = ThemeDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
+            theme = ThemeDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
         } catch(XmlException e) {
             throw new IOException(e.getLocalizedMessage(), e);
         }

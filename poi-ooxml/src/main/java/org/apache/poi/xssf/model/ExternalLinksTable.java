@@ -90,7 +90,7 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
         if (INPUT_STREAM_READ_LIMIT >= 0 && part.getSize() > INPUT_STREAM_READ_LIMIT) {
             throw new IOException(String.format(
                     Locale.ROOT,
-                    "SharedStrings part size (%s) exceeds the read limit (%s)",
+                    "External Links Table part size (%s) exceeds the read limit (%s)",
                     part.getSize(),
                     INPUT_STREAM_READ_LIMIT));
         }
