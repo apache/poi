@@ -77,6 +77,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * Sets the read limit for input streams used to read styles.
      * Negative values mean no limit. The default is -1 (no limit).
      * @param limit
+     * @since POI 5.4.2
      */
     public static void setInputStreamReadLimit(long limit) {
         INPUT_STREAM_READ_LIMIT = limit;
@@ -86,6 +87,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * Gets the read limit for input streams used to read styles.
      * Negative values mean no limit. The default is -1 (no limit).
      * @return the read limit
+     * @since POI 5.4.2
      */
     public static long getInputStreamReadLimit() {
         return INPUT_STREAM_READ_LIMIT;
@@ -236,8 +238,8 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * @throws IOException if an error occurs while reading.
      */
     public void readFrom(final InputStream is) throws IOException {
-        final InputStream stream = INPUT_STREAM_READ_LIMIT >= 0 ?
-                new LimitInputStream(is, INPUT_STREAM_READ_LIMIT) : is;
+        final InputStream stream = getInputStreamReadLimit() >= 0 ?
+                new LimitInputStream(is, getInputStreamReadLimit()) : is;
         try {
             doc = StyleSheetDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
 
