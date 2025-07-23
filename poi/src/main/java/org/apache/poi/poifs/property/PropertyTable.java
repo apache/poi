@@ -228,7 +228,7 @@ public final class PropertyTable implements BATManaged {
     }
 
     // Maximum depth of the property tree to prevent stackoverflow errors
-    private static int MAX_PROPERTY_DEPTH = 1000;
+    private static final int MAX_PROPERTY_DEPTH = 1000;
 
     private void populatePropertyTree(final DirectoryProperty root, final int depth) throws IOException {
         if (depth > MAX_PROPERTY_DEPTH) {
