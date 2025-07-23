@@ -27,6 +27,7 @@ import java.io.InputStream;
  * Internal use only, do not use in new code.
  * @since POI 5.4.2
  */
+@Internal
 public final class LimitInputStream extends FilterInputStream {
     private long left;
     private long mark = -1;
