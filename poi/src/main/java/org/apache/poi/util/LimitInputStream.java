@@ -43,6 +43,7 @@ public final class LimitInputStream extends FilterInputStream {
         left = limit;
     }
 
+    @SuppressForbidden
     @Override
     public int available() throws IOException {
         return (int) Math.min(in.available(), left);
