@@ -634,7 +634,7 @@ public final class IOUtils {
                 parent.toPath().toAbsolutePath().normalize()
         )) {
             throw new IOException(String.format(
-                    Locale.ROOT,"Failing due to path traversal in `%s`", name));
+                    Locale.ROOT, "Failing due to path traversal in `%s`", name));
         }
         return file;
     }
