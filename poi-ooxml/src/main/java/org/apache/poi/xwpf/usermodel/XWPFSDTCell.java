@@ -42,7 +42,12 @@ public class XWPFSDTCell extends XWPFAbstractSDT implements ICell {
         return cellContent;
     }
 
-    public CTSdtCell getSdtCell() {
+    /**
+     * Return the underlying XML bean.
+     * @return the underlying CTSdtCell bean.
+     * @since POI 5.4.2
+     */
+    public CTSdtCell getCTSdtCell() {
         return sdtCell;
     }
 }

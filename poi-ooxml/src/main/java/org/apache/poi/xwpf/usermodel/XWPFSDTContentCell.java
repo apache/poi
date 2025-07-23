@@ -121,6 +121,11 @@ public class XWPFSDTContentCell implements ISDTContent {
         return getText();
     }
 
+    /**
+     * Return the underlying XML bean.
+     * @return the underlying CTSdtContentCell bean.
+     * @since POI 5.4.2
+     */
     public CTSdtContentCell getCTSdtContentCell() {
         return sdtContentCell;
     }
