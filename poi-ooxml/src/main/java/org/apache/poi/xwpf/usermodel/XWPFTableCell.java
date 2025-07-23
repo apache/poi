@@ -524,7 +524,24 @@ public class XWPFTableCell implements IBody, ICell {
 
     @Override
     public XWPFDocument getXWPFDocument() {
-        return part.getXWPFDocument();
+        if (part instanceof XWPFTableCell) {
+            return getCellDocument((XWPFTableCell) part, 0);
+        } else {
+            return part.getXWPFDocument();
+        }
+    }
+
+    private static final int MAX_RECURSION_DEPTH = 1000;
+
+    private static XWPFDocument getCellDocument(XWPFTableCell cell, final int depth) {
+        if (depth > MAX_RECURSION_DEPTH) {
+            throw new IllegalStateException("Recursion depth exceeded while trying to get XWPFDocument from XWPFTableCell");
+        }
+        if (cell.part instanceof XWPFTableCell) {
+            return getCellDocument((XWPFTableCell) cell.part, depth + 1);
+        } else {
+            return cell.part.getXWPFDocument();
+        }
     }
 
     // Create a map from this XWPF-level enum to the STVerticalJc.Enum values
