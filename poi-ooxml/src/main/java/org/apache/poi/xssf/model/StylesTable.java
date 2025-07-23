@@ -22,16 +22,8 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -177,6 +169,13 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      */
     public StylesTable(PackagePart part) throws IOException {
         super(part);
+        if (part.getSize() > getInputStreamReadLimit()) {
+            throw new IOException(String.format(
+                    Locale.ROOT,
+                    "StylesTable part size (%s) exceeds the read limit (%s)",
+                    part.getSize(),
+                    getInputStreamReadLimit()));
+        }
         try (InputStream stream = part.getInputStream()) {
             readFrom(stream);
         }
