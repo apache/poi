@@ -633,7 +633,8 @@ public final class IOUtils {
         if (!file.toPath().toAbsolutePath().normalize().startsWith(
                 parent.toPath().toAbsolutePath().normalize()
         )) {
-            throw new IOException(String.format("Failing due to path traversal in `%s`", name));
+            throw new IOException(String.format(
+                    Locale.ROOT,"Failing due to path traversal in `%s`", name));
         }
         return file;
     }
