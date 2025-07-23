@@ -111,7 +111,7 @@ public final class PropertyTable implements BATManaged {
         Property property = _properties.get(0);
         if (property != null) {
             if (property instanceof DirectoryProperty) {
-                populatePropertyTree((DirectoryProperty) property);
+                populatePropertyTree((DirectoryProperty) property, 0);
             } else {
                 throw new IOException("Invalid format, cannot convert property " + property + " to DirectoryProperty");
             }
@@ -227,7 +227,14 @@ public final class PropertyTable implements BATManaged {
        _header_block.setPropertyCount(countBlocks());
     }
 
-    private void populatePropertyTree(DirectoryProperty root) throws IOException {
+    // Maximum depth of the property tree to prevent stackoverflow errors
+    private static int MAX_PROPERTY_DEPTH = 1000;
+
+    private void populatePropertyTree(final DirectoryProperty root, final int depth) throws IOException {
+        if (depth > MAX_PROPERTY_DEPTH) {
+            throw new IOException("Property tree too deep, likely a corrupt file");
+        }
+
         int index = root.getChildIndex();
 
         if (!Property.isValidIndex(index)) {
@@ -246,7 +253,7 @@ public final class PropertyTable implements BATManaged {
 
             root.addChild(property);
             if (property.isDirectory()) {
-                populatePropertyTree(( DirectoryProperty ) property);
+                populatePropertyTree((DirectoryProperty) property, depth + 1);
             }
             index = property.getPreviousChildIndex();
             if (isValidIndex(index)) {
