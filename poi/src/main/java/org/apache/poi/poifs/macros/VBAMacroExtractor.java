@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -95,7 +96,7 @@ public class VBAMacroExtractor {
                 System.out.println();
                 System.out.println(moduleCode);
             } else {
-                File out = new File(outputDir, moduleName + extension);
+                File out = IOUtils.newFile(outputDir, moduleName + extension);
                 try (OutputStream fout = Files.newOutputStream(out.toPath());
                      OutputStreamWriter fwriter = new OutputStreamWriter(fout, StringUtil.UTF8)) {
                     fwriter.write(moduleCode);
