@@ -30,12 +30,13 @@ public abstract class XWPFAbstractSDT implements ISDTContents {
     private final String title;
     private final String tag;
     private final IBody part;
+    private final XWPFDocument xwpfDocument;
 
     public XWPFAbstractSDT(CTSdtPr pr, IBody part) {
         title = (pr != null && pr.isSetAlias()) ? pr.getAlias().getVal() : "";
         tag = (pr != null && pr.isSetTag()) ? pr.getTag().getVal() : "";
         this.part = part;
-
+        this.xwpfDocument = part.getXWPFDocument();
     }
 
     /**
@@ -86,6 +87,6 @@ public abstract class XWPFAbstractSDT implements ISDTContents {
     }
 
     public XWPFDocument getDocument() {
-        return part.getXWPFDocument();
+        return xwpfDocument;
     }
 }
