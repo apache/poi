@@ -31,6 +31,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.common.usermodel.PictureType;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
@@ -41,6 +42,7 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.xmlbeans.*;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTRelId;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
@@ -75,6 +77,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     private final String pictureText;
     private final IRunBody parent;
     private final List<XWPFPicture> pictures;
+    private final List<XWPFChart> charts;
 
     /**
      * @param r the CTR bean which holds the run attributes
@@ -122,13 +125,24 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
         pictureText = text.toString();
 
-        // Do we have any embedded pictures?
-        // (They're a different CTPicture, under the drawingml namespace)
+        // Do we have any embedded pictures or charts?
+        // Pictures are a different CTPicture, under the drawingml namespace.
+        // Charts are relations and use the CTRelId type.
         pictures = new ArrayList<>();
+        charts = new ArrayList<>();
         for (XmlObject o : pictTextObjs) {
             for (CTPicture pict : getCTPictures(o)) {
                 XWPFPicture picture = new XWPFPicture(pict, this);
                 pictures.add(picture);
+            }
+            XmlObject[] chartRels = o.selectPath("declare namespace c='" + CTChart.type.getName().getNamespaceURI() + "' .//*/c:chart");
+            for (XmlObject chartRel : chartRels) {
+                if (chartRel instanceof CTRelId) {
+                    POIXMLDocumentPart chart = getDocument().getRelationById(((CTRelId) chartRel).getId());
+                    if (chart instanceof XWPFChart) {
+                        charts.add((XWPFChart) chart);
+                    }
+                }
             }
         }
     }
@@ -1358,6 +1372,11 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Internal
     public CTInline addChart(String chartRelId) throws InvalidFormatException, IOException {
         try {
+            POIXMLDocumentPart chart = getDocument().getRelationById(chartRelId);
+            if (chart instanceof XWPFChart) {
+                charts.add((XWPFChart) chart);
+            }
+
             CTInline inline = run.addNewDrawing().addNewInline();
 
             //xml part of chart in document
@@ -1817,4 +1836,12 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         return pr;
     }
 
+    /**
+     * Returns the charts embedded in the run.
+     * @return A list of the XWPFChart objects embedded in the run.
+     * @since POI 5.4.2
+     */
+    public List<XWPFChart> getEmbeddedCharts() {
+        return charts;
+    }
 }
