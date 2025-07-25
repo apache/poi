@@ -24,6 +24,7 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ooxml.TrackingInputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -1545,6 +1546,21 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             assertTrue(tempFile.delete());
         }
     }
+
+    @Test
+    void testStylesTableLimit() throws Exception {
+        StylesTable.setInputStreamReadLimit(100);
+        try {
+            // This file has a styles table that is larger than the limit set above
+            // It should throw a POIXMLException when trying to read it
+            assertThrows(POIXMLException.class, () ->
+                   new XSSFWorkbook(openSampleFileStream("github-321.xlsx")));
+        } finally {
+            // reset the limit to default value
+            StylesTable.setInputStreamReadLimit(-1);
+        }
+    }
+
 
     private static void expectFormattedContent(Cell cell, String value) {
         assertEquals(value, new DataFormatter().formatCellValue(cell),

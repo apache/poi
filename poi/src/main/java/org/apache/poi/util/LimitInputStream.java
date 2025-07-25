@@ -19,20 +19,21 @@ package org.apache.poi.util;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 /**
  * Copied from guava source code v15 (LimitedInputStream)
- * Guava deprecated LimitInputStream in v14 and removed it in v15. Copying this class here
- * allows to be compatible with guava 11 to 15+.
+ * This version is modified to throw an IOException when the limit is reached.
  * Internal use only, do not use in new code.
  * @since POI 5.4.2
  */
 @Internal
 public final class LimitInputStream extends FilterInputStream {
+    private final long limit;
     private long left;
     private long mark = -1;
 
-    public LimitInputStream(InputStream in, long limit) {
+    public LimitInputStream(final InputStream in, final long limit) {
         super(in);
         if (in == null) {
             throw new NullPointerException("InputStream must not be null");
@@ -40,6 +41,7 @@ public final class LimitInputStream extends FilterInputStream {
         if (limit < 0) {
             throw new IllegalArgumentException("limit must be non-negative");
         }
+        this.limit = limit;
         left = limit;
     }
 
@@ -59,7 +61,7 @@ public final class LimitInputStream extends FilterInputStream {
     @Override
     public int read() throws IOException {
         if (left == 0) {
-            return -1;
+            throw new IOException(String.format(Locale.ROOT, "Limit of %d bytes reached", limit));
         }
 
         int result = in.read();
@@ -75,7 +77,7 @@ public final class LimitInputStream extends FilterInputStream {
             return 0;
         }
         if (left == 0) {
-            return -1;
+            throw new IOException(String.format(Locale.ROOT, "Limit of %d bytes reached", limit));
         }
 
         len = (int) Math.min(len, left);
