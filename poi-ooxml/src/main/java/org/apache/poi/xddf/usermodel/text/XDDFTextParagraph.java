@@ -113,7 +113,7 @@ public class XDDFTextParagraph implements Iterable<XDDFTextRun> {
     }
 
     public List<XDDFTextRun> getTextRuns() {
-        return _runs;
+        return Collections.unmodifiableList(_runs);
     }
 
     @Override
