@@ -26,6 +26,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -1418,7 +1419,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * embedded picture image such as a .png or .jpg
      */
     public List<XWPFPicture> getEmbeddedPictures() {
-        return pictures;
+        return Collections.unmodifiableList(pictures);
     }
 
     /**
@@ -1842,6 +1843,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @since POI 5.4.2
      */
     public List<XWPFChart> getEmbeddedCharts() {
-        return charts;
+        return Collections.unmodifiableList(charts);
     }
 }
