@@ -1040,7 +1040,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     @Override
     public List<XSSFPictureData> getAllPictures() {
-        if(pictures == null){
+        if (pictures == null) {
             List<PackagePart> mediaParts = getPackage().getPartsByName(GET_ALL_PICTURES_PATTERN);
             pictures = new ArrayList<>(mediaParts.size());
             for(PackagePart part : mediaParts){
