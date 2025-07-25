@@ -1238,8 +1238,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_GIF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_DIB
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_SVG
-     * @see #addPicture(InputStream, PictureType, String, int, int)
+     * @deprecated use #addPicture(InputStream, PictureType, String, int, int)
      */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public XWPFPicture addPicture(InputStream pictureData, int pictureType, String filename, int width, int height)
             throws InvalidFormatException, IOException {
         return addPicture(pictureData, PictureType.findByOoxmlId(pictureType), filename, width, height);

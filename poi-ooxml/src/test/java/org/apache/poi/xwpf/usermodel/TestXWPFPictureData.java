@@ -117,7 +117,7 @@ class TestXWPFPictureData {
             // Add a picture to the first paragraph
             header.getParagraphs().get(0).getRuns().get(0).addPicture(
                     new ByteArrayInputStream(new byte[]{1, 2, 3, 4}),
-                    Document.PICTURE_TYPE_JPEG, "test.jpg", 2, 2);
+                    PictureType.JPEG, "test.jpg", 2, 2);
 
             // Check
             verifyOneHeaderPicture(doc);
