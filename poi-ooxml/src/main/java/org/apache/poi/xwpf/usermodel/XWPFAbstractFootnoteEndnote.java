@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
@@ -101,7 +102,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      */
     @Override
     public List<XWPFParagraph> getParagraphs() {
-        return paragraphs;
+        return Collections.unmodifiableList(paragraphs);
     }
 
     /**
@@ -130,7 +131,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      */
     @Override
     public List<XWPFTable> getTables() {
-        return tables;
+        return Collections.unmodifiableList(tables);
     }
 
     /**
@@ -138,7 +139,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      * @return List of pictures
      */
     public List<XWPFPictureData> getPictures() {
-        return pictures;
+        return Collections.unmodifiableList(pictures);
     }
 
     /**
@@ -147,7 +148,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      */
     @Override
     public List<IBodyElement> getBodyElements() {
-        return bodyElements;
+        return Collections.unmodifiableList(bodyElements);
     }
 
     /**

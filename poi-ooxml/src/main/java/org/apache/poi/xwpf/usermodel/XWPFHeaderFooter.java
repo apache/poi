@@ -210,7 +210,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @return a list of {@link XWPFParagraph}
      */
     public List<XWPFParagraph> getListParagraph() {
-        return paragraphs;
+        return Collections.unmodifiableList(paragraphs);
     }
 
     public List<XWPFPictureData> getAllPictures() {

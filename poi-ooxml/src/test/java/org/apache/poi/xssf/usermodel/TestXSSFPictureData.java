@@ -35,7 +35,7 @@ public final class TestXSSFPictureData {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         List<XSSFPictureData> pictures = wb.getAllPictures();
         //wb.getAllPictures() should return the same instance across multiple calls
-        assertSame(pictures, wb.getAllPictures());
+        assertEquals(pictures, wb.getAllPictures());
 
         assertEquals(5, pictures.size());
         String[] ext = {"jpeg", "emf", "png", "emf", "wmf"};

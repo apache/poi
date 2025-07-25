@@ -688,7 +688,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         if (axes.isEmpty() && hasAxes()) {
             parseAxes();
         }
-        return axes;
+        return Collections.unmodifiableList(axes);
     }
 
     private boolean hasAxes() {

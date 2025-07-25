@@ -233,7 +233,7 @@ public class XWPFComments extends POIXMLDocumentPart {
      * Get the list of {@link XWPFComment} in the Comments part.
      */
     public List<XWPFComment> getComments() {
-        return comments;
+        return Collections.unmodifiableList(comments);
     }
 
     /**

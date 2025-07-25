@@ -109,7 +109,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         } catch (NumberFormatException e) {}
 
         // Look up an External Link Table for this name
-        List<ExternalLinksTable> tables = _uBook.getExternalLinksTable();
+        List<ExternalLinksTable> tables = _uBook.getExternalLinksTables();
         int index = findExternalLinkIndex(bookName, tables);
         if (index != -1) return index;
 
@@ -126,7 +126,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
             // So, add the missing reference and return
             // Note - this is really rather nasty...
             ExternalLinksTable fakeLinkTable = new FakeExternalLinksTable(relBookName);
-            tables.add(fakeLinkTable);
+            _uBook.addExternalLinksTable(fakeLinkTable);
             return tables.size(); // 1 based results, 0 = current workbook
         }
 
@@ -193,7 +193,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         if (externalWorkbookNumber > 0) {
             // External reference - reference is 1 based, link table is 0 based
             int linkNumber = externalWorkbookNumber - 1;
-            ExternalLinksTable linkTable = _uBook.getExternalLinksTable().get(linkNumber);
+            ExternalLinksTable linkTable = _uBook.getExternalLinksTable(linkNumber);
 
             for (org.apache.poi.ss.usermodel.Name name : linkTable.getDefinedNames()) {
                 if (name.getNameName().equals(nameName)) {
@@ -300,7 +300,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         if (externalWorkbookNumber > 0) {
             // External reference - reference is 1 based, link table is 0 based
             int linkNumber = externalWorkbookNumber - 1;
-            ExternalLinksTable linkTable = _uBook.getExternalLinksTable().get(linkNumber);
+            ExternalLinksTable linkTable = _uBook.getExternalLinksTable(linkNumber);
             workbookName = linkTable.getLinkedFileName();
         } else {
             // Internal reference
