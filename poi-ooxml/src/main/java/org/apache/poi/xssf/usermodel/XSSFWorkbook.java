@@ -2079,8 +2079,43 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @return the {@code ExternalLinksTable} list, which may be empty
      */
     @Internal
+    public List<ExternalLinksTable> getExternalLinksTables() {
+        // needs to be the live copy because unfortunately we don't have APIs to
+        // add and remove external links (this method is annotated @Internal)
+        return externalLinks;
+    }
+
+    @Deprecated // use getExternalLinksTables() instead
+    @Removal(version = "7.0.0")
+    @Internal
     public List<ExternalLinksTable> getExternalLinksTable() {
-        return Collections.unmodifiableList(externalLinks);
+        // needs to be the live copy because unfortunately we don't have APIs to
+        // add and remove external links (this method is annotated @Internal)
+        return externalLinks;
+    }
+
+    /**
+     * Adds an External Links Table to the workbook.
+     *
+     * @param externalLinksTable the External Links Table to add
+     * @since POI 5.4.2
+     */
+    @Internal
+    public void addExternalLinksTable(ExternalLinksTable externalLinksTable) {
+        if (externalLinks == null) {
+            externalLinks = new ArrayList<>();
+        }
+        externalLinks.add(externalLinksTable);
+    }
+
+    /**
+     * @param index the index at which to add the External Links Table
+     * @return  externalLinksTable the External Links Table to add
+     * @since POI 5.4.2
+     */
+    @Internal
+    public ExternalLinksTable getExternalLinksTable(int index) {
+        return externalLinks == null ? null : externalLinks.get(index);
     }
 
     /**
@@ -2125,7 +2160,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             POIXMLDocumentPart.RelationPart rp = this.createRelationship(XSSFRelation.EXTERNAL_LINKS, xssfFactory, externalLinkIdx, false);
             ExternalLinksTable linksTable = rp.getDocumentPart();
             linksTable.setLinkedFileName(name);
-            this.getExternalLinksTable().add(linksTable);
+            this.addExternalLinksTable(linksTable);
 
             CTExternalReference ctExternalReference = this.getCTWorkbook().addNewExternalReferences().addNewExternalReference();
             ctExternalReference.setId(rp.getRelationship().getId());

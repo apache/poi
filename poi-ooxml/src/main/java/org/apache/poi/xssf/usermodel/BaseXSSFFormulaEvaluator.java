@@ -128,7 +128,7 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
         XSSFWorkbook xssfWorkbook = xssfCell.getSheet().getWorkbook();
         XSSFWorkbook externalWorkbook = (XSSFWorkbook) xssfWorkbook.getCreationHelper()
                 .getReferencedWorkbooks().get(externalSheet.getWorkbookName());
-        ExternalLinksTable externalLinksTable = xssfWorkbook.getExternalLinksTable().get(area3DPxg.getExternalWorkbookNumber() - 1);
+        ExternalLinksTable externalLinksTable = xssfWorkbook.getExternalLinksTable(area3DPxg.getExternalWorkbookNumber() - 1);
 
         if (externalWorkbook != null && externalLinksTable != null) {
             int firstSheet = externalWorkbook.getSheetIndex(area3DPxg.getSheetName());
