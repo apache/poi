@@ -4734,8 +4734,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         //Set relationships id for pivotCacheDefinition to pivotCacheRecords
         pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition().setId(pivotCacheDefinition.getRelationId(pivotCacheRecords));
 
-        wb.setPivotTables(pivotTables);
-
         return pivotTable;
     }
 

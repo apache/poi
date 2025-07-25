@@ -205,7 +205,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     /**
      * List of all pivot tables in workbook
      */
-    private List<XSSFPivotTable> pivotTables;
+    private final List<XSSFPivotTable> pivotTables = new ArrayList<>();
     private List<CTPivotCache> pivotCaches;
 
     private final XSSFFactory xssfFactory;
@@ -386,7 +386,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         }
 
         // Create arrays for parts attached to the workbook itself
-        pivotTables = new ArrayList<>();
         pivotCaches = new ArrayList<>();
     }
 
@@ -524,7 +523,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         namedRanges = new ArrayList<>();
         namedRangesByName = new ArrayListValuedHashMap<>();
         sheets = new ArrayList<>();
-        pivotTables = new ArrayList<>();
 
         externalLinks = new ArrayList<>();
     }
@@ -2420,7 +2418,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         }
         CTPivotCache cache = caches.addNewPivotCache();
 
-        int tableId = getPivotTables().size() + 1;
+        final int tableId = pivotTables.size() + 1;
         cache.setCacheId(tableId);
         cache.setId(rId);
         if(pivotCaches == null) {
@@ -2434,20 +2432,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public List<XSSFPivotTable> getPivotTables() {
         // needs to be the live copy because unfortunately we don't have APIs to
         // add and remove external links (this method is annotated @Beta)
-        if (pivotTables == null) {
-            pivotTables = new ArrayList<>();
-        }
         return pivotTables;
     }
 
-    @Beta
+    @Internal
     public void addPivotTable(XSSFPivotTable pivotTable) {
-        getPivotTables().add(pivotTable);
-    }
-
-    @Beta
-    protected void setPivotTables(List<XSSFPivotTable> pivotTables) {
-        this.pivotTables = pivotTables;
+        pivotTables.add(pivotTable);
     }
 
     public XSSFWorkbookType getWorkbookType() {
