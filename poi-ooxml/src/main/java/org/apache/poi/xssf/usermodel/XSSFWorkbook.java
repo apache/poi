@@ -2420,7 +2420,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         }
         CTPivotCache cache = caches.addNewPivotCache();
 
-        int tableId = getPivotTables().size()+1;
+        int tableId = getPivotTables().size() + 1;
         cache.setCacheId(tableId);
         cache.setId(rId);
         if(pivotCaches == null) {
@@ -2432,7 +2432,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
     @Beta
     public List<XSSFPivotTable> getPivotTables() {
-        return Collections.unmodifiableList(pivotTables);
+        // needs to be the live copy because unfortunately we don't have APIs to
+        // add and remove external links (this method is annotated @Beta)
+        if (pivotTables == null) {
+            pivotTables = new ArrayList<>();
+        }
+        return pivotTables;
+    }
+
+    @Beta
+    public void addPivotTable(XSSFPivotTable pivotTable) {
+        getPivotTables().add(pivotTable);
     }
 
     @Beta
