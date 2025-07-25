@@ -59,6 +59,8 @@ import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPictureNonVisual;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
+import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTPosH;
+import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTPosV;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STHexColorRGB;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
@@ -1337,6 +1339,175 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             CTBlipFillProperties blipFill = pic.addNewBlipFill();
             CTBlip blip = blipFill.addNewBlip();
             blip.setEmbed(parent.getPart().getRelationId(picData));
+            blipFill.addNewStretch().addNewFillRect();
+
+            CTShapeProperties spPr = pic.addNewSpPr();
+            CTTransform2D xfrm = spPr.addNewXfrm();
+
+            CTPoint2D off = xfrm.addNewOff();
+            off.setX(0);
+            off.setY(0);
+
+            CTPositiveSize2D ext = xfrm.addNewExt();
+            ext.setCx(width);
+            ext.setCy(height);
+
+            CTPresetGeometry2D prstGeom = spPr.addNewPrstGeom();
+            prstGeom.setPrst(STShapeType.RECT);
+            prstGeom.addNewAvLst();
+
+            // Finish up
+            XWPFPicture xwpfPicture = new XWPFPicture(pic, this);
+            pictures.add(xwpfPicture);
+            return xwpfPicture;
+        } catch (XmlException | SAXException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * Adds a picture to the run. This method handles
+     * attaching the picture data to the overall file.
+     *
+     * @param pictureData The raw picture data
+     * @param pictureType The type of the picture, eg {@link Document#PICTURE_TYPE_JPEG}
+     * @param width       width in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @param height      height in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @param isBehindDoc      The "behindDoc" attribute of the CTAnchor.
+     * @param x      X Position Offset in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @param y      Y Position Offset in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @throws InvalidFormatException If the format of the picture is not known.
+     * @throws IOException            If reading the picture-data from the stream fails.
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_EMF
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_WMF
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PICT
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_JPEG
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PNG
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_GIF
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_DIB
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_SVG
+     * @see #addPicture(InputStream, PictureType, String, int, int, boolean, int, int)
+     */
+    public XWPFPicture addPicture(InputStream pictureData, int pictureType, String filename, int width, int height, boolean isBehindDoc, int x, int y)
+            throws InvalidFormatException, IOException {
+        return addPicture(pictureData, PictureType.findByOoxmlId(pictureType), filename, width, height, isBehindDoc, x, y);
+    }
+
+    /**
+     * Adds a picture to the run. This method handles
+     * attaching the picture data to the overall file.
+     *
+     * @param pictureData The raw picture data
+     * @param pictureType The {@link PictureType} of the picture
+     * @param width       width in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @param height      height in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @param isBehindDoc      The "behindDoc" attribute of the CTAnchor.
+     * @param x      X Position Offset in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @param y      Y Position Offset in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @throws InvalidFormatException If the format of the picture is not known.
+     * @throws IOException            If reading the picture-data from the stream fails.
+     */
+    public XWPFPicture addPicture(InputStream pictureData, PictureType pictureType, String filename, int width, int height, boolean isBehindDoc, int x, int y)
+            throws InvalidFormatException, IOException {
+        if (pictureType == null) {
+            throw new InvalidFormatException("pictureType is not supported");
+        }
+        String relationId;
+        XWPFPictureData picData;
+
+        // Work out what to add the picture to, then add both the
+        //  picture and the relationship for it
+        // TODO Should we have an interface for this sort of thing?
+        if (parent.getPart() instanceof XWPFHeaderFooter) {
+            XWPFHeaderFooter headerFooter = (XWPFHeaderFooter) parent.getPart();
+            relationId = headerFooter.addPictureData(pictureData, pictureType);
+            picData = (XWPFPictureData) headerFooter.getRelationById(relationId);
+        } else if (parent.getPart() instanceof XWPFComments) {
+            XWPFComments comments = (XWPFComments) parent.getPart();
+            relationId = comments.addPictureData(pictureData, pictureType);
+            picData = (XWPFPictureData) comments.getRelationById(relationId);
+        } else {
+            @SuppressWarnings("resource")
+            XWPFDocument doc = parent.getDocument();
+            relationId = doc.addPictureData(pictureData, pictureType);
+            picData = (XWPFPictureData) doc.getRelationById(relationId);
+        }
+
+        // Create the drawing entry for it
+        try {
+            CTDrawing drawing = run.addNewDrawing();
+            CTAnchor inline = drawing.addNewAnchor();
+
+            // Do the fiddly namespace bits on the inline
+            // (We need full control of what goes where and as what)
+            String xml =
+                    "<a:graphic xmlns:a=\"" + CTGraphicalObject.type.getName().getNamespaceURI() + "\">" +
+                            "<a:graphicData uri=\"" + CTPicture.type.getName().getNamespaceURI() + "\">" +
+                            "<pic:pic xmlns:pic=\"" + CTPicture.type.getName().getNamespaceURI() + "\" />" +
+                            "</a:graphicData>" +
+                            "</a:graphic>";
+            InputSource is = new InputSource(new StringReader(xml));
+            org.w3c.dom.Document doc = DocumentHelper.readDocument(is);
+            inline.set(XmlToken.Factory.parse(doc.getDocumentElement(), DEFAULT_XML_OPTIONS));
+
+            // Setup the inline
+            inline.setDistT(0);
+            inline.setDistR(0);
+            inline.setDistB(0);
+            inline.setDistL(0);
+            inline.setSimplePos2(false);
+            inline.setBehindDoc(isBehindDoc);
+            inline.setLocked(false);
+            inline.setLayoutInCell(true);
+            inline.setAllowOverlap(true);
+
+            CTPoint2D simplePost = inline.addNewSimplePos();
+            simplePost.setX(0);
+            simplePost.setY(0);
+
+            CTPosH ph = inline.addNewPositionH();
+            ph.setRelativeFrom(STRelFromH.PAGE);
+            ph.setPosOffset(x);
+            CTPosV pv = inline.addNewPositionV();
+            pv.setRelativeFrom(STRelFromV.PAGE);
+            pv.setPosOffset(y);
+
+            inline.addNewWrapNone();
+            inline.addNewCNvGraphicFramePr();
+
+            CTNonVisualDrawingProps docPr = inline.addNewDocPr();
+            long id = getParent().getDocument().getDrawingIdManager().reserveNew();
+            docPr.setId(id);
+            /* This name is not visible in Word 2010 anywhere. */
+            docPr.setName("Drawing " + id);
+            docPr.setDescr(filename);
+
+            CTPositiveSize2D extent = inline.addNewExtent();
+            extent.setCx(width);
+            extent.setCy(height);
+
+            // Grab the picture object
+            CTGraphicalObject graphic = inline.getGraphic();
+            CTGraphicalObjectData graphicData = graphic.getGraphicData();
+            CTPicture pic = getCTPictures(graphicData).get(0);
+
+            // Set it up
+            CTPictureNonVisual nvPicPr = pic.addNewNvPicPr();
+
+            CTNonVisualDrawingProps cNvPr = nvPicPr.addNewCNvPr();
+            /* use "0" for the id. See ECM-576, 20.2.2.3 */
+            cNvPr.setId(0L);
+            /* This name is not visible in Word 2010 anywhere */
+            cNvPr.setName("Picture " + id);
+            cNvPr.setDescr(filename);
+
+            CTNonVisualPictureProperties cNvPicPr = nvPicPr.addNewCNvPicPr();
+            cNvPicPr.addNewPicLocks().setNoChangeAspect(true);
+
+            CTBlipFillProperties blipFill = pic.addNewBlipFill();
+            CTBlip blip = blipFill.addNewBlip();
+            blip.setEmbed(parent.getPart().getRelationId(picData));
+            blip.setCstate(STBlipCompression.PRINT);
             blipFill.addNewStretch().addNewFillRect();
 
             CTShapeProperties spPr = pic.addNewSpPr();
