@@ -28,6 +28,7 @@ import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Removal;
 
 /**
  * Raw picture data, normally attached to a WordprocessingML Drawing.
@@ -152,8 +153,10 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_GIF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_DIB
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_SVG
-     * @see #getPictureTypeEnum()
+     * @deprecated use #getPictureTypeEnum()
      */
+    @Deprecated
+    @Removal(version = "7.0.0") // repurpose to return PictureType
     public int getPictureType() {
         String contentType = getPackagePart().getContentType();
         for (int i = 0; i < RELATIONS.length; i++) {

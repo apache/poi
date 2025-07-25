@@ -60,6 +60,7 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
@@ -1724,7 +1725,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return the next free ImageNumber
      * @throws InvalidFormatException If the format of the picture is not known.
      * @see #getNextPicNameNumber(PictureType)
+     * @deprecated use {@link #getNextPicNameNumber(PictureType)} instead.
      */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public int getNextPicNameNumber(int format) throws InvalidFormatException {
         return getNextPicNameNumber(PictureType.findByOoxmlId(format));
     }
