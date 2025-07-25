@@ -880,7 +880,7 @@ public final class CellUtil {
      * @param dest destination cell style
      * @param destWorkbook destination workbook (can be null but some font info will not be copied if null is passed)
      * @throws IllegalArgumentException if source or destination styles are null
-     * @since POI 5.4.2
+     * @since POI 5.5.0
      */
     @Internal
     public static void cloneStyle(CellStyle src, CellStyle dest, Workbook destWorkbook) {

@@ -1842,7 +1842,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Returns the charts embedded in the run.
      * @return A list of the XWPFChart objects embedded in the run.
-     * @since POI 5.4.2
+     * @since POI 5.5.0
      */
     public List<XWPFChart> getEmbeddedCharts() {
         return Collections.unmodifiableList(charts);

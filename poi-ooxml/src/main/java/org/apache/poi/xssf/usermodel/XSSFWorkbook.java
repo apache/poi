@@ -2096,7 +2096,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Adds an External Links Table to the workbook.
      *
      * @param externalLinksTable the External Links Table to add
-     * @since POI 5.4.2
+     * @since POI 5.5.0
      */
     @Internal
     public void addExternalLinksTable(ExternalLinksTable externalLinksTable) {
@@ -2109,7 +2109,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     /**
      * @param index the index at which to add the External Links Table
      * @return  externalLinksTable the External Links Table to add
-     * @since POI 5.4.2
+     * @since POI 5.5.0
      */
     @Internal
     public ExternalLinksTable getExternalLinksTable(int index) {

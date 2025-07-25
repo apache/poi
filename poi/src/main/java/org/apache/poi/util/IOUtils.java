@@ -626,7 +626,7 @@ public final class IOUtils {
      * @param name The name of the file to create.
      * @return The created file.
      * @throws IOException If path traversal is detected.
-     * @since POI 5.4.2
+     * @since POI 5.5.0
      */
     public static File newFile(final File parent, final String name) throws IOException {
         final File file = new File(parent, name);

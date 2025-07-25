@@ -288,7 +288,7 @@ public final class AnalysisToolPak implements UDFFinder {
      * @param func  the function to register
      * @param force force registration even if the function is already registered or unknown to POI
      * @throws IllegalArgumentException if the function is unknown or already registered (and `force` is not true).
-     * @since POI 5.4.2
+     * @since POI 5.5.0
      */
     public static void registerFunction(String name, FreeRefFunction func, boolean force) {
         AnalysisToolPak inst = (AnalysisToolPak)instance;
