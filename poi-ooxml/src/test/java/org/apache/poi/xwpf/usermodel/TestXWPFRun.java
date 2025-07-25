@@ -553,7 +553,7 @@ class TestXWPFRun {
         assertEquals(0, doc.getAllPictures().size());
         assertEquals(0, r.getEmbeddedPictures().size());
 
-        r.addPicture(new ByteArrayInputStream(new byte[0]), Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
+        r.addPicture(new ByteArrayInputStream(new byte[0]), PictureType.JPEG, "test.jpg", 21, 32);
 
         assertEquals(1, doc.getAllPictures().size());
         assertEquals(1, r.getEmbeddedPictures().size());
@@ -581,7 +581,7 @@ class TestXWPFRun {
             assertEquals(0, hdr.getAllPictures().size());
             assertEquals(0, r.getEmbeddedPictures().size());
 
-            r.addPicture(new ByteArrayInputStream(new byte[0]), Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
+            r.addPicture(new ByteArrayInputStream(new byte[0]), PictureType.JPEG, "test.jpg", 21, 32);
 
             assertEquals(1, hdr.getAllPictures().size());
             assertEquals(1, r.getEmbeddedPictures().size());
@@ -628,7 +628,7 @@ class TestXWPFRun {
         try (XWPFDocument document = new XWPFDocument()) {
 
             document.createParagraph().createRun().addPicture(
-                    new ByteArrayInputStream(image), Document.PICTURE_TYPE_JPEG, "test.jpg", Units.toEMU(300), Units.toEMU(100));
+                    new ByteArrayInputStream(image), PictureType.JPEG, "test.jpg", Units.toEMU(300), Units.toEMU(100));
 
             try (XWPFDocument docBack = writeOutAndReadBack(document)) {
                 List<XWPFPicture> pictures = docBack.getParagraphArray(0).getRuns().get(0).getEmbeddedPictures();
@@ -859,7 +859,7 @@ class TestXWPFRun {
             assertEquals(0, hdr.getAllPictures().size());
             assertEquals(0, r.getEmbeddedPictures().size());
 
-            r.addPicture(new ByteArrayInputStream(new byte[0]), Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
+            r.addPicture(new ByteArrayInputStream(new byte[0]), PictureType.JPEG, "test.jpg", 21, 32);
 
             assertEquals(1, hdr.getAllPictures().size());
             assertEquals(1, r.getEmbeddedPictures().size());
