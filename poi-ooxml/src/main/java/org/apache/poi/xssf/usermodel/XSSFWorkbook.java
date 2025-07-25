@@ -1049,7 +1049,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 pictures.add(new XSSFPictureData(part));
             }
         }
-        return pictures; //YK: should return Collections.unmodifiableList(pictures);
+        return Collections.unmodifiableList(pictures);
     }
 
     /**
@@ -2080,7 +2080,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     @Internal
     public List<ExternalLinksTable> getExternalLinksTable() {
-        return externalLinks;
+        return Collections.unmodifiableList(externalLinks);
     }
 
     /**
@@ -2397,7 +2397,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
     @Beta
     public List<XSSFPivotTable> getPivotTables() {
-        return pivotTables;
+        return Collections.unmodifiableList(pivotTables);
     }
 
     @Beta

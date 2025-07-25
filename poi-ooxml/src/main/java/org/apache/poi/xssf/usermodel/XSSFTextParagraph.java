@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     }
 
     public List<XSSFTextRun> getTextRuns(){
-        return _runs;
+        return Collections.unmodifiableList(_runs);
     }
 
     public Iterator<XSSFTextRun> iterator(){
