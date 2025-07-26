@@ -58,7 +58,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         this.document = part.getXWPFDocument();
 
         if (document == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("null document in XWPFParagraph");
         }
 
         // Build up the character runs
