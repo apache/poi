@@ -271,6 +271,7 @@ class TestXWPFTableCell {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable(1, 1);
         XWPFTableCell cell = table.getRow(0).getCell(0);
+        assertEquals(doc, cell.getXWPFDocument());
 
         // cell have at least one paragraph by default when creating a cell
         assertEquals(1, cell.getParagraphs().size());
@@ -282,6 +283,7 @@ class TestXWPFTableCell {
         XWPFDocument readDoc = XWPFTestDataSamples.writeOutAndReadBack(doc);
         XWPFTableCell readCell = readDoc.getTableArray(0).getRow(0).getCell(0);
         assertEquals(0, readCell.getParagraphs().size());
+        assertEquals(readDoc, readCell.getXWPFDocument());
     }
 
     @Test

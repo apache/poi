@@ -79,10 +79,16 @@ public class XWPFTableCell implements IBody, ICell {
      * If a table cell does not include at least one block-level element, then this document shall be considered corrupt
      */
     public XWPFTableCell(CTTc cell, XWPFTableRow tableRow, IBody part) {
+        if (cell == null) {
+            throw new IllegalArgumentException("CTTc cannot be null");
+        }
+        if (tableRow == null) {
+            throw new IllegalArgumentException("tableRow cannot be null");
+        }
         this.ctTc = cell;
         this.part = part;
         this.tableRow = tableRow;
-        this.xwpfDocument = part.getXWPFDocument();
+        this.xwpfDocument = part == null ? null : part.getXWPFDocument();
 
         bodyElements = new ArrayList<>();
         paragraphs = new ArrayList<>();
@@ -530,9 +536,10 @@ public class XWPFTableCell implements IBody, ICell {
             return xwpfDocument;
         } else if (part instanceof XWPFTableCell) {
             return getCellDocument((XWPFTableCell) part, 0);
-        } else {
+        } else if (part != null) {
             return part.getXWPFDocument();
         }
+        return null;
     }
 
     private static final int MAX_RECURSION_DEPTH = 1000;
