@@ -143,6 +143,7 @@ public class TestAllFiles {
 
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
             "document/truncated62886.docx",
+            "document/deep-table-cell.docx",
             // this document fails with IBM JDK because of a different exception being thrown
             "spreadsheet/clusterfuzz-testcase-minimized-POIXSSFFuzzer-5089447305609216.xlsx"
     );
