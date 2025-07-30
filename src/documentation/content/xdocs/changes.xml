@@ -76,6 +76,7 @@
             <summary-item>Upgrade bouncycastle dependency to 1.81</summary-item>
             <summary-item>Upgrade commons-codec dependency to 1.19.0</summary-item>
             <summary-item>Upgrade commons-collections4 dependency to 4.5.0</summary-item>
+            <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
             <summary-item>Upgrade commons-io dependency to 2.20.0</summary-item>
             <summary-item>Upgrade pdfbox dependency to 3.0.5</summary-item>
             <summary-item>Upgrade xmlsec dependency to 3.0.6</summary-item>
