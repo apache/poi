@@ -97,6 +97,9 @@ public class TestAllFiles {
         "poifs/60320-protected.xlsx",
         "poifs/protected_sha512.xlsx",
 
+        // stress docs
+        "document/deep-table-cell.docx",
+
         // NOTE: Expected failures should usually be added in file "stress.xls" instead
         // of being listed here in order to also verify the expected exception details!
     };
@@ -143,7 +146,6 @@ public class TestAllFiles {
 
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
             "document/truncated62886.docx",
-            "document/deep-table-cell.docx",
             // this document fails with IBM JDK because of a different exception being thrown
             "spreadsheet/clusterfuzz-testcase-minimized-POIXSSFFuzzer-5089447305609216.xlsx"
     );
