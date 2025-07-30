@@ -19,7 +19,7 @@ package org.apache.poi.ooxml;
 /**
  * Indicates a generic OOXML error.
  */
-public final class POIXMLException extends RuntimeException{
+public final class POIXMLException extends RuntimeException {
     /**
      * Create a new {@code POIXMLException} with no
      * detail message.

@@ -30,6 +30,7 @@ import static javax.xml.stream.XMLOutputFactory.IS_REPAIRING_NAMESPACES;
 
 import java.io.StringReader;
 import java.lang.reflect.Method;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -49,7 +50,9 @@ import javax.xml.validation.SchemaFactory;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogBuilder;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.POIException;
 import org.apache.poi.logging.PoiLogManager;
+import org.w3c.dom.Node;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -76,7 +79,6 @@ public final class XMLHelper {
             //"com.sun.org.apache.xerces.internal.util.SecurityManager",
             "org.apache.xerces.util.SecurityManager"
     };
-
 
     private static final Logger LOG = PoiLogManager.getLogger(XMLHelper.class);
     private static long lastLog;
@@ -251,6 +253,38 @@ public final class XMLHelper {
         quietSet(factory::setProperty, ACCESS_EXTERNAL_STYLESHEET, "");
         quietSet(factory::setProperty, ACCESS_EXTERNAL_SCHEMA, "");
         return factory;
+    }
+
+    /**
+     * Counts the depth of the DOM tree starting from the given node.
+     *
+     * @param node the node to check
+     * @param maxSupportedDepth the maximum supported depth of the DOM tree
+     * @return the depth
+     * @throws POIException if the depth exceeds <code>maxSupportedDepth</code>
+     */
+    public static int getDepthOfChildNodes(final Node node, final int maxSupportedDepth) throws POIException {
+        return getDepthOfChildNodes(node, maxSupportedDepth, 0);
+    }
+
+    private static int getDepthOfChildNodes(final Node node, final int maxSupportedDepth,
+                                            final int nodeDepth) throws POIException {
+        final int currentDepth = nodeDepth + 1;
+        int maxDepth = currentDepth;
+        Node child = node.getFirstChild();
+        while (child != null) {
+            int childDepth = getDepthOfChildNodes(child, maxSupportedDepth, currentDepth);
+            if (childDepth > maxDepth) {
+                maxDepth = childDepth;
+                if (maxDepth > maxSupportedDepth) {
+                    throw new POIException(String.format(Locale.ROOT,
+                            "Node depth exceeds maximum supported depth of %s" ,
+                            maxSupportedDepth));
+                }
+            }
+            child = child.getNextSibling();
+        }
+        return maxDepth;
     }
 
     private static Object _xercesSecurityManager;
