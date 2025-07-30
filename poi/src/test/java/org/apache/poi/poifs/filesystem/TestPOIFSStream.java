@@ -2734,6 +2734,15 @@ final class TestPOIFSStream {
         }
     }
 
+    @Test
+    void testDeepData() throws IOException {
+        try (InputStream stream = POIDataSamples.getPOIFSInstance().openResourceAsStream("deep-data.bin")) {
+            IOException ex = assertThrows(IOException.class,
+                    () -> new POIFSFileSystem(stream));
+            assertEquals("Property tree too deep, likely a corrupt file", ex.getMessage());
+        }
+    }
+
     @Disabled("Takes a long time to run")
     @Test
     void performance() throws Exception {
@@ -2781,4 +2790,5 @@ final class TestPOIFSStream {
             }
         }
     }
+
 }
