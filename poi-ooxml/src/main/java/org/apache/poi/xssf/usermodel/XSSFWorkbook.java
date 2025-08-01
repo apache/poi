@@ -45,6 +45,7 @@ import org.apache.commons.collections4.ListValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.POIException;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.ooxml.HyperlinkRelationship;
@@ -89,6 +90,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.ExternalLinksTable;
@@ -110,6 +112,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Support {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
     private static final Pattern GET_ALL_PICTURES_PATTERN = Pattern.compile("/xl/media/.*?");
+    private static final int MAX_NODE_DEPTH = 1000;
 
     /**
      * Images formats supported by XSSF but not by HSSF
@@ -396,6 +399,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 WorkbookDocument doc = WorkbookDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
                 this.workbook = doc.getWorkbook();
             }
+            final int nodeDepth = XMLHelper.getDepthOfChildNodes(this.workbook.getDomNode(), MAX_NODE_DEPTH);
+            if (nodeDepth > MAX_NODE_DEPTH) {
+                throw new IOException(String.format(Locale.ROOT,
+                        "The document is too complex, it has a node depth of %s, which exceeds the maximum allowed of %s",
+                        nodeDepth,
+                        MAX_NODE_DEPTH));
+            }
 
             ThemesTable theme = null;
             Map<String, XSSFSheet> shIdMap = new HashMap<>();
@@ -476,6 +486,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
             // Process the named ranges
             reprocessNamedRanges();
+        } catch (POIException e) {
+            throw new IOException(e);
         } catch (XmlException e) {
             throw new POIXMLException(e);
         }
