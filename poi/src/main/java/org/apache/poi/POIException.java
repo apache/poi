@@ -21,7 +21,7 @@ package org.apache.poi;
  * but this is intended to be a base class for some new POI exceptions.
  * Historically, POI has used {@link RuntimeException} for most of its
  * exceptions, but this is not a good practice. This class is a checked
- * class that extends {@link Exception} so needs to be explictly
+ * class that extends {@link Exception} so needs to be explicitly
  * caught or declared in the method signature.
  *
  * @since POI 5.5.0
