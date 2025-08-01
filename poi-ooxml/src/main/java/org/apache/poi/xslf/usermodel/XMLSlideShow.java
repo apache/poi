@@ -30,12 +30,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.OptionalLong;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.POIException;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
@@ -55,6 +57,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Units;
+import org.apache.poi.util.XMLHelper;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListEntry;
@@ -78,6 +81,7 @@ public class XMLSlideShow extends POIXMLDocument
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+    private static final int MAX_NODE_DEPTH = 1000;
     private static final Pattern GET_ALL_EMBEDDED_PARTS_PATTERN = Pattern.compile("/ppt/embeddings/.*?");
     private static final Pattern GET_PICTURE_DATA_PATTERN = Pattern.compile("/ppt/media/.*?");
 
@@ -174,6 +178,13 @@ public class XMLSlideShow extends POIXMLDocument
                 PresentationDocument doc = PresentationDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
                 _presentation = doc.getPresentation();
             }
+            final int nodeDepth = XMLHelper.getDepthOfChildNodes(_presentation.getDomNode(), MAX_NODE_DEPTH);
+            if (nodeDepth > MAX_NODE_DEPTH) {
+                throw new IOException(String.format(Locale.ROOT,
+                        "The document is too complex, it has a node depth of %s, which exceeds the maximum allowed of %s",
+                        nodeDepth,
+                        MAX_NODE_DEPTH));
+            }
 
             Map<String, XSLFSlideMaster> masterMap = new HashMap<>();
             Map<String, XSLFSlide> shIdMap = new HashMap<>();
@@ -219,6 +230,8 @@ public class XMLSlideShow extends POIXMLDocument
                     }
                 });
             }
+        } catch (POIException e) {
+            throw new IOException(e);
         } catch (XmlException e) {
             throw new POIXMLException(e);
         }
