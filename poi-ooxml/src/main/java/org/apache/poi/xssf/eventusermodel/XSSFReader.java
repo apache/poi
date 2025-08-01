@@ -178,7 +178,7 @@ public class XSSFReader {
         // Create the Styles Table, and associate the Themes if present
         StylesTable styles = new StylesTable(parts.get(0));
         parts = pkg.getPartsByContentType(XSSFRelation.THEME.getContentType());
-        if (parts.size() != 0) {
+        if (!parts.isEmpty()) {
             styles.setTheme(new ThemesTable(parts.get(0)));
         }
         return styles;
