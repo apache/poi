@@ -28,6 +28,7 @@ import javax.crypto.Cipher;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POIException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
@@ -273,5 +274,14 @@ class TestXWPFBugs {
             assertEquals(TableRowAlign.END, tbl5.getTableAlignment());
             assertEquals(STJcTable.END, tbl5.getCTTbl().getTblPr().getJc().xgetVal().getEnumValue());
         }
+    }
+
+    @Test
+    public void testDeepTableCell() throws Exception {
+        // Document contains a table with nested cells.
+        IOException ex = assertThrows(IOException.class,
+                () -> XWPFTestDataSamples.openSampleDocument("deep-table-cell.docx"));
+        assertInstanceOf(POIException.class, ex.getCause());
+        assertTrue(ex.getMessage().contains("Node depth exceeds maximum supported depth"));
     }
 }
