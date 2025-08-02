@@ -172,6 +172,7 @@ public class TestAllFiles {
                 continue;
             }
 
+            boolean found = false;
             for (FileHandlerKnown handler : sm.getHandler(file)) {
                 ExcInfo info1 = sm.getExcInfo(file, testName, handler);
                 if (info1 == null || info1.isValid(testName, handler.name())) {
@@ -182,7 +183,12 @@ public class TestAllFiles {
                         (info1 != null) ? info1.getExClazz() : null,
                         (info1 != null) ? info1.getExMessage() : null
                     ));
+                    found = true;
                 }
+            }
+
+            if (!found) {
+                System.out.println("Could not find a handler for " + file);
             }
         }
 
