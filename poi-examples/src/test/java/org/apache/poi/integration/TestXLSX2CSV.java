@@ -18,9 +18,11 @@
 package org.apache.poi.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -197,4 +199,23 @@ public class TestXLSX2CSV {
 			return result.toString();
 		}
 	}
+
+    @Test
+    public void testDeepFile() throws Exception {
+        // returns with some System.err
+        try {
+            assertThrows(IOException.class,
+                    () -> XLSX2CSV.main(new String[] { XSSFTestDataSamples.getSampleFile("deep-data.xlsx").getAbsolutePath() }));
+        } catch (Throwable e) {
+            // restore output-streams again to get proper error output
+            System.setErr(err);
+
+            throw e;
+        }
+
+        String output = errorBytes.toString(StandardCharsets.UTF_8);
+        assertFalse(output.contains("Not found"), "Had: " + output);
+
+        System.out.println(output);
+    }
 }
