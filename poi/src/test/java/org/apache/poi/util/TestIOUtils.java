@@ -594,7 +594,7 @@ final class TestIOUtils {
         final File parent = TempFile.createTempDirectory("path-traversal-test");
         try {
             // this path is ok because it doesn't walk out of the parent directory
-            final String path0 = "a/b/c/../d/e/../../f/g/./h";
+            final String path0 = windowsPathIfNecessary("a/b/c/../d/e/../../f/g/./h");
             File outFile = IOUtils.newFile(parent, path0);
             assertTrue(outFile.getAbsolutePath().endsWith(path0),
                     "unexpected path: " + outFile.getAbsolutePath());
@@ -609,7 +609,7 @@ final class TestIOUtils {
         try {
             // this path is ok because it doesn't walk out of the parent directory
             // the initial slash is ignored and the generated path is relative to the parent directory
-            final String path0 = "/a/b/c.txt";
+            final String path0 = windowsPathIfNecessary("/a/b/c.txt");
             File outFile = IOUtils.newFile(parent, path0);
             assertTrue(outFile.getAbsolutePath().endsWith(path0),
                     "unexpected path: " + outFile.getAbsolutePath());
@@ -622,11 +622,16 @@ final class TestIOUtils {
     void testDisallowedPathTraversal() throws  IOException {
         final File parent = TempFile.createTempDirectory("path-traversal-test");
         try {
-            final String path0 = "../a/b/c.txt";
+            final String path0 = windowsPathIfNecessary("../a/b/c.txt");
             Assertions.assertThrows(IOException.class, () -> IOUtils.newFile(parent, path0));
         } finally {
             assertTrue(parent.delete());
         }
+    }
+
+    private static String windowsPathIfNecessary(String path) {
+        // this is a workaround for the Windows file system which doesn't allow slashes in file names
+        return File.pathSeparatorChar == '/' ? path : path.replace('/', File.pathSeparatorChar);
     }
 
     /**
