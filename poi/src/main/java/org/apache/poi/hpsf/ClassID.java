@@ -153,7 +153,7 @@ public class ClassID implements Duplicatable, GenericRecord {
         /* Read 8 bytes. */
         System.arraycopy(src, 8 + offset, bytes, 8, 8);
 
-        return bytes;
+        return bytes.clone();
     }
 
     /**
