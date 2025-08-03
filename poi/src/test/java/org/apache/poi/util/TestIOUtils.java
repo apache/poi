@@ -580,7 +580,7 @@ final class TestIOUtils {
     void testNewFile() throws  IOException {
         final File parent = TempFile.createTempDirectory("create-file-test");
         try {
-            final String path0 = "path/to/file.txt";
+            final String path0 = windowsPathIfNecessary("path/to/file.txt");
             final File outFile = IOUtils.newFile(parent, path0);
             assertTrue(outFile.getAbsolutePath().endsWith(path0),
                     "unexpected path: " + outFile.getAbsolutePath());
