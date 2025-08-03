@@ -631,7 +631,7 @@ final class TestIOUtils {
 
     private static String windowsPathIfNecessary(String path) {
         // this is a workaround for the Windows file system which doesn't allow slashes in file names
-        return File.pathSeparatorChar == '/' ? path : path.replace('/', File.pathSeparatorChar);
+        return File.separatorChar == '/' ? path : path.replace('/', File.separatorChar);
     }
 
     /**
