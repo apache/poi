@@ -1043,127 +1043,127 @@ class TestCellFormat {
 
     @Test
     void testNamedColors() {
-    	// Make sure we have all standard named colors defined 
-    	// and are returned as non-null regardless of case
+        // Make sure we have all standard named colors defined 
+        // and are returned as non-null regardless of case
         Stream.of("black", "white", "red", "green", "blue", "yellow", "magenta", "cyan",
-        		"Black", "White", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan",
-        		"BLACK", "WHITE", "RED", "GREEN", "BLUE", "YELLOW", "MAGENTA", "CYAN")
-        		.map(CellFormatPart::getColor)
+                "Black", "White", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan",
+                "BLACK", "WHITE", "RED", "GREEN", "BLUE", "YELLOW", "MAGENTA", "CYAN")
+                .map(CellFormatPart::getColor)
                 .forEach(Assertions::assertNotNull);
     }
     
     @Test
-    void testIndexedColorsExist() {   	
-    	// Make sure the standard indexed colors are returned correctly and regardless of case
-    	for (int i = 0; i < 56; ++i) {
-    		assertNotNull(CellFormatPart.getColor("Color " + (i + 1)));
-    		assertNotNull(CellFormatPart.getColor("COLOR" + (i + 1)));
-    		assertNotNull(CellFormatPart.getColor("color" + (i + 1)));
-    	}
+    void testIndexedColorsExist() {       
+        // Make sure the standard indexed colors are returned correctly and regardless of case
+        for (int i = 0; i < 56; ++i) {
+            assertNotNull(CellFormatPart.getColor("Color " + (i + 1)));
+            assertNotNull(CellFormatPart.getColor("COLOR" + (i + 1)));
+            assertNotNull(CellFormatPart.getColor("color" + (i + 1)));
+        }
     }
     
     @Test
     void verifyNamedColors() {
-    	assertEquals(CellFormatPart.getColor("Black"), new Color(0x000000));
-    	assertEquals(CellFormatPart.getColor("white"), new Color(0xFFFFFF));
-    	assertEquals(CellFormatPart.getColor("RED"), new Color(0xFF0000));
-    	assertEquals(CellFormatPart.getColor("Green"), new Color(0x00FF00));
-    	assertEquals(CellFormatPart.getColor("blue"), new Color(0x0000FF));
-    	assertEquals(CellFormatPart.getColor("YELLOW"), new Color(0xFFFF00));
-    	assertEquals(CellFormatPart.getColor("Magenta"), new Color(0xFF00FF));
-    	assertEquals(CellFormatPart.getColor("cyan"), new Color(0x00FFFF));
+        assertEquals(CellFormatPart.getColor("Black"), new Color(0x000000));
+        assertEquals(CellFormatPart.getColor("white"), new Color(0xFFFFFF));
+        assertEquals(CellFormatPart.getColor("RED"), new Color(0xFF0000));
+        assertEquals(CellFormatPart.getColor("Green"), new Color(0x00FF00));
+        assertEquals(CellFormatPart.getColor("blue"), new Color(0x0000FF));
+        assertEquals(CellFormatPart.getColor("YELLOW"), new Color(0xFFFF00));
+        assertEquals(CellFormatPart.getColor("Magenta"), new Color(0xFF00FF));
+        assertEquals(CellFormatPart.getColor("cyan"), new Color(0x00FFFF));
     }
     
     @Test
     void verifyIndexedColors() {
-    	assertEquals(CellFormatPart.getColor("Color1"), CellFormatPart.getColor("black"));
-    	assertEquals(CellFormatPart.getColor("color2"), CellFormatPart.getColor("white"));
-    	assertEquals(CellFormatPart.getColor("Color3"), CellFormatPart.getColor("red"));
-    	assertEquals(CellFormatPart.getColor("color4"), CellFormatPart.getColor("green"));
-    	assertEquals(CellFormatPart.getColor("Color5"), CellFormatPart.getColor("blue"));
-    	assertEquals(CellFormatPart.getColor("color6"), CellFormatPart.getColor("yellow"));
-    	assertEquals(CellFormatPart.getColor("Color7"), CellFormatPart.getColor("magenta"));
-    	assertEquals(CellFormatPart.getColor("color8"), CellFormatPart.getColor("cyan"));
-    	assertEquals(CellFormatPart.getColor("Color9"), new Color(0x800000));
-    	assertEquals(CellFormatPart.getColor("color10"), new Color(0x008000));
-    	assertEquals(CellFormatPart.getColor("Color11"), new Color(0x000080));
-    	assertEquals(CellFormatPart.getColor("color12"), new Color(0x808000));
-    	assertEquals(CellFormatPart.getColor("Color13"), new Color(0x800080));
-    	assertEquals(CellFormatPart.getColor("color14"), new Color(0x008080));
-    	assertEquals(CellFormatPart.getColor("Color15"), new Color(0xC0C0C0));
-    	assertEquals(CellFormatPart.getColor("color16"), new Color(0x808080));
-    	assertEquals(CellFormatPart.getColor("Color17"), new Color(0x9999FF));
-    	assertEquals(CellFormatPart.getColor("COLOR18"), new Color(0x993366));
-    	assertEquals(CellFormatPart.getColor("Color19"), new Color(0xFFFFCC));
-    	assertEquals(CellFormatPart.getColor("color20"), new Color(0xCCFFFF));
-    	assertEquals(CellFormatPart.getColor("Color21"), new Color(0x660066));
-    	assertEquals(CellFormatPart.getColor("COLOR22"), new Color(0xFF8080));
-    	assertEquals(CellFormatPart.getColor("Color23"), new Color(0x0066CC));
-    	assertEquals(CellFormatPart.getColor("color24"), new Color(0xCCCCFF));
-    	assertEquals(CellFormatPart.getColor("Color25"), new Color(0x000080));
-    	assertEquals(CellFormatPart.getColor("color26"), new Color(0xFF00FF));
-    	assertEquals(CellFormatPart.getColor("Color27"), new Color(0xFFFF00));
-    	assertEquals(CellFormatPart.getColor("COLOR28"), new Color(0x00FFFF));
-    	assertEquals(CellFormatPart.getColor("Color29"), new Color(0x800080));
-    	assertEquals(CellFormatPart.getColor("color30"), new Color(0x800000));
-    	assertEquals(CellFormatPart.getColor("Color31"), new Color(0x008080));
-    	assertEquals(CellFormatPart.getColor("Color32"), new Color(0x0000FF));
-    	assertEquals(CellFormatPart.getColor("Color33"), new Color(0x00CCFF));
-    	assertEquals(CellFormatPart.getColor("Color34"), new Color(0xCCFFFF));
-    	assertEquals(CellFormatPart.getColor("Color35"), new Color(0xCCFFCC));
-    	assertEquals(CellFormatPart.getColor("Color36"), new Color(0xFFFF99));
-    	assertEquals(CellFormatPart.getColor("Color37"), new Color(0x99CCFF));
-    	assertEquals(CellFormatPart.getColor("Color38"), new Color(0xFF99CC));
-    	assertEquals(CellFormatPart.getColor("Color39"), new Color(0xCC99FF));
-    	assertEquals(CellFormatPart.getColor("Color40"), new Color(0xFFCC99));
-    	assertEquals(CellFormatPart.getColor("Color41"), new Color(0x3366FF));
-    	assertEquals(CellFormatPart.getColor("Color42"), new Color(0x33CCCC));
-    	assertEquals(CellFormatPart.getColor("Color43"), new Color(0x99CC00));
-    	assertEquals(CellFormatPart.getColor("Color44"), new Color(0xFFCC00));
-    	assertEquals(CellFormatPart.getColor("Color45"), new Color(0xFF9900));
-    	assertEquals(CellFormatPart.getColor("Color46"), new Color(0xFF6600));
-    	assertEquals(CellFormatPart.getColor("Color47"), new Color(0x666699));
-    	assertEquals(CellFormatPart.getColor("Color48"), new Color(0x969696));
-    	assertEquals(CellFormatPart.getColor("Color49"), new Color(0x003366));
-    	assertEquals(CellFormatPart.getColor("Color50"), new Color(0x339966));
-    	assertEquals(CellFormatPart.getColor("Color51"), new Color(0x003300));
-    	assertEquals(CellFormatPart.getColor("Color52"), new Color(0x333300));
-    	assertEquals(CellFormatPart.getColor("Color53"), new Color(0x993300));
-    	assertEquals(CellFormatPart.getColor("Color54"), new Color(0x993366));
-    	assertEquals(CellFormatPart.getColor("Color55"), new Color(0x333399));
-    	assertEquals(CellFormatPart.getColor("Color56"), new Color(0x333333));
+        assertEquals(CellFormatPart.getColor("Color1"), CellFormatPart.getColor("black"));
+        assertEquals(CellFormatPart.getColor("color2"), CellFormatPart.getColor("white"));
+        assertEquals(CellFormatPart.getColor("Color3"), CellFormatPart.getColor("red"));
+        assertEquals(CellFormatPart.getColor("color4"), CellFormatPart.getColor("green"));
+        assertEquals(CellFormatPart.getColor("Color5"), CellFormatPart.getColor("blue"));
+        assertEquals(CellFormatPart.getColor("color6"), CellFormatPart.getColor("yellow"));
+        assertEquals(CellFormatPart.getColor("Color7"), CellFormatPart.getColor("magenta"));
+        assertEquals(CellFormatPart.getColor("color8"), CellFormatPart.getColor("cyan"));
+        assertEquals(CellFormatPart.getColor("Color9"), new Color(0x800000));
+        assertEquals(CellFormatPart.getColor("color10"), new Color(0x008000));
+        assertEquals(CellFormatPart.getColor("Color11"), new Color(0x000080));
+        assertEquals(CellFormatPart.getColor("color12"), new Color(0x808000));
+        assertEquals(CellFormatPart.getColor("Color13"), new Color(0x800080));
+        assertEquals(CellFormatPart.getColor("color14"), new Color(0x008080));
+        assertEquals(CellFormatPart.getColor("Color15"), new Color(0xC0C0C0));
+        assertEquals(CellFormatPart.getColor("color16"), new Color(0x808080));
+        assertEquals(CellFormatPart.getColor("Color17"), new Color(0x9999FF));
+        assertEquals(CellFormatPart.getColor("COLOR18"), new Color(0x993366));
+        assertEquals(CellFormatPart.getColor("Color19"), new Color(0xFFFFCC));
+        assertEquals(CellFormatPart.getColor("color20"), new Color(0xCCFFFF));
+        assertEquals(CellFormatPart.getColor("Color21"), new Color(0x660066));
+        assertEquals(CellFormatPart.getColor("COLOR22"), new Color(0xFF8080));
+        assertEquals(CellFormatPart.getColor("Color23"), new Color(0x0066CC));
+        assertEquals(CellFormatPart.getColor("color24"), new Color(0xCCCCFF));
+        assertEquals(CellFormatPart.getColor("Color25"), new Color(0x000080));
+        assertEquals(CellFormatPart.getColor("color26"), new Color(0xFF00FF));
+        assertEquals(CellFormatPart.getColor("Color27"), new Color(0xFFFF00));
+        assertEquals(CellFormatPart.getColor("COLOR28"), new Color(0x00FFFF));
+        assertEquals(CellFormatPart.getColor("Color29"), new Color(0x800080));
+        assertEquals(CellFormatPart.getColor("color30"), new Color(0x800000));
+        assertEquals(CellFormatPart.getColor("Color31"), new Color(0x008080));
+        assertEquals(CellFormatPart.getColor("Color32"), new Color(0x0000FF));
+        assertEquals(CellFormatPart.getColor("Color33"), new Color(0x00CCFF));
+        assertEquals(CellFormatPart.getColor("Color34"), new Color(0xCCFFFF));
+        assertEquals(CellFormatPart.getColor("Color35"), new Color(0xCCFFCC));
+        assertEquals(CellFormatPart.getColor("Color36"), new Color(0xFFFF99));
+        assertEquals(CellFormatPart.getColor("Color37"), new Color(0x99CCFF));
+        assertEquals(CellFormatPart.getColor("Color38"), new Color(0xFF99CC));
+        assertEquals(CellFormatPart.getColor("Color39"), new Color(0xCC99FF));
+        assertEquals(CellFormatPart.getColor("Color40"), new Color(0xFFCC99));
+        assertEquals(CellFormatPart.getColor("Color41"), new Color(0x3366FF));
+        assertEquals(CellFormatPart.getColor("Color42"), new Color(0x33CCCC));
+        assertEquals(CellFormatPart.getColor("Color43"), new Color(0x99CC00));
+        assertEquals(CellFormatPart.getColor("Color44"), new Color(0xFFCC00));
+        assertEquals(CellFormatPart.getColor("Color45"), new Color(0xFF9900));
+        assertEquals(CellFormatPart.getColor("Color46"), new Color(0xFF6600));
+        assertEquals(CellFormatPart.getColor("Color47"), new Color(0x666699));
+        assertEquals(CellFormatPart.getColor("Color48"), new Color(0x969696));
+        assertEquals(CellFormatPart.getColor("Color49"), new Color(0x003366));
+        assertEquals(CellFormatPart.getColor("Color50"), new Color(0x339966));
+        assertEquals(CellFormatPart.getColor("Color51"), new Color(0x003300));
+        assertEquals(CellFormatPart.getColor("Color52"), new Color(0x333300));
+        assertEquals(CellFormatPart.getColor("Color53"), new Color(0x993300));
+        assertEquals(CellFormatPart.getColor("Color54"), new Color(0x993366));
+        assertEquals(CellFormatPart.getColor("Color55"), new Color(0x333399));
+        assertEquals(CellFormatPart.getColor("Color56"), new Color(0x333333));
     }
     
     @Test
     void testColorsInWorkbook() throws IOException {
         // Create a workbook, row and cell to test with
         try (Workbook wb = new HSSFWorkbook()) {
-	        Sheet sheet = wb.createSheet();
-	        Row row = sheet.createRow(0);
-	        Cell cell = row.createCell(0);
-	        CellFormatResult result;
-	        CellFormat cf = CellFormat.getInstance(
-	        		"[GREEN]#,##0.0;[RED]\\(#,##0.0\\);[COLOR22]\"===\";[COLOR 8]\\\"@\\\"");
-	        
-	        cell.setCellValue(100.0);
-	        result = cf.apply(cell);
-	        assertEquals("100.0", result.text);
-	        assertEquals(result.textColor, CellFormatPart.getColor("color 4"));
-	        
-	        cell.setCellValue(-50.0);
-	        result = cf.apply(cell);
-	        assertEquals("(50.0)", result.text);
-	        assertEquals(result.textColor, CellFormatPart.getColor("red"));
-	
-	        cell.setCellValue("foo");
-	        result = cf.apply(cell);
-	        assertEquals("\"foo\"", result.text);
-	        assertEquals(result.textColor, CellFormatPart.getColor("cyan"));
-	        
-	        cell.setCellValue(0.0);
-	        result = cf.apply(cell);
-	        assertEquals("===", result.text);
-	        assertEquals(result.textColor, CellFormatPart.getColor("color 22"));
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            CellFormatResult result;
+            CellFormat cf = CellFormat.getInstance(
+                    "[GREEN]#,##0.0;[RED]\\(#,##0.0\\);[COLOR22]\"===\";[COLOR 8]\\\"@\\\"");
+            
+            cell.setCellValue(100.0);
+            result = cf.apply(cell);
+            assertEquals("100.0", result.text);
+            assertEquals(result.textColor, CellFormatPart.getColor("color 4"));
+            
+            cell.setCellValue(-50.0);
+            result = cf.apply(cell);
+            assertEquals("(50.0)", result.text);
+            assertEquals(result.textColor, CellFormatPart.getColor("red"));
+    
+            cell.setCellValue("foo");
+            result = cf.apply(cell);
+            assertEquals("\"foo\"", result.text);
+            assertEquals(result.textColor, CellFormatPart.getColor("cyan"));
+            
+            cell.setCellValue(0.0);
+            result = cf.apply(cell);
+            assertEquals("===", result.text);
+            assertEquals(result.textColor, CellFormatPart.getColor("color 22"));
         }
     }
 
