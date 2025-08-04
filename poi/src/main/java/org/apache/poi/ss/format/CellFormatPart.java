@@ -346,7 +346,7 @@ public class CellFormatPart {
      * Get the Color object matching a color name, or {@code null} if the
      * color name is not recognized.
      * 
-     * @param cdesc Color name, such as "red" or "Color 15"
+     * @param cname Color name, such as "red" or "Color 15"
      * 
      * @return a Color object or {@code null}.
      */
