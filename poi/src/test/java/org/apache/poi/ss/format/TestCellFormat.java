@@ -1042,7 +1042,7 @@ class TestCellFormat {
     }
 
     @Test
-    void testNamedColorsExist() {
+    void testNamedColors() {
     	// Make sure we have all standard named colors defined 
     	// and are returned as non-null regardless of case
         Stream.of("black", "white", "red", "green", "blue", "yellow", "magenta", "cyan",
