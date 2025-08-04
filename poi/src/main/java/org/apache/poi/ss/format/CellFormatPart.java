@@ -339,8 +339,6 @@ public class CellFormatPart {
      * @return The color specification or {@code null}.
      */
     private static Color getColor(Matcher m) {
-        String cdesc = m.group(COLOR_GROUP);
-        if (cdesc == null || cdesc.isEmpty())
         return getColor(m.group(COLOR_GROUP));
     }
     
