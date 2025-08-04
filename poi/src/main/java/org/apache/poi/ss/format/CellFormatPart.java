@@ -351,7 +351,7 @@ public class CellFormatPart {
      * @return a Color object or {@code null}.
      */
     static Color getColor(String cname) {
-        if (cname == null || cname.length() == 0)
+        if (cname == null || cname.isEmpty())
             return null;
         Color c = NAMED_COLORS.get(cname);
         if (c == null) {
