@@ -120,6 +120,7 @@ public class CellFormatPart {
         NAMED_COLORS = new TreeMap<>(
                 String.CASE_INSENSITIVE_ORDER);
 
+        // Retain compatibility with original implementation
         for (HSSFColor.HSSFColorPredefined color : HSSFColor.HSSFColorPredefined.values()) {
             String name = color.name();
             short[] rgb = color.getTriplet();
@@ -189,8 +190,9 @@ public class CellFormatPart {
             // Escape special characters in the color name
             color += key.replaceAll("([^a-zA-Z0-9])", "\\\\$1") + "|";
         }
-        // Match the indexed color table
-        color += "color\\ [0-9]+)\\]";
+        // Match the indexed color table (accept both e.g. COLOR2 and COLOR 2)
+        // Both formats are accepted as input in other products
+        color += "color\\s*[0-9]+)\\]";
 
         // A number specification
         // Note: careful that in something like ##, that the trailing comma is not caught up in the integer part
@@ -242,6 +244,8 @@ public class CellFormatPart {
         // Once patterns have been compiled, add indexed colors to
         // NAMED_COLORS so they can be easily picked up by getColor().
         for (int i = 0; i < INDEXED_COLORS.size(); ++i) {
+            NAMED_COLORS.put("color" + (i + 1), INDEXED_COLORS.get(i));
+            // Also support space between "color" and number.
             NAMED_COLORS.put("color " + (i + 1), INDEXED_COLORS.get(i));
         }
     }
@@ -337,10 +341,23 @@ public class CellFormatPart {
     private static Color getColor(Matcher m) {
         String cdesc = m.group(COLOR_GROUP);
         if (cdesc == null || cdesc.isEmpty())
+        return getColor(m.group(COLOR_GROUP));
+    }
+    
+    /**
+     * Get the Color object matching a color name, or {@code null} if the
+     * color name is not recognized.
+     * 
+     * @param cdesc Color name, such as "red" or "Color 15"
+     * 
+     * @return a Color object or {@code null}.
+     */
+    static Color getColor(String cname) {
+        if (cname == null || cname.length() == 0)
             return null;
-        Color c = NAMED_COLORS.get(cdesc);
+        Color c = NAMED_COLORS.get(cname);
         if (c == null) {
-            LOG.warn("Unknown color: {}", quote(cdesc));
+            LOG.warn("Unknown color: {}", quote(cname));
         }
         return c;
     }
