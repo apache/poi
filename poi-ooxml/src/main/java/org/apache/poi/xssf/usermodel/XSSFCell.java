@@ -21,6 +21,8 @@ import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
@@ -73,6 +75,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
  */
 public final class XSSFCell extends CellBase {
 
+    private static final Logger LOG = PoiLogManager.getLogger(XSSFCell.class);
     private static final String FALSE_AS_STRING = "0";
     private static final String TRUE_AS_STRING  = "1";
     private static final String FALSE = "FALSE";
@@ -244,7 +247,7 @@ public final class XSSFCell extends CellBase {
                         return 0.0;
                     }
                     try {
-                        return Double.parseDouble(v);
+                        return parseDouble(v);
                     } catch(NumberFormatException e) {
                         throw typeMismatch(CellType.NUMERIC, CellType.STRING, false);
                     }
@@ -330,12 +333,13 @@ public final class XSSFCell extends CellBase {
         } else {
             if (_cell.isSetV()) {
                 try {
-                    int idx = Integer.parseInt(_cell.getV());
+                    int idx = parseInt(_cell.getV());
                     rt = (XSSFRichTextString)_sharedStringSource.getItemAt(idx);
                 } catch (Throwable t) {
                     if (ExceptionUtil.isFatal(t)) {
                         ExceptionUtil.rethrow(t);
                     }
+                    LOG.atError().withThrowable(t).log("Failed to parse SST index '{}'", _cell.getV());
                     rt = new XSSFRichTextString("");
                 }
             } else {
@@ -1122,12 +1126,12 @@ public final class XSSFCell extends CellBase {
             case BOOLEAN:
                 return TRUE_AS_STRING.equals(_cell.getV());
             case STRING:
-                int sstIndex = Integer.parseInt(_cell.getV());
+                int sstIndex = parseInt(_cell.getV());
                 RichTextString rt = _sharedStringSource.getItemAt(sstIndex);
                 String text = rt.getString();
                 return Boolean.parseBoolean(text);
             case NUMERIC:
-                return Double.parseDouble(_cell.getV()) != 0;
+                return parseDouble(_cell.getV()) != 0;
 
             case ERROR:
                 // fall-through
@@ -1149,13 +1153,14 @@ public final class XSSFCell extends CellBase {
                 return TRUE_AS_STRING.equals(_cell.getV()) ? TRUE : FALSE;
             case STRING:
                 try {
-                    int sstIndex = Integer.parseInt(_cell.getV());
+                    int sstIndex = parseInt(_cell.getV());
                     RichTextString rt = _sharedStringSource.getItemAt(sstIndex);
                     return rt.getString();
                 } catch (Throwable t) {
                     if (ExceptionUtil.isFatal(t)) {
                         ExceptionUtil.rethrow(t);
                     }
+                    LOG.atError().withThrowable(t).log("Failed to parse SST index '{}'", _cell.getV());
                     return "";
                 }
             case NUMERIC:
@@ -1225,6 +1230,14 @@ public final class XSSFCell extends CellBase {
         CTCell ctCell = getCTCell();
         String r = new CellReference(getRowIndex(), getColumnIndex()).formatAsString();
         ctCell.setR(r);
+    }
+
+    private static int parseInt(String value) throws NumberFormatException {
+        return Integer.parseInt(value.trim());
+    }
+
+    private static double parseDouble(String value) throws NumberFormatException {
+        return Double.parseDouble(value.trim());
     }
 
 }
