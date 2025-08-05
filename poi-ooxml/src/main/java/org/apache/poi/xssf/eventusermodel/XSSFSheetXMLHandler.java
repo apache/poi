@@ -392,7 +392,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                         if (this.formatString != null) {
                             try {
                                 // Try to use the value as a formattable number
-                                double d = Double.parseDouble(fv);
+                                double d = parseDouble(fv);
                                 thisStr = formatter.formatRawCellContents(d, this.formatIndex, this.formatString);
                             } catch (Exception e) {
                                 // Formula is a String result not a Numeric one
@@ -416,7 +416,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                     break;
 
                 case SST_STRING:
-                    String sstIndex = value.toString();
+                    String sstIndex = value.toString().trim();
                     if (!sstIndex.isEmpty()) {
                         try {
                             int idx = parseInt(sstIndex);
@@ -433,7 +433,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                     if (this.formatString != null && !n.isEmpty()) {
                         try {
                             thisStr = formatter.formatRawCellContents(
-                                    Double.parseDouble(n), this.formatIndex, this.formatString);
+                                    parseDouble(n), this.formatIndex, this.formatString);
                         } catch (Exception e) {
                             LOG.atInfo().log(
                                     "Error formatting cell '{}' - will use its raw value instead (format '{}')",
@@ -523,8 +523,12 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
         output.cell(cellRef.formatAsString(), null, comment);
     }
 
-    private int parseInt(String value) throws NumberFormatException {
+    private static int parseInt(String value) throws NumberFormatException {
         return Integer.parseInt(value.trim());
+    }
+
+    private static double parseDouble(String value) throws NumberFormatException {
+        return Double.parseDouble(value.trim());
     }
 
     private enum EmptyCellCommentsCheckType {

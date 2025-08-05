@@ -3910,6 +3910,34 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
     }
 
+    @Test
+    void testBug69769() throws Exception {
+        final int expectedCount = 3;
+        try (XSSFWorkbook wb = openSampleWorkbook("bug69769.xlsx")) {
+            SharedStringsTable sst = wb.getSharedStringSource();
+            assertNotNull(sst);
+            assertEquals(expectedCount, sst.getCount());
+            for (int i = 0; i < expectedCount; i++) {
+                assertNotNull(sst.getItemAt(i));
+            }
+            XSSFSheet ws = wb.getSheetAt(0);
+            int nRowCount = ws.getLastRowNum();
+            DataFormatter df = new DataFormatter();
+            for (int r = 0; r <= nRowCount; r++) {
+                XSSFRow row = ws.getRow(r);
+                if (row != null) {
+                    for (Cell cell : row) {
+                        String cellValue = df.formatCellValue(cell);
+                        assertNotNull(cellValue, "Cell value should not be null");
+                        if (cell.getRowIndex() == 1 && cell.getColumnIndex() == 1) {
+                            assertEquals("Mustermann", cellValue);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private static void readByCommonsCompress(File temp_excel_poi) throws IOException {
         /* read by commons-compress*/
         try (ZipFile zipFile = ZipFile.builder().setFile(temp_excel_poi).get()) {
