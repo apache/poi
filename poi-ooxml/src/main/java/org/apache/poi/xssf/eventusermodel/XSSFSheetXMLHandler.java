@@ -253,7 +253,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
         } else if ("row".equals(localName)) {
             String rowNumStr = attributes.getValue("r");
             if (rowNumStr != null) {
-                rowNum = Integer.parseInt(rowNumStr) - 1;
+                rowNum = parseInt(rowNumStr) - 1;
             } else {
                 rowNum = nextRowNum;
             }
@@ -284,7 +284,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                 XSSFCellStyle style = null;
                 if (stylesTable != null) {
                     if (cellStyleStr != null) {
-                        int styleIndex = Integer.parseInt(cellStyleStr);
+                        int styleIndex = parseInt(cellStyleStr);
                         style = stylesTable.getStyleAt(styleIndex);
                     } else if (stylesTable.getNumCellStyles() > 0) {
                         style = stylesTable.getStyleAt(0);
@@ -419,7 +419,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                     String sstIndex = value.toString();
                     if (!sstIndex.isEmpty()) {
                         try {
-                            int idx = Integer.parseInt(sstIndex);
+                            int idx = parseInt(sstIndex);
                             RichTextString rtss = sharedStringsTable.getItemAt(idx);
                             thisStr = rtss.toString();
                         } catch (NumberFormatException ex) {
@@ -515,13 +515,16 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
         }
     }
 
-
     /**
      * Output an empty-cell comment.
      */
     private void outputEmptyCellComment(CellAddress cellRef) {
         XSSFComment comment = comments.findCellComment(cellRef);
         output.cell(cellRef.formatAsString(), null, comment);
+    }
+
+    private int parseInt(String value) throws NumberFormatException {
+        return Integer.parseInt(value.trim());
     }
 
     private enum EmptyCellCommentsCheckType {
