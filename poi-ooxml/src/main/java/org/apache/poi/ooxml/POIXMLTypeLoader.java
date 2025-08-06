@@ -43,6 +43,9 @@ public class POIXMLTypeLoader {
         DEFAULT_XML_OPTIONS.setCharacterEncoding("UTF-8");
         DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(true);
         DEFAULT_XML_OPTIONS.setEntityExpansionLimit(1);
+        DEFAULT_XML_OPTIONS.setLoadStripProcinsts(true);
+        DEFAULT_XML_OPTIONS.setLoadStripComments(true);
+
         // JAXP is used for parsing
         // so only user code using XmlObject/XmlToken.Factory.parse
         // directly can bypass the entity check, which is probably unlikely (... and not within our responsibility :)) 
