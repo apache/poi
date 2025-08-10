@@ -314,7 +314,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * edge in a right-to-left table).</p>
      * <p>If the table alignment is not left/start, this property shall be ignored.</p>
      *
-     * @see boolean hasIndent()
+     * @see #hasIndent()
      * @return indentation value as an integer (20ths of a point)
      */
     public int getIndent() {
@@ -343,7 +343,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Set the indentation in 20ths of a point (twips).
-     * @see int getIndent()
+     * @see #getIndent()
      * @param indent Indentation value (20ths of a point)
      */
     public void setIndent(int indent) {
