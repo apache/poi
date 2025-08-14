@@ -1315,23 +1315,24 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     void testNewWorkbookWithTempFilePackagePartsClose() throws Exception {
         try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             ZipPackage.setUseTempFilePackageParts(true);
-            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-                XSSFSheet sheet = workbook.createSheet("sheet1");
-                XSSFRow row = sheet.createRow(0);
-                XSSFCell cell0 = row.createCell(0);
-                cell0.setCellValue("");
-                XSSFCell cell1 = row.createCell(1);
-                cell1.setCellErrorValue(FormulaError.DIV0);
-                XSSFCell cell2 = row.createCell(2);
-                cell2.setCellErrorValue(FormulaError.FUNCTION_NOT_IMPLEMENTED);
-                workbook.write(bos);
-                // workaround for https://github.com/apache/poi/issues/879
-                for (PackagePart part : workbook.getPackage().getParts()) {
-                    part.close();
-                }
-            } finally {
-                ZipPackage.setUseTempFilePackageParts(false);
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("sheet1");
+            XSSFRow row = sheet.createRow(0);
+            XSSFCell cell0 = row.createCell(0);
+            cell0.setCellValue("");
+            XSSFCell cell1 = row.createCell(1);
+            cell1.setCellErrorValue(FormulaError.DIV0);
+            XSSFCell cell2 = row.createCell(2);
+            cell2.setCellErrorValue(FormulaError.FUNCTION_NOT_IMPLEMENTED);
+            workbook.write(bos);
+            List<PackagePart> packageParts = workbook.getPackage().getParts();
+            workbook.close();
+            // workaround for https://github.com/apache/poi/issues/879 (needs to happen after workbook close)
+            for (PackagePart part : packageParts) {
+                part.close();
             }
+        } finally {
+            ZipPackage.setUseTempFilePackageParts(false);
         }
     }
 
