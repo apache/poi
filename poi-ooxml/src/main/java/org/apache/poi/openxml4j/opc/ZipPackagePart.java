@@ -134,14 +134,12 @@ public class ZipPackagePart extends PackagePart {
     }
 
     @Override
-    @NotImplemented
     public void close() {
-        throw new InvalidOperationException("Method not implemented !");
+        // do nothing
     }
 
     @Override
-    @NotImplemented
     public void flush() {
-        throw new InvalidOperationException("Method not implemented !");
+        // do nothing
     }
 }

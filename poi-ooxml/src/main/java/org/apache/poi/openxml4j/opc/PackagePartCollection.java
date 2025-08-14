@@ -112,8 +112,6 @@ public final class PackagePartCollection implements Serializable {
         return packagePartLookup.size();
     }
 
-
-
     /**
      * Get an unused part index based on the namePattern, which doesn't exist yet
      * and has the lowest positive index
@@ -140,5 +138,12 @@ public final class PackagePartCollection implements Serializable {
         return packagePartLookup.keySet().stream()
             .mapToInt(indexFromName)
             .collect(SparseBitSet::new, SparseBitSet::set, (s1,s2) -> s1.or(s2)).nextClearBit(1);
+    }
+
+    // used to ensure resources are closed when they are no longer needed
+    void closeParts() {
+        for (PackagePart part : packagePartLookup.values()) {
+            part.close();
+        }
     }
 }
