@@ -681,6 +681,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         // ensure all held resources are freed
         revert();
 
+        // ensure resources associated with package parts are closed
+        closeParts();
+
         // Clear
         this.contentTypeManager.clearAll();
     }
@@ -1869,6 +1872,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * Has close been called already?
      */
     public abstract boolean isClosed();
+
+    protected void closeParts() {
+        partList.closeParts();
+    }
 
     @Override
     public String toString() {
