@@ -104,6 +104,7 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      *
      * @return the picture data.
      */
+    @Override
     public byte[] getData() {
         try (InputStream inputStream = getPackagePart().getInputStream()) {
             return IOUtils.toByteArrayWithMaxLength(inputStream, getMaxImageSize());
@@ -118,7 +119,7 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
     }
 
     @Override
-    public int getPictureType(){
+    public int getPictureType() {
         String contentType = getPackagePart().getContentType();
         for (int i = 0; i < RELATIONS.length; i++) {
             if(RELATIONS[i] == null) continue;
@@ -130,6 +131,7 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
         return 0;
     }
 
+    @Override
     public String getMimeType() {
         return getPackagePart().getContentType();
     }
