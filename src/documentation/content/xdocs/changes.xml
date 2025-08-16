@@ -84,6 +84,7 @@
             <summary-item>Upgrade JaCoCo code-coverage tooling to 0.8.13</summary-item>
         </summary>
         <actions>
+            <action type="fix" fixes-bug="github-879" context="SXSSF">Images in .xlsx-files can lead to temporary files filling up the disk</action>
             <action type="fix" fixes-bug="66687" context="SXSSF">Combination of XSSF and SXSSF may result in invalid files</action>
             <action type="fix" fixes-bug="69646" context="SXSSF">SXSSF: check for null _fd instance in dispose call</action>
             <action type="fix" fixes-bug="69667" context="HSSF">Handle slightly broken WriteAccessRecord gracefully</action>
@@ -107,6 +108,7 @@
             <summary-item>Upgrade graphics2d dependency to 3.0.3</summary-item>
         </summary>
         <actions>
+            <action type="fix" fixes-bug="69563" context="XSSF">Avoid int-overflow when handling file with very many rows and columns</action>
             <action type="fix" fixes-bug="69618" context="OOXML">ZipPackage save should check that intermediate steps succeed</action>
             <action type="add" fixes-bug="github-775" context="OOXML">Allow some OPC compliance checks to be tuned</action>
             <action type="fix" fixes-bug="66260" context="XWPF">Add getNumberOfTexts() method</action>
