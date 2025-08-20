@@ -374,9 +374,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * @param opcComplianceFlags
      *            The level of OPC compliance to enforce when reading the package
      * @return A PackageBase object, else <b>null</b>.
+     * @throws IllegalArgumentException
+     *             If the specified file doesn't exist or is a directory.
      * @throws InvalidFormatException
-     *             If the specified file doesn't exist, and a parsing error
-     *             occur.
+     *             If a parsing error occurs.
      * @since POI 5.4.1
      */
     public static OPCPackage open(File file, PackageAccess access, OPCComplianceFlags opcComplianceFlags)
