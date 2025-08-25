@@ -461,10 +461,22 @@ public class CellNumberFormatter extends CellFormatter {
             writeFraction(value, null, fractional, output, mods);
         } else {
             StringBuffer result = new StringBuffer();
-            try (Formatter f = new Formatter(result, locale)) {
-                f.format(locale, printfFmt, value);
-            } catch (IllegalFormatException e) {
-                throw new IllegalArgumentException("Format: " + printfFmt, e);
+
+            if (value == 0.0 && decimalPoint == null && !desc.contains("0")
+                    && specials.size() == calculateIntegerPartWidth()) {
+                // Excel's # with value 0 should output empty, not 0 as in Java.
+                // Excel's ? with value 0 should output space, not 0 as in Java.
+                for (Special s : specials) {
+                    if (s.ch == '?') {
+                        result.append(' ');
+                    }
+                }
+            } else {
+                try (Formatter f = new Formatter(result, locale)) {
+                    f.format(locale, printfFmt, value);
+                } catch (IllegalFormatException e) {
+                    throw new IllegalArgumentException("Format: " + printfFmt, e);
+                }
             }
 
             if (numerator == null) {
