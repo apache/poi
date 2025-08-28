@@ -21,6 +21,7 @@ import java.io.File;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
@@ -33,11 +34,13 @@ public class TestXSSFParser {
     @Test
     void testXlsx() throws Exception {
         final File file = HSSFTestDataSamples.getSampleFile("HeaderFooterComplexFormats.xlsx");
-        try (XSSFWorkbook wb = XSSFParser.parse(file)) {
+        // unless we use read-only access, the underlying file gets updated
+        try (
+                OPCPackage pkg = OPCPackage.open(file, PackageAccess.READ);
+                XSSFWorkbook wb = XSSFParser.parse(pkg)
+        ) {
             assertNotNull(wb);
             assertEquals(3, wb.getNumberOfSheets());
-            // unless we revert the package, the underlying file gets updated
-            wb.getPackage().revert();
         }
     }
 
