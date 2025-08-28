@@ -34,14 +34,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class TestXSSFParser {
     @Test
     void testXlsx() throws Exception {
-        final File file = HSSFTestDataSamples.getSampleFile("HeaderFooterComplexFormats.xlsx");
+        final File file = HSSFTestDataSamples.getSampleFile("github-321.xlsx");
         // unless we use read-only access, the underlying file gets updated
         try (
                 OPCPackage pkg = OPCPackage.open(file, PackageAccess.READ);
                 XSSFWorkbook wb = XSSFParser.parse(pkg)
         ) {
             assertNotNull(wb);
-            assertEquals(3, wb.getNumberOfSheets());
+            assertEquals(1, wb.getNumberOfSheets());
         }
     }
 
