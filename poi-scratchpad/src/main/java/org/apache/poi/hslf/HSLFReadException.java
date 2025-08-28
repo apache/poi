@@ -19,7 +19,8 @@ package org.apache.poi.hslf;
 import org.apache.poi.POIException;
 
 /**
- * An exception that indicates a problem reading a ppt file.
+ * An exception that indicates a problem reading a ppt file. Usually, a more
+ * specific exception will be wrapped as the cause.
  * <p>This exception is only used by some new methods.
  * Historically, POI has used {@link RuntimeException} for most of its
  * exceptions, but this is not a good practice. This class is a checked
