@@ -36,6 +36,8 @@ public class TestXSSFParser {
         try (XSSFWorkbook wb = XSSFParser.parse(file)) {
             assertNotNull(wb);
             assertEquals(3, wb.getNumberOfSheets());
+            // unless we revert the package, the underlying file gets updated
+            wb.getPackage().revert();
         }
     }
 
