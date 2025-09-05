@@ -49,6 +49,7 @@ import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -138,6 +139,9 @@ public abstract class HWPFDocumentCore extends POIDocument {
         FileMagic fm = FileMagic.valueOf(is);
 
         if (fm != FileMagic.OLE2) {
+            if (fm == FileMagic.OOXML) {
+                throw new OfficeXmlFileException("The document is really a OOXML file");
+            }
             throw new IllegalArgumentException("The document is really a "+fm+" file");
         }
 
