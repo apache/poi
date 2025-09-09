@@ -3947,7 +3947,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             DataFormatter dataFormatter = new DataFormatter();
             String cellValue = dataFormatter.formatCellValue(cellA1);
             // https://bz.apache.org/bugzilla/show_bug.cgi?id=69812: user says this should be "25,386"
-            assertEquals("25,400", cellValue);
+            assertEquals("25,396", cellValue);
             assertEquals("#,##0,,", cellA1.getCellStyle().getDataFormatString());
         }
     }
