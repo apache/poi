@@ -808,6 +808,10 @@ public class DataFormatter {
             }
         }
 
+        boolean requiresScaling() {
+            return divider != null;
+        }
+
         private Object scaleInput(Object obj) {
             if (divider != null) {
                 if (obj instanceof BigDecimal) {
@@ -965,12 +969,22 @@ public class DataFormatter {
         if (numberFormat == null) {
             return Double.toString(d);
         }
-        String formatted;
-        try {
-            //see https://github.com/apache/poi/pull/321 -- but this sometimes fails, thus the catch and retry
-            formatted = numberFormat.format(BigDecimal.valueOf(d));
-        } catch (NumberFormatException nfe) {
-            formatted = numberFormat.format(d);
+        String formatted = null;
+        if (numberFormat instanceof InternalDecimalFormatWithScale) {
+            InternalDecimalFormatWithScale idfws = (InternalDecimalFormatWithScale) numberFormat;
+            if (idfws.requiresScaling()) {
+                // hack for https://bz.apache.org/bugzilla/show_bug.cgi?id=69812
+                // the https://github.com/apache/poi/pull/321 hack causes problems here
+                formatted = idfws.format(d);
+            }
+        }
+        if (formatted == null) {
+            try {
+                //see https://github.com/apache/poi/pull/321 -- but this sometimes fails, thus the catch and retry
+                formatted = numberFormat.format(BigDecimal.valueOf(d));
+            } catch (NumberFormatException nfe) {
+                formatted = numberFormat.format(d);
+            }
         }
         return formatted.replaceFirst("E(\\d)", "E+$1"); // to match Excel's E-notation
     }
