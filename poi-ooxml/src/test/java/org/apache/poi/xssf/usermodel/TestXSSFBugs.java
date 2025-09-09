@@ -3938,6 +3938,20 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
     }
 
+    @Test
+    void testBug69812() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("bug69812.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFRow row = sheet.getRow(0);
+            XSSFCell cellA1 = row.getCell(0);
+            DataFormatter dataFormatter = new DataFormatter();
+            String cellValue = dataFormatter.formatCellValue(cellA1);
+            // https://bz.apache.org/bugzilla/show_bug.cgi?id=69812: user says this should be "25,386"
+            assertEquals("25,400", cellValue);
+            assertEquals("#,##0,,", cellA1.getCellStyle().getDataFormatString());
+        }
+    }
+
     private static void readByCommonsCompress(File temp_excel_poi) throws IOException {
         /* read by commons-compress*/
         try (ZipFile zipFile = ZipFile.builder().setFile(temp_excel_poi).get()) {
