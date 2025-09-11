@@ -171,12 +171,14 @@ subprojects {
     }
 
     dependencies {
+        api platform("org.apache.logging.log4j:log4j-bom:${log4jVersion}")
+        api 'org.apache.logging.log4j:log4j-api'
         testImplementation platform("org.junit:junit-bom:${junitVersion}")
         testImplementation 'org.junit.jupiter:junit-jupiter'
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
         testImplementation "org.mockito:mockito-core:${mockitoVersion}"
         testImplementation "org.hamcrest:hamcrest:${hamcrestVersion}"
-        testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+        testImplementation 'org.apache.logging.log4j:log4j-core'
 
         if (SAXON_TEST) {
             testRuntimeOnly("net.sf.saxon:Saxon-HE:${saxonVersion}") {
