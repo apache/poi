@@ -34,6 +34,10 @@ public class HWPFTestDataSamples {
         }
     }
 
+    public static InputStream openSampleFileStream(String sampleFileName) {
+        return SAMPLES.openResourceAsStream(sampleFileName);
+    }
+
     public static HWPFOldDocument openOldSampleFile(String sampleFileName) {
        try {
            InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream(sampleFileName);

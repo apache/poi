@@ -172,7 +172,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                 tables.put( rp.getRelationship().getId(), (XSSFTable)p );
             }
             if(p instanceof XSSFPivotTable) {
-                getWorkbook().getPivotTables().add((XSSFPivotTable) p);
+                getWorkbook().addPivotTable((XSSFPivotTable) p);
             }
         }
 
@@ -4705,13 +4705,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     @Beta
     private XSSFPivotTable createPivotTable() {
         XSSFWorkbook wb = getWorkbook();
-        List<XSSFPivotTable> pivotTables = wb.getPivotTables();
         int tableId = getWorkbook().getPivotTables().size()+1;
         //Create relationship between pivotTable and the worksheet
         XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE,
                 getWorkbook().getXssfFactory(), tableId);
         pivotTable.setParentSheet(this);
-        pivotTables.add(pivotTable);
+        wb.addPivotTable(pivotTable);
         XSSFWorkbook workbook = getWorkbook();
 
         //Create relationship between the pivot cache definition and the workbook
@@ -4734,8 +4733,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         //Set relationships id for pivotCacheDefinition to pivotCacheRecords
         pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition().setId(pivotCacheDefinition.getRelationId(pivotCacheRecords));
-
-        wb.setPivotTables(pivotTables);
 
         return pivotTable;
     }

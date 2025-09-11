@@ -69,6 +69,7 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalLink;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalSheetData;
@@ -105,6 +106,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Isolated // run separately because some tests modify global settings that might affect other tests
 public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     public TestXSSFWorkbook() {
@@ -1310,6 +1312,31 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
+    void testNewWorkbookWithTempFilePackagePartsClose() throws Exception {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+            ZipPackage.setUseTempFilePackageParts(true);
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("sheet1");
+            XSSFRow row = sheet.createRow(0);
+            XSSFCell cell0 = row.createCell(0);
+            cell0.setCellValue("");
+            XSSFCell cell1 = row.createCell(1);
+            cell1.setCellErrorValue(FormulaError.DIV0);
+            XSSFCell cell2 = row.createCell(2);
+            cell2.setCellErrorValue(FormulaError.FUNCTION_NOT_IMPLEMENTED);
+            workbook.write(bos);
+            List<PackagePart> packageParts = workbook.getPackage().getParts();
+            workbook.close();
+            // workaround for https://github.com/apache/poi/issues/879 (needs to happen after workbook close)
+            for (PackagePart part : packageParts) {
+                part.close();
+            }
+        } finally {
+            ZipPackage.setUseTempFilePackageParts(false);
+        }
+    }
+
+    @Test
     void testLinkExternalWorkbook() throws Exception {
         String nameA = "link-external-workbook-a.xlsx";
 
@@ -1391,7 +1418,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             try(
                     XSSFWorkbook workbook2 = new XSSFWorkbook(bosB.toInputStream())
             ) {
-                CTExternalLink link = workbook2.getExternalLinksTable().get(0).getCTExternalLink();
+                CTExternalLink link = workbook2.getExternalLinksTable(0).getCTExternalLink();
                 CTExternalSheetData sheetData = link.getExternalBook().getSheetDataSet().getSheetDataArray(0);
                 assertEquals(Double.valueOf(sheetData.getRowArray(0).getCellArray(0).getV()), v1);
                 assertEquals(Double.valueOf(sheetData.getRowArray(0).getCellArray(1).getV()), v2);

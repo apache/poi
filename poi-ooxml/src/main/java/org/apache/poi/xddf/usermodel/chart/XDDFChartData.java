@@ -28,7 +28,6 @@ import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.xddf.usermodel.XDDFFillProperties;
 import org.apache.poi.xddf.usermodel.XDDFLineProperties;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
@@ -83,27 +82,6 @@ public abstract class XDDFChartData {
 
     public List<XDDFValueAxis> getValueAxes() {
         return valueAxes;
-    }
-
-    /**
-     * Calls to {@code getSeries().add(series)} or to {@code getSeries().remove(series)}
-     * may corrupt the workbook.
-     *
-     * <p>
-     * Instead, use the following methods:
-     * <ul>
-     * <li>{@link #getSeriesCount()}</li>
-     * <li>{@link #getSeries(int)}</li>
-     * <li>{@link #addSeries(XDDFDataSource,XDDFNumericalDataSource)}</li>
-     * <li>{@link #removeSeries(int)}</li>
-     * </ul>
-     *
-     * @deprecated since POI 4.1.1
-     */
-    @Deprecated
-    @Removal(version = "5.3")
-    public List<Series> getSeries() {
-        return Collections.unmodifiableList(series);
     }
 
     public final int getSeriesCount() {

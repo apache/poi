@@ -45,6 +45,7 @@ import org.apache.commons.collections4.ListValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.POIException;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.ooxml.HyperlinkRelationship;
@@ -89,6 +90,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.ExternalLinksTable;
@@ -110,6 +112,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Support {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
     private static final Pattern GET_ALL_PICTURES_PATTERN = Pattern.compile("/xl/media/.*?");
+    private static final int MAX_NODE_DEPTH = 1000;
 
     /**
      * Images formats supported by XSSF but not by HSSF
@@ -205,7 +208,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     /**
      * List of all pivot tables in workbook
      */
-    private List<XSSFPivotTable> pivotTables;
+    private final List<XSSFPivotTable> pivotTables = new ArrayList<>();
     private List<CTPivotCache> pivotCaches;
 
     private final XSSFFactory xssfFactory;
@@ -386,7 +389,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         }
 
         // Create arrays for parts attached to the workbook itself
-        pivotTables = new ArrayList<>();
         pivotCaches = new ArrayList<>();
     }
 
@@ -396,6 +398,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             try (InputStream stream = getPackagePart().getInputStream()) {
                 WorkbookDocument doc = WorkbookDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
                 this.workbook = doc.getWorkbook();
+            }
+            final int nodeDepth = XMLHelper.getDepthOfChildNodes(this.workbook.getDomNode(), MAX_NODE_DEPTH);
+            if (nodeDepth > MAX_NODE_DEPTH) {
+                throw new IOException(String.format(Locale.ROOT,
+                        "The document is too complex, it has a node depth of %s, which exceeds the maximum allowed of %s",
+                        nodeDepth,
+                        MAX_NODE_DEPTH));
             }
 
             ThemesTable theme = null;
@@ -477,6 +486,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
             // Process the named ranges
             reprocessNamedRanges();
+        } catch (POIException e) {
+            throw new IOException(e);
         } catch (XmlException e) {
             throw new POIXMLException(e);
         }
@@ -524,7 +535,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         namedRanges = new ArrayList<>();
         namedRangesByName = new ArrayListValuedHashMap<>();
         sheets = new ArrayList<>();
-        pivotTables = new ArrayList<>();
 
         externalLinks = new ArrayList<>();
     }
@@ -1042,14 +1052,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     @Override
     public List<XSSFPictureData> getAllPictures() {
-        if(pictures == null){
+        if (pictures == null) {
             List<PackagePart> mediaParts = getPackage().getPartsByName(GET_ALL_PICTURES_PATTERN);
             pictures = new ArrayList<>(mediaParts.size());
             for(PackagePart part : mediaParts){
                 pictures.add(new XSSFPictureData(part));
             }
         }
-        return pictures; //YK: should return Collections.unmodifiableList(pictures);
+        return Collections.unmodifiableList(pictures);
     }
 
     /**
@@ -2079,8 +2089,43 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @return the {@code ExternalLinksTable} list, which may be empty
      */
     @Internal
-    public List<ExternalLinksTable> getExternalLinksTable() {
+    public List<ExternalLinksTable> getExternalLinksTables() {
+        // needs to be the live copy because unfortunately we don't have APIs to
+        // add and remove external links (this method is annotated @Internal)
         return externalLinks;
+    }
+
+    @Deprecated // use getExternalLinksTables() instead
+    @Removal(version = "7.0.0")
+    @Internal
+    public List<ExternalLinksTable> getExternalLinksTable() {
+        // needs to be the live copy because unfortunately we don't have APIs to
+        // add and remove external links (this method is annotated @Internal)
+        return externalLinks;
+    }
+
+    /**
+     * Adds an External Links Table to the workbook.
+     *
+     * @param externalLinksTable the External Links Table to add
+     * @since POI 5.5.0
+     */
+    @Internal
+    public void addExternalLinksTable(ExternalLinksTable externalLinksTable) {
+        if (externalLinks == null) {
+            externalLinks = new ArrayList<>();
+        }
+        externalLinks.add(externalLinksTable);
+    }
+
+    /**
+     * @param index the index at which to add the External Links Table
+     * @return  externalLinksTable the External Links Table to add
+     * @since POI 5.5.0
+     */
+    @Internal
+    public ExternalLinksTable getExternalLinksTable(int index) {
+        return externalLinks == null ? null : externalLinks.get(index);
     }
 
     /**
@@ -2125,7 +2170,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             POIXMLDocumentPart.RelationPart rp = this.createRelationship(XSSFRelation.EXTERNAL_LINKS, xssfFactory, externalLinkIdx, false);
             ExternalLinksTable linksTable = rp.getDocumentPart();
             linksTable.setLinkedFileName(name);
-            this.getExternalLinksTable().add(linksTable);
+            this.addExternalLinksTable(linksTable);
 
             CTExternalReference ctExternalReference = this.getCTWorkbook().addNewExternalReferences().addNewExternalReference();
             ctExternalReference.setId(rp.getRelationship().getId());
@@ -2385,7 +2430,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         }
         CTPivotCache cache = caches.addNewPivotCache();
 
-        int tableId = getPivotTables().size()+1;
+        final int tableId = pivotTables.size() + 1;
         cache.setCacheId(tableId);
         cache.setId(rId);
         if(pivotCaches == null) {
@@ -2397,12 +2442,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
     @Beta
     public List<XSSFPivotTable> getPivotTables() {
+        // needs to be the live copy because unfortunately we don't have APIs to
+        // add and remove external links (this method is annotated @Beta)
         return pivotTables;
     }
 
-    @Beta
-    protected void setPivotTables(List<XSSFPivotTable> pivotTables) {
-        this.pivotTables = pivotTables;
+    @Internal
+    public void addPivotTable(XSSFPivotTable pivotTable) {
+        pivotTables.add(pivotTable);
     }
 
     public XSSFWorkbookType getWorkbookType() {

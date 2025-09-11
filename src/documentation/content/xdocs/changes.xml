@@ -70,12 +70,14 @@
         </p>
     </section>
 
-    <release version="5.4.2" date="2025-??-??">
+    <release version="5.5.0" date="2025-??-??">
         <summary>
             <summary-item>Upgrade batik dependency to 1.19</summary-item>
-            <summary-item>Upgrade bouncycastle dependency to 1.80</summary-item>
+            <summary-item>Upgrade bouncycastle dependency to 1.81</summary-item>
+            <summary-item>Upgrade commons-codec dependency to 1.19.0</summary-item>
             <summary-item>Upgrade commons-collections4 dependency to 4.5.0</summary-item>
-            <summary-item>Upgrade commons-io dependency to 2.19.0</summary-item>
+            <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
+            <summary-item>Upgrade commons-io dependency to 2.20.0</summary-item>
             <summary-item>Upgrade pdfbox dependency to 3.0.5</summary-item>
             <summary-item>Upgrade xmlsec dependency to 3.0.6</summary-item>
             <summary-item>Upgrade JaCoCo code-coverage tooling to 0.8.13</summary-item>
@@ -87,8 +89,11 @@
             <action type="fix" fixes-bug="69669" context="HSLF">Fix issue where Slide addTitle corrupts the ppt file</action>
             <action type="fix" fixes-bug="69720" context="XWPF">Support null alignment values in XWPFParagraph</action>
             <action type="fix" fixes-bug="69727" context="XSSF">Decrease count when we remove merged regions</action>
+            <action type="fix" fixes-bug="69744" context="XWPF">Support all possible alignment values for docx tables</action>
             <action type="fix" fixes-bug="github-770" context="XSLF">Issue in setBulletStyle in XSLFTextParagraph</action>
             <action type="add" fixes-bug="github-803" context="SS_Common">Add support for SHEET function</action>
+            <action type="add" fixes-bug="github-804" context="XWPF">Add getters and setters for XWPFTable indentation</action>
+            <action type="fix" fixes-bug="github-864" context="XDDF">Remove deprecated method XDDFChartData getSeries()</action>
         </actions>
     </release>
 

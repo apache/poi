@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.util;
 
-import java.awt.Color;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.Color;
 import java.util.Map;
 
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;

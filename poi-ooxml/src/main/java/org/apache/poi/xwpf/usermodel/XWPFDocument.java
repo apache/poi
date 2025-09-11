@@ -23,22 +23,11 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Spliterator;
+import java.util.*;
 import javax.xml.namespace.QName;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.POIException;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.ooxml.POIXMLDocument;
@@ -60,6 +49,8 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
@@ -104,6 +95,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
 @SuppressWarnings("unused")
 public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     private static final Logger LOG = PoiLogManager.getLogger(XWPFDocument.class);
+    private static final int MAX_NODE_DEPTH = 1000;
 
     protected List<XWPFFooter> footers = new ArrayList<>();
     protected List<XWPFHeader> headers = new ArrayList<>();
@@ -213,6 +205,13 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 doc = DocumentDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
                 ctDocument = doc.getDocument();
             }
+            final int nodeDepth = XMLHelper.getDepthOfChildNodes(ctDocument.getDomNode(), MAX_NODE_DEPTH);
+            if (nodeDepth > MAX_NODE_DEPTH) {
+                throw new IOException(String.format(Locale.ROOT,
+                        "The document is too complex, it has a node depth of %s, which exceeds the maximum allowed of %s",
+                        nodeDepth,
+                        MAX_NODE_DEPTH));
+            }
 
             initFootnotes();
 
@@ -303,6 +302,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 }
             }
             initHyperlinks();
+        } catch (POIException e) {
+            throw new IOException(e);
         } catch (XmlException e) {
             throw new POIXMLException(e);
         }
@@ -1724,7 +1725,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return the next free ImageNumber
      * @throws InvalidFormatException If the format of the picture is not known.
      * @see #getNextPicNameNumber(PictureType)
+     * @deprecated use {@link #getNextPicNameNumber(PictureType)} instead.
      */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public int getNextPicNameNumber(int format) throws InvalidFormatException {
         return getNextPicNameNumber(PictureType.findByOoxmlId(format));
     }

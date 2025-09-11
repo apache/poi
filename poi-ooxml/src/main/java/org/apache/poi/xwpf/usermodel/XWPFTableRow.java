@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.ooxml.util.POIXMLUnits;
@@ -211,7 +212,7 @@ public class XWPFTableRow {
 
             this.tableCells = cells;
         }
-        return tableCells;
+        return Collections.unmodifiableList(tableCells);
     }
 
     /**

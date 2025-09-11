@@ -182,7 +182,7 @@ public class HSSFColor implements Color {
      * @param index
      * @param index2
      * @param rgb combined value of RGB
-     * @since POI 5.4.2
+     * @since POI 5.5.0
      */
     public HSSFColor(int index, int index2, int rgb) {
         this.index = index;

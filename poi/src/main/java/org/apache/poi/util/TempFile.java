@@ -62,7 +62,7 @@ public final class TempFile {
      *
      * @param strategy The new strategy to be used to create the temporary files for this thread.
      *                 <code>null</code> can be used to reset the strategy for this thread to the default one.
-     * @since POI 5.4.2
+     * @since POI 5.5.0
      */
     public static void setThreadLocalTempFileCreationStrategy(TempFileCreationStrategy strategy) {
         if (strategy == null) {
@@ -104,7 +104,7 @@ public final class TempFile {
      * @param task the task to be executed with the given temp file strategy
      * @return the result of the given task
      *
-     * @since POI 5.4.2
+     * @since POI 5.5.0
      */
     public static <R> R withStrategy(TempFileCreationStrategy newStrategy, Supplier<? extends R> task) {
         Objects.requireNonNull(newStrategy, "newStrategy");

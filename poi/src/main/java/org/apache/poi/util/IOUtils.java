@@ -601,7 +601,6 @@ public final class IOUtils {
         return Arrays.copyOfRange(src, offset, offset+realLength);
     }
 
-
     /**
      * Simple utility function to check that you haven't hit EOF
      * when reading a byte.
@@ -616,6 +615,28 @@ public final class IOUtils {
             throw new EOFException();
         }
         return b;
+    }
+
+    /**
+     * Creates a new file in the given parent directory with the given name.
+     * There is a check to prevent path traversal attacks. Only path traversal
+     * that would lead to a file outside the parent directory is regarded as an issue.
+     *
+     * @param parent The parent directory where the file should be created.
+     * @param name The name of the file to create.
+     * @return The created file.
+     * @throws IOException If path traversal is detected.
+     * @since POI 5.5.0
+     */
+    public static File newFile(final File parent, final String name) throws IOException {
+        final File file = new File(parent, name);
+        if (!file.toPath().toAbsolutePath().normalize().startsWith(
+                parent.toPath().toAbsolutePath().normalize()
+        )) {
+            throw new IOException(String.format(
+                    Locale.ROOT, "Failing due to path traversal in `%s`", name));
+        }
+        return file;
     }
 
     private static void throwRFE(long length, int maxLength) {

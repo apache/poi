@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     }
 
     public List<XSSFTextRun> getTextRuns(){
-        return _runs;
+        return Collections.unmodifiableList(_runs);
     }
 
     public Iterator<XSSFTextRun> iterator(){
@@ -268,7 +269,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      *
      * @return the color of bullet characters within a given paragraph.
      * A <code>null</code> value means to use the text font color.
-     * @since POI 5.4.2
+     * @since POI 5.5.0
      */
     public byte[] getBulletFontColorAsBytes() {
         ParagraphPropertyFetcher<byte[]> fetcher = new ParagraphPropertyFetcher<byte[]>(getLevel()) {
@@ -300,7 +301,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * Set the color to be used on bullet characters within a given paragraph.
      *
      * @param colorArray the bullet color (as byte array)
-     * @since POI 5.4.2
+     * @since POI 5.5.0
      */
     public void setBulletFontColor(byte[] colorArray) {
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();

@@ -109,11 +109,12 @@ public class ClassID implements Duplicatable, GenericRecord {
 
     /**
      * Gets the bytes making out the class ID. They are returned in correct order, i.e. big-endian.
+     * This no longer returns a reference to the internal byte array, but a copy of it.
      *
      * @return the bytes making out the class ID.
      */
     public byte[] getBytes() {
-        return bytes;
+        return bytes.clone();
     }
 
     /**
@@ -152,7 +153,7 @@ public class ClassID implements Duplicatable, GenericRecord {
         /* Read 8 bytes. */
         System.arraycopy(src, 8 + offset, bytes, 8, 8);
 
-        return bytes;
+        return bytes.clone();
     }
 
     /**

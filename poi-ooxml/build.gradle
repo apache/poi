@@ -58,11 +58,16 @@ dependencies {
     api project(':poi-ooxml-full')
     api project(path: ':poi-ooxml-full', configuration: 'archives')
 
+    // Can be very useful in local testing to comment out the 2 poi-ooxml-full lines above
+    // and uncomment the line below to use a pre-built version of poi-ooxml-full.
+    // Try to use the last release version of poi-ooxml-full. You might be unlucky if
+    // recent unreleased changes in poi-ooxml-full are needed.
+    // api "org.apache.poi:poi-ooxml-full:5.4.1"
+
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
     api 'com.github.virtuald:curvesapi:1.08'
-    api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
     api 'org.apache.commons:commons-collections4:4.5.0'
 
     signingImplementation "org.apache.santuario:xmlsec:${xmlSecVersion}"

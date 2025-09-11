@@ -1008,7 +1008,7 @@ public class DateUtil {
      * If disabled, the cache will not be used and each check will be performed independently.
      *
      * @param enable true to enable the cache, false to disable it (enabled, by default)
-     * @since POI 5.4.2
+     * @since POI 5.5.0
      */
     public static void enableThreadLocalCache(final boolean enable) {
         // enable thread-local cache for date format checking

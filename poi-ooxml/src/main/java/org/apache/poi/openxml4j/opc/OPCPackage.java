@@ -374,9 +374,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * @param opcComplianceFlags
      *            The level of OPC compliance to enforce when reading the package
      * @return A PackageBase object, else <b>null</b>.
+     * @throws IllegalArgumentException
+     *             If the specified file doesn't exist or is a directory.
      * @throws InvalidFormatException
-     *             If the specified file doesn't exist, and a parsing error
-     *             occur.
+     *             If a parsing error occurs.
      * @since POI 5.4.1
      */
     public static OPCPackage open(File file, PackageAccess access, OPCComplianceFlags opcComplianceFlags)
@@ -680,6 +681,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 
         // ensure all held resources are freed
         revert();
+
+        // ensure resources associated with package parts are closed
+        closeParts();
 
         // Clear
         this.contentTypeManager.clearAll();
@@ -1869,6 +1873,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * Has close been called already?
      */
     public abstract boolean isClosed();
+
+    protected void closeParts() {
+        partList.closeParts();
+    }
 
     @Override
     public String toString() {

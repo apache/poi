@@ -595,12 +595,15 @@ public final class ZipPackage extends OPCPackage {
                 }
             }
         }
+
+        // ensure resources associated with package parts are closed
+        closeParts();
     }
 
     /**
-     * Create a unique identifier to be use as a temp file name.
+     * Create a unique identifier to be used as a temp file name.
      *
-     * @return A unique identifier use to be use as a temp file name.
+     * @return A unique identifier to be used as a temp file name.
      */
     private synchronized String generateTempFileName(File directory) {
         File tmpFilename;

@@ -23,7 +23,7 @@ import org.apache.poi.util.Internal;
  * Helper class for number related operations.
  * <p>Note: This class is for internal POI usage only.</p>
  *
- * @since POI 5.4.2
+ * @since POI 5.5.0
  */
 @Internal
 public class NumberHelper {

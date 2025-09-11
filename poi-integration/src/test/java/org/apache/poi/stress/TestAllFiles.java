@@ -97,6 +97,12 @@ public class TestAllFiles {
         "poifs/60320-protected.xlsx",
         "poifs/protected_sha512.xlsx",
 
+        // stress docs
+        "document/deep-table-cell.docx",
+
+        // invalid files
+        "spreadsheet/bug69769.xlsx",
+
         // NOTE: Expected failures should usually be added in file "stress.xls" instead
         // of being listed here in order to also verify the expected exception details!
     };

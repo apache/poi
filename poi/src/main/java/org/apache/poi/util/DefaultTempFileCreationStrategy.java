@@ -71,7 +71,7 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
      * Creates the strategy allowing to set a custom directory for the temporary files.
      * <p>
      *     If you provide a non-null dir as input, it must be a directory (if it already exists).
-     *     Since POI 5.4.2, this is checked at construction time. In previous versions, it was checked
+     *     Since POI 5.5.0, this is checked at construction time. In previous versions, it was checked
      *     at the first call to {@link #createTempFile(String, String)} or {@link #createTempDirectory(String)}.
      * </p>
      *

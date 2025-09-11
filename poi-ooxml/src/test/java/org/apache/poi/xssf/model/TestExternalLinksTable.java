@@ -32,18 +32,18 @@ public final class TestExternalLinksTable {
     @Test
     void none() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("SampleSS.xlsx")) {
-            assertNotNull(wb.getExternalLinksTable());
-            assertEquals(0, wb.getExternalLinksTable().size());
+            assertNotNull(wb.getExternalLinksTables());
+            assertEquals(0, wb.getExternalLinksTables().size());
         }
     }
 
     @Test
     void basicRead() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx")) {
-            assertNotNull(wb.getExternalLinksTable());
-            assertEquals(1, wb.getExternalLinksTable().size());
+            assertNotNull(wb.getExternalLinksTables());
+            assertEquals(1, wb.getExternalLinksTables().size());
 
-            ExternalLinksTable links = wb.getExternalLinksTable().get(0);
+            ExternalLinksTable links = wb.getExternalLinksTable(0);
             assertEquals(3, links.getSheetNames().size());
             assertEquals(2, links.getDefinedNames().size());
 
@@ -70,13 +70,13 @@ public final class TestExternalLinksTable {
     @Test
     void basicReadWriteRead() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx")) {
-            Name name = wb.getExternalLinksTable().get(0).getDefinedNames().get(1);
+            Name name = wb.getExternalLinksTable(0).getDefinedNames().get(1);
             name.setNameName("Testing");
             name.setRefersToFormula("$A$1");
 
             XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-            assertEquals(1, wbBack.getExternalLinksTable().size());
-            ExternalLinksTable links = wbBack.getExternalLinksTable().get(0);
+            assertEquals(1, wbBack.getExternalLinksTables().size());
+            ExternalLinksTable links = wbBack.getExternalLinksTable(0);
 
             name = links.getDefinedNames().get(0);
             assertEquals("NR_Global_B2", name.getNameName());
@@ -95,11 +95,11 @@ public final class TestExternalLinksTable {
     @Test
     void readWithReferencesToTwoExternalBooks() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref2-56737.xlsx")) {
-            assertNotNull(wb.getExternalLinksTable());
-            assertEquals(2, wb.getExternalLinksTable().size());
+            assertNotNull(wb.getExternalLinksTables());
+            assertEquals(2, wb.getExternalLinksTables().size());
 
             // Check the first one, links to 56737.xlsx
-            ExternalLinksTable links = wb.getExternalLinksTable().get(0);
+            ExternalLinksTable links = wb.getExternalLinksTable(0);
             assertEquals("56737.xlsx", links.getLinkedFileName());
             assertEquals(3, links.getSheetNames().size());
             assertEquals(2, links.getDefinedNames().size());
@@ -122,7 +122,7 @@ public final class TestExternalLinksTable {
 
 
             // Check the second one, links to 56737.xls, slightly differently
-            links = wb.getExternalLinksTable().get(1);
+            links = wb.getExternalLinksTable(1);
             assertEquals("56737.xls", links.getLinkedFileName());
             assertEquals(2, links.getSheetNames().size());
             assertEquals(2, links.getDefinedNames().size());

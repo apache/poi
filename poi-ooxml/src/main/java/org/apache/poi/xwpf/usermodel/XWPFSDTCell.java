@@ -29,9 +29,11 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
  */
 public class XWPFSDTCell extends XWPFAbstractSDT implements ICell {
     private final XWPFSDTContentCell cellContent;
+    private final CTSdtCell sdtCell;
 
     public XWPFSDTCell(CTSdtCell sdtCell, XWPFTableRow xwpfTableRow, IBody part) {
         super(sdtCell.getSdtPr(), part);
+        this.sdtCell = sdtCell;
         cellContent = new XWPFSDTContentCell(sdtCell.getSdtContent(), xwpfTableRow, part);
     }
 
@@ -40,4 +42,12 @@ public class XWPFSDTCell extends XWPFAbstractSDT implements ICell {
         return cellContent;
     }
 
+    /**
+     * Return the underlying XML bean.
+     * @return the underlying CTSdtCell bean.
+     * @since POI 5.5.0
+     */
+    public CTSdtCell getCTSdtCell() {
+        return sdtCell;
+    }
 }

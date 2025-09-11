@@ -40,14 +40,19 @@ public class XWPFSDTContentCell implements ISDTContent {
 
     //private List<ICell> cells = new ArrayList<ICell>().
 
-    private String text = "";
+    private final CTSdtContentCell sdtContentCell;
+    private String text;
 
     public XWPFSDTContentCell(CTSdtContentCell sdtContentCell,
                               XWPFTableRow xwpfTableRow, IBody part) {
         super();
+        this.sdtContentCell = sdtContentCell;
+    }
+
+    private String extractTextFromSdtContentCell() {
         //sdtContentCell is allowed to be null:  minOccurs="0" maxOccurs="1"
         if (sdtContentCell == null) {
-            return;
+            return "";
         }
         StringBuilder sb = new StringBuilder();
         try (final XmlCursor cursor = sdtContentCell.newCursor()) {
@@ -87,7 +92,7 @@ public class XWPFSDTContentCell implements ISDTContent {
                     depth--;
                 }
             }
-            text = sb.toString();
+            return sb.toString();
         }
     }
 
@@ -103,12 +108,25 @@ public class XWPFSDTContentCell implements ISDTContent {
         return false;
     }
 
-
+    @Override
     public String getText() {
+        if (text == null) {
+            text = extractTextFromSdtContentCell();
+        }
         return text;
     }
 
+    @Override
     public String toString() {
         return getText();
+    }
+
+    /**
+     * Return the underlying XML bean.
+     * @return the underlying CTSdtContentCell bean.
+     * @since POI 5.5.0
+     */
+    public CTSdtContentCell getCTSdtContentCell() {
+        return sdtContentCell;
     }
 }

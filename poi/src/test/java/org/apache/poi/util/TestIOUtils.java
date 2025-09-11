@@ -41,6 +41,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EmptyFileException;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
@@ -573,6 +574,64 @@ final class TestIOUtils {
         byte[] ret = IOUtils.safelyClone(bytes, 0, Integer.MAX_VALUE, 100);
         assertNotNull(ret);
         assertEquals(4, ret.length);
+    }
+
+    @Test
+    void testNewFile() throws  IOException {
+        final File parent = TempFile.createTempDirectory("create-file-test");
+        try {
+            final String path0 = windowsPathIfNecessary("path/to/file.txt");
+            final File outFile = IOUtils.newFile(parent, path0);
+            assertTrue(outFile.getAbsolutePath().endsWith(path0),
+                    "unexpected path: " + outFile.getAbsolutePath());
+        } finally {
+            assertTrue(parent.delete());
+        }
+    }
+
+    @Test
+    void testAllowedPathTraversal() throws IOException {
+        final File parent = TempFile.createTempDirectory("path-traversal-test");
+        try {
+            // this path is ok because it doesn't walk out of the parent directory
+            final String path0 = windowsPathIfNecessary("a/b/c/../d/e/../../f/g/./h");
+            File outFile = IOUtils.newFile(parent, path0);
+            assertTrue(outFile.getAbsolutePath().endsWith(path0),
+                    "unexpected path: " + outFile.getAbsolutePath());
+        } finally {
+            assertTrue(parent.delete());
+        }
+    }
+
+    @Test
+    void testAllowedPathTraversal2() throws IOException {
+        final File parent = TempFile.createTempDirectory("path-traversal-test");
+        try {
+            // this path is ok because it doesn't walk out of the parent directory
+            // the initial slash is ignored and the generated path is relative to the parent directory
+            final String path0 = windowsPathIfNecessary("/a/b/c.txt");
+            File outFile = IOUtils.newFile(parent, path0);
+            assertTrue(outFile.getAbsolutePath().endsWith(path0),
+                    "unexpected path: " + outFile.getAbsolutePath());
+        } finally {
+            assertTrue(parent.delete());
+        }
+    }
+
+    @Test
+    void testDisallowedPathTraversal() throws  IOException {
+        final File parent = TempFile.createTempDirectory("path-traversal-test");
+        try {
+            final String path0 = windowsPathIfNecessary("../a/b/c.txt");
+            Assertions.assertThrows(IOException.class, () -> IOUtils.newFile(parent, path0));
+        } finally {
+            assertTrue(parent.delete());
+        }
+    }
+
+    private static String windowsPathIfNecessary(String path) {
+        // this is a workaround for the Windows file system which doesn't allow slashes in file names
+        return File.separatorChar == '/' ? path : path.replace('/', File.separatorChar);
     }
 
     /**

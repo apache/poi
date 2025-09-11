@@ -31,6 +31,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
@@ -210,7 +211,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @return a list of {@link XWPFParagraph}
      */
     public List<XWPFParagraph> getListParagraph() {
-        return paragraphs;
+        return Collections.unmodifiableList(paragraphs);
     }
 
     public List<XWPFPictureData> getAllPictures() {
@@ -235,7 +236,10 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
      * @throws InvalidFormatException If the format of the picture is not known.
      * @see #addPictureData(byte[], PictureType)
+     * @deprecated Use {@link #addPictureData(byte[], PictureType)} instead.
      */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public String addPictureData(byte[] pictureData, int format) throws InvalidFormatException {
         return addPictureData(pictureData, PictureType.findByOoxmlId(format));
     }

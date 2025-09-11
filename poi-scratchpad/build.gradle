@@ -34,7 +34,6 @@ sourceSets {
 dependencies {
     api project(':poi')
     api project(path:':poi', configuration: 'archives')
-    api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
     api "org.apache.commons:commons-math3:${commonsMathVersion}"
     api "commons-codec:commons-codec:${commonsCodecVersion}"
 

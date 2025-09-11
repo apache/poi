@@ -27,6 +27,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -307,7 +308,7 @@ public class XDGFShape extends XDGFSheet {
      */
     // -> May be null
     public List<XDGFShape> getShapes() {
-        return _shapes;
+        return _shapes == null ? null : Collections.unmodifiableList(_shapes);
     }
 
     // unique to this shape on the page?

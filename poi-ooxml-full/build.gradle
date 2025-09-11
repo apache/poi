@@ -1,5 +1,3 @@
-import java.util.regex.Pattern
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -17,9 +15,11 @@ import java.util.regex.Pattern
    limitations under the License.
 ==================================================================== */
 
+import java.util.regex.Pattern
+
 final String MODULE_NAME = 'org.apache.poi.ooxml.schemas'
-final String BEANS_SRC = "${buildDir}/generated-sources"
-final String BEANS_RES = "${buildDir}/generated-resources"
+final String BEANS_SRC = layout.buildDirectory.dir('generated-sources').get().asFile.absolutePath
+final String BEANS_RES = layout.buildDirectory.dir('generated-resources').get().asFile.absolutePath
 
 sourceSets {
     main {

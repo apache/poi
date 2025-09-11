@@ -69,7 +69,7 @@ which will be used to configure the chosen Forrest skin.
     <group-name>Apache Software Foundation</group-name>
     <group-description>The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem – supporting some of the most widely used and important software solutions powering today's Internet economy.</group-description>
     <group-url>https://www.apache.org</group-url>
-    <group-logo>images/group-logo.png</group-logo>
+    <group-logo>images/asflogo_horizontal_color.svg</group-logo>
     <!-- optional host logo (e.g. sourceforge logo)
            default skin: renders it at the bottom-left corner -->
     <host-url></host-url>

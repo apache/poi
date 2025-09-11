@@ -67,6 +67,7 @@ public class XWPFTableCell implements IBody, ICell {
     }
 
     private final CTTc ctTc;
+    private final XWPFDocument xwpfDocument;
     protected List<XWPFParagraph> paragraphs;
     protected List<XWPFTable> tables;
     protected List<IBodyElement> bodyElements;
@@ -78,9 +79,16 @@ public class XWPFTableCell implements IBody, ICell {
      * If a table cell does not include at least one block-level element, then this document shall be considered corrupt
      */
     public XWPFTableCell(CTTc cell, XWPFTableRow tableRow, IBody part) {
+        if (cell == null) {
+            throw new IllegalArgumentException("CTTc cannot be null");
+        }
+        if (tableRow == null) {
+            throw new IllegalArgumentException("tableRow cannot be null");
+        }
         this.ctTc = cell;
         this.part = part;
         this.tableRow = tableRow;
+        this.xwpfDocument = part == null ? null : part.getXWPFDocument();
 
         bodyElements = new ArrayList<>();
         paragraphs = new ArrayList<>();
@@ -524,7 +532,27 @@ public class XWPFTableCell implements IBody, ICell {
 
     @Override
     public XWPFDocument getXWPFDocument() {
-        return part.getXWPFDocument();
+        if (xwpfDocument != null) {
+            return xwpfDocument;
+        } else if (part instanceof XWPFTableCell) {
+            return getCellDocument((XWPFTableCell) part, 0);
+        } else if (part != null) {
+            return part.getXWPFDocument();
+        }
+        return null;
+    }
+
+    private static final int MAX_RECURSION_DEPTH = 1000;
+
+    private static XWPFDocument getCellDocument(XWPFTableCell cell, final int depth) {
+        if (depth > MAX_RECURSION_DEPTH) {
+            throw new IllegalStateException("Recursion depth exceeded while trying to get XWPFDocument from XWPFTableCell");
+        }
+        if (cell.part instanceof XWPFTableCell) {
+            return getCellDocument((XWPFTableCell) cell.part, depth + 1);
+        } else {
+            return cell.part.getXWPFDocument();
+        }
     }
 
     // Create a map from this XWPF-level enum to the STVerticalJc.Enum values

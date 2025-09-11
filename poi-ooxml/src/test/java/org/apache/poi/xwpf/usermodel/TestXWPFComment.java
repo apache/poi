@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
@@ -100,7 +101,7 @@ class TestXWPFComment {
             XWPFParagraph paragraph = comment.createParagraph();
             XWPFRun r = paragraph.createRun();
             r.addPicture(new ByteArrayInputStream(new byte[0]),
-                    Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
+                    PictureType.JPEG, "test.jpg", 21, 32);
 
             assertEquals(1, comments.getAllPictures().size());
             assertEquals(1, doc.getAllPackagePictures().size());

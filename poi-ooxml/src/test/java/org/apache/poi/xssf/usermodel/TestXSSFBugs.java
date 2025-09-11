@@ -3910,6 +3910,48 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
     }
 
+    @Test
+    void testBug69769() throws Exception {
+        final int expectedCount = 3;
+        try (XSSFWorkbook wb = openSampleWorkbook("bug69769.xlsx")) {
+            SharedStringsTable sst = wb.getSharedStringSource();
+            assertNotNull(sst);
+            assertEquals(expectedCount, sst.getCount());
+            for (int i = 0; i < expectedCount; i++) {
+                assertNotNull(sst.getItemAt(i));
+            }
+            XSSFSheet ws = wb.getSheetAt(0);
+            int nRowCount = ws.getLastRowNum();
+            DataFormatter df = new DataFormatter();
+            for (int r = 0; r <= nRowCount; r++) {
+                XSSFRow row = ws.getRow(r);
+                if (row != null) {
+                    for (Cell cell : row) {
+                        String cellValue = df.formatCellValue(cell);
+                        assertNotNull(cellValue, "Cell value should not be null");
+                        if (cell.getRowIndex() == 1 && cell.getColumnIndex() == 1) {
+                            assertEquals("Mustermann", cellValue);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void testBug69812() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("bug69812.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFRow row = sheet.getRow(0);
+            XSSFCell cellA1 = row.getCell(0);
+            DataFormatter dataFormatter = new DataFormatter();
+            String cellValue = dataFormatter.formatCellValue(cellA1);
+            // https://bz.apache.org/bugzilla/show_bug.cgi?id=69812: user says this should be "25,386"
+            assertEquals("25,396", cellValue);
+            assertEquals("#,##0,,", cellA1.getCellStyle().getDataFormatString());
+        }
+    }
+
     private static void readByCommonsCompress(File temp_excel_poi) throws IOException {
         /* read by commons-compress*/
         try (ZipFile zipFile = ZipFile.builder().setFile(temp_excel_poi).get()) {

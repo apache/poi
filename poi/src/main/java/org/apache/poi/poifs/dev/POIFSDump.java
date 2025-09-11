@@ -71,7 +71,7 @@ public final class POIFSDump {
                 DirectoryEntry root = fs.getRoot();
                 String filenameWithoutPath = new File(filename).getName();
                 File dumpDir = new File(filenameWithoutPath + "_dump");
-                File file = new File(dumpDir, root.getName());
+                File file = IOUtils.newFile(dumpDir, root.getName());
                 if (!file.exists() && !file.mkdirs()) {
                     throw new IOException("Could not create directory " + file);
                 }
@@ -104,13 +104,14 @@ public final class POIFSDump {
                 try (DocumentInputStream is = new DocumentInputStream(node)) {
                    bytes = IOUtils.toByteArray(is);
                 }
-                try (OutputStream out = Files.newOutputStream(new File(parent, node.getName().trim()).toPath())) {
+                try (OutputStream out = Files.newOutputStream(
+                        IOUtils.newFile(parent, node.getName().trim()).toPath())) {
                     out.write(bytes);
                 }
             } else if (entry instanceof DirectoryEntry){
                 DirectoryEntry dir = (DirectoryEntry)entry;
-                File file = new File(parent, entry.getName());
-                if(!file.exists() && !file.mkdirs()) {
+                File file = IOUtils.newFile(parent, entry.getName());
+                if (!file.exists() && !file.mkdirs()) {
                     throw new IOException("Could not create directory " + file);
                 }
                 dump(dir, file);
@@ -119,8 +120,9 @@ public final class POIFSDump {
             }
         }
     }
+
     public static void dump(POIFSFileSystem fs, int startBlock, String name, File parent) throws IOException {
-        File file = new File(parent, name);
+        File file = IOUtils.newFile(parent, name);
         try (OutputStream out = Files.newOutputStream(file.toPath())) {
             POIFSStream stream = new POIFSStream(fs, startBlock);
 

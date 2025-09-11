@@ -26,8 +26,10 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.apache.poi.ss.format.CellFormatter.quote;
 
@@ -50,28 +52,12 @@ public class CellFormatPart {
     private static final Logger LOG = PoiLogManager.getLogger(CellFormatPart.class);
 
     static final Map<String, Color> NAMED_COLORS;
+    static final List<Color> INDEXED_COLORS;
 
     private final Color color;
     private final CellFormatCondition condition;
     private final CellFormatter format;
     private final CellFormatType type;
-
-    static {
-        NAMED_COLORS = new TreeMap<>(
-                String.CASE_INSENSITIVE_ORDER);
-
-        for (HSSFColor.HSSFColorPredefined color : HSSFColor.HSSFColorPredefined.values()) {
-            String name = color.name();
-            short[] rgb = color.getTriplet();
-            Color c = new Color(rgb[0], rgb[1], rgb[2]);
-            NAMED_COLORS.put(name, c);
-            if (name.indexOf('_') > 0)
-                NAMED_COLORS.put(name.replace('_', ' '), c);
-            if (name.indexOf("_PERCENT") > 0)
-                NAMED_COLORS.put(name.replace("_PERCENT", "%").replace('_',
-                        ' '), c);
-        }
-    }
 
     /** Pattern for the color part of a cell format part. */
     public static final Pattern COLOR_PAT;
@@ -103,6 +89,50 @@ public class CellFormatPart {
     public static final int SPECIFICATION_GROUP;
 
     static {
+    	// Build indexed color list, in order, from 1 to 56
+        Integer[] indexedColors = new Integer[] {
+            0x000000, 0xFFFFFF, 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF,
+            0x800000, 0x008000, 0x000080, 0x808000, 0x800080, 0x008080, 0xC0C0C0, 0x808080,
+            0x9999FF, 0x993366, 0xFFFFCC, 0xCCFFFF, 0x660066, 0xFF8080, 0x0066CC, 0xCCCCFF,
+            0x000080, 0xFF00FF, 0xFFFF00, 0x00FFFF, 0x800080, 0x800000, 0x008080, 0x0000FF,
+            0x00CCFF, 0xCCFFFF, 0xCCFFCC, 0xFFFF99, 0x99CCFF, 0xFF99CC, 0xCC99FF, 0xFFCC99,
+            0x3366FF, 0x33CCCC, 0x99CC00, 0xFFCC00, 0xFF9900, 0xFF6600, 0x666699, 0x969696,
+            0x003366, 0x339966, 0x003300, 0x333300, 0x993300, 0x993366, 0x333399, 0x333333
+    	};
+        INDEXED_COLORS = Collections.unmodifiableList(
+            Arrays.asList(indexedColors)
+            .stream().map(Color::new)
+            .collect(Collectors.toList()));
+
+        // Build initial named color map
+        Map<String, Color> namedColors = new TreeMap<>(
+                String.CASE_INSENSITIVE_ORDER);
+
+        // Retain compatibility with original implementation
+        for (HSSFColor.HSSFColorPredefined color : HSSFColor.HSSFColorPredefined.values()) {
+            String name = color.name();
+            short[] rgb = color.getTriplet();
+            Color c = new Color(rgb[0], rgb[1], rgb[2]);
+            namedColors.put(name, c);
+            if (name.indexOf('_') > 0)
+                namedColors.put(name.replace('_', ' '), c);
+            if (name.indexOf("_PERCENT") > 0)
+                namedColors.put(name.replace("_PERCENT", "%").replace('_',
+                        ' '), c);
+        }
+
+        // Add missing color values and replace incorrectly defined standard colors 
+        // used in Excel, Google Sheets, etc. The first eight indexed colors correspond
+        // exactly to named colors.
+        namedColors.put("black",   INDEXED_COLORS.get(0));
+        namedColors.put("white",   INDEXED_COLORS.get(1));
+        namedColors.put("red",     INDEXED_COLORS.get(2));
+        namedColors.put("green",   INDEXED_COLORS.get(3));
+        namedColors.put("blue",    INDEXED_COLORS.get(4));
+        namedColors.put("yellow",  INDEXED_COLORS.get(5));
+        namedColors.put("magenta", INDEXED_COLORS.get(6));
+        namedColors.put("cyan",    INDEXED_COLORS.get(7));
+
         // A condition specification
         String condition = "([<>=]=?|!=|<>)    # The operator\n" +
                 "  \\s*(-?([0-9]+(?:\\.[0-9]*)?)|(\\.[0-9]*))\\s*  # The constant to test against\n";
@@ -110,8 +140,16 @@ public class CellFormatPart {
         // A currency symbol / string, in a specific locale
         String currency = "(\\[\\$.{0,3}(-[0-9a-f]{3,4})?])";
 
-        String color =
-                "\\[(black|blue|cyan|green|magenta|red|white|yellow|color [0-9]+)]";
+        // Build the color code matching expression. We should match any named color
+        // in the set as well as a string in the form of "Color 8" or "Color 15".
+        String color = "\\[(";
+        for (String key : namedColors.keySet()) {
+            // Escape special characters in the color name
+            color += key.replaceAll("([^a-zA-Z0-9])", "\\\\$1") + "|";
+        }
+        // Match the indexed color table (accept both e.g. COLOR2 and COLOR 2)
+        // Both formats are accepted as input in other products
+        color += "color\\s*[0-9]+)\\]";
 
         // A number specification
         // Note: careful that in something like ##, that the trailing comma is not caught up in the integer part
@@ -159,6 +197,17 @@ public class CellFormatPart {
         CONDITION_OPERATOR_GROUP = findGroup(FORMAT_PAT, "[>=1]@", ">=");
         CONDITION_VALUE_GROUP = findGroup(FORMAT_PAT, "[>=1]@", "1");
         SPECIFICATION_GROUP = findGroup(FORMAT_PAT, "[Blue][>1]\\a ?", "\\a ?");
+
+        // Once patterns have been compiled, add indexed colors to
+        // namedColors so they can be easily picked up by getColor().
+        for (int i = 0; i < INDEXED_COLORS.size(); ++i) {
+            namedColors.put("color" + (i + 1), INDEXED_COLORS.get(i));
+            // Also support space between "color" and number.
+            namedColors.put("color " + (i + 1), INDEXED_COLORS.get(i));
+        }
+
+        // Store namedColors as NAMED_COLORS
+        NAMED_COLORS = Collections.unmodifiableMap(namedColors);
     }
 
     interface PartHandler {
@@ -250,12 +299,23 @@ public class CellFormatPart {
      * @return The color specification or {@code null}.
      */
     private static Color getColor(Matcher m) {
-        String cdesc = m.group(COLOR_GROUP);
-        if (cdesc == null || cdesc.isEmpty())
+        return getColor(m.group(COLOR_GROUP));
+    }
+    
+    /**
+     * Get the Color object matching a color name, or {@code null} if the
+     * color name is not recognized.
+     * 
+     * @param cname Color name, such as "red" or "Color 15"
+     * 
+     * @return a Color object or {@code null}.
+     */
+    static Color getColor(String cname) {
+        if (cname == null || cname.isEmpty())
             return null;
-        Color c = NAMED_COLORS.get(cdesc);
+        Color c = NAMED_COLORS.get(cname);
         if (c == null) {
-            LOG.warn("Unknown color: {}", quote(cdesc));
+            LOG.warn("Unknown color: {}", quote(cname));
         }
         return c;
     }
