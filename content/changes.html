@@ -30,7 +30,7 @@
     |start group logo
     +-->
 <div class="grouplogo">
-<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="images/asflogo_horizontal_color.svg" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
 </div>
 <!--+
     |end group logo
@@ -218,9 +218,9 @@ document.write("Last Published: " + document.lastModified);
 </div>
 
     
-<a name="5.4.2"></a>
+<a name="5.5.0"></a>
 <h2 class="boxed">Version
-                5.4.2 (2025-??-??)
+                5.5.0 (2025-??-??)
             </h2>
 <div class="section">
 <a name="Summary"></a>
@@ -229,11 +229,15 @@ document.write("Last Published: " + document.lastModified);
             
 <li>Upgrade batik dependency to 1.19</li>
             
-<li>Upgrade bouncycastle dependency to 1.80</li>
+<li>Upgrade bouncycastle dependency to 1.81</li>
+            
+<li>Upgrade commons-codec dependency to 1.19.0</li>
             
 <li>Upgrade commons-collections4 dependency to 4.5.0</li>
             
-<li>Upgrade commons-io dependency to 2.19.0</li>
+<li>Upgrade commons-compress dependency to 1.28.0</li>
+            
+<li>Upgrade commons-io dependency to 2.20.0</li>
             
 <li>Upgrade pdfbox dependency to 3.0.5</li>
             
@@ -283,11 +287,23 @@ document.write("Last Published: " + document.lastModified);
 </tr>
             
 <tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=69744">69744</a></td><td>XWPF</td><td>Support all possible alignment values for docx tables</td>
+</tr>
+            
+<tr class="action">
 <td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/770">github-770</a></td><td>XSLF</td><td>Issue in setBulletStyle in XSLFTextParagraph</td>
 </tr>
             
 <tr class="action">
 <td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/803">github-803</a></td><td>SS_Common</td><td>Add support for SHEET function</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/804">github-804</a></td><td>XWPF</td><td>Add getters and setters for XWPFTable indentation</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/864">github-864</a></td><td>XDDF</td><td>Remove deprecated method XDDFChartData getSeries()</td>
 </tr>
         
 </tbody>
@@ -300,7 +316,7 @@ document.write("Last Published: " + document.lastModified);
                 5.4.1 (2025-04-06)
             </h2>
 <div class="section">
-<a name="Summary-N100DC"></a>
+<a name="Summary-N10112"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -315,7 +331,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade graphics2d dependency to 3.0.3</li>
         
 </ul>
-<a name="Changes-N100F2"></a>
+<a name="Changes-N10128"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -401,7 +417,7 @@ document.write("Last Published: " + document.lastModified);
                 5.4.0 (2025-01-08)
             </h2>
 <div class="section">
-<a name="Summary-N10203"></a>
+<a name="Summary-N10239"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -430,7 +446,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade JaCoCo code-coverage tooling to 0.8.12</li>
         
 </ul>
-<a name="Changes-N1022E"></a>
+<a name="Changes-N10264"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -512,7 +528,7 @@ document.write("Last Published: " + document.lastModified);
                 5.3.0 (2024-07-02)
             </h2>
 <div class="section">
-<a name="Summary-N1032F"></a>
+<a name="Summary-N10365"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -533,7 +549,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade xmlbeans dependency to 5.2.1</li>
         
 </ul>
-<a name="Changes-N1034E"></a>
+<a name="Changes-N10384"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -603,7 +619,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.5 (2023-11-25)
             </h2>
 <div class="section">
-<a name="Summary-N1041F"></a>
+<a name="Summary-N10455"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -620,7 +636,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade xmlbeans dependency to 5.2.0</li>
         
 </ul>
-<a name="Changes-N10438"></a>
+<a name="Changes-N1046E"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -674,7 +690,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.4 (2023-09-28)
             </h2>
 <div class="section">
-<a name="Summary-N104C9"></a>
+<a name="Summary-N104FF"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -701,7 +717,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Use jdk18on versions of bouncycastle jars (v1.76)</li>
         
 </ul>
-<a name="Changes-N104F1"></a>
+<a name="Changes-N10527"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -847,7 +863,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.3 (2022-09-16)
             </h2>
 <div class="section">
-<a name="Summary-N106F2"></a>
+<a name="Summary-N10728"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -866,7 +882,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Avoid some more possible overly large memory allocations on certain input documents</li>
         
 </ul>
-<a name="Changes-N1070E"></a>
+<a name="Changes-N10744"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1068,14 +1084,14 @@ document.write("Last Published: " + document.lastModified);
                 5.2.2 (2022-03-19)
             </h2>
 <div class="section">
-<a name="Summary-N109EF"></a>
+<a name="Summary-N10A25"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
 <li>Upgrade log4j-api dependency to 2.17.2 and graphics2d dependency to 0.35 as well as some test dependencies</li>
         
 </ul>
-<a name="Changes-N109F9"></a>
+<a name="Changes-N10A2F"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1129,14 +1145,14 @@ document.write("Last Published: " + document.lastModified);
                 5.2.1 (2022-03-03)
             </h2>
 <div class="section">
-<a name="Summary-N10A8A"></a>
+<a name="Summary-N10AC0"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
 <li>Upgrade curvesapi dependency to 1.07</li>
         
 </ul>
-<a name="Changes-N10A94"></a>
+<a name="Changes-N10ACA"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1210,7 +1226,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.0 (2022-01-14)
             </h2>
 <div class="section">
-<a name="Summary-N10B75"></a>
+<a name="Summary-N10BAB"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1223,7 +1239,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade PDFBox Graphics2d dependency to 0.34 and PDFBox dependency to 2.0.25</li>
         
 </ul>
-<a name="Changes-N10B88"></a>
+<a name="Changes-N10BBE"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1317,7 +1333,7 @@ document.write("Last Published: " + document.lastModified);
                 5.1.0 (2021-11-01)
             </h2>
 <div class="section">
-<a name="Summary-N10CB9"></a>
+<a name="Summary-N10CEF"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1344,7 +1360,7 @@ document.write("Last Published: " + document.lastModified);
 <li>By default, no DTDs will be accepted in XML files. This can be relaxed by setting POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(false).</li>
         
 </ul>
-<a name="Changes-N10CE1"></a>
+<a name="Changes-N10D17"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1546,7 +1562,7 @@ document.write("Last Published: " + document.lastModified);
                 5.0.0 (2021-01-20)
             </h2>
 <div class="section">
-<a name="Summary-N10FC2"></a>
+<a name="Summary-N10FF8"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1573,7 +1589,7 @@ document.write("Last Published: " + document.lastModified);
 <li>new experimental DeferredSXSSFWorkbook which creates fewer temp files by lazily generating rows (see DeferredGeneration in poi-examples)</li>
         
 </ul>
-<a name="Changes-N10FE7"></a>
+<a name="Changes-N1101D"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1883,7 +1899,7 @@ document.write("Last Published: " + document.lastModified);
                 4.1.2 (2020-02-17)
             </h2>
 <div class="section">
-<a name="Summary-N1146F"></a>
+<a name="Summary-N114A5"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1898,7 +1914,7 @@ document.write("Last Published: " + document.lastModified);
 <li>updated dependencies to Bouncycastle 1.64</li>
         
 </ul>
-<a name="Changes-N11485"></a>
+<a name="Changes-N114BB"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2032,7 +2048,7 @@ document.write("Last Published: " + document.lastModified);
                 4.1.1 (2019-10-20)
             </h2>
 <div class="section">
-<a name="Summary-N11650"></a>
+<a name="Summary-N11686"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2051,7 +2067,7 @@ document.write("Last Published: " + document.lastModified);
 <li>CVE-2019-12415 - XML External Entity (XXE) Processing in Apache POI</li>
         
 </ul>
-<a name="Changes-N1166C"></a>
+<a name="Changes-N116A2"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2201,7 +2217,7 @@ document.write("Last Published: " + document.lastModified);
                 4.1.0 (2019-04-09)
             </h2>
 <div class="section">
-<a name="Summary-N11874"></a>
+<a name="Summary-N118AA"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2226,7 +2242,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade to XMLSec 2.1.2</li>
         
 </ul>
-<a name="Changes-N11899"></a>
+<a name="Changes-N118CF"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2400,7 +2416,7 @@ document.write("Last Published: " + document.lastModified);
                 4.0.1 (2018-12-03)
             </h2>
 <div class="section">
-<a name="Summary-N11B0A"></a>
+<a name="Summary-N11B40"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2411,7 +2427,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade to XMLBeans 3.0.2</li>
         
 </ul>
-<a name="Changes-N11B1A"></a>
+<a name="Changes-N11B50"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2569,7 +2585,7 @@ document.write("Last Published: " + document.lastModified);
                 4.0.0 (2018-09-07)
             </h2>
 <div class="section">
-<a name="Summary-N11D4B"></a>
+<a name="Summary-N11D81"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2578,7 +2594,7 @@ document.write("Last Published: " + document.lastModified);
 <li>New OOXML schema (1.4) necessary, because of incompatible XMLBeans loading not anymore through POIXMLTypeLoader</li>
         
 </ul>
-<a name="Changes-N11D58"></a>
+<a name="Changes-N11D8E"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
