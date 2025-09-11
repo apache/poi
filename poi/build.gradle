@@ -41,7 +41,6 @@ dependencies {
     api "org.apache.commons:commons-math3:${commonsMathVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
     api 'com.zaxxer:SparseBitSet:1.3'
-    api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
 
     testImplementation 'org.reflections:reflections:0.10.2'
     testImplementation 'org.apache.ant:ant:1.10.15'
