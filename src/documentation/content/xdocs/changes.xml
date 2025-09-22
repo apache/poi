@@ -73,7 +73,7 @@
     <release version="5.5.0" date="2025-??-??">
         <summary>
             <summary-item>Upgrade batik dependency to 1.19</summary-item>
-            <summary-item>Upgrade bouncycastle dependency to 1.81</summary-item>
+            <summary-item>Upgrade bouncycastle dependency to 1.82</summary-item>
             <summary-item>Upgrade commons-codec dependency to 1.19.0</summary-item>
             <summary-item>Upgrade commons-collections4 dependency to 4.5.0</summary-item>
             <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
