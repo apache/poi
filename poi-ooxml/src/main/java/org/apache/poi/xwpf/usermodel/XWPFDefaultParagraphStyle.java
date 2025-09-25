@@ -32,7 +32,12 @@ public class XWPFDefaultParagraphStyle {
         this.ppr = ppr;
     }
 
-    protected CTPPrGeneral getPPr() {
+    /**
+     * Return the underlying XML bean.
+     * @return underlying CTPPrGeneral bean.
+     * @since POI 5.5.0
+     */
+    public CTPPrGeneral getPPr() {
         return ppr;
     }
 
