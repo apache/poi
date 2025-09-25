@@ -140,7 +140,7 @@ final class TestFileSystemBugs {
         EntryUtils.copyNodes(root, dest);
 
         // Re-load
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         root.getFileSystem().writeFilesystem(baos);
 
         POIFSFileSystem read = new POIFSFileSystem(baos.toInputStream());

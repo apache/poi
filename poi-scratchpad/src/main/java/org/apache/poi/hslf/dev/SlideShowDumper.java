@@ -152,7 +152,7 @@ public final class SlideShowDumper {
         // If it has a length, depending on its type it may have children or data
         // If it has children, these will follow straight away
         //      <xx xx yy yy zz zz zz zz <xx xx yy yy zz zz zz zz>>
-        // If it has data, this will come straigh after, and run for the length
+        // If it has data, this will come straight after, and run for the length
         //      <xx xx yy yy zz zz zz zz dd dd dd dd dd dd dd>
         // All lengths given exclude the 8 byte record header
         // (Data records are known as Atoms)
@@ -194,6 +194,11 @@ public final class SlideShowDumper {
             pos += 8;
             out.printf(Locale.ROOT, ind + "That's a %2$s%n", "", recordName);
 
+            if (len < 0 /*|| len > Integer.MAX_VALUE*/) {
+                // stop processing of invalid header data
+                continue;
+            }
+
             // Now check if it's a container or not
             int container = opt & 0x0f;
 
@@ -219,7 +224,7 @@ public final class SlideShowDumper {
                 }
             }
 
-            pos += (int) len;
+            pos += (int) Math.min(len, Integer.MAX_VALUE);
         }
     }
 
@@ -252,7 +257,7 @@ public final class SlideShowDumper {
 
         // Check for corrupt / lying ones
         if (recordLen != 8 && (recordLen != (atomLen + 8))) {
-            out.printf(Locale.ROOT, ind + "** Atom length of $2d ($3d) doesn't match record length of %4d%n", "", atomLen, atomLen + 8, recordLen);
+            out.printf(Locale.ROOT, ind + "** Atom length of %2d (%3d) doesn't match record length of %4d%n", atomLen, atomLen + 8, recordLen);
         }
 
         // Print the record's details

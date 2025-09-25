@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
@@ -48,7 +48,9 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
     public static final short SP_CONTAINER     = EscherRecordTypes.SP_CONTAINER.typeID;
     public static final short SOLVER_CONTAINER = EscherRecordTypes.SOLVER_CONTAINER.typeID;
 
-    private static final Logger LOGGER = LogManager.getLogger(EscherContainerRecord.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(EscherContainerRecord.class);
+
+    private static final int MAX_NESTED_CHILD_NODES = 1000;
 
     /**
      * in case if document contains any charts we have such document structure:
@@ -86,12 +88,29 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
 
     @Override
     public int fillFields(byte[] data, int pOffset, EscherRecordFactory recordFactory) {
+        return fillFields(data, pOffset, recordFactory, 0);
+    }
+
+    @Override
+    protected int fillFields(byte[] data, int pOffset, EscherRecordFactory recordFactory, int nesting) {
+        if (nesting > MAX_NESTED_CHILD_NODES) {
+            throw new IllegalStateException("Had more than the limit of " + MAX_NESTED_CHILD_NODES + " nested child notes");
+        }
         int bytesRemaining = readHeader(data, pOffset);
         int bytesWritten = 8;
         int offset = pOffset + 8;
         while (bytesRemaining > 0 && offset < data.length) {
             EscherRecord child = recordFactory.createRecord(data, offset);
-            int childBytesWritten = child.fillFields(data, offset, recordFactory);
+
+            final int childBytesWritten;
+            if (child instanceof EscherContainerRecord) {
+                childBytesWritten = ((EscherContainerRecord)child).fillFields(data, offset, recordFactory, nesting + 1);
+            } else if (child instanceof UnknownEscherRecord) {
+                childBytesWritten = ((UnknownEscherRecord)child).fillFields(data, offset, recordFactory, nesting + 1);
+            } else {
+                childBytesWritten = child.fillFields(data, offset, recordFactory, nesting + 1);
+            }
+
             bytesWritten += childBytesWritten;
             offset += childBytesWritten;
             bytesRemaining -= childBytesWritten;
@@ -189,6 +208,12 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
         if (childRecords == _childRecords) {
             throw new IllegalStateException("Child records private data member has escaped");
         }
+
+        if (childRecords.size() > MAX_NUMBER_OF_CHILDREN) {
+            throw new IllegalStateException("Cannot add more than " + MAX_NUMBER_OF_CHILDREN +
+                    " child records, you can use 'EscherRecord.setMaxNumberOfChildren()' to increase the allow size");
+        }
+
         _childRecords.clear();
         _childRecords.addAll(childRecords);
     }
@@ -242,6 +267,11 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
      * @param record the record to be added
      */
     public void addChildRecord(EscherRecord record) {
+        if (_childRecords.size() >= MAX_NUMBER_OF_CHILDREN) {
+            throw new IllegalStateException("Cannot add more than " + MAX_NUMBER_OF_CHILDREN +
+                    " child records, you can use 'EscherRecord.setMaxNumberOfChildren()' to increase the allow size");
+        }
+
         _childRecords.add(record);
     }
 

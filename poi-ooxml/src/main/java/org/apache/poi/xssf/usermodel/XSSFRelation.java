@@ -94,6 +94,11 @@ public final class XSSFRelation extends POIXMLRelation {
         null, XSSFChartSheet::new
     );
 
+    public static final XSSFRelation CHART_EX = new XSSFRelation(
+        "application/vnd.ms-office.chartex+xml",
+        "http://schemas.microsoft.com/office/2014/relationships/chartEx",
+        "/xl/charts/chartEx#.xml");
+
     public static final XSSFRelation SHARED_STRINGS = new XSSFRelation(
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml",
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings",
@@ -286,15 +291,27 @@ public final class XSSFRelation extends POIXMLRelation {
     );
 
     public static final XSSFRelation MACRO_SHEET_BIN = new XSSFRelation(
-        null,//TODO: figure out what this should be?
+        "application/vnd.ms-excel.macrosheet",
         "http://schemas.microsoft.com/office/2006/relationships/xlMacrosheet",
         "/xl/macroSheets/sheet#.bin"
     );
 
+    public static final XSSFRelation MACRO_SHEET_XML = new XSSFRelation(
+            "application/vnd.ms-excel.macrosheet+xml",
+            "http://schemas.microsoft.com/office/2006/relationships/xlMacrosheet",
+            "/xl/macroSheets/sheet#.xml"
+    );
+
     public static final XSSFRelation INTL_MACRO_SHEET_BIN = new XSSFRelation(
-        null,//TODO: figure out what this should be?
+        "application/vnd.ms-excel.intlmacrosheet",
         "http://schemas.microsoft.com/office/2006/relationships/xlIntlMacrosheet",
         "/xl/macroSheets/sheet#.bin"
+    );
+
+    public static final XSSFRelation INTL_MACRO_SHEET_XML = new XSSFRelation(
+            "application/vnd.ms-excel.intlmacrosheet+xml",
+            "http://schemas.microsoft.com/office/2006/relationships/xlIntlMacrosheet",
+            "/xl/macroSheets/sheet#.xml"
     );
 
     public static final XSSFRelation DIALOG_SHEET_BIN = new XSSFRelation(

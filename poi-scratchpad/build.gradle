@@ -24,21 +24,16 @@ configurations {
 
 sourceSets {
     main {
-        if (jdkVersion > 8) {
-            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
-        }
+        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
     }
     test {
-        if (jdkVersion > 8) {
-            output.dir(TEST9_OUT, builtBy: 'cacheTest9')
-        }
+        output.dir(TEST9_OUT, builtBy: 'compileTest9')
     }
 }
 
 dependencies {
     api project(':poi')
     api project(path:':poi', configuration: 'archives')
-    api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
     api "org.apache.commons:commons-math3:${commonsMathVersion}"
     api "commons-codec:commons-codec:${commonsCodecVersion}"
 
@@ -46,10 +41,6 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
-
-    if (SAXON_TEST) {
-        testRuntimeOnly "net.sf.saxon:Saxon-HE:${saxonVersion}"
-    }
 
     javadocs project(':poi')
     javadocs project(':poi-ooxml')
@@ -61,69 +52,43 @@ final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
 final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
 
-task compileJava9(type: JavaCompile) {
+tasks.register('compileJava9', JavaCompile) {
     dependsOn 'compileJava', ':poi:jar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(jdkVersion)
-        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
     }
+    sourceCompatibility = 1.9
+    targetCompatibility = 1.9
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
     options.compilerArgs = [
-        '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
-        '--module-path', files(MAIN_MODULE_PATH).asPath
+            '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
+            '--module-path', files(MAIN_MODULE_PATH).asPath
     ]
-
-    onlyIf {
-        jdkVersion > 8
-    }
 }
 
-task cacheJava9(type: Copy) {
-    dependsOn 'compileJava9'
-
-    from(file(JAVA9_OUT + VERSIONS9))
-    into(JAVA9_SRC)
-}
-
-task compileTest9(type: JavaCompile) {
+tasks.register('compileTest9', JavaCompile) {
     dependsOn 'compileTestJava', ':poi:jar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(jdkVersion)
-        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
     }
+    sourceCompatibility = 1.9
+    targetCompatibility = 1.9
     destinationDirectory = file(TEST9_OUT + VERSIONS9)
     source = file(TEST9_SRC)
     options.compilerArgs = [
-        '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
-        '--module-path', files(TEST_MODULE_PATH).asPath
+            '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
+            '--module-path', files(TEST_MODULE_PATH).asPath
     ]
     classpath = files()
-
-    onlyIf {
-        jdkVersion > 8
-    }
 }
 
-
-task cacheTest9(type: Copy) {
-    dependsOn 'compileTest9'
-
-    from(file(TEST9_OUT + VERSIONS9))
-    into(TEST9_SRC)
-}
 
 jar {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
-
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from JAVA9_SRC include '*.class'
-        }
-    }
 
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
@@ -135,15 +100,9 @@ jar {
 task testJar(type: Jar, dependsOn: testClasses) {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
 
-    classifier 'tests'
+    setArchiveClassifier 'tests'
     // ignore second module-info.class from main
-    duplicatesStrategy = 'exclude'
-
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from TEST9_SRC include '*.class'
-        }
-    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from sourceSets.test.output + sourceSets.main.output
 
@@ -206,4 +165,23 @@ publishing {
             }
         }
     }
+}
+
+cyclonedxBom {
+    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
+    includeConfigs = ["runtimeClasspath"]
+    // skipConfigs is a list of configuration names to exclude when generating the BOM
+    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
+    // Specified the type of project being built. Defaults to 'library'
+    projectType = "library"
+    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
+    schemaVersion = "1.4"
+    // Boms destination directory (defaults to build/reports)
+    destination = file("build/reports")
+    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
+    outputName = "poi-scratchpad-${project.version}.bom"
+    // The file format generated, can be xml, json or all for generating both
+    outputFormat = "all"
+    // Exclude BOM Serial Number
+    includeBomSerialNumber = true
 }

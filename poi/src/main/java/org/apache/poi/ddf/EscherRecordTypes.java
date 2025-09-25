@@ -17,6 +17,7 @@
 
 package org.apache.poi.ddf;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -108,8 +109,8 @@ public enum EscherRecordTypes {
         return typeID;
     }
 
-    private static final Map<Short, EscherRecordTypes> LOOKUP =
-        Stream.of(values()).collect(Collectors.toMap(EscherRecordTypes::getTypeId, Function.identity()));
+    private static final Map<Short, EscherRecordTypes> LOOKUP = Collections.unmodifiableMap(
+        Stream.of(values()).collect(Collectors.toMap(EscherRecordTypes::getTypeId, Function.identity())));
 
     public static EscherRecordTypes forTypeID(int typeID) {
         // Section 2.2.23: 0xF02A is treated as 0xF01D

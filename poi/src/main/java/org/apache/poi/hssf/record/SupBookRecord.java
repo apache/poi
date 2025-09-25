@@ -20,8 +20,8 @@ package org.apache.poi.hssf.record;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
@@ -32,7 +32,7 @@ import org.apache.poi.util.StringUtil;
  */
 public final class SupBookRecord extends StandardRecord {
 
-    private static final Logger LOG = LogManager.getLogger(SupBookRecord.class);
+    private static final Logger LOG = PoiLogManager.getLogger(SupBookRecord.class);
 
     public static final short sid = 0x01AE;
 

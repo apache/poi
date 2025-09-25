@@ -59,7 +59,7 @@ public final class Word2Forrest
     {
       Paragraph p = r.getParagraph (x);
       String text = p.text ();
-      if (text.trim ().length () == 0)
+      if (text.trim().isEmpty())
       {
         continue;
       }

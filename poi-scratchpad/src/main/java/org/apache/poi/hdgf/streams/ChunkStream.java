@@ -19,8 +19,8 @@ package org.apache.poi.hdgf.streams;
 
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hdgf.chunks.Chunk;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.chunks.ChunkHeader;
@@ -29,7 +29,7 @@ import org.apache.poi.hdgf.pointers.Pointer;
 import static org.apache.logging.log4j.util.Unbox.box;
 
 public final class ChunkStream extends Stream {
-    private static final Logger LOG = LogManager.getLogger(ChunkStream.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ChunkStream.class);
 
     private final ChunkFactory chunkFactory;
     /** All the Chunks we contain */

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -91,7 +92,7 @@ public class XWPFStyles extends POIXMLDocumentPart {
     @Override
     protected void commit() throws IOException {
         if (ctStyles == null) {
-            throw new IllegalStateException("Unable to write out styles that were never read in!");
+            throw new IOException("Unable to write out styles that were never read in!");
         }
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
@@ -145,6 +146,41 @@ public class XWPFStyles extends POIXMLDocumentPart {
                         docDefaults.getPPrDefault().getPPr());
             }
         }
+    }
+
+    /**
+     * Gets the underlying CTStyles object for the Styles.
+     *
+     * @return CTStyles object
+     * @since POI 5.4.0
+     */
+    public CTStyles getCtStyles() {
+        return ctStyles;
+    }
+
+    /**
+     * Get the list of {@link XWPFStyle} in the Styles part.
+     *
+     * @since POI 5.4.0
+     */
+    public List<XWPFStyle> getStyles() {
+        return Collections.unmodifiableList(listStyle);
+    }
+
+    /**
+     * Remove the specified style if present.
+     *
+     * @param pos Array position of the style to be removed
+     * @return True if the style was removed.
+     * @since POI 5.4.0
+     */
+    public boolean removeStyle(int pos) {
+        if (pos >= 0 && pos < getNumberOfStyles()) {
+            listStyle.remove(pos);
+            ctStyles.removeStyle(pos);
+            return true;
+        }
+        return false;
     }
 
     /**

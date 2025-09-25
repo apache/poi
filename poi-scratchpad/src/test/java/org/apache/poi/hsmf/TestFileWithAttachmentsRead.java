@@ -119,7 +119,7 @@ public class TestFileWithAttachmentsRead {
         assertEquals("test-unicode.doc", attachment.getAttachLongFileName().getValue());
         assertEquals(".doc", attachment.getAttachExtension().getValue());
         assertNull(attachment.getAttachMimeTag());
-        UnsynchronizedByteArrayOutputStream attachmentstream = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream attachmentstream = UnsynchronizedByteArrayOutputStream.builder().get();
         attachment.getAttachData().writeValue(attachmentstream);
         assertEquals(24064, attachmentstream.size());
         // or compare the hashes of the attachment data

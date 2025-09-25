@@ -221,7 +221,7 @@ public class TestHemfPicture {
     @Test
     void testInfiniteLoopOnByteArray() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("61294.emf")) {
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             IOUtils.copy(is, bos);
 
             HemfPicture pic = new HemfPicture(bos.toInputStream());

@@ -17,6 +17,7 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -598,12 +599,14 @@ public enum Borders {
 
     ZIG_ZAG_STITCH(191);
 
-    private static Map<Integer, Borders> imap = new HashMap<>();
+    private static final Map<Integer, Borders> imap;
 
     static {
+        final Map<Integer, Borders> tempMap = new HashMap<>();
         for (Borders p : values()) {
-            imap.put(Integer.valueOf(p.getValue()), p);
+            tempMap.put(p.getValue(), p);
         }
+        imap = Collections.unmodifiableMap(tempMap);
     }
 
     private final int value;

@@ -419,13 +419,13 @@ public class HemfPlusImage {
                         if (getBitmapType() == EmfPlusBitmapDataType.PIXEL) {
                             return new Rectangle2D.Double(0, 0, bitmapWidth, bitmapHeight);
                         } else {
-                            try(UnsynchronizedByteArrayInputStream is = new UnsynchronizedByteArrayInputStream(getRawData(continuedObjectData))) {
+                            try(UnsynchronizedByteArrayInputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(getRawData(continuedObjectData)).get()) {
                                 BufferedImage bi = ImageIO.read(is);
                                 return new Rectangle2D.Double(bi.getMinX(), bi.getMinY(), bi.getWidth(), bi.getHeight());
                             }
                         }
                     case METAFILE:
-                        try(UnsynchronizedByteArrayInputStream bis = new UnsynchronizedByteArrayInputStream(getRawData(continuedObjectData))) {
+                        try(UnsynchronizedByteArrayInputStream bis = UnsynchronizedByteArrayInputStream.builder().setByteArray(getRawData(continuedObjectData)).get()) {
                             switch (getMetafileType()) {
                                 case Wmf:
                                 case WmfPlaceable:
@@ -447,8 +447,13 @@ public class HemfPlusImage {
             return new Rectangle2D.Double(1,1,1,1);
         }
 
+        /**
+         * @param continuedObjectData list of object data
+         * @return byte array
+         * @throws IllegalStateException if the data cannot be read
+         */
         public byte[] getRawData(List<? extends EmfPlusObjectData> continuedObjectData) {
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 bos.write(getImageData());
                 if (continuedObjectData != null) {
                     for (EmfPlusObjectData od : continuedObjectData) {
@@ -457,7 +462,7 @@ public class HemfPlusImage {
                 }
                 return bos.toByteArray();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
 
@@ -491,7 +496,7 @@ public class HemfPlusImage {
 
         private HemfPlusGDIImageRenderer getGDIRenderer() {
             if (getImageDataType() != EmfPlusImageDataType.BITMAP || getBitmapType() != EmfPlusBitmapDataType.PIXEL) {
-                throw new RuntimeException("image data is not a GDI image");
+                throw new IllegalStateException("image data is not a GDI image");
             }
             HemfPlusGDIImageRenderer renderer = new HemfPlusGDIImageRenderer();
             renderer.setWidth(getBitmapWidth());

@@ -23,15 +23,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.junit.jupiter.api.Test;
 
 public class HSLFFileHandler extends SlideShowHandler {
 
-    private static final Logger LOGGER = LogManager.getLogger(HSLFFileHandler.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(HSLFFileHandler.class);
 
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
@@ -84,6 +84,8 @@ public class HSLFFileHandler extends SlideShowHandler {
         }
 
         handleExtracting(file);
+
+        handleAdditional(file);
     }
 
     public static void main(String[] args) throws Exception {

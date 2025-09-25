@@ -21,12 +21,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.PageOrder;
 import org.apache.poi.ss.usermodel.PaperSize;
 import org.apache.poi.ss.usermodel.PrintCellComments;
 import org.apache.poi.ss.usermodel.PrintOrientation;
+import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.junit.jupiter.api.Disabled;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetup;
@@ -287,15 +295,6 @@ class TestXSSFPrintSetup {
        wb.close();
     }
 
-    /**
-     * Open a file with print settings, save and check.
-     * Then, change, save, read, check
-     */
-    @Disabled
-    void testRoundTrip() {
-       // TODO
-    }
-
     @Test
     void testSetLandscapeFalse() {
         XSSFPrintSetup ps = new XSSFPrintSetup(CTWorksheet.Factory.newInstance());
@@ -320,5 +319,38 @@ class TestXSSFPrintSetup {
 
         ps.setLeftToRight(false);
         assertFalse(ps.getLeftToRight());
+    }
+
+    @Test
+    public void test69266() throws IOException {
+        byte[] bytes;
+        try (Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx")) {
+            Sheet sheet = workbook.getSheetAt(0);
+
+            // Set Fit to Page options
+            sheet.setFitToPage(true);
+            PrintSetup printSetup = sheet.getPrintSetup();
+            printSetup.setFitWidth((short) 1);  // Fit to 1 page wide
+            printSetup.setFitHeight((short) 2); // Fit to 1 page tall
+
+            // Write the modified workbook out
+            try (ByteArrayOutputStream fos = new ByteArrayOutputStream()) {
+                workbook.write(fos);
+
+                fos.flush();
+                bytes = fos.toByteArray();
+            }
+        }
+
+        // verify that information is written out and read in properly again
+        try (Workbook workbook = WorkbookFactory.create(new ByteArrayInputStream(bytes))) {
+            Sheet sheet = workbook.getSheetAt(0);
+
+            // verify Fit to Page options
+            assertTrue(sheet.getFitToPage());
+            PrintSetup printSetup = sheet.getPrintSetup();
+            assertEquals(1, printSetup.getFitWidth());
+            assertEquals(2, printSetup.getFitHeight());
+        }
     }
 }

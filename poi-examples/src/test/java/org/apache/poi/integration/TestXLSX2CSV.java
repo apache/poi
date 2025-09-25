@@ -18,6 +18,7 @@
 package org.apache.poi.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.PrintStream;
@@ -26,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.examples.xssf.eventusermodel.XLSX2CSV;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -35,7 +37,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestXLSX2CSV {
     private PrintStream err;
-    private final UnsynchronizedByteArrayOutputStream errorBytes = new UnsynchronizedByteArrayOutputStream();
+    private final UnsynchronizedByteArrayOutputStream errorBytes = UnsynchronizedByteArrayOutputStream.builder().get();
 
     @BeforeEach
     public void setUp() throws UnsupportedEncodingException {
@@ -77,7 +79,7 @@ public class TestXLSX2CSV {
 
     @Test
     public void testSampleFile() throws Exception {
-        final UnsynchronizedByteArrayOutputStream outputBytes = new UnsynchronizedByteArrayOutputStream();
+        final UnsynchronizedByteArrayOutputStream outputBytes = UnsynchronizedByteArrayOutputStream.builder().get();
         PrintStream out = new PrintStream(outputBytes, true, StandardCharsets.UTF_8.name());
 
         // The package open is instantaneous, as it should be.
@@ -95,8 +97,27 @@ public class TestXLSX2CSV {
     }
 
     @Test
+    public void testInvalidSampleFile() throws Exception {
+        final UnsynchronizedByteArrayOutputStream outputBytes = UnsynchronizedByteArrayOutputStream.builder().get();
+        PrintStream out = new PrintStream(outputBytes, true, StandardCharsets.UTF_8.name());
+
+        // The package open is instantaneous, as it should be.
+        try (OPCPackage p = OPCPackage.open(XSSFTestDataSamples.getSampleFile("clusterfuzz-testcase-minimized-XLSX2CSVFuzzer-5025401116950528.xlsx").getAbsolutePath(), PackageAccess.READ)) {
+            XLSX2CSV xlsx2csv = new XLSX2CSV(p, out, -1);
+            assertThrows(POIXMLException.class,
+                    xlsx2csv::process);
+        }
+
+        String errorOutput = errorBytes.toString(StandardCharsets.UTF_8);
+        assertEquals("", errorOutput);
+
+        String output = outputBytes.toString(StandardCharsets.UTF_8);
+        assertEquals("", output, "Had: " + output);
+    }
+
+    @Test
     public void testMinColumns() throws Exception {
-        final UnsynchronizedByteArrayOutputStream outputBytes = new UnsynchronizedByteArrayOutputStream();
+        final UnsynchronizedByteArrayOutputStream outputBytes = UnsynchronizedByteArrayOutputStream.builder().get();
         PrintStream out = new PrintStream(outputBytes, true, StandardCharsets.UTF_8.name());
 
         // The package open is instantaneous, as it should be.

@@ -103,7 +103,7 @@ public class HemfPlusGDIImageRenderer extends BitmapImageRenderer {
                 bOffs = new int[]{2, 1, 0};
                 break;
             default:
-                throw new RuntimeException("not yet implemented");
+                throw new IllegalStateException("not yet implemented");
         }
 
         ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);

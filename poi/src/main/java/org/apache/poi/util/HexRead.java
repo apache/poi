@@ -18,6 +18,8 @@
 package org.apache.poi.util;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -36,7 +38,7 @@ public class HexRead {
      */
     public static byte[] readData( String filename ) throws IOException {
         File file = new File( filename );
-        try (InputStream stream = new FileInputStream(file)) {
+        try (InputStream stream = Files.newInputStream(file.toPath())) {
             return readData(stream, -1);
         }
     }
@@ -83,7 +85,7 @@ public class HexRead {
     }
 
     public static byte[] readData( String filename, String section ) throws IOException {
-        return readData(new FileInputStream( filename ), section);
+        return readData(Files.newInputStream(Paths.get(filename)), section);
     }
 
     @SuppressWarnings("fallthrough")
@@ -92,49 +94,45 @@ public class HexRead {
     {
         int characterCount = 0;
         byte b = (byte) 0;
-        List<Byte> bytes = new ArrayList<>();
-        final char a = 'a' - 10;
-        final char A = 'A' - 10;
-        while ( true ) {
-            int count = stream.read();
-            int digitValue = -1;
-            if ( '0' <= count && count <= '9' ) {
-                digitValue = count - '0';
-            } else if ( 'A' <= count && count <= 'F' ) {
-                digitValue = count - A;
-            } else if ( 'a' <= count && count <= 'f' ) {
-                digitValue = count - a;
-            } else if ( '#' == count ) {
-                readToEOL( stream );
-            } else if ( -1 == count || eofChar == count ) {
-                break;
-            }
-            // else: ignore the character
+        try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
+            final char a = 'a' - 10;
+            final char A = 'A' - 10;
+            while (true) {
+                int count = stream.read();
+                int digitValue = -1;
+                if ('0' <= count && count <= '9') {
+                    digitValue = count - '0';
+                } else if ('A' <= count && count <= 'F') {
+                    digitValue = count - A;
+                } else if ('a' <= count && count <= 'f') {
+                    digitValue = count - a;
+                } else if ('#' == count) {
+                    readToEOL(stream);
+                } else if (-1 == count || eofChar == count) {
+                    break;
+                }
+                // else: ignore the character
 
-            if (digitValue != -1) {
-                b <<= 4;
-                b += (byte) digitValue;
-                characterCount++;
-                if ( characterCount == 2 ) {
-                    bytes.add( Byte.valueOf( b ) );
-                    characterCount = 0;
-                    b = (byte) 0;
+                if (digitValue != -1) {
+                    b <<= 4;
+                    b += (byte) digitValue;
+                    characterCount++;
+                    if (characterCount == 2) {
+                        bytes.write(b);
+                        characterCount = 0;
+                        b = (byte) 0;
+                    }
                 }
             }
+            return bytes.toByteArray();
         }
-        Byte[] polished = bytes.toArray(new Byte[0]);
-        byte[] rval = new byte[polished.length];
-        for ( int j = 0; j < polished.length; j++ ) {
-            rval[j] = polished[j].byteValue();
-        }
-        return rval;
     }
 
     static public byte[] readFromString(String data) {
         try {
             return readData(new ByteArrayInputStream( data.getBytes(StringUtil.UTF8) ), -1);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

@@ -106,7 +106,11 @@ public abstract class NumericFunction implements Function {
             DecimalFormat nf = (DecimalFormat) NumberFormat.getCurrencyInstance(LocaleUtil.getUserLocale());
             int decimalPlaces = Math.max(nPlaces, 0);
             if (LocaleUtil.getUserLocale().getCountry().equalsIgnoreCase("US")) {
-                nf.setNegativePrefix("(" + nf.getDecimalFormatSymbols().getCurrencySymbol());
+                // Java 23 removed "COMPAT" locale provider and thus
+                // we need to ensure that the dollar-sign is used and not "USD" as Java 23 and newer
+                // would do
+                nf.setPositivePrefix("$");
+                nf.setNegativePrefix("($");
                 nf.setNegativeSuffix(")");
             }
             nf.setMinimumFractionDigits(decimalPlaces);

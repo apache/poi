@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.streaming;
 
-import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
 import java.io.IOException;
@@ -36,9 +36,8 @@ class OpcZipArchiveOutputStream extends ZipArchiveOutputStream {
         out.setLevel(level);
     }
 
-
     @Override
-    public void putArchiveEntry(ArchiveEntry archiveEntry) throws IOException {
+    public void putArchiveEntry(ZipArchiveEntry archiveEntry) throws IOException {
         out.putNextEntry(archiveEntry.getName());
     }
 

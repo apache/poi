@@ -91,6 +91,11 @@ public class HemfRecordIterator implements Iterator<HemfRecord> {
         return record;
     }
 
+    /**
+     * This method is not yet supported.
+     *
+     * @throws UnsupportedOperationException this method is not yet supported
+     */
     @Override
     public void remove() {
         throw new UnsupportedOperationException("Remove not supported");

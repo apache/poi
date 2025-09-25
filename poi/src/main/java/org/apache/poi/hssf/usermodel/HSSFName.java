@@ -180,7 +180,7 @@ public final class HSSFName implements Name {
      */
     private static void validateName(String name) {
 
-        if (name.length() == 0) {
+        if (name.isEmpty()) {
             throw new IllegalArgumentException("Name cannot be blank");
         }
         if (name.length() > 255) {

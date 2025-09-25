@@ -21,6 +21,7 @@ import static org.apache.poi.hslf.HSLFTestDataSamples.getSlideShow;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -471,7 +472,7 @@ public final class TestTextRun {
             // as getShapes()
             List<HSLFShape> sh = slide.getShapes();
             assertEquals(2, sh.size());
-            assertTrue(sh.get(0) instanceof HSLFTextBox);
+            assertInstanceOf(HSLFTextBox.class, sh.get(0));
             HSLFTextBox box1 = (HSLFTextBox) sh.get(0);
             assertSame(run1, box1.getTextParagraphs());
             HSLFTextBox box2 = (HSLFTextBox) sh.get(1);
@@ -545,6 +546,7 @@ public final class TestTextRun {
         }
     }
 
+
     @Test
     void testAppendEmpty() throws IOException {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
@@ -612,8 +614,13 @@ public final class TestTextRun {
                 // refresh internal members
                 phs.forEach(PlaceholderDetails::getPlaceholder);
 
-                String[] actDate = phs.stream().map(PlaceholderDetails::getDateFormat).map(ldt::format).toArray(String[]::new);
-                assertArrayEquals(me.getValue(), actDate,
+                String[] actDate = phs.stream().map(PlaceholderDetails::getDateFormat).map(ldt::format).
+                        // JDK 23 removes the COMPAT/JRE locale provider and this changes blanks to some non-breaking space
+                        map(s -> s.replace(" ", " ")).
+                        toArray(String[]::new);
+                String[] values = me.getValue();
+
+                assertArrayEquals(values, actDate,
                         "While handling local " + me.getKey());
             }
         } finally {

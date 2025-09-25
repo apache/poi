@@ -224,6 +224,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
 
     @Override
     public RichTextString getItemAt(int idx) {
+        if (strings == null || idx >= strings.size()) {
+            throw new IllegalStateException("Cannot get item at " + idx + " with strings: " + strings);
+        }
         return new XSSFRichTextString(strings.get(idx));
     }
 
@@ -241,20 +244,25 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
 
         if ("sst".equals(localName)) {
             String count = attributes.getValue("count");
-            if(count != null) this.count = Integer.parseInt(count);
+            if(count != null) this.count = (int) Long.parseLong(count);
             String uniqueCount = attributes.getValue("uniqueCount");
-            if(uniqueCount != null) this.uniqueCount = Integer.parseInt(uniqueCount);
+            if(uniqueCount != null) this.uniqueCount = (int) Long.parseLong(uniqueCount);
 
-            this.strings = new ArrayList<>(this.uniqueCount);
+            this.strings = new ArrayList<>(
+                    // corrupted files may have a very large number here, so only use it
+                    // up to some size as guideline for pre-allocating the list
+                    Math.min(this.uniqueCount, 100_000));
             characters = new StringBuilder(64);
         } else if ("si".equals(localName)) {
-            characters.setLength(0);
+            if (characters != null) {
+                characters.setLength(0);
+            }
         } else if ("t".equals(localName)) {
             tIsOpen = true;
         } else if ("rPh".equals(localName)) {
             inRPh = true;
             //append space...this assumes that rPh always comes after regular <t>
-            if (includePhoneticRuns && characters.length() > 0) {
+            if (includePhoneticRuns && characters != null && characters.length() > 0) {
                 characters.append(" ");
             }
         }
@@ -266,7 +274,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
         }
 
         if ("si".equals(localName)) {
-            strings.add(characters.toString());
+            if (strings != null && characters != null) {
+                strings.add(characters.toString());
+            }
         } else if ("t".equals(localName)) {
             tIsOpen = false;
         } else if ("rPh".equals(localName)) {
@@ -280,9 +290,13 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (tIsOpen) {
             if (inRPh && includePhoneticRuns) {
-                characters.append(ch, start, length);
+                if (characters != null) {
+                    characters.append(ch, start, length);
+                }
             } else if (! inRPh){
-                characters.append(ch, start, length);
+                if (characters != null) {
+                    characters.append(ch, start, length);
+                }
             }
         }
     }

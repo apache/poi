@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.POIReadOnlyDocument;
 import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
@@ -84,7 +84,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     /**
      * For logging problems we spot with the file
      */
-    private static final Logger LOG = LogManager.getLogger(MAPIMessage.class);
+    private static final Logger LOG = PoiLogManager.getLogger(MAPIMessage.class);
 
     private static final Pattern GUESS_7_BIT_ENCODING_PATTERN = Pattern.compile("content-type:.*?charset=[\"']?([^;'\"]+)[\"']?", Pattern.CASE_INSENSITIVE);
 
@@ -110,7 +110,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
      *
      * @param filename Name of the file to read
      * @throws IOException      on errors reading, or invalid data
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      *                          input format
      */
     public MAPIMessage(String filename) throws IOException {
@@ -122,7 +122,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
      *
      * @param file The file to read from
      * @throws IOException      on errors reading, or invalid data
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      *                          input format
      */
     public MAPIMessage(File file) throws IOException {
@@ -137,7 +137,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
      *
      * @param in The InputStream to buffer and then read from
      * @throws IOException      on errors reading, or invalid data
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      *                          input format
      */
     public MAPIMessage(InputStream in) throws IOException {
@@ -149,7 +149,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
      *
      * @param fs Open POIFS FileSystem containing the message
      * @throws IOException      on errors reading, or invalid data
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      *                          input format
      */
     public MAPIMessage(POIFSFileSystem fs) throws IOException {
@@ -162,7 +162,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
      *
      * @param poifsDir Directory containing the message
      * @throws IOException      on errors reading, or invalid data
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      *                          input format
      */
     public MAPIMessage(DirectoryNode poifsDir) throws IOException {
@@ -278,7 +278,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
             );
             return rtf.getDataString();
         } catch (IOException e) {
-            throw new RuntimeException("Shouldn't happen", e);
+            throw new IllegalStateException("Shouldn't happen", e);
         }
     }
 

@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
@@ -47,7 +47,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * stored in a separate entry within the OLE2 compound file.
  */
 public final class EmbeddedObjectRefSubRecord extends SubRecord {
-    private static final Logger LOG = LogManager.getLogger(EmbeddedObjectRefSubRecord.class);
+    private static final Logger LOG = PoiLogManager.getLogger(EmbeddedObjectRefSubRecord.class);
 
     public static final short sid = 0x0009;
 
@@ -180,7 +180,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 
     private static Ptg readRefPtg(byte[] formulaRawBytes) {
         try (LittleEndianInputStream in = new LittleEndianInputStream(
-                new UnsynchronizedByteArrayInputStream(formulaRawBytes))) {
+                UnsynchronizedByteArrayInputStream.builder().setByteArray(formulaRawBytes).get())) {
             byte ptgSid = in.readByte();
             switch(ptgSid) {
                 case AreaPtg.sid:   return new AreaPtg(in);
@@ -190,7 +190,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
             }
             return null;
         } catch (IOException e) {
-            throw new RuntimeException("Unexpected exception in readRefPtg", e);
+            throw new IllegalStateException("Unexpected exception in readRefPtg", e);
         }
     }
 

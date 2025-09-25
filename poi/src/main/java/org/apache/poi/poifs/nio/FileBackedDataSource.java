@@ -29,15 +29,15 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.IdentityHashMap;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.IOUtils;
 
 /**
  * A POIFS {@link DataSource} backed by a File
  */
 public class FileBackedDataSource extends DataSource implements Closeable {
-    private static final Logger LOG = LogManager.getLogger(FileBackedDataSource.class);
+    private static final Logger LOG = PoiLogManager.getLogger(FileBackedDataSource.class);
 
     private final FileChannel channel;
     private Long channelSize;

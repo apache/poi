@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.function.IntConsumer;
 
 import org.junit.jupiter.api.Test;
 
@@ -35,12 +35,24 @@ class TestCodepointsUtil {
     void testIterator() {
         final String unicodeSurrogates = "\uD835\uDF4A\uD835\uDF4B\uD835\uDF4C\uD835\uDF4D\uD835\uDF4E"
                 + "abcdef123456";
-        Iterator<String> sci = CodepointsUtil.iteratorFor(unicodeSurrogates);
         List<String> codePoints = new ArrayList<>();
         CodepointsUtil.iteratorFor(unicodeSurrogates).forEachRemaining(codePoints::add);
         assertEquals(17, codePoints.size());
-        for(String point : codePoints){
-            assertTrue(point.length() >=1 && point.length() <= 2, "codepoint " + point + "is wrong size");
+        for (String point : codePoints) {
+            assertTrue(point.length() >= 1 && point.length() <= 2, "codepoint " + point + "is wrong size");
+        }
+    }
+
+    @Test
+    void testPrimitiveIterator() {
+        final String unicodeSurrogates = "\uD835\uDF4A\uD835\uDF4B\uD835\uDF4C\uD835\uDF4D\uD835\uDF4E"
+                + "abcdef123456";
+        List<String> codePoints = new ArrayList<>();
+        CodepointsUtil.primitiveIterator(unicodeSurrogates).forEachRemaining((IntConsumer) (i) ->
+                codePoints.add(new String(Character.toChars(i))));
+        assertEquals(17, codePoints.size());
+        for (String point : codePoints) {
+            assertTrue(point.length() >= 1 && point.length() <= 2, "codepoint " + point + "is wrong size");
         }
     }
 

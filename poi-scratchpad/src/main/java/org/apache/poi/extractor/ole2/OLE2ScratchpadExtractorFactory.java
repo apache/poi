@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.ExtractorProvider;
 import org.apache.poi.extractor.POIOLE2TextExtractor;
@@ -58,7 +58,7 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
  */
 @SuppressWarnings("WeakerAccess")
 public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
-    private static final Logger LOG = LogManager.getLogger(OLE2ScratchpadExtractorFactory.class);
+    private static final Logger LOG = PoiLogManager.getLogger(OLE2ScratchpadExtractorFactory.class);
 
     private static final String[] OUTLOOK_ENTRY_NAMES = {
         // message bodies, saved as plain text (PtypString)
@@ -108,7 +108,7 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
         final String oldPW = Biff8EncryptionKey.getCurrentUserPassword();
         try {
             Biff8EncryptionKey.setCurrentUserPassword(password);
-            if (poifsDir.hasEntry("WordDocument")) {
+            if (poifsDir.hasEntryCaseInsensitive("WordDocument")) {
                 // Old or new style word document?
                 try {
                     return new WordExtractor(poifsDir);
@@ -117,20 +117,20 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
                 }
             }
 
-            if (poifsDir.hasEntry(HSLFSlideShow.POWERPOINT_DOCUMENT) || poifsDir.hasEntry(HSLFSlideShow.PP97_DOCUMENT)) {
+            if (poifsDir.hasEntryCaseInsensitive(HSLFSlideShow.POWERPOINT_DOCUMENT) || poifsDir.hasEntryCaseInsensitive(HSLFSlideShow.PP97_DOCUMENT)) {
                 return new SlideShowExtractor<>((HSLFSlideShow)SlideShowFactory.create(poifsDir));
             }
 
-            if (poifsDir.hasEntry("VisioDocument")) {
+            if (poifsDir.hasEntryCaseInsensitive("VisioDocument")) {
                 return new VisioTextExtractor(poifsDir);
             }
 
-            if (poifsDir.hasEntry("Quill")) {
+            if (poifsDir.hasEntryCaseInsensitive("Quill")) {
                 return new PublisherTextExtractor(poifsDir);
             }
 
             for (String entryName : OUTLOOK_ENTRY_NAMES) {
-                if (poifsDir.hasEntry(entryName)) {
+                if (poifsDir.hasEntryCaseInsensitive(entryName)) {
                     return new OutlookTextExtractor(poifsDir);
                 }
             }
@@ -168,7 +168,7 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
         } else if (ext instanceof WordExtractor) {
             // These are in ObjectPool -> _... under the root
             try {
-                DirectoryEntry op = (DirectoryEntry) root.getEntry("ObjectPool");
+                DirectoryEntry op = (DirectoryEntry) root.getEntryCaseInsensitive("ObjectPool");
                 StreamSupport.stream(op.spliterator(), false)
                     .filter(entry -> entry.getName().startsWith("_"))
                     .forEach(dirs::add);
@@ -185,7 +185,12 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
             for (AttachmentChunks attachment : msg.getAttachmentFiles()) {
                 if (attachment.getAttachData() != null) {
                     byte[] data = attachment.getAttachData().getValue();
-                    nonPOIFS.add( new UnsynchronizedByteArrayInputStream(data) );
+                    try {
+                        nonPOIFS.add(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get() );
+                    } catch (IOException e) {
+                        // is actually impossible with ByteArray, but still declared in the interface
+                        throw new IllegalStateException(e);
+                    }
                 } else if (attachment.getAttachmentDirectory() != null) {
                     dirs.add(attachment.getAttachmentDirectory().getDirectory());
                 }

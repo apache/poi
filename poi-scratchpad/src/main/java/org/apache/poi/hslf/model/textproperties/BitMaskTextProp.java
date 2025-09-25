@@ -22,8 +22,8 @@ import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.poi.util.GenericRecordUtil;
 
@@ -35,7 +35,7 @@ import org.apache.poi.util.GenericRecordUtil;
  *  (but related) properties
  */
 public abstract class BitMaskTextProp extends TextProp {
-    protected static final Logger LOG = LogManager.getLogger(BitMaskTextProp.class);
+    protected static final Logger LOG = PoiLogManager.getLogger(BitMaskTextProp.class);
 
     private final String[] subPropNames;
     private final int[] subPropMasks;

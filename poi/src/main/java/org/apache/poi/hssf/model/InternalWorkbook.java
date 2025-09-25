@@ -23,8 +23,8 @@ import java.security.AccessControlException;
 import java.util.*;
 import java.util.Map.Entry;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBoolProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -87,7 +87,7 @@ public final class InternalWorkbook {
     /**
      * Normally, the Workbook will be in a POIFS Stream called
      *  "Workbook". However, some weird XLS generators use "WORKBOOK"
-     *  or "BOOK".
+     *  or "BOOK". This includes common case sensitive variations.
      */
     public static final List<String> WORKBOOK_DIR_ENTRY_NAMES = Collections.unmodifiableList(
             Arrays.asList(
@@ -99,13 +99,26 @@ public final class InternalWorkbook {
     );
 
     /**
+     *     Crystal exports may use this for a regular .xls file. This
+     *     needs to be distinguished case sensitively from {@link #OLD_WORKBOOK_DIR_ENTRY_NAME}.
+     */
+    public static final String BOOK = "BOOK";
+
+    public static final String WORKBOOK = "WORKBOOK";
+
+    public static final List<String> WORKBOOK_DIR_ENTRY_NAMES_CASE_INSENSITIVE =
+            Collections.unmodifiableList(
+                    Arrays.asList(WORKBOOK, BOOK)
+    );
+
+    /**
      * Name of older (pre-Excel 97) Workbook streams, which
      *  aren't supported by HSSFWorkbook, only by
      *  {@link OldExcelExtractor}
      */
     public static final String OLD_WORKBOOK_DIR_ENTRY_NAME = "Book";
 
-    private static final Logger LOG = LogManager.getLogger(InternalWorkbook.class);
+    private static final Logger LOG = PoiLogManager.getLogger(InternalWorkbook.class);
 
     /**
      * constant used to set the "codepage" wherever "codepage" is set in records
@@ -453,7 +466,11 @@ public final class InternalWorkbook {
             "There are only " + numfonts + " font records, but you asked for index " + idx);
         }
 
-        return ( FontRecord ) records.get((records.getFontpos() - (numfonts - 1)) + index);
+        Record record = records.get((records.getFontpos() - (numfonts - 1)) + index);
+        if (!(record instanceof FontRecord)) {
+            throw new IllegalStateException("Did not have the expected record-type FontRecord: " + record.getClass());
+        }
+        return ( FontRecord ) record;
     }
 
     /**
@@ -723,7 +740,7 @@ public final class InternalWorkbook {
     private void checkSheets(int sheetnum) {
         if ((boundsheets.size()) <= sheetnum) {   // if we're short one add another..
             if ((boundsheets.size() + 1) <= sheetnum) {
-                throw new RuntimeException("Sheet number out of bounds!");
+                throw new IllegalStateException("Sheet number out of bounds!");
             }
             BoundSheetRecord bsr = createBoundSheet(sheetnum);
 
@@ -830,7 +847,11 @@ public final class InternalWorkbook {
 
         xfptr += index;
 
-        return ( ExtendedFormatRecord ) records.get(xfptr);
+        Record record = records.get(xfptr);
+        if (!(record instanceof ExtendedFormatRecord)) {
+            throw new IllegalStateException("Did not have a ExtendedFormatRecord: " + record);
+        }
+        return (ExtendedFormatRecord) record;
     }
 
     /**
@@ -1050,13 +1071,16 @@ public final class InternalWorkbook {
      *
      * Include in it ant code that modifies the workbook record stream and affects its size.
      */
-    public void preSerialize(){
+    public void preSerialize() {
         // Ensure we have enough tab IDs
         // Can be a few short if new sheets were added
-        if(records.getTabpos() > 0) {
-            TabIdRecord tir = ( TabIdRecord ) records.get(records.getTabpos());
-            if(tir.getTabIdSize() < boundsheets.size()) {
-                fixTabIdRecord();
+        if (records.getTabpos() > 0) {
+            Record rec = records.get(records.getTabpos());
+            if (rec instanceof TabIdRecord) {
+                TabIdRecord tir = ( TabIdRecord ) rec;
+                if(tir.getTabIdSize() < boundsheets.size()) {
+                    fixTabIdRecord();
+                }
             }
         }
     }
@@ -1640,7 +1664,7 @@ public final class InternalWorkbook {
         NameRecord name = new NameRecord(builtInName, sheetNumber);
 
         if(linkTable.nameAlreadyExists(name)) {
-            throw new RuntimeException("Builtin (" + builtInName
+            throw new IllegalStateException("Builtin (" + builtInName
                     + ") already exists for sheet (" + sheetNumber + ")");
         }
         addName(name);
@@ -1715,7 +1739,7 @@ public final class InternalWorkbook {
      */
     public int createFormat(String formatString) {
 
-        maxformatid = maxformatid >= 0xa4 ? maxformatid + 1 : 0xa4; //Starting value from M$ empircal study.
+        maxformatid = maxformatid >= 0xa4 ? maxformatid + 1 : 0xa4; //Starting value from M$ empirical  study.
         FormatRecord rec = new FormatRecord(maxformatid, formatString);
 
         int pos = 0;
@@ -1813,7 +1837,7 @@ public final class InternalWorkbook {
             if (rec instanceof PaletteRecord) {
                 palette = (PaletteRecord) rec;
             } else {
-                throw new RuntimeException("InternalError: Expected PaletteRecord but got a '"+rec+"'");
+                throw new IllegalStateException("InternalError: Expected PaletteRecord but got a '"+rec+"'");
             }
         } else {
             palette = createPalette();
@@ -2037,7 +2061,7 @@ public final class InternalWorkbook {
     }
 
     /**
-     * protect a workbook with a password (not encypted, just sets writeprotect
+     * protect a workbook with a password (not encrypted, just sets writeprotect
      * flags and the password.
      *
      * @param password the password
@@ -2076,7 +2100,7 @@ public final class InternalWorkbook {
      *
      * @param name the  name of an external function, typically a name of a UDF
      * @param sheetRefIndex the sheet ref index, or -1 if not known
-     * @param udf  locator of user-defiend functions to resolve names of VBA and Add-In functions
+     * @param udf  locator of user-defined functions to resolve names of VBA and Add-In functions
      * @return the external name or null
      */
     public NameXPtg getNameXPtg(String name, int sheetRefIndex, UDFFinder udf) {

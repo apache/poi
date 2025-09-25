@@ -762,7 +762,7 @@ public final class ExtendedFormatRecord extends StandardRecord {
     }
 
     // i've no idea.. possible values are 1 for down, 2 for up and 3 for both...0 for none..
-    // maybe a diagnal line?
+    // maybe a diagonal line?
 
     /**
      * Not sure what this is for (maybe fill lines?) 1 = down, 2 = up, 3 = both, 0 for none..
@@ -1474,7 +1474,7 @@ public final class ExtendedFormatRecord extends StandardRecord {
     }
 
     // i've no idea.. possible values are 1 for down, 2 for up and 3 for both...0 for none..
-    // maybe a diagnal line?
+    // maybe a diagonal line?
 
     /**
      * Not sure what this is for (maybe fill lines?) 1 = down, 2 = up, 3 = both, 0 for none..

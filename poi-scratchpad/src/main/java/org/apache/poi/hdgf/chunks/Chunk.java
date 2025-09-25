@@ -19,8 +19,8 @@ package org.apache.poi.hdgf.chunks;
 
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hdgf.chunks.ChunkFactory.CommandDefinition;
 import org.apache.poi.util.LittleEndian;
 
@@ -31,7 +31,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  */
 public final class Chunk {
     /** For logging warnings about the structure of the file */
-    private static final Logger LOG = LogManager.getLogger(Chunk.class);
+    private static final Logger LOG = PoiLogManager.getLogger(Chunk.class);
 
     /**
      * The contents of the chunk, excluding the header,

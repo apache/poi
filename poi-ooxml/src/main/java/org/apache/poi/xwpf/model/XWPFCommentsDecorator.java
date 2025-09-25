@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xwpf.model;
 
+import java.math.BigInteger;
+
 import org.apache.poi.xwpf.usermodel.XWPFComment;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTMarkupRange;
@@ -38,7 +40,9 @@ public class XWPFCommentsDecorator extends XWPFParagraphDecorator {
         commentText = new StringBuilder(64);
 
         for (CTMarkupRange anchor : paragraph.getCTP().getCommentRangeStartArray()) {
-            if ((comment = paragraph.getDocument().getCommentByID(anchor.getId().toString())) != null) {
+            BigInteger id = anchor.getId();
+            if (id != null &&
+                    (comment = paragraph.getDocument().getCommentByID(id.toString())) != null) {
                 commentText.append("\tComment by ")
                     .append(comment.getAuthor())
                     .append(": ")

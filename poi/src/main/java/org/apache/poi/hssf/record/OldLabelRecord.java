@@ -20,8 +20,8 @@ package org.apache.poi.hssf.record;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
@@ -36,7 +36,7 @@ import static org.apache.poi.util.HexDump.toHex;
  *  didn't use {@link LabelSSTRecord}
  */
 public final class OldLabelRecord extends OldCellRecord {
-    private static final Logger LOG = LogManager.getLogger(OldLabelRecord.class);
+    private static final Logger LOG = PoiLogManager.getLogger(OldLabelRecord.class);
 
     public static final short biff2_sid = 0x0004;
     public static final short biff345_sid = 0x0204;

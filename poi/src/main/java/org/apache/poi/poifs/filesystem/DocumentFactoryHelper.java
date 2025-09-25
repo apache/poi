@@ -73,7 +73,7 @@ public final class DocumentFactoryHelper {
     public static InputStream getDecryptedStream(final DirectoryNode root, String password)
     throws IOException {
         // first check if the node contains an plain package
-        if (root.hasEntry(OOXML_PACKAGE)) {
+        if (root.hasEntryCaseInsensitive(OOXML_PACKAGE)) {
             return root.createDocumentInputStream(OOXML_PACKAGE);
         }
 

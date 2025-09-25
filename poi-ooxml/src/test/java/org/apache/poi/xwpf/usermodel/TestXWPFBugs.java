@@ -28,6 +28,9 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.apache.poi.openxml4j.util.ZipArchiveFakeEntry;
+import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFRun.FontCharRange;
@@ -149,22 +152,22 @@ class TestXWPFBugs {
         }
     }
 
-  /**
-   * Removing a run needs to take into account position of run if paragraph contains hyperlink runs
-   */
-  @Test
-  void test58618() throws IOException {
-      try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("58618.docx")) {
-          XWPFParagraph para = (XWPFParagraph) doc.getBodyElements().get(0);
-          assertNotNull(para);
-          assertEquals("Some text  some hyper links link link and some text.....", para.getText());
-          XWPFRun run = para.insertNewRun(para.getRuns().size());
-          run.setText("New Text");
-          assertEquals("Some text  some hyper links link link and some text.....New Text", para.getText());
-          para.removeRun(para.getRuns().size() - 2);
-          assertEquals("Some text  some hyper links link linkNew Text", para.getText());
-      }
-  }
+    /**
+     * Removing a run needs to take into account position of run if paragraph contains hyperlink runs
+     */
+    @Test
+    void test58618() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("58618.docx")) {
+            XWPFParagraph para = (XWPFParagraph) doc.getBodyElements().get(0);
+            assertNotNull(para);
+            assertEquals("Some text  some hyper links link link and some text.....", para.getText());
+            XWPFRun run = para.insertNewRun(para.getRuns().size());
+            run.setText("New Text");
+            assertEquals("Some text  some hyper links link link and some text.....New Text", para.getText());
+            para.removeRun(para.getRuns().size() - 2);
+            assertEquals("Some text  some hyper links link linkNew Text", para.getText());
+        }
+    }
 
     @Test
     void test59378() throws IOException {
@@ -329,7 +332,7 @@ class TestXWPFBugs {
         }
     }
 
-    private static void addNumberingWithAbstractId(XWPFNumbering documentNumbering, int id){
+    private static void addNumberingWithAbstractId(XWPFNumbering documentNumbering, int id) {
         // create a numbering scheme
         CTAbstractNum cTAbstractNum = CTAbstractNum.Factory.newInstance();
         // give the scheme an ID
@@ -339,5 +342,35 @@ class TestXWPFBugs {
         BigInteger abstractNumID = documentNumbering.addAbstractNum(abstractNum);
 
         documentNumbering.addNum(abstractNumID);
+    }
+
+    @Test
+    void testBug69628() throws IOException {
+        final int expectedParagraphs = 24;
+        // bug69628.docx has -1 entry sizes in the zip data
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("bug69628.docx")) {
+            assertEquals(expectedParagraphs, doc.getParagraphs().size());
+        }
+        // test again with smaller byte array max
+        ZipArchiveFakeEntry.setMaxEntrySize(30 * 1024 * 1024);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("bug69628.docx")) {
+            assertEquals(expectedParagraphs, doc.getParagraphs().size());
+        } finally {
+            ZipArchiveFakeEntry.setMaxEntrySize(-1);
+        }
+        // test again with smaller byte array max
+        IOUtils.setByteArrayMaxOverride(30 * 1024 * 1024);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("bug69628.docx")) {
+            assertEquals(expectedParagraphs, doc.getParagraphs().size());
+        } finally {
+            IOUtils.setByteArrayMaxOverride(-1);
+        }
+        // test again but temp files enabled
+        ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(1000);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("bug69628.docx")) {
+            assertEquals(expectedParagraphs, doc.getParagraphs().size());
+        } finally {
+            ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(-1);
+        }
     }
 }

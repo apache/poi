@@ -272,7 +272,7 @@ public abstract class BaseTestPicture {
         g.draw(ell);
 
         g.dispose();
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(2000);
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(2000).get();
         ImageIO.write(bi, "PNG", bos);
         return bos.toByteArray();
     }

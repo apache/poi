@@ -82,8 +82,11 @@ public final class HDGFDiagram extends POIReadOnlyDocument {
         trailerPointer = ptrFactory.createPointer(_docstream, 0x24);
 
         // Now grab the trailer
-        trailer = (TrailerStream)
-            Stream.createStream(trailerPointer, _docstream, chunkFactory, ptrFactory);
+        Stream stream = Stream.createStream(trailerPointer, _docstream, chunkFactory, ptrFactory);
+        if (!(stream instanceof TrailerStream)) {
+            throw new IllegalStateException("Stream is not a TrailerStream: " + stream);
+        }
+        trailer = (TrailerStream)stream;
 
         // Finally, find all our streams
         trailer.findChildren(_docstream);

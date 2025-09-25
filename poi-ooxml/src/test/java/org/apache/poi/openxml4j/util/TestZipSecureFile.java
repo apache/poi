@@ -34,7 +34,8 @@ class TestZipSecureFile {
         // ClassCastException in ZipFile now
         // The relevant change in the JDK is http://hg.openjdk.java.net/jdk/jdk10/rev/85ea7e83af30#l5.66
 
-        try (ZipFile thresholdInputStream = new ZipFile(XSSFTestDataSamples.getSampleFile("template.xlsx"))) {
+        try (ZipFile thresholdInputStream =
+                 ZipFile.builder().setFile(XSSFTestDataSamples.getSampleFile("template.xlsx")).get()) {
             try (ZipSecureFile secureFile = new ZipSecureFile(XSSFTestDataSamples.getSampleFile("template.xlsx"))) {
                 Enumeration<? extends ZipArchiveEntry> entries = thresholdInputStream.getEntries();
                 while (entries.hasMoreElements()) {
@@ -77,6 +78,27 @@ class TestZipSecureFile {
             assertEquals(approx8G, ZipSecureFile.getMaxTextSize());
         } finally {
             ZipSecureFile.setMaxTextSize(ZipSecureFile.DEFAULT_MAX_TEXT_SIZE);
+        }
+    }
+
+    @Test
+    void testSettingGraceEntrySize() {
+        long approx8G = ZipSecureFile.MAX_ENTRY_SIZE * 2;
+        try {
+            ZipSecureFile.setGraceEntrySize(approx8G);
+            assertEquals(approx8G, ZipSecureFile.getGraceEntrySize());
+        } finally {
+            ZipSecureFile.setGraceEntrySize(ZipSecureFile.DEFAULT_GRACE_ENTRY_SIZE);
+        }
+    }
+
+    @Test
+    void testSettingMaxFileCount() {
+        try {
+            ZipSecureFile.setMaxFileCount(123456789);
+            assertEquals(123456789, ZipSecureFile.getMaxFileCount());
+        } finally {
+            ZipSecureFile.setMaxFileCount(ZipSecureFile.DEFAULT_MAX_FILE_COUNT);
         }
     }
 }

@@ -146,6 +146,33 @@ public abstract class BaseTestCellUtilCopy {
         wb.close();
     }
 
+    @Test
+    public final void testCopyCellTime() throws IOException {
+        try(
+                Workbook srcWb = createNewWorkbook();
+                Workbook destWb = createNewWorkbook()
+        ) {
+            final Row rowS = srcWb.createSheet("Sheet1").createRow(0);
+            final Row rowD = destWb.createSheet("Sheet1").createRow(0);
+            srcCell = rowS.createCell(0);
+            destCell = rowD.createCell(0);
+
+            srcCell.setCellValue(22.0/24.0);
+
+            final CellStyle style = srcWb.createCellStyle();
+            style.setDataFormat((short) 0x12); // time format
+            srcCell.setCellStyle(style);
+
+            final CreationHelper createHelper = srcWb.getCreationHelper();
+
+            final CellCopyPolicy policy = new CellCopyPolicy.Builder().build();
+            CellUtil.copyCell(srcCell, destCell, policy, new CellCopyContext());
+
+            assertEquals(srcCell.getNumericCellValue(), destCell.getNumericCellValue());
+            assertEquals(srcCell.getCellStyle().getDataFormatString(), destCell.getCellStyle().getDataFormatString());
+        }
+    }
+
     private void setUp_testCopyCellFrom_CellCopyPolicy() {
         @SuppressWarnings("resource")
         final Workbook wb = createNewWorkbook();

@@ -21,6 +21,7 @@ import static java.util.Calendar.SATURDAY;
 import static java.util.Calendar.SUNDAY;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -508,11 +509,12 @@ public enum LocaleID {
     private final int defaultCodepage;
     private final int firstWeekday;
 
-    private static final Map<String, LocaleID> languageTagLookup =
-        Stream.of(values()).filter(LocaleID::isValid).collect(Collectors.toMap(LocaleID::getLanguageTag, Function.identity()));
+    private static final Map<String, LocaleID> languageTagLookup = Collections.unmodifiableMap(
+        Stream.of(values()).filter(LocaleID::isValid)
+            .collect(Collectors.toMap(LocaleID::getLanguageTag, Function.identity())));
 
-    private static final Map<Integer, LocaleID> lcidLookup =
-        Stream.of(values()).collect(Collectors.toMap(LocaleID::getLcid, Function.identity()));
+    private static final Map<Integer, LocaleID> lcidLookup = Collections.unmodifiableMap(
+        Stream.of(values()).collect(Collectors.toMap(LocaleID::getLcid, Function.identity())));
 
     LocaleID(int lcid, String windowsId, String languageTag, String description, int defaultCodepage, int firstWeekday) {
         this.lcid = lcid;

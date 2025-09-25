@@ -104,7 +104,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
     private DocumentProperties _dop;
 
     /**
-     * Contains text of the document wrapped in a obfuscated Word data
+     * Contains text of the document wrapped in an obfuscated Word data
      * structure
      */
     private ComplexFileTable _cft;
@@ -215,7 +215,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * @throws IOException If there is an unexpected IOException from the passed
      *                     in InputStream.
      * @throws org.apache.poi.EmptyFileException If the given stream is empty
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public HWPFDocument(InputStream istream) throws IOException {
@@ -229,7 +229,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * @param pfilesystem The POIFSFileSystem that contains the Word document.
      * @throws IOException If there is an unexpected IOException from the passed
      *                     in POIFSFileSystem.
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public HWPFDocument(POIFSFileSystem pfilesystem) throws IOException {
@@ -244,7 +244,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * @param directory The DirectoryNode that contains the Word document.
      * @throws IOException If there is an unexpected IOException from the passed
      *                     in POIFSFileSystem.
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public HWPFDocument(DirectoryNode directory) throws IOException {
@@ -261,7 +261,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         String name = (_fib.getFibBase().isFWhichTblStm()) ? STREAM_TABLE_1 : STREAM_TABLE_0;
 
         // Grab the table stream.
-        if (!directory.hasEntry(name)) {
+        if (!directory.hasEntryCaseInsensitive(name)) {
             throw new IllegalStateException("Table Stream '" + name + "' wasn't found - Either the document is corrupt, or is Word95 (or earlier)");
         }
 
@@ -271,7 +271,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         _fib.fillVariableFields(_mainStream, _tableStream);
 
         // read in the data stream.
-        _dataStream = directory.hasEntry(STREAM_DATA) ? getDocumentEntryBytes(STREAM_DATA, 0, Integer.MAX_VALUE) : new byte[0];
+        _dataStream = directory.hasEntryCaseInsensitive(STREAM_DATA) ? getDocumentEntryBytes(STREAM_DATA, 0, Integer.MAX_VALUE) : new byte[0];
 
         // Get the cp of the start of text in the main stream
         // The latest spec doc says this is always zero!
@@ -291,7 +291,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         _text = _tpt.getText();
 
         /*
-         * in this mode we preserving PAPX/CHPX structure from file, so text may
+         * in this mode we are preserving PAPX/CHPX structure from file, so text may
          * miss from output, and text order may be corrupted
          */
         boolean preserveBinTables = false;
@@ -688,7 +688,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
         /*
          * clx (encoding of the sprm lists for a complex file and piece table
-         * for a any file) Written immediately after the end of the previously
+         * for an any file) Written immediately after the end of the previously
          * recorded structure. This is recorded in all Word documents
          *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
@@ -765,7 +765,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
         // write out the PAPBinTable.
         _fib.setFcPlcfbtePapx(tableOffset);
-        _pbt.writeTo(wordDocumentStream, tableStream, _cft.getTextPieceTable());
+        // Right now we don't know how to save dataStream modifications, so we can just pipe them to a black hole.
+        _pbt.writeTo(wordDocumentStream, tableStream, new ByteArrayOutputStream(), _cft.getTextPieceTable());
         _fib.setLcbPlcfbtePapx(tableStream.size() - tableOffset);
         tableOffset = tableStream.size();
 

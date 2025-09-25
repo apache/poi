@@ -408,7 +408,9 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         out.writeShort(priority);
         out.writeShort(template_type);
         out.writeByte(template_param_length);
-        out.write(template_params);
+        if (template_params != null) {
+            out.write(template_params);
+        }
 
         byte type = getConditionType();
         if (type == CONDITION_TYPE_COLOR_SCALE) {
@@ -432,7 +434,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         len += getFormulaSize(getFormula1());
         len += getFormulaSize(getFormula2());
         len += 2 + getFormulaSize(formula_scale);
-        len += 6 + template_params.length;
+        len += 6 + (template_params == null ? 0 : template_params.length);
 
         byte type = getConditionType();
         if (type == CONDITION_TYPE_COLOR_SCALE) {

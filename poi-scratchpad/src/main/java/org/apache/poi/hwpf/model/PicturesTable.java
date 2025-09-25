@@ -23,8 +23,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
@@ -55,7 +55,7 @@ import org.apache.poi.util.LittleEndian;
  */
 @Internal
 public final class PicturesTable {
-    private static final Logger LOG = LogManager.getLogger(PicturesTable.class);
+    private static final Logger LOG = PoiLogManager.getLogger(PicturesTable.class);
 
     static final int TYPE_IMAGE = 0x08;
     static final int TYPE_IMAGE_WORD2000 = 0x00;

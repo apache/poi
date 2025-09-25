@@ -19,8 +19,8 @@ package org.apache.poi.hmef.attribute;
 
 import java.nio.charset.Charset;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
@@ -32,7 +32,7 @@ import org.apache.poi.util.StringUtil;
  *  to a {@link HMEFMessage} or one of its {@link Attachment}s.
  */
 public final class MAPIStringAttribute extends MAPIAttribute {
-   private static final Logger LOG = LogManager.getLogger(MAPIStringAttribute.class);
+   private static final Logger LOG = PoiLogManager.getLogger(MAPIStringAttribute.class);
    private static final String CODEPAGE = "CP1252";
    private final String data;
 
@@ -64,7 +64,7 @@ public final class MAPIStringAttribute extends MAPIAttribute {
    }
 
    /**
-    * Returns the string of a Attribute, converting as appropriate
+    * Returns the string of an Attribute, converting as appropriate
     */
    public static String getAsString(MAPIAttribute attr) {
       if(attr == null) {

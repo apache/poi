@@ -25,6 +25,8 @@ import java.util.List;
 import com.microsoft.schemas.office.visio.x2012.main.PageType;
 import com.microsoft.schemas.office.visio.x2012.main.PagesDocument;
 import com.microsoft.schemas.office.visio.x2012.main.PagesType;
+import com.microsoft.schemas.office.visio.x2012.main.RelType;
+
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -68,7 +70,12 @@ public class XDGFPages extends XDGFXMLDocumentPart {
             // this iteration is ordered by page number
             for (PageType pageSettings: _pagesObject.getPageArray()) {
 
-                String relId = pageSettings.getRel().getId();
+                RelType rel = pageSettings.getRel();
+                if (rel == null) {
+                    throw new IllegalStateException("Could not read relation for page settings");
+                }
+
+                String relId = rel.getId();
 
                 POIXMLDocumentPart pageContentsPart = getRelationById(relId);
                 if (pageContentsPart == null)

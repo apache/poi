@@ -56,7 +56,7 @@ public final class Switch implements FreeRefFunction {
             return ErrorEval.NA;
         }
 
-        for (int i = 1; i < args.length; i = i+2) {
+        for (int i = 1; i < (args.length - 1); i += 2) {
 
             try {
                 ValueEval value =  OperandResolver.getSingleValue(args[i], ec.getRowIndex(), ec.getColumnIndex());

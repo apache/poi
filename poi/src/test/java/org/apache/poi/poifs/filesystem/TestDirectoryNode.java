@@ -73,7 +73,7 @@ final class TestDirectoryNode {
             assertEquals(0, node.getEntryCount());
 
             // verify behavior of getEntry
-            assertThrows(FileNotFoundException.class, () -> node.getEntry("foo"));
+            assertThrows(FileNotFoundException.class, () -> node.getEntryCaseInsensitive("foo"));
 
             // verify behavior of isDirectoryEntry
             assertTrue(node.isDirectoryEntry());
@@ -124,11 +124,11 @@ final class TestDirectoryNode {
             assertEquals(2, node.getEntryCount());
 
             // verify behavior of getEntry
-            DirectoryNode child1 = (DirectoryNode) node.getEntry("child1");
+            DirectoryNode child1 = (DirectoryNode) node.getEntryCaseInsensitive("child1");
 
-            child1.getEntry("child3");
-            node.getEntry("child2");
-            assertThrows(FileNotFoundException.class, () -> node.getEntry("child3"));
+            child1.getEntryCaseInsensitive("child3");
+            node.getEntryCaseInsensitive("child2");
+            assertThrows(FileNotFoundException.class, () -> node.getEntryCaseInsensitive("child3"));
 
             // verify behavior of isDirectoryEntry
             assertTrue(node.isDirectoryEntry());

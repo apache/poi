@@ -18,9 +18,9 @@
 package org.apache.poi.hwpf.dev;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,7 +67,7 @@ import org.apache.poi.util.LittleEndian;
 @Beta
 public final class HWPFLister {
     private static HWPFDocumentCore loadDoc( File docFile ) throws IOException {
-        try (final FileInputStream istream = new FileInputStream( docFile )) {
+        try (final InputStream istream = Files.newInputStream(docFile.toPath())) {
             return loadDoc( istream );
         }
     }
@@ -256,14 +256,14 @@ public final class HWPFLister {
 
     private static HWPFDocumentCore writeOutAndReadBack(
             HWPFDocumentCore original ) {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             original.write( baos );
             try (InputStream is = baos.toInputStream()) {
                 return loadDoc(is);
             }
         }
         catch ( IOException e ) {
-            throw new RuntimeException( e );
+            throw new IllegalStateException( e );
         }
     }
 

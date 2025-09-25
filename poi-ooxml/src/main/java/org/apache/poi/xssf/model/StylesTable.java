@@ -467,10 +467,12 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     public int putStyle(XSSFCellStyle style) {
         CTXf mainXF = style.getCoreXf();
 
-        if(! xfs.contains(mainXF)) {
+        int ret = xfs.indexOf(mainXF);
+        if(ret == -1) {
             xfs.add(mainXF);
+            ret = xfs.size() - 1;
         }
-        return xfs.indexOf(mainXF);
+        return ret;
     }
 
     @Override
@@ -839,14 +841,15 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * @return defined style, either explicit or built-in, or null if not found
      *
      * @since 3.17 beta 1
+     * @throws IllegalArgumentException if there is no explicit table style but the name is an
+     * unknown built-in style
      */
     public TableStyle getTableStyle(String name) {
         if (name == null) return null;
-        try {
-            return XSSFBuiltinTableStyle.valueOf(name).getStyle();
-        } catch (IllegalArgumentException e) {
-            return getExplicitTableStyle(name);
-        }
+        TableStyle tableStyle = getExplicitTableStyle(name);
+        if (tableStyle == null)
+            tableStyle = XSSFBuiltinTableStyle.valueOf(name).getStyle();
+        return tableStyle;
     }
 
     /**

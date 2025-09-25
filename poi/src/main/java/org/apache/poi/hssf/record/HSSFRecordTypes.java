@@ -20,6 +20,7 @@
 package org.apache.poi.hssf.record;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -211,8 +212,8 @@ public enum HSSFRecordTypes {
         T apply(RecordInputStream in);
     }
 
-    private static final Map<Short,HSSFRecordTypes> LOOKUP =
-        Arrays.stream(values()).collect(Collectors.toMap(HSSFRecordTypes::getSid, Function.identity()));
+    private static final Map<Short,HSSFRecordTypes> LOOKUP = Collections.unmodifiableMap(
+        Arrays.stream(values()).collect(Collectors.toMap(HSSFRecordTypes::getSid, Function.identity())));
 
     public final short sid;
     public final Class<? extends org.apache.poi.hssf.record.Record> clazz;

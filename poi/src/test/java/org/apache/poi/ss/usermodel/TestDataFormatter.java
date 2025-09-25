@@ -13,10 +13,6 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-
-   2012 - Alfresco Software, Ltd.
-   Alfresco Software has modified source of this file
-   The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src
 ==================================================================== */
 
 package org.apache.poi.ss.usermodel;
@@ -114,6 +110,21 @@ class TestDataFormatter {
         assertFalse(dataFormatter.useCachedValuesForFormulaCells());
     }
 
+    @Test
+    void testDouble() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        assertEquals("1.005", dfUS.formatRawCellContents(1.005d, -1, "@"));
+        assertEquals("-1.005", dfUS.formatRawCellContents(-1.005d, -1, "@"));
+    }
+
+    @Disabled
+    @Test
+    void testFloat() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        assertEquals("1.005", dfUS.formatRawCellContents(1.005f, -1, "@"));
+        assertEquals("-1.005", dfUS.formatRawCellContents(-1.005f, -1, "@"));
+    }
+
     /**
      * Test that we use the specified locale when deciding
      *   how to format normal numbers
@@ -146,7 +157,6 @@ class TestDataFormatter {
         // Regular numeric style formats
         assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]##"));
         assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]00"));
-
     }
 
 
@@ -927,7 +937,7 @@ class TestDataFormatter {
         // 2017-12-01 09:54:33 which is 42747.412892397523 as double
         DataFormatter dfDE = new DataFormatter(Locale.GERMANY);
         DataFormatter dfZH = new DataFormatter(Locale.PRC);
-        DataFormatter dfIE = new DataFormatter(new Locale("GA", "IE"));
+        DataFormatter dfIE = new DataFormatter(new Locale.Builder().setLanguage("GA").setRegion("IE").build());
         double date = 42747.412892397523;
         String format = "dd MMMM yyyy HH:mm:ss";
         assertEquals("12 Januar 2017 09:54:33", dfDE.formatRawCellContents(date, -1, format));
@@ -973,16 +983,17 @@ class TestDataFormatter {
     }
 
     @Test
-    void testBug62839() {
-        Workbook wb = new HSSFWorkbook();
-        Sheet sheet = wb.createSheet();
-        Row row = sheet.createRow(0);
-        Cell cell = row.createCell(0);
-        cell.setCellFormula("FLOOR(-123,10)");
-        DataFormatter df = new DataFormatter(Locale.GERMANY);
+    void testBug62839() throws IOException {
+        try (Workbook wb = new HSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellFormula("FLOOR(-123,10)");
+            DataFormatter df = new DataFormatter(Locale.GERMANY);
 
-        String value = df.formatCellValue(cell, wb.getCreationHelper().createFormulaEvaluator());
-        assertEquals("-130", value);
+            String value = df.formatCellValue(cell, wb.getCreationHelper().createFormulaEvaluator());
+            assertEquals("-130", value);
+        }
     }
 
     /**
@@ -1162,4 +1173,61 @@ class TestDataFormatter {
         return true;
     }
 
+    @Test
+    public void testFormatCellValue() throws IOException {
+        DataFormatter df = new DataFormatter();
+
+        assertEquals("", df.formatCellValue(null));
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            Cell cell = wb.createSheet("test").createRow(0).createCell(0);
+            assertEquals("", df.formatCellValue(cell));
+
+            cell.setCellValue(123);
+            assertEquals("123", df.formatCellValue(cell));
+
+            /* This is flaky, likely because of timezone
+            cell.setCellValue(new Date(234092383));
+            assertEquals("25571.75107", df.formatCellValue(cell));*/
+
+            cell.setCellValue("abcdefgh");
+            assertEquals("abcdefgh", df.formatCellValue(cell));
+
+            cell.setCellValue(true);
+            assertEquals("TRUE", df.formatCellValue(cell));
+
+            CellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setDataFormat((short)14);
+            cell.setCellStyle(cellStyle);
+            cell.setCellValue(new Date(234092383));
+            assertEquals("1/3/70", df.formatCellValue(cell));
+
+            /* This is flaky, likely because of timezone
+            cellStyle.setDataFormat((short)9999);
+            assertEquals("25571.751069247686", df.formatCellValue(cell));*/
+        }
+    }
+
+    @Test
+    void testBug65190() {
+        DataFormatter formatter = new DataFormatter(Locale.ENGLISH);
+
+        assertEquals("12334567890",
+                formatter.formatRawCellContents(12334567890.0, 0, "0"));
+        assertEquals("12334567890",
+                formatter.formatRawCellContents(12334567890.0, 0, "#"));
+        assertEquals("12334567890",
+                formatter.formatRawCellContents(12334567890.0, 0, "#0"));
+        assertEquals("12334567890",
+                formatter.formatRawCellContents(12334567890.0, 0, "0#"));
+
+        assertEquals("12334567890123",
+                formatter.formatRawCellContents(12334567890123.0, 0, "0"));
+        assertEquals("12334567890123",
+                formatter.formatRawCellContents(12334567890123.0, 0, "#"));
+        assertEquals("12334567890123",
+                formatter.formatRawCellContents(12334567890123.0, 0, "#0"));
+        assertEquals("12334567890123",
+                formatter.formatRawCellContents(12334567890123.0, 0, "0#"));
+    }
 }

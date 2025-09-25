@@ -38,7 +38,7 @@ final class TestDrawingRecord {
     void testReadContinued() throws IOException {
 
         //simulate a continues drawing record
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         //main part
         DrawingRecord dg = new DrawingRecord();
         byte[] data1 = new byte[8224];

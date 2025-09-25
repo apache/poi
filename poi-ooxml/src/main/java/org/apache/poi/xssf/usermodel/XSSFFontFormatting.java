@@ -73,7 +73,7 @@ public class XSSFFontFormatting implements FontFormatting {
     }
 
     /**
-     * XMLBeans and the XSD make this look like it can have multiple values, but it is maxOccurrs=1.
+     * XMLBeans and the XSD make this look like it can have multiple values, but it is maxOccurs=1.
      * Use get*Array(), it is much faster than get*List().
      *
      * @see org.apache.poi.ss.usermodel.FontFormatting#isStruckout()

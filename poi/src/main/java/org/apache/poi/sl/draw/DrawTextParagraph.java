@@ -41,12 +41,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.common.usermodel.fonts.FontGroup.FontGroupRange;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
+import org.apache.poi.sl.usermodel.HighlightColorSupport;
 import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -65,9 +66,10 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
+import org.w3c.dom.Text;
 
 public class DrawTextParagraph implements Drawable {
-    private static final Logger LOG = LogManager.getLogger(DrawTextParagraph.class);
+    private static final Logger LOG = PoiLogManager.getLogger(DrawTextParagraph.class);
 
     /** Keys for passing hyperlinks to the graphics context */
     public static final XlinkAttribute HYPERLINK_HREF = new XlinkAttribute("href");
@@ -609,6 +611,15 @@ public class DrawTextParagraph implements Drawable {
             Paint fgPaint = dp.getPaint(graphics, fgPaintStyle);
 
             att.put(TextAttribute.FOREGROUND, fgPaint);
+
+            if (run instanceof HighlightColorSupport) {
+                // Highlight color is only supported in XSLF (PPTX) text runs.
+                final PaintStyle highlightPaintStyle = ((HighlightColorSupport)run).getHighlightColor();
+                if (highlightPaintStyle != null) {
+                    final Paint bgPaint = dp.getPaint(graphics, highlightPaintStyle);
+                    att.put(TextAttribute.BACKGROUND, bgPaint);
+                }
+            }
 
             Double fontSz = run.getFontSize();
             if (fontSz == null) {

@@ -142,15 +142,15 @@ public final class TestWordExtractor {
         POIFSFileSystem fs = new POIFSFileSystem(is);
         is.close();
 
-        DirectoryNode dirA = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B7");
-        DirectoryNode dirB = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B2");
+        DirectoryNode dirA = (DirectoryNode) fs.getRoot().getEntryCaseInsensitive("MBD0000A3B7");
+        DirectoryNode dirB = (DirectoryNode) fs.getRoot().getEntryCaseInsensitive("MBD0000A3B2");
 
         // Should have WordDocument and 1Table
-        assertNotNull(dirA.getEntry("1Table"));
-        assertNotNull(dirA.getEntry("WordDocument"));
+        assertNotNull(dirA.getEntryCaseInsensitive("1Table"));
+        assertNotNull(dirA.getEntryCaseInsensitive("WordDocument"));
 
-        assertNotNull(dirB.getEntry("1Table"));
-        assertNotNull(dirB.getEntry("WordDocument"));
+        assertNotNull(dirB.getEntryCaseInsensitive("1Table"));
+        assertNotNull(dirB.getEntryCaseInsensitive("WordDocument"));
 
         // Check each in turn
         HWPFDocument docA = new HWPFDocument(dirA);
@@ -399,6 +399,18 @@ public final class TestWordExtractor {
             assertContains(text, "SUBJECT = sample subject");
             assertContains(text, "MANAGER = sample manager");
             assertContains(text, "COMPANY = sample company");
+        }
+    }
+
+    @Test
+    public void testCaseInsensitiveOLENames() throws Exception {
+        //test files are from Ross Johnson on TIKA-4091
+        for (String n : new String[]{"normal", "lower", "upper"}) {
+            try (InputStream is = docTests.openResourceAsStream("47950_" + n + ".doc");
+                 POIFSFileSystem fs = new POIFSFileSystem(is);
+                 WordExtractor wExt = new WordExtractor(fs)) {
+                assertContains(wExt.getText(), "This is a sample Word document");
+            }
         }
     }
 

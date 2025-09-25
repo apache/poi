@@ -34,7 +34,7 @@ public class TestSLWTListing extends BaseTestPPTIterating {
     @BeforeAll
     public static void muteStdErr() {
         oldStdErr = System.err;
-        System.setErr(new NullPrintStream());
+        System.setErr(NullPrintStream.INSTANCE);
     }
 
     @AfterAll

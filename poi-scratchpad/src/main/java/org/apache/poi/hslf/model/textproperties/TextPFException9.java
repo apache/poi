@@ -32,7 +32,7 @@ import org.apache.poi.util.LittleEndian;
 /**
  * This structure store text autonumber scheme and start number.
  * If a paragraph has an autonumber(fBulletHasAutoNumber = 0x0001) but start number and scheme are empty,
- * this means the default values will be used: statNumber=1 and sheme=ANM_ArabicPeriod
+ * this means the default values will be used: statNumber=1 and scheme=ANM_ArabicPeriod
  * @see <a href="http://social.msdn.microsoft.com/Forums/mr-IN/os_binaryfile/thread/650888db-fabd-4b95-88dc-f0455f6e2d28">
  *     http://social.msdn.microsoft.com/Forums/mr-IN/os_binaryfile/thread/650888db-fabd-4b95-88dc-f0455f6e2d28</a>
  */

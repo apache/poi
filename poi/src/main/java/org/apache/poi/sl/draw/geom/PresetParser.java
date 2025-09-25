@@ -27,8 +27,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.sl.usermodel.PaintStyle.PaintModifier;
 import org.apache.poi.util.Internal;
 
@@ -55,7 +55,7 @@ class PresetParser {
         }
     }
 
-    private static final Logger LOG = LogManager.getLogger(PresetParser.class);
+    private static final Logger LOG = PoiLogManager.getLogger(PresetParser.class);
 
     private Mode mode;
 

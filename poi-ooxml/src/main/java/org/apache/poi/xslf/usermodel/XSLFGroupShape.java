@@ -25,14 +25,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.usermodel.GroupShape;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
@@ -54,7 +55,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 @Beta
 public class XSLFGroupShape extends XSLFShape
 implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
-    private static final Logger LOG = LogManager.getLogger(XSLFGroupShape.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XSLFGroupShape.class);
 
     private final List<XSLFShape> _shapes;
     private final CTGroupShapeProperties _grpSpPr;
@@ -415,7 +416,14 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         }
     }
 
+    /**
+     * This method is not yet supported.
+     *
+     * @throws UnsupportedOperationException this method is not yet supported
+     */
+    @NotImplemented
     @Override
+    @SuppressWarnings("RedundantThrows")
     public void addShape(XSLFShape shape) {
         throw new UnsupportedOperationException(
             "Adding a shape from a different container is not supported -"

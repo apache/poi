@@ -23,12 +23,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.xddf.usermodel.XDDFFillProperties;
 import org.apache.poi.xddf.usermodel.XDDFLineProperties;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
@@ -47,7 +46,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
  */
 @Beta
 public abstract class XDDFChartData {
-    private static final Logger LOGGER = LogManager.getLogger(XDDFChartData.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(XDDFChartData.class);
 
     protected XDDFChart parent;
     protected List<Series> series;
@@ -83,27 +82,6 @@ public abstract class XDDFChartData {
 
     public List<XDDFValueAxis> getValueAxes() {
         return valueAxes;
-    }
-
-    /**
-     * Calls to {@code getSeries().add(series)} or to {@code getSeries().remove(series)}
-     * may corrupt the workbook.
-     *
-     * <p>
-     * Instead, use the following methods:
-     * <ul>
-     * <li>{@link #getSeriesCount()}</li>
-     * <li>{@link #getSeries(int)}</li>
-     * <li>{@link #addSeries(XDDFDataSource,XDDFNumericalDataSource)}</li>
-     * <li>{@link #removeSeries(int)}</li>
-     * </ul>
-     *
-     * @deprecated since POI 4.1.1
-     */
-    @Deprecated
-    @Removal(version = "5.3")
-    public List<Series> getSeries() {
-        return Collections.unmodifiableList(series);
     }
 
     public final int getSeriesCount() {
@@ -170,8 +148,8 @@ public abstract class XDDFChartData {
             if (categoryData != null && values != null) {
                 int numOfPoints = category.getPointCount();
                 if (numOfPoints != values.getPointCount()) {
-                    LOGGER.warn("Category and values must have the same point count, but had " +
-                            numOfPoints + " categories and " + values.getPointCount() + " values.");
+                    LOGGER.warn("Category and values must have the same point count, but had {}" +
+                             " categories and {} values.", numOfPoints, values.getPointCount());
                 }
             }
             this.categoryData = category;

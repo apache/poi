@@ -22,7 +22,6 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -36,6 +35,7 @@ import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.DocumentFormatException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -54,7 +54,7 @@ import org.apache.poi.util.LittleEndianConsts;
  */
 public class Range {
 
-    private static final Logger LOG = LogManager.getLogger(Range.class);
+    private static final Logger LOG = PoiLogManager.getLogger(Range.class);
 
     /**
      * @deprecated POI 3.8 beta 5

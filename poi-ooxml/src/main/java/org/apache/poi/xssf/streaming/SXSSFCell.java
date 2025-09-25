@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.streaming;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,6 +30,7 @@ import org.apache.poi.ss.usermodel.CellBase;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Hyperlink;
@@ -52,11 +51,25 @@ public class SXSSFCell extends CellBase {
     private CellStyle _style;
     private Property _firstProperty;
 
-    public SXSSFCell(SXSSFRow row, CellType cellType)
+    private int _columnIndex = -1;
+
+    public SXSSFCell(final SXSSFRow row, final CellType cellType)
     {
-        _row=row;
+        _row = row;
         _value = new BlankValue();
         setType(cellType);
+    }
+
+    /**
+     * @param row the {@link SXSSFRow}
+     * @param cellType the {@link CellType}
+     * @param columnIndex the column index (zero based)
+     * @since POI 5.2.4
+     */
+    public SXSSFCell(final SXSSFRow row, final CellType cellType, final int columnIndex)
+    {
+        this(row, cellType);
+        _columnIndex = columnIndex;
     }
 
     /**
@@ -75,6 +88,9 @@ public class SXSSFCell extends CellBase {
     @Override
     public int getColumnIndex()
     {
+        if (_columnIndex >= 0) {
+            return _columnIndex;
+        }
         return _row.getCellIndex(this);
     }
 
@@ -139,6 +155,7 @@ public class SXSSFCell extends CellBase {
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
+     * @throws IllegalStateException if cell is not a formula cell
      */
     @Override
     public CellType getCachedFormulaResultType() {
@@ -253,7 +270,7 @@ public class SXSSFCell extends CellBase {
                     _value = new ErrorFormulaValue(formula, getErrorCellValue());
                     break;
                 default:
-                    throw new IllegalStateException("Cannot set a formula for a cell of type " + getCellType());
+                    throw new FormulaParseException("Cannot set a formula for a cell of type " + getCellType());
             }
         }
     }
@@ -463,7 +480,7 @@ public class SXSSFCell extends CellBase {
     }
 
     /**
-     * Set a error value for the cell
+     * Set an error value for the cell
      *
      * @param value the error value to set this cell to.  For formulas, we'll set the
      *        precalculated value , for errors we'll set
@@ -554,7 +571,7 @@ public class SXSSFCell extends CellBase {
      * the Workbook.</p>
      *
      * <p>To change the style of a cell without affecting other cells that use the same style,
-     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, Map)}</p>
+     * use {@link org.apache.poi.ss.util.CellUtil#setCellStylePropertiesEnum(Cell, Map)}</p>
      *
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to used the default workbook style.
@@ -569,7 +586,7 @@ public class SXSSFCell extends CellBase {
     /**
      * Return the cell's style.
      *
-     * @return the cell's style. Always not-null. Default cell style has zero index and can be obtained as
+     * @return the cell's style. Never null. Default cell style has zero index and can be obtained as
      * <code>workbook.getCellStyleAt(0)</code>
      * @see org.apache.poi.ss.usermodel.Workbook#getCellStyleAt(int)
      */
@@ -582,10 +599,9 @@ public class SXSSFCell extends CellBase {
                 SXSSFWorkbook wb = getSheet().getWorkbook();
                 style = wb.getCellStyleAt(0);
             }
-            return style;
-        } else {
-            return _style;
+            _style = style;
         }
+        return _style;
     }
 
     private CellStyle getDefaultCellStyleFromColumn() {
@@ -726,11 +742,11 @@ public class SXSSFCell extends CellBase {
                 return getCellFormula();
             case NUMERIC:
                 if (DateUtil.isCellDateFormatted(this)) {
-                    DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", LocaleUtil.getUserLocale());
-                    sdf.setTimeZone(LocaleUtil.getUserTimeZone());
-                    return sdf.format(getDateCellValue());
+                    DataFormatter df = new DataFormatter();
+                    df.setUseCachedValuesForFormulaCells(true);
+                    return df.formatCellValue(this);
                 }
-                return getNumericCellValue() + "";
+                return Double.toString(getNumericCellValue());
             case STRING:
                 return getRichStringCellValue().toString();
             default:
@@ -931,7 +947,7 @@ public class SXSSFCell extends CellBase {
         }
     }
 
-//COPIED FROM https://svn.apache.org/repos/asf/poi/trunk/poi-ooxml/src/main/java/org/apache/poi/xssf/usermodel/XSSFCell.java since the functions are declared private there
+//COPIED FROM XSSFCell.java since the functions are declared private there
     /**
      * Used to help format error messages
      */

@@ -23,6 +23,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.IOUtils;
 
 /**
@@ -43,7 +44,7 @@ public abstract class HPBFPart {
         DirectoryNode dir = getDir(baseDir, path);
         String name = path[path.length-1];
 
-        if (!dir.hasEntry(name)) {
+        if (!dir.hasEntryCaseInsensitive(name)) {
             throw new IllegalArgumentException("File invalid - failed to find document entry '" + name + "'");
         }
 
@@ -57,7 +58,11 @@ public abstract class HPBFPart {
         DirectoryNode dir = baseDir;
         for(int i=0; i<path.length-1; i++) {
             try {
-                dir = (DirectoryNode)dir.getEntry(path[i]);
+                Entry entry = dir.getEntry(path[i]);
+                if (!(entry instanceof DirectoryNode)) {
+                    throw new IllegalArgumentException("Had unexpected type of entry for path: " + path[i] + ": " + entry);
+                }
+                dir = (DirectoryNode) entry;
             } catch (FileNotFoundException e) {
                 throw new IllegalArgumentException("File invalid - failed to find directory entry '"
                         + path[i] + "': " + e);
@@ -73,7 +78,7 @@ public abstract class HPBFPart {
         DirectoryNode dir = baseDir;
         for(int i=0; i<path.length-1; i++) {
             try {
-                dir = (DirectoryNode)dir.getEntry(path[i]);
+                dir = (DirectoryNode)dir.getEntryCaseInsensitive(path[i]);
             } catch(FileNotFoundException e) {
                 dir.createDirectory(path[i]);
             }
@@ -83,7 +88,7 @@ public abstract class HPBFPart {
         generateData();
 
         // Write out
-        try (UnsynchronizedByteArrayInputStream bais = new UnsynchronizedByteArrayInputStream(data)) {
+        try (UnsynchronizedByteArrayInputStream bais = UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get()) {
             dir.createDocument(path[path.length-1], bais);
         }
     }

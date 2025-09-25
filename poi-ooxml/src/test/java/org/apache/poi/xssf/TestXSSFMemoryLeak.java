@@ -72,7 +72,7 @@ public class TestXSSFMemoryLeak {
             // not freed until we free up the Cell itself
             //verifier.addObject(ctCell);
 
-            try (OutputStream out = new UnsynchronizedByteArrayOutputStream(8192)) {
+            try (OutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(8192).get()) {
                 wb.write(out);
             }
 

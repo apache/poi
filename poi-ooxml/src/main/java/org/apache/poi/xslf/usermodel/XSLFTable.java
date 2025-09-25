@@ -27,8 +27,8 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawTableShape;
@@ -54,7 +54,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
 public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow>,
     TableShape<XSLFShape,XSLFTextParagraph> {
     /* package */ static final String TABLE_URI = "http://schemas.openxmlformats.org/drawingml/2006/table";
-    private static final Logger LOG = LogManager.getLogger(XSLFTable.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XSLFTable.class);
 
     private final CTTable _table;
     private final List<XSLFTableRow> _rows;
@@ -114,7 +114,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
     @Override
     public int getNumberOfColumns() {
-        return _table.getTblGrid().sizeOfGridColArray();
+        return _table.getTblGrid() == null ? 0 : _table.getTblGrid().sizeOfGridColArray();
     }
 
     @Override

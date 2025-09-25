@@ -48,7 +48,10 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
         super(SXSSFITestDataProvider.instance);
     }
 
-    void testSharedFormulas() throws IOException {
+
+    @Override
+    @Disabled
+    protected void testSharedFormulas() throws IOException {
         /* not implemented */
     }
 

@@ -18,12 +18,37 @@
 package org.apache.poi.util;
 
 import java.util.Iterator;
+import java.util.PrimitiveIterator;
 
 @Internal
 public class CodepointsUtil {
+
+    /**
+     * @param text to iterate over
+     * @return iterator with Strings representing the codepoints
+     * @see #primitiveIterator(String) a more performant iterator
+     */
     public static Iterator<String> iteratorFor(String text) {
-        return text.codePoints()
-                .mapToObj(codePoint -> new StringBuilder().appendCodePoint(codePoint).toString())
-                .iterator();
+        final PrimitiveIterator.OfInt iter = primitiveIterator(text);
+        return new Iterator<String>() {
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public String next() {
+                return new String(Character.toChars(iter.nextInt()));
+            }
+        };
+    }
+
+    /**
+     * @param text to iterate over
+     * @return iterator with ints representing the codepoints
+     * @since POI 5.2.4
+     */
+    public static PrimitiveIterator.OfInt primitiveIterator(String text) {
+        return text.codePoints().iterator();
     }
 }

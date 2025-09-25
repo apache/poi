@@ -330,7 +330,7 @@ public interface Cell {
      void setCellValue(boolean value);
 
     /**
-     * Set a error value for the cell
+     * Set an error value for the cell
      *
      * @param value the error value to set this cell to.  For formulas, we'll set the
      *        precalculated value , for errors we'll set
@@ -369,7 +369,7 @@ public interface Cell {
      * the Workbook.</p>
      *
      * <p>To change the style of a cell without affecting other cells that use the same style,
-     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, Map)}</p>
+     * use {@link org.apache.poi.ss.util.CellUtil#setCellStylePropertiesEnum(Cell, Map)}</p>
      *
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to used the default workbook style.

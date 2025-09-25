@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -64,8 +65,8 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
             T apply(LittleEndianInput in, int size, int cmoOt);
         }
 
-        private static final Map<Short,SubRecordTypes> LOOKUP =
-            Arrays.stream(values()).collect(Collectors.toMap(SubRecordTypes::getSid, Function.identity()));
+        private static final Map<Short,SubRecordTypes> LOOKUP = Collections.unmodifiableMap(
+            Arrays.stream(values()).collect(Collectors.toMap(SubRecordTypes::getSid, Function.identity())));
 
         public final short sid;
         public final RecordConstructor<?> recordConstructor;
@@ -136,10 +137,10 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
     protected abstract int getDataSize();
     public byte[] serialize() {
         int size = getDataSize() + 4;
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(size);
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(size).get();
         serialize(new LittleEndianOutputStream(baos));
         if (baos.size() != size) {
-            throw new RuntimeException("write size mismatch");
+            throw new IllegalStateException("write size mismatch");
         }
         return baos.toByteArray();
     }

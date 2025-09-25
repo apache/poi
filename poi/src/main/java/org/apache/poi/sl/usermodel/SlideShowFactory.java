@@ -126,7 +126,7 @@ public final class SlideShowFactory {
      */
     public static SlideShow<?,?> create(final DirectoryNode root, String password) throws IOException {
         // Encrypted OOXML files go inside OLE2 containers, is this one?
-        if (root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE)) {
+        if (root.hasEntryCaseInsensitive(Decryptor.DEFAULT_POIFS_ENTRY) || root.hasEntryCaseInsensitive(OOXML_PACKAGE)) {
             return wp(FileMagic.OOXML, w -> w.create(root, password));
         } else {
             return wp(FileMagic.OLE2, w ->  w.create(root, password));
@@ -200,7 +200,7 @@ public final class SlideShowFactory {
 
         POIFSFileSystem poifs = new POIFSFileSystem(is);
         DirectoryNode root = poifs.getRoot();
-        boolean isOOXML = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
+        boolean isOOXML = root.hasEntryCaseInsensitive(DEFAULT_POIFS_ENTRY) || root.hasEntryCaseInsensitive(OOXML_PACKAGE);
 
         return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(poifs.getRoot(), password));
     }
@@ -274,7 +274,7 @@ public final class SlideShowFactory {
             final boolean ooxmlEnc;
             try (POIFSFileSystem fs = new POIFSFileSystem(file, true)) {
                 DirectoryNode root = fs.getRoot();
-                ooxmlEnc = root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
+                ooxmlEnc = root.hasEntryCaseInsensitive(Decryptor.DEFAULT_POIFS_ENTRY) || root.hasEntryCaseInsensitive(OOXML_PACKAGE);
             }
             return wp(ooxmlEnc ? FileMagic.OOXML : fm, w -> w.create(file, password, readOnly));
         } else {

@@ -25,13 +25,13 @@ import static org.apache.poi.openxml4j.opc.PackagingURIHelper.RELATIONSHIP_PART_
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -42,14 +42,15 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.internal.ContentType;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
+import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 import org.apache.poi.openxml4j.opc.internal.PartUnmarshaller;
@@ -71,7 +72,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     /**
      * Logger.
      */
-    private static final Logger LOG = LogManager.getLogger(OPCPackage.class);
+    private static final Logger LOG = PoiLogManager.getLogger(OPCPackage.class);
 
     /**
      * Default package access.
@@ -136,10 +137,23 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     /**
      * Constructor.
      *
-     * @param access
-     *            Package access.
+     * @param access Package access.
+     * @throws OpenXML4JRuntimeException if there are issues creating properties part
      */
     OPCPackage(PackageAccess access) {
+        this(access, OPCComplianceFlags.enforceAll());
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param access Package access.
+     * @param opcComplianceFlags Enable or disable specific OPC compliance flags.
+     *                           This is useful to allow parsing of certain non-compliant documents.
+     * @throws OpenXML4JRuntimeException if there are issues creating properties part
+     * @since POI 5.4.1
+     */
+    OPCPackage(PackageAccess access, OPCComplianceFlags opcComplianceFlags) {
         if (getClass() != ZipPackage.class) {
             throw new IllegalArgumentException("PackageBase may not be subclassed");
         }
@@ -147,7 +161,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 
         final ContentType contentType = newCorePropertiesPart();
         // TODO Delocalize specialized marshallers
-        this.partUnmarshallers.put(contentType, new PackagePropertiesUnmarshaller());
+        this.partUnmarshallers.put(contentType, new PackagePropertiesUnmarshaller(opcComplianceFlags));
         this.partMarshallers.put(contentType, new ZipPackagePropertiesMarshaller());
     }
 
@@ -175,7 +189,24 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      *             occur.
      */
     public static OPCPackage open(String path) throws InvalidFormatException {
-        return open(path, defaultPackageAccess);
+        return open(path, defaultPackageAccess, OPCComplianceFlags.enforceAll());
+    }
+
+    /**
+     * Open a package with read/write permission.
+     *
+     * @param path
+     *            The document path.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @return A Package object, else <b>null</b>.
+     * @throws InvalidFormatException
+     *             If the specified file doesn't exist, and a parsing error
+     *             occur.
+     * @since POI 5.4.1
+     */
+    public static OPCPackage open(String path, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException {
+        return open(path, defaultPackageAccess, opcComplianceFlags);
     }
 
    /**
@@ -192,8 +223,25 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
       return open(file, defaultPackageAccess);
    }
 
+    /**
+     * Open a package with read/write permission.
+     *
+     * @param file
+     *            The file to open.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @return A Package object, else <b>null</b>.
+     * @throws InvalidFormatException
+     *             If the specified file doesn't exist, and a parsing error
+     *             occur.
+     * @since POI 5.4.1
+     */
+    public static OPCPackage open(File file, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException {
+        return open(file, defaultPackageAccess, opcComplianceFlags);
+    }
+
    /**
-    * Open an user provided {@link ZipEntrySource} with read-only permission.
+    * Open a user provided {@link ZipEntrySource} with read-only permission.
     * This method can be used to stream data into POI.
     * Opposed to other open variants, the data is read as-is, e.g. there aren't
     * any zip-bomb protection put in place.
@@ -202,22 +250,38 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     * @return A Package object
     * @throws InvalidFormatException if a parsing error occur.
     */
-   public static OPCPackage open(ZipEntrySource zipEntry)
-   throws InvalidFormatException {
-       OPCPackage pack = new ZipPackage(zipEntry, PackageAccess.READ);
-       try {
-           if (pack.partList == null) {
-               pack.getParts();
-           }
-           // pack.originalPackagePath = file.getAbsolutePath();
-           return pack;
-       } catch (InvalidFormatException | RuntimeException e) {
-           // use revert() to free resources when the packgae is opened read-only
-           pack.revert();
-
-           throw e;
-       }
+   public static OPCPackage open(ZipEntrySource zipEntry) throws InvalidFormatException {
+       return open(zipEntry, OPCComplianceFlags.enforceAll());
    }
+
+    /**
+     * Open a user provided {@link ZipEntrySource} with read-only permission.
+     * This method can be used to stream data into POI.
+     * Opposed to other open variants, the data is read as-is, e.g. there aren't
+     * any zip-bomb protection put in place.
+     *
+     * @param zipEntry the custom source
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @return A Package object
+     * @throws InvalidFormatException if a parsing error occur.
+     * @since POI 5.4.1
+     */
+    public static OPCPackage open(ZipEntrySource zipEntry, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException {
+        OPCPackage pack = new ZipPackage(zipEntry, PackageAccess.READ, opcComplianceFlags);
+        try {
+            if (pack.partList == null) {
+                pack.getParts();
+            }
+            // pack.originalPackagePath = file.getAbsolutePath();
+            return pack;
+        } catch (InvalidFormatException | RuntimeException e) {
+            // use revert() to free resources when the package is opened read-only
+            pack.revert();
+
+            throw e;
+        }
+    }
 
     /**
      * Open a package.
@@ -235,6 +299,28 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      */
     public static OPCPackage open(String path, PackageAccess access)
             throws InvalidFormatException, InvalidOperationException {
+        return open(path, access, OPCComplianceFlags.enforceAll());
+    }
+
+    /**
+     * Open a package.
+     *
+     * @param path
+     *            The document path.
+     * @param access
+     *            PackageBase access.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @return A PackageBase object, else <b>null</b>.
+     * @throws InvalidFormatException
+     *             If the specified file doesn't exist, and a parsing error
+     *             occur.
+     * @throws InvalidOperationException If the zip file cannot be opened.
+     * @throws InvalidFormatException if the package is not valid.
+     * @since POI 5.4.1
+     */
+    public static OPCPackage open(String path, PackageAccess access, OPCComplianceFlags opcComplianceFlags)
+            throws InvalidFormatException, InvalidOperationException {
         if (StringUtil.isBlank(path)) {
             throw new IllegalArgumentException("'path' must be given");
         }
@@ -244,7 +330,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
             throw new IllegalArgumentException("path must not be a directory");
         }
 
-        OPCPackage pack = new ZipPackage(path, access); // NOSONAR
+        OPCPackage pack = new ZipPackage(path, access, opcComplianceFlags); // NOSONAR
         boolean success = false;
         if (pack.partList == null && access != PackageAccess.WRITE) {
             try {
@@ -275,29 +361,55 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     */
    public static OPCPackage open(File file, PackageAccess access)
          throws InvalidFormatException {
-       if (file == null) {
-           throw new IllegalArgumentException("'file' must be given");
-       }
-       if (file.exists() && file.isDirectory()) {
-           throw new IllegalArgumentException("file must not be a directory");
-       }
-
-       OPCPackage pack = new ZipPackage(file, access); //NOSONAR
-       try {
-           if (pack.partList == null && access != PackageAccess.WRITE) {
-               pack.getParts();
-           }
-           pack.originalPackagePath = file.getAbsolutePath();
-           return pack;
-       } catch (InvalidFormatException | RuntimeException e) {
-           if (access == PackageAccess.READ) {
-               pack.revert();
-           } else {
-               IOUtils.closeQuietly(pack);
-           }
-           throw e;
-       }
+       return open(file, access, OPCComplianceFlags.enforceAll());
    }
+
+    /**
+     * Open a package.
+     *
+     * @param file
+     *            The file to open.
+     * @param access
+     *            PackageBase access.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @return A PackageBase object, else <b>null</b>.
+     * @throws IllegalArgumentException
+     *             If the specified file doesn't exist or is a directory.
+     * @throws InvalidFormatException
+     *             If a parsing error occurs.
+     * @since POI 5.4.1
+     */
+    public static OPCPackage open(File file, PackageAccess access, OPCComplianceFlags opcComplianceFlags)
+            throws InvalidFormatException {
+        if (file == null) {
+            throw new IllegalArgumentException("'file' must be given");
+        }
+        if (file.exists() && file.isDirectory()) {
+            throw new IllegalArgumentException("file must not be a directory");
+        }
+
+        final OPCPackage pack;
+        try {
+            pack = new ZipPackage(file, access, opcComplianceFlags); //NOSONAR
+        } catch (InvalidOperationException e) {
+            throw new InvalidFormatException(e.getMessage(), e);
+        }
+        try {
+            if (pack.partList == null && access != PackageAccess.WRITE) {
+                pack.getParts();
+            }
+            pack.originalPackagePath = file.getAbsolutePath();
+            return pack;
+        } catch (InvalidFormatException | RuntimeException e) {
+            if (access == PackageAccess.READ) {
+                pack.revert();
+            } else {
+                IOUtils.closeQuietly(pack);
+            }
+            throw e;
+        }
+    }
 
     /**
      * Open a package.
@@ -307,7 +419,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * of native methods
      *
      * @param in
-     *            The InputStream to read the package from
+     *            The InputStream to read the package from. The stream is closed.
      * @return A PackageBase object
      *
      * @throws InvalidFormatException
@@ -316,7 +428,97 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      */
     public static OPCPackage open(InputStream in) throws InvalidFormatException,
             IOException {
-        OPCPackage pack = new ZipPackage(in, PackageAccess.READ_WRITE);
+        return open(in, OPCComplianceFlags.enforceAll());
+    }
+
+    /**
+     * Open a package.
+     *
+     * Note - uses quite a bit more memory than {@link #open(String)}, which
+     * doesn't need to hold the whole zip file in memory, and can take advantage
+     * of native methods
+     *
+     * @param in
+     *            The InputStream to read the package from. The stream is closed.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @return A PackageBase object
+     *
+     * @throws InvalidFormatException
+     *              Throws if the specified file exist and is not valid.
+     * @throws IOException If reading the stream fails
+     * @since POI 5.4.1
+     */
+    public static OPCPackage open(InputStream in, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException,
+            IOException {
+        final OPCPackage pack;
+        try {
+            pack = new ZipPackage(in, PackageAccess.READ_WRITE, opcComplianceFlags);
+        } catch (InvalidZipException e) {
+            throw new InvalidFormatException(e.getMessage(), e);
+        }
+        try {
+            if (pack.partList == null) {
+                pack.getParts();
+            }
+        } catch (InvalidFormatException | RuntimeException e) {
+            IOUtils.closeQuietly(pack);
+            throw e;
+        }
+        return pack;
+    }
+
+    /**
+     * Open a package.
+     *
+     * Note - uses quite a bit more memory than {@link #open(String)}, which
+     * doesn't need to hold the whole zip file in memory, and can take advantage
+     * of native methods
+     *
+     * @param in
+     *            The InputStream to read the package from.
+     * @param closeStream
+     *            Whether to close the input stream.
+     * @return A PackageBase object
+     *
+     * @throws InvalidFormatException
+     *              Throws if the specified file exist and is not valid.
+     * @throws IOException If reading the stream fails
+     * @since POI 5.2.5
+     */
+    public static OPCPackage open(InputStream in, boolean closeStream) throws InvalidFormatException,
+            IOException {
+        return open(in, closeStream, OPCComplianceFlags.enforceAll());
+    }
+
+    /**
+     * Open a package.
+     *
+     * Note - uses quite a bit more memory than {@link #open(String)}, which
+     * doesn't need to hold the whole zip file in memory, and can take advantage
+     * of native methods
+     *
+     * @param in
+     *            The InputStream to read the package from.
+     * @param closeStream
+     *            Whether to close the input stream.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @return A PackageBase object
+     *
+     * @throws InvalidFormatException
+     *              Throws if the specified file exist and is not valid.
+     * @throws IOException If reading the stream fails
+     * @since POI 5.4.1
+     */
+    public static OPCPackage open(InputStream in, boolean closeStream, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException,
+            IOException {
+        final OPCPackage pack;
+        try {
+            pack = new ZipPackage(in, PackageAccess.READ_WRITE, closeStream, opcComplianceFlags);
+        } catch (InvalidZipException e) {
+            throw new InvalidFormatException(e.getMessage(), e);
+        }
         try {
             if (pack.partList == null) {
                 pack.getParts();
@@ -480,6 +682,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         // ensure all held resources are freed
         revert();
 
+        // ensure resources associated with package parts are closed
+        closeParts();
+
         // Clear
         this.contentTypeManager.clearAll();
     }
@@ -495,7 +700,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     /**
      * Add a thumbnail to the package. This method is provided to make easier
      * the addition of a thumbnail in a package. You can do the same work by
-     * using the traditionnal relationship and part mechanism.
+     * using the traditional relationship and part mechanism.
      *
      * @param path The full path to the image file.
      */
@@ -506,14 +711,14 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         }
         String name = path.substring(path.lastIndexOf(File.separatorChar) + 1);
 
-        try (FileInputStream is = new FileInputStream(path)) {
+        try (InputStream is = Files.newInputStream(Paths.get(path))) {
             addThumbnail(name, is);
         }
     }
     /**
      * Add a thumbnail to the package. This method is provided to make easier
      * the addition of a thumbnail in a package. You can do the same work by
-     * using the traditionnal relationship and part mechanism.
+     * using the traditional relationship and part mechanism.
      *
      * @param filename The full path to the image file.
      * @param data the image data
@@ -940,7 +1145,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
             throw new IllegalArgumentException("part");
         }
 
-        if (partList.containsKey(part._partName)) {
+        if (hasPackagePart(part)) {
             if (!partList.get(part._partName).isDeleted()) {
                 throw new InvalidOperationException(
                         "A part with the name '"
@@ -950,12 +1155,16 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
             // If the specified partis flagged as deleted, we make it
             // available
             part.setDeleted(false);
-            // and delete the old part to replace it thereafeter
+            // and delete the old part to replace it thereafter
             this.partList.remove(part._partName);
         }
         this.partList.put(part._partName, part);
         this.isDirty = true;
         return part;
+    }
+
+    protected boolean hasPackagePart(PackagePart part) {
+        return partList.containsKey(part._partName);
     }
 
     /**
@@ -989,7 +1198,6 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         if (this.partList.containsKey(partName)) {
             this.partList.get(partName).setDeleted(true);
             this.removePartImpl(partName);
-            this.partList.remove(partName);
         } else {
             this.removePartImpl(partName);
         }
@@ -1413,7 +1621,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         try {
             partMarshallers.remove(new ContentType(contentType));
         } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -1427,7 +1635,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         try {
             partUnmarshallers.remove(new ContentType(contentType));
         } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -1479,7 +1687,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         }
 
         // Do the save
-        try (FileOutputStream fos = new FileOutputStream(targetFile)) {
+        try (OutputStream fos = Files.newOutputStream(targetFile.toPath())) {
             this.save(fos);
         }
     }
@@ -1515,8 +1723,16 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      *
      * @param partName
      *            The URI of the part to delete.
+     * @throws IllegalArgumentException if the partName is null.
+     * @throws InvalidOperationException if the package is in read-only mode.
      */
-    protected abstract void removePartImpl(PackagePartName partName);
+    protected void removePartImpl(PackagePartName partName) {
+        if (partName == null) {
+            throw new IllegalArgumentException("partName cannot be null");
+        }
+        throwExceptionIfReadOnly();
+        this.partList.remove(partName);
+    }
 
     /**
      * Flush the package but not save.
@@ -1554,7 +1770,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 
     /**
      * Replace a content type in this package.<p>
-     * A typical scneario to call this method is to rename a template file to the main format, e.g.
+     * A typical scenario to call this method is to rename a template file to the main format, e.g.
      * <ul>
      *     <li>".dotx" to ".docx"</li>
      *     <li>".dotm" to ".docm"</li>
@@ -1657,6 +1873,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * Has close been called already?
      */
     public abstract boolean isClosed();
+
+    protected void closeParts() {
+        partList.closeParts();
+    }
 
     @Override
     public String toString() {

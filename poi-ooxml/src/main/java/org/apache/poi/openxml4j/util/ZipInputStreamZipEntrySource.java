@@ -21,9 +21,13 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
 
 /**
  * Provides a way to get at all the ZipEntries
@@ -55,7 +59,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
     }
 
     /**
-     * Get the threshold at which it a zip entry is regarded as too large for holding in memory
+     * Get the threshold at which a zip entry is regarded as too large for holding in memory
      * and the data is put in a temp file instead (defaults to -1 meaning temp files are not used)
      * @return threshold in bytes
      * @since POI 5.1.0
@@ -87,15 +91,27 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
      *  into memory, and don't close (since POI 4.0.1) the source stream.
      * We'll then eat lots of memory, but be able to
      *  work with the entries at-will.
+     * @throws IOException if an error occurs while reading the zip entries
+     * @throws InvalidZipException if the input file contains an entry with an empty name or more than 1 entry with the same name
      * @see #setThresholdBytesForTempFiles
      */
     public ZipInputStreamZipEntrySource(ZipArchiveThresholdInputStream inp) throws IOException {
+        final Set<String> filenames = new HashSet<>();
         for (;;) {
             final ZipArchiveEntry zipEntry = inp.getNextEntry();
             if (zipEntry == null) {
                 break;
             }
-            zipEntries.put(zipEntry.getName(), new ZipArchiveFakeEntry(zipEntry, inp));
+            String name = zipEntry.getName();
+            if (name == null || name.isEmpty()) {
+                throw new InvalidZipException("Input file contains an entry with an empty name");
+            }
+            name = name.toLowerCase(Locale.ROOT);
+            if (filenames.contains(name)) {
+                throw new InvalidZipException("Input file contains more than 1 entry with the name " + zipEntry.getName());
+            }
+            filenames.add(name);
+            zipEntries.put(name, new ZipArchiveFakeEntry(zipEntry, inp));
         }
 
         streamToClose = inp;

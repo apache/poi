@@ -17,8 +17,8 @@
 
 package org.apache.poi.hwpf.sprm;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor80;
 
 import org.apache.poi.hwpf.model.Colorref;
@@ -34,7 +34,7 @@ import org.apache.poi.util.LittleEndian;
 @Internal
 public final class CharacterSprmUncompressor extends SprmUncompressor
 {
-    private static final Logger LOG = LogManager.getLogger(CharacterSprmUncompressor.class);
+    private static final Logger LOG = PoiLogManager.getLogger(CharacterSprmUncompressor.class);
 
     public CharacterSprmUncompressor()
   {

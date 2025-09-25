@@ -18,10 +18,10 @@
 package org.apache.poi.hssf.extractor;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.util.Locale;
 
 import org.apache.poi.extractor.POIOLE2TextExtractor;
@@ -51,7 +51,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
  *  the XLS2CSVmra example
  * </p>
  *
- * @see <a href="http://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java">XLS2CSVmra</a>
+ * @see <a href="https://github.com/apache/poi/blob/trunk/poi-examples/src/main/java/org/apache/poi/examples/hssf/eventusermodel/XLS2CSVmra.java">XLS2CSVmra</a>
  */
 public class ExcelExtractor implements POIOLE2TextExtractor, org.apache.poi.ss.extractor.ExcelExtractor {
     private final HSSFWorkbook _wb;
@@ -225,7 +225,7 @@ public class ExcelExtractor implements POIOLE2TextExtractor, org.apache.poi.ss.e
             return;
         }
 
-        try (InputStream is = cmdArgs.getInputFile() == null ? System.in : new FileInputStream(cmdArgs.getInputFile());
+        try (InputStream is = cmdArgs.getInputFile() == null ? System.in : Files.newInputStream(cmdArgs.getInputFile().toPath());
              HSSFWorkbook wb = new HSSFWorkbook(is);
              ExcelExtractor extractor = new ExcelExtractor(wb)
         ) {
@@ -360,7 +360,7 @@ public class ExcelExtractor implements POIOLE2TextExtractor, org.apache.poi.ss.e
                                 }
                                 break;
                             default:
-                                throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
+                                throw new IllegalStateException("Unexpected cell type (" + cell.getCellType() + ")");
                         }
 
                         // Output the comment, if requested and exists

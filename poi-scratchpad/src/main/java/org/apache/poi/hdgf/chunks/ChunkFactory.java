@@ -26,8 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 
@@ -61,7 +61,7 @@ public final class ChunkFactory {
         "/org/apache/poi/hdgf/chunks_parse_cmds.tbl";
 
     /** For logging problems we spot with the file */
-    private static final Logger LOG = LogManager.getLogger(ChunkFactory.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ChunkFactory.class);
 
     /**
      * @param length the max record length allowed for ChunkFactory

@@ -191,7 +191,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pivotTableDefinition.setIndent(0);
         //The pivot version which created the pivot cache set to default value
         pivotTableDefinition.setCreatedVersion(CREATED_VERSION);
-        //Minimun version required to update the pivot cache
+        //Minimum version required to update the pivot cache
         pivotTableDefinition.setMinRefreshableVersion(MIN_REFRESHABLE_VERSION);
         //Version of the application which "updated the spreadsheet last"
         pivotTableDefinition.setUpdatedVersion(UPDATED_VERSION);

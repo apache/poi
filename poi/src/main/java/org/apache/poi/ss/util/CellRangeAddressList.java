@@ -93,10 +93,10 @@ public class CellRangeAddressList implements GenericRecord {
     }
     public CellRangeAddress remove(int rangeIndex) {
         if (_list.isEmpty()) {
-            throw new RuntimeException("List is empty");
+            throw new IllegalStateException("List is empty");
         }
         if (rangeIndex < 0 || rangeIndex >= _list.size()) {
-            throw new RuntimeException("Range index (" + rangeIndex
+            throw new IllegalStateException("Range index (" + rangeIndex
                     + ") is outside allowable range (0.." + (_list.size()-1) + ")");
         }
         return _list.remove(rangeIndex);

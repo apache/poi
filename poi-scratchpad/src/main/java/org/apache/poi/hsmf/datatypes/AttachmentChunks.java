@@ -17,12 +17,17 @@
 package org.apache.poi.hsmf.datatypes;
 
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_CONTENT_ID;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_CONTENT_LOCATION;
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_DATA;
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_EXTENSION;
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_FILENAME;
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_LONG_FILENAME;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_LONG_PATHNAME;
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_MIME_TAG;
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_RENDERING;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.DISPLAY_NAME;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.LANGUAGE;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.RECORD_KEY;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -30,8 +35,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hsmf.MAPIMessage;
 
 /**
@@ -39,16 +44,21 @@ import org.apache.poi.hsmf.MAPIMessage;
  * attachment.
  */
 public class AttachmentChunks implements ChunkGroup {
-    private static final Logger LOG = LogManager.getLogger(AttachmentChunks.class);
+    private static final Logger LOG = PoiLogManager.getLogger(AttachmentChunks.class);
     public static final String PREFIX = "__attach_version1.0_#";
 
     private ByteChunk attachData;
     private StringChunk attachExtension;
     private StringChunk attachFileName;
     private StringChunk attachLongFileName;
+    private StringChunk attachLongPathName;
+    private StringChunk attachDisplayName;
     private StringChunk attachMimeTag;
     private DirectoryChunk attachmentDirectory;
     private StringChunk attachContentId;
+    private StringChunk attachLanguage;
+    private StringChunk attachContentLocation;
+    private ByteChunk attachRecordKey;
 
     /**
      * This is in WMF Format. You'll probably want to pass it to Apache Batik to
@@ -139,6 +149,38 @@ public class AttachmentChunks implements ChunkGroup {
     }
 
     /**
+     * @return long path name for the attachment
+     * @since POI 5.4.0
+     */
+    public StringChunk getAttachLongPathName() {
+        return attachLongPathName;
+    }
+
+    /**
+     * @return attachment content location -- relative or absolute URI matching reference in html body
+     * @since POI 5.4.0
+     */
+    public StringChunk getAttachContentLocation() {
+        return attachContentLocation;
+    }
+
+    /**
+     * @return the display name of the attachment
+     * @since POI 5.4.0
+     */
+    public StringChunk getAttachDisplayName() {
+        return attachDisplayName;
+    }
+
+    /**
+     * @return the language property for the attachment
+     * @since POI 5.4.0
+     */
+    public StringChunk getAttachLanguage() {
+        return attachLanguage;
+    }
+
+    /**
      * @return the attachment mimetag
      */
     public StringChunk getAttachMimeTag() {
@@ -167,6 +209,14 @@ public class AttachmentChunks implements ChunkGroup {
     }
 
     /**
+     * @return record key
+     * @since POI 5.4.0
+     */
+    public ByteChunk getAttachRecordKey() {
+        return attachRecordKey;
+    }
+
+    /**
      * Called by the parser whenever a chunk is found.
      */
     @Override
@@ -178,35 +228,50 @@ public class AttachmentChunks implements ChunkGroup {
         // - ATTACH_DISPOSITION
         // - ATTACH_ENCODING
         // - ATTACH_FLAGS
-        // - ATTACH_LONG_PATHNAME
         // - ATTACH_SIZE
         final int chunkId = chunk.getChunkId();
-        if (chunkId == ATTACH_DATA.id) {
-            if (chunk instanceof ByteChunk) {
-                attachData = (ByteChunk) chunk;
-            } else if (chunk instanceof DirectoryChunk) {
-                attachmentDirectory = (DirectoryChunk) chunk;
-            } else {
-                LOG.atError().log("Unexpected data chunk of type {}", chunk.getEntryName());
-            }
-        } else if (chunkId == ATTACH_EXTENSION.id) {
-            attachExtension = (StringChunk) chunk;
-        } else if (chunkId == ATTACH_FILENAME.id) {
-            attachFileName = (StringChunk) chunk;
-        } else if (chunkId == ATTACH_LONG_FILENAME.id) {
-            attachLongFileName = (StringChunk) chunk;
-        } else if (chunkId == ATTACH_MIME_TAG.id) {
-            attachMimeTag = (StringChunk) chunk;
-        } else if (chunkId == ATTACH_RENDERING.id) {
-            attachRenderingWMF = (ByteChunk) chunk;
-        } else if (chunkId == ATTACH_CONTENT_ID.id) {
-            attachContentId = (StringChunk) chunk;
-        } else {
-            LOG.atWarn().log("Currently unsupported attachment chunk property will be ignored. {}", chunk.getEntryName());
-        }
 
-        // And add to the main list
-        allChunks.add(chunk);
+        try {
+            if (chunkId == ATTACH_DATA.id) {
+                if (chunk instanceof ByteChunk) {
+                    attachData = (ByteChunk) chunk;
+                } else if (chunk instanceof DirectoryChunk) {
+                    attachmentDirectory = (DirectoryChunk) chunk;
+                } else {
+                    LOG.atError().log("Unexpected data chunk of type {}", chunk.getEntryName());
+                }
+            } else if (chunkId == ATTACH_EXTENSION.id) {
+                attachExtension = (StringChunk) chunk;
+            } else if (chunkId == ATTACH_FILENAME.id) {
+                attachFileName = (StringChunk) chunk;
+            } else if (chunkId == ATTACH_LONG_FILENAME.id) {
+                attachLongFileName = (StringChunk) chunk;
+            } else if (chunkId == ATTACH_MIME_TAG.id) {
+                attachMimeTag = (StringChunk) chunk;
+            } else if (chunkId == ATTACH_RENDERING.id) {
+                attachRenderingWMF = (ByteChunk) chunk;
+            } else if (chunkId == ATTACH_CONTENT_ID.id) {
+                attachContentId = (StringChunk) chunk;
+            } else if (chunkId == DISPLAY_NAME.id) {
+                attachDisplayName = (StringChunk) chunk;
+            } else if (chunkId == LANGUAGE.id) {
+                attachLanguage = (StringChunk) chunk;
+            } else if (chunkId == ATTACH_LONG_PATHNAME.id) {
+                attachLongPathName = (StringChunk) chunk;
+            } else if (chunkId == ATTACH_CONTENT_LOCATION.id) {
+                attachContentLocation = (StringChunk) chunk;
+            } else if (chunkId == RECORD_KEY.id) {
+                attachRecordKey = (ByteChunk) chunk;
+            } else {
+                LOG.atWarn().log("Currently unsupported attachment chunk property will be ignored. {}", chunk.getEntryName());
+            }
+
+            // And add to the main list
+            allChunks.add(chunk);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("ChunkId and type of chunk did not match, had id " +
+                    chunkId + " and type of chunk: " + chunk.getClass(), e);
+        }
     }
 
     /**

@@ -65,7 +65,7 @@ public class HemfImageRenderer implements ImageRenderer, EmbeddedExtractor {
         if (!PictureData.PictureType.EMF.contentType.equals(contentType)) {
             throw new IOException("Invalid picture type");
         }
-        image = new HemfPicture(new UnsynchronizedByteArrayInputStream(data));
+        image = new HemfPicture(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get());
     }
 
     @Override

@@ -36,7 +36,7 @@ WorkbookFactory.create(f,null,true).withCloseable { workbook ->
 
       def sheet = workbook.getSheetAt(sheetNum)
       sheet.each { row ->
-         def nonEmptyCells = row.grep { c -> c.getCellType() != Cell.CELL_TYPE_BLANK }
+         def nonEmptyCells = row.grep { c -> c.getCellType() != CellType.BLANK }
          println " Row ${row.getRowNum()} has ${nonEmptyCells.size()} non-empty cells:"
          nonEmptyCells.each { c ->
             def cRef = [c] as CellReference
@@ -52,7 +52,7 @@ WorkbookFactory.create(f,null,true).withCloseable { workbook ->
    ns1.createRow(1).createCell(0).setCellValue("TODO - Populate with data")
 
    Sheet ns2 = workbook.createSheet("Generated 2")
-   exportHeader(ns2, headerStyle, "This is a demo sheet", 
+   exportHeader(ns2, headerStyle, "This is a demo sheet",
                 ["ID","Title","Date","Author","Num"] as String[])
    ns2.createRow(2).createCell(0).setCellValue(1)
    ns2.createRow(3).createCell(0).setCellValue(4)

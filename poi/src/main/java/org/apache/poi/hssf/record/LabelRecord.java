@@ -20,8 +20,8 @@ package org.apache.poi.hssf.record;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.RecordFormatException;
 
@@ -35,7 +35,7 @@ import static org.apache.poi.util.HexDump.toHex;
  * @see LabelSSTRecord
  */
 public final class LabelRecord extends Record implements CellValueRecordInterface {
-    private static final Logger LOG = LogManager.getLogger(LabelRecord.class);
+    private static final Logger LOG = PoiLogManager.getLogger(LabelRecord.class);
 
     public static final short sid = 0x0204;
 

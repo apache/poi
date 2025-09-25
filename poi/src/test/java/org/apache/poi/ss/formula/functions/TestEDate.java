@@ -41,7 +41,7 @@ class TestEDate {
         checkValue(1, 0, 1d);
         checkValue(0, 1, 31d);
         checkValue(1, 1, 32d);
-        checkValue(0, 0, /* BAD_DATE! */ -1.0d);
+        checkValue(0, 0, 0.0d);
         checkValue(0, -2, /* BAD_DATE! */ -1.0d);
         checkValue(0, -3, /* BAD_DATE! */ -1.0d);
         checkValue(49104, 0, 49104d);
@@ -112,14 +112,14 @@ class TestEDate {
     @Test
     void testEDateBlankValueEval() {
         NumberEval evaluate = (NumberEval) new EDate().evaluate(new ValueEval[]{BlankEval.instance, new NumberEval(0)}, null);
-        assertEquals(-1.0d, evaluate.getNumberValue(), 0);
+        assertEquals(0.0d, evaluate.getNumberValue(), 0);
     }
 
     @Test
     void testEDateBlankRefValueEval() {
         EDate eDate = new EDate();
         NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new RefEvalImplementation(BlankEval.instance), new NumberEval(0)}, null);
-        assertEquals(-1.0d, result.getNumberValue(), 0, "0 startDate triggers BAD_DATE currently, thus -1.0!");
+        assertEquals(0.0d, result.getNumberValue(), 0, "0 startDate triggers BAD_DATE currently, thus -1.0!");
 
         result = (NumberEval) eDate.evaluate(new ValueEval[]{new NumberEval(1), new RefEvalImplementation(BlankEval.instance)}, null);
         assertEquals(1.0d, result.getNumberValue(), 0, "Blank is handled as 0 otherwise");

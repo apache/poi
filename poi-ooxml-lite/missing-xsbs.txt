@@ -35,6 +35,7 @@ ctcustomshowlist3419type
 ctcustomxmlblockd3c1type
 ctdatarefsb753type
 ctdiagramc1cctype
+ctdocumentbasedf5ctype
 cteastasianlayout0841type
 ctednposd4a3type
 cteqarr9667type
@@ -96,8 +97,10 @@ ctwebpublishobjects30d8type
 ctwrapthrough8b4etype
 ctwraptightae95type
 ctwraptopbottom5e13type
+fonts7aa2doctype
 lockedcanvaselement
 polylineelement
+relationships93b3doctype
 relidselement
 stalignh768ctype
 stalignv5abetype
@@ -125,3 +128,4 @@ ststrokelinestylea509type
 sttargetscreensize4357type
 stverticalanchor22cctype
 stwrapside6d02type
+wsdrd172doctype

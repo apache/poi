@@ -20,8 +20,8 @@ package org.apache.poi.hwpf.usermodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.TableSprmUncompressor;
 
@@ -29,7 +29,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 public final class TableRow extends Range
 {
-    private static final Logger LOG = LogManager.getLogger(TableRow.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TableRow.class);
 
     private static final short SPRM_DXAGAPHALF = (short) 0x9602;
     private static final short SPRM_DYAROWHEIGHT = (short) 0x9407;
@@ -63,6 +63,9 @@ public final class TableRow extends Range
         return _tprops.getFCantSplit();
     }
 
+    /**
+     * @throws UnsupportedOperationException not applicable for TableRow
+     */
     public BorderCode getBarBorder()
     {
         throw new UnsupportedOperationException( "not applicable for TableRow" );

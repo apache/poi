@@ -16,7 +16,9 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.eventusermodel;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -96,7 +98,7 @@ final class TestFormatTrackingHSSFListener {
                     // Should always give us a string
                     String s = listener.formatNumberDateCell(cvr);
                     assertNotNull(s);
-                    assertTrue(s.length() > 0);
+                    assertNotEquals(0, s.length());
                 }
             }
 

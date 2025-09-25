@@ -73,7 +73,7 @@ public class TestInteractiveInfoAtom {
     @Test
     void testWrite() throws Exception {
         InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ia.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
     }
@@ -90,7 +90,7 @@ public class TestInteractiveInfoAtom {
         ia.setHyperlinkType((byte)8);
 
         // Check it's now the same as a
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ia.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
     }
@@ -104,7 +104,7 @@ public class TestInteractiveInfoAtom {
         ia.setHyperlinkID(4);
 
         // Check bytes are now the same
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ia.writeOut(baos);
         assertArrayEquals(data_b, baos.toByteArray());
     }

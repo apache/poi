@@ -42,7 +42,9 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated // testFactoryFromFile() changes sample-files, thus should run in isolation until this is removed
 public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
     private static final String filename = "SampleShow.pptx";
@@ -54,7 +56,7 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
     @Test
     void testFactoryFromFile() {
         // Remove thrown.* when bug 58779 is resolved
-        // In the mean time, this function will modify SampleShow.pptx on disk.
+        // In the meantime, this function will modify SampleShow.pptx on disk.
         AssertionError ex = assertThrows(AssertionError.class, () -> testFactoryFromFile(filename),
             "Bug 58779: " + removeExpectedExceptionMsg);
         assertTrue(ex.getMessage().contains("SampleShow.pptx sample file was modified as a result of closing the slideshow"));
@@ -97,7 +99,7 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
         File file = XSSFTestDataSamples.getSampleFile("workbook.xml");
         try (FileInputStream fis = new FileInputStream(file)) {
             try {
-                SlideShow slideShow = SlideShowFactory.create(fis);
+                SlideShow<?,?> slideShow = SlideShowFactory.create(fis);
                 if (slideShow != null) slideShow.close();
                 fail("SlideShowFactory.create should have failed");
             } catch (IOException ie) {
@@ -105,7 +107,7 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
             }
         }
         try {
-            SlideShow slideShow = SlideShowFactory.create(file);
+            SlideShow<?,?> slideShow = SlideShowFactory.create(file);
             if (slideShow != null) slideShow.close();
             fail("SlideShowFactory.create should have failed");
         } catch (IOException ie) {

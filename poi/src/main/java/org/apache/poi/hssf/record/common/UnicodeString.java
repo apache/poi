@@ -27,8 +27,8 @@ import java.util.Spliterator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
@@ -46,7 +46,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * This is often called a XLUnicodeRichExtendedString in MS documentation.
  */
 public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, GenericRecord {
-    private static final Logger LOG = LogManager.getLogger(UnicodeString.class);
+    private static final Logger LOG = PoiLogManager.getLogger(UnicodeString.class);
 
     private static final BitField highByte  = BitFieldFactory.getInstance(0x1);
     // 0x2 is reserved
@@ -115,8 +115,8 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
     }
 
     /**
-     * Our handling of equals is inconsistent with compareTo.  The trouble is because we don't truely understand
-     * rich text fields yet it's difficult to make a sound comparison.
+     * Our handling of equals is inconsistent with compareTo.  The trouble is because we don't truly understand
+     * rich text fields, yet it's difficult to make a sound comparison.
      *
      * @param o     The object to compare.
      * @return      true if the object is actually equal.

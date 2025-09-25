@@ -375,7 +375,7 @@ public interface TextParagraph<
 
 
     /**
-     * Get the {@link TabStop TabStops} - the list can't be and it's entries shouldn't be modified.
+     * Get the {@link TabStop TabStops} - the list can't be and its entries shouldn't be modified.
      * Opposed to other properties, this method is not cascading to the master sheet,
      * if the property is not defined on the normal slide level, i.e. the tabstops on
      * different levels aren't merged.

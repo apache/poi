@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,11 +76,11 @@ public enum PageMargin {
     private static final Map<Short, PageMargin> PAGE_MARGIN_BY_LEGACY_API_VALUE;
 
     static {
-        PAGE_MARGIN_BY_LEGACY_API_VALUE = new HashMap<>();
-
+        final Map<Short, PageMargin> map = new HashMap<>();
         for (PageMargin margin : values()) {
-            PAGE_MARGIN_BY_LEGACY_API_VALUE.put(margin.legacyApiValue, margin);
+            map.put(margin.legacyApiValue, margin);
         }
+        PAGE_MARGIN_BY_LEGACY_API_VALUE = Collections.unmodifiableMap(map);
     }
 
     /**

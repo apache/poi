@@ -41,8 +41,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ooxml.util.XPathHelper;
@@ -55,7 +55,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class SignaturePart {
-    private static final Logger LOG = LogManager.getLogger(SignaturePart.class);
+    private static final Logger LOG = PoiLogManager.getLogger(SignaturePart.class);
     private static final String XMLSEC_VALIDATE_MANIFEST = "org.jcp.xml.dsig.validateManifests";
     private static final String XMLSEC_VALIDATE_SECURE = "org.apache.jcp.xml.dsig.secureValidation";
 

@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 final class TestPropertyTable {
 
     private static void confirmBlockEncoding(String expectedDataStr, PropertyTable table) throws IOException {
-        final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         byte[] expectedData = RawDataUtil.decompress(expectedDataStr);
 
         POIFSStream stream = new POIFSStream(null) {

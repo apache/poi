@@ -1,5 +1,3 @@
-import java.util.regex.Pattern
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -17,18 +15,18 @@ import java.util.regex.Pattern
    limitations under the License.
 ==================================================================== */
 
+import java.util.regex.Pattern
+
 final String MODULE_NAME = 'org.apache.poi.ooxml.schemas'
-final String BEANS_SRC = "${buildDir}/generated-sources"
-final String BEANS_RES = "${buildDir}/generated-resources"
+final String BEANS_SRC = layout.buildDirectory.dir('generated-sources').get().asFile.absolutePath
+final String BEANS_RES = layout.buildDirectory.dir('generated-resources').get().asFile.absolutePath
 
 sourceSets {
     main {
         // TypeSystemHolder.class is in the resources
         output.dir(BEANS_RES, builtBy: 'generate_beans')
         compileClasspath += files(BEANS_RES)
-        if (jdkVersion > 8) {
-            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
-        }
+        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
         java {
             srcDirs = [BEANS_SRC]
         }
@@ -53,48 +51,39 @@ final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path 
 compileJava {
     dependsOn 'generate_beans'
     options.fork = true
-    options.forkOptions.jvmArgs << '-Xmx2G'
+    options.forkOptions.jvmArgs += '-Xmx2G'
 }
 
-task compileJava9(type: JavaCompile) {
+tasks.register('compileJava9', JavaCompile) {
     dependsOn 'compileJava'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(jdkVersion >= 17 ? 17 : 11)
-        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
     }
+    sourceCompatibility = 1.9
+    targetCompatibility = 1.9
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
     options.compilerArgs = [
-        '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.asPath}",
-        '--module-path', files(MAIN_MODULE_PATH).asPath
+            '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.asPath}",
+            '--module-path', files(MAIN_MODULE_PATH).asPath
     ]
-
-    onlyIf {
-        jdkVersion > 8
-    }
 }
 
-task cacheJava9(type: Copy) {
-    dependsOn 'compileJava9'
-
-    from(file(JAVA9_OUT + VERSIONS9))
-    into(JAVA9_SRC)
-}
-
-task copy_xsds(type: Copy) {
-    from ('src/main/xmlschema/org/apache/poi/xdgf')
-    from ('src/main/xmlschema/org/apache/poi/schemas') {
+tasks.register('copy_xsds', Copy) {
+    from('src/main/xmlschema/org/apache/poi/xdgf')
+    from('src/main/xmlschema/org/apache/poi/schemas') {
         include 'XAdES*.xsd', '*.xsdconfig', 'xmldsig*.xsd', 'ooxmlSchemas.xsdconfig', 'markup-compatibility.xsd',
-            'vmlDrawing.xsd', 'word12.xsd', 'xlThreaded*.xsd', 'dml-drawing.xsd'
+                'vmlDrawing.xsd', 'word10.xsd', 'word12.xsd', 'xlThreaded*.xsd', 'dml-drawing.xsd', 'drawing-chart2012.xsd',
+                'chartEx.xsd'
         exclude '*.zip'
     }
-    from ('src/main/xmlschema/org/apache/poi/poifs/crypt') {
+    from('src/main/xmlschema/org/apache/poi/poifs/crypt') {
         include 'signatureInfo.xsd'
     }
-    from (zipTree('src/main/xmlschema/org/apache/poi/schemas/OfficeOpenXML-XMLSchema-Transitional.zip'))
-    from (zipTree('src/main/xmlschema/org/apache/poi/schemas/OpenPackagingConventions-XMLSchema.zip')) {
+    from(zipTree('src/main/xmlschema/org/apache/poi/schemas/OfficeOpenXML-XMLSchema-Transitional.zip'))
+    from(zipTree('src/main/xmlschema/org/apache/poi/schemas/OpenPackagingConventions-XMLSchema.zip')) {
         include 'opc-digSig.xsd', 'opc-relationships.xsd'
     }
     into 'build/xsds'
@@ -106,30 +95,30 @@ task generate_beans(dependsOn: copy_xsds) {
 
     doLast {
         ant.uptodate(
-            property: 'xmlbeans_uptodate',
-            targetfile: 'build/generated-resources/org/apache/poi/schemas/ooxml/system/ooxml/TypeSystemHolder.class'
+                property: 'xmlbeans_uptodate',
+                targetfile: 'build/generated-resources/org/apache/poi/schemas/ooxml/system/ooxml/TypeSystemHolder.class'
         ) {
             srcFiles(dir: 'build/xsds', includes: '*.xsd')
         }
 
         ant.taskdef(
-            name: 'xmlbean',
-            classname: 'org.apache.xmlbeans.impl.tool.XMLBean',
-            classpath: sourceSets.main.runtimeClasspath.asPath
+                name: 'xmlbean',
+                classname: 'org.apache.xmlbeans.impl.tool.XMLBean',
+                classpath: sourceSets.main.runtimeClasspath.asPath
         )
 
         if (!ant.properties.xmlbeans_uptodate) {
             ant.xmlbean(
-                schema: 'build/xsds',
-                srcgendir: BEANS_SRC,
-                classgendir: BEANS_RES,
-                destfile: 'build/xsds.jar',
-                srconly: true,
-                failonerror: true,
-                fork: true,
-                memoryMaximumSize: '1536m',
-                typesystemname: 'ooxml',
-                repackage: 'org.apache.xmlbeans.metadata:org.apache.poi.schemas.ooxml'
+                    schema: 'build/xsds',
+                    srcgendir: BEANS_SRC,
+                    classgendir: BEANS_RES,
+                    destfile: 'build/xsds.jar',
+                    srconly: true,
+                    failonerror: true,
+                    fork: true,
+                    memoryMaximumSize: '1536m',
+                    typesystemname: 'ooxml',
+                    repackage: 'org.apache.xmlbeans.metadata:org.apache.poi.schemas.ooxml'
             ) {
                 classpath = sourceSets.main.runtimeClasspath.asPath
             }
@@ -137,19 +126,13 @@ task generate_beans(dependsOn: copy_xsds) {
     }
 }
 
-task sourceJar(type: Jar) {
-    classifier 'sources'
+tasks.register('sourceJar', Jar) {
+    setArchiveClassifier 'sources'
     from sourceSets.main.allJava
 }
 
 jar {
     dependsOn 'sourceJar'
-
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from JAVA9_SRC include '*.class'
-        }
-    }
 
     manifest {
         attributes ('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
@@ -180,3 +163,22 @@ spotbugsTest.enabled = false
 spotbugsMain.enabled = false
 javadoc.enabled = false
 javadocJar.enabled = false
+
+cyclonedxBom {
+    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
+    includeConfigs = ["runtimeClasspath"]
+    // skipConfigs is a list of configuration names to exclude when generating the BOM
+    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
+    // Specified the type of project being built. Defaults to 'library'
+    projectType = "library"
+    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
+    schemaVersion = "1.4"
+    // Boms destination directory (defaults to build/reports)
+    destination = file("build/reports")
+    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
+    outputName = "poi-ooxml-full-${project.version}.bom"
+    // The file format generated, can be xml, json or all for generating both
+    outputFormat = "all"
+    // Exclude BOM Serial Number
+    includeBomSerialNumber = true
+}

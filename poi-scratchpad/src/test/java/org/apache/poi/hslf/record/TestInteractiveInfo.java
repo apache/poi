@@ -56,7 +56,7 @@ public class TestInteractiveInfo {
     @Test
     void testWrite() throws Exception {
         InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ii.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
     }
@@ -74,7 +74,7 @@ public class TestInteractiveInfo {
         ia.setHyperlinkType((byte)8);
 
         // Check it's now the same as a
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ii.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
    }

@@ -75,7 +75,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                     if (r instanceof CTTextLineBreak) {
                         _runs.add(new XSLFLineBreak((CTTextLineBreak)r, this));
                     } else if (r instanceof CTRegularTextRun || r instanceof CTTextField) {
-                        _runs.add(new XSLFTextRun(r, this));
+                        _runs.add(newTextRun(r));
                     }
                 } while (c.toNextSibling());
             }
@@ -952,7 +952,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                 } else if (ostyle instanceof String) {
                     setBulletFont((String)ostyle);
                 } else if (ostyle instanceof AutoNumberingScheme) {
-                    setBulletAutoNumber((AutoNumberingScheme)ostyle, 0);
+                    setBulletAutoNumber((AutoNumberingScheme)ostyle, 1);
                 }
             }
         }

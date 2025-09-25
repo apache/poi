@@ -308,7 +308,7 @@ public final class StyleTextPropAtom extends RecordAtom {
     private void updateRawContents() throws IOException {
         if (initialised) {
             // Only update the style bytes, if the styles have been potentially changed
-            try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 // First up, we need to serialise the paragraph properties
                 for (TextPropCollection tpc : paragraphStyles) {
                     tpc.writeOut(baos);

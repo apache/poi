@@ -192,28 +192,32 @@ public class SSSlideInfoAtom extends RecordAtom {
 
         // Sanity Checking
         if(len != 24) len = 24;
-        assert(source.length >= offset+len);
+
+        if (source.length < offset+len) {
+            throw new IllegalArgumentException("Need at least " + (offset + len) +
+                    " bytes with offset " + offset + ", length " + len + " and array-size " + source.length);
+        }
 
         // Get the header
         _header = Arrays.copyOfRange(source, ofs, ofs+8);
         ofs += _header.length;
 
         if (LittleEndian.getShort(_header, 0) != 0) {
-            LOG.atDebug().log("Invalid data for SSSlideInfoAtom at offset 0: " + LittleEndian.getShort(_header, 0));
+            LOG.debug("Invalid data for SSSlideInfoAtom at offset 0: {}", LittleEndian.getShort(_header, 0));
         }
         if (LittleEndian.getShort(_header, 2) != RecordTypes.SSSlideInfoAtom.typeID) {
-            LOG.atDebug().log("Invalid data for SSSlideInfoAtom at offset 2: "+ LittleEndian.getShort(_header, 2));
+            LOG.debug("Invalid data for SSSlideInfoAtom at offset 2: {}", LittleEndian.getShort(_header, 2));
         }
         if (LittleEndian.getShort(_header, 4) != 0x10) {
-            LOG.atDebug().log("Invalid data for SSSlideInfoAtom at offset 4: "+ LittleEndian.getShort(_header, 4));
+            LOG.debug("Invalid data for SSSlideInfoAtom at offset 4: {}", LittleEndian.getShort(_header, 4));
         }
         if (LittleEndian.getShort(_header, 6) == 0) {
-            LOG.atDebug().log("Invalid data for SSSlideInfoAtom at offset 6: "+ LittleEndian.getShort(_header, 6));
+            LOG.debug("Invalid data for SSSlideInfoAtom at offset 6: {}", LittleEndian.getShort(_header, 6));
         }
 
         _slideTime = LittleEndian.getInt(source, ofs);
         if (_slideTime < 0 || _slideTime > 86399000) {
-            LOG.atDebug().log("Invalid data for SSSlideInfoAtom - invalid slideTime: "+ _slideTime);
+            LOG.debug("Invalid data for SSSlideInfoAtom - invalid slideTime: {}", _slideTime);
         }
         ofs += LittleEndianConsts.INT_SIZE;
         _soundIdRef = LittleEndian.getInt(source, ofs);
@@ -226,7 +230,7 @@ public class SSSlideInfoAtom extends RecordAtom {
         ofs += LittleEndianConsts.SHORT_SIZE;
         _speed = LittleEndian.getUByte(source, ofs);
         ofs += LittleEndianConsts.BYTE_SIZE;
-        _unused = Arrays.copyOfRange(source,ofs,ofs+3);
+        _unused = Arrays.copyOfRange(source, ofs,ofs+3);
     }
 
     /**

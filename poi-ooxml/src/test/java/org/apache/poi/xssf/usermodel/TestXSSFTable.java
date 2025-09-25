@@ -651,7 +651,7 @@ public final class TestXSSFTable {
     void testNamesWithNewLines() throws IOException {
         try (
                 XSSFWorkbook wb = new XSSFWorkbook();
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             XSSFSheet sheet = wb.createSheet();
 
@@ -739,7 +739,7 @@ public final class TestXSSFTable {
     void bug66213() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("table-sample.xlsx")) {
             wb.cloneSheet(0, "Test");
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 wb.write(bos);
                 try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
                     XSSFSheet sheet0 = wb2.getSheetAt(0);
@@ -757,7 +757,7 @@ public final class TestXSSFTable {
     void testCloneConditionalFormattingSamples() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ConditionalFormattingSamples.xlsx")) {
             wb.cloneSheet(0, "Test");
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 wb.write(bos);
                 try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
                     XSSFSheet sheet0 = wb2.getSheetAt(0);
@@ -773,7 +773,7 @@ public final class TestXSSFTable {
     void testCloneSingleCellTable() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("SingleCellTable.xlsx")) {
             wb.cloneSheet(0, "Test");
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 wb.write(bos);
                 try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
                     XSSFSheet sheet0 = wb2.getSheetAt(0);

@@ -95,7 +95,7 @@ public final class ColorSchemeAtom extends RecordAtom {
     /* *************** record code follows ********************** */
 
     /**
-     * For the Colour Scheme (ColorSchem) Atom
+     * For the Colour Scheme (ColorScheme) Atom
      */
     protected ColorSchemeAtom(byte[] source, int start, int len) {
         // Sanity Checking - we're always 40 bytes long
@@ -154,7 +154,7 @@ public final class ColorSchemeAtom extends RecordAtom {
         byte[] ret = new byte[3];
 
         // Serialise to bytes, then grab the right ones out
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         try {
             writeLittleEndian(rgb,baos);
         } catch(IOException ie) {

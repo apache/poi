@@ -84,7 +84,7 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
         try {
             return getPart().getInputStream();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to read image data", e);
+            throw new IllegalStateException("Failed to read image data", e);
         }
     }
 
@@ -97,7 +97,7 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
         try {
             return getPart().getContentType();
         } catch (InvalidFormatException e) {
-            throw new RuntimeException("Failed to read package part", e);
+            throw new IllegalStateException("Failed to read package part", e);
         }
     }
 

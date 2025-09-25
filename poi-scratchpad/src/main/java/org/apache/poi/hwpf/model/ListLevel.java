@@ -19,8 +19,8 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.model.types.LVLFAbstractType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -45,7 +45,7 @@ public final class ListLevel
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 10_485_760;
 
-    private static final Logger LOG = LogManager.getLogger(ListLevel.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ListLevel.class);
 
     private byte[] _grpprlChpx;
     private byte[] _grpprlPapx;

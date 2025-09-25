@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
@@ -39,7 +39,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * Icon / Multi-State Conditional Formatting Rule Record.
  */
 public final class IconMultiStateFormatting implements Duplicatable, GenericRecord {
-    private static final Logger LOG = LogManager.getLogger(IconMultiStateFormatting.class);
+    private static final Logger LOG = PoiLogManager.getLogger(IconMultiStateFormatting.class);
 
     private static BitField ICON_ONLY = BitFieldFactory.getInstance(0x01);
     private static BitField REVERSED = BitFieldFactory.getInstance(0x04);

@@ -30,8 +30,7 @@ import org.apache.poi.util.LittleEndianConsts;
  * drop-down list box.
  */
 @Internal
-public class FFData
-{
+public class FFData {
     private FFDataBase _base;
 
     /**
@@ -79,89 +78,82 @@ public class FFData
 
     private Xstz _xstzTextFormat;
 
-    public FFData( byte[] std, int offset )
-    {
-        fillFields( std, offset );
+    public FFData(byte[] std, int offset) {
+        fillFields(std, offset);
     }
 
-    public void fillFields( final byte[] std, final int startOffset ) // NOSONAR
-    {
+    public void fillFields(final byte[] std, final int startOffset) { // NOSONAR
         int offset = startOffset;
 
-        this._base = new FFDataBase( std, offset );
+        this._base = new FFDataBase(std, offset);
         offset += FFDataBaseAbstractType.getSize();
 
-        this._xstzName = new Xstz( std, offset );
+        this._xstzName = new Xstz(std, offset);
         offset += this._xstzName.getSize();
 
-        if ( _base.getIType() == ITYPE_TEXT )
-        {
-            _xstzTextDef = new Xstz( std, offset );
+        if (_base.getIType() == ITYPE_TEXT) {
+            _xstzTextDef = new Xstz(std, offset);
             offset += this._xstzTextDef.getSize();
-        }
-        else
-        {
+        } else {
             this._xstzTextDef = null;
         }
 
-        if ( _base.getIType() == ITYPE_CHCK
-                || _base.getIType() == ITYPE_DROP )
-        {
+        if (_base.getIType() == ITYPE_CHCK
+                || _base.getIType() == ITYPE_DROP) {
             this._wDef = LittleEndian.getUShort(std, offset);
             offset += LittleEndianConsts.SHORT_SIZE;
-        }
-        else
-        {
+        } else {
             this._wDef = null;
         }
 
-        _xstzTextFormat = new Xstz( std, offset );
+        _xstzTextFormat = new Xstz(std, offset);
         offset += this._xstzTextFormat.getSize();
 
-        _xstzHelpText = new Xstz( std, offset );
+        _xstzHelpText = new Xstz(std, offset);
         offset += this._xstzHelpText.getSize();
 
-        _xstzStatText = new Xstz( std, offset );
+        _xstzStatText = new Xstz(std, offset);
         offset += this._xstzStatText.getSize();
 
-        _xstzEntryMcr = new Xstz( std, offset );
+        _xstzEntryMcr = new Xstz(std, offset);
         offset += this._xstzEntryMcr.getSize();
 
-        _xstzExitMcr = new Xstz( std, offset );
+        _xstzExitMcr = new Xstz(std, offset);
         offset += this._xstzExitMcr.getSize();
 
-        if ( _base.getIType() == ITYPE_DROP ) {
-            _hsttbDropList = new Sttb( std, offset );
+        if (_base.getIType() == ITYPE_DROP) {
+            _hsttbDropList = new Sttb(std, offset);
         }
     }
 
     /**
      * specify the default item selected (zero-based index).
      */
-    public int getDefaultDropDownItemIndex()
-    {
+    public int getDefaultDropDownItemIndex() {
+        if (_wDef == null) {
+            return 0;
+        }
         return _wDef;
     }
 
-    public String[] getDropList()
-    {
+    public String[] getDropList() {
+        if (_hsttbDropList == null) {
+            return null;
+        }
         return _hsttbDropList.getData();
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         int size = FFDataBaseAbstractType.getSize();
 
         size += _xstzName.getSize();
 
-        if ( _base.getIType() == ITYPE_TEXT )
-        {
+        if (_base.getIType() == ITYPE_TEXT && _xstzTextDef != null) {
             size += _xstzTextDef.getSize();
         }
 
-        if ( _base.getIType() == ITYPE_CHCK
-                || _base.getIType() == ITYPE_DROP )
-        {
+        if (_base.getIType() == ITYPE_CHCK
+                || _base.getIType() == ITYPE_DROP) {
             size += LittleEndianConsts.SHORT_SIZE;
         }
 
@@ -171,49 +163,47 @@ public class FFData
         size += _xstzEntryMcr.getSize();
         size += _xstzExitMcr.getSize();
 
-        if ( _base.getIType() == ITYPE_DROP )
-        {
+        if (_base.getIType() == ITYPE_DROP) {
             size += _hsttbDropList.getSize();
         }
 
         return size;
     }
 
-    public String getTextDef()
-    {
+    public String getTextDef() {
+        if (_xstzTextDef == null) {
+            return null;
+        }
         return _xstzTextDef.getAsJavaString();
     }
 
-    public byte[] serialize()
-    {
+    public byte[] serialize() {
         byte[] buffer = new byte[getSize()];
         int offset = 0;
 
-        _base.serialize( buffer, offset );
+        _base.serialize(buffer, offset);
         offset += FFDataBaseAbstractType.getSize();
 
-        offset += _xstzName.serialize( buffer, offset );
+        offset += _xstzName.serialize(buffer, offset);
 
-        if ( _base.getIType() == ITYPE_TEXT )
-        {
-            offset += _xstzTextDef.serialize( buffer, offset );
+        if (_base.getIType() == ITYPE_TEXT && _xstzTextDef != null) {
+            offset += _xstzTextDef.serialize(buffer, offset);
         }
 
-        if ( _base.getIType() == ITYPE_CHCK
-                || _base.getIType() == ITYPE_DROP )
-        {
-            LittleEndian.putUShort( buffer, offset, _wDef );
+        if (_base.getIType() == ITYPE_CHCK
+                || _base.getIType() == ITYPE_DROP) {
+            LittleEndian.putUShort(buffer, offset, _wDef);
             offset += LittleEndianConsts.SHORT_SIZE;
         }
 
-        offset += _xstzTextFormat.serialize( buffer, offset );
-        offset += _xstzHelpText.serialize( buffer, offset );
-        offset += _xstzStatText.serialize( buffer, offset );
-        offset += _xstzEntryMcr.serialize( buffer, offset );
-        offset += _xstzExitMcr.serialize( buffer, offset );
+        offset += _xstzTextFormat.serialize(buffer, offset);
+        offset += _xstzHelpText.serialize(buffer, offset);
+        offset += _xstzStatText.serialize(buffer, offset);
+        offset += _xstzEntryMcr.serialize(buffer, offset);
+        offset += _xstzExitMcr.serialize(buffer, offset);
 
-        if ( _base.getIType() == ITYPE_DROP ) {
-            _hsttbDropList.serialize( buffer, offset );
+        if (_base.getIType() == ITYPE_DROP) {
+            _hsttbDropList.serialize(buffer, offset);
         }
 
         return buffer;

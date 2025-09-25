@@ -27,8 +27,8 @@ import java.util.Spliterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.model.DrawingManager2;
@@ -94,7 +94,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * High level representation of a worksheet.
  */
 public final class HSSFSheet implements Sheet {
-    private static final Logger LOGGER = LogManager.getLogger(HSSFSheet.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(HSSFSheet.class);
 
     /**
      * width of 1px in columns with default width in units of 1/256 of a character width
@@ -227,7 +227,7 @@ public final class HSSFSheet implements Sheet {
                     // Excel, OpenOffice.org and GoogleDocs are all OK with this, so POI should be too.
                     if (rowRecordsAlreadyPresent) {
                         // if at least one row record is present, all should be present.
-                        throw new RuntimeException("Unexpected missing row when some rows already present");
+                        throw new IllegalStateException("Unexpected missing row when some rows already present");
                     }*/
 
                     // create the row record on the fly now.
@@ -512,7 +512,7 @@ public final class HSSFSheet implements Sheet {
      * using the default font (first font in the workbook).<p>
      *
      * Unless you are using a very special font, the default character is '0' (zero),
-     * this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)<p>
+     * this is true for Arial (default font in HSSF) and Calibri (default font in XSSF)<p>
      *
      * Please note, that the width set by this method includes 4 pixels of margin padding (two on each side),
      * plus 1 pixel padding for the gridlines (Section 3.3.1.12 of the OOXML spec).
@@ -645,7 +645,7 @@ public final class HSSFSheet implements Sheet {
         }
 
         ExtendedFormatRecord xf = _book.getExFormatAt(styleIndex);
-        return new HSSFCellStyle(styleIndex, xf, _book);
+        return new HSSFCellStyle(styleIndex, xf, _workbook);
     }
 
     /**
@@ -1995,7 +1995,7 @@ public final class HSSFSheet implements Sheet {
      * Breaks occur above the specified row and left of the specified column inclusive.<p>
      *
      * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+     * with columns A,B,C in the first and D,E,... in the second. Similar, <code>sheet.setRowBreak(2);</code>
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -2047,7 +2047,7 @@ public final class HSSFSheet implements Sheet {
      * Breaks occur above the specified row and left of the specified column inclusive.<p>
      *
      * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, {@code sheet.setRowBreak(2);}
+     * with columns A,B,C in the first and D,E,... in the second. Similar, {@code sheet.setRowBreak(2);}
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -2527,10 +2527,7 @@ public final class HSSFSheet implements Sheet {
 
     protected HSSFComment findCellComment(int row, int column) {
         HSSFPatriarch patriarch = getDrawingPatriarch();
-        if (null == patriarch) {
-            patriarch = createDrawingPatriarch();
-        }
-        return lookForComment(patriarch, row, column);
+        return patriarch == null ? null : lookForComment(patriarch, row, column);
     }
 
     private HSSFComment lookForComment(HSSFShapeContainer container, int row, int column) {

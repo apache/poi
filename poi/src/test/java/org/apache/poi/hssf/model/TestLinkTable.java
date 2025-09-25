@@ -22,8 +22,11 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -32,6 +35,7 @@ import java.util.Map;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.CRNCountRecord;
 import org.apache.poi.hssf.record.CountryRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.ExternSheetRecord;
@@ -39,11 +43,13 @@ import org.apache.poi.hssf.record.ExternalNameRecord;
 import org.apache.poi.hssf.record.NameCommentRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.SupBookRecord;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.util.LittleEndian;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -51,7 +57,7 @@ import org.junit.jupiter.api.Test;
  */
 final class TestLinkTable {
 
-    /**
+    /*
      * The example file attached to bugzilla 45046 is a clear example of Name records being present
      * without an External Book (SupBook) record.  Excel has no trouble reading this file.<br>
      * TODO get OOO documentation updated to reflect this (that EXTERNALBOOK is optional).
@@ -59,61 +65,64 @@ final class TestLinkTable {
      * It's not clear what exact steps need to be taken in Excel to create such a workbook
      */
     @Test
-    void testLinkTableWithoutExternalBookRecord_bug45046() {
+    void testLinkTableWithoutExternalBookRecord_bug45046() throws IOException {
         // Bug 45046 b: DEFINEDNAME is part of LinkTable
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45046-21984.xls");
-        // some other sanity checks
-        assertEquals(3, wb.getNumberOfSheets());
-        String formula = wb.getSheetAt(0).getRow(4).getCell(13).getCellFormula();
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45046-21984.xls")) {
+            // some other sanity checks
+            assertEquals(3, wb.getNumberOfSheets());
+            String formula = wb.getSheetAt(0).getRow(4).getCell(13).getCellFormula();
 
-        // The reported symptom of this bugzilla is an earlier bug (already fixed)
-        // This is observable in version 3.0
-        assertNotEquals("ipcSummenproduktIntern($P5,N$6,$A$9,N$5)", formula);
+            // The reported symptom of this bugzilla is an earlier bug (already fixed)
+            // This is observable in version 3.0
+            assertNotEquals("ipcSummenproduktIntern($P5,N$6,$A$9,N$5)", formula);
 
-        assertEquals("ipcSummenproduktIntern($C5,N$2,$A$9,N$1)", formula);
+            assertEquals("ipcSummenproduktIntern($C5,N$2,$A$9,N$1)", formula);
+        }
     }
 
     @Test
-    void testMultipleExternSheetRecords_bug45698() {
+    void testMultipleExternSheetRecords_bug45698() throws IOException {
         // Bug: Extern sheet is part of LinkTable
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls");
-        // some other sanity checks
-        assertEquals(7, wb.getNumberOfSheets());
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls")) {
+            // some other sanity checks
+            assertEquals(7, wb.getNumberOfSheets());
+        }
     }
 
     @Test
-    void testExtraSheetRefs_bug45978() {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45978-extraLinkTableSheets.xls");
-        /*
-        ex45978-extraLinkTableSheets.xls is a cut-down version of attachment 22561.
-        The original file produces the same error.
+    void testExtraSheetRefs_bug45978() throws IOException {
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45978-extraLinkTableSheets.xls")) {
+            /*
+            ex45978-extraLinkTableSheets.xls is a cut-down version of attachment 22561.
+            The original file produces the same error.
 
-        This bug was caused by a combination of invalid sheet indexes in the EXTERNSHEET
-        record, and eager initialisation of the extern sheet references. Note - the workbook
-        has 2 sheets, but the EXTERNSHEET record refers to sheet indexes 0, 1 and 2.
+            This bug was caused by a combination of invalid sheet indexes in the EXTERNSHEET
+            record, and eager initialisation of the extern sheet references. Note - the workbook
+            has 2 sheets, but the EXTERNSHEET record refers to sheet indexes 0, 1 and 2.
 
-        Offset 0x3954 (14676)
-        recordid = 0x17, size = 32
-        [EXTERNSHEET]
-           numOfRefs     = 5
-        refrec       #0: extBook=0 firstSheet=0 lastSheet=0
-        refrec       #1: extBook=1 firstSheet=2 lastSheet=2
-        refrec       #2: extBook=2 firstSheet=1 lastSheet=1
-        refrec       #3: extBook=0 firstSheet=-1 lastSheet=-1
-        refrec       #4: extBook=0 firstSheet=1 lastSheet=1
-        [/EXTERNSHEET]
+            Offset 0x3954 (14676)
+            recordid = 0x17, size = 32
+            [EXTERNSHEET]
+               numOfRefs     = 5
+            refrec       #0: extBook=0 firstSheet=0 lastSheet=0
+            refrec       #1: extBook=1 firstSheet=2 lastSheet=2
+            refrec       #2: extBook=2 firstSheet=1 lastSheet=1
+            refrec       #3: extBook=0 firstSheet=-1 lastSheet=-1
+            refrec       #4: extBook=0 firstSheet=1 lastSheet=1
+            [/EXTERNSHEET]
 
-        As it turns out, the formula in question doesn't even use externSheetIndex #1 - it
-        uses #4, which resolves to sheetIndex 1 -> 'Data'.
+            As it turns out, the formula in question doesn't even use externSheetIndex #1 - it
+            uses #4, which resolves to sheetIndex 1 -> 'Data'.
 
-        It is not clear exactly what externSheetIndex #4 would refer to.  Excel seems to
-        display such a formula as "''!$A2", but then complains of broken link errors.
-        */
+            It is not clear exactly what externSheetIndex #4 would refer to.  Excel seems to
+            display such a formula as "''!$A2", but then complains of broken link errors.
+            */
 
-        HSSFCell cell = wb.getSheetAt(0).getRow(1).getCell(1);
-        // Bug: IndexOutOfBoundsException - Index: 2, Size: 2
-        String cellFormula = cell.getCellFormula();
-        assertEquals("Data!$A2", cellFormula);
+            HSSFCell cell = wb.getSheetAt(0).getRow(1).getCell(1);
+            // Bug: IndexOutOfBoundsException - Index: 2, Size: 2
+            String cellFormula = cell.getCellFormula();
+            assertEquals("Data!$A2", cellFormula);
+        }
     }
 
     /**
@@ -122,7 +131,6 @@ final class TestLinkTable {
      */
     @Test
     void testMissingExternSheetRecord_bug47001b() {
-
         Record[] recs = {
                 SupBookRecord.createAddInFunctions(),
                 new SSTRecord(),
@@ -136,8 +144,30 @@ final class TestLinkTable {
     }
 
     @Test
-    void testNameCommentRecordBetweenNameRecords() {
+    void testCRNCountRecordInvalid() {
+        byte[] data = new byte[22];
+        LittleEndian.putShort(data, 0, CRNCountRecord.sid);
+        LittleEndian.putShort(data, 2, (short)18);
+        LittleEndian.putShort(data, 4, (short)55);
+        LittleEndian.putInt(data, 6, 56);
 
+        RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(data));
+        in.nextRecord();
+
+        Record[] recs = {
+                SupBookRecord.createAddInFunctions(),
+                new CRNCountRecord(in),
+                new SSTRecord(),
+        };
+        List<org.apache.poi.hssf.record.Record> recList = Arrays.asList(recs);
+        WorkbookRecordList wrl = new WorkbookRecordList();
+
+        assertThrows(IllegalStateException.class,
+                () -> new LinkTable(recList, 0, wrl, Collections.emptyMap()));
+    }
+
+    @Test
+    void testNameCommentRecordBetweenNameRecords() {
         final Record[] recs = {
         new NameRecord(),
         new NameCommentRecord("name1", "comment1"),
@@ -251,6 +281,5 @@ final class TestLinkTable {
 
         assertEquals(0, tbl.resolveNameXIx(namex2.getSheetRefIndex(), namex2.getNameIndex()));
         assertEquals("ISEVEN", tbl.resolveNameXText(namex2.getSheetRefIndex(), namex2.getNameIndex(), null));
-
     }
 }

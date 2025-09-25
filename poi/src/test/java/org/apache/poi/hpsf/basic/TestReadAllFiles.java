@@ -60,7 +60,12 @@ class TestReadAllFiles {
         Objects.requireNonNull(files, "Could not find directory " + hpsfTestDir.getAbsolutePath());
 
         // convert to list of object-arrays for @Parameterized
-        return Arrays.stream(files).map(Arguments::of);
+        return Arrays.
+                stream(files).
+                // exclude some files which can be created by other parallel tests,
+                // but then might not exist any more when they are processed here
+                filter(file -> !file.getName().endsWith("-saved.xls")).
+                map(Arguments::of);
     }
 
     /**
@@ -101,7 +106,7 @@ class TestReadAllFiles {
 
         /* Create a new POI filesystem containing the origin file's
          * property set streams: */
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (POIFSFileSystem poiFs = new POIFSFileSystem()) {
             for (POIFile poifile : Util.readPropertySets(file)) {
                 final InputStream in = new ByteArrayInputStream(poifile.getBytes());
@@ -149,7 +154,7 @@ class TestReadAllFiles {
              * If there is a document summry information stream, read it from
              * the POI filesystem.
              */
-            if (dir.hasEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)) {
+            if (dir.hasEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME)) {
                 final DocumentSummaryInformation dsi = TestWriteWellKnown.getDocumentSummaryInformation(poifs);
                 assertNotNull(dsi);
 

@@ -23,15 +23,26 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.DrawTextParagraph;
+import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.xslf.model.PropertyFetcher;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
@@ -79,6 +90,32 @@ class TestXSLFTextRun {
         assertTrue(r.isSubscript());
         r.setSubscript(false);
         assertFalse(r.isSubscript());
+
+        // Test highlight get/set.
+        assertNull(r.getHighlightColor());
+        r.setHighlightColor(Color.yellow);
+        assertEquals(DrawPaint.createSolidPaint(Color.yellow), r.getHighlightColor());
+        r.setHighlightColor(DrawPaint.createSolidPaint(Color.blue));
+        assertEquals(DrawPaint.createSolidPaint(Color.blue), r.getHighlightColor());
+
+        r.setHighlightColor((Color) null);
+        assertNull(r.getHighlightColor());
+        r.setHighlightColor((PaintStyle) null);
+        assertNull(r.getHighlightColor());
+
+        try {
+            // make a dummy gradient to test paint rejection.
+            final XSLFSheet sheet = sh.getSheet();
+            final XSLFTheme theme = sheet.getTheme();
+            final CTSchemeColor phClr = CTSchemeColor.Factory.newInstance();
+            final CTGradientFillProperties gradFill = CTGradientFillProperties.Factory.newInstance();
+            final XSLFGradientPaint dummyGrad = new XSLFGradientPaint(gradFill, phClr, theme, sheet);
+
+            r.setHighlightColor(dummyGrad);
+            fail("Expected non solid paint to cause an exception.");
+        } catch (IllegalArgumentException iae) {
+            // Expected, do nothing.
+        }
 
         ppt.close();
     }

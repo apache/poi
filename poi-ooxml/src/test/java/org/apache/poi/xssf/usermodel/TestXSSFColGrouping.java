@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
@@ -33,7 +33,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 /**
  * Test asserts the POI produces &lt;cols&gt; element that could be read and properly interpreted by the MS Excel.
  * For specification of the "cols" element see the chapter 3.3.1.16 of the "Office Open XML Part 4 - Markup Language Reference.pdf".
- * The specification can be downloaded at http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip.
+ * The specification can be downloaded at https://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip.
  *
  * <p><em>
  * The test saves xlsx file on a disk if the system property is set:
@@ -43,7 +43,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
  */
 class TestXSSFColGrouping {
 
-    private static final Logger LOG = LogManager.getLogger(TestXSSFColGrouping.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TestXSSFColGrouping.class);
 
 
     /**

@@ -174,8 +174,8 @@ public final class CopyCompare {
 
                 for (int i=0; i<path.length(); i++) {
                     String subDir = path.getComponent(i);
-                    if (de.hasEntry(subDir)) {
-                        de = (DirectoryEntry)de.getEntry(subDir);
+                    if (de.hasEntryCaseInsensitive(subDir)) {
+                        de = (DirectoryEntry)de.getEntryCaseInsensitive(subDir);
                     } else {
                         de = de.createDirectory(subDir);
                         if (i == path.length()-1) {

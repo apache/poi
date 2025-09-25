@@ -67,7 +67,7 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
             // collect pairs of ranges and criteria
             AreaEval[] ae = new AreaEval[(args.length - firstCriteria)/2];
             I_MatchPredicate[] mp = new I_MatchPredicate[ae.length];
-            for(int i = firstCriteria, k=0; i < args.length; i += 2, k++){
+            for(int i = firstCriteria, k=0; i < (args.length - 1); i += 2, k++){
                 ae[k] = convertRangeArg(args[i]);
 
                 mp[k] = Countif.createCriteriaPredicate(args[i+1], ec.getRowIndex(), ec.getColumnIndex());

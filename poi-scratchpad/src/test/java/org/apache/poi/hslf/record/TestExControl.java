@@ -92,7 +92,7 @@ public final class TestExControl {
     @Test
     void testWrite() throws Exception {
         ExControl record = new ExControl(data, 0, data.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         assertArrayEquals(data, baos.toByteArray());
     }
@@ -115,7 +115,7 @@ public final class TestExControl {
         record.setProgId("ShockwaveFlash.ShockwaveFlash.9");
         record.setClipboardName("Shockwave Flash Object");
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         assertArrayEquals(data, baos.toByteArray());
     }

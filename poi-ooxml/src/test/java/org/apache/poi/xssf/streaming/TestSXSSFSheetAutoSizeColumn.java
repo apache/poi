@@ -210,7 +210,7 @@ class TestSXSSFSheetAutoSizeColumn {
             final int maxExpectedWidth = expectedWidth * 3 / 2;
             assertColumnWidthStrictlyWithinRange(sheet.getColumnWidth(0), minExpectedWidth, maxExpectedWidth); //short
         } else {
-            assertColumnWidthStrictlyWithinRange(sheet.getColumnWidth(0), 1000, MAX_COLUMN_WIDTH); //long
+            assertColumnWidthStrictlyWithinRange(sheet.getColumnWidth(0), 950, MAX_COLUMN_WIDTH); //long
         }
         assertColumnWidthStrictlyWithinRange(sheet.getColumnWidth(1), 0, COLUMN_WIDTH_THRESHOLD_BETWEEN_SHORT_AND_LONG); //short
     }

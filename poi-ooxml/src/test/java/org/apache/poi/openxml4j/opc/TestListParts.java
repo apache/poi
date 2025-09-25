@@ -24,15 +24,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.TreeMap;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public final class TestListParts {
-    private static final Logger LOG = LogManager.getLogger(TestListParts.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TestListParts.class);
 
     private TreeMap<PackagePartName, String> expectedValues;
 

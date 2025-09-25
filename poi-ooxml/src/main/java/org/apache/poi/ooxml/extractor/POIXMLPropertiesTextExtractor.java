@@ -273,7 +273,7 @@ public class POIXMLPropertiesTextExtractor implements POIXMLTextExtractor {
                             getExtendedPropertiesText() +
                             getCustomPropertiesText();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

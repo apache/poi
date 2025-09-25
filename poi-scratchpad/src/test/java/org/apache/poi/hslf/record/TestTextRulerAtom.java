@@ -61,7 +61,7 @@ public final class TestTextRulerAtom {
     @Test
     void testWriteRuler() throws Exception {
         TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         ruler.writeOut(out);
 
         byte[] result = out.toByteArray();
@@ -72,7 +72,7 @@ public final class TestTextRulerAtom {
     void testRead2() throws Exception {
         TextRulerAtom ruler = TextRulerAtom.getParagraphInstance();
         ruler.setParagraphIndent((short)249, (short)321);
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         ruler.writeOut(out);
 
         byte[] result = out.toByteArray();

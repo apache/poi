@@ -21,8 +21,8 @@ import java.awt.Color;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -48,7 +48,7 @@ import org.apache.poi.sl.usermodel.TextShape;
  */
 @SuppressWarnings({"WeakerAccess", "Duplicates", "unused"})
 public final class HSLFTextRun implements TextRun {
-    private static final Logger LOG = LogManager.getLogger(HSLFTextRun.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HSLFTextRun.class);
 
     /** The TextRun we belong to */
     private HSLFTextParagraph parentParagraph;
@@ -413,7 +413,7 @@ public final class HSLFTextRun implements TextRun {
     }
 
     /**
-     * Sets color of the text, as a int bgr.
+     * Sets color of the text, as an int bgr.
      * (PowerPoint stores as BlueGreenRed, not the more
      *  usual RedGreenBlue)
      * @see Color

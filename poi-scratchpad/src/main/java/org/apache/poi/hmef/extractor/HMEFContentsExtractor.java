@@ -18,11 +18,10 @@
 package org.apache.poi.hmef.extractor;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
@@ -70,8 +69,9 @@ public final class HMEFContentsExtractor {
     }
     
     private final HMEFMessage message;
-    public HMEFContentsExtractor(File filename) throws IOException {
-        this(new HMEFMessage(new FileInputStream(filename)));
+
+    public HMEFContentsExtractor(File file) throws IOException {
+        this(new HMEFMessage(Files.newInputStream(file.toPath())));
     }
     public HMEFContentsExtractor(HMEFMessage message) {
         this.message = message;
@@ -94,7 +94,7 @@ public final class HMEFContentsExtractor {
             dest = new File(name + ".txt");
         }
 
-        try (OutputStream fout = new FileOutputStream(dest)) {
+        try (OutputStream fout = Files.newOutputStream(dest.toPath())) {
             if (body instanceof MAPIStringAttribute) {
                 // Save in a predictable encoding, not raw bytes
                 String text = ((MAPIStringAttribute) body).getDataString();
@@ -111,7 +111,7 @@ public final class HMEFContentsExtractor {
         if (body != null) return body;
         
         // See bug #59786 - we'd really like a test file to confirm if this
-        //  is the right properties + if this is truely general or not!
+        //  is the right properties + if this is truly general or not!
         MAPIProperty uncompressedBody = 
                 MAPIProperty.createCustom(0x3fd9, Types.ASCII_STRING, "Uncompressed Body");
         // Return this uncompressed one, or null if that isn't their either
@@ -141,10 +141,10 @@ public final class HMEFContentsExtractor {
             
             // Decide what to call it
             String filename = att.getLongFilename();
-            if(filename == null || filename.length() == 0) {
+            if(filename == null || filename.isEmpty()) {
                 filename = att.getFilename();
             }
-            if(filename == null || filename.length() == 0) {
+            if(filename == null || filename.isEmpty()) {
                 filename = "attachment" + count;
                 if(att.getExtension() != null) {
                     filename += att.getExtension();
@@ -153,7 +153,7 @@ public final class HMEFContentsExtractor {
             
             // Save it
             File file = new File(dir, filename);
-            try (OutputStream fout = new FileOutputStream(file)) {
+            try (OutputStream fout = Files.newOutputStream(file.toPath())) {
                 fout.write(att.getContents());
             }
         }

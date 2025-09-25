@@ -59,7 +59,7 @@ public final class PresetGeometries {
                 }
             }
         } catch (IOException | XMLStreamException e){
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

@@ -38,8 +38,8 @@ import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 
 /**
  * JSR105 key selector implementation using the ds:KeyInfo data of the signature
@@ -47,7 +47,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class KeyInfoKeySelector extends KeySelector implements KeySelectorResult {
 
-    private static final Logger LOG = LogManager.getLogger(KeyInfoKeySelector.class);
+    private static final Logger LOG = PoiLogManager.getLogger(KeyInfoKeySelector.class);
 
     private final List<X509Certificate> certChain = new ArrayList<>();
 

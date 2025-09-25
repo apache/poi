@@ -79,7 +79,7 @@ final class OperandClassTransformer {
                 rootNodeOperandClass = Ptg.CLASS_REF;
                 break;
             default:
-                throw new RuntimeException("Incomplete code - formula type ("
+                throw new IllegalStateException("Incomplete code - formula type ("
                         + _formulaType + ") not supported yet");
 
         }

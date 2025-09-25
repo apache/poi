@@ -19,25 +19,33 @@ package org.apache.poi.ss.util;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
+import java.awt.font.FontRenderContext;
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.ExceptionUtil;
 import org.junit.jupiter.api.Test;
+import org.mockito.stubbing.Answer;
 
 /**
  * Tests SheetUtil.
  *
  * @see org.apache.poi.ss.util.SheetUtil
  */
+@SuppressWarnings("deprecation")
 final class TestSheetUtil {
     @Test
     void testCellWithMerges() throws Exception {
@@ -107,7 +115,11 @@ final class TestSheetUtil {
             Cell cell = row.createCell(0);
 
             // no contents: cell.setCellValue("sometext");
+            //noinspection deprecation
             assertEquals(-1.0, SheetUtil.getCellWidth(cell, 1, null, true), 0.01);
+            assertEquals(-1.0, SheetUtil.getCellWidth(cell, 1.0f, null, true), 0.01);
+
+            assertEquals(-1.0, SheetUtil.getCellWidth(cell, 1.5f, null, true), 0.01);
         }
     }
 
@@ -120,7 +132,10 @@ final class TestSheetUtil {
 
             cell.setCellValue("sometext");
 
-            assertTrue(SheetUtil.getCellWidth(cell, 1, null, true) > 0);
+            final double width = SheetUtil.getCellWidth(cell, 1.0f, null, true);
+            assertTrue(width > 0);
+            //noinspection deprecation
+            assertEquals(width, SheetUtil.getCellWidth(cell, 1, null, true));
         }
     }
 
@@ -133,7 +148,9 @@ final class TestSheetUtil {
 
             cell.setCellValue(88.234);
 
+            //noinspection deprecation
             assertTrue(SheetUtil.getCellWidth(cell, 1, null, true) > 0);
+            assertTrue(SheetUtil.getCellWidth(cell, 1.0f, null, true) > 0);
         }
     }
 
@@ -146,7 +163,9 @@ final class TestSheetUtil {
 
             cell.setCellValue(false);
 
+            //noinspection deprecation
             assertTrue(SheetUtil.getCellWidth(cell, 1, null, false) > 0);
+            assertTrue(SheetUtil.getCellWidth(cell, 1.0f, null, false) > 0);
         }
     }
 
@@ -162,7 +181,7 @@ final class TestSheetUtil {
             cell.setCellValue("sometext");
 
             assertTrue(SheetUtil.getColumnWidth(sheet, 0, true) > 0, "Having some width for rows with actual cells");
-            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");
+            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any width for rows with all empty cells");
         }
     }
 
@@ -178,7 +197,7 @@ final class TestSheetUtil {
             cell.setCellValue((String)null);
 
             assertEquals(-1, SheetUtil.getColumnWidth(sheet, 0, true), "Having some width for rows with actual cells");
-            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");
+            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any width for rows with all empty cells");
         }
     }
 
@@ -194,7 +213,7 @@ final class TestSheetUtil {
             cell.setCellValue("");
 
             assertTrue(SheetUtil.getColumnWidth(sheet, 0, true) > 0, "Having some width for rows with actual cells");
-            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");
+            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any width for rows with all empty cells");
         }
     }
 
@@ -212,7 +231,212 @@ final class TestSheetUtil {
             cell.setCellType(CellType.STRING);
 
             assertTrue(SheetUtil.getColumnWidth(sheet, 0, true) > 0, "Having some width for rows with actual cells");
-            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");
+            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any width for rows with all empty cells");
+        }
+    }
+
+    @Test
+    void testIsFatal() {
+        assertFalse(ExceptionUtil.isFatal(new RuntimeException()),
+                "RuntimeException should not be regarded as 'fatal'");
+        assertTrue(ExceptionUtil.isFatal(new LinkageError()),
+                "LinkageError should not be regarded as 'fatal'");
+        assertTrue(ExceptionUtil.isFatal(new UnsatisfiedLinkError()),
+                "UnsatisfiedLinkError should not be regarded as 'fatal'");
+    }
+
+    @Test
+    void testGetCharWidthWithFonts() throws IOException {
+        // verify that normal call returns a useful value
+        // (may fail if font-system is missing, but then many other tests fail as well)
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            final float width = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(width > 0,
+                    "Should get some useful char width, but had: " + width);
+        }
+    }
+
+    @Test
+    void testGetCharWidthWithInvalidFont() throws IOException {
+        // verify that a call with an unknown font-name returns a useful value
+        // (likely the font-system falls back to a default font here)
+        // (may fail if font-system is missing, but then many other tests fail as well)
+        try (Workbook wb = new HSSFWorkbook()) {
+            wb.getFontAt(0).setFontName("invalid font");
+
+            float width = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(width > 0,
+                    "Should get some useful char width, but had: " + width);
+
+            wb.getFontAt(0).setFontName("");
+
+            width = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(width > 0,
+                    "Should get some useful char width, but had: " + width);
+
+            wb.getFontAt(0).setFontName(null);
+
+            width = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(width > 0,
+                    "Should get some useful char width, but had: " + width);
+        }
+    }
+
+    @Test
+    void testDefaultIgnoreMissingFontSystem() {
+        assertTrue(SheetUtil.isIgnoreMissingFontSystem());
+    }
+
+    @Test
+    void testGetCharWidthWithIgnoreEnabled() throws IOException {
+        boolean previous = SheetUtil.isIgnoreMissingFontSystem();
+        SheetUtil.setIgnoreMissingFontSystem(true);
+
+        // just verify that enabling the setting "ignoreMissingFontSystem"
+        // does not cause unexpected results
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            final float width = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(width > 0,
+                    "Should get some useful char width, but had: " + width);
+        } finally {
+            // restore value
+            SheetUtil.setIgnoreMissingFontSystem(previous);
+        }
+    }
+
+    @Test
+    void testGetCharWidthWithMockedException() throws IOException {
+        FontRenderContext prevCtx = SheetUtil.getFontRenderContext();
+        final FontRenderContext ctx = mock(FontRenderContext.class, (Answer<Object>) invocation -> {
+            // simulate an exception in some of the calls to java.awt packages
+            throw new IllegalArgumentException("Test runtime exception");
+        });
+        SheetUtil.setFontRenderContext(ctx);
+
+        boolean previous = SheetUtil.isIgnoreMissingFontSystem();
+        SheetUtil.setIgnoreMissingFontSystem(false);
+
+        // verify that a RuntimeException in the font-system is
+        // thrown when "ignoreMissingFontSystem" is disabled
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            assertThrows(IllegalArgumentException.class,
+                    () -> SheetUtil.getDefaultCharWidthAsFloat(wb),
+                    "Should get an exception because ignoreMissingFontSystem = false");
+        } finally {
+            // restore values
+            SheetUtil.setFontRenderContext(prevCtx);
+            SheetUtil.setIgnoreMissingFontSystem(previous);
+        }
+    }
+
+    @Test
+    void testGetCharWidthWithMockedUnsatisfiedLinkError() throws IOException {
+        FontRenderContext prevCtx = SheetUtil.getFontRenderContext();
+        final FontRenderContext ctx = mock(FontRenderContext.class, (Answer<Object>) invocation -> {
+            // simulate an exception in some of the calls to java.awt packages
+            throw new UnsatisfiedLinkError("Test runtime exception");
+        });
+        SheetUtil.setFontRenderContext(ctx);
+
+        boolean previous = SheetUtil.isIgnoreMissingFontSystem();
+        SheetUtil.setIgnoreMissingFontSystem(false);
+
+        // verify that a UnsatisfiedLinkError in the font-system is
+        // thrown when "ignoreMissingFontSystem" is disabled
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            assertThrows(UnsatisfiedLinkError.class,
+                    () -> SheetUtil.getDefaultCharWidthAsFloat(wb),
+                    "Should get an exception because ignoreMissingFontSystem = false");
+        } finally {
+            // restore values
+            SheetUtil.setFontRenderContext(prevCtx);
+            SheetUtil.setIgnoreMissingFontSystem(previous);
+        }
+    }
+
+    @Test
+    void testGetCharWidthWithMockedExceptionAndIgnore() throws IOException {
+        FontRenderContext prevCtx = SheetUtil.getFontRenderContext();
+        final FontRenderContext ctx = mock(FontRenderContext.class, (Answer<Object>) invocation -> {
+            // simulate an exception in some of the calls to java.awt packages
+            throw new IllegalArgumentException("Test runtime exception");
+        });
+        SheetUtil.setFontRenderContext(ctx);
+
+        boolean previous = SheetUtil.isIgnoreMissingFontSystem();
+        SheetUtil.setIgnoreMissingFontSystem(true);
+
+        // verify that a RuntimeException in the font-system is
+        // ignored when "ignoreMissingFontSystem" is enabled
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            final float width = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertEquals(SheetUtil.DEFAULT_CHAR_WIDTH, width,
+                    "Should get default char width because ignoreMissingFontSystem = true, but had: " + width);
+        } finally {
+            // restore values
+            SheetUtil.setFontRenderContext(prevCtx);
+            SheetUtil.setIgnoreMissingFontSystem(previous);
+        }
+    }
+
+    @Test
+    void testGetCharWidthWithMockedUnsatisfiedLinkErrorAndIgnore() throws IOException {
+        FontRenderContext prevCtx = SheetUtil.getFontRenderContext();
+        final FontRenderContext ctx = mock(FontRenderContext.class, (Answer<Object>) invocation -> {
+            // simulate an exception in some of the calls to java.awt packages
+            throw new UnsatisfiedLinkError("Test runtime exception");
+        });
+        SheetUtil.setFontRenderContext(ctx);
+
+        boolean previous = SheetUtil.isIgnoreMissingFontSystem();
+        SheetUtil.setIgnoreMissingFontSystem(true);
+
+        // verify that a UnsatisfiedLinkError in the font-system is
+        // ignored when "ignoreMissingFontSystem" is enabled
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            final float width = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertEquals(SheetUtil.DEFAULT_CHAR_WIDTH, width,
+                    "Should get default char width because ignoreMissingFontSystem = true, but had: " + width);
+        } finally {
+            // restore values
+            SheetUtil.setFontRenderContext(prevCtx);
+            SheetUtil.setIgnoreMissingFontSystem(previous);
+        }
+    }
+
+    @Test
+    void testGetDefaultCharWidthAsFloat() throws IOException {
+        try (Workbook wb = new HSSFWorkbook()) {
+            float width = SheetUtil.getDefaultCharWidthAsFloat(new HSSFWorkbook());
+            assertTrue(width > 0,
+                    "Expected a non-zero and positive font width");
+
+            //Font font = wb.createFont();
+            Font font = wb.getFontAt(0);
+            assertNotNull(font);
+
+            // verify that the system falls back to some default font for unknown/incorrect font-families
+
+            font.setFontName("not-existing");
+            float range = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(range > 5.5);
+            assertTrue(range < 6.7);
+
+            font.setFontName("");
+            range = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(range > 5.5);
+            assertTrue(range < 6.7);
+
+            font.setFontName(null);
+            range = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(range > 5.5);
+            assertTrue(range < 6.7);
         }
     }
 }

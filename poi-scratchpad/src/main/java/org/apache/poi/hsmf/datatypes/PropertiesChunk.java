@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hsmf.datatypes.PropertyValue.BooleanPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.CurrencyPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.DoublePropertyValue;
@@ -72,7 +72,7 @@ public abstract class PropertiesChunk extends Chunk {
     public static final int PROPERTIES_FLAG_WRITEABLE = 4;
 
     /** For logging problems we spot with the file */
-    private static final Logger LOG = LogManager.getLogger(PropertiesChunk.class);
+    private static final Logger LOG = PoiLogManager.getLogger(PropertiesChunk.class);
 
     /**
      * Holds properties, indexed by type. If a property is multi-valued, or
@@ -209,6 +209,12 @@ public abstract class PropertiesChunk extends Chunk {
                 int id = LittleEndian.readUShort(value);
                 long flags = LittleEndian.readUInt(value);
 
+                boolean multivalued = false;
+                if ((typeID & Types.MULTIVALUED_FLAG) != 0) {
+                    typeID -= Types.MULTIVALUED_FLAG;
+                    multivalued = true;
+                }
+
                 // Turn the Type and ID into helper objects
                 MAPIType type = Types.getById(typeID);
                 MAPIProperty prop = MAPIProperty.get(id);
@@ -218,7 +224,8 @@ public abstract class PropertiesChunk extends Chunk {
                     prop = MAPIProperty.createCustom(id, type, "Unknown " + id);
                 }
                 if (type == null) {
-                    LOG.atWarn().log("Invalid type found, expected {} but got {} for property {}", prop.usualType, box(typeID),prop);
+                    LOG.atWarn().log("Invalid type found, expected {} but got {} for property {}",
+                            prop.usualType, box(typeID), prop);
                     going = false;
                     break;
                 }
@@ -254,7 +261,7 @@ public abstract class PropertiesChunk extends Chunk {
                 // to another chunk which holds the data itself
                 boolean isPointer = false;
                 int length = type.getLength();
-                if (!type.isFixedLength()) {
+                if (type.isPointer() || multivalued) {
                     isPointer = true;
                     length = 8;
                 }
@@ -318,7 +325,7 @@ public abstract class PropertiesChunk extends Chunk {
      *         If an I/O error occurs.
      */
     public void writeProperties(DirectoryEntry directory) throws IOException {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             List<PropertyValue> values = writeProperties(baos);
 
             // write the header data with the properties declaration
@@ -379,12 +386,53 @@ public abstract class PropertiesChunk extends Chunk {
             LittleEndian.putUInt(value.getFlags(), out); // readable + writable
 
             MAPIType type = getTypeMapping(value.getActualType());
-            if (type.isFixedLength()) {
+            if (type.isFixedLength() && !type.isPointer()) {
                 // page 11, point 2.1.2
                 writeFixedLengthValueHeader(out, property, type, value);
             } else {
                 // page 12, point 2.1.3
                 writeVariableLengthValueHeader(out, property, type, value);
+                variableLengthProperties.add(value);
+            }
+        }
+        return variableLengthProperties;
+    }
+
+    /**
+     * Writes the manually pre-calculated(have header and data written manually) properties.
+     *
+     * @param out
+     *          The {@code OutputStream}.
+     * @return The variable-length properties that need to be written in another
+     *         node.
+     * @throws IOException
+     *           If an I/O error occurs.
+     */
+    protected List<PropertyValue> writePreCalculatedProperties(OutputStream out) throws IOException {
+        List<PropertyValue> variableLengthProperties = new ArrayList<>();
+        for (Entry<MAPIProperty, PropertyValue> entry : properties.entrySet()) {
+            MAPIProperty property = entry.getKey();
+            PropertyValue value = entry.getValue();
+            if (value == null) {
+                continue;
+            }
+            if (property.id < 0) {
+                continue;
+            }
+            // generic header
+            // page 23, point 2.4.2
+            // tag is the property id and its type
+            long tag = Long.parseLong(getActualTypeTag(property, value.getActualType()), 16);
+            LittleEndian.putUInt(tag, out);
+            LittleEndian.putUInt(value.getFlags(), out); // readable + writable
+
+            MAPIType type = value.getActualType();
+            if (type.isFixedLength()) {
+                // page 11, point 2.1.2
+                writeFixedLengthValueHeader(out, property, type, value);
+            } else {
+                // page 12, point 2.1.3
+                writeVariableLengthPreCalculatedValue(out, value);
                 variableLengthProperties.add(value);
             }
         }
@@ -402,6 +450,20 @@ public abstract class PropertiesChunk extends Chunk {
         out.write(new byte[8 - length]);
     }
 
+    /**
+     * Writes out pre-calculated raw values which assume any variable length property `data`
+     *  field to already have size, reserved and manually written header
+     *
+     * @param out The OutputStream to write the data to
+     * @throws IOException If an I/O error occurs while writing data
+     */
+    private void writeVariableLengthPreCalculatedValue(OutputStream out, PropertyValue value) throws IOException {
+        // variable length header
+        // page 24, point 2.4.2.2
+        byte[] bytes = value.getRawValue();
+        out.write(bytes);
+    }
+
     private void writeVariableLengthValueHeader(OutputStream out, MAPIProperty propertyEx, MAPIType type,
         PropertyValue value) throws IOException {
         // variable length header
@@ -417,6 +479,15 @@ public abstract class PropertiesChunk extends Chunk {
         LittleEndian.putUInt(length, out);
         // specified in page 25
         LittleEndian.putUInt(0, out);
+    }
+
+    private String getActualTypeTag(MAPIProperty property, MAPIType actualType) {
+        StringBuilder buffer = new StringBuilder(Integer.toHexString(property.id).toUpperCase(Locale.ROOT));
+        while (buffer.length() < 4) {
+            buffer.insert(0, "0");
+        }
+        buffer.append(actualType.asFileEnding());
+        return buffer.toString();
     }
 
     private String getFileName(MAPIProperty property, MAPIType actualType) {

@@ -160,7 +160,7 @@ public interface Sheet extends Iterable<Row> {
      * using the default font (first font in the workbook).<p>
      *
      * Unless you are using a very special font, the default character is '0' (zero),
-     * this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)<p>
+     * this is true for Arial (default font in HSSF) and Calibri (default font in XSSF)<p>
      *
      * Please note, that the width set by this method includes 4 pixels of margin padding (two on each side),
      * plus 1 pixel padding for the gridlines (Section 3.3.1.12 of the OOXML spec).

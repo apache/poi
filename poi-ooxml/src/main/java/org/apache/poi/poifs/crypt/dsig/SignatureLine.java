@@ -341,7 +341,7 @@ public abstract class SignatureLine {
         rnd.drawImage(gfx, new Rectangle2D.Double(0, 0, defaultWidth, defaultHeight));
         gfx.dispose();
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         ImageIO.write(bi, "PNG", bos);
         return bos.toByteArray();
     }
@@ -426,7 +426,7 @@ public abstract class SignatureLine {
 
         gfx.dispose();
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         ImageIO.write(bi, "PNG", bos);
         return bos.toByteArray();
     }

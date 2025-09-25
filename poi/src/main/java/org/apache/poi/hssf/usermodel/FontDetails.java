@@ -116,7 +116,7 @@ public class FontDetails
         String[] charactersStrArray = split(charactersStr, ",", -1);
         String[] widthsStrArray = split(widthsStr, ",", -1);
         if (charactersStrArray.length != widthsStrArray.length)
-            throw new RuntimeException("Number of characters does not number of widths for font " + fontName);
+            throw new IllegalStateException("Number of characters does not number of widths for font " + fontName);
         for ( int i = 0; i < widthsStrArray.length; i++ )
         {
             if (charactersStrArray[i].length() != 0)

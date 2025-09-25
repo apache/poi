@@ -16,7 +16,9 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.cryptoapi;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.security.GeneralSecurityException;
 
 import javax.crypto.Cipher;
@@ -40,8 +42,22 @@ import org.apache.poi.util.Internal;
         cipher = encryptor.initCipherForBlock(null, 0);
     }
 
+    /**
+     * Returns the encrypted data.
+     *
+     * @param maxSize
+     * @return the encrypted data
+     * @throws UncheckedIOException if an I/O error occurs
+     */
     public InputStream toInputStream(long maxSize) {
-        return new BoundedInputStream(toInputStream(), maxSize);
+        try {
+            return BoundedInputStream.builder()
+                .setInputStream(toInputStream())
+                .setMaxCount(maxSize)
+                .get();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public void setSize(int count) {

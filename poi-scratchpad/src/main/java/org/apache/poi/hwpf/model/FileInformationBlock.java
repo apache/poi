@@ -24,8 +24,8 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Locale;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.types.FibBaseAbstractType;
 import org.apache.poi.hwpf.model.types.FibRgLw97AbstractType;
@@ -51,7 +51,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 @Internal
 public final class FileInformationBlock {
 
-    private static final Logger LOG = LogManager.getLogger(FileInformationBlock.class);
+    private static final Logger LOG = PoiLogManager.getLogger(FileInformationBlock.class);
 
     private final FibBase _fibBase;
     private final int _csw;

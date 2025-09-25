@@ -26,61 +26,62 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 /**
  * A ZipEntrySource wrapper around a ZipFile.
  * Should be as low in terms of memory as a
- *  normal ZipFile implementation is.
+ * normal ZipFile implementation is.
  */
 public class ZipFileZipEntrySource implements ZipEntrySource {
-   private ZipFile zipArchive;
-   public ZipFileZipEntrySource(ZipFile zipFile) {
-      this.zipArchive = zipFile;
-   }
+    private ZipFile zipArchive;
 
-   @Override
-   public void close() throws IOException {
-      if(zipArchive != null) {
-         zipArchive.close();
-      }
-      zipArchive = null;
-   }
+    public ZipFileZipEntrySource(ZipFile zipFile) {
+        this.zipArchive = zipFile;
+    }
 
-   @Override
-   public boolean isClosed() {
-       return (zipArchive == null);
-   }
+    @Override
+    public void close() throws IOException {
+        if (zipArchive != null) {
+            zipArchive.close();
+        }
+        zipArchive = null;
+    }
 
-   @Override
-   public Enumeration<? extends ZipArchiveEntry> getEntries() {
-      if (zipArchive == null)
-         throw new IllegalStateException("Zip File is closed");
-      
-      return zipArchive.getEntries();
-   }
+    @Override
+    public boolean isClosed() {
+        return (zipArchive == null);
+    }
 
-   @Override
-   public InputStream getInputStream(ZipArchiveEntry entry) throws IOException {
-      if (zipArchive == null)
-         throw new IllegalStateException("Zip File is closed");
-      
-      return zipArchive.getInputStream(entry);
-   }
+    @Override
+    public Enumeration<? extends ZipArchiveEntry> getEntries() {
+        if (zipArchive == null)
+            throw new IllegalStateException("Zip File is closed");
 
-   @Override
-   public ZipArchiveEntry getEntry(final String path) {
-      String normalizedPath = path.replace('\\', '/');
+        return zipArchive.getEntries();
+    }
 
-      final ZipArchiveEntry entry = zipArchive.getEntry(normalizedPath);
-      if (entry != null) {
-         return entry;
-      }
+    @Override
+    public InputStream getInputStream(ZipArchiveEntry entry) throws IOException {
+        if (zipArchive == null)
+            throw new IllegalStateException("Zip File is closed");
 
-      // the opc spec allows case-insensitive filename matching (see #49609)
-      final Enumeration<ZipArchiveEntry> zipArchiveEntryEnumeration = zipArchive.getEntries();
-      while (zipArchiveEntryEnumeration.hasMoreElements()) {
-         ZipArchiveEntry ze = zipArchiveEntryEnumeration.nextElement();
-         if (normalizedPath.equalsIgnoreCase(ze.getName().replace('\\','/'))) {
-            return ze;
-         }
-      }
+        return zipArchive.getInputStream(entry);
+    }
 
-      return null;
-   }
+    @Override
+    public ZipArchiveEntry getEntry(final String path) {
+        String normalizedPath = path.replace('\\', '/');
+
+        final ZipArchiveEntry entry = zipArchive.getEntry(normalizedPath);
+        if (entry != null) {
+            return entry;
+        }
+
+        // the opc spec allows case-insensitive filename matching (see #49609)
+        final Enumeration<ZipArchiveEntry> zipArchiveEntryEnumeration = zipArchive.getEntries();
+        while (zipArchiveEntryEnumeration.hasMoreElements()) {
+            ZipArchiveEntry ze = zipArchiveEntryEnumeration.nextElement();
+            if (normalizedPath.equalsIgnoreCase(ze.getName().replace('\\', '/'))) {
+                return ze;
+            }
+        }
+
+        return null;
+    }
 }

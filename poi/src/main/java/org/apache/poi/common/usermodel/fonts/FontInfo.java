@@ -29,7 +29,7 @@ import org.apache.poi.util.Beta;
  * If an implementation doesn't provide a property, the getter will return {@code null} -
  * if the value is unset, a default value will be returned.<p>
  *
- * Setting a unsupported property results in an {@link UnsupportedOperationException}.
+ * Setting an unsupported property results in an {@link UnsupportedOperationException}.
  *
  * @since POI 3.17-beta2
  *
@@ -69,6 +69,7 @@ public interface FontInfo {
      *
      * @param typeface the full name of the font, when {@code null} removes the font definition -
      *    removal is implementation specific
+     * @throws UnsupportedOperationException can return UnsupportedOperationException when FontInfo is read-only
      */
     default void setTypeface(String typeface) {
         throw new UnsupportedOperationException("FontInfo is read-only.");
@@ -85,6 +86,7 @@ public interface FontInfo {
      * Sets the charset
      *
      * @param charset the charset
+     * @throws UnsupportedOperationException can return UnsupportedOperationException when FontInfo is read-only
      */
     default void setCharset(FontCharset charset) {
         throw new UnsupportedOperationException("FontInfo is read-only.");
@@ -101,6 +103,7 @@ public interface FontInfo {
      * Sets the font family class
      *
      * @param family the font family class
+     * @throws UnsupportedOperationException can return UnsupportedOperationException when FontInfo is read-only
      */
     default void setFamily(FontFamily family) {
         throw new UnsupportedOperationException("FontInfo is read-only.");
@@ -134,6 +137,7 @@ public interface FontInfo {
     /**
      * Set the panose in binary form
      * @param panose the panose bytes
+     * @throws UnsupportedOperationException can return UnsupportedOperationException when FontInfo is read-only
      */
     default void setPanose(byte[] panose) {
         throw new UnsupportedOperationException("FontInfo is read-only.");

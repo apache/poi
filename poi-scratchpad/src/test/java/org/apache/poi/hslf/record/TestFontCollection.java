@@ -94,7 +94,7 @@ public final class TestFontCollection {
     @Test
     void testWrite() throws Exception {
         FontCollection fonts = new FontCollection(data, 0, data.length);
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         fonts.writeOut(out);
         byte[] recdata = out.toByteArray();
         assertArrayEquals(recdata, data);

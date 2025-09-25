@@ -29,12 +29,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -46,7 +47,7 @@ import org.apache.poi.util.StringUtil;
  *  document. As such, it has to be treated specially
  */
 public class CurrentUserAtom {
-    private static final Logger LOG = LogManager.getLogger(CurrentUserAtom.class);
+    private static final Logger LOG = PoiLogManager.getLogger(CurrentUserAtom.class);
 
     /** Standard Atom header */
     private static final byte[] atomHeader = new byte[] { 0, 0, -10, 15 };
@@ -120,12 +121,15 @@ public class CurrentUserAtom {
      */
     public CurrentUserAtom(DirectoryNode dir) throws IOException {
         // Decide how big it is
-        DocumentEntry docProps =
-            (DocumentEntry)dir.getEntry("Current User");
+        final Entry entry = dir.getEntry("Current User");
+        if (!(entry instanceof DocumentEntry)) {
+            throw new IllegalArgumentException("Had unexpected type of entry for name: Current User: " + entry.getClass());
+        }
+        DocumentEntry docProps = (DocumentEntry) entry;
 
         // If it's clearly junk, bail out
         if(docProps.getSize() > 131072) {
-            throw new CorruptPowerPointFileException("The Current User stream is implausably long. It's normally 28-200 bytes long, but was " + docProps.getSize() + " bytes");
+            throw new CorruptPowerPointFileException("The Current User stream is implausibly long. It's normally 28-200 bytes long, but was " + docProps.getSize() + " bytes");
         }
 
         // Grab the contents
@@ -136,7 +140,7 @@ public class CurrentUserAtom {
         // See how long it is. If it's under 28 bytes long, we can't
         //  read it
         if(_contents.length < 28) {
-            boolean isPP95 = dir.hasEntry(PP95_DOCUMENT);
+            boolean isPP95 = dir.hasEntryCaseInsensitive(PP95_DOCUMENT);
             // PPT95 has 4 byte size, then data
             if (!isPP95 && _contents.length >= 4) {
                 int size = LittleEndian.getInt(_contents);
@@ -264,7 +268,7 @@ public class CurrentUserAtom {
      */
     public void writeToFS(POIFSFileSystem fs) throws IOException {
         // Grab contents
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             writeOut(baos);
             try (InputStream is = baos.toInputStream()) {
                 // Write out

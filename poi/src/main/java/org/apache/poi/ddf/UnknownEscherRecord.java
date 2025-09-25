@@ -28,16 +28,17 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * This record is used whenever a escher record is encountered that
+ * This record is used whenever an escher record is encountered that
  * we do not explicitly support.
  */
 public final class UnknownEscherRecord extends EscherRecord {
-
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private static final byte[] NO_BYTES = new byte[0];
+
+    private static final int MAX_NESTED_CHILD_NODES = 1000;
 
     /** The data for this record not including the 8 byte header */
     private byte[] thedata = NO_BYTES;
@@ -66,6 +67,15 @@ public final class UnknownEscherRecord extends EscherRecord {
 
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
+        return fillFields(data, offset, recordFactory, 0);
+    }
+
+    @Override
+    protected int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory, int nesting) {
+        if (nesting > MAX_NESTED_CHILD_NODES) {
+            throw new IllegalStateException("Had more than the limit of " + MAX_NESTED_CHILD_NODES + " nested child notes");
+        }
+
         int bytesRemaining = readHeader( data, offset );
         /*
          * Have a check between available bytes and bytesRemaining,
@@ -83,7 +93,13 @@ public final class UnknownEscherRecord extends EscherRecord {
             bytesWritten += 8;
             while ( bytesRemaining > 0 ) {
                 EscherRecord child = recordFactory.createRecord( data, offset );
-                int childBytesWritten = child.fillFields( data, offset, recordFactory );
+                final int childBytesWritten;
+
+                if (child instanceof EscherContainerRecord) {
+                    childBytesWritten = ((EscherContainerRecord)child).fillFields(data, offset, recordFactory, nesting + 1);
+                } else {
+                    childBytesWritten = child.fillFields(data, offset, recordFactory, nesting + 1);
+                }
                 bytesWritten += childBytesWritten;
                 offset += childBytesWritten;
                 bytesRemaining -= childBytesWritten;
@@ -144,6 +160,12 @@ public final class UnknownEscherRecord extends EscherRecord {
         if (childRecords == _childRecords) {
             return;
         }
+
+        if (childRecords.size() > MAX_NUMBER_OF_CHILDREN) {
+            throw new IllegalStateException("Cannot add more than " + MAX_NUMBER_OF_CHILDREN +
+                    " child records, you can use 'EscherRecord.setMaxNumberOfChildren()' to increase the allow size");
+        }
+
         _childRecords.clear();
         _childRecords.addAll(childRecords);
     }
@@ -154,6 +176,11 @@ public final class UnknownEscherRecord extends EscherRecord {
     }
 
     public void addChildRecord(EscherRecord childRecord) {
+        if (_childRecords.size() >= MAX_NUMBER_OF_CHILDREN) {
+            throw new IllegalStateException("Cannot add more than " + MAX_NUMBER_OF_CHILDREN +
+                    " child records, you can use 'EscherRecord.setMaxNumberOfChildren()' to increase the allow size");
+        }
+
         getChildRecords().add( childRecord );
     }
 

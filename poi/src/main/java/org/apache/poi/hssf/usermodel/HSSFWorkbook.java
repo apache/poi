@@ -18,7 +18,9 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.logging.log4j.util.Unbox.box;
+import static org.apache.poi.hssf.model.InternalWorkbook.BOOK;
 import static org.apache.poi.hssf.model.InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME;
+import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK;
 import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 import java.io.BufferedOutputStream;
@@ -48,8 +50,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDocument;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -195,7 +197,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      */
     private MissingCellPolicy missingCellPolicy = MissingCellPolicy.RETURN_NULL_AND_BLANK;
 
-    private static final Logger LOGGER = LogManager.getLogger(HSSFWorkbook.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(HSSFWorkbook.class);
 
     /**
      * The locator of user-defined functions.
@@ -232,7 +234,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * @return the max image length allowed for HSSFWorkbook
      */
     public static int getMaxImageLength() {
-        return MAX_IMAGE_LENGTH;
+        final int ioMaxSize = IOUtils.getByteArrayMaxOverride();
+        return ioMaxSize < 0 ? MAX_IMAGE_LENGTH : Math.min(MAX_IMAGE_LENGTH, ioMaxSize);
     }
 
     /**
@@ -256,7 +259,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * preserve nodes set to true.
      *
      * @throws IOException if the stream cannot be read
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      * @see #HSSFWorkbook(POIFSFileSystem, boolean)
      * @see POIFSFileSystem
@@ -275,7 +278,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *                      need to. If set, will store all of the POIFSFileSystem
      *                      in memory
      * @throws IOException if the stream cannot be read
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      * @see POIFSFileSystem
      */
@@ -285,26 +288,30 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     public static String getWorkbookDirEntryName(DirectoryNode directory) {
-        for (String wbName : WORKBOOK_DIR_ENTRY_NAMES) {
-            if (directory.hasEntry(wbName)) {
-                return wbName;
-            }
+        if (directory.hasEntryCaseInsensitive(WORKBOOK)) {
+            return WORKBOOK;
         }
 
         // check for an encrypted .xlsx file - they get OLE2 wrapped
-        if (directory.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
+        if (directory.hasEntryCaseInsensitive(Decryptor.DEFAULT_POIFS_ENTRY)) {
             throw new EncryptedDocumentException("The supplied spreadsheet seems to be an Encrypted .xlsx file. " +
                     "It must be decrypted before use by XSSF, it cannot be used by HSSF");
         }
 
-        // check for previous version of file format
+        // check case-sensitive for previous version of file format
         if (directory.hasEntry(OLD_WORKBOOK_DIR_ENTRY_NAME)) {
             throw new OldExcelFormatException("The supplied spreadsheet seems to be Excel 5.0/7.0 (BIFF5) format. "
                     + "POI only supports BIFF8 format (from Excel versions 97/2000/XP/2003)");
         }
 
+        //check for non-case-sensitive book (e.g. crystal) after ruling out case-sensitive
+        // OldExcelFormatException
+        if (directory.hasEntryCaseInsensitive(BOOK)) {
+            return BOOK;
+        }
+
         // throw more useful exceptions for known wrong file-extensions
-        if (directory.hasEntry("WordDocument")) {
+        if (directory.hasEntryCaseInsensitive("WordDocument")) {
             throw new IllegalArgumentException("The document is really a DOC file");
         }
 
@@ -324,7 +331,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *                      need to. If set, will store all of the POIFSFileSystem
      *                      in memory
      * @throws IOException if the stream cannot be read
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      * @see POIFSFileSystem
      */
@@ -344,7 +351,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *                      need to. If set, will store all of the POIFSFileSystem
      *                      in memory
      * @throws IOException if the stream cannot be read
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      * @see POIFSFileSystem
      */
@@ -401,7 +408,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * preserve nodes set to true.
      *
      * @throws IOException if the stream cannot be read
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      * @see #HSSFWorkbook(InputStream, boolean)
      * @see #HSSFWorkbook(POIFSFileSystem)
@@ -420,7 +427,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *                      macros.  This takes more memory, so only say yes if you
      *                      need to.
      * @throws IOException if the stream cannot be read
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      * @see POIFSFileSystem
      * @see #HSSFWorkbook(POIFSFileSystem)
@@ -1049,24 +1056,25 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * Get sheet with the given name (case insensitive match)
+     * Get sheet with the given name (case insensitive match).
+     *
+     * If there are multiple matches, the first sheet from the list
+     * of sheets is returned.
      *
      * @param name of the sheet
      * @return HSSFSheet with the name provided or {@code null} if it does not exist
      */
-
     @Override
     public HSSFSheet getSheet(String name) {
-        HSSFSheet retval = null;
-
         for (int k = 0; k < _sheets.size(); k++) {
             String sheetname = workbook.getSheetName(k);
 
             if (sheetname.equalsIgnoreCase(name)) {
-                retval = _sheets.get(k);
+                return _sheets.get(k);
             }
         }
-        return retval;
+
+        return null;
     }
 
     /**
@@ -1156,7 +1164,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         for (int defNameIndex = 0; defNameIndex < names.size(); defNameIndex++) {
             NameRecord r = workbook.getNameRecord(defNameIndex);
             if (r == null) {
-                throw new RuntimeException("Unable to find all defined names to iterate over");
+                throw new IllegalStateException("Unable to find all defined names to iterate over");
             }
             if (!r.isBuiltInName() || r.getBuiltInName() != builtinCode) {
                 continue;
@@ -1350,10 +1358,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         final DirectoryNode dir = getDirectory();
 
         // Update the Workbook stream in the file
-        DocumentNode workbookNode = (DocumentNode) dir.getEntry(
+        DocumentNode workbookNode = (DocumentNode) dir.getEntryCaseInsensitive(
                 getWorkbookDirEntryName(dir));
         POIFSDocument workbookDoc = new POIFSDocument(workbookNode);
-        workbookDoc.replaceContents(new UnsynchronizedByteArrayInputStream(getBytes()));
+        workbookDoc.replaceContents(UnsynchronizedByteArrayInputStream.builder().setByteArray(getBytes()).get());
 
         // Update the properties streams in the file
         writeProperties();
@@ -1415,7 +1423,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         List<String> excepts = new ArrayList<>(1);
 
         // Write out the Workbook stream
-        fs.createDocument(new UnsynchronizedByteArrayInputStream(getBytes()), "Workbook");
+        fs.createDocument(UnsynchronizedByteArrayInputStream.builder().setByteArray(getBytes()).get(), "Workbook");
 
         // Write out our HPFS properties, if we have them
         writeProperties(fs, excepts);
@@ -1971,7 +1979,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             case PICTURE_TYPE_WMF:
                 // remove first 22 bytes if file starts with the WMF placeable header
                 if (FileMagic.valueOf(pictureData) == FileMagic.WMF) {
-                    pictureData = IOUtils.safelyClone(pictureData, 22, pictureData.length - 22, MAX_IMAGE_LENGTH);
+                    pictureData = IOUtils.safelyClone(pictureData, 22, pictureData.length - 22, getMaxImageLength());
                 }
                 // fall through
             case PICTURE_TYPE_EMF:
@@ -2104,13 +2112,13 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         DirectoryNode root = poiData.getRoot();
         Map<String, ClassID> olemap = getOleMap();
         for (Map.Entry<String, ClassID> entry : olemap.entrySet()) {
-            if (root.hasEntry(entry.getKey())) {
+            if (root.hasEntryCaseInsensitive(entry.getKey())) {
                 root.setStorageClsid(entry.getValue());
                 break;
             }
         }
 
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             poiData.writeFilesystem(bos);
             return addOlePackage(bos.toByteArray(), label, fileName, command);
         }
@@ -2129,7 +2137,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         DirectoryEntry oleDir = null;
         do {
             String storageStr = "MBD" + HexDump.toHex(++storageId);
-            if (!getDirectory().hasEntry(storageStr)) {
+            if (!getDirectory().hasEntryCaseInsensitive(storageStr)) {
                 oleDir = getDirectory().createDirectory(storageStr);
                 oleDir.setStorageClsid(ClassIDPredefined.OLE_V1_PACKAGE.getClassID());
             }
@@ -2138,7 +2146,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         Ole10Native.createOleMarkerEntry(oleDir);
 
         Ole10Native oleNative = new Ole10Native(label, fileName, command, oleData);
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             oleNative.writeOut(bos);
             oleDir.createDocument(Ole10Native.OLE10_NATIVE, bos.toInputStream());
         }
@@ -2168,7 +2176,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * protect a workbook with a password (not encypted, just sets writeprotect
+     * protect a workbook with a password (not encrypted, just sets writeprotect
      * flags and the password.
      *
      * @param password to set
@@ -2309,7 +2317,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * Returns the spreadsheet version (EXCLE97) of this workbook
+     * Returns the spreadsheet version (EXCEL97) of this workbook
      *
      * @return EXCEL97 SpreadsheetVersion enum
      * @since 3.14 beta 2

@@ -25,8 +25,8 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
@@ -63,7 +63,7 @@ import org.xml.sax.XMLReader;
 public class XSSFEventBasedExcelExtractor
     implements POIXMLTextExtractor, ExcelExtractor {
 
-    private static final Logger LOGGER = LogManager.getLogger(XSSFEventBasedExcelExtractor.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(XSSFEventBasedExcelExtractor.class);
 
     protected final OPCPackage container;
     protected final POIXMLProperties properties;
@@ -245,7 +245,7 @@ public class XSSFEventBasedExcelExtractor
             sheetParser.setContentHandler(handler);
             sheetParser.parse(sheetSource);
         } catch (ParserConfigurationException e) {
-            throw new RuntimeException("SAX parser appears to be broken - " + e.getMessage());
+            throw new IllegalStateException("SAX parser appears to be broken - " + e.getMessage());
         }
     }
 
@@ -289,7 +289,7 @@ public class XSSFEventBasedExcelExtractor
             }
 
             return text.toString();
-        } catch (IOException | OpenXML4JException | SAXException e) {
+        } catch (IOException | OpenXML4JException | SAXException | NumberFormatException e) {
             LOGGER.atWarn().withThrowable(e).log("Failed to load text");
             return "";
         }
@@ -302,7 +302,7 @@ public class XSSFEventBasedExcelExtractor
         for (XSSFShape shape : shapes) {
             if (shape instanceof XSSFSimpleShape) {
                 String sText = ((XSSFSimpleShape) shape).getText();
-                if (sText != null && sText.length() > 0) {
+                if (sText != null && !sText.isEmpty()) {
                     text.append(sText).append('\n');
                 }
             }
@@ -384,7 +384,7 @@ public class XSSFEventBasedExcelExtractor
          */
         private void appendHeaderFooterText(StringBuilder buffer, String name) {
             String text = headerFooterMap.get(name);
-            if (text != null && text.length() > 0) {
+            if (text != null && !text.isEmpty()) {
                 // this is a naive way of handling the left, center, and right
                 // header and footer delimiters, but it seems to be as good as
                 // the method used by XSSFExcelExtractor

@@ -22,8 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -34,7 +38,7 @@ public abstract class BaseTestDataFormat {
 
     protected static final String POUND_FMT = "\"\u00a3\"#,##0;[Red]\\-\"\u00a3\"#,##0";
 
-    private final ITestDataProvider _testDataProvider;
+    protected final ITestDataProvider _testDataProvider;
 
     protected BaseTestDataFormat(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;
@@ -43,6 +47,16 @@ public abstract class BaseTestDataFormat {
     void assertNotBuiltInFormat(String customFmt) {
         //check it is not in built-in formats
         assertEquals(-1, BuiltinFormats.getBuiltinFormat(customFmt));
+    }
+
+    @BeforeAll
+    static void setUp() {
+        LocaleUtil.setUserLocale(Locale.US);
+    }
+
+    @AfterAll
+    static void tearDown() {
+        LocaleUtil.setUserLocale(null);
     }
 
     @Test
@@ -259,4 +273,24 @@ public abstract class BaseTestDataFormat {
             assertEquals("12'345'678", formatter.formatCellValue(lge));
         }
     }
+
+    @Test
+    public void testFormatCellValueDecimal() throws IOException {
+        DataFormatter df = new DataFormatter();
+
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = wb.createSheet("test").createRow(0).createCell(0);
+            assertEquals("", df.formatCellValue(cell));
+
+            cell.setCellValue(1.005);
+            assertEquals("1.005", df.formatCellValue(cell));
+
+            DataFormat format = wb.createDataFormat();
+            CellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setDataFormat(format.getFormat("0.00"));
+            cell.setCellStyle(cellStyle);
+            assertEquals("1.01", df.formatCellValue(cell));
+        }
+    }
+
 }

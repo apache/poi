@@ -1,5 +1,5 @@
 
-Apache POI
+Apache POI™
 ======================
 
 A Java library for reading and writing Microsoft Office binary and OOXML file formats.
@@ -53,18 +53,16 @@ Bug tracker:
 
 Source code:
 
-* Official `Apache Subversion repo`_ at apache.org
-* `ViewVC repo browser`_ at apache.org
-* `GitHub git mirror`_ at github.com
+* Official `Apache Git repo`_ at apache.org
 
 Requires Java 1.8 or later.
 
 Contributing
 ------------------
 
-* Download and install svn or git, Java JDK 1.8+, and Apache Ant 1.8+ or Gradle
+* Download and install git, Java JDK 1.8+, and Apache Ant 1.8+ or Gradle
 
-* Check out the code from svn or git
+* Check out the code from git
 
 * Import the project into Eclipse or your favorite IDE
 
@@ -100,7 +98,5 @@ To build the jar files for poi, poi-ooxml, poi-ooxml-lite, poi-ooxml-full and po
 .. _Bugzilla: https://bz.apache.org/bugzilla/buglist.cgi?product=POI
 .. _GitHub pull requests: https://github.com/apache/poi/pulls
 
-.. _Apache Subversion repo: https://svn.apache.org/repos/asf/poi/trunk
-.. _ViewVC repo browser: https://svn.apache.org/viewvc/poi/trunk
-.. _GitHub git mirror: https://github.com/apache/poi
+.. _Apache Git repo: https://github.com/apache/poi
 .. _How To Build page: http://poi.apache.org/devel/

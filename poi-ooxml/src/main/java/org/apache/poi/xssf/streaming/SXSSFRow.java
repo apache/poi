@@ -113,7 +113,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
      * either through calling {@code setCellValue} or {@code setCellType}.
      *
-     * @param column - the column number this cell represents
+     * @param column - the column number this cell represents (zero-based)
      * @return Cell a high level representation of the created cell.
      * @throws IllegalArgumentException if columnIndex &lt; 0 or greater than the maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
@@ -130,23 +130,23 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
      * either through calling setCellValue or setCellType.
      *
-     * @param column - the column number this cell represents
+     * @param column - the column number this cell represents (zero-based)
      * @return Cell a high level representation of the created cell.
      * @throws IllegalArgumentException if columnIndex &lt; 0 or greater than a maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
      */
     @Override
-    public SXSSFCell createCell(int column, CellType type)
+    public SXSSFCell createCell(final int column, final CellType type)
     {
         checkBounds(column);
-        SXSSFCell cell = new SXSSFCell(this, type);
+        SXSSFCell cell = new SXSSFCell(this, type, column);
         _cells.put(column, cell);
         _sheet.trackNewCell(cell);
         return cell;
     }
 
     /**
-     * @throws RuntimeException if the bounds are exceeded.
+     * @throws IllegalStateException if the bounds are exceeded.
      */
     private static void checkBounds(int cellIndex) {
         SpreadsheetVersion v = SpreadsheetVersion.EXCEL2007;
@@ -219,7 +219,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @param cellnum  0 based column number
      * @return Cell representing that column or null if undefined.
      * @see #getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)
-     * @throws RuntimeException if cellnum is out of bounds
+     * @throws IllegalStateException if cellnum is out of bounds
      */
     @Override
     public SXSSFCell getCell(int cellnum) {
@@ -485,6 +485,12 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         {
             return iter.next();
         }
+
+        /**
+         * This method is not yet supported.
+         *
+         * @throws UnsupportedOperationException this method is not yet supported
+         */
         @Override
         public void remove()
         {
@@ -517,6 +523,13 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
                 throw new NoSuchElementException();
             }
         }
+
+        /**
+         * This method is not yet supported.
+         *
+         * @throws UnsupportedOperationException this method is not yet supported
+         */
+        @NotImplemented
         @Override
         public void remove()
         {
@@ -535,11 +548,11 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *      equal to the row number of the argument <code>SXSSFRow</code>
      *      </li>
      *      <li>
-     *      a value less than <code>0</code> if the row number of this this <code>SXSSFRow</code> is
+     *      a value less than <code>0</code> if the row number of this <code>SXSSFRow</code> is
      *      numerically less than the row number of the argument <code>SXSSFRow</code>
      *      </li>
      *      <li>
-     *      a value greater than <code>0</code> if the row number of this this <code>SXSSFRow</code> is
+     *      a value greater than <code>0</code> if the row number of this <code>SXSSFRow</code> is
      *      numerically greater than the row number of the argument <code>SXSSFRow</code>
      *      </li>
      *      </ul>

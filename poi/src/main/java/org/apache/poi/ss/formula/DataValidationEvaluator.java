@@ -47,20 +47,20 @@ import org.apache.poi.util.StringUtil;
 /**
  * Evaluates Data Validation constraints.<p>
  *
- * For performance reasons, this class keeps a cache of all previously retrieved {@link DataValidation} instances.  
- * Be sure to call {@link #clearAllCachedValues()} if any workbook validation definitions are 
+ * For performance reasons, this class keeps a cache of all previously retrieved {@link DataValidation} instances.
+ * Be sure to call {@link #clearAllCachedValues()} if any workbook validation definitions are
  * added, modified, or deleted.
  * <p>
  * Changing cell values should be fine, as long as the corresponding {@link WorkbookEvaluator#clearAllCachedResultValues()}
  * is called as well.
- * 
+ *
  */
 public class DataValidationEvaluator {
 
     /**
      * Expensive to compute, so cache them as they are retrieved.
      * <p>
-     * Sheets don't implement equals, and since its an interface, 
+     * Sheets don't implement equals, and since its an interface,
      * there's no guarantee instances won't be recreated on the fly by some implementation.
      * So we use sheet name.
      */
@@ -79,14 +79,14 @@ public class DataValidationEvaluator {
         this.workbook = wb;
         this.workbookEvaluator = provider._getWorkbookEvaluator();
     }
-    
+
     /**
      * @return evaluator
      */
     protected WorkbookEvaluator getWorkbookEvaluator() {
         return workbookEvaluator;
     }
-    
+
     /**
      * Call this whenever validation structures change,
      * so future results stay in sync with the Workbook state.
@@ -94,7 +94,7 @@ public class DataValidationEvaluator {
     public void clearAllCachedValues() {
         validations.clear();
     }
-    
+
     /**
      * Lazy load validations by sheet, since reading the CT* types is expensive
      *
@@ -109,14 +109,14 @@ public class DataValidationEvaluator {
         }
         return dvs;
     }
-    
+
     /**
      * Finds and returns the {@link DataValidation} for the cell, if there is
      * one. Lookup is based on the first match from
      * {@link DataValidation#getRegions()} for the cell's sheet. DataValidation
      * regions must be in the same sheet as the DataValidation. Allowed values
      * expressions may reference other sheets, however.
-     * 
+     *
      * @param cell reference to check - use this in case the cell does not actually exist yet
      * @return the DataValidation applicable to the given cell, or null if no
      *         validation applies
@@ -132,7 +132,7 @@ public class DataValidationEvaluator {
      * {@link DataValidation#getRegions()} for the cell's sheet. DataValidation
      * regions must be in the same sheet as the DataValidation. Allowed values
      * expressions may reference other sheets, however.
-     * 
+     *
      * @param cell reference to check
      * @return the DataValidationContext applicable to the given cell, or null if no
      *         validation applies
@@ -166,7 +166,7 @@ public class DataValidationEvaluator {
      * This method could throw an exception if the validation type is not LIST,
      * but since this method is mostly useful in UI contexts, null seems the
      * easier path.
-     * 
+     *
      * @param cell reference to check - use this in case the cell does not actually exist yet
      * @return returns an unmodifiable {@link List} of {@link ValueEval}s if applicable, or
      *         null
@@ -175,7 +175,7 @@ public class DataValidationEvaluator {
         DataValidationContext context = getValidationContextForCell(cell);
 
         if (context == null) return null;
-        
+
         return getValidationValuesForConstraint(context);
     }
 
@@ -186,11 +186,11 @@ public class DataValidationEvaluator {
     protected static List<ValueEval> getValidationValuesForConstraint(DataValidationContext context) {
         final DataValidationConstraint val = context.getValidation().getValidationConstraint();
         if (val.getValidationType() != ValidationType.LIST) return null;
-        
+
         String formula = val.getFormula1();
-        
+
         final List<ValueEval> values = new ArrayList<>();
-        
+
         if (val.getExplicitListValues() != null && val.getExplicitListValues().length > 0) {
             // assumes parsing interprets the overloaded property right for XSSF
             for (String s : val.getExplicitListValues()) {
@@ -221,7 +221,7 @@ public class DataValidationEvaluator {
      * Note that to properly apply some validations, care must be taken to
      * offset the base validation formula by the relative position of the
      * current cell, or the wrong value is checked.
-     * 
+     *
      * @param cellRef The reference of the cell to evaluate
      * @return true if the cell has no validation or the cell value passes the
      *         defined validation, false if it fails
@@ -230,23 +230,23 @@ public class DataValidationEvaluator {
         final DataValidationContext context = getValidationContextForCell(cellRef);
 
         if (context == null) return true;
-        
+
         final Cell cell = SheetUtil.getCell(workbook.getSheet(cellRef.getSheetName()), cellRef.getRow(), cellRef.getCol());
-        
+
         // now we can validate the cell
-        
+
         // if empty, return not allowed flag
         if (   cell == null
-            || isType(cell, CellType.BLANK)  
-            || (isType(cell,CellType.STRING) 
+            || isType(cell, CellType.BLANK)
+            || (isType(cell,CellType.STRING)
                 && (cell.getStringCellValue() == null || cell.getStringCellValue().isEmpty())
                )
            ) {
             return context.getValidation().getEmptyCellAllowed();
         }
-        
+
         // cell has a value
-        
+
         return ValidationEnum.isValid(cell, context);
     }
 
@@ -259,18 +259,18 @@ public class DataValidationEvaluator {
     */
     public static boolean isType(Cell cell, CellType type) {
         final CellType cellType = cell.getCellType();
-        return cellType == type 
-              || (cellType == CellType.FORMULA 
+        return cellType == type
+              || (cellType == CellType.FORMULA
                   && cell.getCachedFormulaResultType() == type
                  );
     }
-   
+
 
     /**
      * Not calling it ValidationType to avoid confusion for now with DataValidationConstraint.ValidationType.
      * Definition order matches OOXML type ID indexes
      */
-    public static enum ValidationEnum {
+    public enum ValidationEnum {
         ANY {
             public boolean isValidValue(Cell cell, DataValidationContext context) {
                 return true;
@@ -291,11 +291,11 @@ public class DataValidationEvaluator {
             public boolean isValidValue(Cell cell, DataValidationContext context) {
                 final List<ValueEval> valueList = getValidationValuesForConstraint(context);
                 if (valueList == null) return true; // special case
-                
+
                 // compare cell value to each item
                 for (ValueEval listVal : valueList) {
                     ValueEval comp = listVal instanceof RefEval ? ((RefEval) listVal).getInnerValueEval(context.getSheetIndex()) : listVal;
-                    
+
                     // any value is valid if the list contains a blank value per Excel help
                     if (comp instanceof BlankEval) return true;
                     if (comp instanceof ErrorEval) continue; // nothing to check
@@ -310,7 +310,7 @@ public class DataValidationEvaluator {
                         // could this have trouble with double precision/rounding errors and date/time values?
                         // do we need to allow a "close enough" double fractional range?
                         // I see 17 digits after the decimal separator in XSSF files, and for time values,
-                        // there are sometimes discrepancies in the final decimal place.  
+                        // there are sometimes discrepancies in the final decimal place.
                         // I don't have a validation test case yet though. - GW
                         if (isType(cell, CellType.NUMERIC) && ((NumberEval) comp).getNumberValue() == cell.getNumericCellValue()) {
                             return true;
@@ -319,7 +319,7 @@ public class DataValidationEvaluator {
                         }
                     }
                     if (comp instanceof StringEval) {
-                        // interestingly, in testing, a validation value of the string "TRUE" or "true" 
+                        // interestingly, in testing, a validation value of the string "TRUE" or "true"
                         // did not match a boolean cell value of TRUE - so apparently cell type matters
                         // also, Excel validation is case insensitive - "true" is valid for the list value "TRUE"
                         if (isType(cell, CellType.STRING) && ((StringEval) comp).getStringValue().equalsIgnoreCase(cell.getStringCellValue())) {
@@ -368,16 +368,16 @@ public class DataValidationEvaluator {
             }
         },
         ;
-        
+
         public boolean isValidValue(Cell cell, DataValidationContext context) {
             return isValidNumericCell(cell, context);
         }
-        
+
         /**
          * Uses the cell value, which may be the cached formula result value.
          * We won't re-evaluate cells here.  This validation would be after the cell value was updated externally.
-         * Excel allows invalid values through methods like copy/paste, and only validates them when the user 
-         * interactively edits the cell.   
+         * Excel allows invalid values through methods like copy/paste, and only validates them when the user
+         * interactively edits the cell.
          * @return if the cell is a valid numeric cell for the validation or not
          */
         protected boolean isValidNumericCell(Cell cell, DataValidationContext context) {
@@ -394,12 +394,12 @@ public class DataValidationEvaluator {
             try {
                 Double t1 = evalOrConstant(context.getFormula1(), context);
                 // per Excel, a blank value for a numeric validation constraint formula validates true
-                if (t1 == null) return true; 
+                if (t1 == null) return true;
                 Double t2 = null;
                 if (context.getOperator() == OperatorType.BETWEEN || context.getOperator() == OperatorType.NOT_BETWEEN) {
                     t2 = evalOrConstant(context.getFormula2(), context);
                     // per Excel, a blank value for a numeric validation constraint formula validates true
-                    if (t2 == null) return true; 
+                    if (t2 == null) return true;
                 }
                 return OperatorEnum.values()[context.getOperator()].isValid(value, t1, t2);
             } catch (NumberFormatException e) {
@@ -407,7 +407,7 @@ public class DataValidationEvaluator {
                 return false;
             }
         }
-        
+
         /**
          * Evaluate a numeric formula value as either a constant or numeric expression.
          * Note that Excel treats validations with constraint formulas that evaluate to null as valid,
@@ -435,12 +435,12 @@ public class DataValidationEvaluator {
             if (eval instanceof StringEval) {
                 final String value = ((StringEval) eval).getStringValue();
                 if (StringUtil.isBlank(value)) return null;
-                // try to parse the cell value as a double and return it 
+                // try to parse the cell value as a double and return it
                 return Double.valueOf(value);
             }
             throw new NumberFormatException("Formula '" + formula + "' evaluates to something other than a number");
         }
-        
+
         /**
          * Validates against the type defined in context, as an index of the enum values array.
          * @param cell Cell to check validity of
@@ -451,14 +451,14 @@ public class DataValidationEvaluator {
         public static boolean isValid(Cell cell, DataValidationContext context) {
             return values()[context.getValidation().getValidationConstraint().getValidationType()].isValidValue(cell, context);
         }
-        
+
     }
-    
+
     /**
      * Not calling it OperatorType to avoid confusion for now with DataValidationConstraint.OperatorType.
      * Definition order matches OOXML type ID indexes
      */
-    public static enum OperatorEnum {
+    public enum OperatorEnum {
         BETWEEN {
             public boolean isValid(Double cellValue, Double v1, Double v2) {
                 return cellValue.compareTo(v1) >= 0 && cellValue.compareTo(v2) <= 0;
@@ -500,9 +500,9 @@ public class DataValidationEvaluator {
             }
         },
         ;
-        
+
         public static final OperatorEnum IGNORED = BETWEEN;
-        
+
         /**
          * Evaluates comparison using operator instance rules
          * @param cellValue won't be null, assumption is previous checks handled that
@@ -512,7 +512,7 @@ public class DataValidationEvaluator {
          */
         public abstract boolean isValid(Double cellValue, Double v1, Double v2);
     }
-    
+
     /**
      * This class organizes and encapsulates all the pieces of information related to a single
      * data validation configuration for a single cell.  It cleanly separates the validation region,
@@ -524,7 +524,7 @@ public class DataValidationEvaluator {
         private final DataValidationEvaluator dve;
         private final CellRangeAddressBase region;
         private final CellReference target;
-        
+
         /**
          * Populate the context with the necessary values.
          */
@@ -558,30 +558,30 @@ public class DataValidationEvaluator {
         public CellReference getTarget() {
             return target;
         }
-        
+
         public int getOffsetColumns() {
             return target.getCol() - region.getFirstColumn();
         }
-        
+
         public int getOffsetRows() {
             return target.getRow() - region.getFirstRow();
         }
-        
+
         public int getSheetIndex() {
             return dve.getWorkbookEvaluator().getSheetIndex(target.getSheetName());
         }
-        
+
         public String getFormula1() {
             return dv.getValidationConstraint().getFormula1();
         }
-        
+
         public String getFormula2() {
             return dv.getValidationConstraint().getFormula2();
         }
-        
+
         public int getOperator() {
             return dv.getValidationConstraint().getOperator();
         }
-        
+
     }
 }

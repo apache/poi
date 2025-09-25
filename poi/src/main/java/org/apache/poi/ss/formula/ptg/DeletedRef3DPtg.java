@@ -54,7 +54,7 @@ public final class DeletedRef3DPtg extends OperandPtg implements WorkbookDepende
         return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, FormulaError.REF.getString());
     }
     public String toFormulaString() {
-        throw new RuntimeException("3D references need a workbook to determine formula text");
+        throw new IllegalStateException("3D references need a workbook to determine formula text");
     }
     @Override
     public byte getDefaultOperandClass() {

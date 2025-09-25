@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState;
@@ -55,7 +55,7 @@ import org.apache.poi.util.RecordFormatException;
  */
 @Internal
 public class HemfComment {
-    private static final Logger LOG = LogManager.getLogger(HemfComment.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HemfComment.class);
 
     public enum HemfCommentRecordType {
         emfGeneric(-1, EmfCommentDataGeneric::new, false),
@@ -256,6 +256,11 @@ public class HemfComment {
             }
         }
 
+        /**
+         * This method is not yet supported.
+         *
+         * @throws UnsupportedOperationException this method is not yet supported
+         */
         @Override
         public void remove() {
             throw new UnsupportedOperationException("Remove not supported");

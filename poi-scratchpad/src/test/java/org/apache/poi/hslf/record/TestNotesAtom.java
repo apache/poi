@@ -51,7 +51,7 @@ public final class TestNotesAtom {
     @Test
     void testWrite() throws Exception {
         NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         na.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
     }

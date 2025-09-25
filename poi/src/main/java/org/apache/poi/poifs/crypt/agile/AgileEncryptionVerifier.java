@@ -44,17 +44,23 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
             }
         }
 
-        if (keyData == null) {
+        if (keyData == null || keyData.getHashSize() == null) {
             throw new IllegalArgumentException("encryptedKey not set");
         }
 
         setCipherAlgorithm(keyData.getCipherAlgorithm());
         setKeySize(keyData.getKeyBits());
 
-        int blockSize = keyData.getBlockSize();
+        Integer blockSize = keyData.getBlockSize();
+        if (blockSize == null) {
+            throw new IllegalArgumentException("blockSize not set");
+        }
         setBlockSize(blockSize);
 
-        int hashSize = keyData.getHashSize();
+        Integer hashSize = keyData.getHashSize();
+        if (hashSize == null) {
+            throw new IllegalArgumentException("hashSize not set");
+        }
 
         HashAlgorithm ha = keyData.getHashAlgorithm();
         setHashAlgorithm(ha);

@@ -177,7 +177,7 @@ public interface Drawable {
     /**
      * Apply 2-D transforms before drawing this shape. This includes rotation and flipping.
      *
-     * @param graphics the graphics whos transform matrix will be modified
+     * @param graphics the graphics whose transform matrix will be modified
      */
     void applyTransform(Graphics2D graphics);
 

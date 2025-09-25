@@ -188,7 +188,7 @@ final class TestDirectoryProperty {
     }
 
     private void verifyProperty() throws IOException {
-        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(512);
+        UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(512).get();
 
         _property.writeData(stream);
         byte[] output = stream.toByteArray();
@@ -254,7 +254,7 @@ final class TestDirectoryProperty {
 
     private static void verifyReadingProperty(int index, byte[] input, int offset, String name) {
         DirectoryProperty property = new DirectoryProperty(index, input, offset);
-        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(128);
+        UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(128).get();
         byte[] expected = Arrays.copyOfRange(input, offset, offset+128);
         try {
             property.writeData(stream);

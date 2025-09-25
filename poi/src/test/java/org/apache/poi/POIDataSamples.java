@@ -17,10 +17,10 @@
 package org.apache.poi;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -150,9 +150,9 @@ public final class POIDataSamples {
 
         File f = getFile(sampleFileName);
         try {
-            return new FileInputStream(f);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            return Files.newInputStream(f.toPath());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -160,27 +160,27 @@ public final class POIDataSamples {
      *
      * @param sampleFileName    the name of the test file
      * @return Verifies that the file with the given name exists in the test-data directory
-     * @throws RuntimeException if the file was not found
+     * @throws IllegalStateException if the file was not found
      */
     public File getFile(String sampleFileName) {
         File f = new File(_resolvedDataDir, sampleFileName);
         if (!f.exists()) {
-            throw new RuntimeException("Sample file '" + sampleFileName
+            throw new IllegalStateException("Sample file '" + sampleFileName
                     + "' not found in data dir '" + _resolvedDataDir.getAbsolutePath() + "'");
         }
         try {
-            if(sampleFileName.length() > 0) {
+            if(!sampleFileName.isEmpty()) {
                String fn = sampleFileName;
                if(fn.indexOf('/') > 0) {
                   fn = fn.substring(fn.indexOf('/')+1);
                }
                if(!fn.equals(f.getCanonicalFile().getName())){
-                   throw new RuntimeException("File name is case-sensitive: requested '" + fn
+                   throw new IllegalStateException("File name is case-sensitive: requested '" + fn
                         + "' but actual file is '" + f.getCanonicalFile().getName() + "'");
                }
             }
         } catch (IOException e){
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         return f;
     }
@@ -264,7 +264,7 @@ public final class POIDataSamples {
      */
     public byte[] readFile(String fileName) {
         try (InputStream fis = openResourceAsStream(fileName);
-             UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+             UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             IOUtils.copy(fis, bos);
             return bos.toByteArray();
         } catch (IOException e) {
@@ -273,7 +273,7 @@ public final class POIDataSamples {
     }
 
     public static POIFSFileSystem writeOutAndReadBack(POIFSFileSystem original) throws IOException {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             original.writeFilesystem(baos);
             return new POIFSFileSystem(baos.toInputStream());
         }

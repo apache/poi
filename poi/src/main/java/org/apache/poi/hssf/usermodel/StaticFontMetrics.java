@@ -19,15 +19,15 @@ package org.apache.poi.hssf.usermodel;
 
 import java.awt.Font;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 
 /**
  * Allows the user to lookup the font metrics for a particular font without
@@ -37,7 +37,7 @@ import org.apache.logging.log4j.Logger;
  * font. Use a multiplier for other sizes.
  */
 final class StaticFontMetrics {
-    private static final Logger LOGGER = LogManager.getLogger(StaticFontMetrics.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(StaticFontMetrics.class);
     /** The font metrics property file we're using */
     private static Properties fontMetricsProps;
     /** Our cache of font details we've already looked up */
@@ -59,7 +59,7 @@ final class StaticFontMetrics {
             try {
                 fontMetricsProps = loadMetrics();
             } catch (IOException e) {
-                throw new RuntimeException("Could not load font metrics", e);
+                throw new IllegalStateException("Could not load font metrics", e);
             }
         }
 
@@ -118,7 +118,7 @@ final class StaticFontMetrics {
         }
 
         try (InputStream metricsIn = (propFile != null)
-                ? new FileInputStream(propFile)
+                ? Files.newInputStream(propFile.toPath())
                 : FontDetails.class.getResourceAsStream("/font_metrics.properties")
         )  {
             // Use the built-in font metrics file off the classpath

@@ -19,6 +19,7 @@
 
 package org.apache.poi.xssf.streaming;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
@@ -44,7 +45,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.*;
@@ -337,12 +337,12 @@ final class TestSXSSFWorkbookWithNullAutoSizeTracker extends BaseTestXWorkbook {
     void bug53515() throws Exception {
         try (Workbook wb1 = new SXSSFWorkbook(10)) {
             populateWorkbook(wb1);
-            assertDoesNotThrow(() -> wb1.write(NULL_OUTPUT_STREAM));
-            assertDoesNotThrow(() -> wb1.write(NULL_OUTPUT_STREAM));
+            assertDoesNotThrow(() -> wb1.write(NullOutputStream.INSTANCE));
+            assertDoesNotThrow(() -> wb1.write(NullOutputStream.INSTANCE));
             try (Workbook wb2 = new XSSFWorkbook()) {
                 populateWorkbook(wb2);
-                assertDoesNotThrow(() -> wb2.write(NULL_OUTPUT_STREAM));
-                assertDoesNotThrow(() -> wb2.write(NULL_OUTPUT_STREAM));
+                assertDoesNotThrow(() -> wb2.write(NullOutputStream.INSTANCE));
+                assertDoesNotThrow(() -> wb2.write(NullOutputStream.INSTANCE));
             }
         }
     }
@@ -460,7 +460,7 @@ final class TestSXSSFWorkbookWithNullAutoSizeTracker extends BaseTestXWorkbook {
                 }
             }
 
-            assertDoesNotThrow(() -> swb.write(NULL_OUTPUT_STREAM));
+            assertDoesNotThrow(() -> swb.write(NullOutputStream.INSTANCE));
             swb.dispose();
         }
     }
@@ -478,7 +478,7 @@ final class TestSXSSFWorkbookWithNullAutoSizeTracker extends BaseTestXWorkbook {
         File input = XSSFTestDataSamples.getSampleFile("sample.xlsx");
 
         try (OPCPackage pkg = OPCPackage.open(input, PackageAccess.READ)) {
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             try (XSSFWorkbook xssf = new XSSFWorkbook(pkg)) {
                 try (SXSSFWorkbook wb = new SXSSFWorkbook(xssf, 2)) {
                     Sheet s = wb.createSheet(sheetName);
@@ -521,7 +521,7 @@ final class TestSXSSFWorkbookWithNullAutoSizeTracker extends BaseTestXWorkbook {
     void addHyperlink() throws Exception {
         try (
             SXSSFWorkbook wb = new SXSSFWorkbook();
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             SXSSFSheet sheet = wb.createSheet("s1");
             SXSSFRow row = sheet.createRow(0);
@@ -547,7 +547,7 @@ final class TestSXSSFWorkbookWithNullAutoSizeTracker extends BaseTestXWorkbook {
     void addDimension() throws IOException {
         try (
                 SXSSFWorkbook wb = new SXSSFWorkbook();
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             SXSSFSheet sheet = wb.createSheet();
             sheet.createRow(2).createCell(3).setCellValue("top left");
@@ -566,7 +566,7 @@ final class TestSXSSFWorkbookWithNullAutoSizeTracker extends BaseTestXWorkbook {
     void addDimension1() throws IOException {
         try (
                 SXSSFWorkbook wb = new SXSSFWorkbook(1);
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             SXSSFSheet sheet = wb.createSheet();
             sheet.createRow(2).createCell(3).setCellValue("top left");
@@ -591,7 +591,7 @@ final class TestSXSSFWorkbookWithNullAutoSizeTracker extends BaseTestXWorkbook {
             assertEquals(6, sheet.getLastRowNum());
             try (
                     SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook(wb);
-                    UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                    UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
             ) {
                 sxssfWorkbook.write(bos);
                 try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
@@ -606,7 +606,7 @@ final class TestSXSSFWorkbookWithNullAutoSizeTracker extends BaseTestXWorkbook {
     void addDimensionDisabled() throws IOException {
         try (
                 SXSSFWorkbook wb = new SXSSFWorkbook();
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             wb.setShouldCalculateSheetDimensions(false);
             SXSSFSheet sheet = wb.createSheet();

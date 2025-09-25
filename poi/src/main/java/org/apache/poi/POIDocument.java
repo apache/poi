@@ -31,8 +31,8 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
@@ -62,7 +62,7 @@ public abstract class POIDocument implements Closeable {
     private DirectoryNode directory;
 
     /** For our own logging use */
-    private static final Logger LOG = LogManager.getLogger(POIDocument.class);
+    private static final Logger LOG = PoiLogManager.getLogger(POIDocument.class);
 
     /* Have the property streams been read yet? (Only done on-demand) */
     private boolean initialized;
@@ -122,7 +122,7 @@ public abstract class POIDocument implements Closeable {
      */
     public void createInformationProperties() {
         if (!initialized) {
-            readProperties();
+            readProperties(false);
         }
         if (sInf == null) {
             sInf = PropertySetFactory.newSummaryInformation();
@@ -140,14 +140,26 @@ public abstract class POIDocument implements Closeable {
      */
     @Internal
     public void readProperties() {
+        readProperties(true);
+    }
+
+    /**
+     * Find, and create objects for, the standard Document Information Properties (HPSF).
+     * If a given property set is missing or corrupt, it will remain null.
+     *
+     * @param warnIfNull log a warning if any of the property sets come back as null.
+     *                   The directory is null when creating a new document from scratch
+     */
+    @Internal
+    public void readProperties(boolean warnIfNull) {
         if (initialized) {
             return;
         }
-        DocumentSummaryInformation dsi = readPropertySet(DocumentSummaryInformation.class, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        DocumentSummaryInformation dsi = readPropertySet(DocumentSummaryInformation.class, DocumentSummaryInformation.DEFAULT_STREAM_NAME, warnIfNull);
         if (dsi != null) {
             dsInf = dsi;
         }
-        SummaryInformation si = readPropertySet(SummaryInformation.class, SummaryInformation.DEFAULT_STREAM_NAME);
+        SummaryInformation si = readPropertySet(SummaryInformation.class, SummaryInformation.DEFAULT_STREAM_NAME, warnIfNull);
         if (si != null) {
             sInf = si;
         }
@@ -157,7 +169,7 @@ public abstract class POIDocument implements Closeable {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T readPropertySet(Class<T> clazz, String name) {
+    private <T> T readPropertySet(Class<T> clazz, String name, boolean warnIfNull) {
         String localName = clazz.getName().substring(clazz.getName().lastIndexOf('.')+1);
         try {
             PropertySet ps = getPropertySet(name);
@@ -166,7 +178,9 @@ public abstract class POIDocument implements Closeable {
             } else if (ps != null) {
                 LOG.atWarn().log("{} property set came back with wrong class - {}", localName, ps.getClass().getName());
             } else {
-                LOG.atWarn().log("{} property set came back as null", localName);
+                if (warnIfNull) {
+                    LOG.atWarn().log("{} property set came back as null", localName);
+                }
             }
         } catch (IOException e) {
             LOG.atError().withThrowable(e).log("can't retrieve property set");
@@ -208,7 +222,7 @@ public abstract class POIDocument implements Closeable {
             if (encryptionInfo != null && encryptionInfo.isDocPropsEncrypted()) {
                 step = "getting encrypted";
                 String encryptedStream = getEncryptedPropertyStreamName();
-                if (!dirNode.hasEntry(encryptedStream)) {
+                if (!dirNode.hasEntryCaseInsensitive(encryptedStream)) {
                     throw new EncryptedDocumentException("can't find encrypted property stream '"+encryptedStream+"'");
                 }
                 CryptoAPIDecryptor dec = (CryptoAPIDecryptor)encryptionInfo.getDecryptor();
@@ -217,13 +231,13 @@ public abstract class POIDocument implements Closeable {
             }
 
             //directory can be null when creating new documents
-            if (dirNode == null || !dirNode.hasEntry(setName)) {
+            if (dirNode == null || !dirNode.hasEntryCaseInsensitive(setName)) {
                 return null;
             }
 
             // Find the entry, and get an input stream for it
             step = "getting";
-            try (DocumentInputStream dis = dirNode.createDocumentInputStream(dirNode.getEntry(setName))) {
+            try (DocumentInputStream dis = dirNode.createDocumentInputStream(dirNode.getEntryCaseInsensitive(setName))) {
                 // Create the Property Set
                 step = "creating";
                 return PropertySetFactory.create(dis);
@@ -288,8 +302,8 @@ public abstract class POIDocument implements Closeable {
             writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, newDocumentSummaryInformation(), outFS);
 
             // remove summary, if previously available
-            if (outFS.getRoot().hasEntry(SummaryInformation.DEFAULT_STREAM_NAME)) {
-                outFS.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME).delete();
+            if (outFS.getRoot().hasEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME)) {
+                outFS.getRoot().getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME).delete();
             }
             CryptoAPIEncryptor enc = (CryptoAPIEncryptor) encGen;
             try {
@@ -322,7 +336,7 @@ public abstract class POIDocument implements Closeable {
      *      {@link POIFSFileSystem} occurs
      */
     private void writePropertySet(String name, PropertySet set, POIFSFileSystem outFS) throws IOException {
-        try (UnsynchronizedByteArrayOutputStream bOut = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bOut = UnsynchronizedByteArrayOutputStream.builder().get()) {
             PropertySet mSet = new PropertySet(set);
             mSet.write(bOut);
 

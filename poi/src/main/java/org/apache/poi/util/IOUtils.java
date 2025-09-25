@@ -20,13 +20,13 @@ package org.apache.poi.util;
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.zip.CRC32;
@@ -34,19 +34,18 @@ import java.util.zip.Checksum;
 
 import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.EmptyFileException;
 
 @Internal
 public final class IOUtils {
-    private static final Logger LOG = LogManager.getLogger(IOUtils.class);
+    private static final Logger LOG = PoiLogManager.getLogger(IOUtils.class);
 
     /**
      * The default buffer size to use for the skip() methods.
      */
     private static final int SKIP_BUFFER_SIZE = 2048;
-    private static byte[] SKIP_BYTE_BUFFER;
 
     /**
      * The current set global allocation limit override,
@@ -109,6 +108,14 @@ public final class IOUtils {
     }
 
     /**
+     * @return The maximum number of bytes that should be possible to be allocated in one step.
+     * @since 5.4.1
+     */
+    public static int getByteArrayMaxOverride() {
+        return BYTE_ARRAY_MAX_OVERRIDE;
+    }
+
+    /**
      * Peeks at the first 8 bytes of the stream. Returns those bytes, but
      *  with the stream unaffected. Requires a stream that supports mark/reset,
      *  or a PushbackInputStream. If the stream has &gt;0 but &lt;8 bytes,
@@ -125,6 +132,12 @@ public final class IOUtils {
         }
     }
 
+    private static void checkByteSizeLimit(long length) {
+        if(BYTE_ARRAY_MAX_OVERRIDE != -1 && length > BYTE_ARRAY_MAX_OVERRIDE) {
+            throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
+        }
+    }
+
     /**
      * Peeks at the first N bytes of the stream. Returns those bytes, but
      *  with the stream unaffected. Requires a stream that supports mark/reset,
@@ -136,26 +149,26 @@ public final class IOUtils {
         checkByteSizeLimit(limit);
 
         stream.mark(limit);
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(limit);
-        copy(new BoundedInputStream(stream, limit), bos);
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(limit).get()) {
+            copy(BoundedInputStream.builder().setInputStream(stream).setMaxCount(limit).get(), bos);
 
-        int readBytes = bos.size();
-        if (readBytes == 0) {
-            throw new EmptyFileException();
-        }
+            int readBytes = bos.size();
+            if (readBytes == 0) {
+                throw new EmptyFileException();
+            }
 
-        if (readBytes < limit) {
-            bos.write(new byte[limit-readBytes]);
+            if (readBytes < limit) {
+                bos.write(new byte[limit-readBytes]);
+            }
+            byte[] peekedBytes = bos.toByteArray();
+            if(stream instanceof PushbackInputStream) {
+                PushbackInputStream pin = (PushbackInputStream)stream;
+                pin.unread(peekedBytes, 0, readBytes);
+            } else {
+                stream.reset();
+            }
+            return peekedBytes;
         }
-        byte[] peekedBytes = bos.toByteArray();
-        if(stream instanceof PushbackInputStream) {
-            PushbackInputStream pin = (PushbackInputStream)stream;
-            pin.unread(peekedBytes, 0, readBytes);
-        } else {
-            stream.reset();
-        }
-
-        return peekedBytes;
     }
 
     /**
@@ -204,6 +217,27 @@ public final class IOUtils {
     }
 
     /**
+     * Reads up to {@code length} bytes from the input stream, and returns the bytes read.
+     *
+     * @param stream The byte stream of data to read.
+     * @param length The maximum length to read, use {@link Integer#MAX_VALUE} to read the stream
+     *               until EOF
+     * @param maxLength if the input is equal to/longer than {@code maxLength} bytes,
+     *                  then throw an {@link IOException} complaining about the length.
+     *                  use {@link Integer#MAX_VALUE} to disable the check - if {@link #setByteArrayMaxOverride(int)} is
+     *                  set then that max of that value and this maxLength is used
+     * @return A byte array with the read bytes.
+     * @throws IOException If reading data fails or EOF is encountered too early for the given length.
+     * @throws RecordFormatException If the requested length is invalid.
+     * @since POI 5.4.1
+     */
+    public static byte[] toByteArray(InputStream stream, final long length, final int maxLength) throws IOException {
+        return toByteArray(stream,
+                length > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) length,
+                maxLength, true, length != Integer.MAX_VALUE);
+    }
+
+    /**
      * Reads the input stream, and returns the bytes read.
      *
      * @param stream The byte stream of data to read.
@@ -222,18 +256,15 @@ public final class IOUtils {
 
     private static byte[] toByteArray(InputStream stream, final int length, final int maxLength,
                                       final boolean checkEOFException, final boolean isLengthKnown) throws IOException {
-        if (length < 0 || maxLength < 0) {
-            throw new RecordFormatException("Can't allocate an array of length < 0");
-        }
         final int derivedMaxLength = Math.max(maxLength, BYTE_ARRAY_MAX_OVERRIDE);
         if ((length != Integer.MAX_VALUE) || (derivedMaxLength != Integer.MAX_VALUE)) {
             checkLength(length, derivedMaxLength);
         }
 
-        final int derivedLen = isLengthKnown ? Math.min(length, derivedMaxLength) : derivedMaxLength;
+        final int derivedLen = isLengthKnown && length >= 0 ? Math.min(length, derivedMaxLength) : derivedMaxLength;
         final int byteArrayInitLen = calculateByteArrayInitLength(isLengthKnown, length, derivedMaxLength);
         final int internalBufferLen = DEFAULT_BUFFER_SIZE;
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(byteArrayInitLen)) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(byteArrayInitLen).get()) {
             byte[] buffer = new byte[internalBufferLen];
             int totalBytes = 0, readBytes;
             do {
@@ -249,7 +280,7 @@ public final class IOUtils {
                 throwRecordTruncationException(derivedMaxLength);
             }
 
-            if (checkEOFException && derivedLen != Integer.MAX_VALUE && totalBytes < derivedLen) {
+            if (checkEOFException && length >= 0 && derivedLen != Integer.MAX_VALUE && totalBytes < derivedLen) {
                 throw new EOFException("unexpected EOF - expected len: " + derivedLen + " - actual len: " + totalBytes);
             }
 
@@ -429,9 +460,9 @@ public final class IOUtils {
     public static long copy(InputStream srcStream, File destFile) throws IOException {
         File destDirectory = destFile.getParentFile();
         if (!(destDirectory.exists() || destDirectory.mkdirs())) {
-            throw new RuntimeException("Can't create destination directory: "+destDirectory);
+            throw new IllegalStateException("Can't create destination directory: "+destDirectory);
         }
-        try (OutputStream destStream = new FileOutputStream(destFile)) {
+        try (OutputStream destStream = Files.newOutputStream(destFile.toPath())) {
             return IOUtils.copy(srcStream, destStream);
         }
     }
@@ -520,18 +551,12 @@ public final class IOUtils {
         if (toSkip == 0) {
             return 0L;
         }
-        /*
-         * N.B. no need to synchronize this because: - we don't care if the buffer is created multiple times (the data
-         * is ignored) - we always use the same size buffer, so if it it is recreated it will still be OK (if the buffer
-         * size were variable, we would need to synch. to ensure some other thread did not create a smaller one)
-         */
-        if (SKIP_BYTE_BUFFER == null) {
-            SKIP_BYTE_BUFFER = new byte[SKIP_BUFFER_SIZE];
-        }
+        // use dedicated buffer to avoid having other threads possibly access the bytes in a shared byte array
+        final byte[] skipBuffer = new byte[SKIP_BUFFER_SIZE];
         long remain = toSkip;
         while (remain > 0) {
             // See https://issues.apache.org/jira/browse/IO-203 for why we use read() rather than delegating to skip()
-            final long n = input.read(SKIP_BYTE_BUFFER, 0, (int) Math.min(remain, SKIP_BUFFER_SIZE));
+            final long n = input.read(skipBuffer, 0, (int) Math.min(remain, SKIP_BUFFER_SIZE));
             if (n < 0) { // EOF
                 break;
             }
@@ -546,7 +571,7 @@ public final class IOUtils {
     public static byte[] safelyAllocate(long length, int maxLength) {
         safelyAllocateCheck(length, maxLength);
 
-        checkByteSizeLimit((int)length);
+        checkByteSizeLimit(length);
 
         return new byte[(int)length];
     }
@@ -576,9 +601,6 @@ public final class IOUtils {
         return Arrays.copyOfRange(src, offset, offset+realLength);
     }
 
-
-
-
     /**
      * Simple utility function to check that you haven't hit EOF
      * when reading a byte.
@@ -595,19 +617,41 @@ public final class IOUtils {
         return b;
     }
 
+    /**
+     * Creates a new file in the given parent directory with the given name.
+     * There is a check to prevent path traversal attacks. Only path traversal
+     * that would lead to a file outside the parent directory is regarded as an issue.
+     *
+     * @param parent The parent directory where the file should be created.
+     * @param name The name of the file to create.
+     * @return The created file.
+     * @throws IOException If path traversal is detected.
+     * @since POI 5.5.0
+     */
+    public static File newFile(final File parent, final String name) throws IOException {
+        final File file = new File(parent, name);
+        if (!file.toPath().toAbsolutePath().normalize().startsWith(
+                parent.toPath().toAbsolutePath().normalize()
+        )) {
+            throw new IOException(String.format(
+                    Locale.ROOT, "Failing due to path traversal in `%s`", name));
+        }
+        return file;
+    }
+
     private static void throwRFE(long length, int maxLength) {
         throw new RecordFormatException(String.format(Locale.ROOT, "Tried to allocate an array of length %,d" +
-                        ", but the maximum length for this record type is %,d.\n" +
-                        "If the file is not corrupt and not large, please open an issue on bugzilla to request \n" +
-                        "increasing the maximum allowable size for this record type.\n"+
+                        ", but the maximum length for this record type is %,d.%n" +
+                        "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
+                        "increasing the maximum allowable size for this record type.%n"+
                         "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", length, maxLength));
     }
 
     private static void throwRecordTruncationException(final int maxLength) {
         throw new RecordFormatException(String.format(Locale.ROOT, "Tried to read data but the maximum length " +
-                "for this record type is %,d.\n" +
-                "If the file is not corrupt and not large, please open an issue on bugzilla to request \n" +
-                "increasing the maximum allowable size for this record type.\n"+
+                "for this record type is %,d.%n" +
+                "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
+                "increasing the maximum allowable size for this record type.%n"+
                 "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", maxLength));
     }
 }

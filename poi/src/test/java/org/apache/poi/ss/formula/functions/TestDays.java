@@ -23,10 +23,14 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Locale;
 
 import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
@@ -36,6 +40,16 @@ import static org.apache.poi.ss.util.Utils.assertError;
  * Testcase for DAYS() functions
  */
 public class TestDays {
+
+    @BeforeAll
+    static void setUp() {
+        LocaleUtil.setUserLocale(Locale.US);
+    }
+
+    @AfterAll
+    static void tearDown() {
+        LocaleUtil.setUserLocale(null);
+    }
 
     //https://support.microsoft.com/en-us/office/days-function-57740535-d549-4395-8728-0f07bff0b9df
     @Test

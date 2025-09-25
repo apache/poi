@@ -67,7 +67,7 @@ final class TestCellRangeAddress {
         CellRangeAddress ref = new CellRangeAddress(0, 0, 0, 0);
 
         byte[] recordBytes;
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (LittleEndianOutputStream out = new LittleEndianOutputStream(baos)) {
             // With nothing set
             ref.serialize(out);

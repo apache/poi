@@ -149,7 +149,7 @@ public class FontHeader implements FontInfo, GenericRecord {
         fontDataSize = leis.readInt();
         version = leis.readInt();
         if (version != 0x00010000 && version != 0x00020001 && version != 0x00020002) {
-            throw new RuntimeException("not a EOT font data stream");
+            throw new IllegalStateException("not a EOT font data stream");
         }
         flags = leis.readInt();
         leis.readFully(panose);
@@ -159,7 +159,7 @@ public class FontHeader implements FontInfo, GenericRecord {
         fsType = leis.readUShort();
         magic = leis.readUShort();
         if (magic != 0x504C) {
-            throw new RuntimeException("not a EOT font data stream");
+            throw new IllegalStateException("not a EOT font data stream");
         }
         unicodeRange1 = leis.readInt();
         unicodeRange2 = leis.readInt();

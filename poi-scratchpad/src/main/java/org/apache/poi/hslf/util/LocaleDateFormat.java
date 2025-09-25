@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
 import java.util.AbstractMap;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
@@ -58,14 +59,15 @@ public final class LocaleDateFormat {
         VI_VN(LocaleID.VI_VN, 0, 1, 2, 3, 5, 6, 10, 11, 12, 13, 14, 15, 16),
         HI_IN(LocaleID.HI_IN, 1, 2, 3, 5, 7, 11, 13, 0, 1, 5, 10, 11, 14),
         SYR_SY(LocaleID.SYR_SY, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+        DE_DE(LocaleID.DE_DE, "dd.MM.yyyy", "EEEE, d. MMMM yyyy", 3, 2, 5, 9, 10, "dd.MM.yy  HH:mm", "dd.MM.yy  HH:mm:ss", 15, 16, 13, 14, 4, 6, 7, 8),
         NO_MAP(LocaleID.INVALID_O, 0, 1, 3, 2, 5, 9, 10, 11, 12, 15, 16, 13, 14, 4, 6, 7, 8)
         ;
 
         private final LocaleID lcid;
         private final Object[] mapping;
 
-        private static final Map<LocaleID,MapFormatPPT> LCID_LOOKUP =
-            Stream.of(values()).collect(Collectors.toMap(MapFormatPPT::getLocaleID, Function.identity()));
+        private static final Map<LocaleID,MapFormatPPT> LCID_LOOKUP = Collections.unmodifiableMap(
+            Stream.of(values()).collect(Collectors.toMap(MapFormatPPT::getLocaleID, Function.identity())));
 
         MapFormatPPT(LocaleID lcid, Object... mapping) {
             this.lcid = lcid;
@@ -195,9 +197,9 @@ public final class LocaleDateFormat {
         private final LocaleID[] lcid;
         private final Object[] mapping;
 
-        private static final Map<LocaleID, MapFormatException> LCID_LOOKUP =
+        private static final Map<LocaleID, MapFormatException> LCID_LOOKUP = Collections.unmodifiableMap(
             Stream.of(values()).flatMap(m -> Stream.of(m.lcid).map(l -> new AbstractMap.SimpleEntry<>(l, m)))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
         MapFormatException(LocaleID[] lcid, Object... mapping) {
             this.lcid = lcid;

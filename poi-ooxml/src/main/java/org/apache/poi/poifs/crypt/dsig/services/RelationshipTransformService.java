@@ -50,8 +50,8 @@ import javax.xml.crypto.dsig.TransformService;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
 import org.apache.jcp.xml.dsig.internal.dom.ApacheNodeSetData;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.SuppressForbidden;
 import org.apache.xml.security.signature.XMLSignatureInput;
@@ -78,7 +78,7 @@ public class RelationshipTransformService extends TransformService {
 
     private final List<String> sourceIds;
 
-    private static final Logger LOG = LogManager.getLogger(RelationshipTransformService.class);
+    private static final Logger LOG = PoiLogManager.getLogger(RelationshipTransformService.class);
 
     /**
      * Relationship Transform parameter specification class.

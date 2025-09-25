@@ -64,7 +64,7 @@ class TestEOMonth {
     void testEOMonthBadDateValues() {
         checkValue(0.0, -2, BAD_DATE);
         checkValue(0.0, -3, BAD_DATE);
-        checkValue(DATE_1900_01_31, -1, BAD_DATE);
+        checkValue(DATE_1900_01_31, -2, BAD_DATE);
     }
 
     private void checkValue(double startDate, int monthInc, double expectedResult) {

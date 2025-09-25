@@ -23,8 +23,8 @@ import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.common.ExtendedColor;
@@ -39,7 +39,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * Data Bar Conditional Formatting Rule Record.
  */
 public final class DataBarFormatting implements Duplicatable, GenericRecord {
-    private static final Logger LOG = LogManager.getLogger(DataBarFormatting.class);
+    private static final Logger LOG = PoiLogManager.getLogger(DataBarFormatting.class);
 
     private static final BitField ICON_ONLY = BitFieldFactory.getInstance(0x01);
     private static final BitField REVERSED = BitFieldFactory.getInstance(0x04);

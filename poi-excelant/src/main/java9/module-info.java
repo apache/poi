@@ -18,6 +18,7 @@
 module org.apache.poi.excelant {
 
     requires ant;
+    requires transitive org.apache.poi.poi;
     requires org.apache.poi.ooxml;
 
     exports org.apache.poi.ss.excelant;

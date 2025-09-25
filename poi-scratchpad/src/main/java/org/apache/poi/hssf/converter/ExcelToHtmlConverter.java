@@ -40,8 +40,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -66,7 +66,7 @@ import org.w3c.dom.Text;
  */
 @Beta
 public class ExcelToHtmlConverter extends AbstractExcelConverter {
-    private static final Logger LOG = LogManager.getLogger(ExcelToHtmlConverter.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ExcelToHtmlConverter.class);
 
     /**
      * Java main() interface to interact with ExcelToHtmlConverter
@@ -104,7 +104,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
      * @return DOM representation of result HTML
      * @throws IOException                  If an error occurs reading or writing files
      * @throws ParserConfigurationException If configuration is incorrect
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public static Document process(File xlsFile) throws IOException, ParserConfigurationException {
@@ -120,7 +120,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
      * @return DOM representation of result HTML
      * @throws IOException                  If an error occurs reading or writing files
      * @throws ParserConfigurationException If configuration is incorrect
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public static Document process(InputStream xlsStream) throws IOException, ParserConfigurationException {
@@ -136,7 +136,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
      * @return DOM representation of result HTML
      * @throws IOException                  If an error occurs reading or writing files
      * @throws ParserConfigurationException If configuration is incorrect
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public static Document process(HSSFWorkbook workbook) throws IOException, ParserConfigurationException {

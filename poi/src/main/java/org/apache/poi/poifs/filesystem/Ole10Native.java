@@ -37,7 +37,7 @@ import org.apache.poi.util.StringUtil;
  *
  * Ole10Native objects come in different shapes:
  * <ul>
- *     <li>unparsed: we can't identify it's structure</li>
+ *     <li>unparsed: we can't identify its structure</li>
  *     <li>compact: same as unparsed but with a leading flag</li>
  *     <li>parsed - Ole-Class "Package": data + ASCII label,command,filename</li>
  *     <li>parsed - Ole-Class "Package2": as above plus UTF16 label,command,filename</li>
@@ -133,7 +133,7 @@ public class Ole10Native {
      * @throws Ole10NativeException on invalid or unexcepted data format
      */
     public static Ole10Native createFromEmbeddedOleObject(DirectoryNode directory) throws IOException, Ole10NativeException {
-        DocumentEntry nativeEntry = (DocumentEntry) directory.getEntry(OLE10_NATIVE);
+        DocumentEntry nativeEntry = (DocumentEntry) directory.getEntryCaseInsensitive(OLE10_NATIVE);
         try (DocumentInputStream dis = directory.createDocumentInputStream(nativeEntry)) {
             byte[] data = IOUtils.toByteArray(dis, nativeEntry.getSize(), MAX_RECORD_LENGTH);
             return new Ole10Native(data, 0);
@@ -253,8 +253,8 @@ public class Ole10Native {
      * OlePresXXX, but it seems, that they aren't necessary
      */
     public static void createOleMarkerEntry(final DirectoryEntry parent) throws IOException {
-        if (!parent.hasEntry(OLE_MARKER_NAME)) {
-            parent.createDocument(OLE_MARKER_NAME, new UnsynchronizedByteArrayInputStream(OLE_MARKER_BYTES));
+        if (!parent.hasEntryCaseInsensitive(OLE_MARKER_NAME)) {
+            parent.createDocument(OLE_MARKER_NAME, UnsynchronizedByteArrayInputStream.builder().setByteArray(OLE_MARKER_BYTES).get());
         }
     }
 
@@ -402,7 +402,7 @@ public class Ole10Native {
 
         switch (mode) {
             case parsed: {
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 try (LittleEndianOutputStream leos = new LittleEndianOutputStream(bos)) {
                     // total size, will be determined later ..
 

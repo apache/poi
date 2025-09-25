@@ -52,7 +52,7 @@ public final class ErrorEval implements ValueEval {
     /**
      * Translates an Excel internal error code into the corresponding POI ErrorEval instance
      * @param errorCode An error code listed in {@link FormulaError}
-     * @throws RuntimeException If an unknown errorCode is specified
+     * @throws IllegalStateException If an unknown errorCode is specified
      */
     public static ErrorEval valueOf(int errorCode) {
         FormulaError error = FormulaError.forInt(errorCode);
@@ -60,7 +60,7 @@ public final class ErrorEval implements ValueEval {
         if (eval != null) {
             return eval;
         } else {
-            throw new RuntimeException("Unhandled error type for code " + errorCode);
+            throw new IllegalStateException("Unhandled error type for code " + errorCode);
         }
     }
 

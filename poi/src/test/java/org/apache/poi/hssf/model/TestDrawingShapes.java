@@ -274,7 +274,7 @@ class TestDrawingShapes {
     }
 
 
-    /* assert shape properties when reading shapes from a existing workbook */
+    /* assert shape properties when reading shapes from an existing workbook */
     @Test
     void testReadExistingRectangle() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls")) {

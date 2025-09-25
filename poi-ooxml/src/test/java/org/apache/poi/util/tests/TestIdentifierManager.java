@@ -27,8 +27,7 @@ import org.junit.jupiter.api.Test;
 
 class TestIdentifierManager {
     @Test
-    void testBasic()
-    {
+    void testBasic() {
         IdentifierManager manager = new IdentifierManager(0L,100L);
         assertEquals(101L,manager.getRemainingIdentifiers());
         assertEquals(0L,manager.reserveNew());
@@ -42,6 +41,7 @@ class TestIdentifierManager {
         long min = IdentifierManager.MIN_ID;
         long max = IdentifierManager.MAX_ID;
         IdentifierManager manager = new IdentifierManager(min,max);
+        //noinspection ConstantValue
         assertTrue(max - min + 1 > 0, "Limits lead to a long variable overflow");
         assertTrue(manager.getRemainingIdentifiers() > 0, "Limits lead to a long variable overflow");
         assertEquals(min,manager.reserveNew());
@@ -102,5 +102,61 @@ class TestIdentifierManager {
         assertEquals(10L,manager.reserve(10L));
         assertEquals(11L,manager.reserve(11L));
         assertTrue(manager.release(12L));
+    }
+
+    @Test
+    void testBounds() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new IdentifierManager(1, 0),
+                "Lower bound higher than upper");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> new IdentifierManager(-1, 0),
+                "Out of lower bound");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> new IdentifierManager(0, Long.MAX_VALUE),
+                "Out of upper bound");
+
+        IdentifierManager manager = new IdentifierManager(10, 100);
+        assertThrows(IllegalArgumentException.class,
+                () -> manager.reserve(9),
+                "Reserve out of lower bound");
+        assertThrows(IllegalArgumentException.class,
+                () -> manager.reserve(101),
+                "Reserve out of upper bound");
+
+        // normal reserving works
+        assertEquals(10, manager.reserve(10));
+        assertEquals(100, manager.reserve(100));
+
+        assertEquals(11, manager.reserve(10));
+        assertEquals(12, manager.reserve(100));
+
+        for (int i = 13; i < 100; i++) {
+            assertEquals(i, manager.reserve(10));
+            assertEquals(100 - i - 1,
+                    manager.getRemainingIdentifiers());
+        }
+
+        // now the manager is exhausted
+        assertThrows(IllegalStateException.class,
+                () -> manager.reserve(10),
+                "No more ids left any more");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> manager.release(9),
+                "Release out of lower bound");
+        assertThrows(IllegalArgumentException.class,
+                () -> manager.release(101),
+                "Release out of upper bound");
+
+        for (int i = 10; i < 100; i++) {
+            assertTrue(manager.release(i));
+            assertEquals(i - 10 + 1,
+                    manager.getRemainingIdentifiers());
+        }
+
+        assertEquals(100 - 10, manager.getRemainingIdentifiers());
     }
 }

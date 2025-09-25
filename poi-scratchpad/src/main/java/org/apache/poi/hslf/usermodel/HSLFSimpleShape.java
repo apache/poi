@@ -19,8 +19,11 @@ package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
+import org.apache.poi.hslf.record.OEPlaceholderAtom;
+import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
@@ -53,12 +56,17 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.Units;
 
+import static org.apache.poi.hslf.usermodel.HSLFShapePlaceholderDetails.createOEPlaceholderAtom;
+import static org.apache.poi.hslf.usermodel.HSLFShapePlaceholderDetails.getPlaceholderId;
+import static org.apache.poi.hslf.usermodel.HSLFShapePlaceholderDetails.removePlaceholder;
+import static org.apache.poi.hslf.usermodel.HSLFShapePlaceholderDetails.updateSPRecord;
+
 /**
  *  An abstract simple (non-group) shape.
  *  This is the parent class for all primitive shapes like Line, Rectangle, etc.
  */
 public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<HSLFShape,HSLFTextParagraph> {
-    private static final Logger LOG = LogManager.getLogger(HSLFSimpleShape.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HSLFSimpleShape.class);
 
     public static final double DEFAULT_LINE_WIDTH = 0.75;
 
@@ -79,6 +87,8 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      * Hyperlink
      */
     protected HSLFHyperlink _hyperlink;
+
+    protected HSLFShapePlaceholderDetails _placeholderDetails;
 
     /**
      * Create a SimpleShape object and initialize it from the supplied Record container.
@@ -564,9 +574,11 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     @Override
     public HSLFShapePlaceholderDetails getPlaceholderDetails() {
-        return new HSLFShapePlaceholderDetails(this);
+        if (_placeholderDetails == null) {
+            _placeholderDetails = new HSLFShapePlaceholderDetails(this);
+        }
+        return _placeholderDetails;
     }
-
 
     @Override
     public Placeholder getPlaceholder() {
@@ -575,9 +587,62 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     @Override
     public void setPlaceholder(Placeholder placeholder) {
-        getPlaceholderDetails().setPlaceholder(placeholder);
-    }
+        // reset the placeholder details so that the next call to getPlaceholderDetails() will reinitialize it
+        _placeholderDetails = null;
+        updateSPRecord(this, placeholder);
 
+        if (placeholder == null) {
+            removePlaceholder(this);
+            return;
+        }
+
+        HSLFEscherClientDataRecord clientData = getClientData(true);
+
+        // OEPlaceholderAtom tells powerpoint that this shape is a placeholder
+        OEPlaceholderAtom oep = null;
+        RoundTripHFPlaceholder12 rtp = null;
+        for (org.apache.poi.hslf.record.Record r : clientData.getHSLFChildRecords()) {
+            if (r instanceof OEPlaceholderAtom) {
+                oep = (OEPlaceholderAtom) r;
+                break;
+            }
+            if (r instanceof RoundTripHFPlaceholder12) {
+                rtp = (RoundTripHFPlaceholder12) r;
+                break;
+            }
+        }
+
+        /**
+         * Extract from MSDN:
+         *
+         * There is a special case when the placeholder does not have a position in the layout.
+         * This occurs when the user has moved the placeholder from its original position.
+         * In this case the placeholder ID is -1.
+         */
+        final byte phId = getPlaceholderId(getSheet(), placeholder);
+
+        switch (placeholder) {
+            case HEADER:
+            case FOOTER:
+                if (rtp == null) {
+                    rtp = new RoundTripHFPlaceholder12();
+                    rtp.setPlaceholderId(phId);
+                    clientData.addChild(rtp);
+                }
+                if (oep != null) {
+                    clientData.removeChild(OEPlaceholderAtom.class);
+                }
+                break;
+            default:
+                if (rtp != null) {
+                    clientData.removeChild(RoundTripHFPlaceholder12.class);
+                }
+                if (oep == null) {
+                    oep = createOEPlaceholderAtom(clientData, phId);
+                }
+                break;
+        }
+    }
 
     @Override
     public void setStrokeStyle(Object... styles) {

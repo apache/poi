@@ -1,5 +1,3 @@
-import java.util.regex.Pattern
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -17,8 +15,10 @@ import java.util.regex.Pattern
    limitations under the License.
 ==================================================================== */
 
+import java.util.regex.Pattern
+
 final String TEST9_SRC = 'src/test/java9'
-final String TEST9_OUT = "${buildDir}/classes/java9/test/"
+final String TEST9_OUT = layout.buildDirectory.dir('classes/java9/test/').get().asFile.absolutePath
 final String VERSIONS9 = 'META-INF/versions/9'
 final boolean IBMVM = System.getProperty("java.vendor").contains("IBM")
 
@@ -29,9 +29,7 @@ configurations {
 
 sourceSets {
     test {
-        if (jdkVersion > 8) {
-            output.dir(TEST9_OUT, builtBy: 'cacheTest9')
-        }
+        output.dir(TEST9_OUT, builtBy: 'compileTest9')
         if (IBMVM) {
             java {
                 exclude '**/HeapDump**'
@@ -41,9 +39,9 @@ sourceSets {
 }
 
 dependencies {
-    testImplementation 'org.apache.ant:ant:1.10.12'
-    testImplementation 'org.apache.commons:commons-collections4:4.4'
-    testImplementation 'com.google.guava:guava:31.1-jre'
+    testImplementation 'org.apache.ant:ant:1.10.15'
+    testImplementation 'org.apache.commons:commons-collections4:4.5.0'
+    testImplementation 'com.google.guava:guava:33.5.0-jre'
 
     misc(project(':poi-ooxml')) {
         capabilities {
@@ -77,13 +75,9 @@ dependencies {
         }
     }
     testImplementation project(path: ':poi-ooxml-lite-agent', configuration: 'archives')
-    testImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:${log4jVersion}"
-    testImplementation 'org.slf4j:slf4j-simple:1.7.36'
+    testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
+    testImplementation 'org.slf4j:slf4j-simple:2.0.17'
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
-
-    if (SAXON_TEST) {
-        testRuntimeOnly "net.sf.saxon:Saxon-HE:${saxonVersion}"
-    }
 }
 
 final String MODULE_NAME = 'org.apache.poi.stress'
@@ -96,40 +90,23 @@ final String OOXML_LITE_AGENT = "../build/dist/maven/poi-ooxml-lite-agent/poi-oo
 final String OOXML_LITE_REPORT = '../src/resources/ooxml-lite-report'
 final String OOXML_LITE_INCLUDES = "^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(jdkVersion))
-        if (jdkVendor != '') vendor.set(JvmVendorSpec.matching(jdkVendor))
-    }
-}
-
-task compileTest9(type: JavaCompile) {
+tasks.register('compileTest9', JavaCompile) {
     dependsOn 'compileTestJava', ':poi-ooxml:testJar', ':poi-scratchpad:testJar', ':poi-examples:jar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(jdkVersion)
-        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
     }
+    sourceCompatibility = 1.9
+    targetCompatibility = 1.9
     destinationDirectory = file(TEST9_OUT + VERSIONS9)
     source = file(TEST9_SRC)
     options.compilerArgs = [
-        '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
-        '--module-path', files(MODULE_COMPILE_PATH).asPath
+            '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
+            '--module-path', files(MODULE_COMPILE_PATH).asPath
     ]
     classpath = files()
-
-    onlyIf {
-        jdkVersion > 8
-    }
 }
 
-
-task cacheTest9(type: Copy) {
-    dependsOn 'compileTest9'
-
-    from(file(TEST9_OUT + VERSIONS9))
-    into(TEST9_SRC)
-}
 
 jar {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
@@ -141,18 +118,12 @@ jar {
 
 // Create a separate jar for test-code to depend on it in other projects
 // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
-task testJar(type: Jar, dependsOn: [ testClasses, cacheTest9 ] ) {
+task testJar(type: Jar, dependsOn: [ testClasses, compileTest9 ] ) {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
 
-    classifier 'tests'
+    setArchiveClassifier 'tests'
     // ignore second module-info.class from main
-    duplicatesStrategy = 'exclude'
-
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from TEST9_SRC include '*.class'
-        }
-    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from sourceSets.test.output + sourceSets.main.output
 
@@ -172,6 +143,9 @@ test {
     dependsOn { testJar }
 
     systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+    if (jdkVersion == 8)  {
+        systemProperties['sun.java2d.renderer'] = 'sun.java2d.marlin.MarlinRenderingEngine'
+    }
 
     doFirst {
         jvmArgs += [
@@ -189,11 +163,9 @@ test {
     }
 }
 
-javadoc.onlyIf { false }
+javadoc { enabled(false) }
 
-javadocJar.onlyIf { false }
-
-sourcesJar.onlyIf { false }
+sourcesJar { enabled(false) }
 
 generateMetadataFileForPOIPublication.enabled = false
 publishPOIPublicationToMavenLocal.enabled = false

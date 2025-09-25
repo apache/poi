@@ -35,7 +35,9 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.ThreadLocalUtil;
 
 /**
  * High level representation of the style of a cell in a sheet of a workbook.
@@ -48,22 +50,29 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     private final ExtendedFormatRecord _format;
     private final short                _index;
     private final InternalWorkbook     _workbook;
+    private final HSSFWorkbook         _hssfWorkbook;
 
-
-    /** Creates new HSSFCellStyle why would you want to do this?? */
     protected HSSFCellStyle(short index, ExtendedFormatRecord rec, HSSFWorkbook workbook)
     {
-        this(index, rec, workbook.getWorkbook());
+        _workbook = workbook.getInternalWorkbook();
+        _hssfWorkbook = workbook;
+        _index = index;
+        _format = rec;
     }
+
+    @Deprecated
+    @Removal(version = "7.0.0")
     protected HSSFCellStyle(short index, ExtendedFormatRecord rec, InternalWorkbook workbook)
     {
         _workbook = workbook;
+        _hssfWorkbook = null;
         _index = index;
-        _format     = rec;
+        _format = rec;
     }
 
     protected HSSFCellStyle(HSSFCellStyle other) {
         _workbook = other._workbook;
+        _hssfWorkbook = other._hssfWorkbook;
         _index = other._index;
         _format = other._format;
     }
@@ -123,6 +132,14 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     private static final ThreadLocal<Short> lastDateFormat = ThreadLocal.withInitial(() -> Short.MIN_VALUE);
     private static final ThreadLocal<List<FormatRecord>> lastFormats = new ThreadLocal<>();
     private static final ThreadLocal<String> getDataFormatStringCache = new ThreadLocal<>();
+    static {
+        // allow to clear all thread-locals via ThreadLocalUtil
+        ThreadLocalUtil.registerCleaner(() -> {
+            lastDateFormat.remove();
+            lastFormats.remove();
+            getDataFormatStringCache.remove();
+        });
+    }
 
     /**
      * Get the contents of the format string, by looking up
@@ -637,7 +654,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
         _format.setFillBackground(bg);
         checkDefaultBackgroundFills();
     }
-    
+
     /**
      * Set the background fill color represented as a {@link org.apache.poi.ss.usermodel.Color} value.
      * <br>
@@ -649,8 +666,8 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setFillBackgroundColor(org.apache.poi.ss.usermodel.Color color)
     {
         if (color instanceof HSSFColor) {
-            short index2 = ((HSSFColor)color).getIndex2();
-            if (index2 != -1) setFillBackgroundColor(index2);
+            final short index = ((HSSFColor)color).getIndex();
+            if (index != -1) setFillBackgroundColor(index);
         } else if (color != null) {
             throw new IllegalArgumentException("HSSFCellStyle only accepts HSSFColor instances");
         }
@@ -696,7 +713,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
         _format.setFillForeground(bg);
         checkDefaultBackgroundFills();
     }
-    
+
     /**
      * Set the foreground fill color represented as a {@link org.apache.poi.ss.usermodel.Color} value.
      * <br>
@@ -708,8 +725,8 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setFillForegroundColor(org.apache.poi.ss.usermodel.Color color)
     {
         if (color instanceof HSSFColor) {
-            short index2 = ((HSSFColor)color).getIndex2();
-            if (index2 != -1) setFillForegroundColor(index2);
+            final short index = ((HSSFColor)color).getIndex();
+            if (index != -1) setFillForegroundColor(index);
         } else if (color != null) {
             throw new IllegalArgumentException("HSSFCellStyle only accepts HSSFColor instances");
         }
@@ -842,9 +859,10 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
         if(source instanceof HSSFCellStyle) {
             this.cloneStyleFrom((HSSFCellStyle)source);
         } else {
-            throw new IllegalArgumentException("Can only clone from one HSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
+            CellUtil.cloneStyle(source, this, _hssfWorkbook);
         }
     }
+
     public void cloneStyleFrom(HSSFCellStyle source) {
         // First we need to clone the extended format
         //  record

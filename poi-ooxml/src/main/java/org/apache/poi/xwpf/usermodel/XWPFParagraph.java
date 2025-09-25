@@ -58,7 +58,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         this.document = part.getXWPFDocument();
 
         if (document == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("null document in XWPFParagraph");
         }
 
         // Build up the character runs
@@ -78,11 +78,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     XmlObject o = c.getObject();
                     if (o instanceof CTFtnEdnRef) {
                         CTFtnEdnRef ftn = (CTFtnEdnRef) o;
-                        footnoteText.append(" [").append(ftn.getId()).append(": ");
+                        final BigInteger id = ftn.getId();
+                        footnoteText.append(" [").append(id).append(": ");
                         XWPFAbstractFootnoteEndnote footnote =
                                 ftn.getDomNode().getLocalName().equals("footnoteReference") ?
-                                        document.getFootnoteByID(ftn.getId().intValue()) :
-                                        document.getEndnoteByID(ftn.getId().intValue());
+                                        document.getFootnoteByID(id == null ? 0 : id.intValue()) :
+                                        document.getEndnoteByID(id == null ? 0 : id.intValue());
                         if (null != footnote) {
                             boolean first = true;
                             for (XWPFParagraph p : footnote.getParagraphs()) {
@@ -93,7 +94,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                                 footnoteText.append(p.getText());
                             }
                         } else {
-                            footnoteText.append("!!! End note with ID \"").append(ftn.getId()).append("\" not found in document.");
+                            footnoteText.append("!!! End note with ID \"").append(id).append("\" not found in document.");
                         }
                         footnoteText.append("] ");
 
@@ -108,14 +109,13 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * sub-paragraph that correspond to character text
      * runs, and builds the appropriate runs for these.
      */
-    @SuppressWarnings("deprecation")
     private void buildRunsInOrderFromXml(XmlObject object) {
         try (XmlCursor c = object.newCursor()) {
             c.selectPath("child::*");
             while (c.toNextSelection()) {
                 XmlObject o = c.getObject();
                 if (o instanceof CTR) {
-                    XWPFRun r = new XWPFRun((CTR) o, this);
+                    XWPFRun r = new XWPFRun((CTR) o, (IRunBody) this);
                     runs.add(r);
                     iruns.add(r);
                 }
@@ -144,22 +144,21 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     iruns.add(cc);
                 }
                 if (o instanceof CTRunTrackChange) {
-                    for (CTR r : ((CTRunTrackChange) o).getRArray()) {
-                        XWPFRun cr = new XWPFRun(r, this);
+                    final CTRunTrackChange parentRecord = (CTRunTrackChange) o;
+                    for (CTR r : parentRecord.getRArray()) {
+                        XWPFRun cr = new XWPFRun(r, (IRunBody) this);
                         runs.add(cr);
                         iruns.add(cr);
+                    }
+                    // add all the insertions as text
+                    for (CTRunTrackChange change : parentRecord.getInsArray()) {
+                        buildRunsInOrderFromXml(change);
                     }
                 }
                 if (o instanceof CTSmartTagRun) {
                     // Smart Tags can be nested many times.
                     // This implementation does not preserve the tagging information
                     buildRunsInOrderFromXml(o);
-                }
-                if (o instanceof CTRunTrackChange) {
-                    // add all the insertions as text
-                    for (CTRunTrackChange change : ((CTRunTrackChange) o).getInsArray()) {
-                        buildRunsInOrderFromXml(change);
-                    }
                 }
             }
         }
@@ -204,7 +203,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             if (run instanceof XWPFRun) {
                 XWPFRun xRun = (XWPFRun) run;
                 // don't include the text if reviewing is enabled and this is a deleted run
-                if (xRun.getCTR().getDelTextArray().length == 0) {
+                if (xRun.getCTR().sizeOfDelTextArray() == 0) {
                     out.append(xRun);
                 }
             } else if (run instanceof XWPFSDT) {
@@ -483,16 +482,19 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Returns the paragraph alignment which shall be applied to text in this
      * paragraph.
      * <p>
-     * If this element is not set on a given paragraph, its value is determined
+     * If this element is not set on a given paragraph, this function returns
+     * ParagraphAlignment.LEFT as a placeholder value, and isAlignmentSet()
+     * returns false. In such case, the alignment value must be determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
      * specified in the style hierarchy, then no alignment is applied to the
      * paragraph.
      *
+     * @see #isAlignmentSet()
      * @return the paragraph alignment of this paragraph.
      */
     public ParagraphAlignment getAlignment() {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(false);
         return pr == null || !pr.isSetJc() ? ParagraphAlignment.LEFT
                 : ParagraphAlignment.valueOf(pr.getJc().getVal().intValue());
     }
@@ -507,13 +509,32 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * specified in the style hierarchy, then no alignment is applied to the
      * paragraph.
      *
-     * @param align the paragraph alignment to apply to this paragraph.
+     * @param align the paragraph alignment to apply to this paragraph. It can
+     *              be null to unset it and fall back to the style hierarchy.
      */
     public void setAlignment(ParagraphAlignment align) {
-        CTPPr pr = getCTPPr();
-        CTJc jc = pr.isSetJc() ? pr.getJc() : pr.addNewJc();
-        STJc.Enum en = STJc.Enum.forInt(align.getValue());
-        jc.setVal(en);
+        if (align == null) {
+            CTPPr pr = getCTPPr(false);
+            if (pr != null)
+                pr.unsetJc();
+        } else {
+            CTPPr pr = getCTPPr(true);
+            CTJc jc = pr.isSetJc() ? pr.getJc() : pr.addNewJc();
+            STJc.Enum en = STJc.Enum.forInt(align.getValue());
+            jc.setVal(en);
+        }
+    }
+
+    /**
+     * Returns true if the paragraph has a paragraph alignment value of its own
+     * or false in case it should fall back to the alignment value set by the
+     * paragraph style.
+     *
+     * @return boolean
+     */
+    public boolean isAlignmentSet() {
+        CTPPr pr = getCTPPr(false);
+        return pr != null && pr.isSetJc();
     }
 
     /**
@@ -549,7 +570,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return the vertical alignment of this paragraph.
      */
     public TextAlignment getVerticalAlignment() {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(false);
         return (pr == null || !pr.isSetTextAlignment()) ? TextAlignment.AUTO
                 : TextAlignment.valueOf(pr.getTextAlignment().getVal()
                 .intValue());
@@ -629,7 +650,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public void setBorderTop(Borders border) {
         CTPBdr ct = getCTPBrd(true);
         if (ct == null) {
-            throw new RuntimeException("invalid paragraph state");
+            throw new IllegalStateException("invalid paragraph state");
         }
 
         CTBorder pr = (ct.isSetTop()) ? ct.getTop() : ct.addNewTop();
@@ -865,7 +886,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return boolean - if page break is set
      */
     public boolean isPageBreak() {
-        final CTPPr ppr = getCTPPr();
+        final CTPPr ppr = getCTPPr(false);
+        if (ppr == null) {
+            return false;
+        }
         final CTOnOff ctPageBreak = ppr.isSetPageBreakBefore() ? ppr.getPageBreakBefore() : null;
         if (ctPageBreak == null) {
             return false;
@@ -1354,7 +1378,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     @Override
     public boolean isWordWrapped() {
-        return getCTPPr().isSetWordWrap() && POIXMLUnits.parseOnOff(getCTPPr().getWordWrap());
+        CTPPr ppr = getCTPPr(false);
+        return ppr != null && ppr.isSetWordWrap() && POIXMLUnits.parseOnOff(ppr.getWordWrap());
     }
 
     /**
@@ -1391,7 +1416,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return the style of the paragraph
      */
     public String getStyle() {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(false);
+        if (pr == null) {
+            return null;
+        }
         CTString style = pr.isSetPStyle() ? pr.getPStyle() : null;
         return style != null ? style.getVal() : null;
     }
@@ -1412,7 +1440,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * a new instance.
      */
     private CTPBdr getCTPBrd(boolean create) {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(create);
+        if (pr == null) {
+            return null;
+        }
         CTPBdr ct = pr.isSetPBdr() ? pr.getPBdr() : null;
         if (create && ct == null) {
             ct = pr.addNewPBdr();
@@ -1425,7 +1456,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * return a new instance.
      */
     private CTSpacing getCTSpacing(boolean create) {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(create);
         CTSpacing ct = pr.getSpacing();
         if (create && ct == null) {
             ct = pr.addNewSpacing();
@@ -1438,7 +1469,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * a new instance.
      */
     private CTInd getCTInd(boolean create) {
-        CTPPr pr = getCTPPr();
+        CTPPr pr = getCTPPr(create);
+        if (pr == null) {
+           return null;
+        }
         CTInd ct = pr.getInd();
         if (create && ct == null) {
             ct = pr.addNewInd();
@@ -1452,8 +1486,18 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     @Internal
     public CTPPr getCTPPr() {
-        return paragraph.getPPr() == null ? paragraph.addNewPPr()
-                : paragraph.getPPr();
+        return getCTPPr(true);
+    }
+
+    /**
+     * Get a <b>copy</b> of the currently used CTPPr. If none is used, return
+     * a new instance when create is true, or null when create is false.
+     *
+     * @param create create a new instance if none exists.
+     */
+    private CTPPr getCTPPr(final boolean create) {
+        return (paragraph.isSetPPr() || !create) ? paragraph.getPPr()
+                : paragraph.addNewPPr();
     }
 
 
@@ -1652,12 +1696,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         int startRun = startPos.getRun(),
             startText = startPos.getText(),
             startChar = startPos.getChar();
-        int beginRunPos = 0, candCharPos = 0;
+        int beginRunPos = 0, candCharPos = 0, beginTextPos = 0, beginCharPos = 0;
         boolean newList = false;
 
         CTR[] rArray = paragraph.getRArray();
         for (int runPos = startRun; runPos < rArray.length; runPos++) {
-            int beginTextPos = 0, beginCharPos = 0, textPos = 0, charPos;
+            int textPos = 0, charPos;
             CTR ctRun = rArray[runPos];
 
             try (XmlCursor c = ctRun.newCursor()) {

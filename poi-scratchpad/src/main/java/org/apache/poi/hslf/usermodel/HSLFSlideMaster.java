@@ -65,7 +65,7 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
     }
 
     /**
-     * Returns <code>null</code> since SlideMasters doen't have master sheet.
+     * Returns <code>null</code> since SlideMasters doesn't have master sheet.
      */
     @Override
     public HSLFMasterSheet getMasterSheet() {

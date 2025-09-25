@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.model.types.LFOAbstractType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -39,7 +39,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * Binary File Format
  */
 public class PlfLfo {
-    private static final Logger LOGGER = LogManager.getLogger(PlfLfo.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(PlfLfo.class);
 
     private static final int MAX_NUMBER_OF_LFO = 100_000;
 

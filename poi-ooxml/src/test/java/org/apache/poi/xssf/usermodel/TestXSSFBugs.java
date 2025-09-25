@@ -19,7 +19,6 @@ package org.apache.poi.xssf.usermodel;
 
 import static java.time.Duration.between;
 import static java.time.Instant.now;
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
 import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
@@ -30,21 +29,28 @@ import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFITestDataProvider;
@@ -54,6 +60,7 @@ import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.POIXMLProperties;
+import org.apache.poi.ooxml.ReferenceRelationship;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -62,8 +69,13 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.EncryptionMode;
+import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
@@ -89,6 +101,7 @@ import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.*;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.XMLHelper;
@@ -98,6 +111,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
@@ -123,7 +137,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
-    private static final Logger LOG = LogManager.getLogger(TestXSSFBugs.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TestXSSFBugs.class);
 
     public TestXSSFBugs() {
         super(XSSFITestDataProvider.instance);
@@ -221,18 +235,18 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(1, wb1.getNumberOfSheets());
             XSSFSheet sh = wb1.getSheetAt(0);
             XSSFDrawing drawing = sh.createDrawingPatriarch();
-            List<RelationPart> rels = drawing.getRelationParts();
-            assertEquals(1, rels.size());
-            assertEquals("Sheet1!A1", rels.get(0).getRelationship().getTargetURI().getFragment());
+            List<ReferenceRelationship> referenceRelationships = drawing.getReferenceRelationships();
+            assertEquals(1, referenceRelationships.size());
+            assertEquals("#Sheet1!A1", referenceRelationships.get(0).getUri().toString());
 
             // And again, just to be sure
             try (XSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
                 assertEquals(1, wb2.getNumberOfSheets());
                 sh = wb2.getSheetAt(0);
                 drawing = sh.createDrawingPatriarch();
-                rels = drawing.getRelationParts();
-                assertEquals(1, rels.size());
-                assertEquals("Sheet1!A1", rels.get(0).getRelationship().getTargetURI().getFragment());
+                referenceRelationships = drawing.getReferenceRelationships();
+                assertEquals(1, referenceRelationships.size());
+                assertEquals("#Sheet1!A1", referenceRelationships.get(0).getUri().toString());
             }
         }
     }
@@ -1093,7 +1107,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet s = wb.createSheet();
 
-            CellStyle defaultStyle = wb.getCellStyleAt((short) 0);
+            CellStyle defaultStyle = wb.getCellStyleAt(0);
             assertEquals(0, defaultStyle.getIndex());
 
             CellStyle blueStyle = wb.createCellStyle();
@@ -1525,7 +1539,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 Thread.sleep(10);
             }
 
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(8096);
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(8096).get();
             wb.write(bos);
             byte[] firstSave = bos.toByteArray();
             bos.reset();
@@ -1754,8 +1768,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @ParameterizedTest
     @CsvSource({
-        /* Not 0.0 because POI sees date "0" minus one month as invalid date, which is -1! */
-        "56688_1.xlsx, -1.0",
+        "56688_1.xlsx, 0.0",
         "56688_2.xlsx, #VALUE!",
         "56688_3.xlsx, #VALUE!",
         "56688_4.xlsx, date"
@@ -1861,6 +1874,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
 
         // Try with one with the entities in the Content Types
+        //noinspection resource
         assertThrows(Exception.class, () -> XSSFTestDataSamples.openSamplePackage("54764-2.xlsx"),
             "Should fail as too much expansion occurs");
 
@@ -1873,7 +1887,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     void test54764WithSAXHelper() throws Exception {
         File testFile = XSSFTestDataSamples.getSampleFile("54764.xlsx");
-        try (ZipFile zip = new ZipFile(testFile)) {
+        try (ZipFile zip = ZipFile.builder().setFile(testFile).get()) {
             ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
             XMLReader reader = XMLHelper.newXMLReader();
             SAXParseException e = assertThrows(SAXParseException.class,
@@ -1886,7 +1900,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     void test54764WithDocumentHelper() throws Exception {
         File testFile = XSSFTestDataSamples.getSampleFile("54764.xlsx");
-        try (ZipFile zip = new ZipFile(testFile)) {
+        try (ZipFile zip = ZipFile.builder().setFile(testFile).get()) {
             ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
             SAXParseException e = assertThrows(SAXParseException.class,
                 () -> DocumentHelper.readDocument(zip.getInputStream(ze)));
@@ -1929,6 +1943,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // Workbook Factory gives helpful error on file
         File xlsbFile = HSSFTestDataSamples.getSampleFile("Simple.xlsb");
+        //noinspection resource
         assertThrows(XLSBUnsupportedException.class, () -> WorkbookFactory.create(xlsbFile), ".xlsb files not supported");
     }
 
@@ -2278,7 +2293,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
             List<XSSFShape> shapes = drawing.getShapes();
             assertEquals(1, shapes.size());
-            assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
+            assertInstanceOf(XSSFSimpleShape.class, shapes.get(0));
 
             XSSFSimpleShape shape = (XSSFSimpleShape) shapes.get(0);
 
@@ -2510,6 +2525,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Disabled("this test is only for manual verification, as we can't test if the cell is visible in Excel")
+    @Test
     void test51451() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sh = wb.createSheet();
@@ -2970,7 +2986,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
             // we currently only populate the dimension during writing out
             // to avoid having to iterate all rows/cells in each add/remove of a row or cell
-            wb.write(NULL_OUTPUT_STREAM);
+            wb.write(NullOutputStream.INSTANCE);
 
             assertEquals("B2:H5", ((XSSFSheet) sheet).getCTWorksheet().getDimension().getRef());
         }
@@ -2991,7 +3007,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
             // we currently only populate the dimension during writing out
             // to avoid having to iterate all rows/cells in each add/remove of a row or cell
-            wb.write(NULL_OUTPUT_STREAM);
+            wb.write(NullOutputStream.INSTANCE);
 
             assertEquals("B2:XFD5", ((XSSFSheet) sheet).getCTWorksheet().getDimension().getRef());
         }
@@ -3288,6 +3304,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     void test64045() {
         File file = XSSFTestDataSamples.getSampleFile("xlsx-corrupted.xlsx");
+        //noinspection resource
         assertThrows(POIXMLException.class, () -> new XSSFWorkbook(file), "Should catch exception as the file is corrupted");
     }
 
@@ -3312,7 +3329,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 }
             LOG.atInfo().log(between(start, now()));
 
-            assertTrue(between(start, now()).getSeconds() < 25);
+            assertTrue(between(start, now()).getSeconds() < 25,
+                    "Expected to have less than 25s duration for test, but had start: " + start + ", now: " + now() +
+                            ", diff: " + Duration.between(start, now()).getSeconds());
         }
     }
 
@@ -3445,13 +3464,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
             // Will be OOXML wrapped in OLE2, not directly SpreadSheet
             POIFSFileSystem fs = new POIFSFileSystem(data.getInputStream());
-            assertTrue(fs.getRoot().hasEntry(OOXML_PACKAGE));
-            assertFalse(fs.getRoot().hasEntry("Workbook"));
+            assertTrue(fs.getRoot().hasEntryCaseInsensitive(OOXML_PACKAGE));
+            assertFalse(fs.getRoot().hasEntryCaseInsensitive("Workbook"));
 
 
             // Can fetch Package to get OOXML
             DirectoryNode root = fs.getRoot();
-            DocumentEntry docEntry = (DocumentEntry) root.getEntry(OOXML_PACKAGE);
+            DocumentEntry docEntry = (DocumentEntry) root.getEntryCaseInsensitive(OOXML_PACKAGE);
             try (DocumentInputStream dis = new DocumentInputStream(docEntry);
                  OPCPackage pkg = OPCPackage.open(dis);
                  XSSFWorkbook wb = new XSSFWorkbook(pkg)) {
@@ -3626,6 +3645,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             IOException ie = assertThrows(IOException.class, () -> WorkbookFactory.create(fis));
             assertEquals("Can't open workbook - unsupported file type: XML", ie.getMessage());
         }
+        //noinspection resource
         IOException ie = assertThrows(IOException.class, () -> WorkbookFactory.create(file));
         assertEquals("Can't open workbook - unsupported file type: XML", ie.getMessage());
     }
@@ -3677,7 +3697,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(blueStyle.getIndex(), r3.getCell(4).getCellStyle().getIndex());
             assertEquals(pinkStyle.getIndex(), r3.getCell(6).getCellStyle().getIndex());
 
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 wb.write(bos);
                 try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
                     XSSFSheet wb2Sheet = wb2.getSheetAt(0);
@@ -3742,6 +3762,210 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             StylesTable stylesTable = reader.getStylesTable();
             assertNotNull(stylesTable);
             assertEquals(23, stylesTable.getFonts().size());
+        }
+    }
+
+    private static final String secretKey = "foobaa";
+
+    @Test
+    void testBug66436() throws IOException, InvalidFormatException, GeneralSecurityException {
+        final File temp_excel_poi = TempFile.createTempFile("temp_excel_poi", ".xlsx");
+        final File temp_excel_poi_encrypt = TempFile.createTempFile("temp_excel_poi_encrypt", ".xlsx");
+        final File temp_excel_poi_decrypt = TempFile.createTempFile("temp_excel_poi_decrypt", ".xlsx");
+
+        /* create new excel by poi */
+        try (XSSFWorkbook workbook = new XSSFWorkbook();
+                FileOutputStream foss = new FileOutputStream(temp_excel_poi)) {
+            XSSFSheet sheet = workbook.createSheet();
+            XSSFRow row = sheet.createRow(0);
+            XSSFCell cell = row.createCell(0);
+            cell.setCellValue("Hello Apache POI");
+            workbook.write(foss);
+        }
+
+        // read bytes of workbook before
+        UnsynchronizedByteArrayOutputStream bosOrig = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (FileInputStream fis = new FileInputStream(temp_excel_poi)) {
+            IOUtils.copy(fis, bosOrig);
+        }
+
+        // for the encrypted bytes
+        UnsynchronizedByteArrayOutputStream bosEnc = UnsynchronizedByteArrayOutputStream.builder().get();
+
+        /* encrypt excel by poi */
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
+            Encryptor enc = info.getEncryptor();
+            enc.confirmPassword(secretKey);
+
+            // Read in an existing OOXML file and write to encrypted output stream
+            // don't forget to close the output stream otherwise the padding bytes aren't added
+            try (OPCPackage opc = OPCPackage.open(new FileInputStream(temp_excel_poi));
+                    OutputStream os = enc.getDataStream(fs)) {
+                opc.save(os);
+            }
+
+            fs.writeFilesystem(bosEnc);
+
+            bosEnc.close();
+
+            // Write out the encrypted version
+            try (FileOutputStream fos = new FileOutputStream(temp_excel_poi_encrypt)) {
+                IOUtils.copy(new ByteArrayInputStream(bosEnc.toByteArray()), fos);
+            }
+        }
+
+        // for the decrypted bytes
+        UnsynchronizedByteArrayOutputStream bosDec = UnsynchronizedByteArrayOutputStream.builder().get();
+
+        /* decrypt excel by poi */
+        try (POIFSFileSystem fileSystem = new POIFSFileSystem(temp_excel_poi_encrypt)) {
+            EncryptionInfo info = new EncryptionInfo(fileSystem);
+            Decryptor d = Decryptor.getInstance(info);
+            if (!d.verifyPassword(secretKey)) {
+                throw new RuntimeException("Unable to process: document is encrypted");
+            }
+
+            // parse dataStream
+            try (InputStream dataStream = d.getDataStream(fileSystem)) {
+                IOUtils.copy(dataStream, bosDec);
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(temp_excel_poi_decrypt)) {
+                IOUtils.copy(new ByteArrayInputStream(bosDec.toByteArray()), fos);
+            }
+        }
+
+        // input-data and resulting decrypted data should be equal
+        /* This is a flaky assertion, maybe there is a timestamp in the files which can differ
+        in the two byte-arrays. Other tests verify this for encryption/decryption anyway
+        assertArrayEquals(bosOrig.toByteArray(), bosDec.toByteArray(),
+                "Having " + bosOrig.size() + " bytes");*/
+
+        // also make sure the original and the resulting decrypted
+        // file can be read, i.e. is a valid Zip
+        readByCommonsCompress(temp_excel_poi);
+        readByCommonsCompress(temp_excel_poi_decrypt);
+    }
+
+    @Test
+    void getMacrosheet() throws IOException, InvalidFormatException {
+        try (XSSFWorkbook wb = openSampleWorkbook("xlmmacro.xlsm")) {
+            PackageRelationshipCollection prc = wb.getPackagePart().getRelationships();
+            assertNotNull(prc);
+            assertEquals(6, prc.size());
+            PackageRelationshipCollection prc2 = prc.getRelationships(XSSFRelation.MACRO_SHEET_XML.getRelation());
+            assertNotNull(prc2);
+            assertEquals(1, prc2.size());
+        }
+    }
+
+    @Test
+    void testBug62181() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("bug62181.xlsx")) {
+            SharedStringsTable sst = wb.getSharedStringSource();
+            assertNotNull(sst);
+            assertEquals(0, sst.getCount());
+        }
+    }
+
+    @Test
+    void testBug66675() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("bug66675.xlsx")) {
+            POIXMLProperties.CoreProperties coreProperties = wb.getProperties().getCoreProperties();
+            assertNotNull(coreProperties);
+            wb.removeSheetAt(0);
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                wb.write(bos);
+                try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet sheet = wb2.getSheetAt(0);
+                    assertNotNull(sheet);
+                    assertNotNull(wb2.getProperties().getCoreProperties());
+                }
+            }
+        }
+    }
+
+    @Test
+    void testBug66827() throws Exception {
+        final int expectedCount = 6;
+        try (XSSFWorkbook wb = openSampleWorkbook("bug66827.xlsx")) {
+            SharedStringsTable sst = wb.getSharedStringSource();
+            assertNotNull(sst);
+            assertEquals(expectedCount, sst.getCount());
+            for (int i = 0; i < expectedCount; i++) {
+                assertNotNull(sst.getItemAt(i));
+            }
+            XSSFSheet ws = wb.getSheetAt(0);
+            int nRowCount = ws.getLastRowNum(); // does not include header row in the count
+            for (int r = 1; r <= nRowCount; r++) {
+                XSSFRow row = ws.getRow(r);
+                if (row != null) {
+                    XSSFCell cellSymbol = row.getCell(0);
+                    if (cellSymbol != null) {
+                        cellSymbol.getCellComment();
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void testBug69769() throws Exception {
+        final int expectedCount = 3;
+        try (XSSFWorkbook wb = openSampleWorkbook("bug69769.xlsx")) {
+            SharedStringsTable sst = wb.getSharedStringSource();
+            assertNotNull(sst);
+            assertEquals(expectedCount, sst.getCount());
+            for (int i = 0; i < expectedCount; i++) {
+                assertNotNull(sst.getItemAt(i));
+            }
+            XSSFSheet ws = wb.getSheetAt(0);
+            int nRowCount = ws.getLastRowNum();
+            DataFormatter df = new DataFormatter();
+            for (int r = 0; r <= nRowCount; r++) {
+                XSSFRow row = ws.getRow(r);
+                if (row != null) {
+                    for (Cell cell : row) {
+                        String cellValue = df.formatCellValue(cell);
+                        assertNotNull(cellValue, "Cell value should not be null");
+                        if (cell.getRowIndex() == 1 && cell.getColumnIndex() == 1) {
+                            assertEquals("Mustermann", cellValue);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void testBug69812() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("bug69812.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFRow row = sheet.getRow(0);
+            XSSFCell cellA1 = row.getCell(0);
+            DataFormatter dataFormatter = new DataFormatter();
+            String cellValue = dataFormatter.formatCellValue(cellA1);
+            // https://bz.apache.org/bugzilla/show_bug.cgi?id=69812: user says this should be "25,386"
+            assertEquals("25,396", cellValue);
+            assertEquals("#,##0,,", cellA1.getCellStyle().getDataFormatString());
+        }
+    }
+
+    private static void readByCommonsCompress(File temp_excel_poi) throws IOException {
+        /* read by commons-compress*/
+        try (ZipFile zipFile = ZipFile.builder().setFile(temp_excel_poi).get()) {
+            ZipArchiveEntry entry = zipFile.getEntry("xl/workbook.xml");
+            InputStream inputStream = zipFile.getInputStream(entry);
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            while (true) {
+                String line = bufferedReader.readLine();
+                if (line == null) {
+                    break;
+                }
+                //System.out.println(line);
+            }
         }
     }
 }

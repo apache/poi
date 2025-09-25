@@ -106,7 +106,7 @@ public final class ReaderWriter implements POIFSReaderListener, POIFSWriterListe
 
                 try
                 {
-                    nextEntry = entry.getEntry(componentName);
+                    nextEntry = entry.getEntryCaseInsensitive(componentName);
                 }
                 catch (FileNotFoundException ignored)
                 {

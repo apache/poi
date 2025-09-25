@@ -20,6 +20,8 @@ package org.apache.poi.hssf.record;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -53,9 +55,8 @@ final class TestRecordInputStream {
             + "1A 59 00 8A 9E 8A " // 3 uncompressed unicode chars
     ;
 
-
     @Test
-    void testChangeOfCompressionFlag_bug25866() {
+    void testChangeOfCompressionFlag_bug25866() throws IOException {
         byte[] changingFlagSimpleData = HexRead.readFromString(""
                 + "AA AA "  // fake SID
                 + "06 00 "  // first rec len 6
@@ -66,10 +67,13 @@ final class TestRecordInputStream {
         // bug 45866 - compressByte in continue records must be 1 while reading unicode LE string
         String actual  = in.readUnicodeLEString(18);
         assertEquals("\u591A\u8A00\u8A9E - Multilingual", actual);
+
+        in.mark(10);
+        in.reset();
     }
 
     @Test
-    void testChangeFromUnCompressedToCompressed() {
+    void testChangeFromUnCompressedToCompressed() throws IOException {
         byte[] changingFlagSimpleData = HexRead.readFromString(""
                 + "AA AA "  // fake SID
                 + "0F 00 "  // first rec len 15
@@ -78,10 +82,13 @@ final class TestRecordInputStream {
         RecordInputStream in = TestcaseRecordInputStream.create(changingFlagSimpleData);
         String actual = in.readCompressedUnicode(18);
         assertEquals("Multilingual - \u591A\u8A00\u8A9E", actual);
+
+        in.mark(10);
+        in.reset();
     }
 
     @Test
-    void testReadString() {
+    void testReadString() throws IOException {
         byte[] changingFlagFullData = HexRead.readFromString(""
                 + "AA AA "  // fake SID
                 + "12 00 "  // first rec len 18 (15 + next 3 bytes)
@@ -92,6 +99,9 @@ final class TestRecordInputStream {
         RecordInputStream in = TestcaseRecordInputStream.create(changingFlagFullData);
         String actual = in.readString();
         assertEquals("Multilingual - \u591A\u8A00\u8A9E", actual);
+
+        in.mark(10);
+        in.reset();
     }
 
     @ParameterizedTest

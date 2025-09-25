@@ -23,6 +23,7 @@ import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_DIGSIG_N
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_NS;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,7 +52,8 @@ public class SignatureMarshalDefaultListener implements SignatureMarshalListener
     private static final String OBJECT_TAG = "Object";
     private static final Set<String> IGNORE_NS = new HashSet<>(Arrays.asList(null, XML_NS, XML_DIGSIG_NS));
 
-    private static final List<String> DIRECT_NS = Arrays.asList(OO_DIGSIG_NS, MS_DIGSIG_NS);
+    private static final List<String> DIRECT_NS = Collections.unmodifiableList(
+        Arrays.asList(OO_DIGSIG_NS, MS_DIGSIG_NS));
 
     @Override
     public void handleElement(SignatureInfo signatureInfo, Document doc, EventTarget target, EventListener parentListener) {

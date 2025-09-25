@@ -24,8 +24,8 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -40,7 +40,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  */
 @Internal
 public class TextPieceTable implements CharIndexTranslator {
-    private static final Logger LOG = LogManager.getLogger(TextPieceTable.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TextPieceTable.class);
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;

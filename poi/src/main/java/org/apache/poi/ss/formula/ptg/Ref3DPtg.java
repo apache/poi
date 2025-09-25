@@ -94,7 +94,7 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
         return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, formatReferenceAsString());
     }
     public String toFormulaString() {
-        throw new RuntimeException("3D references need a workbook to determine formula text");
+        throw new IllegalStateException("3D references need a workbook to determine formula text");
     }
 
     @Override

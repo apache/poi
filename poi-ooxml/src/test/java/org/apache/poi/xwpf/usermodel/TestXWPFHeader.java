@@ -127,7 +127,7 @@ final class TestXWPFHeader {
 
             assertEquals(0, headerF.getParagraphs().size());
 
-            // As an additional check, recover the defauls footer and
+            // As an additional check, recover the defaults footer and
             // make sure that it contains two paragraphs of text and that
             // both do hold what is expected.
             footerD = policy.getDefaultFooter();

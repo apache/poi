@@ -527,7 +527,7 @@ final class TestMetaDataIPI {
         dsi.write(poifs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
         si.write(poifs.getRoot(), SummaryInformation.DEFAULT_STREAM_NAME);
 
-        UnsynchronizedByteArrayOutputStream bout = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bout = UnsynchronizedByteArrayOutputStream.builder().get();
         poifs.writeFilesystem(bout);
         poifs.close();
 

@@ -41,7 +41,7 @@ public class Code extends Fixed1ArgFunction {
         }
         String text = OperandResolver.coerceValueToString(veText1);
 
-        if (text.length() == 0) {
+        if (text.isEmpty()) {
             return ErrorEval.VALUE_INVALID;
         }
 

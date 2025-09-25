@@ -19,8 +19,6 @@
 
 package org.apache.poi.util;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
-
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
@@ -31,13 +29,13 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +48,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordJsonWriter.AppendableWriter;
 
@@ -68,7 +67,7 @@ public class GenericRecordXmlWriter implements Closeable {
          * @param name the name of the property
          * @param object the value of the property
          * @return {@code true}, if the element was handled and output produced,
-         *   The provided methods can be overridden and a implementation can return {@code false},
+         *   The provided methods can be overridden and an implementation can return {@code false},
          *   if the element hasn't been written to the stream
          */
         boolean print(GenericRecordXmlWriter record, String name, Object object);
@@ -109,7 +108,8 @@ public class GenericRecordXmlWriter implements Closeable {
     private boolean attributePhase = true;
 
     public GenericRecordXmlWriter(File fileName) throws IOException {
-        OutputStream os = ("null".equals(fileName.getName())) ? NULL_OUTPUT_STREAM : new FileOutputStream(fileName);
+        OutputStream os = ("null".equals(fileName.getName())) ?
+                NullOutputStream.INSTANCE : Files.newOutputStream(fileName.toPath());
         fw = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
     }
 

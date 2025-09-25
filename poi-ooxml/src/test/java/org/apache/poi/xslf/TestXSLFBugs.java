@@ -25,6 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Color;
+import java.awt.LinearGradientPaint;
+import java.awt.MultipleGradientPaint;
+import java.awt.Paint;
+import java.awt.RadialGradientPaint;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,8 +53,10 @@ import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.ooxml.HyperlinkRelationship;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.ooxml.ReferenceRelationship;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePartName;
@@ -247,9 +254,9 @@ class TestXSLFBugs {
     @Test
     void bug62587() throws IOException {
         Object[][] pics = {
-            {"santa.wmf", PictureType.WMF, XSLFRelation.IMAGE_WMF},
-            {"tomcat.png", PictureType.PNG, XSLFRelation.IMAGE_PNG},
-            {"clock.jpg", PictureType.JPEG, XSLFRelation.IMAGE_JPEG}
+                {"santa.wmf", PictureType.WMF, XSLFRelation.IMAGE_WMF},
+                {"tomcat.png", PictureType.PNG, XSLFRelation.IMAGE_PNG},
+                {"clock.jpg", PictureType.JPEG, XSLFRelation.IMAGE_JPEG}
         };
 
         try (XMLSlideShow ppt1 = new XMLSlideShow()) {
@@ -298,12 +305,12 @@ class TestXSLFBugs {
             XSLFSlide slide1 = ppt1.getSlides().get(0);
 
             Optional<XSLFShape> shapeToDelete1 =
-                slide1.getShapes().stream().filter(s -> s instanceof XSLFPictureShape).findFirst();
+                    slide1.getShapes().stream().filter(s -> s instanceof XSLFPictureShape).findFirst();
 
             assertTrue(shapeToDelete1.isPresent());
             slide1.removeShape(shapeToDelete1.get());
             assertTrue(slide1.getRelationParts().stream()
-                .allMatch(rp -> "rId1,rId3".contains(rp.getRelationship().getId())));
+                    .allMatch(rp -> "rId1,rId3".contains(rp.getRelationship().getId())));
 
             assertNotNull(ppt1.getPackage().getPart(ppn));
         }
@@ -311,20 +318,20 @@ class TestXSLFBugs {
         try (XMLSlideShow ppt2 = openSampleDocument("bug60499.pptx")) {
             XSLFSlide slide2 = ppt2.getSlides().get(0);
             Optional<XSLFShape> shapeToDelete2 =
-                slide2.getShapes().stream().filter(s -> s instanceof XSLFPictureShape).skip(1).findFirst();
+                    slide2.getShapes().stream().filter(s -> s instanceof XSLFPictureShape).skip(1).findFirst();
             assertTrue(shapeToDelete2.isPresent());
             slide2.removeShape(shapeToDelete2.get());
             assertTrue(slide2.getRelationParts().stream()
-                .allMatch(rp -> "rId1,rId2".contains(rp.getRelationship().getId())));
+                    .allMatch(rp -> "rId1,rId2".contains(rp.getRelationship().getId())));
             assertNotNull(ppt2.getPackage().getPart(ppn));
         }
 
         try (XMLSlideShow ppt3 = openSampleDocument("bug60499.pptx")) {
             XSLFSlide slide3 = ppt3.getSlides().get(0);
             slide3.getShapes().stream()
-                .filter(s -> s instanceof XSLFPictureShape)
-                .collect(Collectors.toList())
-                .forEach(slide3::removeShape);
+                    .filter(s -> s instanceof XSLFPictureShape)
+                    .collect(Collectors.toList())
+                    .forEach(slide3::removeShape);
             assertNull(ppt3.getPackage().getPart(ppn));
         }
     }
@@ -379,23 +386,31 @@ class TestXSLFBugs {
 
             // Check the relations from this
             Collection<RelationPart> rels = slide.getRelationParts();
+            Collection<ReferenceRelationship> referenceRelationships = slide.getReferenceRelationships();
 
             // Should have 6 relations:
             //   1 external hyperlink (skipped from list)
             //   4 internal hyperlinks
             //   1 slide layout
-            assertEquals(5, rels.size());
+            assertEquals(1, rels.size());
+            assertEquals(5, referenceRelationships.size());
             int layouts = 0;
             int hyperlinks = 0;
+            int extHyperLinks = 0;
             for (RelationPart p : rels) {
-                if (p.getRelationship().getRelationshipType().equals(XSLFRelation.HYPERLINK.getRelation())) {
-                    hyperlinks++;
-                } else if (p.getDocumentPart() instanceof XSLFSlideLayout) {
+                if (p.getDocumentPart() instanceof XSLFSlideLayout) {
                     layouts++;
+                }
+            }
+            for (ReferenceRelationship ref : referenceRelationships) {
+                if (ref instanceof HyperlinkRelationship) {
+                    if (ref.isExternal()) extHyperLinks++;
+                    else hyperlinks++;
                 }
             }
             assertEquals(1, layouts);
             assertEquals(4, hyperlinks);
+            assertEquals(1, extHyperLinks);
 
             // Hyperlinks should all be to #_ftn1 or #ftnref1
             for (RelationPart p : rels) {
@@ -754,8 +769,8 @@ class TestXSLFBugs {
     void bug59273() throws IOException {
         try (XMLSlideShow ppt = openSampleDocument("bug59273.potx")) {
             ppt.getPackage().replaceContentType(
-                XSLFRelation.PRESENTATIONML_TEMPLATE.getContentType(),
-                XSLFRelation.MAIN.getContentType()
+                    XSLFRelation.PRESENTATIONML_TEMPLATE.getContentType(),
+                    XSLFRelation.MAIN.getContentType()
             );
 
             try (XMLSlideShow rwPptx = writeOutAndReadBack(ppt)) {
@@ -879,7 +894,7 @@ class TestXSLFBugs {
     @Test
     void bug62051() throws IOException {
         final Function<List<XSLFShape>, int[]> ids = (shapes) ->
-            shapes.stream().mapToInt(Shape::getShapeId).toArray();
+                shapes.stream().mapToInt(Shape::getShapeId).toArray();
 
         try (final XMLSlideShow ppt = new XMLSlideShow()) {
             final XSLFSlide slide = ppt.createSlide();
@@ -959,7 +974,7 @@ class TestXSLFBugs {
 
             final List<Object> strings = new ArrayList<>();
 
-            DummyGraphics2d dgfx = new DummyGraphics2d(new NullPrintStream()) {
+            DummyGraphics2d dgfx = new DummyGraphics2d(NullPrintStream.INSTANCE) {
                 @Override
                 public void drawString(AttributedCharacterIterator iterator, float x, float y) {
                     // For the test file, common sl draws textruns one by one and not mixed
@@ -997,14 +1012,14 @@ class TestXSLFBugs {
         assumeFalse(xslfOnly);
 
         final double[][] clips = {
-            { 50.999999999999986, 51.0, 298.0, 98.0 },
-            { 51.00000000000003, 51.0, 298.0, 98.0 },
-            { 51.0, 51.0, 298.0, 98.0 },
-            { 250.02000796164992, 93.10370370370373, 78.61839367617523, 55.89629629629627 },
-            { 79.58198774450841, 53.20887318960063, 109.13118501448272, 9.40935058567127 },
+                { 50.999999999999986, 51.0, 298.0, 98.0 },
+                { 51.00000000000003, 51.0, 298.0, 98.0 },
+                { 51.0, 51.0, 298.0, 98.0 },
+                { 250.02000796164992, 93.10370370370373, 78.61839367617523, 55.89629629629627 },
+                { 79.58198774450841, 53.20887318960063, 109.13118501448272, 9.40935058567127 },
         };
 
-        DummyGraphics2d dgfx = new DummyGraphics2d(new NullPrintStream()) {
+        DummyGraphics2d dgfx = new DummyGraphics2d(NullPrintStream.INSTANCE) {
             int idx = 0;
             @Override
             public void clip(java.awt.Shape s) {
@@ -1031,13 +1046,13 @@ class TestXSLFBugs {
     public void bug65228() throws IOException {
         try (XMLSlideShow ppt = openSampleDocument("bug65228.pptx")) {
             TextRun.TextCap act = ppt.getSlides().stream()
-                .flatMap(s -> s.getShapes().stream())
-                .filter(s -> "März 2021\u2026".equals(s.getShapeName()))
-                .map(XSLFTextShape.class::cast)
-                .flatMap(s -> s.getTextParagraphs().stream())
-                .flatMap(s -> s.getTextRuns().stream())
-                .map(XSLFTextRun::getTextCap)
-                .findFirst().orElse(null);
+                    .flatMap(s -> s.getShapes().stream())
+                    .filter(s -> "März 2021\u2026".equals(s.getShapeName()))
+                    .map(XSLFTextShape.class::cast)
+                    .flatMap(s -> s.getTextParagraphs().stream())
+                    .flatMap(s -> s.getTextRuns().stream())
+                    .map(XSLFTextRun::getTextCap)
+                    .findFirst().orElse(null);
             assertEquals(TextRun.TextCap.ALL, act);
         }
     }
@@ -1060,7 +1075,7 @@ class TestXSLFBugs {
             assertNotNull(targetSlide);
             assertEquals(2, targetPresentation.getPictureData().size());
 
-            targetPresentation.write(NullOutputStream.NULL_OUTPUT_STREAM);
+            targetPresentation.write(NullOutputStream.INSTANCE);
         }
     }
 
@@ -1120,4 +1135,109 @@ class TestXSLFBugs {
             }
         }
     }
+
+    @Test
+    void loadPptxWithArtisticEffect() throws IOException {
+        try (XMLSlideShow slideShowModel = openSampleDocument("ArtisticEffectSample.pptx")) {
+            for (XSLFSlide slide : slideShowModel.getSlides()) {
+                assertNotNull(slide);
+                for (XSLFShape shape : slide.getShapes()) {
+                    assertNotNull(shape);
+                }
+            }
+        }
+    }
+
+    @Test
+    void identicalGradientStopsBug() throws IOException {
+
+        final ArrayList<LinearGradientPaint> linearGradients = new ArrayList<>();
+        final ArrayList<RadialGradientPaint> radialGradients = new ArrayList<>();
+        final DummyGraphics2d dgfx = new DummyGraphics2d(NullPrintStream.INSTANCE)
+        {
+            public void setPaint(final Paint paint) {
+                if (paint instanceof LinearGradientPaint) {
+                    linearGradients.add((LinearGradientPaint) paint);
+                }
+                if (paint instanceof RadialGradientPaint) {
+                    radialGradients.add((RadialGradientPaint) paint);
+                }
+            }
+        };
+
+        final List<LinearGradientPaint> expectedLinearGradients = Arrays.asList(
+                new LinearGradientPaint(new Point2D.Double(30.731732283464567, 138.7317322834646),
+                        new Point2D.Double(122.91549846753813, 46.54796609939099),
+                        new float[] { 0.0f, 0.99999994f, 1.0f },
+                        new Color[] { new Color(81, 124, 252, 255),
+                                new Color(81, 124, 252, 255),
+                                new Color(17,21,27, 204) }),
+                new LinearGradientPaint(new Point2D.Double(174.7317322834646, 138.73173228346457),
+                        new Point2D.Double(266.9154984675381, 46.547966099391004),
+                        new float[] { 0.0f, 0.00000005f, 1.0f },
+                        new Color[] { new Color(17,21,27, 204),
+                                new Color(81, 124, 252, 255),
+                                new Color(81, 124, 252, 255) }),
+                new LinearGradientPaint(new Point2D.Double(318.73173228346457, 138.73173228346462),
+                        new Point2D.Double(410.9154984675381, 46.547966099391004),
+                        new float[] { 0.0f, 0.5f, 0.50000006f, 1.0f },
+                        new Color[] { new Color(17,21,27, 204),
+                                new Color(17,21,27, 204),
+                                new Color(81, 124, 252, 255),
+                                new Color(81, 124, 252, 255) })
+        );
+
+        final List<RadialGradientPaint> expectedRadialGradients = Arrays.asList(
+                new RadialGradientPaint(new Point2D.Double(30.731732283464567, 138.7317322834646),
+                        108.0f, new Point2D.Double(122.91549846753813, 46.54796609939099),
+                        new float[] { 0.0f, 0.5f, 0.50000006f, 1.0f },
+                        new Color[] { new Color(17,21,27, 204),
+                                new Color(17,21,27, 204),
+                                new Color(81, 124, 252, 255),
+                                new Color(81, 124, 252, 255)  },
+                        MultipleGradientPaint.CycleMethod.NO_CYCLE),
+                new RadialGradientPaint(new Point2D.Double(228.73173228346457, 226.9755905511811),
+                        108.0f, new Point2D.Double(282.73173228346457, 280.9755905511811),
+                        new float[] { 0.0f, 0.00000005f, 1.0f },
+                        new Color[] { new Color(17,21,27, 204),
+                                new Color(81, 124, 252, 255),
+                                new Color(81, 124, 252, 255)  },
+                        MultipleGradientPaint.CycleMethod.NO_CYCLE),
+                new RadialGradientPaint(new Point2D.Double(84.73173228346457, 226.9755905511811),
+                        108.0f, new Point2D.Double(138.73173228346457, 280.9755905511811),
+                        new float[] { 0.0f, 0.99999994f, 1.0f },
+                        new Color[] { new Color(81, 124, 252, 255),
+                                new Color(81, 124, 252, 255),
+                                new Color(17,21,27, 204) },
+                        MultipleGradientPaint.CycleMethod.NO_CYCLE)
+        );
+
+        try (XMLSlideShow slideShowModel = openSampleDocument("minimal-gradient-fill-issue.pptx")) {
+            // Render the first (and only) slide.
+            slideShowModel.getSlides().get(0).draw(dgfx);
+
+            // Test that the linear gradients have the expected data (stops modified)
+            assertEquals(3, linearGradients.size());
+            for (int i = 0 ; i < expectedLinearGradients.size() ; i++) {
+                final LinearGradientPaint expected = expectedLinearGradients.get(i);
+                final LinearGradientPaint actual = linearGradients.get(i);
+                assertEquals(expected.getStartPoint(), expected.getStartPoint());
+                assertEquals(expected.getEndPoint(), expected.getEndPoint());
+                assertArrayEquals(expected.getFractions(), actual.getFractions());
+                assertArrayEquals(expected.getColors(), actual.getColors());
+            }
+
+            // Test that the radial gradients have the expected data (stops modified)
+            assertEquals(3, radialGradients.size());
+            for (int i = 0 ; i < expectedRadialGradients.size() ; i++) {
+                final RadialGradientPaint expected = expectedRadialGradients.get(i);
+                final RadialGradientPaint actual = radialGradients.get(i);
+                assertEquals(expected.getCenterPoint(), expected.getCenterPoint());
+                assertEquals(expected.getFocusPoint(), expected.getFocusPoint());
+                assertArrayEquals(expected.getFractions(), actual.getFractions());
+                assertArrayEquals(expected.getColors(), actual.getColors());
+            }
+        }
+    }
+
 }

@@ -23,8 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -43,7 +43,7 @@ import org.apache.poi.util.Units;
  */
 public class HSLFGroupShape extends HSLFShape
 implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
-    private static final Logger LOG = LogManager.getLogger(HSLFGroupShape.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HSLFGroupShape.class);
 
     /**
       * Create a new ShapeGroup. This constructor is used when a new shape is created.
@@ -270,6 +270,11 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
         return getShapes().spliterator();
     }
 
+    /**
+     * This method is not yet supported.
+     *
+     * @throws UnsupportedOperationException this method is not yet supported
+     */
     @Override
     public boolean removeShape(HSLFShape shape) {
         // TODO: implement!

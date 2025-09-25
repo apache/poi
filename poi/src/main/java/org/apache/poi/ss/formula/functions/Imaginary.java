@@ -74,7 +74,7 @@ public class Imaginary extends Fixed1ArgFunction implements FreeRefFunction {
             String imaginaryGroup = m.group(5);
             boolean hasImaginaryPart = imaginaryGroup.equals("i") || imaginaryGroup.equals("j");
 
-            if (imaginaryGroup.length() == 0) {
+            if (imaginaryGroup.isEmpty()) {
                 return new StringEval(String.valueOf(0));
             }
 

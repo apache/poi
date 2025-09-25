@@ -117,7 +117,7 @@ public final class TextRulerAtom extends RecordAtom {
      */
     @Override
     public void writeOut(final OutputStream out) throws IOException {
-        final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(200);
+        final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(200).get();
         final LittleEndianOutputStream lbos = new LittleEndianOutputStream(bos);
         int mask = 0;
         mask |= writeIf(lbos, numLevels, C_LEVELS);

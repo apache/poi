@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Deleted Area 3D Ptg - 3D referecnce (Sheet + Area)<p>
- * Defined a area in Extern Sheet.
+ * Defined an area in Extern Sheet.
  *
  * @version 1.0-pre
  */
@@ -54,7 +54,7 @@ public final class DeletedArea3DPtg extends OperandPtg implements WorkbookDepend
         return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, FormulaError.REF.getString());
     }
     public String toFormulaString() {
-        throw new RuntimeException("3D references need a workbook to determine formula text");
+        throw new IllegalStateException("3D references need a workbook to determine formula text");
     }
     @Override
     public byte getDefaultOperandClass() {

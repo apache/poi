@@ -37,7 +37,7 @@ import org.apache.poi.util.HexDump;
 
 /**
  * This class provides a way to view the contents of a powerpoint file.
- * It will use the recored layer to grok the contents of the file, and
+ * It will use the record layer to grok the contents of the file, and
  *  will print out what it finds.
  */
 public final class SlideShowRecordDumper {
@@ -79,12 +79,12 @@ public final class SlideShowRecordDumper {
 
         String filename = args[ndx];
 
-        SlideShowRecordDumper foo = new SlideShowRecordDumper(System.out,
-                filename, verbose, escher);
-
-        foo.printDump();
-
-        foo.doc.close();
+        SlideShowRecordDumper foo = new SlideShowRecordDumper(System.out, filename, verbose, escher);
+        try {
+            foo.printDump();
+        } finally {
+            foo.doc.close();
+        }
     }
 
     public static void printUsage() {
@@ -146,7 +146,7 @@ public final class SlideShowRecordDumper {
     public int getDiskLen(org.apache.poi.hslf.record.Record r) throws IOException {
         int diskLen = 0;
         if (r != null) {
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
             r.writeOut(baos);
             diskLen = baos.size();
         }
@@ -158,7 +158,7 @@ public final class SlideShowRecordDumper {
             return "<<null>>";
         }
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         r.writeOut(baos);
         byte[] b = baos.toByteArray();
         return HexDump.dump(b, 0, 0);
@@ -258,7 +258,7 @@ public final class SlideShowRecordDumper {
             if (optEscher && cname.equals("PPDrawing")) {
                 DefaultEscherRecordFactory factory = new HSLFEscherRecordFactory();
 
-                UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
                 r.writeOut(baos);
                 byte[] b = baos.toByteArray();
 

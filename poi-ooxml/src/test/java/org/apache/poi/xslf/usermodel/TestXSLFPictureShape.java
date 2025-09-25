@@ -359,4 +359,24 @@ class TestXSLFPictureShape {
             assertEquals(ps.getVideoFileLink(), "rId2");
         }
     }
+
+    @Test
+    void testIsSetAudioFile() throws IOException {
+        try (XMLSlideShow ppt = openSampleDocument("EmbeddedAudio.pptx")) {
+            XSLFSlide slide = ppt.getSlides().get(0);
+            XSLFPictureShape ps = (XSLFPictureShape) slide.getShapes().get(0);
+
+            assertTrue(ps.isAudioFile());
+        }
+    }
+
+    @Test
+    void testGetAudioLink() throws IOException {
+        try (XMLSlideShow ppt = openSampleDocument("EmbeddedAudio.pptx")) {
+            XSLFSlide slide = ppt.getSlides().get(0);
+            XSLFPictureShape ps = (XSLFPictureShape) slide.getShapes().get(0);
+
+            assertEquals(ps.getAudioFileLink(), "rId2");
+        }
+    }
 }

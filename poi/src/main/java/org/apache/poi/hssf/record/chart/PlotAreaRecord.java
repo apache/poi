@@ -26,7 +26,7 @@ import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * preceeds and identifies a frame as belonging to the plot area.
+ * precedes and identifies a frame as belonging to the plot area.
  */
 public final class PlotAreaRecord extends StandardRecord {
     public static final short sid = 0x1035;

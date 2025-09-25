@@ -271,9 +271,9 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
      */
     @Override
     public XSLFBackground getBackground() {
-        CTBackground bg = _slide.getCSld().getBg();
-        if(bg != null) {
-            return new XSLFBackground(bg, this);
+        if(_slide.getCSld() != null &&
+                _slide.getCSld().getBg() != null) {
+            return new XSLFBackground(_slide.getCSld().getBg(), this);
         } else {
             return getMasterSheet().getBackground();
         }
@@ -344,11 +344,19 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         return this;
     }
 
+    /**
+     * @return always returns false
+     */
     @Override
     public boolean getFollowMasterBackground() {
         return false;
     }
 
+    /**
+     * This method is not yet supported.
+     *
+     * @throws UnsupportedOperationException this method is not yet supported
+     */
     @Override
     @NotImplemented
     public void setFollowMasterBackground(boolean follow) {
@@ -361,6 +369,11 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         return false;
     }
 
+    /**
+     * This method is not yet supported.
+     *
+     * @throws UnsupportedOperationException this method is not yet supported
+     */
     @Override
     @NotImplemented
     public void setFollowMasterColourScheme(boolean follow) {

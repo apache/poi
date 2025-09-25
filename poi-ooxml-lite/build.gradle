@@ -1,5 +1,3 @@
-import java.util.regex.Pattern
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -17,14 +15,14 @@ import java.util.regex.Pattern
    limitations under the License.
 ==================================================================== */
 
-final String BEANS_SRC = "${buildDir}/generated-sources"
-final String BEANS_RES = "${buildDir}/generated-resources"
+import java.util.regex.Pattern
+
+final String BEANS_SRC = layout.buildDirectory.dir('generated-sources').get().asFile.absolutePath
+final String BEANS_RES = layout.buildDirectory.dir('generated-resources').get().asFile.absolutePath
 
 sourceSets {
     main {
-        if (jdkVersion > 8) {
-            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
-        }
+        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
         compileClasspath += files(BEANS_RES)
         java {
             srcDirs += BEANS_SRC
@@ -45,7 +43,7 @@ final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
 final String OOXML_LITE_REPORT = '../src/resources/ooxml-lite-report'
 
-task generateModuleInfo() {
+tasks.register('generateModuleInfo') {
     File fileIn = file("${OOXML_LITE_REPORT}.clazz")
     File fileOut = file("src/main/java9/module-info.java")
 
@@ -57,8 +55,8 @@ task generateModuleInfo() {
 
         // generate module-info based on exported classes
         String exports = fileIn.
-            collect { "    exports ${it.replaceAll('[/\\\\][^/\\\\]+$', '').replaceAll('[/\\\\]', '.')};" }.
-            findAll { !(it =~ /\.impl;$/) }.unique().sort().join('\n')
+                collect { "    exports ${it.replaceAll('[/\\\\][^/\\\\]+$', '').replaceAll('[/\\\\]', '.')};" }.
+                findAll { !(it =~ /\.impl;$/) }.unique().sort().join('\n')
 
         String content = header + '\n' + exports + '\n}'
         if (fileOut.text != content) {
@@ -67,33 +65,25 @@ task generateModuleInfo() {
     }
 }
 
-task compileOoxmlLite(type: Copy) {
-    dependsOn 'generateModuleInfo', ':poi-ooxml-full:generate_beans'
+tasks.register('compileOoxmlLite', Copy) {
+    dependsOn 'generateModuleInfo', ':poi-ooxml-full:generate_beans', ':poi-ooxml-full:compileJava'
 
     // This task is currently always executed, because gradle thinks files with two dollar signs
     // (as in AlternateContentDocument$AlternateContent$Choice.class) are always stale
 
     // copy re-/sources to modules own directory to pacify IntelliJ, which doesn't like the same source dir in multiple modules
-    from(project(':poi-ooxml-full').buildDir) {
+    from(project(':poi-ooxml-full').layout.buildDirectory.asFile) {
         include 'generated-sources/**'
         include 'generated-resources/**'
         include 'classes/java/main/**'
     }
-    into(buildDir)
-}
-
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(jdkVersion))
-        if (jdkVendor != '') vendor.set(JvmVendorSpec.matching(jdkVendor))
-    }
+    into(layout.buildDirectory.asFile)
 }
 
 compileJava {
     dependsOn 'compileOoxmlLite'
     options.fork = true
-    options.forkOptions.jvmArgs << '-Xmx2G'
+    options.forkOptions.jvmArgs += '-Xmx2G'
 }
 
 processResources.dependsOn 'compileOoxmlLite'
@@ -101,27 +91,19 @@ sourcesJar.dependsOn 'compileOoxmlLite'
 
 task compileJava9(type: JavaCompile, dependsOn: 'compileJava') {
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(jdkVersion)
-        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
     }
+    sourceCompatibility = 1.9
+    targetCompatibility = 1.9
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
     doFirst {
         options.compilerArgs = [
-            '--patch-module', "${MODULE_NAME}=${project(':poi-ooxml-full').sourceSets.main.output.asPath}",
-            '--module-path', files(MAIN_MODULE_PATH).asPath
+                '--patch-module', "${MODULE_NAME}=${project(':poi-ooxml-full').sourceSets.main.output.asPath}",
+                '--module-path', files(MAIN_MODULE_PATH).asPath
         ]
     }
-
-    onlyIf {
-        jdkVersion > 8
-    }
-}
-
-task cacheJava9(type: Copy, dependsOn: 'compileJava9') {
-    from(file(JAVA9_OUT + VERSIONS9))
-    into(JAVA9_SRC)
 }
 
 jar {
@@ -141,14 +123,8 @@ jar {
         }
     }
 
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from JAVA9_SRC include '*.class'
-        }
-    }
-
     // ignore second module-info.class from poi-ooxml-full
-    // duplicatesStrategy = 'exclude'
+    // duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     includeEmptyDirs = false
 
     manifest {
@@ -167,3 +143,22 @@ spotbugsTest.enabled = false
 spotbugsMain.enabled = false
 javadoc.enabled = false
 javadocJar.enabled = false
+
+cyclonedxBom {
+    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
+    includeConfigs = ["runtimeClasspath"]
+    // skipConfigs is a list of configuration names to exclude when generating the BOM
+    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
+    // Specified the type of project being built. Defaults to 'library'
+    projectType = "library"
+    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
+    schemaVersion = "1.4"
+    // Boms destination directory (defaults to build/reports)
+    destination = file("build/reports")
+    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
+    outputName = "poi-ooxml-lite-${project.version}.bom"
+    // The file format generated, can be xml, json or all for generating both
+    outputFormat = "all"
+    // Exclude BOM Serial Number
+    includeBomSerialNumber = true
+}

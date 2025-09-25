@@ -38,9 +38,14 @@ import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextShape;
+import org.apache.poi.util.ThreadLocalUtil;
 
 public class DrawFactory {
     private static final ThreadLocal<DrawFactory> defaultFactory = new ThreadLocal<>();
+    static {
+        // allow to clear all thread-locals via ThreadLocalUtil
+        ThreadLocalUtil.registerCleaner(defaultFactory::remove);
+    }
 
     /**
      * Set a custom draw factory for the current thread.

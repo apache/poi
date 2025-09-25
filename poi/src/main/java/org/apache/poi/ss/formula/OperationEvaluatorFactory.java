@@ -135,7 +135,7 @@ final class OperationEvaluatorFactory {
             return udfFunc.evaluate(args, ec);
         }
 
-        throw new RuntimeException("Unexpected operation ptg class (" + ptg.getClass().getName() + ")");
+        throw new IllegalStateException("Unexpected operation ptg class (" + ptg.getClass().getName() + ")");
     }
 
     static ValueEval evaluateArrayFunction(ArrayFunction func, ValueEval[] args,

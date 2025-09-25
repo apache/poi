@@ -22,8 +22,8 @@ import java.awt.Color;
 
 import javax.xml.namespace.QName;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AbstractColorStyle;
@@ -50,7 +50,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTSystemColor;
 @Beta
 @Internal
 public class XSLFColor {
-    private static final Logger LOGGER = LogManager.getLogger(XSLFColor.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(XSLFColor.class);
     private static final QName VAL_ATTR = new QName("val");
 
     private final XmlObject _xmlObject;

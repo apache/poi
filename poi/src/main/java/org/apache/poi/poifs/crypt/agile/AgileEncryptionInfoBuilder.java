@@ -36,6 +36,10 @@ public class AgileEncryptionInfoBuilder implements EncryptionInfoBuilder {
 
     @Override
     public void initialize(EncryptionInfo info, LittleEndianInput dis) throws IOException {
+        if (!(dis instanceof InputStream)) {
+            throw new IllegalArgumentException("Had unexpected type of input: " + (dis == null ? "<null>" : dis.getClass()));
+        }
+
         EncryptionDocument ed = parseDescriptor((InputStream)dis);
         info.setHeader(new AgileEncryptionHeader(ed));
         info.setVerifier(new AgileEncryptionVerifier(ed));

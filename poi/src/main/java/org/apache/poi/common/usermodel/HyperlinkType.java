@@ -25,7 +25,7 @@ public enum HyperlinkType {
     /** Not a hyperlink */
     @Internal
     NONE(-1),
-    
+
     /**
      * Link to an existing file or web page
      */
@@ -37,7 +37,10 @@ public enum HyperlinkType {
     DOCUMENT(2),
 
     /**
-     * Link to an E-mail address
+     * Link to an E-mail address.
+     *
+     * Please note that this currently only works if the address in the hyperlink
+     * uses the prefix "mailto:" as the binary formats do not persis this type.
      */
     EMAIL(3),
 
@@ -45,13 +48,13 @@ public enum HyperlinkType {
      * Link to a file
      */
     FILE(4);
-    
-    
+
+
     /** @deprecated POI 3.15 beta 3 */
     @Internal(since="3.15 beta 3")
     @Deprecated
     private final int code;
-    
+
     /**
      * The codes don't have any real meaning.
      * They are bytes that are read in and written out from HSSF, HSLF, XSSF, and XSLF are different
@@ -66,7 +69,7 @@ public enum HyperlinkType {
     HyperlinkType(int code) {
         this.code = code;
     }
-    
+
     /**
      * @deprecated POI 3.15 beta 3
      *

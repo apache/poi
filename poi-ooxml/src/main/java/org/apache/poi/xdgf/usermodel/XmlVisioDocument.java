@@ -59,6 +59,11 @@ public class XmlVisioDocument extends POIXMLDocument {
     protected XDGFMasters _masters;
     protected XDGFDocument _document;
 
+    /**
+     * Construct a VisioDocument from the given OPCPackage
+     * @param pkg The xml-base input for the Visio document
+     * @throws IOException If parsing the document fails
+     */
     public XmlVisioDocument(OPCPackage pkg) throws IOException {
         super(pkg, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
 
@@ -76,8 +81,22 @@ public class XmlVisioDocument extends POIXMLDocument {
         load(new XDGFFactory(_document));
     }
 
-    public XmlVisioDocument(InputStream is) throws IOException {
-        this(PackageHelper.open(is));
+    /**
+     * @param stream InputStream - closed when it is read
+     * @throws IOException If parsing the document fails
+     */
+    public XmlVisioDocument(InputStream stream) throws IOException {
+        this(stream, true);
+    }
+
+    /**
+     * @param stream InputStream
+     * @param closeStream Whether to close the InputStream
+     * @throws IOException If parsing the document fails
+     * @since POI 5.2.5
+     */
+    public XmlVisioDocument(InputStream stream, boolean closeStream) throws IOException {
+        this(PackageHelper.open(stream, closeStream));
     }
 
     @Override
@@ -122,11 +141,13 @@ public class XmlVisioDocument extends POIXMLDocument {
      * @return pages ordered by page number
      */
     public Collection<XDGFPage> getPages() {
+        if (_pages == null) {
+            throw new IllegalStateException("No page-information available");
+        }
         return _pages.getPageList();
     }
 
     public XDGFStyleSheet getStyleById(long id) {
         return _document.getStyleById(id);
     }
-
 }

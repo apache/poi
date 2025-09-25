@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.tools.ant.DirectoryScanner;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -49,12 +50,12 @@ import org.opentest4j.AssertionFailedError;
  *  to reveal problems which are introduced, but not covered (yet) by unit tests.
  *
  *  This test looks for any file under the test-data directory and tries to do some useful
- *  processing with it based on it's type.
+ *  processing with it based on its type.
  *
  *  The test is implemented as a junit {@link ParameterizedTest} test, which leads
  *  to one test-method call for each file (currently around 950 files are handled).
  *
- *  There is a a mapping of extension to implementations of the interface
+ *  There is a mapping of extension to implementations of the interface
  *  {@link FileHandler} which defines how the file is loaded and which actions are
  *  tried with the file.
  *
@@ -95,14 +96,19 @@ public class TestAllFiles {
         "poifs/protected_sha512.xlsx",
         "poifs/60320-protected.xlsx",
         "poifs/protected_sha512.xlsx",
+
+        // stress docs
+        "document/deep-table-cell.docx",
+
+        // invalid files
+        "spreadsheet/bug69769.xlsx",
+
+        // NOTE: Expected failures should usually be added in file "stress.xls" instead
+        // of being listed here in order to also verify the expected exception details!
     };
 
     // cheap workaround of skipping the few problematic files
-    public static final String[] SCAN_EXCLUDES_NOSCRATCHPAD = {
-        "**/.svn/**",
-        "lost+found",
-        "**/.git/**",
-        "**/ExternalEntityInText.docx", //the DocType (DTD) declaration causes this to fail
+    public static final String[] SCAN_EXCLUDES_NOSCRATCHPAD = concat(SCAN_EXCLUDES, new String[] {
         "**/right-to-left.xlsx", //the threaded comments in this file cause XSSF clone to fail
         "document/word2.doc",
         "document/cpansearch.perl.org_src_tobyink_acme-rundoc-0.001_word-lib_hello_world.docm",
@@ -118,17 +124,33 @@ public class TestAllFiles {
         "spreadsheet/testEXCEL_3.xls",
         "spreadsheet/testEXCEL_4.xls",
         "poifs/unknown_properties.msg",
-
-        // exclude files failing on windows nodes, because of limited JCE policies
-        "document/bug53475-password-is-pass.docx",
-        "poifs/60320-protected.xlsx",
-        "poifs/protected_sha512.xlsx",
-        "poifs/60320-protected.xlsx",
-        "poifs/protected_sha512.xlsx",
-    };
+        "publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-4701121678278656.pub",
+        "hsmf/clusterfuzz-testcase-minimized-POIHSMFFuzzer-4848576776503296.msg",
+        "hsmf/clusterfuzz-testcase-minimized-POIHSMFFuzzer-5336473854148608.msg",
+        "slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-6416153805979648.ppt",
+        "slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-6710128412590080.ppt",
+        "publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-4701121678278656.pub",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-5285517825277952.xls",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-6322470200934400.xls",
+        "document/clusterfuzz-testcase-minimized-POIHWPFFuzzer-5418937293340672.doc",
+        "document/clusterfuzz-testcase-minimized-POIHWPFFuzzer-5440721166139392.doc",
+        "diagram/clusterfuzz-testcase-minimized-POIHDGFFuzzer-5947849161179136.vsd",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-5436547081830400.xls",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-4819588401201152.xls",
+        "diagram/clusterfuzz-testcase-minimized-POIVisioFuzzer-4537225637134336.vsd",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-6537773940867072.xls",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-4977868385681408.xls",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-4651309315719168.xls",
+        "document/clusterfuzz-testcase-POIHWPFFuzzer-5696094627495936.doc",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-4657005060816896.xls",
+        "diagram/clusterfuzz-testcase-minimized-POIHDGFFuzzer-4913778037489664.vsd",
+        "diagram/clusterfuzz-testcase-minimized-POIHDGFFuzzer-6478389109981184.vsd"
+    });
 
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
-            "document/truncated62886.docx"
+            "document/truncated62886.docx",
+            // this document fails with IBM JDK because of a different exception being thrown
+            "spreadsheet/clusterfuzz-testcase-minimized-POIXSSFFuzzer-5089447305609216.xlsx"
     );
 
     public static Stream<Arguments> allfiles(String testName) throws IOException {
@@ -184,7 +206,7 @@ public class TestAllFiles {
             FileHandler fileHandler = handler.getHandler();
             assertNotNull(fileHandler, "Did not find a handler for file " + file);
             Executable exec = () -> fileHandler.handleExtracting(new File(ROOT_DIR, file));
-            verify(file, exec, exClass, exMessage, password);
+            verify(file, exec, exClass, exMessage, password, fileHandler);
         } finally {
             Thread.currentThread().setName(threadName);
         }
@@ -200,12 +222,19 @@ public class TestAllFiles {
         String threadName = Thread.currentThread().getName();
         try {
             Thread.currentThread().setName("Handle - " + file + " - " + handler);
+
+            // Some of the tests hang in JDK 8 due to Graphics-Rendering issues in JDK itself,
+            // therefore we do not run some tests here
+            Assumptions.assumeFalse(isJava8() && (
+                    file.endsWith("23884_defense_FINAL_OOimport_edit.ppt")
+            ), "Some files hang in JDK graphics rendering on Java 8 due to a JDK bug");
+
             System.out.println("Running handleFiles on "+file);
             FileHandler fileHandler = handler.getHandler();
             assertNotNull(fileHandler, "Did not find a handler for file " + file);
             try (InputStream stream = new BufferedInputStream(new FileInputStream(new File(ROOT_DIR, file)), 64 * 1024)) {
                 Executable exec = () -> fileHandler.handleFile(stream, file);
-                verify(file, exec, exClass, exMessage, password);
+                verify(file, exec, exClass, exMessage, password, fileHandler);
             }
         } finally {
             Thread.currentThread().setName(threadName);
@@ -222,19 +251,23 @@ public class TestAllFiles {
         String threadName = Thread.currentThread().getName();
         try {
             Thread.currentThread().setName("Additional - " + file + " - " + handler);
+            if (StressTestUtils.excludeFile(file, EXPECTED_FAILURES))
+                return;
+
             System.out.println("Running additionals on "+file);
             FileHandler fileHandler = handler.getHandler();
             assertNotNull(fileHandler, "Did not find a handler for file " + file);
             Executable exec = () -> fileHandler.handleAdditional(new File(ROOT_DIR, file));
-            verify(file, exec, exClass, exMessage, password);
+            verify(file, exec, exClass, exMessage, password, fileHandler);
         } finally {
             Thread.currentThread().setName(threadName);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private static void verify(String file, Executable exec, Class<? extends Throwable> exClass, String exMessage, String password) {
-        final String errPrefix = file + " - failed. ";
+    private static void verify(String file, Executable exec, Class<? extends Throwable> exClass, String exMessage, String password,
+            FileHandler fileHandler) {
+        final String errPrefix = file.replace("\\", "/") + " - failed for handler " + fileHandler.getClass().getSimpleName() + ": ";
         // this also removes the password for non encrypted files
         Biff8EncryptionKey.setCurrentUserPassword(password);
         if (exClass != null && AssertionFailedError.class.isAssignableFrom(exClass)) {
@@ -250,18 +283,45 @@ public class TestAllFiles {
         } else if (exClass != null) {
             Exception e = assertThrows((Class<? extends Exception>)exClass, exec, errPrefix + " expected " + exClass);
             String actMsg = pathReplace(e.getMessage());
+
+            // perform special handling of NullPointerException as
+            // JDK started to add more information in some newer JDK, so
+            // it sometimes has a message and sometimes not!
             if (NullPointerException.class.isAssignableFrom(exClass)) {
                 if (actMsg != null) {
-                    assertTrue(actMsg.contains(exMessage), errPrefix + "Message: "+actMsg+" - didn't contain: "+exMessage);
+                    assertTrue(actMsg.contains(exMessage), errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
                 }
             } else {
-                assertNotNull(actMsg, errPrefix);
-                assertTrue(actMsg.contains(exMessage),
-                        errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
+                // verify that message is either null for both or set for both
+                assertTrue(actMsg != null || isBlank(exMessage),
+                        errPrefix + " for " + exClass + " expected message '" + exMessage + "' but had '" + actMsg + "': " + e);
+
+                if (actMsg != null &&
+                        // in newer JDK versions IndexOutOfBoundsException switch from empty message
+                        // to more useful content
+                        // so skip the check for this type of exception if expected message is null
+                        (exMessage != null || !IndexOutOfBoundsException.class.isAssignableFrom(exClass))) {
+                    assertNotNull(exMessage,
+                            errPrefix + "Expected message was null, but actMsg wasn't: Message: " + actMsg + ": " + e);
+                    assertTrue(actMsg.contains(exMessage),
+                            errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
+                }
             }
         } else {
             assertDoesNotThrow(exec, errPrefix);
         }
+    }
+
+    private static boolean isBlank(final String str) {
+        if (str != null) {
+            final int strLen = str.length();
+            for (int i = 0; i < strLen; i++) {
+                if (!Character.isWhitespace(str.charAt(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private static String pathReplace(String msg) {
@@ -278,5 +338,16 @@ public class TestAllFiles {
         }
 
         return msg;
+    }
+
+    private static boolean isJava8() {
+        return System.getProperty("java.version").startsWith("1.8");
+    }
+
+    private static String[] concat(String[] a, String[] b) {
+        String[] result = new String[a.length + b.length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
     }
 }

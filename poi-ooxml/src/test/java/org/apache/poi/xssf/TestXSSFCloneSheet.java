@@ -17,22 +17,30 @@
 
 package org.apache.poi.xssf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import org.apache.poi.ooxml.ReferenceRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.ss.usermodel.BaseTestCloneSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xddf.usermodel.chart.XDDFDataSource;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFPicture;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualPictureProperties;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPictureNonVisual;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestXSSFCloneSheet  extends BaseTestCloneSheet {
     public TestXSSFCloneSheet() {
@@ -127,4 +135,78 @@ class TestXSSFCloneSheet  extends BaseTestCloneSheet {
         }
     }
 
+    @Test
+    void testBug63189() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("bug63189.xlsx")) {
+            // given
+            final String linkRelationType = PackageRelationshipTypes.HYPERLINK_PART;
+            final String linkTargetUrl = "#Sheet3!A1";
+            final String imageRelationType = PackageRelationshipTypes.IMAGE_PART;
+            final String imageTargetUrl = "/xl/media/image1.png";
+
+            XSSFSheet srcSheet = workbook.getSheetAt(0);
+            assertEquals("CloneMe", srcSheet.getSheetName());
+            XSSFDrawing drawing = srcSheet.getDrawingPatriarch();
+            assertNotNull(drawing);
+            assertEquals(1, drawing.getShapes().size());
+            assertInstanceOf(XSSFPicture.class, drawing.getShapes().get(0));
+            XSSFPicture lPic = (XSSFPicture)drawing.getShapes().get(0);
+            CTPicture pic = lPic.getCTPicture();
+            CTPictureNonVisual nvPicPr = pic.getNvPicPr();
+            CTNonVisualDrawingProps cNvPr = nvPicPr.getCNvPr();
+            assertTrue(cNvPr.isSetHlinkClick());
+            CTHyperlink hlinkClick = cNvPr.getHlinkClick();
+            String linkRelId = hlinkClick.getId();
+
+            ReferenceRelationship linkRel = drawing.getReferenceRelationship(linkRelId);
+            assertEquals(linkRelationType, linkRel.getRelationshipType());
+            assertEquals(linkTargetUrl, linkRel.getUri().toString());
+
+            CTNonVisualPictureProperties cNvPicPr = nvPicPr.getCNvPicPr();
+            assertTrue(cNvPicPr.getPicLocks().getNoChangeAspect());
+
+            CTBlipFillProperties blipFill = pic.getBlipFill();
+            CTBlip blip = blipFill.getBlip();
+            String imageRelId = blip.getEmbed();
+
+            PackageRelationship imageRel = drawing.getRelationPartById(imageRelId).getRelationship();
+            assertEquals(imageRelationType, imageRel.getRelationshipType());
+            assertEquals(imageTargetUrl, imageRel.getTargetURI().toString());
+
+            // when
+            XSSFSheet clonedSheet = workbook.cloneSheet(0);
+
+            // then
+            XSSFDrawing drawing2 = clonedSheet.getDrawingPatriarch();
+            assertNotNull(drawing2);
+            assertEquals(1, drawing2.getShapes().size());
+            assertInstanceOf(XSSFPicture.class, drawing2.getShapes().get(0));
+            XSSFPicture lPic2 = (XSSFPicture)drawing2.getShapes().get(0);
+            CTPicture pic2 = lPic2.getCTPicture();
+            CTPictureNonVisual nvPicPr2 = pic2.getNvPicPr();
+            CTNonVisualDrawingProps cNvPr2 = nvPicPr2.getCNvPr();
+            assertTrue(cNvPr2.isSetHlinkClick());
+            CTHyperlink hlinkClick2 = cNvPr2.getHlinkClick();
+            String linkRelId2 = hlinkClick2.getId();
+
+            ReferenceRelationship linkRel2 = drawing2.getReferenceRelationship(linkRelId2);
+            assertEquals(linkRelationType, linkRel2.getRelationshipType());
+            assertEquals(linkTargetUrl, linkRel2.getUri().toString());
+
+            CTNonVisualPictureProperties cNvPicPr2 = nvPicPr2.getCNvPicPr();
+            assertTrue(cNvPicPr2.getPicLocks().getNoChangeAspect());
+
+            CTBlipFillProperties blipFill2 = pic2.getBlipFill();
+            CTBlip blip2 = blipFill2.getBlip();
+            String imageRelId2 = blip2.getEmbed();
+
+            PackageRelationship imageRel2 = drawing2.getRelationPartById(imageRelId2).getRelationship();
+            assertEquals(imageRelationType, imageRel2.getRelationshipType());
+            assertEquals(imageTargetUrl, imageRel2.getTargetURI().toString());
+
+            assertTrue(drawing2.removeReferenceRelationship(linkRelId2));
+            assertFalse(drawing2.removeReferenceRelationship(linkRelId2));
+            assertNull(drawing2.getReferenceRelationship(linkRelId2));
+        }
+    }
 }

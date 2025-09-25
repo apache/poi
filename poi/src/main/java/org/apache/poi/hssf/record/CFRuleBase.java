@@ -20,8 +20,8 @@ package org.apache.poi.hssf.record;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
@@ -95,7 +95,7 @@ public abstract class CFRuleBase extends StandardRecord {
     public static final int TEMPLATE_ABOVE_OR_EQUAL_TO_AVERAGE = 0x001D;
     public static final int TEMPLATE_BELOW_OR_EQUAL_TO_AVERAGE = 0x001E;
 
-    protected static final Logger LOG = LogManager.getLogger(CFRuleBase.class);
+    protected static final Logger LOG = PoiLogManager.getLogger(CFRuleBase.class);
 
     static final BitField modificationBits = bf(0x003FFFFF); // Bits: font,align,bord,patt,prot
     static final BitField alignHor         = bf(0x00000001); // 0 = Horizontal alignment modified

@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -32,7 +32,7 @@ import org.apache.poi.util.StringUtil;
 
 @Internal
 public class UnicodeString {
-    private static final Logger LOG = LogManager.getLogger(UnicodeString.class);
+    private static final Logger LOG = PoiLogManager.getLogger(UnicodeString.class);
 
     private byte[] _value;
 

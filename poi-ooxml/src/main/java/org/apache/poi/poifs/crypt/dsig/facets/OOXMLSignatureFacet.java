@@ -54,8 +54,8 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 
 import com.microsoft.schemas.office.x2006.digsig.CTSignatureInfoV1;
 import com.microsoft.schemas.office.x2006.digsig.SignatureInfoV1Document;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -82,7 +82,7 @@ import org.w3c.dom.Element;
  */
 public class OOXMLSignatureFacet implements SignatureFacet {
 
-    private static final Logger LOG = LogManager.getLogger(OOXMLSignatureFacet.class);
+    private static final Logger LOG = PoiLogManager.getLogger(OOXMLSignatureFacet.class);
     private static final String ID_PACKAGE_OBJECT = "idPackageObject";
 
     @Override
@@ -173,6 +173,9 @@ public class OOXMLSignatureFacet implements SignatureFacet {
                 try {
                     PackagePartName relName = PackagingURIHelper.createPartName(partName);
                     PackagePart pp2 = opcPackage.getPart(relName);
+                    if (pp2 == null) {
+                        throw new XMLSignatureException("Failed to find part " + relName);
+                    }
                     contentType = pp2.getContentType();
                 } catch (InvalidFormatException e) {
                     throw new XMLSignatureException(e);
@@ -352,7 +355,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
      */
     private static final Set<String> signed = Stream.of(
             "activeXControlBinary", "aFChunk", "attachedTemplate", "attachedToolbars", "audio", "calcChain", "chart", "chartColorStyle",
-            "chartLayout", "chartsheet", "chartStyle", "chartUserShapes", "commentAuthors", "comments", "connections", "connectorXml",
+            "chartLayout", "chartsheet", "chartStyle", "chartUserShapes", "classificationlabels", "commentAuthors", "comments", "connections", "connectorXml",
             "control", "ctrlProp", "customData", "customData", "customProperty", "customXml", "diagram", "diagramColors",
             "diagramColorsHeader", "diagramData", "diagramDrawing", "diagramLayout", "diagramLayoutHeader", "diagramQuickStyle",
             "diagramQuickStyleHeader", "dialogsheet", "dictionary", "documentParts", "downRev", "drawing", "endnotes", "externalLink",

@@ -19,6 +19,8 @@ package org.apache.poi.hwpf.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
@@ -33,6 +35,7 @@ import org.apache.poi.util.LittleEndian;
 
 @Internal
 public class PICFAndOfficeArtData {
+    private static final Logger LOG = PoiLogManager.getLogger(PicturesTable.class);
 
     /**
      * Can contain either a {@link EscherBlipRecord} or a {@link EscherBSERecord}.
@@ -88,7 +91,9 @@ public class PICFAndOfficeArtData {
 
             // [MS-ODRAW] allows for multiple records in a OfficeArtInlineSpContainer, which is what we're parsing here.
             //   However, in the context of a HWPF document, there should be only 1.
-            assert _blipRecords.size() == 1;
+            if (_blipRecords.size() != 1) {
+                LOG.atWarn().log("Should only have one BLIP-Record, but had: " + _blipRecords.size());
+            }
         }
     }
 

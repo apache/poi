@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -119,5 +120,25 @@ final class TestSSTDeserializer {
         deserializer.manufactureStrings( 1, in);
 
         assertEquals( "At a dinner party orAt At At ", strings.get( 0 ) + "" );
+    }
+
+    /**
+     * Ensure that invalid SST records with an incorrect number of strings specified, does not consume non-continuation records.
+     */
+    @Test
+    void test65543() throws IOException {
+        final byte[] sstRecord = readSampleHexData("notenoughstrings.txt", "sst-record", SSTRecord.sid);
+        byte[] nonContinuationRecord = readSampleHexData("notenoughstrings.txt", "non-continuation-record", ExtSSTRecord.sid);
+        RecordInputStream in = TestcaseRecordInputStream.create(concat(sstRecord, nonContinuationRecord));
+
+        IntMapper<UnicodeString> strings = new IntMapper<>();
+        SSTDeserializer deserializer = new SSTDeserializer(strings);
+
+        // The record data in notenoughstrings.txt only contains 1 string, deliberately pass in a larger number.
+        deserializer.manufactureStrings(2, in);
+
+        assertEquals("At a dinner party or", strings.get(0) + "");
+        assertThrows(IndexOutOfBoundsException.class,
+                () -> strings.get(1));
     }
 }

@@ -37,9 +37,10 @@
     <Logger name="org.apache.poi.xssf.usermodel.XSSFWorkbook" level="ERROR" />
     <Logger name="org.apache.poi.hslf.usermodel.HSLFGroupShape" level="WARN" />
     <Logger name="org.apache.poi.hslf.record.Record" level="ERROR" />
+    <Logger name="org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor" level="FATAL" />
 
     <!-- Change to DEBUG or another level to get log output -->
-    <Root level="DEBUG">
+    <Root level="ERROR">
       <AppenderRef ref="Console" />
     </Root>
   </Loggers>

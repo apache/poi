@@ -77,7 +77,7 @@ public class LinkedDropDownLists {
             LinkedDropDownLists.buildDataSheet(sheet);
 
             // Build the first data validation to occupy cell A1. Note
-            // that it retrieves it's data from the named area or region called
+            // that it retrieves its data from the named area or region called
             // CHOICES. Further information about this can be found in the
             // static buildDataSheet() method below.
             CellRangeAddressList addressList = new CellRangeAddressList(0, 0, 0, 0);

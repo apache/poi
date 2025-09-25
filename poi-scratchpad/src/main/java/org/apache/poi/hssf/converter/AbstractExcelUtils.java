@@ -17,8 +17,9 @@
 package org.apache.poi.hssf.converter;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -113,11 +114,11 @@ class AbstractExcelUtils {
         StringBuilder stringBuilder = new StringBuilder(7);
         stringBuilder.append('#');
         for (short s : color.getTriplet()) {
-            if (s < 10) {
+            String hex = Integer.toHexString(s);
+            if (hex.length() == 1) {
                 stringBuilder.append('0');
             }
-
-            stringBuilder.append(Integer.toHexString(s));
+            stringBuilder.append(hex);
         }
         String result = stringBuilder.toString();
 
@@ -173,7 +174,7 @@ class AbstractExcelUtils {
     }
 
     static boolean isEmpty(String str) {
-        return str == null || str.length() == 0;
+        return str == null || str.isEmpty();
     }
 
     static boolean isNotEmpty(String str) {
@@ -181,7 +182,7 @@ class AbstractExcelUtils {
     }
 
     public static HSSFWorkbook loadXls(File xlsFile) throws IOException {
-        try (final FileInputStream inputStream = new FileInputStream(xlsFile)) {
+        try (final InputStream inputStream = Files.newInputStream(xlsFile.toPath())) {
             return new HSSFWorkbook(inputStream);
         }
     }

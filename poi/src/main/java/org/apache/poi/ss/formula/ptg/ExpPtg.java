@@ -68,7 +68,7 @@ public final class ExpPtg extends ControlPtg {
 
     @Override
     public String toFormulaString() {
-        throw new RuntimeException("Coding Error: Expected ExpPtg to be converted from Shared to Non-Shared Formula by ValueRecordsAggregate, but it wasn't");
+        throw new IllegalStateException("Coding Error: Expected ExpPtg to be converted from Shared to Non-Shared Formula by ValueRecordsAggregate, but it wasn't");
     }
 
     @Override

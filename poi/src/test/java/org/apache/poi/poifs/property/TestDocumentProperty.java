@@ -83,7 +83,7 @@ final class TestDocumentProperty {
             throws IOException {
         DocumentProperty      property = new DocumentProperty(index, input,
                                              offset);
-        UnsynchronizedByteArrayOutputStream stream   = new UnsynchronizedByteArrayOutputStream(128);
+        UnsynchronizedByteArrayOutputStream stream   = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(128).get();
         byte[]                expected = Arrays.copyOfRange(input, offset, offset+128);
         property.writeData(stream);
         byte[] output = stream.toByteArray();
@@ -145,7 +145,7 @@ final class TestDocumentProperty {
         {
             testblock[ index * 2 ] = name_bytes[ index ];
         }
-        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(512);
+        UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(512).get();
 
         property.writeData(stream);
         byte[] output = stream.toByteArray();

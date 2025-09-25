@@ -127,8 +127,11 @@ public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTFootnotes.type.getName().getNamespaceURI(), "footnotes"));
         PackagePart part = getPackagePart();
-        try (OutputStream out = part.getOutputStream()) {
-            ctFootnotes.save(out, xmlOptions);
+
+        if (ctFootnotes != null) {
+            try (OutputStream out = part.getOutputStream()) {
+                ctFootnotes.save(out, xmlOptions);
+            }
         }
     }
 

@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,12 +55,14 @@ public enum BreakType {
      */
     TEXT_WRAPPING(3);
 
-    private static Map<Integer, BreakType> imap = new HashMap<>();
+    private static final Map<Integer, BreakType> imap;
 
     static {
+        final Map<Integer, BreakType> tempMap = new HashMap<>();
         for (BreakType p : values()) {
-            imap.put(p.getValue(), p);
+            tempMap.put(p.getValue(), p);
         }
+        imap = Collections.unmodifiableMap(tempMap);
     }
 
     private final int value;

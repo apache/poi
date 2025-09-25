@@ -214,8 +214,12 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         CTGroupShapeProperties groupShapePropsCt = groupShapeCt.addNewGrpSpPr();
 
         CTGroupShapeNonVisual groupShapeNonVisualCt = groupShapeCt.addNewNvGrpSpPr();
-        groupShapeNonVisualCt.setCNvPr(msGroupShapeCt.getNvGrpSpPr().getCNvPr());
-        groupShapeNonVisualCt.setCNvGrpSpPr(msGroupShapeCt.getNvGrpSpPr().getCNvGrpSpPr());
+        final com.microsoft.schemas.office.drawing.x2008.diagram.CTGroupShapeNonVisual nvGrpSpPr =
+                msGroupShapeCt.getNvGrpSpPr();
+        if (nvGrpSpPr != null) {
+            groupShapeNonVisualCt.setCNvPr(nvGrpSpPr.getCNvPr());
+            groupShapeNonVisualCt.setCNvGrpSpPr(nvGrpSpPr.getCNvGrpSpPr());
+        }
         groupShapeNonVisualCt.setNvPr(CTApplicationNonVisualDrawingProps.Factory.newInstance());
 
         for (CTShape msShapeCt : msGroupShapeCt.getSpList()) {
@@ -239,7 +243,7 @@ public class XSLFDiagram extends XSLFGraphicFrame {
      * Diagrams store relationships to media in `drawing#.xml.rels`. These relationships are accessible using
      * {@link #getRelationById(String)}.
      */
-    static class XSLFDiagramGroupShape extends XSLFGroupShape {
+    public static class XSLFDiagramGroupShape extends XSLFGroupShape {
 
         private XSLFDiagramDrawing diagramDrawing;
 
@@ -255,7 +259,7 @@ public class XSLFDiagram extends XSLFGraphicFrame {
             this.diagramDrawing = diagramDrawing;
         }
 
-        POIXMLDocumentPart getRelationById(String id) {
+        public POIXMLDocumentPart getRelationById(String id) {
             return diagramDrawing.getRelationById(id);
         }
     }

@@ -37,7 +37,7 @@ import org.apache.tools.ant.Task;
  * <p>
  * In order to use this tag you must write a class that implements the
  * {@code IExcelAntWorkbookHandler} interface.  After writing the
- * class you should package it and it's dependencies into a jar file to
+ * class you should package it and its dependencies into a jar file to
  * add as library in your Ant build file.
  */
 public class ExcelAntHandlerTask extends Task {

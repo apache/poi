@@ -18,6 +18,7 @@
  */
 package org.apache.poi.hssf.record;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -278,7 +279,13 @@ public class DConRefRecord extends StandardRecord {
     }
 
     private static RecordInputStream bytesToRIStream(byte[] data) {
-        RecordInputStream ric = new RecordInputStream(new UnsynchronizedByteArrayInputStream(data));
+        RecordInputStream ric = null;
+        try {
+            ric = new RecordInputStream(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get());
+        } catch (IOException e) {
+            // not possible with ByteArray but still declared in the API
+            throw new IllegalStateException(e);
+        }
         ric.nextRecord();
         return ric;
     }

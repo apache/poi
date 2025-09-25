@@ -17,6 +17,7 @@
 package org.apache.poi.xwpf.usermodel;
 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 
 /**
@@ -37,6 +38,11 @@ public class XWPFSDT extends XWPFAbstractSDT
     public XWPFSDT(CTSdtBlock block, IBody part) {
         super(block.getSdtPr(), part);
         this.content = new XWPFSDTContent(block.getSdtContent(), part, this);
+    }
+
+    public XWPFSDT(CTSdtRow row, IBody part) {
+        super(row.getSdtPr(), part);
+        this.content = new XWPFSDTContent(row.getSdtContent(), part, this);
     }
 
     public ISDTContent getContent() {

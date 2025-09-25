@@ -17,6 +17,7 @@
 
 package org.apache.poi.xdgf.usermodel.section;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -72,6 +73,6 @@ enum XDGFSectionTypes {
         return l.constructor.apply(section, containingSheet);
     }
 
-    private static final Map<String, XDGFSectionTypes> LOOKUP =
-        Stream.of(values()).collect(Collectors.toMap(XDGFSectionTypes::getSectionType, Function.identity()));
+    private static final Map<String, XDGFSectionTypes> LOOKUP = Collections.unmodifiableMap(
+        Stream.of(values()).collect(Collectors.toMap(XDGFSectionTypes::getSectionType, Function.identity())));
 }

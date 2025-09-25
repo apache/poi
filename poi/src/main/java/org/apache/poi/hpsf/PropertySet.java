@@ -514,7 +514,7 @@ public class PropertySet {
     }
 
     private byte[] toBytes() throws WritingNotSupportedException, IOException {
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             LittleEndianOutputStream leos = new LittleEndianOutputStream(bos)) {
 
             /* Write the number of sections in this property set stream. */
@@ -575,8 +575,8 @@ public class PropertySet {
     public void write(final DirectoryEntry dir, final String name)
     throws WritingNotSupportedException, IOException {
         /* If there is already an entry with the same name, remove it. */
-        if (dir.hasEntry(name)) {
-            final Entry e = dir.getEntry(name);
+        if (dir.hasEntryCaseInsensitive(name)) {
+            final Entry e = dir.getEntryCaseInsensitive(name);
             e.delete();
         }
 
@@ -599,7 +599,7 @@ public class PropertySet {
      * @throws IOException if an I/O exception occurs.
      */
     public InputStream toInputStream() throws WritingNotSupportedException, IOException {
-        return new UnsynchronizedByteArrayInputStream(toBytes());
+        return UnsynchronizedByteArrayInputStream.builder().setByteArray(toBytes()).get();
     }
 
     /**

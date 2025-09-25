@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.hslf.HSLFTestDataSamples.getSlideShow;
 import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -30,6 +29,8 @@ import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,6 +39,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.output.CountingOutputStream;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -271,9 +273,9 @@ public final class TestPictures {
     @Test
     @Disabled("requires an internet connection to a 3rd party site")
     // As of 2017-06-20, the file still exists at the specified URL and the test passes.
-    void testZeroPictureLength() throws IOException {
+    void testZeroPictureLength() throws IOException, URISyntaxException {
         // take the data from www instead of test directory
-        URL url = new URL("http://www.cs.sfu.ca/~anoop/courses/CMPT-882-Fall-2002/chris.ppt");
+        URL url = new URI("http://www.cs.sfu.ca/~anoop/courses/CMPT-882-Fall-2002/chris.ppt").toURL();
         HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(url.openStream());
         /* Assume that the file could retrieved...
         InputStream is;
@@ -315,7 +317,7 @@ public final class TestPictures {
             assertEquals(PictureType.WMF, pdata.getType());
 
             //add a new picture, it should be correctly appended to the Pictures stream
-            CountingOutputStream out = new CountingOutputStream(NULL_OUTPUT_STREAM);
+            CountingOutputStream out = new CountingOutputStream(NullOutputStream.INSTANCE);
             for (HSLFPictureData p : pictures) p.write(out);
 
             int streamSize = out.getCount();

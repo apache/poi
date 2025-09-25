@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.functions.TestMathX;
@@ -47,7 +47,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 final class TestMatrixFormulasFromBinarySpreadsheet {
 
-    private static final Logger LOG = LogManager.getLogger(TestMatrixFormulasFromBinarySpreadsheet.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TestMatrixFormulasFromBinarySpreadsheet.class);
 
 
     private static HSSFWorkbook workbook;
@@ -101,7 +101,9 @@ final class TestMatrixFormulasFromBinarySpreadsheet {
     @AfterAll
     public static void closeResource() throws Exception {
         LocaleUtil.setUserLocale(userLocale);
-        workbook.close();
+        if (workbook != null) {
+            workbook.close();
+        }
     }
 
     /* generating parameter instances */

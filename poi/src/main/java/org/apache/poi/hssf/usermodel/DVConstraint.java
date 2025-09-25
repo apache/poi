@@ -231,7 +231,7 @@ public class DVConstraint implements DataValidationConstraint {
         try {
             return Double.valueOf(numberStr);
         } catch (NumberFormatException e) {
-            throw new RuntimeException("The supplied text '" + numberStr
+            throw new IllegalStateException("The supplied text '" + numberStr
                     + "' could not be parsed as a number");
         }
     }
@@ -260,7 +260,7 @@ public class DVConstraint implements DataValidationConstraint {
             try {
                 dateVal = dateFormat.parse(dateStr);
             } catch (ParseException e) {
-                throw new RuntimeException("Failed to parse date '" + dateStr
+                throw new IllegalStateException("Failed to parse date '" + dateStr
                         + "' using specified format '" + dateFormat + "'", e);
             }
         }
@@ -323,7 +323,7 @@ public class DVConstraint implements DataValidationConstraint {
     @Override
     public void setExplicitListValues(String[] explicitListValues) {
         if (_validationType != ValidationType.LIST) {
-            throw new RuntimeException("Cannot setExplicitListValues on non-list constraint");
+            throw new IllegalStateException("Cannot setExplicitListValues on non-list constraint");
         }
         _formula1 = null;
         _explicitListValues = explicitListValues;

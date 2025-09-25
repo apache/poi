@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +37,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
@@ -314,64 +317,66 @@ class TestBugs {
      * CharacterRun.replaceText()
      */
     @Test
-    void test47287() {
-        HWPFDocument doc = openSampleFile("Bug47287.doc");
-        String[] values = {"1-1", "1-2", "1-3", "1-4", "1-5", "1-6", "1-7",
-            "1-8", "1-9", "1-10", "1-11", "1-12", "1-13", "1-14", "1-15",};
-        int usedVal = 0;
-        String PLACEHOLDER = "\u2002\u2002\u2002\u2002\u2002";
-        Range r = doc.getRange();
-        for (int x = 0; x < r.numSections(); x++) {
-            Section s = r.getSection(x);
-            for (int y = 0; y < s.numParagraphs(); y++) {
-                Paragraph p = s.getParagraph(y);
+    void test47287() throws IOException {
+        try (HWPFDocument doc = openSampleFile("Bug47287.doc")) {
+            String[] values = { "1-1", "1-2", "1-3", "1-4", "1-5", "1-6", "1-7",
+                    "1-8", "1-9", "1-10", "1-11", "1-12", "1-13", "1-14", "1-15",
+            };
+            int usedVal = 0;
+            String PLACEHOLDER = "\u2002\u2002\u2002\u2002\u2002";
+            Range r = doc.getRange();
+            for (int x = 0; x < r.numSections(); x++) {
+                Section s = r.getSection(x);
+                for (int y = 0; y < s.numParagraphs(); y++) {
+                    Paragraph p = s.getParagraph(y);
 
-                for (int z = 0; z < p.numCharacterRuns(); z++) {
-                    boolean isFound = false;
+                    for (int z = 0; z < p.numCharacterRuns(); z++) {
+                        boolean isFound = false;
 
-                    // character run
-                    CharacterRun run = p.getCharacterRun(z);
-                    // character run text
-                    String text = run.text();
-                    String oldText = text;
-                    int c = text.indexOf("FORMTEXT ");
-                    if (c < 0) {
-                        int k = text.indexOf(PLACEHOLDER);
-                        if (k >= 0) {
-                            text = text.substring(0, k) + values[usedVal]
-                                + text.substring(k + PLACEHOLDER.length());
-                            usedVal++;
-                            isFound = true;
-                        }
-                    } else {
-                        for (; c >= 0; c = text.indexOf("FORMTEXT ", c
-                            + "FORMTEXT ".length())) {
-                            int k = text.indexOf(PLACEHOLDER, c);
+                        // character run
+                        CharacterRun run = p.getCharacterRun(z);
+                        // character run text
+                        String text = run.text();
+                        String oldText = text;
+                        int c = text.indexOf("FORMTEXT ");
+                        if (c < 0) {
+                            int k = text.indexOf(PLACEHOLDER);
                             if (k >= 0) {
-                                text = text.substring(0, k)
-                                    + values[usedVal]
-                                    + text.substring(k
-                                    + PLACEHOLDER.length());
+                                text = text.substring(0, k) + values[usedVal]
+                                        + text.substring(k + PLACEHOLDER.length());
                                 usedVal++;
                                 isFound = true;
                             }
+                        } else {
+                            for (; c >= 0; c = text.indexOf("FORMTEXT ", c
+                                    + "FORMTEXT ".length())) {
+                                int k = text.indexOf(PLACEHOLDER, c);
+                                if (k >= 0) {
+                                    text = text.substring(0, k)
+                                            + values[usedVal]
+                                            + text.substring(k
+                                            + PLACEHOLDER.length());
+                                    usedVal++;
+                                    isFound = true;
+                                }
+                            }
                         }
-                    }
-                    if (isFound) {
-                        run.replaceText(oldText, text, 0);
-                    }
+                        if (isFound) {
+                            run.replaceText(oldText, text, 0);
+                        }
 
+                    }
                 }
             }
+
+            String docText = r.text();
+
+            assertContains(docText, "1-1");
+            assertContains(docText, "1-12");
+
+            assertNotContained(docText, "1-13");
+            assertNotContained(docText, "1-15");
         }
-
-        String docText = r.text();
-
-        assertContains(docText, "1-1");
-        assertContains(docText, "1-12");
-
-        assertNotContained(docText, "1-13");
-        assertNotContained(docText, "1-15");
     }
 
     /**
@@ -718,10 +723,13 @@ class TestBugs {
         assertEquals(section2NumColumns, section.getNumColumns());
     }
 
+    /**
+     * [RESOLVED FIXED] Bug 57603 - failed to create Word 2003 with seven or more columns
+     */
     @Test
     void test57603SevenRowTable() throws Exception {
         try (HWPFDocument hwpfDocument = openSampleFile("57603-seven_columns.doc")) {
-            assertThrows(ArrayIndexOutOfBoundsException.class, () -> HWPFTestDataSamples.writeOutAndReadBack(hwpfDocument));
+            HWPFTestDataSamples.writeOutAndReadBack(hwpfDocument);
         }
     }
 
@@ -778,6 +786,28 @@ class TestBugs {
             PicturesTable picturesTable = doc.getPicturesTable();
             List<Picture> pictures = picturesTable.getAllPictures();
             assertNotNull(pictures);
+        }
+    }
+
+    //
+    @Test
+    void test58805() throws IOException {
+        try (HWPFDocument doc = openSampleFile("header_footer_replace.doc")) {
+
+            Range oRange = doc.getHeaderStoryRange();
+            for (int i = 0; i < oRange.numCharacterRuns(); i++) {
+                CharacterRun run = oRange.getCharacterRun(i);
+                run.replaceText("_TEST_", "This text is longer than the initial text. It goes on and on without interruption.");
+            }
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            doc.write(out);
+            out.flush();
+
+            POITextExtractor extractor = ExtractorFactory.createExtractor(new ByteArrayInputStream(out.toByteArray()));
+            assertThrows(IllegalArgumentException.class,
+                    () -> /*String text =*/ extractor.getText());
+            // assertFalse(text.contains("_TEST_"), "Had: " + text);
         }
     }
 }

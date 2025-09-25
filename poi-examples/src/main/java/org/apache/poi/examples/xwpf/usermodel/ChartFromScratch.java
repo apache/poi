@@ -146,6 +146,10 @@ public final class ChartFromScratch {
         chart.setTitleText(chartTitle);
         chart.setTitleOverlay(false);
         chart.setAutoTitleDeleted(false);
+
+        // temporary workaround for https://bz.apache.org/bugzilla/show_bug.cgi?id=67510
+        if (bottomAxis.hasNumberFormat()) bottomAxis.setNumberFormat("@");
+        if (leftAxis.hasNumberFormat()) leftAxis.setNumberFormat("#,##0.00");
     }
 
     private static final int COLUMN_LANGUAGES = 0;

@@ -205,7 +205,7 @@ public class HemfPlusObject {
                 ) {
                     other.linkContinuedObject(objectData);
                 } else {
-                    throw new RuntimeException("can't find previous record for continued record");
+                    throw new IllegalStateException("can't find previous record for continued record");
                 }
             } else {
                 ctx.addPlusObjectTableEntry(this, getObjectId());

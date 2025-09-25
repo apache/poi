@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -32,8 +33,8 @@ import java.util.List;
 
 import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.commons.io.output.NullOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.dev.BiffDumpingStream.IBiffRecordListener;
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.HSSFRecordTypes;
@@ -52,7 +53,7 @@ import org.apache.poi.util.StringUtil;
  */
 public final class BiffViewer {
     private static final char[] NEW_LINE_CHARS = System.getProperty("line.separator").toCharArray();
-    private static final Logger LOG = LogManager.getLogger(BiffViewer.class);
+    private static final Logger LOG = PoiLogManager.getLogger(BiffViewer.class);
     private static final String ESCHER_SERIALIZE = "poi.deserialize.escher";
     private static final int DUMP_LINE_LEN = 16;
     private static final char[] COLUMN_SEPARATOR = " | ".toCharArray();
@@ -197,7 +198,7 @@ public final class BiffViewer {
 
         if (os == null) {
             cs = Charset.defaultCharset();
-            osOut = NullOutputStream.NULL_OUTPUT_STREAM;
+            osOut = NullOutputStream.INSTANCE;
         } else if (os == System.out) {
             // Use the system default encoding when sending to System Out
             cs = Charset.defaultCharset();
@@ -311,7 +312,7 @@ public final class BiffViewer {
 
             w.write(buf, 0, idx);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

@@ -20,8 +20,8 @@ package org.apache.poi.hwpf.model;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -36,7 +36,7 @@ import org.apache.poi.util.LittleEndianConsts;
 @Internal
 public final class FontTable
 {
-    private static final Logger LOG = LogManager.getLogger(FontTable.class);
+    private static final Logger LOG = PoiLogManager.getLogger(FontTable.class);
     private short _stringCount;// how many strings are included in the string table
     private short _extraDataSz;// size in bytes of the extra data
 

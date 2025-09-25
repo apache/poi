@@ -21,8 +21,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
@@ -36,7 +36,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  */
 public final class FormatRecord extends StandardRecord {
 
-    private static final Logger LOG = LogManager.getLogger(FormatRecord.class);
+    private static final Logger LOG = PoiLogManager.getLogger(FormatRecord.class);
 
     public static final short sid = 0x041E;
 

@@ -62,8 +62,8 @@ import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSubTreeData;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -79,6 +79,7 @@ import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
+import org.apache.poi.util.NotImplemented;
 import org.apache.xml.security.Init;
 import org.apache.xml.security.utils.XMLUtils;
 import org.apache.xmlbeans.XmlOptions;
@@ -93,7 +94,7 @@ import org.w3c.dom.events.MutationEvent;
 
 /**
  * <p>This class is the default entry point for XML signatures and can be used for
- * validating an existing signed office document and signing a office document.</p>
+ * validating an existing signed office document and signing an office document.</p>
  *
  * <p><b>Validating a signed office document</b></p>
  *
@@ -153,14 +154,14 @@ import org.w3c.dom.events.MutationEvent;
  * <p>To use SignatureInfo and its sibling classes, you'll need to have the following libs
  * in the classpath:</p>
  * <ul>
- * <li>BouncyCastle bcpkix and bcprov (tested against 1.70)</li>
- * <li>Apache Santuario "xmlsec" (tested against 2.3.0)</li>
- * <li>and log4j-api (tested against 2.17.x)</li>
+ * <li>BouncyCastle bcpkix and bcprov (tested against 1.81)</li>
+ * <li>Apache Santuario "xmlsec" (tested against 3.0.x)</li>
+ * <li>and log4j-api (tested against 2.22.x)</li>
  * </ul>
  */
 public class SignatureInfo {
 
-    private static final Logger LOG = LogManager.getLogger(SignatureInfo.class);
+    private static final Logger LOG = PoiLogManager.getLogger(SignatureInfo.class);
 
     private SignatureConfig signatureConfig;
     private OPCPackage opcPackage;
@@ -341,12 +342,17 @@ public class SignatureInfo {
             return new SignaturePart(sigRelPart, SignatureInfo.this);
         }
 
+        /**
+         * This method is not yet supported.
+         *
+         * @throws UnsupportedOperationException this method is not yet supported
+         */
+        @NotImplemented
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }
     }
-
 
 
     /**
@@ -493,7 +499,7 @@ public class SignatureInfo {
          */
         String signatureId = signatureConfig.getPackageSignatureId();
         if (!signatureId.equals(document.getDocumentElement().getAttribute("Id"))) {
-            throw new RuntimeException("ds:Signature not found for @Id: " + signatureId);
+            throw new IllegalStateException("ds:Signature not found for @Id: " + signatureId);
         }
 
         /*
@@ -501,7 +507,7 @@ public class SignatureInfo {
          */
         final Element signatureNode = getDsigElement(document, "SignatureValue");
         if (signatureNode == null) {
-            throw new RuntimeException("preSign has to be called before postSign");
+            throw new IllegalStateException("preSign has to be called before postSign");
         }
         signatureNode.setTextContent(signatureValue);
 
@@ -626,32 +632,17 @@ public class SignatureInfo {
      */
     @SuppressWarnings("deprecation")
     protected void initXmlProvider() {
-        if (opcPackage == null) {
-            opcPackage = signatureConfig.getOpcPackage();
-        }
         if (provider == null) {
-            provider = signatureConfig.getProvider();
-            if (provider == null) {
-                provider = XmlProviderInitSingleton.getInstance().findProvider();
-            }
+            provider = XmlProviderInitSingleton.getInstance().findProvider();
         }
         if (signatureFactory == null) {
-            signatureFactory = signatureConfig.getSignatureFactory();
-            if (signatureFactory == null) {
-                signatureFactory = XMLSignatureFactory.getInstance("DOM", provider);
-            }
+            signatureFactory = XMLSignatureFactory.getInstance("DOM", provider);
         }
         if (keyInfoFactory == null) {
-            keyInfoFactory = signatureConfig.getKeyInfoFactory();
-            if (keyInfoFactory == null) {
-                keyInfoFactory = KeyInfoFactory.getInstance("DOM", provider);
-            }
+            keyInfoFactory = KeyInfoFactory.getInstance("DOM", provider);
         }
         if (uriDereferencer == null) {
-            uriDereferencer = signatureConfig.getUriDereferencer();
-            if (uriDereferencer == null) {
-                uriDereferencer = new OOXMLURIDereferencer();
-            }
+            uriDereferencer = new OOXMLURIDereferencer();
         }
         if (uriDereferencer instanceof OOXMLURIDereferencer) {
             ((OOXMLURIDereferencer)uriDereferencer).setSignatureInfo(this);
@@ -675,7 +666,7 @@ public class SignatureInfo {
                 RelationshipTransformService.registerDsigProvider();
                 CryptoFunctions.registerBouncyCastle();
             } catch (Exception e) {
-                throw new RuntimeException("Xml & BouncyCastle-Provider initialization failed", e);
+                throw new IllegalStateException("Xml & BouncyCastle-Provider initialization failed", e);
             }
         }
 
@@ -710,7 +701,7 @@ public class SignatureInfo {
         }
 
         private RuntimeException providerNotFound() {
-            return new RuntimeException("JRE doesn't support default xml signature provider - set jsr105Provider system property!");
+            return new IllegalStateException("JRE doesn't support default xml signature provider - set jsr105Provider system property!");
         }
     }
 

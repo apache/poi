@@ -49,7 +49,7 @@ final class TestSSTRecord {
      */
     private static byte[] concatHexDumps(String... hexDumpFileNames) throws IOException {
         int nFiles = hexDumpFileNames.length;
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(nFiles * 8228);
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(nFiles * 8228).get();
         for (String sampleFileName : hexDumpFileNames) {
             try (InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName)) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(is, LocaleUtil.CHARSET_1252));

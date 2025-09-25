@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -114,14 +115,10 @@ class TestDrawingAggregate {
          * @return the raw data being aggregated
          */
         byte[] getRawBytes(){
-            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
             for (RecordBase rb : aggRecords) {
                 Record r = (org.apache.poi.hssf.record.Record) rb;
-                try {
-                    out.write(r.serialize());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                out.write(r.serialize());
             }
             return out.toByteArray();
         }
@@ -136,7 +133,11 @@ class TestDrawingAggregate {
 
         File[] files = testData.listFiles((dir, name) -> name.endsWith(".xls"));
         assertNotNull(files, "Need to find files in test-data path, had path: " + testData);
-        return Stream.of(files).map(Arguments::of);
+        return Stream.of(files).
+                filter(file ->
+                        !file.getName().equals("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5285517825277952.xls") &&
+                        !file.getName().equals("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4977868385681408.xls")).
+                map(Arguments::of);
     }
 
     /**
@@ -161,6 +162,12 @@ class TestDrawingAggregate {
                 DrawingAggregateInfo info = DrawingAggregateInfo.get(sheet);
                 if(info != null) {
                     aggs.put(i, info);
+                    if (file.getName().equals("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5436547081830400.xls")) {
+                        assertThrows(IllegalArgumentException.class,
+                                sheet::getDrawingPatriarch);
+                        return;
+                    }
+
                     HSSFPatriarch p = sheet.getDrawingPatriarch();
 
                     // compare aggregate.serialize() with raw bytes from the record stream
@@ -170,7 +177,8 @@ class TestDrawingAggregate {
                     byte[] dgBytes2 = agg.serialize();
 
                     assertEquals(dgBytes1.length, dgBytes2.length, "different size of raw data ande aggregate.serialize()");
-                    assertArrayEquals(dgBytes1, dgBytes2, "raw drawing data (" + dgBytes1.length + " bytes) and aggregate.serialize() are different.");
+                    assertArrayEquals(dgBytes1, dgBytes2,
+                            "raw drawing data (" + dgBytes1.length + " bytes) and aggregate.serialize() are different.");
                 }
             }
 
@@ -222,7 +230,7 @@ class TestDrawingAggregate {
         assertEquals(dgBytes.length, pos, "data was not fully read");
 
         // serialize to byte array
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         for(EscherRecord r : records) {
             out.write(r.serialize());
         }
@@ -248,14 +256,10 @@ class TestDrawingAggregate {
     }
 
     private static byte[] toByteArray(List<RecordBase> records) {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         for (RecordBase rb : records) {
             Record r = (org.apache.poi.hssf.record.Record) rb;
-            try {
-                out.write(r.serialize());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            out.write(r.serialize());
         }
         return out.toByteArray();
     }

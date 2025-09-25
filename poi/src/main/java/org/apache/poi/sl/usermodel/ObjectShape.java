@@ -96,7 +96,7 @@ public interface ObjectShape<
 
         final Application app = Application.lookup(progId);
 
-        try (final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        try (final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
              final InputStream is = FileMagic.prepareToCheckMagic(readObjectDataRaw())) {
 
             final FileMagic fm = FileMagic.valueOf(is);
@@ -113,7 +113,7 @@ public interface ObjectShape<
                     final DirectoryNode root = poifs.getRoot();
                     String entryName = null;
                     for (String n : names) {
-                        if (root.hasEntry(n)) {
+                        if (root.hasEntryCaseInsensitive(n)) {
                             entryName = n;
                             break;
                         }

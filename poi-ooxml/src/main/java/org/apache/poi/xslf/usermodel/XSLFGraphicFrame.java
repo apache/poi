@@ -27,8 +27,8 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -37,6 +37,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.GraphicalFrame;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -54,12 +55,18 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 @Beta
 public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFShape, XSLFTextParagraph> {
     private static final String DRAWINGML_CHART_URI = "http://schemas.openxmlformats.org/drawingml/2006/chart";
-    private static final Logger LOG = LogManager.getLogger(XSLFGraphicFrame.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XSLFGraphicFrame.class);
 
     /*package*/ XSLFGraphicFrame(CTGraphicalObjectFrame shape, XSLFSheet sheet){
         super(shape,sheet);
     }
 
+    /**
+     * This method is not yet supported.
+     *
+     * @throws UnsupportedOperationException this method is not yet supported
+     */
+    @NotImplemented
     public ShapeType getShapeType(){
         throw new UnsupportedOperationException();
     }
@@ -67,12 +74,24 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
     @Override
     public Rectangle2D getAnchor(){
         CTTransform2D xfrm = ((CTGraphicalObjectFrame)getXmlObject()).getXfrm();
+        if (xfrm == null) {
+            throw new IllegalArgumentException("Could not retrieve an Xfrm from the XML object");
+        }
+
         CTPoint2D off = xfrm.getOff();
+        if (off == null || off.getX() == null || off.getY() == null) {
+            throw new IllegalArgumentException("Could not retrieve Off from the XML object");
+        }
         double x = Units.toPoints(POIXMLUnits.parseLength(off.xgetX()));
         double y = Units.toPoints(POIXMLUnits.parseLength(off.xgetY()));
+
         CTPositiveSize2D ext = xfrm.getExt();
+        if (ext == null) {
+            throw new IllegalArgumentException("Could not retrieve Ext from the XML object");
+        }
         double cx = Units.toPoints(ext.getCx());
         double cy = Units.toPoints(ext.getCy());
+
         return new Rectangle2D.Double(x, y, cx, cy);
     }
 

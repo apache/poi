@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+    <header>
+        <title>Apache POI™ - How To Build</title>
+        <authors>
+            <person email="user@poi.apache.org" name="Glen Stampoultzis" id="GS"/>
+            <person email="tetsuya@apache.org" name="Tetsuya Kitahata" id="TK"/>
+            <person email="dfisher@jmlafferty.com" name="David Fisher" id="DF"/>
+        </authors>
+    </header>
+    <body>
+        <section>
+          <title>JDK Version</title>
+          <p>
+            POI 4.0 and later require JDK version 1.8 or later. JDK version 11 is required to compile module support.
+          </p>
+          <p>
+            POI 3.11 and later 3.x versions require JDK version 1.6 or later.
+          </p>
+          <p>
+            POI 3.5 to 3.10 required the JDK version 1.5 or later.
+            Versions prior to 3.5 required JDK 1.4+.
+          </p>
+        </section>
+        <section>
+            <title>Install Apache Forrest</title>
+            <p>
+                The POI build system requires
+                <a href="https://forrest.apache.org/">Apache Forrest</a>
+                to build the documentation.
+            </p>
+            <p>
+                Specifically, the build has been tested to work with Forrest 0.9. When building with Forrest,
+                it is recommended to use Java 8.
+            </p>
+            <p>
+                Remember to set the FORREST_HOME environment variable.
+            </p>
+        </section>
+        <section>
+            <title>Building Targets with Gradle</title>
+            <p>
+                The main Apache POI build was traditionally done with <a href="https://ant.apache.org/">Apache Ant</a>.
+                In 2021, we moved to using <a href="https://gradle.org/">Gradle</a>.
+                After <a href="git.html">checking out</a> the POI code, you will find <strong>gradlew</strong> and
+                <strong>gradlew.bat</strong>. These command files are used for running Gradle on Linux/Mac and Windows respectively.
+                Gradlew checks if you the right version of Gradle installed and will install it if you don't.
+            </p>
+            <p>
+                Note that our source releases no longer contain gradlew or gradlew.bat. You can install the Gradle tool
+                yourself and use it to build POI.
+            </p>
+            <p>
+                The main targets of interest to our users are:
+            </p>
+            <table>
+                <tr>
+                    <th>Gradle Target</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>clean</td>
+                    <td>Erase all build work products (ie. everything in the
+                        build directory</td>
+                </tr>
+                <tr>
+                    <td>test</td>
+                    <td>Run all unit tests from main, ooxml and scratchpad</td>
+                </tr>
+                <tr>
+                    <td>jar</td>
+                    <td>Produce jar files</td>
+                </tr>
+                <tr>
+                    <td>jenkins</td>
+                    <td>
+                        Runs the tests which Jenkins, our Continuous Integration system, does. This includes the unit tests and various code quality checks.
+                        Also, packages up the jars and build distributions.
+                    </td>
+                </tr>
+            </table>
+            <p>
+                To run the tests from just one test class, use a command like:
+            </p>
+            <p>
+                ./gradlew poi-ooxml:test --tests *TestXSSFBugs
+            </p>
+            <p>
+                gradlew poi-ooxml:test --tests *TestXSSFBugs
+            </p>
+            <p>
+                The example command runs tests in the poi-ooxml sub-project that match the name '*TestXSSFBugs'.
+                The '*' wildcard is useful to avoid typing the full Java package name.
+            </p>
+        </section>
+        <section>
+            <title>Working with Eclipse</title>
+            <p>
+                Apache POI no longer includes a pre-defined Eclipse project file. When importing the POI project,
+                your IDE should recognise that there is Gradle support and offer to do the build using that.
+            </p>
+            <p>
+                First make sure that Java is set up properly and that you can execute the 'javac' executable in your shell.
+            </p>
+            <p>
+                Next, open Eclipse and create a copy of the Git repository,
+                and import the project into Eclipse.
+            </p>
+            <p>
+                Note: when executing junit tests from within Eclipse, you might need to set the system
+                property "POI.testdata.path" to the actual location of the 'test-data' directory to make
+                the test framework find the required test-files. A simple value of 'test-data' usually works.
+            </p>
+        </section>
+        <section>
+            <title>Working with IntelliJ Idea</title>
+            <p>
+                Import the Gradle project into your IDE. Execute a build to get all the dependencies and generated code
+                in place.
+            </p>
+            <p>
+                Note: when executing junit tests from within IntelliJ, you might need to set the system
+                property "POI.testdata.path" to the actual location of the 'test-data' directory to make
+                the test framework find the required test-files. A simple value of 'test-data' usually works.
+            </p>
+        </section>
+        <section>
+            <title>Setting environment variables</title>
+            <p>Linux:
+              <a href="https://help.ubuntu.com/community/EnvironmentVariables">help.ubuntu.com</a>,
+              <a href="http://unix.stackexchange.com/questions/117467/how-to-permanently-set-environmental-variables">unix.stackexchange.com</a>
+            </p>
+            <p>Windows:
+              <a href="https://en.wikipedia.org/wiki/Environment_variable#DOS.2C_OS.2F2_and_Windows">en.wikipedia.org</a>
+            </p>
+        </section>
+    </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache
+      POI project logo are trademarks of The Apache Software Foundation.
+    </legal>
+  </footer>
+</document>
+
+

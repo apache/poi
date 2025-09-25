@@ -20,8 +20,8 @@ package org.apache.poi.hmef.attribute;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.util.StringUtil;
@@ -31,7 +31,7 @@ import org.apache.poi.util.StringUtil;
  *  or one of its {@link Attachment}s.
  */
 public final class TNEFStringAttribute extends TNEFAttribute {
-   private static final Logger LOG = LogManager.getLogger(TNEFStringAttribute.class);
+   private static final Logger LOG = PoiLogManager.getLogger(TNEFStringAttribute.class);
    private final String data;
 
    /**
@@ -68,7 +68,7 @@ public final class TNEFStringAttribute extends TNEFAttribute {
    }
 
    /**
-    * Returns the string of a Attribute, converting as appropriate
+    * Returns the string of an Attribute, converting as appropriate
     */
    public static String getAsString(TNEFAttribute attr) {
       if(attr == null) {

@@ -130,7 +130,7 @@ final class TestPOIFSFileSystem {
      *  multiple of 512 bytes)
      *
      * As yet, this problem remains. One school of thought is
-     *  not not issue an EOF when we discover the last block
+     *  to not issue an EOF when we discover the last block
      *  is short, but this seems a bit wrong.
      * The other is to fix the handling of the last block in
      *  POIFS, since it seems to be slight wrong
@@ -142,7 +142,7 @@ final class TestPOIFSFileSystem {
         try (POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream(file))) {
 
             // Write it into a temp output array
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
             fs.writeFilesystem(baos);
 
             // Check sizes
@@ -181,7 +181,7 @@ final class TestPOIFSFileSystem {
              "BIG", new ByteArrayInputStream(hugeStream)
        );
 
-       UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+       UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
        fs.writeFilesystem(baos);
        byte[] fsData = baos.toByteArray();
 
@@ -214,7 +214,7 @@ final class TestPOIFSFileSystem {
 
        DirectoryNode root = fs.getRoot();
        assertEquals(1, root.getEntryCount());
-       DocumentNode big = (DocumentNode)root.getEntry("BIG");
+       DocumentNode big = (DocumentNode)root.getEntryCaseInsensitive("BIG");
        assertEquals(hugeStream.length, big.getSize());
     }
 

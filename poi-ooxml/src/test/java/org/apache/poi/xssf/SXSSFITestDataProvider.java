@@ -67,7 +67,7 @@ public class SXSSFITestDataProvider implements ITestDataProvider {
             throw new IllegalArgumentException("Expected an instance of SXSSFWorkbook");
         }
 
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             wb.write(baos);
             try (InputStream is = baos.toInputStream()) {
                 return new XSSFWorkbook(is);

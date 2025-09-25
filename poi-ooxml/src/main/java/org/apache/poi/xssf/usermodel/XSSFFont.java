@@ -392,17 +392,10 @@ public class XSSFFont implements Font {
     @Override
     public void setColor(short color) {
         CTColor ctColor = _ctFont.sizeOfColorArray() == 0 ? _ctFont.addNewColor() : _ctFont.getColorArray(0);
-        switch (color) {
-            case Font.COLOR_NORMAL: {
-                ctColor.setIndexed(XSSFFont.DEFAULT_FONT_COLOR);
-                break;
-            }
-            case Font.COLOR_RED: {
-                ctColor.setIndexed(IndexedColors.RED.getIndex());
-                break;
-            }
-            default:
-                ctColor.setIndexed(color);
+        if (color == Font.COLOR_NORMAL) {
+            ctColor.setIndexed(XSSFFont.DEFAULT_FONT_COLOR);
+        } else {
+            ctColor.setIndexed(color);
         }
     }
 
@@ -418,7 +411,7 @@ public class XSSFFont implements Font {
             if (ctColor.isSetIndexed()) {
                 ctColor.unsetIndexed();
             }
-            ctColor.setRgb(color.getRGB());
+            ctColor.setRgb(color.getARGB());
         }
     }
 

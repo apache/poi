@@ -152,7 +152,7 @@ public class DummyKeystore {
     public DummyKeystore(String pfxInput, String storePass) throws GeneralSecurityException, IOException {
         CryptoFunctions.registerBouncyCastle();
         keystore = KeyStore.getInstance("PKCS12");
-        try (InputStream fis = new UnsynchronizedByteArrayInputStream(RawDataUtil.decompress(pfxInput))) {
+        try (InputStream fis = UnsynchronizedByteArrayInputStream.builder().setByteArray(RawDataUtil.decompress(pfxInput)).get()) {
             keystore.load(fis, storePass.toCharArray());
         }
     }

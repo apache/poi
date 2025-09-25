@@ -67,7 +67,7 @@ public final class WorkbookFactory {
      * @return The created workbook
      *
      * @throws IOException if an error occurs while creating the objects
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public static Workbook create(boolean xssf) throws IOException {
@@ -85,7 +85,7 @@ public final class WorkbookFactory {
      * @return The created workbook
      *
      * @throws IOException if an error occurs while reading the data
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public static Workbook create(POIFSFileSystem fs) throws IOException {
@@ -105,7 +105,7 @@ public final class WorkbookFactory {
      *  @return The created Workbook
      *
      *  @throws IOException if an error occurs while reading the data
-     *  @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     *  @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      *  input format
      */
     private static Workbook create(final POIFSFileSystem fs, String password) throws IOException {
@@ -124,7 +124,7 @@ public final class WorkbookFactory {
      * @return The created Workbook
      *
      * @throws IOException if an error occurs while reading the data
-     * @throws RuntimeException a number of other exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public static Workbook create(final DirectoryNode root) throws IOException {
@@ -145,12 +145,12 @@ public final class WorkbookFactory {
      * @return The created Workbook
      *
      * @throws IOException if an error occurs while reading the data
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public static Workbook create(final DirectoryNode root, String password) throws IOException {
         // Encrypted OOXML files go inside OLE2 containers, is this one?
-        if (root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE)) {
+        if (root.hasEntryCaseInsensitive(DEFAULT_POIFS_ENTRY) || root.hasEntryCaseInsensitive(OOXML_PACKAGE)) {
             return wp(FileMagic.OOXML, w -> w.create(root, password));
         } else {
             return wp(FileMagic.OLE2, w ->  w.create(root, password));
@@ -178,7 +178,7 @@ public final class WorkbookFactory {
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the Workbook given is password protected
      *  @throws EmptyFileException If the given data is empty
-     *  @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     *  @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      *  input format
      */
     public static Workbook create(InputStream inp) throws IOException, EncryptedDocumentException {
@@ -207,7 +207,7 @@ public final class WorkbookFactory {
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
      *  @throws EmptyFileException If the given data is empty
-     *  @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     *  @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      *  input format
      */
     public static Workbook create(InputStream inp, String password) throws IOException, EncryptedDocumentException {
@@ -230,7 +230,7 @@ public final class WorkbookFactory {
 
         POIFSFileSystem poifs = new POIFSFileSystem(is);
         DirectoryNode root = poifs.getRoot();
-        boolean isOOXML = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
+        boolean isOOXML = root.hasEntryCaseInsensitive(DEFAULT_POIFS_ENTRY) || root.hasEntryCaseInsensitive(OOXML_PACKAGE);
 
         return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(root, password));
     }
@@ -248,7 +248,7 @@ public final class WorkbookFactory {
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the Workbook given is password protected
      *  @throws EmptyFileException If the given data is empty
-     *  @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     *  @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      *  input format
      */
     public static Workbook create(File file) throws IOException, EncryptedDocumentException {
@@ -270,7 +270,7 @@ public final class WorkbookFactory {
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
      *  @throws EmptyFileException If the given data is empty
-     *  @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     *  @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      *  input format
      */
     public static Workbook create(File file, String password) throws IOException, EncryptedDocumentException {
@@ -294,7 +294,7 @@ public final class WorkbookFactory {
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
      *  @throws EmptyFileException If the given data is empty
-     *  @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     *  @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      *  input format
      */
     public static Workbook create(File file, String password, boolean readOnly) throws IOException, EncryptedDocumentException {
@@ -313,7 +313,7 @@ public final class WorkbookFactory {
             final boolean ooxmlEnc;
             try (POIFSFileSystem fs = new POIFSFileSystem(file, true)) {
                 DirectoryNode root = fs.getRoot();
-                ooxmlEnc = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
+                ooxmlEnc = root.hasEntryCaseInsensitive(DEFAULT_POIFS_ENTRY) || root.hasEntryCaseInsensitive(OOXML_PACKAGE);
             }
             return wp(ooxmlEnc ? FileMagic.OOXML : fm, w -> w.create(file, password, readOnly));
         } else {

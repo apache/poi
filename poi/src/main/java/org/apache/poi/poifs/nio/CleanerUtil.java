@@ -17,6 +17,7 @@
 
 package org.apache.poi.poifs.nio;
 
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.SuppressForbidden;
 
 import java.io.IOException;
@@ -179,12 +180,17 @@ public final class CleanerUtil {
                     (PrivilegedAction<Throwable>) () -> {
                         try {
                             unmapper.invokeExact(buffer);
-                            return null;
                         } catch (Throwable t) {
-                            return t;
+                            if (ExceptionUtil.isFatal(t)) {
+                                ExceptionUtil.rethrow(t);
+                            }
                         }
+                        return null;
                     });
             if (error != null) {
+                if (ExceptionUtil.isFatal(error)) {
+                    ExceptionUtil.rethrow(error);
+                }
                 throw new IOException("Unable to unmap the mapped buffer", error);
             }
         };

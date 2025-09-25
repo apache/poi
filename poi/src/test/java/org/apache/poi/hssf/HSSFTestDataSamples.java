@@ -43,8 +43,8 @@ public final class HSSFTestDataSamples {
     }
 
     public static HSSFWorkbook openSampleWorkbook(String sampleFileName) {
-        try {
-            return new HSSFWorkbook(_inst.openResourceAsStream(sampleFileName));
+        try (InputStream stream = _inst.openResourceAsStream(sampleFileName)){
+            return new HSSFWorkbook(stream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -55,7 +55,7 @@ public final class HSSFTestDataSamples {
      * Useful for verifying that the serialisation round trip
      */
     public static HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             original.write(baos);
             try (InputStream is = baos.toInputStream()) {
                 return new HSSFWorkbook(is);

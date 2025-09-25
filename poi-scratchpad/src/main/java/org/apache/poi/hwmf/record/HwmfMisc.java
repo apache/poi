@@ -528,7 +528,7 @@ public class HwmfMisc {
             case BS_DIBPATTERN8X8:
             case BS_MONOPATTERN:
             case BS_PATTERN8X8:
-                throw new RuntimeException("pattern not supported");
+                throw new IllegalStateException("pattern not supported");
             }
             return size;
         }

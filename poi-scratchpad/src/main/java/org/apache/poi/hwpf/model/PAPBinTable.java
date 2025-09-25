@@ -26,8 +26,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.SprmIterator;
 import org.apache.poi.hwpf.sprm.SprmOperation;
@@ -46,7 +46,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 @Internal
 public class PAPBinTable
 {
-    private static final Logger LOG = LogManager.getLogger(PAPBinTable.class);
+    private static final Logger LOG = PoiLogManager.getLogger(PAPBinTable.class);
 
     protected final ArrayList<PAPX> _paragraphs = new ArrayList<>();
 
@@ -366,7 +366,7 @@ public class PAPBinTable
     }
 
     public void writeTo( ByteArrayOutputStream wordDocumentStream,
-            ByteArrayOutputStream tableStream, CharIndexTranslator translator )
+            ByteArrayOutputStream tableStream, ByteArrayOutputStream dataStream, CharIndexTranslator translator )
             throws IOException
     {
 
@@ -401,7 +401,7 @@ public class PAPBinTable
             PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage();
             pfkp.fill(overflow);
 
-            byte[] bufFkp = pfkp.toByteArray(tableStream, translator);
+            byte[] bufFkp = pfkp.toByteArray(dataStream, translator);
             wordDocumentStream.write(bufFkp);
             overflow = pfkp.getOverflow();
 

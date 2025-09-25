@@ -152,7 +152,7 @@ final class TestXSSFBubbleChartData {
             setRoundedCorners(chart, false);
 
             // Write the output to a file
-            try (UnsynchronizedByteArrayOutputStream outStream = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream outStream = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 wb.write(outStream);
                 try (XSSFWorkbook wb2 = new XSSFWorkbook(outStream.toInputStream())) {
                     // see if this fails

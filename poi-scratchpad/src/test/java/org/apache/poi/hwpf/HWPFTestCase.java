@@ -49,7 +49,7 @@ public abstract class HWPFTestCase {
     }
 
     public HWPFDocument writeOutAndRead(HWPFDocument doc) {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             doc.write(baos);
             try (InputStream is = baos.toInputStream()) {
                 return new HWPFDocument(is);

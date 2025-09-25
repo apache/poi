@@ -87,7 +87,7 @@ public final class NamePtg extends OperandPtg implements WorkbookDependentFormul
 
     @Override
     public String toFormulaString() {
-        throw new RuntimeException("3D references need a workbook to determine formula text");
+        throw new IllegalStateException("3D references need a workbook to determine formula text");
     }
 
     @Override

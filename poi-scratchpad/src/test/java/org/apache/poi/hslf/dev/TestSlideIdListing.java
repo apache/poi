@@ -20,12 +20,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
 public class TestSlideIdListing extends BaseTestPPTIterating {
+    static final Set<String> LOCAL_EXCLUDED = new HashSet<>();
+    static {
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-5306877435838464.ppt");
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
+    }
+
     @Test
     void testMain() throws IOException {
         // calls System.exit(): SlideIdListing.main(new String[0]);
@@ -37,6 +45,12 @@ public class TestSlideIdListing extends BaseTestPPTIterating {
 
     @Override
     void runOneFile(File pFile) throws Exception {
-        SlideIdListing.main(new String[]{pFile.getAbsolutePath()});
+        try {
+            SlideIdListing.main(new String[]{pFile.getAbsolutePath()});
+        } catch (RuntimeException e) {
+            if (!LOCAL_EXCLUDED.contains(pFile.getName())) {
+                throw e;
+            }
+        }
     }
 }

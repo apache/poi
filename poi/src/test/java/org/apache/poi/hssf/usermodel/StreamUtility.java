@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public final class StreamUtility {
             result = diffInternal(isA, isB, allowableDifferenceRegions);
             success = true;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         } finally {
             close(isA, success);
             close(isB, success);
@@ -70,7 +71,7 @@ public final class StreamUtility {
         } catch (IOException e) {
             if(success) {
                 // this is a new error. ok to throw
-                throw new RuntimeException(e);
+                throw new UncheckedIOException(e);
             }
             // else don't subvert original exception. just print stack trace for this one
             e.printStackTrace();

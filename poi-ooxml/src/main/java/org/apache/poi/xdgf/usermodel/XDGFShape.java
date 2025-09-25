@@ -27,6 +27,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -307,7 +308,7 @@ public class XDGFShape extends XDGFSheet {
      */
     // -> May be null
     public List<XDGFShape> getShapes() {
-        return _shapes;
+        return _shapes == null ? null : Collections.unmodifiableList(_shapes);
     }
 
     // unique to this shape on the page?
@@ -845,7 +846,7 @@ public class XDGFShape extends XDGFSheet {
 
     /**
      * @return returns bounds as a path in local coordinates, which is
-     *         userful if you need to transform to global coordinates
+     *         useful if you need to transform to global coordinates
      *
      * Warning: Don't use this for 1d objects, and will fail for
      *          infinite line objects

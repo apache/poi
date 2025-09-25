@@ -81,7 +81,7 @@ public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
     public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
         final XSSFCell cell = ((XSSFEvaluationCell)evalCell).getXSSFCell();
         final int sheetIndex = _uBook.getSheetIndex(cell.getSheet());
-        final int rowIndex = cell.getRowIndex();
-        return FormulaParser.parse(cell.getCellFormula(this), this, FormulaType.CELL, sheetIndex, rowIndex);
+        return FormulaParser.parse(cell.getCellFormula(this), this,
+                FormulaType.CELL, sheetIndex, cell.getRowIndex());
     }
 }

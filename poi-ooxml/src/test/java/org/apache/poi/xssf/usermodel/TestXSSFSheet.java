@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -240,6 +241,26 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         }
     }
 
+    @Test
+    void autoSizeColumnWithArbitraryExtraWidth() throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet("Sheet 1");
+            XSSFCell cell = sheet.createRow(0).createCell(13);
+            cell.setCellValue("test");
+            sheet.autoSizeColumn(13);
+            final int size1 = sheet.getColumnWidth(13);
+
+            sheet.setArbitraryExtraWidth(10.0);
+            sheet.autoSizeColumn(13);
+            final int size2 = sheet.getColumnWidth(13);
+
+            assertEquals(size1 + 10, size2);
+
+            ColumnHelper columnHelper = sheet.getColumnHelper();
+            CTCol col = columnHelper.getColumn(13, false);
+            assertTrue(col.getBestFit());
+        }
+    }
 
     @Test
     void setCellComment() throws IOException {
@@ -337,6 +358,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             sheet.removeMergedRegion(1);
             assertEquals("E5:F6", ctWorksheet.getMergeCells().getMergeCellArray(1).getRef());
             assertEquals(2, sheet.getNumMergedRegions());
+            assertEquals(2, ctWorksheet.getMergeCells().getCount());
             sheet.removeMergedRegion(1);
             sheet.removeMergedRegion(0);
             assertEquals(0, sheet.getNumMergedRegions());
@@ -346,11 +368,15 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertEquals(1, sheet.addMergedRegion(region_2));
             assertEquals(2, sheet.addMergedRegion(region_3));
             assertEquals(3, sheet.addMergedRegion(region_4));
+            assertEquals(4, sheet.getNumMergedRegions());
+            assertEquals(4, ctWorksheet.getMergeCells().getCount());
             // test invalid indexes OOBE
             Set<Integer> rmIdx = new HashSet<>(Arrays.asList(5, 6));
             sheet.removeMergedRegions(rmIdx);
             rmIdx = new HashSet<>(Arrays.asList(1, 3));
             sheet.removeMergedRegions(rmIdx);
+            assertEquals(2, sheet.getNumMergedRegions());
+            assertEquals(2, ctWorksheet.getMergeCells().getCount());
             assertEquals("A1:B2", ctWorksheet.getMergeCells().getMergeCellArray(0).getRef());
             assertEquals("E5:F6", ctWorksheet.getMergeCells().getMergeCellArray(1).getRef());
         }
@@ -386,7 +412,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     void saveGroupColumns() throws IOException {
         try (
                 XSSFWorkbook workbook = new XSSFWorkbook();
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             XSSFSheet sheet = workbook.createSheet();
             XSSFRow row0 = sheet.createRow(0);
@@ -2268,7 +2294,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     void testBug64536() throws IOException {
         try (
                 XSSFWorkbook xssfWorkbook = (XSSFWorkbook) _testDataProvider.openSampleWorkbook("1_NoIden.xlsx");
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             XSSFSheet fileSheet = xssfWorkbook.getSheetAt(0);
             assertEquals(CellRangeAddress.valueOf("B1:D9"), fileSheet.getDimension());
@@ -2385,5 +2411,32 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         }
         sheet.addHyperlink(hyperlink);
         return wb;
+    }
+
+    @Test
+    void testSetBlankOnNestedSharedFormulas() throws IOException {
+        try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("testSharedFormulasSetBlank.xlsx")) {
+            XSSFSheet s1 = wb1.getSheetAt(0);
+            assertNotNull(s1);
+            Iterator<Row> rowIterator = s1.rowIterator();
+            int count = 0;
+            StringBuilder sb = new StringBuilder();
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+                Iterator<Cell> cellIterator = row.cellIterator();
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+
+                    // the toString is needed to exhibit the broken state
+                    sb.append(cell.toString()).append(",");
+                    count++;
+
+                    // breaks the sheet state
+                    cell.setBlank();
+                }
+            }
+            assertEquals(10, count);
+            assertEquals("2-1,2-1,1+2,2-1,2-1,3+3,3+3,3+3,2-1,2-1,", sb.toString());
+        }
     }
 }

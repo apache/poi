@@ -30,8 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherPropertyTypes;
@@ -65,7 +65,7 @@ import org.apache.poi.util.Units;
  */
 public abstract class HSLFTextShape extends HSLFSimpleShape
 implements TextShape<HSLFShape,HSLFTextParagraph> {
-    private static final Logger LOG = LogManager.getLogger(HSLFTextShape.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HSLFTextShape.class);
 
     /**
      * How to anchor the text
@@ -860,7 +860,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public void setTextPlaceholder(TextPlaceholder placeholder) {
-        // TOOD: check for correct placeholder handling - see org.apache.poi.hslf.model.Placeholder
+        // TODO: check for correct placeholder handling - see org.apache.poi.hslf.model.Placeholder
         Placeholder ph = null;
         int runType;
         switch (placeholder) {

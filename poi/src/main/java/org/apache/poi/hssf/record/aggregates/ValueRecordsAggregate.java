@@ -101,15 +101,15 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
         }
         int row = cell.getRow();
         if (row >= records.length) {
-            throw new RuntimeException("cell row is out of range");
+            throw new IllegalStateException("cell row is out of range");
         }
         CellValueRecordInterface[] rowCells = records[row];
         if (rowCells == null) {
-            throw new RuntimeException("cell row is already empty");
+            throw new IllegalStateException("cell row is already empty");
         }
         short column = cell.getColumn();
         if (column >= rowCells.length) {
-            throw new RuntimeException("cell column is out of range");
+            throw new IllegalStateException("cell column is out of range");
         }
         rowCells[column] = null;
     }

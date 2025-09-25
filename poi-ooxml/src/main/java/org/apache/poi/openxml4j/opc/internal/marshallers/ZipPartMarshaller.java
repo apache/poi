@@ -21,17 +21,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Objects;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.StreamHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
@@ -47,7 +49,7 @@ import org.w3c.dom.Element;
  * Zip part marshaller. This marshaller is use to save any part in a zip stream.
  */
 public final class ZipPartMarshaller implements PartMarshaller {
-    private static final Logger LOG = LogManager.getLogger(ZipPartMarshaller.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ZipPartMarshaller.class);
 
     /**
      * Save the specified part to the given stream.
@@ -65,7 +67,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
             throws OpenXML4JException {
         if (!(os instanceof ZipArchiveOutputStream)) {
             LOG.atError().log("Unexpected class {}", os.getClass().getName());
-            throw new OpenXML4JException("ZipOutputStream expected !");
+            throw new OpenXML4JException("ZipArchiveOutputStream expected !");
             // Normally should happen only in development phase, so just throw
             // exception
         }
@@ -81,6 +83,8 @@ public final class ZipPartMarshaller implements PartMarshaller {
                 .getZipItemNameFromOPCName(part.getPartName().getURI()
                         .getPath()));
         try {
+            ZipHelper.adjustEntryTime(partEntry);
+
             // Create next zip entry
             zos.putArchiveEntry(partEntry);
 
@@ -100,7 +104,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
             PackagePartName relationshipPartName = PackagingURIHelper
                     .getRelationshipPartName(part.getPartName());
 
-            marshallRelationshipPart(part.getRelationships(),
+            return marshallRelationshipPart(part.getRelationships(),
                     relationshipPartName, zos);
         }
 
@@ -154,7 +158,14 @@ public final class ZipPartMarshaller implements PartMarshaller {
             // the relationship Target
             String targetValue;
             URI uri = rel.getTargetURI();
-            if (rel.getTargetMode() == TargetMode.EXTERNAL) {
+            if (Objects.equals(rel.getRelationshipType(), PackageRelationshipTypes.HYPERLINK_PART)) {
+                // Save the target as-is - we don't need to validate it,
+                targetValue = uri.toString();
+                if (rel.getTargetMode() == TargetMode.EXTERNAL) {
+                    // add TargetMode attribute (as it is external link external)
+                    relElem.setAttribute(PackageRelationship.TARGET_MODE_ATTRIBUTE_NAME, "External");
+                }
+            } else if (rel.getTargetMode() == TargetMode.EXTERNAL) {
                 // Save the target as-is - we don't need to validate it,
                 //  alter it etc
                 targetValue = uri.toString();
@@ -178,6 +189,8 @@ public final class ZipPartMarshaller implements PartMarshaller {
         ZipArchiveEntry ctEntry = new ZipArchiveEntry(ZipHelper.getZipURIFromOPCName(
                 relPartName.getURI().toASCIIString()).getPath());
         try {
+            ZipHelper.adjustEntryTime(ctEntry);
+
             zos.putArchiveEntry(ctEntry);
             try {
                 return StreamHelper.saveXmlInStream(xmlOutDoc, zos);

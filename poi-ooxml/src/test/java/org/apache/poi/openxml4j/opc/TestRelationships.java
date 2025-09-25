@@ -30,25 +30,26 @@ import java.net.URI;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.junit.jupiter.api.Test;
 
 
 class TestRelationships {
     private static final String HYPERLINK_REL_TYPE =
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";
+        PackageRelationshipTypes.HYPERLINK_PART;
     private static final String COMMENTS_REL_TYPE =
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments";
+        XSSFRelation.SHEET_COMMENTS.getRelation();
     private static final String SHEET_WITH_COMMENTS =
         "/xl/worksheets/sheet1.xml";
 
-    private static final Logger LOG = LogManager.getLogger(TestPackageCoreProperties.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TestRelationships.class);
 
     /**
      * Test relationships are correctly loaded. This at the moment fails (as of r499)
-     * whenever a document is loaded before its correspondig .rels file has been found.
+     * whenever a document is loaded before its corresponding .rels file has been found.
      * The code in this case assumes there are no relationships defined, but it should
      * really look also for not yet loaded parts.
      */
@@ -198,7 +199,7 @@ class TestRelationships {
 
 
         // Write out and re-load
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         pkg.save(baos);
 
         // use revert to not re-write the input file
@@ -226,7 +227,7 @@ class TestRelationships {
 
     @Test
     void testCreateRelationsFromScratch() throws Exception {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         OPCPackage pkg = OPCPackage.create(baos);
 
         PackagePart partA =
@@ -298,7 +299,7 @@ class TestRelationships {
         OPCPackage pkg = OPCPackage.open(filepath);
         assert_50154(pkg);
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         pkg.save(baos);
 
         // use revert to not re-write the input file
@@ -319,14 +320,18 @@ class TestRelationships {
         // expected one image
         assertEquals(1, drawingPart.getRelationshipsByType(IMAGE_PART).size());
         // and three hyperlinks
-        assertEquals(5, drawingPart.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink").size());
+        assertEquals(5, drawingPart.getRelationshipsByType(HYPERLINK_REL_TYPE).size());
 
         PackageRelationship rId1 = drawingPart.getRelationship("rId1");
+        assertNotNull(rId1);
         URI parent = drawingPart.getPartName().getURI();
+        // Hyperlink is not a target of relativize() because it is not resolved based on sourceURI in getTargetURI()
         URI rel1 = parent.relativize(rId1.getTargetURI());
-        URI rel11 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId1.getTargetURI());
         assertEquals("'Another Sheet'!A1", rel1.getFragment());
-        assertEquals("'Another Sheet'!A1", rel11.getFragment());
+        URI rel11 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId1.getTargetURI());
+        // the following changed with https://github.com/apache/poi/pull/617
+        //assertEquals("'Another Sheet'!A1", rel11.getFragment());
+        assertNull(rel11.getFragment());
 
         PackageRelationship rId2 = drawingPart.getRelationship("rId2");
         URI rel2 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId2.getTargetURI());
@@ -353,7 +358,7 @@ class TestRelationships {
 
    @Test
    void testSelfRelations_bug51187() throws Exception {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         PackageRelationship rel1;
         try (OPCPackage pkg = OPCPackage.create(baos)) {
 
@@ -399,7 +404,7 @@ class TestRelationships {
             assertEquals("mailto:nobody@nowhere.uk%C2%A0", targetUri.toASCIIString());
             assertEquals("nobody@nowhere.uk\u00A0", targetUri.getSchemeSpecificPart());
 
-            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
             pkg1.save(out);
 
             try (OPCPackage pkg2 = OPCPackage.open(out.toInputStream())) {

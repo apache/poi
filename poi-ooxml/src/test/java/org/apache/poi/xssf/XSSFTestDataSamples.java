@@ -18,10 +18,10 @@
 package org.apache.poi.xssf;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -52,8 +52,7 @@ public class XSSFTestDataSamples {
         }
     }
     public static XSSFWorkbook openSampleWorkbook(String sampleName) {
-        InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleName);
-        try {
+        try (InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleName)) {
             return new XSSFWorkbook(is);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -76,7 +75,7 @@ public class XSSFTestDataSamples {
     }
 
     private static <R extends Workbook> void writeOut(R wb, File file) throws IOException {
-        try (FileOutputStream out = new FileOutputStream(file)) {
+        try (OutputStream out = Files.newOutputStream(file.toPath())) {
             wb.write(out);
         }
     }
@@ -116,7 +115,7 @@ public class XSSFTestDataSamples {
      * @throws IOException If writing the file fails
      */
     public static <R extends Workbook> UnsynchronizedByteArrayOutputStream writeOut(R wb) throws IOException {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(8192);
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(8192).get();
         wb.write(out);
         return out;
     }
@@ -139,7 +138,7 @@ public class XSSFTestDataSamples {
      * @param wb The workbook to write out, it is closed after the call.
      * @param testName file name to be used to write to a file. This file will be cleaned up by a call to readBack(String)
      * @return workbook location
-     * @throws RuntimeException if {@link #TEST_OUTPUT_DIR} System property is not set
+     * @throws IllegalStateException if {@link #TEST_OUTPUT_DIR} System property is not set
      */
     public static <R extends Workbook> File writeOutAndClose(R wb, String testName) {
         try {
@@ -160,7 +159,7 @@ public class XSSFTestDataSamples {
      *
      * @param wb the workbook to write
      * @return the memory buffer
-     * @throws RuntimeException If writing the file fails
+     * @throws IllegalStateException If writing the file fails
      */
     public static <R extends Workbook> UnsynchronizedByteArrayOutputStream writeOutAndClose(R wb) throws IOException {
         UnsynchronizedByteArrayOutputStream out = writeOut(wb);
@@ -197,7 +196,7 @@ public class XSSFTestDataSamples {
      * @throws IOException If reading the file fails
      */
     public static XSSFWorkbook readBack(File file) throws IOException {
-        try (InputStream in = new FileInputStream(file)) {
+        try (InputStream in = Files.newInputStream(file.toPath())) {
             return new XSSFWorkbook(in);
         }
     }

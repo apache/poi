@@ -169,7 +169,8 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
             throw new IllegalArgumentException("buffer must not be null");
         }
         if (off < 0 || len < 0 || b.length < off + len) {
-            throw new IndexOutOfBoundsException("can't read past buffer boundaries");
+            throw new IndexOutOfBoundsException("can't read past buffer boundaries with off: " + off +
+                    ", len: " + len + ", b.length: " + b.length);
         }
         if (len == 0) {
             return 0;

@@ -32,7 +32,7 @@ import org.apache.poi.util.LittleEndian;
  * What MSDN says about  <code>OutlineTextRefAtom</code>:
  * <p>
  * Appears in a slide to indicate a text that is already contained in the document,
- * in a SlideListWithText containter. Sometimes slide texts are not contained
+ * in a SlideListWithText container. Sometimes slide texts are not contained
  * within the slide container to be able to delay loading a slide and still display
  * the title and body text in outline view.
  */

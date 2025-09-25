@@ -24,16 +24,17 @@ import java.io.OutputStream;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 
+@Internal
 public final class StreamHelper {
 
     private StreamHelper() {
@@ -53,8 +54,10 @@ public final class StreamHelper {
     public static boolean saveXmlInStream(Document xmlContent,
                                           OutputStream outStream) {
         try {
+            // https://bz.apache.org/bugzilla/show_bug.cgi?id=67396
+            xmlContent.setXmlStandalone(true);
             Transformer trans = XMLHelper.newTransformer();
-            Source xmlSource = new DOMSource(xmlContent);
+            DOMSource xmlSource = new DOMSource(xmlContent);
             // prevent close of stream by transformer:
             Result outputTarget = new StreamResult(new FilterOutputStream(
                     outStream) {
@@ -69,7 +72,6 @@ public final class StreamHelper {
                     out.flush(); // only flush, don't close!
                 }
             });
-            // xmlContent.setXmlStandalone(true);
             trans.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             // don't indent xml documents, the indent will cause errors in calculating the xml signature
             // because of different handling of linebreaks in Windows/Unix

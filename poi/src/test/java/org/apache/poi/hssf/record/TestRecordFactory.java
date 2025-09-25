@@ -19,7 +19,8 @@ package org.apache.poi.hssf.record;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,13 +28,17 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexRead;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Tests the record factory
  */
+@Isolated // changes static values, so other tests should not run at the same time
 final class TestRecordFactory {
 
 
@@ -178,14 +183,14 @@ final class TestRecordFactory {
 
         List<org.apache.poi.hssf.record.Record> records = RecordFactory.createRecords(new ByteArrayInputStream(data));
         assertEquals(5, records.size());
-        assertTrue(records.get(0) instanceof ObjRecord);
-        assertTrue(records.get(1) instanceof DrawingRecord);
-        assertTrue(records.get(2) instanceof TextObjectRecord);
-        assertTrue(records.get(3) instanceof ContinueRecord);
-        assertTrue(records.get(4) instanceof ObjRecord);
+        assertInstanceOf(ObjRecord.class, records.get(0));
+        assertInstanceOf(DrawingRecord.class, records.get(1));
+        assertInstanceOf(TextObjectRecord.class, records.get(2));
+        assertInstanceOf(ContinueRecord.class, records.get(3));
+        assertInstanceOf(ObjRecord.class, records.get(4));
 
         //serialize and verify that the serialized data is the same as the original
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         for(org.apache.poi.hssf.record.Record rec : records){
             out.write(rec.serialize());
         }
@@ -204,13 +209,9 @@ final class TestRecordFactory {
             BOFRecord.createSheetBOF(),
             EOFRecord.instance,
         };
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         for (org.apache.poi.hssf.record.Record rec : recs) {
-            try {
-                baos.write(rec.serialize());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            baos.write(rec.serialize());
         }
         //simulate the bad padding at the end of the workbook stream in attachment 23483 of bug 46987
         baos.write(0x00);
@@ -229,6 +230,24 @@ final class TestRecordFactory {
             List<org.apache.poi.hssf.record.Record> outRecs = RecordFactory.createRecords(is);
             // Buffer underrun - requested 512 bytes but 192 was available
             assertEquals(5, outRecs.size());
+        }
+    }
+
+    @Test
+    void testMaxNumberOfRecords() {
+        int prev = RecordFactory.getMaxNumberOfRecords();
+
+        try {
+            // check setter/getter
+            RecordFactory.setMaxNumberOfRecords(0);
+            assertEquals(0, RecordFactory.getMaxNumberOfRecords());
+
+            // check exception when exceeding the limit
+            //noinspection resource
+            assertThrows(RecordFormatException.class,
+                    () -> HSSFTestDataSamples.openSampleWorkbook("SampleSS.xls"));
+        } finally {
+            RecordFactory.setMaxNumberOfRecords(prev);
         }
     }
 }

@@ -117,7 +117,7 @@ public final class Match extends Var2or3ArgFunction {
         @Override
         public ValueEval getItem(int index) {
             if (index != 0) {
-                throw new RuntimeException("Invalid index ("
+                throw new IllegalStateException("Invalid index ("
                         + index + ") only zero is allowed");
             }
             return _value;
@@ -160,7 +160,7 @@ public final class Match extends Var2or3ArgFunction {
             // else looks like a number
             throw new EvaluationException(ErrorEval.NA);
         }
-        throw new RuntimeException("Unexpected eval type (" + eval + ")");
+        throw new IllegalStateException("Unexpected eval type (" + eval + ")");
     }
 
 
@@ -191,7 +191,7 @@ public final class Match extends Var2or3ArgFunction {
             // uses the default-value instead
             return 1;
         }
-        throw new RuntimeException("Unexpected match_type type (" + match_type.getClass().getName() + ")");
+        throw new IllegalStateException("Unexpected match_type type (" + match_type.getClass().getName() + ")");
     }
 
     /**

@@ -24,8 +24,8 @@ import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathFactory;
 
 import com.microsoft.schemas.compatibility.AlternateContentDocument;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.xmlbeans.XmlCursor;
@@ -34,7 +34,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 
 public final class XPathHelper {
-    private static final Logger LOG = LogManager.getLogger(XPathHelper.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XPathHelper.class);
 
     private static final String OSGI_ERROR =
             "Schemas (*.xsb) for <CLASS> can't be loaded - usually this happens when OSGI " +
@@ -80,8 +80,8 @@ public final class XPathHelper {
      * It returns the first element found - the search order is:
      * <ul>
      *     <li>searching for a direct child</li>
-     *     <li>searching for a AlternateContent.Choice child</li>
-     *     <li>searching for a AlternateContent.Fallback child</li>
+     *     <li>searching for an AlternateContent.Choice child</li>
+     *     <li>searching for an AlternateContent.Fallback child</li>
      * </ul>
      * The factory flag is
      * a workaround to process files based on a later edition. But it comes with the drawback:

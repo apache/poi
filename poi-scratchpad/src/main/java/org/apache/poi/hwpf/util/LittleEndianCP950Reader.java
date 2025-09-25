@@ -23,9 +23,9 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetDecoder;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.SimpleMessage;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
 
 /**
@@ -35,7 +35,7 @@ import org.apache.poi.util.Internal;
 @Internal
 public class LittleEndianCP950Reader extends Reader {
 
-    private static final Logger LOGGER = LogManager.getLogger(LittleEndianCP950Reader.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(LittleEndianCP950Reader.class);
 
     private static final char UNMAPPABLE = '?';
     private final ByteBuffer doubleByteBuffer = ByteBuffer.allocate(2);

@@ -314,7 +314,7 @@ final class TestOldExcelExtractor {
         SecurityManager sm = System.getSecurityManager();
         System.setSecurityManager(new NoExitSecurityManager());
         try {
-            System.setErr(new NullPrintStream());
+            System.setErr(NullPrintStream.INSTANCE);
             // calls System.exit()
             assertThrows(ExitException.class, () -> OldExcelExtractor.main(new String[]{}));
         } finally {
@@ -328,7 +328,7 @@ final class TestOldExcelExtractor {
     void testMain() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("testEXCEL_3.xls");
         PrintStream save = System.out;
-        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
              PrintStream str = new PrintStream(out, false, StandardCharsets.UTF_8.displayName(LocaleUtil.getUserLocale()))) {
             System.setOut(str);
             OldExcelExtractor.main(new String[] {file.getAbsolutePath()});

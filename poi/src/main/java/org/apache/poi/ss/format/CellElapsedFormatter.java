@@ -59,7 +59,7 @@ public class CellElapsedFormatter extends CellFormatter {
                 val = elapsed / factor;
             else
                 val = elapsed / factor % modBy;
-            if (type == '0')
+            if (type == '0' || type == 's')
                 return Math.round(val);
             else
                 return (long) val;
@@ -124,7 +124,7 @@ public class CellElapsedFormatter extends CellFormatter {
     }
 
     /**
-     * Creates a elapsed time formatter.
+     * Creates an elapsed time formatter.
      *
      * @param pattern The pattern to parse.
      */
@@ -166,7 +166,7 @@ public class CellElapsedFormatter extends CellFormatter {
             return SEC__FACTOR / Math.pow(10, len);
         default:
             throw new IllegalArgumentException(
-                    "Uknown elapsed time spec: " + type);
+                    "Unknown elapsed time spec: " + type);
         }
     }
 
@@ -181,7 +181,7 @@ public class CellElapsedFormatter extends CellFormatter {
             return Math.pow(10, len);
         default:
             throw new IllegalArgumentException(
-                    "Uknown elapsed time spec: " + type);
+                    "Unknown elapsed time spec: " + type);
         }
     }
 

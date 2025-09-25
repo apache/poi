@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
@@ -53,7 +53,7 @@ import org.apache.poi.util.LittleEndianOutputStream;
  * </p>
  */
 public final class TxMasterStyleAtom extends RecordAtom {
-    private static final Logger LOG = LogManager.getLogger(TxMasterStyleAtom.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TxMasterStyleAtom.class);
 
     /**
      * Maximum number of indentation levels allowed in PowerPoint documents
@@ -187,7 +187,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
         int type = getTextType();
 
         try {
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
             int levels = paragraphStyles.size();
             leos.writeShort(levels);

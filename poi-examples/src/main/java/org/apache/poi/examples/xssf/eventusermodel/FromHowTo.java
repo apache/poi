@@ -136,7 +136,7 @@ public class FromHowTo {
             if(nextIsString && StringUtil.isNotBlank(lastContents)) {
                 Integer idx = Integer.valueOf(lastContents);
                 lastContents = lruCache.get(idx);
-                if (lastContents == null && !lruCache.containsKey(idx)) {
+                if (lastContents == null && !lruCache.containsKey(idx) && sst != null) {
                     lastContents = sst.getItemAt(idx).getString();
                     lruCache.put(idx, lastContents);
                 }

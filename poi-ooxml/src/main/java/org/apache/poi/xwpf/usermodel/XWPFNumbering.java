@@ -97,8 +97,10 @@ public class XWPFNumbering extends POIXMLDocumentPart {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTNumbering.type.getName().getNamespaceURI(), "numbering"));
         PackagePart part = getPackagePart();
-        try (OutputStream out = part.getOutputStream()) {
-            ctNumbering.save(out, xmlOptions);
+        if (ctNumbering != null) {
+            try (OutputStream out = part.getOutputStream()) {
+                ctNumbering.save(out, xmlOptions);
+            }
         }
     }
 

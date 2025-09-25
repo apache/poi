@@ -76,14 +76,20 @@ public interface DirectoryEntry extends Entry, Iterable<Entry> {
 
     int getEntryCount();
 
-    /**
-     * Checks if entry with specified name present
-     */
 
+    /**
+     * Checks if entry with specified name present, case sensitive
+     */
     boolean hasEntry( final String name );
 
     /**
-     * get a specified Entry by name
+     * Checks if entry with specified name present, case sensitive
+     */
+
+    boolean hasEntryCaseInsensitive(final String name );
+
+    /**
+     * get a specified Entry by name, case sensitive
      *
      * @param name the name of the Entry to obtain.
      *
@@ -95,6 +101,20 @@ public interface DirectoryEntry extends Entry, Iterable<Entry> {
      */
 
     Entry getEntry(final String name) throws FileNotFoundException;
+
+    /**
+     * get a specified Entry by name, case insensitive
+     *
+     * @param name the name of the Entry to obtain.
+     *
+     * @return the specified Entry, if it is directly contained in
+     *         this DirectoryEntry
+     *
+     * @throws FileNotFoundException if no Entry with the specified
+     *            name exists in this DirectoryEntry
+     */
+
+    Entry getEntryCaseInsensitive(final String name) throws FileNotFoundException;
 
     /**
      * create a new DocumentEntry

@@ -24,10 +24,11 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Dimension2D;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
@@ -35,8 +36,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.sl.draw.Drawable;
@@ -49,7 +50,7 @@ import org.apache.poi.util.LocaleUtil;
  * An utility to convert slides of a .pptx slide show to a PNG image
  */
 public final class PPTX2PNG {
-    private static final Logger LOG = LogManager.getLogger(PPTX2PNG.class);
+    private static final Logger LOG = PoiLogManager.getLogger(PPTX2PNG.class);
 
     private static final String INPUT_PAT_REGEX =
         "(?<slideno>[^|]+)\\|(?<format>[^|]+)\\|(?<basename>.+)\\.(?<ext>[^.]++)";
@@ -358,7 +359,7 @@ public final class PPTX2PNG {
                 try {
                     return new SVGFormat(textAsShapes);
                 } catch (Exception | NoClassDefFoundError e) {
-                    LOG.atError().withThrowable(e).log("Batik is not not added to/working on the module-path. Use classpath mode instead of JPMS. Fallback to PNG.");
+                    LOG.atError().withThrowable(e).log("Batik is not added to/working on the module-path. Use classpath mode instead of JPMS. Fallback to PNG.");
                     return new BitmapFormat("png");
                 }
             }
@@ -426,7 +427,7 @@ public final class PPTX2PNG {
             // do some sanitizing for creative filenames ...
             filename = new File(filename == null ? "dummy.dat" : filename).getName();
             filename = calcOutFile(proxy, slideNo).replaceFirst("\\.\\w+$", "")+"_"+filename;
-            try (FileOutputStream fos = new FileOutputStream(new File(outdir, filename))) {
+            try (OutputStream fos = Files.newOutputStream(new File(outdir, filename).toPath())) {
                 fos.write(ep.getData().get());
             }
         }

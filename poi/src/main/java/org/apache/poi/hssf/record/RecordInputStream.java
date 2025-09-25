@@ -216,7 +216,8 @@ public final class RecordInputStream implements LittleEndianInput {
         _currentDataLength = _bhi.readDataSize();
         if (_currentDataLength > MAX_RECORD_DATA_SIZE) {
             throw new RecordFormatException("The content of an excel record cannot exceed "
-                    + MAX_RECORD_DATA_SIZE + " bytes");
+                    + MAX_RECORD_DATA_SIZE + " bytes, but had: " + _currentDataLength +
+                    " for record with sid: " + _currentSid);
         }
     }
 
@@ -447,13 +448,13 @@ public final class RecordInputStream implements LittleEndianInput {
      *
      * @return all byte data for the current record
      *
-     * @deprecated POI 2.0 Best to write a input stream that wraps this one
+     * @deprecated POI 2.0 Best to write an input stream that wraps this one
      *             where there is special sub record that may overlap continue
      *             records.
      */
     @Deprecated
     public byte[] readAllContinuedRemainder() {
-        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(2 * MAX_RECORD_DATA_SIZE)) {
+        try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(2 * MAX_RECORD_DATA_SIZE).get()) {
 
             while (true) {
                 byte[] b = readRemainder();
@@ -516,6 +517,9 @@ public final class RecordInputStream implements LittleEndianInput {
      */
     @Internal
     public void mark(int readlimit) {
+        if (!(_dataInput instanceof InputStream)) {
+            throw new IllegalStateException("Cannot use mark for dataInput of type " + _dataInput.getClass() + ", need an InputStream");
+        }
         ((InputStream)_dataInput).mark(readlimit);
         _markedDataOffset = _currentDataOffset;
     }

@@ -36,8 +36,8 @@ import java.util.function.Supplier;
 
 import javax.imageio.ImageIO;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.GenericRecordJsonWriter;
@@ -52,7 +52,7 @@ import org.apache.poi.util.RecordFormatException;
  */
 public class HwmfBitmapDib implements GenericRecord {
 
-    private static final Logger LOG = LogManager.getLogger(HwmfBitmapDib.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HwmfBitmapDib.class);
     private static final int BMP_HEADER_SIZE = 14;
 
     public enum BitCount {

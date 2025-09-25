@@ -40,7 +40,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  */
 public class Rept extends Fixed2ArgFunction  {
 
-
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval text, ValueEval number_times) {
 
@@ -64,7 +63,7 @@ public class Rept extends Fixed2ArgFunction  {
             strb.append(strText1);
         }
 
-        if (strb.toString().length() > 32767) {
+        if (strb.length() > 32767) {
             return ErrorEval.VALUE_INVALID;
         }
 

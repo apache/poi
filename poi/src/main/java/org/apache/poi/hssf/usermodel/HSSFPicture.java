@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.awt.Dimension;
+import java.io.IOException;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
@@ -40,7 +41,7 @@ import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Represents a escher picture.  Eg. A GIF, JPEG etc...
+ * Represents an escher picture.  Eg. A GIF, JPEG etc...
  */
 public class HSSFPicture extends HSSFSimpleShape implements Picture {
 
@@ -90,7 +91,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with default font size (Arial 10pt for .xls).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * If the default font is changed the resized image can be stretched vertically or horizontally.
      * </p>
      */
     @Override
@@ -113,7 +114,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with default font size (Arial 10pt for .xls).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * If the default font is changed the resized image can be stretched vertically or horizontally.
      * </p>
      * <p>
      * <code>resize(1.0,1.0)</code> keeps the original size,<br>
@@ -191,7 +192,12 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
         EscherBSERecord bse = iwb.getBSERecord(getPictureIndex());
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
-        return ImageUtils.getImageDimension(new UnsynchronizedByteArrayInputStream(data), type);
+        try {
+            return ImageUtils.getImageDimension(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get(), type);
+        } catch (IOException e) {
+            // not possible with ByteArray but still declared in the API
+            throw new IllegalStateException(e);
+        }
     }
 
     /**

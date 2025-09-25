@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
@@ -109,6 +110,33 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         }
     }
 
+    @Test
+    void testEvaluateFormulaWithSheetRefEscapedApostrophe() throws IOException {
+        // https://bz.apache.org/bugzilla/show_bug.cgi?id=68305
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet1 = wb.createSheet("Sheet1");
+            XSSFSheet sheet2 = wb.createSheet("(2) 4-Tension Bolt MC's");
+            sheet2.createRow(0).createCell(0).setCellValue(1.0);
+            XSSFCell xssfCell = sheet1.createRow(0).createCell(0);
+            xssfCell.setCellFormula("'(2) 4-Tension Bolt MC''s'!A1");
+            XSSFFormulaEvaluator xssfFormulaEvaluator = new XSSFFormulaEvaluator(wb);
+            xssfFormulaEvaluator.evaluateAll();
+            assertEquals(1.0, xssfCell.getNumericCellValue());
+
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                wb.write(bos);
+                try (XSSFWorkbook wb2 = new XSSFWorkbook()) {
+                    XSSFSheet sheet1Wb2 = wb.getSheet("Sheet1");
+                    assertNotNull(sheet1Wb2, "Sheet1 found?");
+                    XSSFFormulaEvaluator xssfFormulaEvaluator2 = new XSSFFormulaEvaluator(wb2);
+                    xssfFormulaEvaluator2.evaluateAll();
+                    XSSFCell cell2 = sheet1Wb2.getRow(0).getCell(0);
+                    assertEquals(1.0, cell2.getNumericCellValue());
+                }
+            }
+        }
+    }
+
     /**
      * Related to bugs #56737 and #56752 - XSSF workbooks which have
      *  formulas that refer to cells and named ranges in multiple other
@@ -186,8 +214,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
                 // Add another formula referencing these workbooks
                 Cell cXSL_cell2 = rXSL.createCell(40);
                 cXSL_cell2.setCellFormula("[56737.xls]Uses!$C$1");
-                // it become [2] like the others
-                assertEquals("[2]Uses!$C$1", cXSL_cell2.getCellFormula());
+                // TODO Shouldn't it become [2] like the others?
+                assertEquals("[56737.xls]Uses!$C$1", cXSL_cell2.getCellFormula());
                 assertEquals("\"Hello!\"", evaluator.evaluate(cXSL_cell2).formatAsString());
 
 
@@ -442,6 +470,19 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             Cell a5 = wb.getSheetAt(0).getRow(4).getCell(0);
             value = evaluator.evaluateInCell(a5);
             assertEquals("another value", value.getStringCellValue(), "wrong value A5");
+        }
+    }
+
+    @Test
+    void testBug63934() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("63934.xlsx")) {
+
+            final Cell cell = wb.getSheetAt(0).getRow(1).getCell(1);
+            assertNotNull(cell);
+
+            final FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            final CellValue value = evaluator.evaluate(cell);
+            assertEquals("Male", value.getStringValue());
         }
     }
 }

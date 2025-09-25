@@ -28,8 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -58,7 +58,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.TableDocument;
  */
 public class XSSFTable extends POIXMLDocumentPart implements Table {
 
-    private static final Logger LOG = LogManager.getLogger(XSSFTable.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XSSFTable.class);
 
     private CTTable ctTable;
     private transient List<XSSFXmlColumnPr> xmlColumnPrs;
@@ -803,7 +803,12 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      *  manually add cells with values of "Column1", "Column2" etc first.
      */
     public void updateHeaders() {
-        XSSFSheet sheet = (XSSFSheet)getParent();
+        final POIXMLDocumentPart parent = getParent();
+        if (!(parent instanceof XSSFSheet)) {
+            throw new IllegalArgumentException("Had unexpected type of parent: " + (parent == null ? "<null>" : parent.getClass()));
+        }
+
+        XSSFSheet sheet = (XSSFSheet) parent;
         CellReference ref = getStartCellReference();
         if (ref == null) return;
 

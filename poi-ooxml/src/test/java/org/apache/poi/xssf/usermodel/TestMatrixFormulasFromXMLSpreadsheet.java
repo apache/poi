@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.functions.BaseTestNumeric;
 import org.apache.poi.ss.usermodel.Cell;
@@ -47,7 +47,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 public final class TestMatrixFormulasFromXMLSpreadsheet {
 
-    private static final Logger LOG = LogManager.getLogger(TestMatrixFormulasFromXMLSpreadsheet.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TestMatrixFormulasFromXMLSpreadsheet.class);
 
     private static XSSFWorkbook workbook;
     private static Sheet sheet;

@@ -116,7 +116,7 @@ public class MAPIAttribute {
                "instead received a " + parent.getProperty() + " one"
          );
       }
-      try(UnsynchronizedByteArrayInputStream inp = new UnsynchronizedByteArrayInputStream(parent.getData())) {
+      try(UnsynchronizedByteArrayInputStream inp = UnsynchronizedByteArrayInputStream.builder().setByteArray(parent.getData()).get()) {
          // First up, get the number of attributes
          int count = LittleEndian.readInt(inp);
          List<MAPIAttribute> attrs = new ArrayList<>();

@@ -78,7 +78,7 @@ public final class TblPtg extends ControlPtg {
     public String toFormulaString()
     {
         // table(....)[][]
-        throw new RuntimeException("Table and Arrays are not yet supported");
+        throw new IllegalStateException("Table and Arrays are not yet supported");
     }
 
     @Override

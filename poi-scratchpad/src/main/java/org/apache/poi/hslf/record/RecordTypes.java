@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.record;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -181,10 +182,11 @@ public enum RecordTypes {
     private static final Map<Short,RecordTypes> LOOKUP;
 
     static {
-        LOOKUP = new HashMap<>();
+        final Map<Short,RecordTypes> map = new HashMap<>();
         for(RecordTypes s : values()) {
-            LOOKUP.put(s.typeID, s);
+            map.put(s.typeID, s);
         }
+        LOOKUP = Collections.unmodifiableMap(map);
     }
 
     public final short typeID;

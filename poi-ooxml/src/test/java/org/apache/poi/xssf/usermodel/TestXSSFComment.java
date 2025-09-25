@@ -311,7 +311,7 @@ public final class TestXSSFComment extends BaseTestCellComment {
 
     @Test
     void bug59388CommentVisible() throws IOException {
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("59388.xlsx")) {
                 Sheet sheet = wb.getSheetAt(0);
                 Cell a1 = sheet.getRow(0).getCell(0);
@@ -474,7 +474,7 @@ public final class TestXSSFComment extends BaseTestCellComment {
     }
 
     private void _testMoveIsSaved(Workbook workbook) throws Exception {
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             CreationHelper factory = workbook.getCreationHelper();
             Sheet sheet = workbook.createSheet();
             Row row = sheet.createRow(0);
@@ -511,7 +511,7 @@ public final class TestXSSFComment extends BaseTestCellComment {
     }
 
     private void _testModificationIsSaved(Workbook workbook) throws Exception {
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             CreationHelper factory = workbook.getCreationHelper();
             Sheet sheet = workbook.createSheet();
             Row row = sheet.createRow(0);

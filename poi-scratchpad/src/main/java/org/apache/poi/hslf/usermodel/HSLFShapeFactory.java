@@ -19,8 +19,8 @@ package org.apache.poi.hslf.usermodel;
 
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -49,7 +49,7 @@ import org.apache.poi.util.RecordFormatException;
  */
 public final class HSLFShapeFactory {
     // For logging
-    private static final Logger LOG = LogManager.getLogger(HSLFShapeFactory.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HSLFShapeFactory.class);
 
     /**
      * Create a new shape from the data provided.
@@ -63,7 +63,11 @@ public final class HSLFShapeFactory {
 
     public static HSLFGroupShape createShapeGroup(EscherContainerRecord spContainer, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         boolean isTable = false;
-        EscherContainerRecord ecr = (EscherContainerRecord)spContainer.getChild(0);
+        EscherRecord child = spContainer.getChild(0);
+        if (!(child instanceof EscherContainerRecord)) {
+            throw new RecordFormatException("Did not have a EscherContainerRecord: " + child);
+        }
+        EscherContainerRecord ecr = (EscherContainerRecord) child;
         EscherRecord opt = HSLFShape.getEscherChild(ecr, EscherRecordTypes.USER_DEFINED);
 
         if (opt != null) {

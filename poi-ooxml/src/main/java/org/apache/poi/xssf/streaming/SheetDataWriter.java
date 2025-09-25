@@ -31,9 +31,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.PrimitiveIterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -53,7 +52,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
  * so that it was renamed to "SheetDataWriter"
  */
 public class SheetDataWriter implements Closeable {
-    private static final Logger LOG = LogManager.getLogger(SheetDataWriter.class);
 
     private final File _fd;
     protected final Writer _out;
@@ -221,11 +219,11 @@ public class SheetDataWriter implements Closeable {
         _out.write("<row");
         writeAttribute("r", Integer.toString(rownum + 1));
         if (row.hasCustomHeight()) {
-            writeAttribute("customHeight", "true");
+            writeAttribute("customHeight", "1");
             writeAttribute("ht", Float.toString(row.getHeightInPoints()));
         }
         if (row.getZeroHeight()) {
-            writeAttribute("hidden", "true");
+            writeAttribute("hidden", "1");
         }
         if (row.isFormatted()) {
             writeAttribute("s", Integer.toString(row.getRowStyleIndex()));
@@ -384,7 +382,7 @@ public class SheetDataWriter implements Closeable {
      *  need to be preserved with the xml:space=\"preserve\" attribute
      */
     boolean hasLeadingTrailingSpaces(String str) {
-        if (str != null && str.length() > 0) {
+        if (str != null && !str.isEmpty()) {
             char firstChar = str.charAt(0);
             char lastChar  = str.charAt(str.length() - 1);
             return Character.isWhitespace(firstChar) || Character.isWhitespace(lastChar) ;
@@ -393,41 +391,43 @@ public class SheetDataWriter implements Closeable {
     }
 
     protected void outputEscapedString(String s) throws IOException {
-        if (s == null || s.length() == 0) {
+        if (s == null || s.isEmpty()) {
             return;
         }
 
-        for (Iterator<String> iter = CodepointsUtil.iteratorFor(s); iter.hasNext(); ) {
-            String codepoint = iter.next();
+        int codepoint;
+        for (PrimitiveIterator.OfInt iter = CodepointsUtil.primitiveIterator(s); iter.hasNext(); ) {
+            codepoint = iter.nextInt();
             switch (codepoint) {
-                case "<":
+                case '<':
                     _out.write("&lt;");
                     break;
-                case ">":
+                case '>':
                     _out.write("&gt;");
                     break;
-                case "&":
+                case '&':
                     _out.write("&amp;");
                     break;
-                case "\"":
+                case '\"':
                     _out.write("&quot;");
                     break;
                 // Special characters
-                case "\n":
+                case '\n':
                     _out.write("&#xa;");
                     break;
-                case "\r":
+                case '\r':
                     _out.write("&#xd;");
                     break;
-                case "\t":
+                case '\t':
                     _out.write("&#x9;");
                     break;
-                case "\u00A0": // NO-BREAK SPACE
+                case '\u00A0': // NO-BREAK SPACE
                     _out.write("&#xa0;");
                     break;
                 default:
-                    if (codepoint.length() == 1) {
-                        char c = codepoint.charAt(0);
+                    final char[] chars = Character.toChars(codepoint);
+                    if (chars.length == 1) {
+                        char c = chars[0];
                         // YK: XmlBeans silently replaces all ISO control characters ( < 32) with question marks.
                         // the same rule applies to "not a character" symbols.
                         if (replaceWithQuestionMark(c)) {
@@ -436,7 +436,7 @@ public class SheetDataWriter implements Closeable {
                             _out.write(c);
                         }
                     } else {
-                        _out.write(codepoint);
+                        _out.write(chars);
                     }
                     break;
             }
@@ -460,7 +460,7 @@ public class SheetDataWriter implements Closeable {
         try {
             _out.close();
         } finally {
-            ret = _fd.delete();
+            ret = _fd == null || _fd.delete();
         }
         return ret;
     }

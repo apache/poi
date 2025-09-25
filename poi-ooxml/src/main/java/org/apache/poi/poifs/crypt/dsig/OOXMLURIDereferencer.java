@@ -38,8 +38,8 @@ import javax.xml.crypto.XMLCryptoContext;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
@@ -50,7 +50,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
  */
 public class OOXMLURIDereferencer implements URIDereferencer {
 
-    private static final Logger LOG = LogManager.getLogger(OOXMLURIDereferencer.class);
+    private static final Logger LOG = PoiLogManager.getLogger(OOXMLURIDereferencer.class);
 
     private SignatureInfo signatureInfo;
     private URIDereferencer baseUriDereferencer;
@@ -90,7 +90,7 @@ public class OOXMLURIDereferencer implements URIDereferencer {
             if (part.getPartName().toString().endsWith(".rels")) {
                 // although xmlsec has an option to ignore line breaks, currently this
                 // only affects .rels files, so we only modify these
-                try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+                try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                     for (int ch; (ch = dataStream.read()) != -1; ) {
                         if (ch == 10 || ch == 13) continue;
                         bos.write(ch);

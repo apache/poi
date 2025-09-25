@@ -20,11 +20,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.poi.EmptyFileException;
 import org.junit.jupiter.api.Test;
 
 public class TestUserEditAndPersistListing extends BaseTestPPTIterating {
+    static final Set<String> LOCAL_EXCLUDED = new HashSet<>();
+    static {
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
+    }
+
     @Test
     void testMain() throws IOException {
         // calls System.exit(): UserEditAndPersistListing.main(new String[0]);
@@ -33,6 +40,12 @@ public class TestUserEditAndPersistListing extends BaseTestPPTIterating {
 
     @Override
     void runOneFile(File pFile) throws Exception {
-        UserEditAndPersistListing.main(new String[]{pFile.getAbsolutePath()});
+        try {
+            UserEditAndPersistListing.main(new String[]{pFile.getAbsolutePath()});
+        } catch (IllegalStateException e) {
+            if (!LOCAL_EXCLUDED.contains(pFile.getName())) {
+                throw e;
+            }
+        }
     }
 }

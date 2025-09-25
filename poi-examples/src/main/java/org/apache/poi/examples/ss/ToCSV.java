@@ -28,8 +28,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -134,7 +134,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  */
 @SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public class ToCSV {
-    private static final Logger LOG = LogManager.getLogger(ToCSV.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ToCSV.class);
 
     private Workbook workbook;
     private ArrayList<ArrayList<String>> csvData;
@@ -327,7 +327,7 @@ public class ToCSV {
         }
 
         // Step through each of the files in the source folder and for each
-        // open the workbook, convert it's contents to CSV format and then
+        // open the workbook, convert its contents to CSV format and then
         // save the resulting file away into the folder specified by the
         // contents of the destination variable. Note that the name of the
         // csv file will be created by taking the name of the Excel file,
@@ -342,7 +342,7 @@ public class ToCSV {
                 // Open the workbook
                 this.openWorkbook(excelFile);
 
-                // Convert it's contents into a CSV file
+                // Convert its contents into a CSV file
                 this.convertToCSV();
 
                 // Build the name of the csv folder from that of the Excel workbook.
@@ -451,7 +451,7 @@ public class ToCSV {
                 // from this 'row' ArrayList one at a time and to write the Strings
                 // away to a StringBuilder thus assembling a single line for inclusion
                 // in the CSV file. If a row was empty or if it was short, then
-                // the ArrayList that contains it's data will also be shorter than
+                // the ArrayList that contains its data will also be shorter than
                 // some of the others. Therefore, it is necessary to check within
                 // the for loop to ensure that the ArrayList contains data to be
                 // processed. If it does, then an element will be recovered and
@@ -689,7 +689,7 @@ public class ToCSV {
         // It is not wise to have such a wide catch clause - Exception is very
         // close to being at the top of the inheritance hierarchy - though it
         // will suffice for this example as it is really not possible to recover
-        // easilly from an exceptional set of circumstances at this point in the
+        // easily  from an exceptional set of circumstances at this point in the
         // program. It should however, ideally be replaced with one or more
         // catch clauses optimised to handle more specific problems.
         catch(Exception ex) {

@@ -45,8 +45,8 @@ import java.util.stream.Stream;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
@@ -86,7 +86,7 @@ import org.bouncycastle.tsp.TimeStampToken;
  */
 public class TSPTimeStampService implements TimeStampService {
 
-    private static final Logger LOG = LogManager.getLogger(TSPTimeStampService.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TSPTimeStampService.class);
 
     /**
      * Maps the digest algorithm to corresponding OID value.
@@ -133,7 +133,7 @@ public class TSPTimeStampService implements TimeStampService {
         byte[] responseBytes = response.getResponseBytes();
 
         if (responseBytes.length == 0) {
-            throw new RuntimeException("Content-Length is zero");
+            throw new IllegalStateException("Content-Length is zero");
         }
 
         // TSP response parsing and validation
@@ -150,7 +150,7 @@ public class TSPTimeStampService implements TimeStampService {
                     LOG.atDebug().log("unaccepted policy");
                 }
             }
-            throw new RuntimeException("timestamp response status != 0: "
+            throw new IllegalStateException("timestamp response status != 0: "
                     + timeStampResponse.getStatus());
         }
         TimeStampToken timeStampToken = timeStampResponse.getTimeStampToken();
@@ -171,7 +171,7 @@ public class TSPTimeStampService implements TimeStampService {
             .filter(h -> signerCertIssuer.equals(h.getIssuer())
                 && signerCertSerialNumber.equals(h.getSerialNumber()))
             .findFirst()
-            .orElseThrow(() -> new RuntimeException("TSP response token has no signer certificate"));
+            .orElseThrow(() -> new IllegalStateException("TSP response token has no signer certificate"));
 
         JcaX509CertificateConverter x509converter = new JcaX509CertificateConverter();
         x509converter.setProvider("BC");
@@ -215,7 +215,7 @@ public class TSPTimeStampService implements TimeStampService {
 
     /**
      * Check if CRL is to be added, check cached CRLs in config and download if necessary.
-     * Can be overriden to suppress the logic
+     * Can be overridden to suppress the logic
      * @return empty list, if not found or suppressed, otherwise the list of CRLs as encoded bytes
      */
     protected List<byte[]> retrieveCRL(SignatureConfig signatureConfig, X509Certificate holder) throws IOException {

@@ -38,6 +38,12 @@ public class TestSlideShowDumper extends BaseTestPPTIterating {
         FAILING.add("cryptoapi-proc2356.ppt");
         FAILING.add("41384.ppt");
         FAILING.add("bug56240.ppt");
+        FAILING.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
+    }
+
+    static final Set<String> LOCAL_EXCLUDED = new HashSet<>();
+    static {
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6614960949821440.ppt");
     }
 
     @Test
@@ -66,9 +72,14 @@ public class TestSlideShowDumper extends BaseTestPPTIterating {
             }
         } catch (FileNotFoundException e) {
             // some old files are not detected correctly
-            if(!OLD_FILES.contains(pFile.getName())) {
+            if(!FAILING.contains(pFile.getName()) && !OLD_FILES.contains(pFile.getName())) {
                 throw e;
             }
+        }
+
+        // these fail everywhere else, so also should fail here
+        if (LOCAL_EXCLUDED.contains(pFile.getName())) {
+            throw new RuntimeException();
         }
     }
 

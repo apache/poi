@@ -17,14 +17,14 @@ package org.apache.poi.util;
    limitations under the License.
 ==================================================================== */
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 
 /**
  * Helper for fetching int values from system properties
  */
 public class Configurator {
-    private static final Logger LOG = LogManager.getLogger(Configurator.class);
+    private static final Logger LOG = PoiLogManager.getLogger(Configurator.class);
 
     public static int getIntValue(String systemProperty, int defaultValue) {
         String property = System.getProperty(systemProperty);

@@ -20,6 +20,7 @@ package org.apache.poi.hssf.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.Color;
 import java.util.Map;
 
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
@@ -55,5 +56,16 @@ final class TestHSSFColor {
                 HSSFColorPredefined.YELLOW.getColor(),
                 triplets.get(HSSFColorPredefined.YELLOW.getHexString())
         );
+    }
+
+    @Test
+    void testRgbAndColorWorkTheSame() {
+        Color color = java.awt.Color.YELLOW;
+        @SuppressWarnings("deprecation")
+        HSSFColor fromColor = new HSSFColor(10, 20, color);
+        HSSFColor fromRgb = new HSSFColor(10, 20, color.getRGB());
+
+        assertEquals(fromColor, fromRgb, "Both colors are equal");
+        assertEquals(fromColor.hashCode(), fromRgb.hashCode(), "Both have the same hash code");
     }
 }

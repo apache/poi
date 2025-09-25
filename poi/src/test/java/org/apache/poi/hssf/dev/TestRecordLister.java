@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.io.output.NullWriter;
 import org.apache.poi.hssf.record.ContinueRecord;
@@ -28,6 +29,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * This is a low-level debugging class, which simply prints out what records come in what order.
@@ -41,9 +43,22 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 class TestRecordLister extends BaseTestIteratingXLS {
     @Override
+    protected Map<String, Class<? extends Throwable>> getExcludes() {
+        Map<String, Class<? extends Throwable>> excludes = super.getExcludes();
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5786329142919168.xls", RecordFormatException.class);
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5889658057523200.xls", IndexOutOfBoundsException.class);
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5175219985448960.xls", RecordFormatException.class);
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-6137883240824832.xls", RecordFormatException.class);
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-6483562584932352.xls", RecordFormatException.class);
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5816431116615680.xls", RecordFormatException.class);
+
+        return excludes;
+    }
+
+    @Override
     void runOneFile(File fileIn) throws IOException {
         // replace it with System.out if you like it more verbatim
-        PrintWriter out = new PrintWriter(new NullWriter());
+        PrintWriter out = new PrintWriter(NullWriter.INSTANCE);
 
         try (POIFSFileSystem fs = new POIFSFileSystem(fileIn, true);
              InputStream din = BiffViewer.getPOIFSInputStream(fs)) {

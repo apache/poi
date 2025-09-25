@@ -37,7 +37,7 @@ class OpcOutputStream extends DeflaterOutputStream {
     private final List<Entry> entries = new ArrayList<>();
     private final CRC32 crc = new CRC32();
     private Entry current;
-    private int written = 0;
+    private long written = 0;
     private boolean finished = false;
 
     /**
@@ -71,6 +71,7 @@ class OpcOutputStream extends DeflaterOutputStream {
     }
 
     /**
+     * @throws IllegalStateException if no entry found
      * @see ZipOutputStream#closeEntry()
      */
     public void closeEntry() throws IOException {
@@ -83,7 +84,7 @@ class OpcOutputStream extends DeflaterOutputStream {
         }
 
         current.size = def.getBytesRead();
-        current.compressedSize = Math.toIntExact(def.getBytesWritten());
+        current.compressedSize = def.getBytesWritten();
         current.crc = crc.getValue();
 
         written += current.compressedSize;
@@ -105,7 +106,7 @@ class OpcOutputStream extends DeflaterOutputStream {
         if(current != null) {
             closeEntry();
         }
-        int offset = written;
+        long offset = written;
         for (Entry entry : entries) {
             written += spec.writeCEN(entry);
         }

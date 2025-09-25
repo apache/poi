@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hpsf;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
@@ -25,7 +25,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 @Internal
 public class VariantBool {
-    private static final Logger LOG = LogManager.getLogger(VariantBool.class);
+    private static final Logger LOG = PoiLogManager.getLogger(VariantBool.class);
 
     static final int SIZE = 2;
 

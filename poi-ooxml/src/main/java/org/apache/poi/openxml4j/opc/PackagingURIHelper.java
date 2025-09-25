@@ -23,8 +23,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 
@@ -37,7 +37,7 @@ public final class PackagingURIHelper {
     // FIXME: this class implements a lot of path joining and splitting logic that
     // is already implemented in java.nio.file.Path.
     // This class should heavily leverage Java library code to reduce the number of lines of code that POI has to maintain and test
-    private static final Logger LOG = LogManager.getLogger(PackagingURIHelper.class);
+    private static final Logger LOG = PoiLogManager.getLogger(PackagingURIHelper.class);
 
     /**
      * Package root URI.
@@ -165,7 +165,9 @@ public final class PackagingURIHelper {
         if (partUri == null)
             throw new IllegalArgumentException("partUri");
 
-        return partUri.getPath().matches(
+        final String path = partUri.getPath();
+
+        return path != null && path.matches(
                 ".*" + RELATIONSHIP_PART_SEGMENT_NAME + ".*"
                         + RELATIONSHIP_PART_EXTENSION_NAME + "$");
     }
@@ -285,7 +287,7 @@ public final class PackagingURIHelper {
         //  form must actually be an absolute URI
         if(sourceURI.toString().equals("/")) {
             String path = targetURI.getPath();
-            if(msCompatible && path.length() > 0 && path.charAt(0) == '/') {
+            if(msCompatible && !path.isEmpty() && path.charAt(0) == '/') {
                 try {
                     targetURI = new URI(path.substring(1));
                 } catch (Exception e) {
@@ -486,7 +488,7 @@ public final class PackagingURIHelper {
      *
      * @param partName
      *            The part name to validate.
-     * @return The correspondant part name if valid, else <code>null</code>.
+     * @return The correspondent part name if valid, else <code>null</code>.
      * @throws InvalidFormatException
      *             Throws if the specified part name is not OPC compliant.
      * @see #createPartName(URI)
@@ -509,7 +511,7 @@ public final class PackagingURIHelper {
      *            The part name to validate.
      * @param relativePart
      *            The relative base part.
-     * @return The correspondant part name if valid, else <code>null</code>.
+     * @return The correspondent part name if valid, else <code>null</code>.
      * @throws InvalidFormatException
      *             Throws if the specified part name is not OPC compliant.
      * @see #createPartName(URI)
@@ -533,7 +535,7 @@ public final class PackagingURIHelper {
      *            The part name URI to validate.
      * @param relativePart
      *            The relative base part.
-     * @return The correspondant part name if valid, else <code>null</code>.
+     * @return The correspondent part name if valid, else <code>null</code>.
      * @throws InvalidFormatException
      *             Throws if the specified part name is not OPC compliant.
      * @see #createPartName(URI)
@@ -625,7 +627,7 @@ public final class PackagingURIHelper {
      *            Source part URI
      * @return the full path (as URI) of the relation file
      * @throws InvalidOperationException
-     *             Throws if the specified URI is a relationshp part.
+     *             Throws if the specified URI is a relationship part.
      */
     public static PackagePartName getRelationshipPartName(
             PackagePartName partName) {
@@ -688,7 +690,7 @@ public final class PackagingURIHelper {
              value = value.replace('\\', '/');
         }
 
-        // URI fragemnts (those starting with '#') are not encoded
+        // URI fragments (those starting with '#') are not encoded
         // and may contain white spaces and raw unicode characters
         int fragmentIdx = value.indexOf('#');
         if(fragmentIdx != -1){
@@ -699,7 +701,7 @@ public final class PackagingURIHelper {
         }
 
         // trailing white spaces must be url-encoded, see Bugzilla 53282
-        if(value.length() > 0 ){
+        if(!value.isEmpty()){
             StringBuilder b = new StringBuilder();
             int idx = value.length() - 1;
             for(; idx >= 0; idx--){

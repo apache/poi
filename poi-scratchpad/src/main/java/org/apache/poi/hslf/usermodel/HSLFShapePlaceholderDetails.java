@@ -47,6 +47,68 @@ import org.apache.poi.util.LocaleUtil;
  * @since POI 4.0.0
  */
 public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
+
+    static void updateSPRecord(final HSLFSimpleShape shape, final Placeholder placeholder) {
+        final EscherSpRecord spRecord = shape.getEscherChild(EscherSpRecord.RECORD_ID);
+        int flags = spRecord.getFlags();
+        if (placeholder == null) {
+            flags ^= EscherSpRecord.FLAG_HAVEMASTER;
+        } else {
+            flags |= EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HAVEMASTER;
+        }
+        spRecord.setFlags(flags);
+
+        // Placeholders can't be grouped
+        shape.setEscherProperty(EscherPropertyTypes.PROTECTION__LOCKAGAINSTGROUPING, (placeholder == null ? -1 : 262144));
+    }
+
+    static void removePlaceholder(final HSLFSimpleShape shape) {
+        final HSLFEscherClientDataRecord clientData = shape.getClientData(false);
+        if (clientData != null) {
+            clientData.removeChild(OEPlaceholderAtom.class);
+            clientData.removeChild(RoundTripHFPlaceholder12.class);
+            // remove client data if the placeholder was the only child to be carried
+            if (clientData.getChildRecords().isEmpty()) {
+                shape.getSpContainer().removeChildRecord(clientData);
+            }
+        }
+    }
+
+    static OEPlaceholderAtom createOEPlaceholderAtom(final HSLFEscherClientDataRecord clientData) {
+        return createOEPlaceholderAtom(clientData, (byte) 0);
+    }
+
+    static OEPlaceholderAtom createOEPlaceholderAtom(final HSLFEscherClientDataRecord clientData,
+                                                     final byte placeholderId) {
+        OEPlaceholderAtom oePlaceholderAtom = new OEPlaceholderAtom();
+        oePlaceholderAtom.setPlaceholderSize((byte)OEPlaceholderAtom.PLACEHOLDER_FULLSIZE);
+        // TODO: placement id only "SHOULD" be unique ... check other placeholders on sheet for unique id
+        oePlaceholderAtom.setPlacementId(-1);
+        oePlaceholderAtom.setPlaceholderId(placeholderId);
+        clientData.addChild(oePlaceholderAtom);
+        return oePlaceholderAtom;
+    }
+
+    static byte getPlaceholderId(final HSLFSheet sheet, final Placeholder placeholder) {
+        if (placeholder == null) {
+            return 0;
+        }
+        byte phId;
+        // TODO: implement/switch NotesMaster
+        if (sheet instanceof HSLFSlideMaster) {
+            phId = (byte) placeholder.nativeSlideMasterId;
+        } else if (sheet instanceof HSLFNotes) {
+            phId = (byte) placeholder.nativeNotesId;
+        } else {
+            phId = (byte) placeholder.nativeSlideId;
+        }
+
+        if (phId == -2) {
+            throw new HSLFException("Placeholder " + placeholder.name() + " not supported for this sheet type (" + sheet.getClass() + ")");
+        }
+        return phId;
+    }
+
     private enum PlaceholderContainer {
         slide, master, notes, notesMaster
     }
@@ -78,7 +140,7 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
 
     @Override
     public Placeholder getPlaceholder() {
-        updatePlaceholderAtom(false);
+        updatePlaceholderAtom(null, false);
         final int phId;
         if (oePlaceholderAtom != null) {
             phId = oePlaceholderAtom.getPlaceholderId();
@@ -105,17 +167,7 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
 
     @Override
     public void setPlaceholder(final Placeholder placeholder) {
-        final EscherSpRecord spRecord = shape.getEscherChild(EscherSpRecord.RECORD_ID);
-        int flags = spRecord.getFlags();
-        if (placeholder == null) {
-            flags ^= EscherSpRecord.FLAG_HAVEMASTER;
-        } else {
-            flags |= EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HAVEMASTER;
-        }
-        spRecord.setFlags(flags);
-
-        // Placeholders can't be grouped
-        shape.setEscherProperty(EscherPropertyTypes.PROTECTION__LOCKAGAINSTGROUPING, (placeholder == null ? -1 : 262144));
+        updateSPRecord(shape, placeholder);
 
         if (placeholder == null) {
             removePlaceholder();
@@ -123,7 +175,7 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
         }
 
         // init client data
-        updatePlaceholderAtom(true);
+        updatePlaceholderAtom(placeholder, true);
 
         final byte phId = getPlaceholderId(placeholder);
         oePlaceholderAtom.setPlaceholderId(phId);
@@ -158,7 +210,7 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
         if (ph == null || size == null) {
             return;
         }
-        updatePlaceholderAtom(true);
+        updatePlaceholderAtom(ph, true);
 
         final byte ph_size;
         switch (size) {
@@ -209,20 +261,12 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
     }
 
     private void removePlaceholder() {
-        final HSLFEscherClientDataRecord clientData = shape.getClientData(false);
-        if (clientData != null) {
-            clientData.removeChild(OEPlaceholderAtom.class);
-            clientData.removeChild(RoundTripHFPlaceholder12.class);
-            // remove client data if the placeholder was the only child to be carried
-            if (clientData.getChildRecords().isEmpty()) {
-                shape.getSpContainer().removeChildRecord(clientData);
-            }
-        }
+        removePlaceholder(shape);
         oePlaceholderAtom = null;
         roundTripHFPlaceholder12 = null;
     }
 
-    private void updatePlaceholderAtom(final boolean create) {
+    private void updatePlaceholderAtom(final Placeholder placeholder, final boolean create) {
         localDateTime = null;
         if (shape instanceof HSLFTextBox) {
             EscherTextboxWrapper txtBox = ((HSLFTextBox)shape).getEscherTextboxWrapper();
@@ -255,11 +299,8 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
         }
 
         if (oePlaceholderAtom == null) {
-            oePlaceholderAtom = new OEPlaceholderAtom();
-            oePlaceholderAtom.setPlaceholderSize((byte)OEPlaceholderAtom.PLACEHOLDER_FULLSIZE);
-            // TODO: placement id only "SHOULD" be unique ... check other placeholders on sheet for unique id
-            oePlaceholderAtom.setPlacementId(-1);
-            clientData.addChild(oePlaceholderAtom);
+            final byte phId = getPlaceholderId(shape.getSheet(), placeholder);
+            oePlaceholderAtom = createOEPlaceholderAtom(clientData, phId);
         }
         if (roundTripHFPlaceholder12 == null) {
             roundTripHFPlaceholder12 = new RoundTripHFPlaceholder12();

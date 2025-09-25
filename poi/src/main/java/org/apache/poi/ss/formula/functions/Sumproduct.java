@@ -87,7 +87,7 @@ public final class Sumproduct implements Function {
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
-        throw new RuntimeException("Invalid arg type for SUMPRODUCT: ("
+        throw new IllegalStateException("Invalid arg type for SUMPRODUCT: ("
                 + firstArg.getClass().getName() + ")");
     }
 
@@ -116,7 +116,7 @@ public final class Sumproduct implements Function {
         }
 
         if (eval == null) {
-            throw new RuntimeException("parameter may not be null");
+            throw new IllegalStateException("parameter may not be null");
         }
         if (eval instanceof AreaEval) {
             AreaEval ae = (AreaEval) eval;
@@ -235,7 +235,7 @@ public final class Sumproduct implements Function {
             NumericValueEval nve = (NumericValueEval) ve;
             return nve.getNumberValue();
         }
-        throw new RuntimeException("Unexpected value eval class ("
+        throw new IllegalStateException("Unexpected value eval class ("
                 + ve.getClass().getName() + ")");
     }
 }

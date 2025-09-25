@@ -18,15 +18,16 @@
 package org.apache.poi.hssf.extractor;
 
 import static org.apache.poi.hssf.model.InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME;
+import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK;
 import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.extractor.POITextExtractor;
@@ -44,6 +45,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentNode;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -93,7 +95,7 @@ public class OldExcelExtractor implements POITextExtractor {
         }
 
         @SuppressWarnings("resource")
-        FileInputStream biffStream = new FileInputStream(f); // NOSONAR
+        InputStream biffStream = Files.newInputStream(f.toPath());
         try {
             open(biffStream);
         } catch (IOException | RuntimeException e)  {
@@ -149,14 +151,18 @@ public class OldExcelExtractor implements POITextExtractor {
     private void open(DirectoryNode directory) throws IOException {
         DocumentNode book;
         try {
-            book = (DocumentNode)directory.getEntry(OLD_WORKBOOK_DIR_ENTRY_NAME);
+            Entry entry = directory.getEntryCaseInsensitive(OLD_WORKBOOK_DIR_ENTRY_NAME);
+            if (!(entry instanceof DocumentNode)) {
+                throw new IllegalArgumentException("Did not have an Excel 5/95 Book stream: " + entry);
+            }
+            book = (DocumentNode) entry;
         } catch (FileNotFoundException | IllegalArgumentException e) {
             // some files have "Workbook" instead
-            book = (DocumentNode)directory.getEntry(WORKBOOK_DIR_ENTRY_NAMES.get(0));
-        }
-
-        if (book == null) {
-            throw new IOException("No Excel 5/95 Book stream found");
+            Entry entry = directory.getEntryCaseInsensitive(WORKBOOK);
+            if (!(entry instanceof DocumentNode)) {
+                throw new IllegalArgumentException("Did not have an Excel 5/95 Book stream: " + entry);
+            }
+            book = (DocumentNode) entry;
         }
 
         ris = new RecordInputStream(directory.createDocumentInputStream(book));

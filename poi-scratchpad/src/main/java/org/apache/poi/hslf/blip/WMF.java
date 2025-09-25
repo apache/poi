@@ -65,7 +65,7 @@ public final class WMF extends Metafile {
     @Override
     public byte[] getData(){
         byte[] rawdata = getRawData();
-        try (InputStream is = new UnsynchronizedByteArrayInputStream(rawdata)) {
+        try (InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(rawdata).get()) {
 
 
             Header header = new Header();
@@ -75,7 +75,7 @@ public final class WMF extends Metafile {
             assert(skipped == skipLen);
 
             ImageHeaderWMF aldus = new ImageHeaderWMF(header.getBounds());
-            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
             aldus.write(out);
 
             try (InflaterInputStream inflater = new InflaterInputStream( is )) {

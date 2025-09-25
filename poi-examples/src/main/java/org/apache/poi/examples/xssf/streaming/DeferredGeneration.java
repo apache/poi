@@ -53,12 +53,13 @@ public class DeferredGeneration {
 
             try (FileOutputStream fileOut = new FileOutputStream("DeferredGeneration.xlsx")) {
                 wb.write(fileOut);
-                //writeAvoidingTempFiles was added as an experimental change in POI 5.1.0
-                //wb.writeAvoidingTempFiles(fileOut);
-            } finally {
-                //the dispose call is necessary to ensure temp files are removed
-                wb.dispose();
+                // writeAvoidingTempFiles was added as an experimental change in POI 5.1.0
+                // wb.writeAvoidingTempFiles(fileOut);
             }
+            // finally {
+              // the dispose call is no longer necessary to ensure temp files are removed
+              // wb.dispose();
+            // }
             System.out.println("wrote DeferredGeneration.xlsx");
         }
     }

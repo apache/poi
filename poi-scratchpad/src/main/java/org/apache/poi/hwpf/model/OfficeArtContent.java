@@ -20,8 +20,8 @@ package org.apache.poi.hwpf.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
@@ -38,7 +38,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  */
 @Internal
 public final class OfficeArtContent {
-    protected static final Logger LOG = LogManager.getLogger(OfficeArtContent.class);
+    protected static final Logger LOG = PoiLogManager.getLogger(OfficeArtContent.class);
 
     /**
      * {@link EscherRecordTypes#DGG_CONTAINER} containing drawing group information for the document.
@@ -79,7 +79,7 @@ public final class OfficeArtContent {
         int pos = offset;
         pos += drawingGroupData.fillFields(data, pos, recordFactory);
         if (drawingGroupData.getRecordId() == EscherRecordTypes.DGG_CONTAINER.typeID) {
-            LOG.atDebug().log("Invalid record-id for filling Escher records: " + drawingGroupData.getRecordId());
+            LOG.debug("Invalid record-id for filling Escher records: {}", drawingGroupData.getRecordId());
         }
 
         /*
@@ -117,7 +117,7 @@ public final class OfficeArtContent {
                     headerDocumentDgContainer = dgContainer;
                     break;
                 default:
-                    LogManager.getLogger(OfficeArtContent.class).atWarn()
+                    PoiLogManager.getLogger(OfficeArtContent.class).atWarn()
                             .log("dgglbl {} for OfficeArtWordDrawing is out of bounds [0, 1]", box(dgglbl));
             }
         }

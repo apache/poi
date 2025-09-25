@@ -29,7 +29,7 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The area record is used to define a area chart.
+ * The area record is used to define an area chart.
  */
 public final class AreaRecord extends StandardRecord {
     public static final short sid = 0x101A;

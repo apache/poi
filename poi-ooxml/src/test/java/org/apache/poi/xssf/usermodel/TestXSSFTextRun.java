@@ -45,11 +45,17 @@ class TestXSSFTextRun {
             assertNotNull(run.getXmlObject());
             assertNotNull(run.getRPr());
 
-            assertEquals(new Color(0, 0, 0), run.getFontColor());
+            assertArrayEquals(new byte[]{0, 0, 0}, run.getFontColorAsBytes());
 
+            final byte[] colorBytes = new byte[]{0, (byte) 255, (byte) 255};
             Color color = new Color(0, 255, 255);
             run.setFontColor(color);
             assertEquals(color, run.getFontColor());
+            assertArrayEquals(colorBytes, run.getFontColorAsBytes());
+
+            run.setFontColor(colorBytes);
+            assertEquals(color, run.getFontColor());
+            assertArrayEquals(colorBytes, run.getFontColorAsBytes());
 
             assertEquals(11.0, run.getFontSize(), 0.01);
             run.setFontSize(12.32);

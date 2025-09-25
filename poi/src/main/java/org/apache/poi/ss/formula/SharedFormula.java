@@ -20,7 +20,7 @@ import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
- *   Encapsulates logic to convert shared formulaa into non shared equivalent
+ *   Encapsulates logic to convert shared formula into non shared equivalent
  */
 public class SharedFormula {
 

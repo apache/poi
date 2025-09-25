@@ -22,10 +22,10 @@ import static org.apache.logging.log4j.util.Unbox.box;
 import java.awt.Dimension;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,8 +35,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.POIDocument;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
@@ -66,6 +66,7 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.ThreadLocalUtil;
 import org.apache.poi.util.Units;
 
 /**
@@ -82,7 +83,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
     public static final String PP95_DOCUMENT = "PP40";
 
     // For logging
-    private static final Logger LOG = LogManager.getLogger(HSLFSlideShow.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HSLFSlideShow.class);
 
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 10_000_000;
@@ -91,7 +92,11 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
     enum LoadSavePhase {
         INIT, LOADED
     }
-    private static final ThreadLocal<LoadSavePhase> loadSavePhase = new ThreadLocal<>();
+    private static final ThreadLocal<LoadSavePhase> loadSavePhase = new ThreadLocal<>();    // NOSONAR
+    static {
+        // allow to clear all thread-locals via ThreadLocalUtil
+        ThreadLocalUtil.registerCleaner(loadSavePhase::remove);
+    }
 
     // What we're based on
     private final HSLFSlideShowImpl _hslfSlideShow;
@@ -167,7 +172,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
     /**
      * Constructs a Powerpoint document from an input stream.
      * @throws IOException If reading data from the stream fails
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     @SuppressWarnings("resource")
@@ -178,7 +183,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
     /**
      * Constructs a Powerpoint document from an POIFSFileSystem.
      * @throws IOException If reading data from the file-system fails
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     @SuppressWarnings("resource")
@@ -189,7 +194,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
     /**
      * Constructs a Powerpoint document from an DirectoryNode.
      * @throws IOException If reading data from the DirectoryNode fails
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     @SuppressWarnings("resource")
@@ -346,7 +351,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         // SlideAtomsSet for each Notes
         // These SlideAtomsSets will not normally contain text
         //
-        // Having indentified the masters, slides and notes + their orders,
+        // Having identified the masters, slides and notes + their orders,
         // we have to go and find their matching records
         // We always use the latest versions of these records, and use the
         // SlideAtom/NotesAtom to match them with the StyleAtomSet
@@ -872,7 +877,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
             throw new IllegalArgumentException("Unsupported picture format: " + format);
         }
         byte[] data = IOUtils.safelyAllocate(pict.length(), MAX_RECORD_LENGTH);
-        try (FileInputStream is = new FileInputStream(pict)) {
+        try (InputStream is = Files.newInputStream(pict.toPath())) {
             IOUtils.readFully(is, data);
         }
         return addPicture(data, format);
@@ -1029,7 +1034,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
     }
 
     /**
-     * Add a embedded object to this presentation
+     * Add an embedded object to this presentation
      *
      * @return 0-based index of the embedded object
      */
@@ -1042,7 +1047,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
             Map<String,ClassID> olemap = getOleMap();
             ClassID classID = null;
             for (Map.Entry<String,ClassID> entry : olemap.entrySet()) {
-                if (root.hasEntry(entry.getKey())) {
+                if (root.hasEntryCaseInsensitive(entry.getKey())) {
                     classID = entry.getValue();
                     break;
                 }
@@ -1055,7 +1060,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         }
 
         ExEmbed exEmbed = new ExEmbed();
-        // remove unneccessary infos, so we don't need to specify the type
+        // remove unnecessary infos, so we don't need to specify the type
         // of the ole object multiple times
         Record[] children = exEmbed.getChildRecords();
         exEmbed.removeChild(children[2]);
@@ -1075,7 +1080,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         ExOleObjStg exOleObjStg = new ExOleObjStg();
         try {
             Ole10Native.createOleMarkerEntry(poiData);
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             poiData.writeFilesystem(bos);
             exOleObjStg.setData(bos.toByteArray());
         } catch (IOException e) {

@@ -53,7 +53,7 @@ class TestFormulaViewer extends BaseTestIteratingXLS {
     @Override
     void runOneFile(File fileIn) throws Exception {
         // replace with System.out for manual tests
-        PrintWriter out = new PrintWriter(new NullWriter());
+        PrintWriter out = new PrintWriter(NullWriter.INSTANCE);
 
         final Function<FormulaRecord, String> lister = (doListFormula) ? this::listFormula : this::parseFormulaRecord;
 

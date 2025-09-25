@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -52,7 +52,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  * Tests formulas for multi sheet reference (i.e. SUM(Sheet1:Sheet5!A1))
  */
 public final class TestMultiSheetFormulaEvaluatorOnXSSF {
-    private static final Logger LOG = LogManager.getLogger(TestMultiSheetFormulaEvaluatorOnXSSF.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TestMultiSheetFormulaEvaluatorOnXSSF.class);
 
     private static XSSFWorkbook workbook;
     private static Sheet sheet;

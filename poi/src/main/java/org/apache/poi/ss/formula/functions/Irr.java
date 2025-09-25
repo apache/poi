@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -35,7 +35,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 public final class Irr implements Function {
     private static final int MAX_ITERATION_COUNT = 1000;
     private static final double ABSOLUTE_ACCURACY = 1E-7;
-    private static final Logger LOGGER = LogManager.getLogger(Irr.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(Irr.class);
 
 
     public ValueEval evaluate(final ValueEval[] args, final int srcRowIndex, final int srcColumnIndex) {

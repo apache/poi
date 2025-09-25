@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,6 +33,7 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.util.SuppressForbidden;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -50,6 +52,7 @@ class TestTempFileThreaded {
     // the actual thread-safe temp-file strategy
     private static TempFileCreationStrategy createTempFileCreationStrategy(File poiTempFileDirectory) {
         return new TempFileCreationStrategy() {
+            @SuppressForbidden("Thread.getId() is deprecated and replaced with threadId() in JDK 19+")
             @Override
             public File createTempFile(String prefix, String suffix) throws IOException {
                 long threadId = Thread.currentThread().getId();
@@ -76,10 +79,11 @@ class TestTempFileThreaded {
     public static void setUpClass() throws IOException {
         String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
         if (tmpDir == null) {
-            throw new IOException("Systems temporary directory not defined - set the -D" + JAVA_IO_TMPDIR + " jvm property!");
+            throw new IOException("System's temporary directory not defined - set the -D" + JAVA_IO_TMPDIR + " jvm property!");
         }
 
-        TempFile.setTempFileCreationStrategy(createTempFileCreationStrategy(new File(new File(tmpDir, POIFILES), "TestTempFileThreaded")));
+        TempFile.setTempFileCreationStrategy(createTempFileCreationStrategy(
+                Paths.get(tmpDir, POIFILES, "TestTempFileThreaded").toFile()));
     }
 
     @BeforeEach

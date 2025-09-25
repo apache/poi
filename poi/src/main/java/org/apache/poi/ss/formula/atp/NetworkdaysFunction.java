@@ -51,7 +51,7 @@ final class NetworkdaysFunction implements FreeRefFunction {
     }
 
     /**
-     * Evaluate for NETWORKDAYS. Given two dates and a optional date or interval of holidays, determines how many working days are there
+     * Evaluate for NETWORKDAYS. Given two dates and an optional date or interval of holidays, determines how many working days are there
      * between those dates.
      *
      * @return {@link ValueEval} for the number of days between two dates.

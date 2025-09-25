@@ -43,11 +43,10 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the auto-sizing behaviour of {@link SXSSFSheet} when not all
  * rows fit into the memory window size etc.
- *
+ * <p>
  * see Bug #57450 which reported the original misbehaviour
  */
 class TestAutoSizeColumnTracker {
-
     private SXSSFSheet sheet;
     private SXSSFWorkbook workbook;
     private AutoSizeColumnTracker tracker;

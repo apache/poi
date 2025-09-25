@@ -16,8 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import java.awt.Color;
-
+import org.apache.poi.ooxml.util.NumberHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
@@ -58,34 +57,53 @@ public class XSSFTextRun {
         return _r;
     }
 
-    public void setFontColor(Color color){
+    public void setFontColor(java.awt.Color color) {
+        setFontColor(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
+    }
+
+    /**
+     * @param rgb
+     * @since POI 5.5.0
+     */
+    public void setFontColor(byte[] rgb) {
         CTTextCharacterProperties rPr = getRPr();
         CTSolidColorFillProperties fill = rPr.isSetSolidFill() ? rPr.getSolidFill() : rPr.addNewSolidFill();
         CTSRgbColor clr = fill.isSetSrgbClr() ? fill.getSrgbClr() : fill.addNewSrgbClr();
-        clr.setVal(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
+        clr.setVal(rgb);
 
         if(fill.isSetHslClr()) fill.unsetHslClr();
         if(fill.isSetPrstClr()) fill.unsetPrstClr();
         if(fill.isSetSchemeClr()) fill.unsetSchemeClr();
         if(fill.isSetScrgbClr()) fill.unsetScrgbClr();
         if(fill.isSetSysClr()) fill.unsetSysClr();
-
     }
 
-    public Color getFontColor(){
+    public java.awt.Color getFontColor() {
+        final byte[] rgb = getFontColorAsBytes();
+        if (rgb.length == 3) {
+            return new java.awt.Color(0xFF & rgb[0], 0xFF & rgb[1], 0xFF & rgb[2]);
+        } else {
+            return new java.awt.Color(0xFF & rgb[1], 0xFF & rgb[2], 0xFF & rgb[3], 0xFF & rgb[0]);
+        }
+    }
 
-        CTTextCharacterProperties rPr = getRPr();
-        if(rPr.isSetSolidFill()){
+    /**
+     * @return the font color as a byte array.
+     * @since POI 5.5.0
+     */
+    public byte[] getFontColorAsBytes() {
+
+        CTTextCharacterProperties rPr = getRPrOrNull();
+        if (rPr != null && rPr.isSetSolidFill()) {
             CTSolidColorFillProperties fill = rPr.getSolidFill();
 
             if(fill.isSetSrgbClr()){
                 CTSRgbColor clr = fill.getSrgbClr();
-                byte[] rgb = clr.getVal();
-                return new Color(0xFF & rgb[0], 0xFF & rgb[1], 0xFF & rgb[2]);
+                return clr.getVal();
             }
         }
 
-        return new Color(0, 0, 0);
+        return new byte[]{0, 0, 0};
     }
 
     /**
@@ -93,7 +111,7 @@ public class XSSFTextRun {
      * @param fontSize  font size in points.
      * The value of {@code -1} unsets the Sz attribute from the underlying xml bean
      */
-    public void setFontSize(double fontSize){
+    public void setFontSize(double fontSize) {
         CTTextCharacterProperties rPr = getRPr();
         if(fontSize == -1.0) {
             if(rPr.isSetSz()) rPr.unsetSz();
@@ -109,14 +127,16 @@ public class XSSFTextRun {
     /**
      * @return font size in points or -1 if font size is not set.
      */
-    public double getFontSize(){
+    public double getFontSize() {
         double scale = 1;
         double size = XSSFFont.DEFAULT_FONT_SIZE;   // default font size
         CTTextNormalAutofit afit = getParentParagraph().getParentShape().getTxBody().getBodyPr().getNormAutofit();
-        if(afit != null) scale = (double)afit.getFontScale() / 100000;
+        if (afit != null && afit.isSetFontScale()) {
+            scale = NumberHelper.toDouble(afit.getFontScale()) / 100000;
+        }
 
-        CTTextCharacterProperties rPr = getRPr();
-        if(rPr.isSetSz()){
+        CTTextCharacterProperties rPr = getRPrOrNull();
+        if(rPr != null && rPr.isSetSz()){
             size = rPr.getSz()*0.01;
         }
 
@@ -129,8 +149,8 @@ public class XSSFTextRun {
      * If this attribute is omitted then a value of 0 or no adjustment is assumed.
      */
     public double getCharacterSpacing(){
-        CTTextCharacterProperties rPr = getRPr();
-        if(rPr.isSetSpc()){
+        CTTextCharacterProperties rPr = getRPrOrNull();
+        if(rPr != null && rPr.isSetSpc()){
             return Units.toPoints(POIXMLUnits.parseLength(rPr.xgetSpc()));
         }
         return 0;
@@ -188,19 +208,23 @@ public class XSSFTextRun {
      * @return  font family or null if not set
      */
     public String getFontFamily(){
-        CTTextCharacterProperties rPr = getRPr();
-        CTTextFont font = rPr.getLatin();
-        if(font != null){
-            return font.getTypeface();
+        CTTextCharacterProperties rPr = getRPrOrNull();
+        if (rPr != null) {
+            CTTextFont font = rPr.getLatin();
+            if(font != null) {
+                return font.getTypeface();
+            }
         }
         return XSSFFont.DEFAULT_FONT_NAME;
     }
 
-    public byte getPitchAndFamily(){
-        CTTextCharacterProperties rPr = getRPr();
-        CTTextFont font = rPr.getLatin();
-        if(font != null){
-            return font.getPitchFamily();
+    public byte getPitchAndFamily() {
+        CTTextCharacterProperties rPr = getRPrOrNull();
+        if (rPr != null) {
+            CTTextFont font = rPr.getLatin();
+            if(font != null) {
+                return font.getPitchFamily();
+            }
         }
         return 0;
     }
@@ -218,8 +242,8 @@ public class XSSFTextRun {
      * @return whether a run of text will be formatted as strikethrough text. Default is false.
      */
     public boolean isStrikethrough() {
-        CTTextCharacterProperties rPr = getRPr();
-        if(rPr.isSetStrike()){
+        CTTextCharacterProperties rPr = getRPrOrNull();
+        if (rPr != null && rPr.isSetStrike()){
             return rPr.getStrike() != STTextStrikeType.NO_STRIKE;
         }
         return false;
@@ -229,8 +253,8 @@ public class XSSFTextRun {
      * @return whether a run of text will be formatted as a superscript text. Default is false.
      */
     public boolean isSuperscript() {
-        CTTextCharacterProperties rPr = getRPr();
-        if(rPr.isSetBaseline()){
+        CTTextCharacterProperties rPr = getRPrOrNull();
+        if (rPr != null && rPr.isSetBaseline()){
             return POIXMLUnits.parsePercent(rPr.xgetBaseline()) > 0;
         }
         return false;
@@ -270,8 +294,8 @@ public class XSSFTextRun {
      * @return whether a run of text will be formatted as a superscript text. Default is false.
      */
     public boolean isSubscript() {
-        CTTextCharacterProperties rPr = getRPr();
-        if(rPr.isSetBaseline()){
+        CTTextCharacterProperties rPr = getRPrOrNull();
+        if (rPr != null && rPr.isSetBaseline()){
             return POIXMLUnits.parsePercent(rPr.xgetBaseline()) < 0;
         }
         return false;
@@ -281,8 +305,8 @@ public class XSSFTextRun {
      * @return whether a run of text will be formatted as a superscript text. Default is false.
      */
     public TextCap getTextCap() {
-        CTTextCharacterProperties rPr = getRPr();
-        if(rPr.isSetCap()){
+        CTTextCharacterProperties rPr = getRPrOrNull();
+        if (rPr != null && rPr.isSetCap()) {
             return TextCap.values()[rPr.getCap().intValue() - 1];
         }
         return TextCap.NONE;
@@ -301,8 +325,8 @@ public class XSSFTextRun {
      * @return whether this run of text is formatted as bold text
      */
     public boolean isBold(){
-        CTTextCharacterProperties rPr = getRPr();
-        if(rPr.isSetB()){
+        CTTextCharacterProperties rPr = getRPrOrNull();
+        if (rPr != null && rPr.isSetB()){
             return rPr.getB();
         }
         return false;
@@ -319,8 +343,8 @@ public class XSSFTextRun {
      * @return whether this run of text is formatted as italic text
      */
     public boolean isItalic(){
-        CTTextCharacterProperties rPr = getRPr();
-        if(rPr.isSetI()){
+        CTTextCharacterProperties rPr = getRPrOrNull();
+        if (rPr != null && rPr.isSetI()){
             return rPr.getI();
         }
         return false;
@@ -337,15 +361,19 @@ public class XSSFTextRun {
      * @return whether this run of text is formatted as underlined text
      */
     public boolean isUnderline(){
-        CTTextCharacterProperties rPr = getRPr();
-        if(rPr.isSetU()){
+        CTTextCharacterProperties rPr = getRPrOrNull();
+        if (rPr != null && rPr.isSetU()){
             return rPr.getU() != STTextUnderlineType.NONE;
         }
         return false;
     }
 
-    protected CTTextCharacterProperties getRPr(){
+    protected CTTextCharacterProperties getRPr() {
         return _r.isSetRPr() ? _r.getRPr() : _r.addNewRPr();
+    }
+
+    private CTTextCharacterProperties getRPrOrNull() {
+        return _r.isSetRPr() ? _r.getRPr() : null;
     }
 
     @Override

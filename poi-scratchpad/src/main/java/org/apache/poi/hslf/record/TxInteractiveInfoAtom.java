@@ -28,7 +28,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Tne atom that holds starting and ending character positions of a hyperlink
+ * The atom that holds starting and ending character positions of a hyperlink
  */
 public final class TxInteractiveInfoAtom extends RecordAtom {
 

@@ -23,22 +23,12 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Spliterator;
-
+import java.util.*;
 import javax.xml.namespace.QName;
-
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.POIException;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
@@ -59,6 +49,8 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
@@ -66,6 +58,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocument1;
@@ -96,12 +89,13 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
  * XML structure come through. You'll therefore almost
  * certainly need to refer to the OOXML specifications
  * from
- * http://www.ecma-international.org/publications/standards/Ecma-376.htm
+ * https://www.ecma-international.org/publications/standards/Ecma-376.htm
  * at some point in your use.
  */
 @SuppressWarnings("unused")
 public class XWPFDocument extends POIXMLDocument implements Document, IBody {
-    private static final Logger LOG = LogManager.getLogger(XWPFDocument.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XWPFDocument.class);
+    private static final int MAX_NODE_DEPTH = 1000;
 
     protected List<XWPFFooter> footers = new ArrayList<>();
     protected List<XWPFHeader> headers = new ArrayList<>();
@@ -115,6 +109,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     protected XWPFEndnotes endnotes;
     protected XWPFNumbering numbering;
     protected XWPFStyles styles;
+    protected XWPFTheme theme;
     protected XWPFFootnotes footnotes;
     private CTDocument1 ctDocument;
     private XWPFSettings settings;
@@ -136,7 +131,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @param pkg OPC package
      * @throws IOException If reading data from the package fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public XWPFDocument(OPCPackage pkg) throws IOException {
@@ -147,14 +142,27 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * @param is The InputStream to read data from
+     * @param stream The InputStream to read data from - the stream is closed
      * @throws IOException If reading data from the stream fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
-    public XWPFDocument(InputStream is) throws IOException {
-        super(PackageHelper.open(is));
+    public XWPFDocument(InputStream stream) throws IOException {
+        this(stream, true);
+    }
+
+    /**
+     * @param stream The InputStream to read data from
+     * @param closeStream Whether to close the InputStream
+     * @throws IOException If reading data from the stream fails
+     * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @since POI 5.2.5
+     */
+    public XWPFDocument(InputStream stream, boolean closeStream) throws IOException {
+        super(PackageHelper.open(stream, closeStream));
 
         //build a tree of POIXMLDocumentParts, this workbook being the root
         load(XWPFFactory.getInstance());
@@ -171,7 +179,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     protected static OPCPackage newPackage() {
         OPCPackage pkg = null;
         try {
-            pkg = OPCPackage.create(new UnsynchronizedByteArrayOutputStream());    // NOSONAR - we do not want to close this here
+            pkg = OPCPackage.create(UnsynchronizedByteArrayOutputStream.builder().get());    // NOSONAR - we do not want to close this here
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XWPFRelation.DOCUMENT.getDefaultFileName());
             // Create main part relationship
@@ -197,6 +205,13 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 doc = DocumentDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
                 ctDocument = doc.getDocument();
             }
+            final int nodeDepth = XMLHelper.getDepthOfChildNodes(ctDocument.getDomNode(), MAX_NODE_DEPTH);
+            if (nodeDepth > MAX_NODE_DEPTH) {
+                throw new IOException(String.format(Locale.ROOT,
+                        "The document is too complex, it has a node depth of %s, which exceeds the maximum allowed of %s",
+                        nodeDepth,
+                        MAX_NODE_DEPTH));
+            }
 
             initFootnotes();
 
@@ -216,7 +231,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                                     bodyElements.add(p);
                                     paragraphs.add(p);
                                 } else if (bodyObj instanceof CTTbl) {
-                                    XWPFTable t = new XWPFTable((CTTbl) bodyObj, this);
+                                    XWPFTable t = new XWPFTable((CTTbl) bodyObj, this, false);
                                     bodyElements.add(t);
                                     tables.add(t);
                                 } else if (bodyObj instanceof CTSdtBlock) {
@@ -230,7 +245,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 }
             }
             // Sort out headers and footers
-            if (doc.getDocument().getBody().getSectPr() != null) {
+            if (doc.getDocument().getBody() != null && doc.getDocument().getBody().getSectPr() != null) {
                 headerFooterPolicy = new XWPFHeaderFooterPolicy(this);
             }
 
@@ -238,48 +253,57 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             for (RelationPart rp : getRelationParts()) {
                 POIXMLDocumentPart p = rp.getDocumentPart();
                 String relation = rp.getRelationship().getRelationshipType();
-                if (relation.equals(XWPFRelation.STYLES.getRelation())) {
-                    this.styles = (XWPFStyles) p;
-                    this.styles.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.NUMBERING.getRelation())) {
-                    this.numbering = (XWPFNumbering) p;
-                    this.numbering.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.FOOTER.getRelation())) {
-                    XWPFFooter footer = (XWPFFooter) p;
-                    footers.add(footer);
-                    footer.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.HEADER.getRelation())) {
-                    XWPFHeader header = (XWPFHeader) p;
-                    headers.add(header);
-                    header.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.COMMENT.getRelation())) {
-                    this.comments = (XWPFComments) p;
-                    this.comments.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.SETTINGS.getRelation())) {
-                    settings = (XWPFSettings) p;
-                    settings.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.IMAGES.getRelation())) {
-                    XWPFPictureData picData = (XWPFPictureData) p;
-                    picData.onDocumentRead();
-                    registerPackagePictureData(picData);
-                    pictures.add(picData);
-                } else if (relation.equals(XWPFRelation.CHART.getRelation())) {
-                    //now we can use all methods to modify charts in XWPFDocument
-                    XWPFChart chartData = (XWPFChart) p;
-                    charts.add(chartData);
-                } else if (relation.equals(XWPFRelation.GLOSSARY_DOCUMENT.getRelation())) {
-                    // We don't currently process the glossary itself
-                    // Until we do, we do need to load the glossary child parts of it
-                    for (POIXMLDocumentPart gp : p.getRelations()) {
-                        // Trigger the onDocumentRead for all the child parts
-                        // Otherwise we'll hit issues on Styles, Settings etc on save
-                        // TODO: Refactor this to not need to access protected method
-                        // from other package! Remove the static helper method once fixed!!!
-                        POIXMLDocumentPart._invokeOnDocumentRead(gp);
+                try {
+                    if (relation.equals(XWPFRelation.STYLES.getRelation())) {
+                        this.styles = (XWPFStyles) p;
+                        this.styles.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.THEME.getRelation())) {
+                        this.theme = (XWPFTheme) p;
+                        this.theme.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.NUMBERING.getRelation())) {
+                        this.numbering = (XWPFNumbering) p;
+                        this.numbering.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.FOOTER.getRelation())) {
+                        XWPFFooter footer = (XWPFFooter) p;
+                        footers.add(footer);
+                        footer.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.HEADER.getRelation())) {
+                        XWPFHeader header = (XWPFHeader) p;
+                        headers.add(header);
+                        header.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.COMMENT.getRelation())) {
+                        this.comments = (XWPFComments) p;
+                        this.comments.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.SETTINGS.getRelation())) {
+                        settings = (XWPFSettings) p;
+                        settings.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.IMAGES.getRelation())) {
+                        XWPFPictureData picData = (XWPFPictureData) p;
+                        picData.onDocumentRead();
+                        registerPackagePictureData(picData);
+                        pictures.add(picData);
+                    } else if (relation.equals(XWPFRelation.CHART.getRelation())) {
+                        //now we can use all methods to modify charts in XWPFDocument
+                        XWPFChart chartData = (XWPFChart) p;
+                        charts.add(chartData);
+                    } else if (relation.equals(XWPFRelation.GLOSSARY_DOCUMENT.getRelation())) {
+                        // We don't currently process the glossary itself
+                        // Until we do, we do need to load the glossary child parts of it
+                        for (POIXMLDocumentPart gp : p.getRelations()) {
+                            // Trigger the onDocumentRead for all the child parts
+                            // Otherwise we'll hit issues on Styles, Settings etc on save
+                            // TODO: Refactor this to not need to access protected method
+                            // from other package! Remove the static helper method once fixed!!!
+                            POIXMLDocumentPart._invokeOnDocumentRead(gp);
+                        }
                     }
+                } catch (ClassCastException e) {
+                    throw new IllegalArgumentException("Relation and type of document-part did not match, had relation " + relation + " and type of document-part: " + p.getClass(), e);
                 }
             }
             initHyperlinks();
+        } catch (POIException e) {
+            throw new IOException(e);
         } catch (XmlException e) {
             throw new POIXMLException(e);
         }
@@ -302,11 +326,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         for (RelationPart rp : getRelationParts()) {
             POIXMLDocumentPart p = rp.getDocumentPart();
             String relation = rp.getRelationship().getRelationshipType();
-            if (relation.equals(XWPFRelation.FOOTNOTE.getRelation())) {
+            if (relation.equals(XWPFRelation.FOOTNOTE.getRelation()) && p instanceof XWPFFootnotes) {
                 this.footnotes = (XWPFFootnotes) p;
                 this.footnotes.onDocumentRead();
                 this.footnotes.setIdManager(footnoteIdManager);
-            } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation())) {
+            } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation()) && p instanceof XWPFEndnotes) {
                 this.endnotes = (XWPFEndnotes) p;
                 this.endnotes.onDocumentRead();
                 this.endnotes.setIdManager(footnoteIdManager);
@@ -458,6 +482,14 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return footnotes.getFootnotesList();
     }
 
+    /**
+     * @return Theme document (can be null)
+     * @since POI 5.2.4
+     */
+    public XWPFTheme getTheme() {
+        return theme;
+    }
+
     public XWPFHyperlink[] getHyperlinks() {
         return hyperlinks.toArray(new XWPFHyperlink[0]);
     }
@@ -568,8 +600,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     private CTSectPr getSection() {
         CTBody ctBody = getDocument().getBody();
         return (ctBody.isSetSectPr() ?
-                ctBody.getSectPr() :
-                ctBody.addNewSectPr());
+            ctBody.getSectPr() :
+            ctBody.addNewSectPr());
     }
 
     /**
@@ -581,10 +613,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         try {
             parts = getRelatedByType(XWPFRelation.STYLES.getRelation());
         } catch (InvalidFormatException e) {
-            throw new IllegalStateException(e);
+            throw new IOException(e);
         }
         if (parts.length != 1) {
-            throw new IllegalStateException("Expecting one Styles document part, but found " + parts.length);
+            throw new IOException("Expecting one Styles document part, but found " + parts.length);
         }
 
         try (InputStream stream = parts[0].getInputStream()) {
@@ -678,25 +710,82 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param cursor The cursor-position where the new paragraph should be added.
      * @return the {@link XWPFParagraph} object representing the newly inserted
-     * CTP object
+     * CTP object.
      */
     @Override
     public XWPFParagraph insertNewParagraph(XmlCursor cursor) {
-        if (isCursorInBody(cursor)) {
-            String uri = CTP.type.getName().getNamespaceURI();
-            /*
-             * TODO DO not use a coded constant, find the constant in the OOXML
-             * classes instead, as the child of type CT_Paragraph is defined in the
-             * OOXML schema as 'p'
-             */
-            String localPart = "p";
-            // creates a new Paragraph, cursor is positioned inside the new
-            // element
-            cursor.beginElement(localPart, uri);
-            // move the cursor to the START token to the paragraph just created
-            cursor.toParent();
-            CTP p = (CTP) cursor.getObject();
-            XWPFParagraph newP = new XWPFParagraph(p, this);
+        Deque<XmlObject> path = getPathToObject(cursor);
+        String uri = CTP.type.getName().getNamespaceURI();
+        /*
+         * TODO DO not use a coded constant, find the constant in the OOXML
+         * classes instead, as the child of type CT_Paragraph is defined in the
+         * OOXML schema as 'p'
+         */
+        String localPart = "p";
+        // creates a new Paragraph, cursor is positioned inside the new
+        // element
+        cursor.beginElement(localPart, uri);
+        // move the cursor to the START token to the paragraph just created
+        cursor.toParent();
+        CTP p = (CTP) cursor.getObject();
+        XWPFParagraph newP = new XWPFParagraph(p, this);
+        insertIntoParentElement(newP, path);
+        cursor.toCursor(newP.getCTP().newCursor());
+        cursor.toEndToken();
+        return newP;
+    }
+
+    @Override
+    public XWPFTable insertNewTbl(XmlCursor cursor) {
+        Deque<XmlObject> path = getPathToObject(cursor);
+        String uri = CTTbl.type.getName().getNamespaceURI();
+        String localPart = "tbl";
+        cursor.beginElement(localPart, uri);
+        cursor.toParent();
+        CTTbl t = (CTTbl) cursor.getObject();
+        XWPFTable newT = new XWPFTable(t, this);
+        insertIntoParentElement(newT, path);
+        cursor.toCursor(newT.getCTTbl().newCursor());
+        cursor.toEndToken();
+        return newT;
+    }
+
+    private Deque<XmlObject> getPathToObject(XmlCursor cursor) {
+        Deque<XmlObject> searchPath = new LinkedList<>();
+        try (XmlCursor verify = cursor.newCursor()) {
+            while (verify.toParent() && searchPath.peekFirst() != this.ctDocument.getBody()) {
+                searchPath.addFirst(verify.getObject());
+            }
+        }
+        return searchPath;
+    }
+
+    private void insertIntoParentElement(IBodyElement iBodyElement, Deque<XmlObject> path) {
+        XmlObject firstObject = path.pop();
+        if (path.isEmpty()) {
+            if (iBodyElement instanceof XWPFParagraph) {
+                insertIntoParagraphsAndElements((XWPFParagraph) iBodyElement, paragraphs, bodyElements);
+            } else if (iBodyElement instanceof XWPFTable) {
+                insertIntoTablesAndElements((XWPFTable) iBodyElement, tables, bodyElements);
+            }
+        } else {
+            CTTbl ctTbl = (CTTbl) path.pop(); //first object is always the body, we want the second one
+            for (XWPFTable xwpfTable : tables) {
+                if (ctTbl == xwpfTable.getCTTbl()) {
+                    insertElementIntoTable(xwpfTable, iBodyElement, path);
+                }
+            }
+        }
+    }
+
+    private void insertIntoParagraphsAndElements(XWPFParagraph newP, List<XWPFParagraph> paragraphs, List<IBodyElement> bodyElements) {
+        insertIntoParagraphs(newP, paragraphs);
+        insertIntoBodyElements(newP, bodyElements);
+    }
+
+    private void insertIntoParagraphs(XWPFParagraph newP, List<XWPFParagraph> paragraphs) {
+        try (XmlCursor cursor = newP.getCTP().newCursor()) {
+            XmlObject p = cursor.getObject();
             XmlObject o = null;
             /*
              * move the cursor to the previous element until a) the next
@@ -719,77 +808,108 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;
                 paragraphs.add(pos, newP);
             }
-
-            /*
-             * create a new cursor, that points to the START token of the just
-             * inserted paragraph
-             */
-            try (XmlCursor newParaPos = p.newCursor()) {
-                /*
-                 * Calculate the paragraphs index in the list of all body
-                 * elements
-                 */
-                int i = 0;
-                cursor.toCursor(newParaPos);
-                while (cursor.toPrevSibling()) {
-                    o = cursor.getObject();
-                    if (o instanceof CTP || o instanceof CTTbl) {
-                        i++;
-                    }
-                }
-                bodyElements.add(i, newP);
-                cursor.toCursor(newParaPos);
-                cursor.toEndToken();
-                return newP;
-            }
         }
-        return null;
     }
 
-    @Override
-    public XWPFTable insertNewTbl(XmlCursor cursor) {
-        if (isCursorInBody(cursor)) {
-            String uri = CTTbl.type.getName().getNamespaceURI();
-            String localPart = "tbl";
-            cursor.beginElement(localPart, uri);
-            cursor.toParent();
-            CTTbl t = (CTTbl) cursor.getObject();
-            XWPFTable newT = new XWPFTable(t, this);
+    private void insertIntoTablesAndElements(XWPFTable newT, List<XWPFTable> tables, List<IBodyElement> bodyElements) {
+        insertIntoTables(newT, tables);
+        insertIntoBodyElements(newT, bodyElements);
+    }
+
+    private void insertIntoTables(XWPFTable newT, List<XWPFTable> tables) {
+        try (XmlCursor cursor = newT.getCTTbl().newCursor()) {
+            XmlObject p = cursor.getObject();
             XmlObject o = null;
+            /*
+             * move the cursor to the previous element until a) the next
+             * paragraph is found or b) all elements have been passed
+             */
             while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
             }
+            /*
+             * if the object that has been found is a) not a paragraph or b) is
+             * the paragraph that has just been inserted, as the cursor in the
+             * while loop above was not moved as there were no other siblings,
+             * then the paragraph that was just inserted is the first paragraph
+             * in the body. Otherwise, take the previous paragraph and calculate
+             * the new index for the new paragraph.
+             */
             if (!(o instanceof CTTbl)) {
                 tables.add(0, newT);
             } else {
                 int pos = tables.indexOf(getTable((CTTbl) o)) + 1;
                 tables.add(pos, newT);
             }
-            int i = 0;
-            try (XmlCursor tableCursor = t.newCursor()) {
-                cursor.toCursor(tableCursor);
-                while (cursor.toPrevSibling()) {
-                    o = cursor.getObject();
-                    if (o instanceof CTP || o instanceof CTTbl) {
-                        i++;
-                    }
-                }
-                bodyElements.add(i, newT);
-                cursor.toCursor(tableCursor);
-                cursor.toEndToken();
-                return newT;
-            }
         }
-        return null;
     }
 
-    /**
-     * verifies that cursor is on the right position
-     */
-    private boolean isCursorInBody(XmlCursor cursor) {
-        try (XmlCursor verify = cursor.newCursor()) {
-            verify.toParent();
-            return (verify.getObject() == this.ctDocument.getBody());
+    private void insertIntoBodyElements(IBodyElement iBodyElement, List<IBodyElement> bodyElements) {
+        /*
+         * create a new cursor, that points to the START token of the just
+         * inserted paragraph
+         */
+        try (XmlCursor cursor = getNewCursor(iBodyElement).orElseThrow(NoSuchElementException::new);
+             XmlCursor newParaPos = getNewCursor(iBodyElement).orElseThrow(NoSuchElementException::new)) {
+            XmlObject o;
+            /*
+             * Calculate the paragraphs index in the list of all body
+             * elements
+             */
+            int i = 0;
+            cursor.toCursor(newParaPos);
+            while (cursor.toPrevSibling()) {
+                o = cursor.getObject();
+                if (o instanceof CTP || o instanceof CTTbl || o instanceof CTSdtBlock) {
+                    i++;
+                }
+            }
+            bodyElements.add(i, iBodyElement);
+            cursor.toCursor(newParaPos);
+            cursor.toEndToken();
+        } catch (NoSuchElementException ignored) {
+            //We could not open a cursor to the ibody element
+        }
+    }
+
+    private Optional<XmlCursor> getNewCursor(IBodyElement iBodyElement) {
+        if (iBodyElement instanceof XWPFParagraph) {
+            return Optional.ofNullable(((XWPFParagraph) iBodyElement).getCTP().newCursor());
+        } else if (iBodyElement instanceof XWPFTable) {
+            return Optional.ofNullable(((XWPFTable) iBodyElement).getCTTbl().newCursor());
+        }
+        return Optional.empty();
+    }
+
+
+    private void insertElementIntoTable(XWPFTable xwpfTable, IBodyElement iBodyElement, Deque<XmlObject> path) {
+        CTRow row = (CTRow) path.pop();
+        for (XWPFTableRow tableRow : xwpfTable.getRows()) {
+            if (tableRow.getCtRow() == row) {
+                insertElementIntoRow(tableRow, iBodyElement, path);
+            }
+        }
+    }
+
+    private void insertElementIntoRow(XWPFTableRow tableRow, IBodyElement iBodyElement, Deque<XmlObject> path) {
+        CTTc cell = (CTTc) path.pop();
+        for (XWPFTableCell tableCell : tableRow.getTableCells()) {
+            if (tableCell.getCTTc() == cell) {
+                insertElementIntoCell(tableCell, iBodyElement, path);
+            }
+        }
+    }
+
+    private void insertElementIntoCell(XWPFTableCell tableCell, IBodyElement iBodyElement, Deque<XmlObject> path) {
+        if (path.isEmpty()) {
+            if (iBodyElement instanceof XWPFParagraph) {
+                insertIntoParagraphsAndElements((XWPFParagraph) iBodyElement, tableCell.paragraphs, tableCell.bodyElements);
+            }  else if (iBodyElement instanceof XWPFTable) {
+                insertIntoTablesAndElements((XWPFTable) iBodyElement, tableCell.tables, tableCell.bodyElements);
+            }
+        } else {
+            // another table
+            insertElementIntoTable((XWPFTable) path.pop(), iBodyElement, path);
         }
     }
 
@@ -929,6 +1049,28 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return styles;
     }
 
+
+    /**
+     * Creates an empty styles for the document if one does not already exist
+     *
+     * @return styles
+     * @since POI 5.2.4
+     */
+    public XWPFTheme createTheme() {
+        if (theme == null) {
+            ThemeDocument themeDoc = ThemeDocument.Factory.newInstance();
+
+            XWPFRelation relation = XWPFRelation.THEME;
+            int i = getRelationIndex(relation);
+
+            XWPFTheme wrapper = (XWPFTheme) createRelationship(relation, XWPFFactory.getInstance(), i);
+            wrapper.setTheme(themeDoc.addNewTheme());
+            theme = wrapper;
+        }
+
+        return theme;
+    }
+
     /**
      * Creates an empty footnotes element for the document if one does not already exist
      *
@@ -999,7 +1141,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * copies content of a paragraph to a existing paragraph in the list paragraphs at position pos
+     * copies content of a paragraph to an existing paragraph in the list paragraphs at position pos
      */
     public void setParagraph(XWPFParagraph paragraph, int pos) {
         paragraphs.set(pos, paragraph);
@@ -1014,7 +1156,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return the LastParagraph of the document
      */
     public XWPFParagraph getLastParagraph() {
-        int lastPos = paragraphs.toArray().length - 1;
+        final int lastPos = paragraphs.size() - 1;
         return paragraphs.get(lastPos);
     }
 
@@ -1185,7 +1327,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param password the plaintext password, if null no password will be applied
      * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                 if null, it will default default to sha1
+     *                 if null, it will default to sha1
      */
     public void enforceReadonlyProtection(String password, HashAlgorithm hashAlgo) {
         settings.setEnforcementEditValue(STDocProtect.READ_ONLY, password, hashAlgo);
@@ -1221,7 +1363,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param password the plaintext password, if null no password will be applied
      * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                 if null, it will default default to sha1
+     *                 if null, it will default to sha1
      */
     public void enforceFillingFormsProtection(String password, HashAlgorithm hashAlgo) {
         settings.setEnforcementEditValue(STDocProtect.FORMS, password, hashAlgo);
@@ -1257,7 +1399,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param password the plaintext password, if null no password will be applied
      * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                 if null, it will default default to sha1
+     *                 if null, it will default to sha1
      */
     public void enforceCommentsProtection(String password, HashAlgorithm hashAlgo) {
         settings.setEnforcementEditValue(STDocProtect.COMMENTS, password, hashAlgo);
@@ -1293,7 +1435,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param password the plaintext password, if null no password will be applied
      * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                 if null, it will default default to sha1
+     *                 if null, it will default to sha1
      */
     public void enforceTrackedChangesProtection(String password, HashAlgorithm hashAlgo) {
         settings.setEnforcementEditValue(STDocProtect.TRACKED_CHANGES, password, hashAlgo);
@@ -1583,7 +1725,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return the next free ImageNumber
      * @throws InvalidFormatException If the format of the picture is not known.
      * @see #getNextPicNameNumber(PictureType)
+     * @deprecated use {@link #getNextPicNameNumber(PictureType)} instead.
      */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public int getNextPicNameNumber(int format) throws InvalidFormatException {
         return getNextPicNameNumber(PictureType.findByOoxmlId(format));
     }
@@ -1795,7 +1940,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
         //create relationship in document for new chart
         RelationPart rp = createRelationship(
-                XWPFRelation.CHART, XWPFFactory.getInstance(), chartNumber, false);
+            XWPFRelation.CHART, XWPFFactory.getInstance(), chartNumber, false);
 
         // initialize xwpfchart object
         XWPFChart xwpfChart = rp.getDocumentPart();

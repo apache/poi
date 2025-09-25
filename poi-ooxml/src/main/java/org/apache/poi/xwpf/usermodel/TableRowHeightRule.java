@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,12 +29,14 @@ public enum TableRowHeightRule {
     EXACT(2),
     AT_LEAST(3);
 
-    private static Map<Integer, TableRowHeightRule> imap = new HashMap<>();
+    private static final Map<Integer, TableRowHeightRule> imap;
 
     static {
+        final Map<Integer, TableRowHeightRule> tempMap = new HashMap<>();
         for (TableRowHeightRule p : values()) {
-            imap.put(p.getValue(), p);
+            tempMap.put(p.getValue(), p);
         }
+        imap = Collections.unmodifiableMap(tempMap);
     }
 
     private final int value;

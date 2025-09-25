@@ -26,8 +26,10 @@ import java.util.function.Supplier;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
+import org.apache.poi.poifs.crypt.EncryptionHeader;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
+import org.apache.poi.poifs.crypt.EncryptionVerifier;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionVerifier;
@@ -118,8 +120,16 @@ public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
         bos.writeShort(ei.getVersionMinor());
         bos.writeInt(ei.getEncryptionFlags());
 
-        ((CryptoAPIEncryptionHeader)ei.getHeader()).write(bos);
-        ((CryptoAPIEncryptionVerifier)ei.getVerifier()).write(bos);
+        final EncryptionHeader header = ei.getHeader();
+        if (!(header instanceof CryptoAPIEncryptionHeader)) {
+            throw new IllegalStateException("Had unexpected type of header: " + header.getClass());
+        }
+        ((CryptoAPIEncryptionHeader) header).write(bos);
+        final EncryptionVerifier verifier = ei.getVerifier();
+        if (!(verifier instanceof CryptoAPIEncryptionVerifier)) {
+            throw new IllegalStateException("Had unexpected type of verifier: " + verifier.getClass());
+        }
+        ((CryptoAPIEncryptionVerifier) verifier).write(bos);
 
         // Header
         LittleEndian.putInt(_header, 4, bos.getWriteIndex());

@@ -20,8 +20,10 @@
 package org.apache.poi.xssf.streaming;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -33,6 +35,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 
 public final class TestSXSSFSheet extends BaseTestXSheet {
@@ -43,7 +46,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
 
 
     @AfterEach
-    void tearDown(){
+    void tearDown() {
         SXSSFITestDataProvider.instance.cleanup();
     }
 
@@ -60,6 +63,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     @Override
     @Test
     protected void cloneSheet() {
+        //noinspection Convert2MethodRef
         RuntimeException ex = assertThrows(RuntimeException.class, () -> super.cloneSheet());
         assertEquals("Not Implemented", ex.getMessage());
     }
@@ -67,6 +71,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     @Override
     @Test
     protected void cloneSheetMultipleTimes() {
+        //noinspection Convert2MethodRef
         RuntimeException ex = assertThrows(RuntimeException.class, () -> super.cloneSheetMultipleTimes());
         assertEquals("Not Implemented", ex.getMessage());
     }
@@ -77,18 +82,20 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     @Override
     @Test
     protected void shiftMerged() {
+        //noinspection Convert2MethodRef
         RuntimeException ex = assertThrows(RuntimeException.class, () -> super.shiftMerged());
         assertEquals("Not Implemented", ex.getMessage());
     }
 
     /**
-     *  Bug 35084: cloning cells with formula
-     *
-     *  The test is disabled because cloning of sheets is not supported in SXSSF
+     * Bug 35084: cloning cells with formula
+     * <p>
+     * The test is disabled because cloning of sheets is not supported in SXSSF
      */
     @Override
     @Test
     protected void bug35084() {
+        //noinspection Convert2MethodRef
         RuntimeException ex = assertThrows(RuntimeException.class, () -> super.bug35084());
         assertEquals("Not Implemented", ex.getMessage());
     }
@@ -117,7 +124,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
 
     @Test
     void flushBufferedDaat() throws IOException {
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             try (SXSSFWorkbook wb = new SXSSFWorkbook(1)) {
                 SXSSFSheet sheet = wb.createSheet("my-sheet");
 
@@ -177,4 +184,106 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
 
         wb.close();
     }
+
+    @Test
+    void groupRow() throws IOException {
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
+            SXSSFSheet sheet = workbook.createSheet();
+
+            // XSSF code can group rows even if there are no XSSFRows yet, SXSSFWorkbook needs the rows to exist first
+            for (int i = 0; i < 20; i++) {
+                sheet.createRow(i);
+            }
+
+            //one level
+            sheet.groupRow(9, 10);
+
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                workbook.write(bos);
+                try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+                    CTRow ctrow = xssfSheet.getRow(9).getCTRow();
+
+                    assertNotNull(ctrow);
+                    assertEquals(10, ctrow.getR());
+                    assertEquals(1, ctrow.getOutlineLevel());
+                    assertEquals(1, xssfSheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelRow());
+                }
+            }
+        }
+    }
+
+    @Test
+    void groupRow2Levels() throws IOException {
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
+            SXSSFSheet sheet = workbook.createSheet();
+
+            // XSSF code can group rows even if there are no XSSFRows yet, SXSSFWorkbook needs the rows to exist first
+            for (int i = 0; i < 20; i++) {
+                sheet.createRow(i);
+            }
+
+            //one level
+            sheet.groupRow(9, 10);
+            //two level
+            sheet.groupRow(10, 13);
+
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                workbook.write(bos);
+                try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+                    CTRow ctrow = xssfSheet.getRow(9).getCTRow();
+
+                    assertNotNull(ctrow);
+                    assertEquals(10, ctrow.getR());
+                    assertEquals(1, ctrow.getOutlineLevel());
+
+                    ctrow = xssfSheet.getRow(10).getCTRow();
+                    assertNotNull(ctrow);
+                    assertEquals(11, ctrow.getR());
+                    assertEquals(2, ctrow.getOutlineLevel());
+                    assertEquals(2, xssfSheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelRow());
+                }
+            }
+        }
+    }
+
+    @Test
+    void autosizeWithArbitraryExtraWidth() throws IOException {
+        final int extra = 100;
+        final String longText =
+                "This is a very long text that will exceed default column width for sure.";
+        int width0, width1 = 0;
+        try (SXSSFWorkbook workbook0 = new SXSSFWorkbook()) {
+            SXSSFSheet sheet = workbook0.createSheet();
+            sheet.trackColumnForAutoSizing(0);
+
+            SXSSFRow row = sheet.createRow(0);
+            row.createCell(0).setCellValue(longText);
+            sheet.autoSizeColumn(0);
+
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                workbook0.write(bos);
+            }
+            width0 = sheet.getColumnWidth(0);
+        }
+
+        try (SXSSFWorkbook workbook1 = new SXSSFWorkbook()) {
+            SXSSFSheet sheet = workbook1.createSheet();
+            sheet.setArbitraryExtraWidth(extra);
+            sheet.trackColumnForAutoSizing(0);
+
+            SXSSFRow row = sheet.createRow(0);
+            row.createCell(0).setCellValue(longText);
+            sheet.autoSizeColumn(0);
+
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                workbook1.write(bos);
+            }
+            width1 = sheet.getColumnWidth(0);
+        }
+
+        assertEquals(width0 + extra, width1);
+    }
+
 }

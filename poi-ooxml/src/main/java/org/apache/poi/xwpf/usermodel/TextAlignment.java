@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,12 +51,14 @@ public enum TextAlignment {
      */
     AUTO(5);
 
-    private static Map<Integer, TextAlignment> imap = new HashMap<>();
+    private static final Map<Integer, TextAlignment> imap;
 
     static {
+        final Map<Integer, TextAlignment> tempMap = new HashMap<>();
         for (TextAlignment p : values()) {
-            imap.put(p.getValue(), p);
+            tempMap.put(p.getValue(), p);
         }
+        imap = Collections.unmodifiableMap(tempMap);
     }
 
     private final int value;

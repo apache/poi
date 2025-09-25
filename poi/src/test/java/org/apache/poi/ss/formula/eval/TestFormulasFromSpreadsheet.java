@@ -100,7 +100,9 @@ public final class TestFormulasFromSpreadsheet {
     @AfterAll
     public static void closeResource() throws Exception {
         LocaleUtil.setUserLocale(userLocale);
-        workbook.close();
+        if (workbook != null) {
+            workbook.close();
+        }
     }
 
     public static Stream<Arguments> data() {

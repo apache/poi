@@ -19,6 +19,8 @@ package org.apache.poi.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Interface for creating temporary files. Collects them all into one directory by default.
@@ -27,7 +29,14 @@ public final class TempFile {
     /** The strategy used by {@link #createTempFile(String, String)} to create the temporary files. */
     private static TempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy();
 
-    /** Define a constant for this property as it is sometimes mistypes as "tempdir" otherwise */
+    /** If set for the thread, this is used instead of the strategy variable above. */
+    private static final ThreadLocal<TempFileCreationStrategy> threadLocalStrategy = new ThreadLocal<>();
+    static {
+        // allow to clear all thread-locals via ThreadLocalUtil
+        ThreadLocalUtil.registerCleaner(threadLocalStrategy::remove);
+    }
+
+    /** Define a constant for this property as it is sometimes mistyped as "tempdir" otherwise */
     public static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
     
     private TempFile() {
@@ -47,11 +56,27 @@ public final class TempFile {
         }
         TempFile.strategy = strategy;
     }
+
+    /**
+     * Configures the strategy used by {@link #createTempFile(String, String)} to create the temporary files.
+     *
+     * @param strategy The new strategy to be used to create the temporary files for this thread.
+     *                 <code>null</code> can be used to reset the strategy for this thread to the default one.
+     * @since POI 5.5.0
+     */
+    public static void setThreadLocalTempFileCreationStrategy(TempFileCreationStrategy strategy) {
+        if (strategy == null) {
+            threadLocalStrategy.remove();
+        } else {
+            threadLocalStrategy.set(strategy);
+        }
+    }
     
     /**
-     * Creates a new and empty temporary file. By default, files are collected into one directory and are
-     * deleted on exit from the VM, although they can be kept by defining the system property
-     * <code>poi.keep.tmp.files</code> (see {@link DefaultTempFileCreationStrategy}).
+     * Creates a new and empty temporary file. By default, files are collected into one directory and are not
+     * deleted on exit from the VM, although they can be deleted by defining the system property
+     * <code>poi.delete.tmp.files.on.exit</code> (see {@link DefaultTempFileCreationStrategy}), which may
+     * cause {@link OutOfMemoryError} problem due to the frequent usage of {@link File#deleteOnExit()}
      * <p>
      * Don't forget to close all files or it might not be possible to delete them.
      *
@@ -63,10 +88,44 @@ public final class TempFile {
      * @throws IOException If no temporary file could be created.
      */
     public static File createTempFile(String prefix, String suffix) throws IOException {
-        return strategy.createTempFile(prefix, suffix);
+        return getStrategy().createTempFile(prefix, suffix);
     }
     
     public static File createTempDirectory(String name) throws IOException {
-        return strategy.createTempDirectory(name);
+        return getStrategy().createTempDirectory(name);
+    }
+
+    /**
+     * Executes the given task ensuring that POI will use the given temp file creation strategy
+     * within the scope of the given task. The change of strategy is not visible to other threads,
+     * and the previous strategy is restored after the task completed (normally or exceptionally).
+     *
+     * @param newStrategy the temp file strategy to be used in the scope of the given task
+     * @param task the task to be executed with the given temp file strategy
+     * @return the result of the given task
+     *
+     * @since POI 5.5.0
+     */
+    public static <R> R withStrategy(TempFileCreationStrategy newStrategy, Supplier<? extends R> task) {
+        Objects.requireNonNull(newStrategy, "newStrategy");
+        Objects.requireNonNull(task, "task");
+
+        TempFileCreationStrategy oldStrategy = threadLocalStrategy.get();
+        try {
+            threadLocalStrategy.set(newStrategy);
+            return task.get();
+        } finally {
+            setThreadLocalTempFileCreationStrategy(oldStrategy);
+        }
+    }
+
+    private static TempFileCreationStrategy getStrategy() {
+        final TempFileCreationStrategy s = threadLocalStrategy.get();
+        if (s == null) {
+            threadLocalStrategy.remove();
+            return strategy;
+        } else {
+            return s;
+        }
     }
 }

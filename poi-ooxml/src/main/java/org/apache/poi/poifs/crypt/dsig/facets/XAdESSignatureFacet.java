@@ -49,8 +49,8 @@ import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.namespace.QName;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
@@ -94,7 +94,7 @@ import org.w3c.dom.Element;
  */
 public class XAdESSignatureFacet implements SignatureFacet {
 
-    private static final Logger LOG = LogManager.getLogger(XAdESSignatureFacet.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XAdESSignatureFacet.class);
 
     private static final String XADES_TYPE = "http://uri.etsi.org/01903#SignedProperties";
 
@@ -169,7 +169,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         List<X509Certificate> chain = signatureConfig.getSigningCertificateChain();
         if (chain == null || chain.isEmpty()) {
-            throw new RuntimeException("no signing certificate chain available");
+            throw new IllegalStateException("no signing certificate chain available");
         }
         CertIDListType signingCertificates = signedSignatureProperties.addNewSigningCertificate();
         CertIDType certId = signingCertificates.addNewCert();
@@ -332,7 +332,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         try {
             encodedCertificate = certificate.getEncoded();
         } catch (CertificateEncodingException e) {
-            throw new RuntimeException("certificate encoding error: "
+            throw new IllegalStateException("certificate encoding error: "
                     + e.getMessage(), e);
         }
         DigestAlgAndValueType certDigest = certId.addNewCertDigest();

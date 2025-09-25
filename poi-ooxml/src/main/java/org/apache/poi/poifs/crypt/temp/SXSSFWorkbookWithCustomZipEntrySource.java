@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
@@ -35,7 +35,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 @Beta
 public class SXSSFWorkbookWithCustomZipEntrySource extends SXSSFWorkbook {
-    private static final Logger LOG = LogManager.getLogger(SXSSFWorkbookWithCustomZipEntrySource.class);
+    private static final Logger LOG = PoiLogManager.getLogger(SXSSFWorkbookWithCustomZipEntrySource.class);
 
     public SXSSFWorkbookWithCustomZipEntrySource() {
         super(20);

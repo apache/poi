@@ -429,7 +429,7 @@ public enum HwmfTernaryRasterOp {
                     stack[stackPnt++] = "all black";
                     break;
                 default:
-                    throw new RuntimeException("unknown cmd '"+c+"'.");
+                    throw new IllegalStateException("unknown cmd '"+c+"'.");
             }
         }
 

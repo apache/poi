@@ -22,10 +22,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.BreakType;
-import org.apache.poi.xwpf.usermodel.Document;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -45,30 +45,30 @@ public final class SimpleImages {
             XWPFRun r = p.createRun();
 
             for (String imgFile : args) {
-                int format;
+                PictureType format;
 
                 if (imgFile.endsWith(".emf")) {
-                    format = Document.PICTURE_TYPE_EMF;
+                    format = PictureType.EMF;
                 } else if (imgFile.endsWith(".wmf")) {
-                    format = Document.PICTURE_TYPE_WMF;
+                    format = PictureType.WMF;
                 } else if (imgFile.endsWith(".pict")) {
-                    format = Document.PICTURE_TYPE_PICT;
+                    format = PictureType.PICT;
                 } else if (imgFile.endsWith(".jpeg") || imgFile.endsWith(".jpg")) {
-                    format = Document.PICTURE_TYPE_JPEG;
+                    format = PictureType.JPEG;
                 } else if (imgFile.endsWith(".png")) {
-                    format = Document.PICTURE_TYPE_PNG;
+                    format = PictureType.PNG;
                 } else if (imgFile.endsWith(".dib")) {
-                    format = Document.PICTURE_TYPE_DIB;
+                    format = PictureType.DIB;
                 } else if (imgFile.endsWith(".gif")) {
-                    format = Document.PICTURE_TYPE_GIF;
+                    format = PictureType.GIF;
                 } else if (imgFile.endsWith(".tiff")) {
-                    format = Document.PICTURE_TYPE_TIFF;
+                    format = PictureType.TIFF;
                 } else if (imgFile.endsWith(".eps")) {
-                    format = Document.PICTURE_TYPE_EPS;
+                    format = PictureType.EPS;
                 } else if (imgFile.endsWith(".bmp")) {
-                    format = Document.PICTURE_TYPE_BMP;
+                    format = PictureType.BMP;
                 } else if (imgFile.endsWith(".wpg")) {
-                    format = Document.PICTURE_TYPE_WPG;
+                    format = PictureType.WPG;
                 } else {
                     System.err.println("Unsupported picture: " + imgFile +
                             ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");

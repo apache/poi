@@ -67,6 +67,9 @@ public class NURBSTo implements GeometryRow {
 
         for (CellType cell : row.getCellArray()) {
             String cellName = cell.getN();
+            if (cellName == null) {
+                throw new POIXMLException("Invalid null-cell in NURBS row");
+            }
 
             switch (cellName) {
                 case "X":

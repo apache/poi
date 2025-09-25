@@ -59,8 +59,8 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
@@ -100,7 +100,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 public final class TestPackage {
-    private static final Logger LOG = LogManager.getLogger(TestPackage.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TestPackage.class);
     private static final String CONTENT_EXT_PROPS = "application/vnd.openxmlformats-officedocument.extended-properties+xml";
     private static final POIDataSamples xlsSamples = POIDataSamples.getSpreadSheetInstance();
 
@@ -218,7 +218,7 @@ public final class TestPackage {
      */
     @Test
     void createPackageWithCoreDocument() throws IOException, InvalidFormatException, URISyntaxException, SAXException {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (OPCPackage pkg = OPCPackage.create(baos)) {
 
             // Add a core document
@@ -284,7 +284,7 @@ public final class TestPackage {
             assertEquals(1, rels.size());
             PackageRelationship rel = rels.getRelationship(0);
             assertNotNull(rel);
-            assertEquals("Sheet1!A1", rel.getTargetURI().getRawFragment());
+            assertEquals("#Sheet1!A1", rel.getTargetURI().toString());
 
             assertMSCompatibility(pkg);
         }
@@ -676,7 +676,7 @@ public final class TestPackage {
     @Test
     void zipBombCreateAndHandle()
     throws IOException, EncryptedDocumentException {
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(2500000);
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(2500000).get();
 
         try (ZipFile zipFile = ZipHelper.openZipFile(getSampleFile("sample.xlsx"));
              ZipArchiveOutputStream append = new ZipArchiveOutputStream(bos)) {

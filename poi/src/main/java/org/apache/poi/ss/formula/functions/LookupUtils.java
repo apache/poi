@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -75,16 +76,20 @@ public final class LookupUtils {
         public int getIntValue() { return intValue; }
     }
 
-    private static Map<Integer, MatchMode> matchModeMap = new HashMap<>();
-    private static Map<Integer, SearchMode> searchModeMap = new HashMap<>();
+    private static final Map<Integer, MatchMode> matchModeMap;
+    private static final Map<Integer, SearchMode> searchModeMap;
 
     static {
+        final Map<Integer, MatchMode> mmMap = new HashMap<>();
         for (MatchMode mode : MatchMode.values()) {
-            matchModeMap.put(mode.getIntValue(), mode);
+            mmMap.put(mode.getIntValue(), mode);
         }
+        matchModeMap = Collections.unmodifiableMap(mmMap);
+        final Map<Integer, SearchMode> smMap = new HashMap<>();
         for (SearchMode mode : SearchMode.values()) {
-            searchModeMap.put(mode.getIntValue(), mode);
+            smMap.put(mode.getIntValue(), mode);
         }
+        searchModeMap = Collections.unmodifiableMap(smMap);
     }
 
     public static MatchMode matchMode(int m) {
@@ -358,14 +363,14 @@ public final class LookupUtils {
         private final Class<? extends ValueEval> _targetClass;
         protected LookupValueComparerBase(ValueEval targetValue) {
             if(targetValue == null) {
-                throw new RuntimeException("targetValue cannot be null");
+                throw new IllegalStateException("targetValue cannot be null");
             }
             _targetClass = targetValue.getClass();
         }
         @Override
         public final CompareResult compareTo(ValueEval other) {
             if (other == null) {
-                throw new RuntimeException("compare to value cannot be null");
+                throw new IllegalStateException("compare to value cannot be null");
             }
             if (_targetClass != other.getClass()) {
                 return CompareResult.TYPE_MISMATCH;
@@ -588,7 +593,7 @@ public final class LookupUtils {
 
         if (valEval instanceof StringEval) {
             String stringValue = ((StringEval) valEval).getStringValue();
-            if(stringValue.length() < 1) {
+            if(stringValue.isEmpty()) {
                 // More trickiness:
                 // Empty string is not the same as BlankEval.  It causes #VALUE! error
                 throw EvaluationException.invalidValue();
@@ -611,7 +616,7 @@ public final class LookupUtils {
             // zero is FALSE, everything else is TRUE
             return 0.0 != nve.getNumberValue();
         }
-        throw new RuntimeException("Unexpected eval type (" + valEval + ")");
+        throw new IllegalStateException("Unexpected eval type (" + valEval + ")");
     }
 
     public static int lookupFirstIndexOfValue(ValueEval lookupValue, ValueVector vector, boolean isRangeLookup) throws EvaluationException {

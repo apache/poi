@@ -21,8 +21,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.Internal;
 
@@ -42,7 +42,7 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
 
     public static final Comparator<PropertyNode<?>> StartComparator = Comparator.comparingInt(PropertyNode::getStart);
 
-    private static final Logger LOG = LogManager.getLogger(PropertyNode.class);
+    private static final Logger LOG = PoiLogManager.getLogger(PropertyNode.class);
 
 
     protected Object _buf;

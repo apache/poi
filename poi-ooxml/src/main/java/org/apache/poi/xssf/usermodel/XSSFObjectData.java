@@ -22,8 +22,8 @@ import java.io.InputStream;
 
 import javax.xml.namespace.QName;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -51,7 +51,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOleObject;
  * Represents binary object (i.e. OLE) data stored in the file.  Eg. A GIF, JPEG etc...
  */
 public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
-    private static final Logger LOG = LogManager.getLogger(XSSFObjectData.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XSSFObjectData.class);
 
     /**
      * A default instance of CTShape used for creating new shapes.

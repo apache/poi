@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.sl.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,11 +30,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.TabStop.TabStopType;
+import org.apache.poi.util.Reproducibility;
 import org.junit.jupiter.api.Test;
 
 public abstract class BaseTestSlideShow<
@@ -199,4 +202,29 @@ public abstract class BaseTestSlideShow<
                 : null;
     }
 
+    // ensure a simple slide-show can be reproducibly written
+    @Test
+    void testWriteDocumentTwice() throws Exception {
+        try (SlideShow<S,P> ppt = createSlideShow()) {
+            ppt.createSlide();
+
+            Reproducibility.runWithSourceDateEpoch(
+                    () -> {
+                        try (UnsynchronizedByteArrayOutputStream out1 = UnsynchronizedByteArrayOutputStream.builder().get();
+                                UnsynchronizedByteArrayOutputStream out2 = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                            ppt.write(out1);
+                            ppt.write(out2);
+
+                            out1.flush();
+                            out2.flush();
+
+                            // to avoid flaky tests if the documents are written at slightly different timestamps
+                            // we clear some bytes which contain timestamps
+                            assertArrayEquals(
+                                    out1.toByteArray(),
+                                    out2.toByteArray());
+                        }
+                    });
+        }
+    }
 }

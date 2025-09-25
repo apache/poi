@@ -106,7 +106,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
      */
     public final XmlObject getXmlObject() {
         // it's final because the xslf inheritance hierarchy is not necessary the same as
-        // the (not existing) xmlbeans hierarchy and subclasses shouldn't narrow it's return value
+        // the (not existing) xmlbeans hierarchy and subclasses shouldn't narrow its return value
         return _shape;
     }
 
@@ -448,6 +448,10 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         // values 1-999 refer to the index of a fill style within the fillStyleLst element
         // values 1001 and above refer to the index of a background fill style within the bgFillStyleLst element.
         long idx = fillRef.getIdx();
+
+        if (theme == null || theme.getXmlObject() == null || theme.getXmlObject().getThemeElements() == null) {
+            throw new IllegalArgumentException("Could not retrieve theme elements from shape");
+        }
         CTStyleMatrix matrix = theme.getXmlObject().getThemeElements().getFmtScheme();
         final XmlObject styleLst;
         long childIdx;

@@ -25,8 +25,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -58,7 +58,7 @@ public class VariantSupport extends Variant {
             Variant.VT_CF, Variant.VT_BOOL };
 
 
-    private static final Logger LOG = LogManager.getLogger(VariantSupport.class);
+    private static final Logger LOG = PoiLogManager.getLogger(VariantSupport.class);
 
     private static boolean logUnsupportedTypes;
 
@@ -66,7 +66,7 @@ public class VariantSupport extends Variant {
      * Keeps a list of the variant types an "unsupported" message has already
      * been issued for.
      */
-    private static List<Long> unsupportedMessage;
+    private static final List<Long> unsupportedMessage = new LinkedList<>();
 
     private static final byte[] paddingBytes = new byte[3];
 
@@ -102,18 +102,18 @@ public class VariantSupport extends Variant {
      *
      * @param ex The exception to log
      */
-    protected static void writeUnsupportedTypeMessage
-        (final UnsupportedVariantTypeException ex) {
-        if (isLogUnsupportedTypes())
-        {
-            if (unsupportedMessage == null) {
-                unsupportedMessage = new LinkedList<>();
+    protected static void writeUnsupportedTypeMessage(final UnsupportedVariantTypeException ex) {
+        if (isLogUnsupportedTypes()) {
+            final Long vt = ex.getVariantType();
+            boolean needsLogging = false;
+            synchronized (unsupportedMessage) {
+                if (!unsupportedMessage.contains(vt)) {
+                    needsLogging = true;
+                    unsupportedMessage.add(vt);
+                }
             }
-            Long vt = Long.valueOf(ex.getVariantType());
-            if (!unsupportedMessage.contains(vt))
-            {
+            if (needsLogging) {
                 LOG.atError().withThrowable(ex).log("Unsupported type");
-                unsupportedMessage.add(vt);
             }
         }
     }
@@ -177,7 +177,7 @@ public class VariantSupport extends Variant {
                 final byte[] v = IOUtils.toByteArray(lei, length, CodePageString.getMaxRecordLength());
                 throw new ReadingNotSupportedException( type, v );
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
 

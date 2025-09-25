@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.util.DateParser;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -45,7 +45,7 @@ import java.time.DateTimeException;
  */
 public class DateValue extends Fixed1ArgFunction {
 
-    private static final Logger LOG = LogManager.getLogger(DateValue.class);
+    private static final Logger LOG = PoiLogManager.getLogger(DateValue.class);
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval dateTextArg) {
@@ -54,7 +54,7 @@ public class DateValue extends Fixed1ArgFunction {
                     OperandResolver.getSingleValue(dateTextArg, srcRowIndex, srcColumnIndex));
 
             if (dateText == null || dateText.isEmpty()) {
-                return BlankEval.instance;
+                return ErrorEval.VALUE_INVALID;
             }
 
             return new NumberEval(DateUtil.getExcelDate(DateParser.parseLocalDate(dateText)));

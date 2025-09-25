@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -37,7 +37,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 @Internal
 public class ExtRst implements Comparable<ExtRst>, GenericRecord {
-    private static final Logger LOG = LogManager.getLogger(ExtRst.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ExtRst.class);
 
     private short reserved;
 

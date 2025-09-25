@@ -243,4 +243,30 @@ final class TestFormulaBugs {
         CellValue value = evaluateFormulaInCell(wb, cell, formula);
         assertEquals(expectedValue, value.getStringValue());
     }
+
+    @Test
+    public void testFormula_58571() throws IOException {
+        try (Workbook wb = new HSSFWorkbook()) {
+            FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+
+            Sheet sheet = wb.createSheet("test");
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            // it seems the two double-quotes are replaced with one double-quote when parsing the function
+            // this does not work: cell.setCellFormula("TEXT(B1, \"h\"\"h\"\" m\"\"m\"\"\")");
+            cell.setCellFormula("TEXT(B1, \"h\"\"\"\"h\"\"\"\" m\"\"\"\"m\"\"\"\"\")");
+
+            Cell cellValue = row.createCell(1);
+            cellValue.setCellValue(0.0104166666666666);
+
+            CellValue value = eval.evaluate(cell);
+            assertEquals(CellType.STRING, value.getCellType());
+            assertEquals("0h 15m", value.getStringValue());
+
+            cellValue.setCellValue(1.123);
+            value = eval.evaluate(cell);
+            assertEquals(CellType.STRING, value.getCellType());
+            assertEquals("0h 15m", value.getStringValue());
+        }
+    }
 }

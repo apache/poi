@@ -34,8 +34,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
@@ -62,7 +62,7 @@ public final class TestWorkbookFactory {
     private static final String[] xlsx_protected = new String[]{"protected_passtika.xlsx", "tika"};
     private static final String txt = "SampleSS.txt";
 
-    private static final Logger LOGGER = LogManager.getLogger(TestWorkbookFactory.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(TestWorkbookFactory.class);
 
     /**
      * Closes the sample workbook read in from filename.
@@ -350,5 +350,13 @@ public final class TestWorkbookFactory {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Test
+    void testEncryptionNullPointerException() throws IOException {
+        assertThrows(IllegalArgumentException.class,
+                () -> WorkbookFactory.create(POIDataSamples.getSpreadSheetInstance().
+                        openResourceAsStream(
+                                "crash-9bf3cd4bd6f50a8a9339d363c2c7af14b536865c.xlsx")));
     }
 }

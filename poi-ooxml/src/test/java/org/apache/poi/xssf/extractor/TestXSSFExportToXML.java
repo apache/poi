@@ -72,7 +72,7 @@ public final class TestXSSFExportToXML {
 
                 XSSFMap map = mapInfo.getXSSFMapById(1);
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, true);
                 String xml = os.toString(StandardCharsets.UTF_8);
 
@@ -120,7 +120,7 @@ public final class TestXSSFExportToXML {
 
                 XSSFMap map = mapInfo.getXSSFMapById(1);
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, true);
                 String xml = os.toString(StandardCharsets.UTF_8);
 
@@ -194,7 +194,7 @@ public final class TestXSSFExportToXML {
 
                     XSSFExportToXml exporter = new XSSFExportToXml(map);
                     String xml;
-                    try (UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream()) {
+                    try (UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get()) {
                         exporter.exportToXML(os, true);
                         xml = os.toString(StandardCharsets.UTF_8);
                     }
@@ -231,7 +231,7 @@ public final class TestXSSFExportToXML {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMapping-singleattributenamespace.xlsx")) {
             for (XSSFMap map : wb.getCustomXMLMappings()) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 SAXParseException ex = assertThrows(SAXParseException.class, () -> exporter.exportToXML(os, true));
                 assertTrue(p.matcher(ex.getMessage()).find(),
                         "Did not find pattern " + p + " in " + ex.getMessage());
@@ -256,7 +256,7 @@ public final class TestXSSFExportToXML {
                 assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, true);
                 String xmlData = os.toString(StandardCharsets.UTF_8);
 
@@ -300,7 +300,7 @@ public final class TestXSSFExportToXML {
                 assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, true);
                 String xmlData = os.toString(StandardCharsets.UTF_8);
 
@@ -335,7 +335,7 @@ public final class TestXSSFExportToXML {
                 assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, true);
                 String xmlData = os.toString(StandardCharsets.UTF_8);
 
@@ -374,7 +374,7 @@ public final class TestXSSFExportToXML {
                 assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, true);
                 String xmlData = os.toString(StandardCharsets.UTF_8);
 
@@ -400,7 +400,7 @@ public final class TestXSSFExportToXML {
             for (XSSFMap map : wb.getCustomXMLMappings()) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
 
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, true);
                 String xmlData = os.toString(StandardCharsets.UTF_8);
 
@@ -478,7 +478,7 @@ public final class TestXSSFExportToXML {
                 assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, true);
                 String xmlData = os.toString(StandardCharsets.UTF_8);
 
@@ -556,7 +556,7 @@ public final class TestXSSFExportToXML {
                 assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, true);
                 String xmlData = os.toString(StandardCharsets.UTF_8);
 
@@ -587,7 +587,7 @@ public final class TestXSSFExportToXML {
                 assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, false);
                 String xmlData = os.toString(StandardCharsets.UTF_8);
 
@@ -619,7 +619,7 @@ public final class TestXSSFExportToXML {
                 assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, true);
                 String xmlData = os.toString(StandardCharsets.UTF_8);
 
@@ -645,7 +645,7 @@ public final class TestXSSFExportToXML {
             for (XSSFMap map : mappings) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
 
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, false);
                 assertNotNull(os.toString(StandardCharsets.UTF_8));
             }
@@ -657,7 +657,7 @@ public final class TestXSSFExportToXML {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("61281.xlsx")) {
             for (XSSFMap map : wb.getCustomXMLMappings()) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(bos, true);
                 assertNotNull(DocumentHelper.readDocument(bos.toInputStream()));
                 String exportedXml = bos.toString(StandardCharsets.UTF_8);
@@ -671,7 +671,7 @@ public final class TestXSSFExportToXML {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("xxe_in_schema.xlsx")) {
             for (XSSFMap map : wb.getCustomXMLMappings()) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 assertThrows(SAXParseException.class, () -> exporter.exportToXML(bos, true));
             }
         }

@@ -117,7 +117,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    void testSharedFormulas() throws IOException {
+    protected void testSharedFormulas() throws IOException {
         String fileName = "shared_formulas.xls" + (getClass().getName().contains("xssf") ? "x" : "");
         try (Workbook wb = _testDataProvider.openSampleWorkbook(fileName)) {
 
@@ -303,7 +303,7 @@ public abstract class BaseTestFormulaEvaluator {
             try {
                 fe.evaluateInCell(cellB1);
             } catch (IllegalStateException e) {
-                if (e.getMessage().equalsIgnoreCase("Cannot get a numeric value from a error formula cell")) {
+                if (e.getMessage().equalsIgnoreCase("Cannot get a numeric value from an error formula cell")) {
                     fail("Identified bug 46479a");
                 }
             }
@@ -357,7 +357,7 @@ public abstract class BaseTestFormulaEvaluator {
 
             eval.evaluateInCell(cell);
 
-            assertEquals("3.0", cell.toString());
+            assertEquals(3.0, cell.getNumericCellValue());
         }
     }
 
@@ -621,7 +621,6 @@ public abstract class BaseTestFormulaEvaluator {
 
             assertNotNull(eval.evaluateInCell(cell));
 
-            assertEquals("3.0", cell.toString());
             assertEquals(CellType.NUMERIC, cell.getCellType());
             assertEquals(3.0, cell.getNumericCellValue(), 0.01);
         }

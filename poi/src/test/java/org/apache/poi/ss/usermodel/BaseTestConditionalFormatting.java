@@ -531,7 +531,7 @@ public abstract class BaseTestConditionalFormatting {
 
             // Sanity check data
             assertEquals("Values", s.getRow(0).getCell(0).toString());
-            assertEquals("10.0", s.getRow(2).getCell(0).toString());
+            assertEquals(10.0, s.getRow(2).getCell(0).getNumericCellValue());
 
             // Check we found all the conditional formatting rules we should have
             SheetConditionalFormatting sheetCF = s.getSheetConditionalFormatting();

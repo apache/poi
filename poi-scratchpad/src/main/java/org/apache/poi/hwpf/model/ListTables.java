@@ -23,8 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.model.types.LSTFAbstractType;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -35,7 +35,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 @Internal
 public final class ListTables
 {
-  private static final Logger LOGGER = LogManager.getLogger(ListTables.class);
+  private static final Logger LOGGER = PoiLogManager.getLogger(ListTables.class);
 
     /**
      * Both PlfLst and the following LVLs

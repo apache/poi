@@ -24,12 +24,15 @@ import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.HDPHOTO_PART;
 import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.IMAGE_PART;
 
 public final class XWPFRelation extends POIXMLRelation {
+
+    /* package */ static final String NS_DRAWINGML = XSSFRelation.NS_DRAWINGML;
 
     /**
      * A map to lookup POIXMLRelation by its relation type
@@ -116,7 +119,8 @@ public final class XWPFRelation extends POIXMLRelation {
     public static final XWPFRelation THEME = new XWPFRelation(
         "application/vnd.openxmlformats-officedocument.theme+xml",
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme",
-        "/word/theme/theme#.xml"
+        "/word/theme/theme#.xml",
+        XWPFTheme::new, XWPFTheme::new
     );
 
     public static final XWPFRelation WORKBOOK = new XWPFRelation(
@@ -134,7 +138,7 @@ public final class XWPFRelation extends POIXMLRelation {
     );
     public static final XWPFRelation HYPERLINK = new XWPFRelation(
         null,
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+        PackageRelationshipTypes.HYPERLINK_PART,
         null
     );
     public static final XWPFRelation COMMENT = new XWPFRelation(
@@ -230,6 +234,12 @@ public final class XWPFRelation extends POIXMLRelation {
             "/ppt/media/hdphoto#.wdp",
             XWPFPictureData::new, XWPFPictureData::new
     );
+    public static final XWPFRelation IMAGE_SVG = new XWPFRelation(
+        PictureType.SVG.contentType,
+        IMAGE_PART,
+        "/word/media/image#.svg",
+        XWPFPictureData::new, XWPFPictureData::new
+);
     public static final XWPFRelation IMAGES = new XWPFRelation(
             null,
             IMAGE_PART,
@@ -267,4 +277,12 @@ public final class XWPFRelation extends POIXMLRelation {
         return _table.get(rel);
     }
 
+    @Override
+    public String toString() {
+        return "XWPFRelation{" +
+                //getRelation() + "/" +
+                getContentType() + "/" +
+                getDefaultFileName() +
+                "}";
+    }
 }

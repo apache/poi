@@ -20,14 +20,18 @@ package org.apache.poi.ss.formula.functions;
 import java.util.Locale;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 public abstract class TextFunction implements Function {
     protected static final DataFormatter formatter = new DataFormatter();
@@ -36,6 +40,7 @@ public abstract class TextFunction implements Function {
         ValueEval ve = OperandResolver.getSingleValue(eval, srcRow, srcCol);
         return OperandResolver.coerceValueToString(ve);
     }
+
     protected static int evaluateIntArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
         ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
         return OperandResolver.coerceValueToInt(ve);
@@ -103,12 +108,14 @@ public abstract class TextFunction implements Function {
             return new NumberEval(arg.length());
         }
     };
+
     public static final Function LOWER = new SingleArgTextFunc() {
         @Override
         protected ValueEval evaluate(String arg) {
             return new StringEval(arg.toLowerCase(Locale.ROOT));
         }
     };
+
     public static final Function UPPER = new SingleArgTextFunc() {
         @Override
         protected ValueEval evaluate(String arg) {
@@ -241,13 +248,16 @@ public abstract class TextFunction implements Function {
     private static final class LeftRight extends Var1or2ArgFunction {
         private static final ValueEval DEFAULT_ARG1 = new NumberEval(1.0);
         private final boolean _isLeft;
+
         protected LeftRight(boolean isLeft) {
             _isLeft = isLeft;
         }
+
         @Override
         public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
             return evaluate(srcRowIndex, srcColumnIndex, arg0, DEFAULT_ARG1);
         }
+
         @Override
         public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0,
                 ValueEval arg1) {
@@ -342,22 +352,62 @@ public abstract class TextFunction implements Function {
 
         @Override
         public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
-            double s0;
-            String s1;
-            try {
-                s0 = evaluateDoubleArg(arg0, srcRowIndex, srcColumnIndex);
-                s1 = evaluateStringArg(arg1, srcRowIndex, srcColumnIndex);
-            } catch (EvaluationException e) {
-                return e.getErrorEval();
-            }
+            ValueEval valueEval;
 
             try {
-                // Ask DataFormatter to handle the String for us
-                String formattedStr = formatter.formatRawCellContents(s0, -1, s1);
-                return new StringEval(formattedStr);
-            } catch (Exception e) {
-                return ErrorEval.VALUE_INVALID;
+                ValueEval valueVe = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+                ValueEval formatVe = OperandResolver.getSingleValue(arg1, srcRowIndex, srcColumnIndex);
+                try {
+                    Double valueDouble = null;
+                    String evaluated = null;
+
+                    if (valueVe == BlankEval.instance) {
+                        valueDouble = 0.0;
+                    } else if (valueVe instanceof BoolEval) {
+                        evaluated = ((BoolEval) valueVe).getStringValue();
+                    } else if (valueVe instanceof NumericValueEval) {
+                        valueDouble = ((NumericValueEval) valueVe).getNumberValue();
+                    } else if (valueVe instanceof StringEval) {
+                        evaluated = ((StringEval) valueVe).getStringValue();
+                        valueDouble = OperandResolver.parseDouble(evaluated);
+                        if (valueDouble == null) {
+                            try {
+                                valueDouble = DateUtil.parseDateTime(evaluated);
+                            } catch (Exception ignored) {
+                            }
+                        }
+                    }
+                    if (valueDouble != null) {
+                        String format = formatPatternValueEval2String(formatVe);
+                        evaluated = formatter.formatRawCellContents(valueDouble, -1, format);
+                    }
+
+                    valueEval = new StringEval(evaluated);
+                } catch (Exception e) {
+                    valueEval = ErrorEval.VALUE_INVALID;
+                }
+            } catch (EvaluationException e) {
+                valueEval = e.getErrorEval();
             }
+
+            return valueEval;
+        }
+
+        /**
+         * Using it instead of {@link OperandResolver#coerceValueToString(ValueEval)} in order to handle booleans differently.
+         */
+        private String formatPatternValueEval2String(ValueEval ve) {
+            final String format;
+            if (!(ve instanceof BoolEval) && (ve instanceof StringValueEval)) {
+                StringValueEval sve = (StringValueEval) ve;
+                format = sve.getStringValue();
+            } else if (ve == BlankEval.instance) {
+                format = "";
+            } else {
+                throw new IllegalArgumentException("Unexpected eval class (" + ve.getClass().getName() + ")");
+            }
+
+            return format;
         }
     };
 
@@ -368,6 +418,7 @@ public abstract class TextFunction implements Function {
         public SearchFind(boolean isCaseSensitive) {
             _isCaseSensitive = isCaseSensitive;
         }
+
         @Override
         public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
             try {
@@ -378,6 +429,7 @@ public abstract class TextFunction implements Function {
                 return e.getErrorEval();
             }
         }
+
         @Override
         public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
                 ValueEval arg2) {
@@ -394,6 +446,7 @@ public abstract class TextFunction implements Function {
                 return e.getErrorEval();
             }
         }
+
         private ValueEval eval(String haystack, String needle, int startIndex) {
             int result;
             if (_isCaseSensitive) {
@@ -408,6 +461,7 @@ public abstract class TextFunction implements Function {
             return new NumberEval(result + 1.);
         }
     }
+
     /**
      * Implementation of the FIND() function.<p>
      *
@@ -422,6 +476,7 @@ public abstract class TextFunction implements Function {
      * Author: Torstein Tauno Svendsen (torstei@officenet.no)
      */
     public static final Function FIND = new SearchFind(true);
+
     /**
      * Implementation of the FIND() function.<p>
      *

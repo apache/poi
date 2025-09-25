@@ -18,12 +18,13 @@
 package org.apache.poi.openxml4j.opc.internal;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
@@ -36,6 +37,7 @@ import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Reproducibility;
 
 @Internal
 public final class ZipHelper {
@@ -46,7 +48,7 @@ public final class ZipHelper {
     private static final String FORWARD_SLASH = "/";
 
     /**
-     * Prevent this class to be instancied.
+     * Prevent this class to be instantiated.
      */
     private ZipHelper() {
         // Do nothing
@@ -67,7 +69,9 @@ public final class ZipHelper {
             return null;
         }
 
-        return new ZipArchiveEntry(corePropsRel.getTargetURI().getPath());
+        ZipArchiveEntry entry = new ZipArchiveEntry(corePropsRel.getTargetURI().getPath());
+        ZipHelper.adjustEntryTime(entry);
+        return entry;
     }
 
     /**
@@ -131,10 +135,10 @@ public final class ZipHelper {
             return null;
         }
     }
-    
+
     /**
      * Verifies that the given stream starts with a Zip structure.
-     * 
+     *
      * Warning - this will consume the first few bytes of the stream,
      *  you should push-back or reset the stream after use!
      */
@@ -162,24 +166,38 @@ public final class ZipHelper {
     }
 
     /**
-     * Opens the specified stream as a secure zip
+     * Opens the specified stream as a secure zip. Closes the Input Stream.
      *
-     * @param stream
-     *            The stream to open.
+     * @param stream The stream to open.
      * @return The zip stream freshly open.
      */
     @SuppressWarnings("resource")
     public static ZipArchiveThresholdInputStream openZipStream(InputStream stream) throws IOException {
-        // Peek at the first few bytes to sanity check
-        InputStream checkedStream = FileMagic.prepareToCheckMagic(stream);
-        verifyZipHeader(checkedStream);
-        
-        // Open as a proper zip stream
-        return new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(checkedStream));
+        return openZipStream(stream, true);
     }
 
     /**
-     * Opens the specified file as a secure zip, or returns null if no 
+     * Opens the specified stream as a secure zip. Closes the Input Stream.
+     *
+     * @param stream The stream to open.
+     * @param closeStream whether to close the stream
+     * @return The zip stream freshly open.
+     */
+    @SuppressWarnings("resource")
+    public static ZipArchiveThresholdInputStream openZipStream(
+            final InputStream stream, final boolean closeStream) throws IOException {
+        // Peek at the first few bytes to sanity check
+        InputStream checkedStream = FileMagic.prepareToCheckMagic(stream);
+        verifyZipHeader(checkedStream);
+
+        final InputStream processStream = closeStream ? checkedStream : new NoCloseInputStream(checkedStream);
+        // Open as a proper zip stream
+        return new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(
+                processStream, StandardCharsets.UTF_8.name(), false, true));
+    }
+
+    /**
+     * Opens the specified file as a secure zip, or returns null if no
      *  such file exists
      *
      * @param file
@@ -195,9 +213,9 @@ public final class ZipHelper {
         if (file.isDirectory()) {
             throw new IOException("File is a directory");
         }
-        
+
         // Peek at the first few bytes to sanity check
-        try (FileInputStream input = new FileInputStream(file)) {
+        try (InputStream input = Files.newInputStream(file.toPath())) {
             verifyZipHeader(input);
         }
 
@@ -214,5 +232,18 @@ public final class ZipHelper {
      */
     public static ZipSecureFile openZipFile(String path) throws IOException {
         return openZipFile(new File(path));
+    }
+
+    /**
+     * If environment-variable SOURCE_DATE_EPOCH is set, we use "0" for the
+     * time of the entry.
+     *
+     * @param entry The zip-entry to adjust
+     */
+    public static void adjustEntryTime(ZipArchiveEntry entry) {
+        // if SOURCE_DATE_EPOCH is set, we set the time-field to zero
+        if (Reproducibility.isSourceDateEpoch()) {
+            entry.setTime(0);
+        }
     }
 }

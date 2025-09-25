@@ -61,7 +61,7 @@ public class AgileEncryptionHeader extends EncryptionHeader {
         setFlags(0);
         setSizeExtra(0);
         setCspName(null);
-        setBlockSize(keyData.getBlockSize());
+        setBlockSize(keyData.getBlockSize() == null ? 0 : keyData.getBlockSize());
 
         setChainingMode(keyData.getCipherChaining());
 
@@ -69,7 +69,11 @@ public class AgileEncryptionHeader extends EncryptionHeader {
             throw new EncryptedDocumentException("Unsupported chaining mode - "+ keyData.getCipherChaining());
         }
 
-        int hashSize = keyData.getHashSize();
+        Integer hashSizeObj = keyData.getHashSize();
+        if (hashSizeObj == null) {
+            throw new EncryptedDocumentException("Invalid hash size: " + hashSizeObj);
+        }
+        int hashSize = hashSizeObj;
 
         HashAlgorithm ha = keyData.getHashAlgorithm();
         setHashAlgorithm(ha);
@@ -79,10 +83,14 @@ public class AgileEncryptionHeader extends EncryptionHeader {
                     keyData.getHashAlgorithm() + " @ " + hashSize + " bytes");
         }
 
+        if (keyData.getSaltSize() == null) {
+            throw new EncryptedDocumentException("Invalid salt length: " + keyData.getSaltSize());
+        }
+
         int saltLength = keyData.getSaltSize();
         setKeySalt(keyData.getSaltValue());
         if (getKeySalt().length != saltLength) {
-            throw new EncryptedDocumentException("Invalid salt length");
+            throw new EncryptedDocumentException("Invalid salt length: " + getKeySalt().length + " and " + saltLength);
         }
 
         DataIntegrity di = ed.getDataIntegrity();

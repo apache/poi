@@ -81,6 +81,20 @@ public final class Types {
     /** A string, from Outlook 3.0 onwards. Normally unicode */
     public static final MAPIType UNICODE_STRING = new MAPIType(0x001F, "Unicode String", -1);
 
+    /** MultiValued Properties */
+    public static final MAPIType MV_SHORT = new MAPIType(0x1002, "MV Short", -1);
+    public static final MAPIType MV_LONG = new MAPIType(0x1003, "MV Long", -1);
+    public static final MAPIType MV_FLOAT = new MAPIType(0x1004, "MV Float", -1);
+    public static final MAPIType MV_DOUBLE = new MAPIType(0x1005, "MV Double", -1);
+    public static final MAPIType MV_CURRENCY = new MAPIType(0x1006, "MV Currency", -1);
+    public static final MAPIType MV_APP_TIME = new MAPIType(0x1007, "MV Application Time", -1);
+    public static final MAPIType MV_LONG_LONG = new MAPIType(0x1014, "MV Long Long", -1);
+    public static final MAPIType MV_TIME = new MAPIType(0x1040, "MV Time", -1);
+    public static final MAPIType MV_CLS_ID = new MAPIType(0x1048, "MV CLS ID GUID", -1);
+    public static final MAPIType MV_BINARY = new MAPIType(0x1102, "MV Binary", -1);
+    public static final MAPIType MV_ASCII_STRING = new MAPIType(0x101E, "MV ASCII String", -1);
+    public static final MAPIType MV_UNICODE_STRING = new MAPIType(0x101F, "MV Unicode String", -1);
+
     /** MultiValued - Value part contains multiple values */
     public static final int MULTIVALUED_FLAG = 0x1000;
 
@@ -122,6 +136,14 @@ public final class Types {
          */
         public boolean isFixedLength() {
             return ((length != -1) && (length <= 8)) || (id == Types.CLS_ID.id);
+        }
+
+        /**
+         * @return whether the type is a pointer
+         * @since POI 5.2.4
+         */
+        public boolean isPointer() {
+            return (length == -1) || (length > 8);
         }
 
         public int getId() {

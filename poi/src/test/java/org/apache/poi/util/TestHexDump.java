@@ -41,7 +41,7 @@ class TestHexDump {
     @BeforeAll
     public static void setUp() throws UnsupportedEncodingException {
         SYSTEM_OUT = System.out;
-        System.setOut(new NullPrintStream());
+        System.setOut(NullPrintStream.INSTANCE);
     }
 
     @AfterAll
@@ -52,7 +52,7 @@ class TestHexDump {
     @Test
     void testDump() throws IOException {
         byte[] testArray = testArray();
-        UnsynchronizedByteArrayOutputStream streamAct = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream streamAct = UnsynchronizedByteArrayOutputStream.builder().get();
         HexDump.dump(testArray, 0, streamAct, 0);
         byte[] bytesAct = streamAct.toByteArray();
         byte[] bytesExp = toHexDump(0, 0);

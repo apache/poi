@@ -34,8 +34,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -67,7 +67,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter {
 
     private static final float DPI = 72;
 
-    private static final Logger LOG = LogManager.getLogger(ExcelToFoConverter.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ExcelToFoConverter.class);
 
     private static final float PAPER_A4_HEIGHT_INCHES = 29.4f / CM_PER_INCH;
 

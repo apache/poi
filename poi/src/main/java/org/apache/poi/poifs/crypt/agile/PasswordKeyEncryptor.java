@@ -109,7 +109,7 @@ public class PasswordKeyEncryptor {
         blockSize = getIntAttr(passwordKey, "blockSize");
         keyBits = getIntAttr(passwordKey, "keyBits");
         hashSize = getIntAttr(passwordKey, "hashSize");
-        cipherAlgorithm = CipherAlgorithm.fromXmlId(passwordKey.getAttribute("cipherAlgorithm"), keyBits);
+        cipherAlgorithm = CipherAlgorithm.fromXmlId(passwordKey.getAttribute("cipherAlgorithm"), keyBits == null ? -1 : keyBits);
         cipherChaining = ChainingMode.fromXmlId(passwordKey.getAttribute("cipherChaining"));
         hashAlgorithm = HashAlgorithm.fromEcmaId(passwordKey.getAttribute("hashAlgorithm"));
         saltValue = getBinAttr(passwordKey, "saltValue");

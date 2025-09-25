@@ -17,6 +17,7 @@
 
 package org.apache.poi.ddf;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -365,8 +366,8 @@ public enum EscherPropertyTypes {
         return propNumber;
     }
 
-    private static final Map<Short, EscherPropertyTypes> LOOKUP =
-            Stream.of(values()).collect(Collectors.toMap(EscherPropertyTypes::getPropertyId, Function.identity()));
+    private static final Map<Short, EscherPropertyTypes> LOOKUP = Collections.unmodifiableMap(
+            Stream.of(values()).collect(Collectors.toMap(EscherPropertyTypes::getPropertyId, Function.identity())));
 
     public static EscherPropertyTypes forPropertyID(int propertyId) {
         EscherPropertyTypes rt = LOOKUP.get((short)(propertyId & 0x3FFF));

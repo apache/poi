@@ -16,10 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
@@ -31,6 +28,8 @@ import javax.crypto.Cipher;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POIException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
@@ -42,10 +41,12 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.*;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJcTable;
 
 class TestXWPFBugs {
     private static final POIDataSamples samples = POIDataSamples.getDocumentInstance();
@@ -55,7 +56,7 @@ class TestXWPFBugs {
         //started failing after uptake of commons-compress 1.21
         assertThrows(IOException.class, () -> {
             try (InputStream fis = samples.openResourceAsStream("truncated62886.docx");
-                OPCPackage opc = OPCPackage.open(fis)) {
+                 OPCPackage opc = OPCPackage.open(fis)) {
                 assertNotNull(opc);
                 //XWPFWordExtractor ext = new XWPFWordExtractor(opc)) {
                 //assertNotNull(ext.getText());
@@ -137,11 +138,11 @@ class TestXWPFBugs {
     void bug59058() throws IOException, XmlException {
         String[] files = {"bug57031.docx", "bug59058.docx"};
         for (String f : files) {
-            ZipFile zf = new ZipFile(samples.getFile(f));
-            ZipArchiveEntry entry = zf.getEntry("word/document.xml");
-            DocumentDocument document = DocumentDocument.Factory.parse(zf.getInputStream(entry));
-            assertNotNull(document);
-            zf.close();
+            try (ZipFile zf = ZipFile.builder().setFile(samples.getFile(f)).get()) {
+                ZipArchiveEntry entry = zf.getEntry("word/document.xml");
+                DocumentDocument document = DocumentDocument.Factory.parse(zf.getInputStream(entry));
+                assertNotNull(document);
+            }
         }
     }
 
@@ -149,11 +150,11 @@ class TestXWPFBugs {
     void missingXsbs() throws IOException, XmlException {
         String[] files = {"bib-chernigovka.netdo.ru_download_docs_17459.docx"};
         for (String f : files) {
-            ZipFile zf = new ZipFile(samples.getFile(f));
-            ZipArchiveEntry entry = zf.getEntry("word/document.xml");
-            DocumentDocument document = DocumentDocument.Factory.parse(zf.getInputStream(entry));
-            assertNotNull(document);
-            zf.close();
+            try (ZipFile zf = ZipFile.builder().setFile(samples.getFile(f)).get()) {
+                ZipArchiveEntry entry = zf.getEntry("word/document.xml");
+                DocumentDocument document = DocumentDocument.Factory.parse(zf.getInputStream(entry));
+                assertNotNull(document);
+            }
         }
     }
 
@@ -172,14 +173,124 @@ class TestXWPFBugs {
             PackagePart part = document.getPackage().getPart(partName);
             assertNotNull(part);
             try (
-                    InputStream partStream = part.getInputStream();
-                    POIFSFileSystem poifs = new POIFSFileSystem(partStream)
+                InputStream partStream = part.getInputStream();
+                POIFSFileSystem poifs = new POIFSFileSystem(partStream)
             ) {
                 Ole10Native ole = Ole10Native.createFromEmbeddedOleObject(poifs);
                 String fn = "C:\\Users\\ross\\AppData\\Local\\Microsoft\\Windows\\INetCache\\Content.Word\\約翰的測試文件\uD83D\uDD96.msg";
                 assertEquals(fn, ole.getFileName());
                 assertEquals(fn, ole.getFileName2());
             }
+        }
+    }
+
+    @Test
+    void insertParagraphDirectlyIntoBody() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug66312.docx"))) {
+            XWPFParagraph paragraph = document.getParagraphArray(0);
+            insertParagraph(paragraph, document);
+            assertEquals("Hello", document.getParagraphArray(0).getText());
+            assertEquals("World", document.getParagraphArray(1).getText());
+        }
+    }
+
+    @Test
+    void insertTableDirectlyIntoBody() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug66312.docx"))) {
+            XWPFParagraph paragraph = document.getParagraphArray(0);
+            insertTable(paragraph, document);
+            assertEquals("Hello", document.getTableArray(0).getRow(0).getCell(0).getText());
+            assertEquals("World", document.getParagraphArray(0).getText());
+        }
+    }
+
+    @Test
+    void insertParagraphIntoTable() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug66312.docx"))) {
+            XWPFTableCell cell = document.getTableArray(0).getRow(0).getCell(0);
+            XWPFParagraph paragraph = cell.getParagraphArray(0);
+            insertParagraph(paragraph, document);
+            assertEquals("Hello", cell.getParagraphArray(0).getText());
+            assertEquals("World", cell.getParagraphArray(1).getText());
+        }
+    }
+
+    @Test
+    void insertTableIntoTable() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug66312.docx"))) {
+            XWPFTableCell cell = document.getTableArray(0).getRow(0).getCell(0);
+            XWPFParagraph paragraph = cell.getParagraphArray(0);
+            insertTable(paragraph, document);
+            assertEquals("Hello", cell.getTableArray(0).getRow(0).getCell(0).getText());
+            assertEquals("World", cell.getParagraphArray(0).getText());
+        }
+    }
+
+
+    public static void insertParagraph(XWPFParagraph xwpfParagraph, XWPFDocument document) {
+        XmlCursor xmlCursor = xwpfParagraph.getCTP().newCursor();
+        XWPFParagraph xwpfParagraph2 = document.insertNewParagraph(xmlCursor);
+        xwpfParagraph2.createRun().setText("Hello");
+    }
+
+    public static void insertTable(XWPFParagraph xwpfParagraph, XWPFDocument document) {
+        XmlCursor xmlCursor = xwpfParagraph.getCTP().newCursor();
+        XWPFTable xwpfTable = document.insertNewTbl(xmlCursor);
+        xwpfTable.getRow(0).getCell(0).setText("Hello");
+    }
+
+    @Test
+    void correctParagraphAlignment() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug-paragraph-alignment.docx"))) {
+            XWPFParagraph centeredParagraph = document.getParagraphArray(0);
+            assertFalse(centeredParagraph.isAlignmentSet());
+            assertEquals(ParagraphAlignment.LEFT, centeredParagraph.getAlignment()); // LEFT is a fallback value here.
+
+            XWPFParagraph leftParagraph = document.getParagraphArray(1);
+            assertTrue(leftParagraph.isAlignmentSet());
+            assertEquals(ParagraphAlignment.LEFT, leftParagraph.getAlignment()); // LEFT is the real alignment value.
+        }
+    }
+
+    @Test
+    public void testTableRightAlign() throws Exception {
+        // Document contains all possible values for table alignment, including null.
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("table-alignment.docx")) {
+            XWPFTable tbl0 = doc.getTableArray(0);
+            assertNull(tbl0.getTableAlignment());
+            assertFalse(tbl0.getCTTbl().getTblPr().isSetJc());
+            XWPFTable tbl1 = doc.getTableArray(1);
+            assertEquals(TableRowAlign.LEFT, tbl1.getTableAlignment());
+            assertEquals(STJcTable.LEFT, tbl1.getCTTbl().getTblPr().getJc().xgetVal().getEnumValue());
+            XWPFTable tbl2 = doc.getTableArray(2);
+            assertEquals(TableRowAlign.START, tbl2.getTableAlignment());
+            assertEquals(STJcTable.START, tbl2.getCTTbl().getTblPr().getJc().xgetVal().getEnumValue());
+            XWPFTable tbl3 = doc.getTableArray(3);
+            assertEquals(TableRowAlign.CENTER, tbl3.getTableAlignment());
+            assertEquals(STJcTable.CENTER, tbl3.getCTTbl().getTblPr().getJc().xgetVal().getEnumValue());
+            XWPFTable tbl4 = doc.getTableArray(4);
+            assertEquals(TableRowAlign.RIGHT, tbl4.getTableAlignment());
+            assertEquals(STJcTable.RIGHT, tbl4.getCTTbl().getTblPr().getJc().xgetVal().getEnumValue());
+            XWPFTable tbl5 = doc.getTableArray(5);
+            assertEquals(TableRowAlign.END, tbl5.getTableAlignment());
+            assertEquals(STJcTable.END, tbl5.getCTTbl().getTblPr().getJc().xgetVal().getEnumValue());
+        }
+    }
+
+    @Test
+    public void testDeepTableCell() {
+        try {
+            // Document contains a table with nested cells.
+            //noinspection resource
+            XWPFTestDataSamples.openSampleDocument("deep-table-cell.docx");
+            fail("Should catch exception");
+        } catch (POIXMLException e) {
+            // JDK 25+ does more checks, so more than one exception are possible
+            assertTrue(e.getMessage().contains("The element \"w:t\" has a depth"),
+                    "Had: " + e);
+        } catch (IOException e) {
+            assertInstanceOf(POIException.class, e.getCause());
+            assertTrue(e.getMessage().contains("Node depth exceeds maximum supported depth"));
         }
     }
 }

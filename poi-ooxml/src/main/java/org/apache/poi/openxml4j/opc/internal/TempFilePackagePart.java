@@ -17,8 +17,8 @@
 
 package org.apache.poi.openxml4j.opc.internal;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -30,6 +30,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 
 import java.io.*;
+import java.nio.file.Files;
 
 /**
  * (Experimental) Temp File version of a package part.
@@ -38,7 +39,7 @@ import java.io.*;
  */
 @Beta
 public final class TempFilePackagePart extends PackagePart {
-    private static final Logger LOG = LogManager.getLogger(TempFilePackagePart.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TempFilePackagePart.class);
 
     /**
      * Storage for the part data.
@@ -89,12 +90,12 @@ public final class TempFilePackagePart extends PackagePart {
 
     @Override
     protected InputStream getInputStreamImpl() throws IOException {
-        return new FileInputStream(tempFile);
+        return Files.newInputStream(tempFile.toPath());
     }
 
     @Override
     protected OutputStream getOutputStreamImpl() throws IOException {
-        return new FileOutputStream(tempFile);
+        return Files.newOutputStream(tempFile.toPath());
     }
 
     @Override

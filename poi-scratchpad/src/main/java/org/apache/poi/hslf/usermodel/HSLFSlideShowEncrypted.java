@@ -120,11 +120,17 @@ public class HSLFSlideShowEncrypted implements Closeable {
             recordMap.put(encOffset, r);
         }
 
+        if (!(r instanceof DocumentEncryptionAtom)) {
+            throw new EncryptedPowerPointFileException("Did not have a DocumentEncryptionAtom: " + r);
+        }
         this.dea = (DocumentEncryptionAtom)r;
 
         String pass = Biff8EncryptionKey.getCurrentUserPassword();
         EncryptionInfo ei = getEncryptionInfo();
         try {
+            if (ei == null || ei.getDecryptor() == null) {
+                throw new IllegalStateException("Invalid encryption-info: " + ei);
+            }
             if(!ei.getDecryptor().verifyPassword(pass != null ? pass : Decryptor.DEFAULT_PASSWORD)) {
                 throw new EncryptedPowerPointFileException("PowerPoint file is encrypted. The correct password needs to be set via Biff8EncryptionKey.setCurrentUserPassword()");
             }
@@ -224,7 +230,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
             int endOffset = offset + rlen;
 
             if (recType == 0xF007) {
-                // TOOD: get a real example file ... to actual test the FBSE entry
+                // TODO: get a real example file ... to actual test the FBSE entry
                 // not sure where the foDelay block is
 
                 // File BLIP Store Entry (FBSE)
@@ -302,7 +308,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
             int endOffset = offset + rlen;
 
             if (recType == 0xF007) {
-                // TOOD: get a real example file ... to actual test the FBSE entry
+                // TODO: get a real example file ... to actual test the FBSE entry
                 // not sure where the foDelay block is
 
                 // File BLIP Store Entry (FBSE)

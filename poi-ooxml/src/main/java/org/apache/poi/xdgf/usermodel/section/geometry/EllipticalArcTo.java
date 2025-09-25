@@ -30,6 +30,8 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
 
 public class EllipticalArcTo implements GeometryRow {
 
+    private static final double EPS = 1e-10;
+
     EllipticalArcTo _master;
 
     // The x-coordinate of the ending vertex on an arc.
@@ -70,6 +72,10 @@ public class EllipticalArcTo implements GeometryRow {
 
         for (CellType cell : row.getCellArray()) {
             String cellName = cell.getN();
+
+            if (cellName == null) {
+                throw new POIXMLException("Missing cellName in EllipticalArcTo row");
+            }
 
             switch (cellName) {
                 case "X":
@@ -169,6 +175,13 @@ public class EllipticalArcTo implements GeometryRow {
         double x0 = last.getX();
         double y0 = last.getY();
 
+        if (isColinear(x0, y0, x, y, a, b)) {
+            // All begin, end, and control points lie on the same line.
+            // Skip calculating an arc and just replace it with line.
+            path.lineTo(x, y);
+            return;
+        }
+
         // translate all of the points to the same angle as the ellipse
         AffineTransform at = AffineTransform.getRotateInstance(-c);
         double[] pts = new double[] { x0, y0, x, y, a, b };
@@ -217,6 +230,10 @@ public class EllipticalArcTo implements GeometryRow {
         // rotate the arc back to the original coordinate system
         at.setToRotation(c);
         path.append(at.createTransformedShape(arc), false);
+    }
+
+    private static boolean isColinear(double x1, double y1, double x2, double y2, double x3, double y3) {
+        return Math.abs((y1 - y2) * (x1 - x3) - (y1 - y3) * (x1 - x2)) < EPS;
     }
 
     protected static double computeSweep(double startAngle, double endAngle,

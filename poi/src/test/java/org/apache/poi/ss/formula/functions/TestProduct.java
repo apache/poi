@@ -16,6 +16,11 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -23,6 +28,9 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
+import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -63,6 +71,22 @@ class TestProduct {
         ValueEval result = getInstance().evaluate(args, 0, 0);
         assertTrue(result instanceof NumberEval);
         assertEquals(12, ((NumberEval)result).getNumberValue(), 0);
+    }
+
+    @Test
+    void test2Booleans() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row0 = sheet.createRow(0);
+            HSSFRow row1 = sheet.createRow(1);
+            row0.createCell(0).setCellValue(true);
+            row0.createCell(1).setCellValue(true);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = row1.createCell(0);
+            assertDouble(fe, cell, "PRODUCT(TRUE,TRUE)", 1.0, 0.000001);
+            assertDouble(fe, cell, "PRODUCT(A1:B1)", 0.0, 0.000001);
+            assertDouble(fe, cell, "PRODUCT(A1,B1)", 0.0, 0.000001);
+        }
     }
 
     private static Function getInstance() {

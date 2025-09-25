@@ -253,7 +253,7 @@ public abstract class MatrixFunction implements Function{
         protected double[] collectValues(ValueEval arg) throws EvaluationException {
             double[] values = instance.collectValues(arg);
 
-            /* handle case where MDETERM is operating on an array that that is not completely filled*/
+            /* handle case where MDETERM is operating on an array that is not completely filled*/
             if (arg instanceof AreaEval && values.length == 1)
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
 
@@ -297,7 +297,7 @@ public abstract class MatrixFunction implements Function{
         protected double[] collectValues(ValueEval arg) throws EvaluationException {
             double[] values = instance.collectValues(arg);
 
-            /* handle case where MDETERM is operating on an array that that is not completely filled*/
+            /* handle case where MDETERM is operating on an array that is not completely filled*/
             if (arg instanceof AreaEval && values.length == 1)
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
 

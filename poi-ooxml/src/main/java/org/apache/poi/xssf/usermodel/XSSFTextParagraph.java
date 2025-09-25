@@ -19,9 +19,11 @@ package org.apache.poi.xssf.usermodel;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.ooxml.util.NumberHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
@@ -64,7 +66,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         }
     }
 
-    public String getText(){
+    public String getText() {
         StringBuilder out = new StringBuilder();
         for (XSSFTextRun r : _runs) {
             out.append(r.getText());
@@ -83,7 +85,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     }
 
     public List<XSSFTextRun> getTextRuns(){
-        return _runs;
+        return Collections.unmodifiableList(_runs);
     }
 
     public Iterator<XSSFTextRun> iterator(){
@@ -252,14 +254,30 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * @return the color of bullet characters within a given paragraph.
      * A <code>null</code> value means to use the text font color.
      */
-    public Color getBulletFontColor(){
-        ParagraphPropertyFetcher<Color> fetcher = new ParagraphPropertyFetcher<Color>(getLevel()){
+    public Color getBulletFontColor() {
+        byte[] bytes = getBulletFontColorAsBytes();
+        if (bytes == null) {
+            return null;
+        } else if (bytes.length == 3) {
+            return new Color(bytes[0] & 0xFF, bytes[1] & 0xFF, bytes[2] & 0xFF);
+        } else {
+            return new Color(0xFF & bytes[1], 0xFF & bytes[2], 0xFF & bytes[3], 0xFF & bytes[0]);
+        }
+    }
+
+    /**
+     *
+     * @return the color of bullet characters within a given paragraph.
+     * A <code>null</code> value means to use the text font color.
+     * @since POI 5.5.0
+     */
+    public byte[] getBulletFontColorAsBytes() {
+        ParagraphPropertyFetcher<byte[]> fetcher = new ParagraphPropertyFetcher<byte[]>(getLevel()) {
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetBuClr()){
                     if(props.getBuClr().isSetSrgbClr()){
                         CTSRgbColor clr = props.getBuClr().getSrgbClr();
-                        byte[] rgb = clr.getVal();
-                        setValue(new Color(0xFF & rgb[0], 0xFF & rgb[1], 0xFF & rgb[2]));
+                        setValue(clr.getVal());
                         return true;
                     }
                 }
@@ -275,11 +293,21 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      *
      * @param color the bullet color
      */
-    public void setBulletFontColor(Color color){
+    public void setBulletFontColor(Color color) {
+        setBulletFontColor(new byte[]{(byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue()});
+    }
+
+    /**
+     * Set the color to be used on bullet characters within a given paragraph.
+     *
+     * @param colorArray the bullet color (as byte array)
+     * @since POI 5.5.0
+     */
+    public void setBulletFontColor(byte[] colorArray) {
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTColor c = pr.isSetBuClr() ? pr.getBuClr() : pr.addNewBuClr();
         CTSRgbColor clr = c.isSetSrgbClr() ? c.getSrgbClr() : c.addNewSrgbClr();
-        clr.setVal(new byte[]{(byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue()});
+        clr.setVal(colorArray);
     }
 
     /**
@@ -552,8 +580,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         if(lnSpc > 0) {
             // check if the percentage value is scaled
             CTTextNormalAutofit normAutofit = _shape.getTxBody().getBodyPr().getNormAutofit();
-            if(normAutofit != null) {
-                double scale = 1 - (double)normAutofit.getLnSpcReduction() / 100000;
+            if(normAutofit != null && normAutofit.isSetLnSpcReduction()) {
+                double scale = 1 - NumberHelper.toDouble(normAutofit.getLnSpcReduction()) / 100000;
                 lnSpc *= scale;
             }
         }
@@ -836,7 +864,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     public ListAutoNumber getBulletAutoNumberScheme() {
         ParagraphPropertyFetcher<ListAutoNumber> fetcher = new ParagraphPropertyFetcher<ListAutoNumber>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetBuAutoNum()) {
+                if(props.isSetBuAutoNum() && props.getBuAutoNum().getType() != null) {
                     setValue(ListAutoNumber.values()[props.getBuAutoNum().getType().intValue() - 1]);
                     return true;
                 }

@@ -21,9 +21,16 @@ package org.apache.poi.xssf.usermodel;
 import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.BaseTestSheetShiftColumns;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestXSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
     public TestXSSFSheetShiftColumns() {
@@ -40,4 +47,26 @@ class TestXSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
         return XSSFTestDataSamples.writeOutAndReadBack(wb);
     }
 
+    @Test
+    public void testBug69154() throws Exception {
+        // this does not appear to work for HSSF but let's get it working for XSSF anyway
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            for (int i = 0; i < 4; i++) {
+                Row row = sheet.createRow(i);
+                for (int j = 0; j < 6; j++) {
+                    String value = new CellAddress(i, j).formatAsString();
+                    row.createCell(j).setCellValue(value);
+                }
+            }
+            final int firstRow = 1; // worked with 0, but failed with 1!
+            final int secondRow = firstRow + 1;
+            sheet.addMergedRegion(new CellRangeAddress(firstRow, secondRow, 0, 0));
+            sheet.addMergedRegion(new CellRangeAddress(firstRow, firstRow, 1, 2));
+            sheet.addMergedRegion(new CellRangeAddress(firstRow, secondRow, 3, 3));
+            assertEquals(3, sheet.getNumMergedRegions());
+            sheet.shiftColumns(2, 5, -1);
+            assertEquals(2, sheet.getNumMergedRegions());
+        }
+    }
 }

@@ -166,7 +166,7 @@ final class TestLbsDataSubRecord {
         try (LittleEndianInputStream in = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
             LbsDataSubRecord.LbsDropData lbs = new LbsDataSubRecord.LbsDropData(in);
 
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
             try (LittleEndianOutputStream out = new LittleEndianOutputStream(baos)) {
                 lbs.serialize(out);
 

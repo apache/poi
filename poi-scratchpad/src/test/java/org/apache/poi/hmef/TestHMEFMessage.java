@@ -169,7 +169,7 @@ public final class TestHMEFMessage {
 
     @Test
     void testNoData() throws Exception {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
 
         // Header
         LittleEndian.putInt(HMEFMessage.HEADER_SIGNATURE, out);
@@ -184,7 +184,7 @@ public final class TestHMEFMessage {
 
     @Test
     void testInvalidLevel() throws Exception {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
 
         // Header
         LittleEndian.putInt(HMEFMessage.HEADER_SIGNATURE, out);

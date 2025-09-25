@@ -37,3 +37,6 @@ TEST-org.apache.poi*.xml
 /*/build/
 dist
 lib/
+
+# Compiled module-info class-files
+/poi*/src/*/java9/*.class

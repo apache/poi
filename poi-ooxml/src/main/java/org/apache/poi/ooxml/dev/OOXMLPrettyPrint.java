@@ -17,6 +17,7 @@
 package org.apache.poi.ooxml.dev;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -82,7 +83,8 @@ public class OOXMLPrettyPrint {
         System.out.println("Reading zip-file " + file + " and writing pretty-printed XML to " + outFile);
 
         try (ZipSecureFile zipFile = ZipHelper.openZipFile(file)) {
-            try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outFile)))) {
+            try (ZipOutputStream out = new ZipOutputStream(
+                    new BufferedOutputStream(Files.newOutputStream(outFile.toPath())))) {
                 new OOXMLPrettyPrint().handle(zipFile, out);
             }
         } finally {

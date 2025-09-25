@@ -27,8 +27,8 @@ import static org.apache.poi.util.HexDump.toHex;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -48,7 +48,7 @@ import org.apache.poi.util.StringUtil;
  */
 public final class HyperlinkRecord extends StandardRecord {
     public static final short sid = 0x01B8;
-    private static final Logger LOG = LogManager.getLogger(HyperlinkRecord.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HyperlinkRecord.class);
 
     /*
      * Link flags

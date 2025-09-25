@@ -34,8 +34,8 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import com.zaxxer.sparsebits.SparseBitSet;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -53,6 +53,7 @@ import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Units;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.xmlbeans.XmlCursor;
@@ -74,7 +75,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 @Beta
 public abstract class XSLFSheet extends POIXMLDocumentPart
 implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
-    private static final Logger LOG = LogManager.getLogger(XSLFSheet.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XSLFSheet.class);
 
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -330,11 +331,17 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         return getShapes().iterator();
     }
 
+    /**
+     * This method is not yet supported.
+     *
+     * @throws UnsupportedOperationException this method is not yet supported
+     */
+    @NotImplemented
     @Override
     public void addShape(XSLFShape shape) {
         throw new UnsupportedOperationException(
             "Adding a shape from a different container is not supported -"
-            + " create it from scratch witht XSLFSheet.create* methods");
+            + " create it from scratch with the XSLFSheet.create* methods");
     }
 
     /**
@@ -395,7 +402,11 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
             if(sp.length == 0) {
                 throw new IllegalStateException("CTGroupShape was not found");
             }
-            _spTree = (CTGroupShape)sp[0];
+            XmlObject xmlObject = sp[0];
+            if (!(xmlObject instanceof CTGroupShape)) {
+                throw new IllegalArgumentException("Had unexpected type of entry: " + xmlObject.getClass());
+            }
+            _spTree = (CTGroupShape) xmlObject;
         }
         return _spTree;
     }

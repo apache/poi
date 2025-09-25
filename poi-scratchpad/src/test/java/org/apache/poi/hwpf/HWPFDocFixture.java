@@ -44,7 +44,7 @@ public final class HWPFDocFixture
               POIDataSamples.getDocumentInstance().openResourceAsStream(_testFile));
 
       DocumentEntry documentProps =
-        (DocumentEntry) filesystem.getRoot().getEntry("WordDocument");
+        (DocumentEntry) filesystem.getRoot().getEntryCaseInsensitive("WordDocument");
       _mainStream = new byte[documentProps.getSize()];
       filesystem.createDocumentInputStream("WordDocument").read(_mainStream);
 
@@ -59,7 +59,7 @@ public final class HWPFDocFixture
 
       // read in the table stream.
       DocumentEntry tableProps =
-        (DocumentEntry) filesystem.getRoot().getEntry(name);
+        (DocumentEntry) filesystem.getRoot().getEntryCaseInsensitive(name);
       _tableStream = new byte[tableProps.getSize()];
       filesystem.createDocumentInputStream(name).read(_tableStream);
 

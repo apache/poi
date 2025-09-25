@@ -158,7 +158,7 @@ public final class WriteAuthorAndTitle {
 
                 for (int i=0; i<path.length(); i++) {
                     String subDir = path.getComponent(i);
-                    de = (de.hasEntry(subDir)) ? (DirectoryEntry)de.getEntry(subDir) : de.createDirectory(subDir);
+                    de = (de.hasEntryCaseInsensitive(subDir)) ? (DirectoryEntry)de.getEntryCaseInsensitive(subDir) : de.createDirectory(subDir);
                 }
 
                 de.createDocument(event.getName(), is);

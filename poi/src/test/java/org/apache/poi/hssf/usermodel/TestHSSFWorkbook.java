@@ -28,11 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -69,6 +72,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
@@ -93,6 +97,15 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      */
     public static InternalWorkbook getInternalWorkbook(HSSFWorkbook wb) {
         return wb.getWorkbook();
+    }
+
+    @Override
+    protected int getDrawingSizeForCreateDrawing1() {
+        return 225;
+    }
+    @Override
+    protected int getDrawingSizeForCreateDrawing2() {
+        return 171;
     }
 
     /**
@@ -559,7 +572,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
              HSSFWorkbook wb = new HSSFWorkbook(fs1)) {
             ClassID clsid1 = fs1.getRoot().getStorageClsid();
 
-            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(4096);
+            UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(4096).get();
             wb.write(out);
             try (POIFSFileSystem fs2 = new POIFSFileSystem(out.toInputStream())) {
                 ClassID clsid2 = fs2.getRoot().getStorageClsid();
@@ -641,7 +654,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
                             DirectoryEntry dir = embeddedObject.getDirectory();
                             if (dir instanceof DirectoryNode) {
                                 DirectoryNode dNode = (DirectoryNode) dir;
-                                if (dNode.hasEntry("WordDocument")) {
+                                if (dNode.hasEntryCaseInsensitive("WordDocument")) {
                                     found = true;
                                     break;
                                 }
@@ -974,7 +987,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertNotNull(name);
         assertEquals("ASheet!A1", name.getRefersToFormula());
 
-        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().get();
         wb.write(stream);
 
         assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
@@ -985,7 +998,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
         assertEquals("ASheet!A1", name.getRefersToFormula());
 
-        UnsynchronizedByteArrayOutputStream stream2 = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream stream2 = UnsynchronizedByteArrayOutputStream.builder().get();
         wb.write(stream2);
 
         assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
@@ -1074,7 +1087,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     private void writeAndCloseWorkbook(Workbook workbook, File file)
     throws IOException {
-        final UnsynchronizedByteArrayOutputStream bytesOut = new UnsynchronizedByteArrayOutputStream();
+        final UnsynchronizedByteArrayOutputStream bytesOut = UnsynchronizedByteArrayOutputStream.builder().get();
         workbook.write(bytesOut);
         workbook.close();
 
@@ -1182,7 +1195,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     @Test
     void checkExistingFileForR1C1Refs() throws IOException {
         try (
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 HSSFWorkbook wb = openSampleWorkbook("49423.xls")
         ) {
             assertEquals(CellReferenceType.A1, wb.getCellReferenceType());
@@ -1198,7 +1211,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     @Test
     void checkNewFileForR1C1Refs() throws IOException {
         try (
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 HSSFWorkbook wb = new HSSFWorkbook()
         ) {
             assertEquals(CellReferenceType.UNKNOWN, wb.getCellReferenceType());
@@ -1213,8 +1226,44 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
-    @Disabled
-    void createDrawing() {
-        // the dimensions for this image are different than for XSSF and SXSSF
+    @Test
+    void writeInvalidFile() throws Exception {
+        try (Workbook wb = WorkbookFactory.create(
+                samples.getFile("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5786329142919168.xls"),
+                null, true)) {
+            try (OutputStream out = new ByteArrayOutputStream()) {
+                wb.write(out);
+            }
+        }
+    }
+
+    @Test
+    void testWorkbookCloseClosesInputStream() throws Exception {
+        try (WrappedStream stream = new WrappedStream(
+                HSSFTestDataSamples.openSampleFileStream("49423.xls"))) {
+            try (HSSFWorkbook wb = new HSSFWorkbook(stream)) {
+                HSSFSheet hssfSheet = wb.getSheetAt(0);
+                assertNotNull(hssfSheet);
+            }
+            assertTrue(stream.isClosed(), "stream should be closed by HSSFWorkbook");
+        }
+    }
+
+    private static class WrappedStream extends FilterInputStream {
+        private boolean closed;
+
+        WrappedStream(InputStream stream) {
+            super(stream);
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            closed = true;
+        }
+
+        boolean isClosed() {
+            return closed;
+        }
     }
 }

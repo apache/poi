@@ -34,7 +34,7 @@ class TestLittleEndianInputStream {
         assertEquals(4, fr.getCharacterPos());
         assertEquals(0x15c, fr.getFontIndex());
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         LittleEndianOutputStream out = new LittleEndianOutputStream(baos);
 
         fr.serialize(out);

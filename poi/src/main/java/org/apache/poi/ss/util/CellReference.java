@@ -93,10 +93,6 @@ public class CellReference implements GenericRecord {
      * digits or dot.  (They can even end in dot).
      */
     private static final Pattern NAMED_RANGE_NAME_PATTERN = Pattern.compile("[_A-Z][_.A-Z0-9]*", Pattern.CASE_INSENSITIVE);
-    //private static final String BIFF8_LAST_COLUMN = SpreadsheetVersion.EXCEL97.getLastColumnName();
-    //private static final int BIFF8_LAST_COLUMN_TEXT_LEN = BIFF8_LAST_COLUMN.length();
-    //private static final String BIFF8_LAST_ROW = String.valueOf(SpreadsheetVersion.EXCEL97.getMaxRows());
-    //private static final int BIFF8_LAST_ROW_TEXT_LEN = BIFF8_LAST_ROW.length();
 
     // FIXME: _sheetName may be null, depending on the entry point.
     // Perhaps it would be better to declare _sheetName is never null, using an empty string to represent a 2D reference.
@@ -120,22 +116,22 @@ public class CellReference implements GenericRecord {
         _sheetName = parts.sheetName;
 
         String colRef = parts.colRef;
-        _isColAbs = (colRef.length() > 0) && colRef.charAt(0) == '$';
+        _isColAbs = (!colRef.isEmpty()) && colRef.charAt(0) == '$';
         if (_isColAbs) {
             colRef = colRef.substring(1);
         }
-        if (colRef.length() == 0) {
+        if (colRef.isEmpty()) {
             _colIndex = -1;
         } else {
             _colIndex = convertColStringToIndex(colRef);
         }
 
         String rowRef=parts.rowRef;
-        _isRowAbs = (rowRef.length() > 0) && rowRef.charAt(0) == '$';
+        _isRowAbs = (!rowRef.isEmpty()) && rowRef.charAt(0) == '$';
         if (_isRowAbs) {
             rowRef = rowRef.substring(1);
         }
-        if (rowRef.length() == 0) {
+        if (rowRef.isEmpty()) {
             _rowIndex = -1;
         } else {
             // throws NumberFormatException if rowRef is not convertible to an int
@@ -455,7 +451,7 @@ public class CellReference implements GenericRecord {
     }
 
     /**
-     * Takes in a 0-based base-10 column and returns a ALPHA-26
+     * Takes in a 0-based base-10 column and returns an ALPHA-26
      *  representation.
      * eg {@code convertNumToColString(3)} returns {@code "D"}
      */

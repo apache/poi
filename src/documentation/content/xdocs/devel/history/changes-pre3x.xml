@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE changes PUBLIC "-//APACHE//DTD Changes POI//EN" "changes-poi.dtd">
+
+<changes>
+    <contexts>
+        <context id="OOXML" title="OOXML"/>
+        <context id="OPC" title="OPC"/>
+        <context id="POI_Overall" title="POI Overall"/>
+        <context id="HSSF" title="Horrible SpreadSheet Format"/>
+        <context id="XSSF" title="ooXml SpreadSheet Format"/>
+        <context id="SXSSF" title="Streaming ooXml SpreadSheet Format"/>
+        <context id="SS_Common" title="SpreadSheet Common"/>
+        <context id="HSLF" title="Horrible SlideShow Format"/>
+        <context id="XSLF" title="ooXml SlideShow Format"/>
+        <context id="SL_Common" title="SlideShow Common"/>
+        <context id="HWPF" title="Horrible WordProcessor Format"/>
+        <context id="XWPF" title="ooXml WordProcessor Format"/>
+        <context id="HDF" title="Horrible Document Format"/>
+        <context id="HPSF" title="Horrible PropertySet Format"/>
+        <context id="HDGF" title="Horrible Dreadful Graph Format"/>
+        <context id="XDGF" title="ooXml Dreadful Graph Format"/>
+        <context id="DDF" title="Dreadful Drawing Format"/>
+        <context id="XDDF" title="ooXml Dreadful Drawing Format"/>
+        <context id="HMEF" title="Horrible Mail Encoder Format"/>
+        <context id="HSMF" title="Horrible Senseless Format"/>
+        <context id="HPBF" title="Horrible Peep Book Format"/>
+        <context id="HWMF" title="Horrible Wannabe Metafile Format"/>
+        <context id="HEMF" title="Horrible Ermahgerd Metafile Format"/>
+        <context id="POIFS" title="Poor Obfuscation Implementation FileSystem"/>
+    </contexts>
+
+    <section id="current_release">
+        <title>Current releases</title>
+        <p>The change log for the <a href="site:changes">current release</a> can be found in the home section.</p>
+    </section>
+
+
+    <release version="2.5.1-FINAL" date="2004-02-29">
+      <actions>
+        <action type="add" context="HSSF">Outlining support</action>
+        <action type="fix" fixes-bug="27574" context="HSSF">HSSFDateUtil.getExcelDate() is one hour off when DST changes</action>
+        <action type="fix" fixes-bug="26465" context="HSSF">wrong lastrow entry</action>
+        <action type="fix" fixes-bug="28203" context="HSSF">Unable to open read-write excel file including forms</action>
+      </actions>
+    </release>
+
+    <release version="2.5-FINAL" date="2004-02-29">
+      <actions>
+        <action type="add" context="DDF">Add support for the Escher file format</action>
+        <action type="fix" fixes-bug="27005" context="HSSF">java.lang.IndexOutOfBoundsException during Workbook.cloneSheet()</action>
+      </actions>
+    </release>
+
+    <release version="2.0-FINAL" date="2004-01-26">
+      <actions>
+        <action type="update" context="POI_Overall">No changes</action>
+      </actions>
+    </release>
+
+    <release version="2.0-RC2" date="2004-01-11">
+      <actions>
+        <action type="fix" fixes-bug="25695" context="HSSF">HSSFCell.getStringCellValue() on cell which has string formula will return swap bye unicode characters</action>
+        <action type="fix" context="POI_Overall">Updated website for upcoming release</action>
+        <action type="fix" fixes-bug="25457" context="HSSF">Formula Parser fixes with tests, by Peter M Murray Bug 25457</action>
+        <action type="fix" context="HSSF">Fixed cloning merge regions</action>
+        <action type="fix" context="HSSF">The cloned reference for merged cells did not create a new collection, so deletes cascaded to the original</action>
+        <action type="fix" fixes-bug="24519" context="HSSF">Call to getCustomPalette() from a newly created workbook now works</action>
+        <action type="fix" fixes-bug="24397" context="POI_Overall">Some compilation got ambiguous classes. Explicitly imports the classes. Patch supplied by Jean-Pierre Paris</action>
+      </actions>
+    </release>
+
+    <release version="2.0-RC1" date="2003-11-02">
+      <actions>
+        <action type="fix" fixes-bug="12561" context="HSSF" importance="minor">HSSFWorkbook throws Exceptions</action>
+        <action type="fix" fixes-bug="12730" context="HSSF" importance="normal">values dont get copied to another sheet</action>
+        <action type="fix" fixes-bug="13224" context="POI_Overall" importance="major">Exception thrown when cell has =Names call</action>
+        <action type="fix" fixes-bug="13796" context="HSSF" importance="normal">Error Reading Formula Record (optimized if, external link)</action>
+        <action type="fix" fixes-bug="13921" context="HSSF" importance="normal">Sheet name cannot exceed 31 characters and cannot contain :</action>
+        <action type="fix" fixes-bug="14330" context="HSSF" importance="normal">Error reading FormulaRecord</action>
+        <action type="fix" fixes-bug="14460" context="HSSF" importance="normal">Name in Formula - ArrayOutOfBoundsException</action>
+        <action type="fix" fixes-bug="15228" context="HSSF" importance="critical">ArrayIndexoutofbounds Exception. POI - Version 1.8</action>
+        <action type="fix" fixes-bug="16488" context="HSSF" importance="major">Unable to open written spreadsheet in Excel, but can in Open</action>
+        <action type="fix" fixes-bug="16559" context="HSSF" importance="normal">testCustomPalette.xls crashes Excel 97</action>
+        <action type="fix" fixes-bug="16560" context="HSSF" importance="normal">testBoolErr.xls crashes Excel '97</action>
+        <action type="fix" fixes-bug="17374" context="HSSF" importance="minor">HSSFFont - BOLDWEIGHT_NORMAL</action>
+        <action type="fix" fixes-bug="18800" context="HSSF" importance="major">The sheet made by HSSFWorkbook#cloneSheet() doesn't work cor</action>
+        <action type="fix" fixes-bug="18846" context="POI_Overall" importance="minor">[RFE]Refactor the transformation between byte array a</action>
+        <action type="fix" fixes-bug="19599" context="HSSF" importance="minor">java.lang.IllegalArgumentException</action>
+        <action type="fix" fixes-bug="19961" context="HSSF" importance="normal">Sheet.getColumnWidth() returns wrong value</action>
+        <action type="fix" fixes-bug="21066" context="HSSF" importance="blocker">Can not modify a blank spreadsheet</action>
+        <action type="fix" fixes-bug="21444" context="HSSF" importance="enhancement">Macro functions</action>
+        <action type="fix" fixes-bug="21447" context="HSSF" importance="normal">[RFE]String Formula Cells</action>
+        <action type="fix" fixes-bug="21674" context="HSSF" importance="enhancement">Documentation changes for @(Greater|Less|Not)EqualPt</action>
+        <action type="fix" fixes-bug="21863" context="POI_Overall" importance="enhancement">build.xml fixes</action>
+        <action type="fix" fixes-bug="22195" context="POIFS" importance="normal">[RFE] Support for Storage Class ID</action>
+        <action type="fix" fixes-bug="22742" context="HSSF" importance="critical">Failed to create HSSFWorkbook!</action>
+        <action type="fix" fixes-bug="22922" context="HSSF" importance="critical">HSSFSheet.shiftRows() throws java.lang.IndexOutOfBoundsExcep</action>
+        <action type="fix" fixes-bug="22963" context="HPSF" importance="normal">org.apache.poi.hpsf.SummaryInformation.getEditTime() should</action>
+        <action type="fix" fixes-bug="24149" context="POIFS" importance="major">Error passing inputstream to POIFSFileSystem</action>
+        <action type="fix" fixes-bug="21722" context="HSSF" importance="normal">Add a ProtectRecord to Sheets and give control over</action>
+        <action type="fix" fixes-bug="9576" context="HSSF" importance="normal">DBCELL, INDEX EXTSST (was Acess 97 import)</action>
+        <action type="fix" fixes-bug="13478" context="POIFS" importance="blocker">[RFE] POIFS, RawDataBlock: Missing workaround for lo</action>
+        <action type="fix" fixes-bug="14824" context="HSSF" importance="normal">Unable to modify empty sheets</action>
+        <action type="fix" fixes-bug="12843" context="HSSF" importance="critical">Make POI handle chinese better</action>
+        <action type="fix" fixes-bug="15353" context="HSSF" importance="normal">[RFE] creating a cell with a hyperlink</action>
+        <action type="fix" fixes-bug="15375" context="HSSF" importance="blocker">Post 1.5.1 POI causes spreadsheet to become unopenable</action>
+      </actions>
+    </release>
+
+    <release version="2.0-pre3" date="2003-07-29">
+      <actions>
+        <action type="add" context="HPSF">HPSF is now able to read properties which are given in the property set stream but which don't have a value ("variant" type VT_EMPTY). The getXXX() methods of the PropertySet class return null if their return type is a reference (like a string) or 0
+            if the return type is numeric. Details about the return types and about how to distinguish between a property value of zero and a property value that is not present can be found in the API documentation</action>
+        <action type="fix" context="HSSF">Gridlines can now be turned on and off</action>
+        <action type="fix" context="HSSF">NamePTG refactoring/fixes</action>
+        <action type="fix" context="HSSF">minor fixes to ExternSheet and formula strings</action>
+        <action type="fix" context="HSSF">Sheet comparisons now ignore case</action>
+      </actions>
+    </release>
+
+    <release version="2.0-pre2" date="2003-07-06">
+      <actions>
+        <action type="fix" context="HSSF">A nasty concurrency problem has been fixed. Any users working in a multithreaded environment should seriously consider upgrading to this release</action>
+        <action type="update" context="HSSF">The EXTSST record has been implemented. This record is used by excel for optimized reading of strings</action>
+        <action type="update" context="HSSF">When rows are shifted, the merged regions now move with them. If a row contains 2 merged cells, the resulting shifted row should have those cells merged as well</action>
+        <action type="fix" context="HSSF">There were some issues when removing merged
+            regions (specifically, removing all of them and then adding some more) and have been resolved.
+        </action>
+        <action type="fix" context="HSSF">When a sheet contained shared formulas (when a formula is
+            dragged across greater than 6 cells), the clone would fail. We now support cloning of
+            sheets that contain this Excel optimization.
+        </action>
+        <action type="add" context="HSSF">Support added for reading formulas with UnaryPlus and UnaryMinus operators</action>
+      </actions>
+    </release>
+    <release version="2.0-pre1" date="2003-05-17">
+      <actions>
+        <action type="add" context="HSSF">Patch applied for deep cloning of worksheets was provided</action>
+        <action type="add" context="HSSF">Patch applied to allow sheet reordering</action>
+        <action type="add" context="HSSF">Added additional print area setting methods using row/column numbers</action>
+        <action type="fix" context="HDF">Negative Array size fix</action>
+        <action type="update" context="HSSF">Added argument pointers to support the IF formula</action>
+        <action type="update" context="HSSF">Formulas: Added special character support for string literals, specifically for SUMIF formula support and addresses a bug as well</action>
+        <action type="fix" context="POIFS">BlockingInputStream committed to help ensure reads</action>
+        <action type="fix" context="HSSF">Fixed problem with NaN values differing from the investigated value from file reads in FormulaRecords</action>
+        <action type="fix" context="HSSF">Patch for getColumnWidth in HSSF</action>
+        <action type="add" context="HDF">Patch for dealing with mult-level numbered lists in HDF</action>
+        <action type="fix" context="HSSF">Due to named reference work, several named-ranged bugs were closed</action>
+        <action type="fix" context="HSSF">Patch applied to prevent sheet corruption after a template modification</action>
+        <action type="update" context="HSSF">Shared Formulas now Supported</action>
+        <action type="update" context="HSSF">Added GreaterEqual, LessEqual and NotEqual to Formula Parser</action>
+        <action type="update" context="HSSF">Added GreaterThan and LessThan functionality to formulas</action>
+        <action type="fix" context="POI_Overall">Patches for i10n</action>
+        <action type="update" context="POI_Overall">POI Build System Updated</action>
+        <action type="fix" context="HSSF">font names can now be null</action>
+      </actions>
+    </release>
+    <release version="1.10-dev" date="2003-02-19">
+      <actions>
+        <action type="add" context="HSSF">Support for zoom level</action>
+        <action type="add" context="HSSF">Freeze and split pane support</action>
+        <action type="add" context="HSSF">Row and column headers on printouts</action>
+      </actions>
+    </release>
+    <release version="1.8-dev" date="2002-09-20">
+      <actions>
+        <action type="add" context="HSSF">Custom Data Format Support</action>
+        <action type="add" context="HSSF">Enhanced Unicode Support for Russian and Japanese</action>
+        <action type="add" context="HSSF">Enhanced formula support including read-only for
+            "optimized if" statements.
+        </action>
+        <action type="add" context="HSSF">Support for cloning objects</action>
+        <action type="add" context="HSSF">Fixes for header/footer</action>
+        <action type="add" context="POI_Overall">Spanish Documentation translations</action>
+        <action type="add" context="HSSF">Support for preserving VBA macros</action>
+      </actions>
+    </release>
+    <release version="1.7-dev" date="Release date not recorded">
+      <actions>
+        <action type="update" context="POI_Overall">Removed runtime dependency on commons logging</action>
+        <action type="update" context="HSSF">Formula support</action>
+      </actions>
+    </release>
+    <release version="1.5.1" date="2002-06-16">
+      <actions>
+        <action type="update" context="POI_Overall">Removed depedency on commons logging. Now define poi.logging system property to enable logging to standard out</action>
+        <action type="fix" context="HSSF">Fixed SST string handling so that spreadsheets with rich text or extended text will be read correctly</action>
+      </actions>
+    </release>
+    <release version="1.5" date="2002-05-06">
+      <actions>
+        <action type="update" context="POI_Overall">New project build</action>
+        <action type="update" context="POI_Overall">New project documentation system based on Cocoon</action>
+        <action type="update" context="POI_Overall">Package rename</action>
+        <action type="fix" context="POI_Overall">Various bug fixes</action>
+        <action type="add" context="HSSF">Early stages of HSSF development (not ready for development)</action>
+        <action type="add" context="HSSF">Initial low level record support for charting (not complete)</action>
+      </actions>
+    </release>
+    <release version="1.2.0" date="2002-01-19">
+      <actions>
+        <action type="update" context="POI_Overall">Changes not recorded</action>
+      </actions>
+    </release>
+    <release version="1.1.0" date="2002-01-04">
+      <actions>
+        <action type="update" context="HSSF">Created new event model</action>
+        <action type="update" context="HSSF">Optimizations made to HSSF including aggregate records for values, rows, etc.</action>
+        <action type="update" context="POI_Overall">predictive sizing, offset based writing (instead of lots of array copies)</action>
+        <action type="update" context="POI_Overall">minor re-factoring and bug fixes</action>
+      </actions>
+    </release>
+    <release version="1.0.2" date="2002-01-11">
+      <actions>
+        <action type="update" context="POI_Overall">Changes not recorded</action>
+      </actions>
+    </release>
+    <release version="1.0.1" date="2002-01-04">
+      <actions>
+        <action type="update" context="POI_Overall">Changes not recorded</action>
+      </actions>
+    </release>
+    <release version="1.0.0" date="2001-12-30">
+      <actions>
+        <action type="update" context="POI_Overall">Minor documentation updates</action>
+      </actions>
+    </release>
+    <release version="0.14.0" date="2001-12-22">
+      <actions>
+        <action type="update" context="HSSF">Added DataFormat helper class and exposed set and get format on HSSFCellStyle</action>
+        <action type="update" context="HSSF">Fixed column width apis (unit wise) and various javadoc on the subject</action>
+        <action type="update" context="HSSF">Fix for Dimensions record (again)... (one of these days I'll write a unit test for this ;-p).</action>
+        <action type="update" context="HSSF">Some optimization on sheet creation</action>
+      </actions>
+    </release>
+    <release version="0.13.0" date="2001-12-16">
+      <actions>
+        <action type="update" context="POI_Overall">Changes not recorded</action>
+      </actions>
+    </release>
+    <release version="0.12.0" date="2001-12-12">
+      <actions>
+        <action type="update" context="HSSF">Added MulBlank, Blank, ColInfo</action>
+        <action type="update" context="POI_Overall">Added log4j facility and removed all sys.out type logging</action>
+        <action type="update" context="HSSF">Added support for adding font's, styles and corresponding high level api for styling cells</action>
+        <action type="update" context="HSSF">added support for changing row height, cell width and default row height/cell width.</action>
+        <action type="update" context="HSSF">Added fixes for internationalization (UTF-16 should work now from HSSFCell.setStringValue, etc when the encoding is set)</action>
+        <action type="update" context="HSSF">added support for adding/removing and naming sheets</action>
+      </actions>
+    </release>
+    <release version="0.11.0" date="2001-12-08">
+      <actions>
+        <action type="update" context="HSSF">Bugfix release. We were throwing an exception when reading RKRecord objects.</action>
+      </actions>
+    </release>
+    <release version="0.10.0" date="2001-12-02">
+      <actions>
+        <action type="update" context="HSSF">Got continuation records to work (read/write)</action>
+        <action type="update" context="HSSF">Added various pre-support for formulas</action>
+        <action type="update" context="POI_Overall">Massive API reorganization, repackaging</action>
+        <action type="update" context="POI_Overall">Better API support for modification</action>
+      </actions>
+    </release>
+    <release version="0.7 (and interim releases)" date="2001-11-17">
+      <actions>
+        <action type="update" context="HSSF">Added encoding flag to high and low level api to use utf-16
+            when needed (HSSFCell.setEncoding())
+        </action>
+        <action type="update" context="HSSF">added read only support for Label records (which are
+            reinterpreted as LabelSST when written)
+        </action>
+        <action type="update" context="HSSF">Broken continuation record implementation (oops)</action>
+        <action type="update" context="POIFS HSSF">BiffViewer class added for validating POI and/or HSSF Output.</action>
+      </actions>
+    </release>
+    <release version="0.6" date="2001-11-11">
+      <actions>
+        <action type="update" context="POIFS">Support for read/write and modify</action>
+        <action type="update" context="HSSF">Read only support for MulRK records (converted to Number when writing)</action>
+      </actions>
+    </release>
+    <release version="0.5" date="2001-11-05">
+      <actions>
+        <action type="update" context="POI_Overall">Changes not recorded</action>
+      </actions>
+    </release>
+    <release version="0.4" date="2001-10-31">
+      <actions>
+        <action type="update" context="POI_Overall">Changes not recorded</action>
+      </actions>
+    </release>
+    <release version="0.3" date="2001-10-26">
+      <actions>
+        <action type="update" context="POI_Overall">Changes not recorded</action>
+      </actions>
+    </release>
+    <release version="0.2" date="2001-09-24">
+      <actions>
+        <action type="update" context="POI_Overall">Changes not recorded</action>
+      </actions>
+    </release>
+    <release version="0.1" date="2001-08-28">
+      <actions>
+        <action type="update" context="POI_Overall">First ever public release</action>
+      </actions>
+    </release>
+
+</changes>

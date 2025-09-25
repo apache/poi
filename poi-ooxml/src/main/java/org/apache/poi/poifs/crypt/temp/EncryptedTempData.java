@@ -20,11 +20,10 @@
 package org.apache.poi.poifs.crypt.temp;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -32,8 +31,8 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.io.output.CountingOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
@@ -47,7 +46,7 @@ import org.apache.poi.util.TempFile;
 @Beta
 public class EncryptedTempData {
 
-    private static final Logger LOG = LogManager.getLogger(EncryptedTempData.class);
+    private static final Logger LOG = PoiLogManager.getLogger(EncryptedTempData.class);
     private static final CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
     private static final String PADDING = "PKCS5Padding";
     private final SecretKeySpec skeySpec;
@@ -73,7 +72,7 @@ public class EncryptedTempData {
      */
     public OutputStream getOutputStream() throws IOException {
         Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
-        outputStream = new CountingOutputStream(new CipherOutputStream(new FileOutputStream(tempFile), ciEnc));
+        outputStream = new CountingOutputStream(new CipherOutputStream(Files.newOutputStream(tempFile.toPath()), ciEnc));
         return outputStream;
     }
 
@@ -85,7 +84,7 @@ public class EncryptedTempData {
      */
     public InputStream getInputStream() throws IOException {
         Cipher ciDec = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, PADDING);
-        return new CipherInputStream(new FileInputStream(tempFile), ciDec);
+        return new CipherInputStream(Files.newInputStream(tempFile.toPath()), ciDec);
     }
 
     /**

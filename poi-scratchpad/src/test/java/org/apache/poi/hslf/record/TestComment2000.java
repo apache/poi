@@ -144,7 +144,7 @@ public final class TestComment2000 {
     @Test
     void testWrite() throws Exception {
         Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ca.writeOut(baos);
         byte[] b = baos.toByteArray();
         assertArrayEquals(data_a, b);
@@ -196,8 +196,8 @@ public final class TestComment2000 {
         assertFalse(equals, "Arrays should not be equals");
 
         // Check bytes are now the same
-        UnsynchronizedByteArrayOutputStream baosa = new UnsynchronizedByteArrayOutputStream();
-        UnsynchronizedByteArrayOutputStream baosn = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baosa = UnsynchronizedByteArrayOutputStream.builder().get();
+        UnsynchronizedByteArrayOutputStream baosn = UnsynchronizedByteArrayOutputStream.builder().get();
         ca.writeOut(baosa);
         cn.writeOut(baosn);
         byte[] ba = baosa.toByteArray();

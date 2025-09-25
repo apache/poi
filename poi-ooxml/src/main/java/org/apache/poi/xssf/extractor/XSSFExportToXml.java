@@ -38,8 +38,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -79,7 +79,7 @@ import org.xml.sax.SAXException;
  * </ul>
  */
 public class XSSFExportToXml implements Comparator<String>{
-    private static final Logger LOG = LogManager.getLogger(XSSFExportToXml.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XSSFExportToXml.class);
 
 
     @FunctionalInterface

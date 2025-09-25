@@ -17,8 +17,8 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
@@ -44,7 +44,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  */
 @Internal
 /*private*/ final class XSSFRowColShifter {
-    private static final Logger LOG = LogManager.getLogger(XSSFRowColShifter.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XSSFRowColShifter.class);
 
     private XSSFRowColShifter() { /*no instances for static classes*/}
 

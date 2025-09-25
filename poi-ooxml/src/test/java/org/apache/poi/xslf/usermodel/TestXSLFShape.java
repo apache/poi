@@ -90,7 +90,7 @@ class TestXSLFShape {
     void testReplaceTextInShapes() throws IOException {
         try (
                 XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             assertEquals(6, ppt.getSlides().size());
             XSLFSlide slide0 = ppt.getSlides().get(0);
@@ -135,7 +135,7 @@ class TestXSLFShape {
     void testReplaceTextInShapesXDDF() throws IOException {
         try (
                 XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             assertEquals(6, ppt.getSlides().size());
             XSLFSlide slide0 = ppt.getSlides().get(0);
@@ -180,7 +180,7 @@ class TestXSLFShape {
     void testCloneSlideAndReplaceText() throws IOException {
         try (
                 XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             assertEquals(6, ppt.getSlides().size());
             XSLFSlide slide0 = ppt.getSlides().get(0);
@@ -245,7 +245,7 @@ class TestXSLFShape {
     void testCloneSlideAndReplaceTextXDDF() throws IOException {
         try (
                 XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             assertEquals(6, ppt.getSlides().size());
             XSLFSlide slide0 = ppt.getSlides().get(0);

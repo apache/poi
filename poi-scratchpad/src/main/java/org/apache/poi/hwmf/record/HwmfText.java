@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
@@ -48,7 +48,7 @@ import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
 
 public class HwmfText {
-    private static final Logger LOG = LogManager.getLogger(HwmfText.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HwmfText.class);
     private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 

@@ -55,6 +55,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.impl.values.XmlValueOutOfRangeException;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalse;
 
 /**
@@ -149,6 +150,11 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
             new ReplacingInputStream(is, "<br>", "<br/>"),
             " xmlns=\""+NS_SPREADSHEETML+"\"", "")
             , xopt);
+
+        // ignore empty XML content in the stream which indicates severely broken parts in the workbook-file
+        if (root.getXml() == null) {
+            return;
+        }
 
         try (XmlCursor cur = root.getXml().newCursor()) {
             for (boolean found = cur.toFirstChild(); found; found = cur.toNextSibling()) {
@@ -301,7 +307,12 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         }
 
         CTClientData cldata = sh.getClientDataArray(0);
-        if(cldata.getObjectType() != STObjectType.NOTE) {
+        try {
+            if (cldata.getObjectType() != STObjectType.NOTE) {
+                return false;
+            }
+        } catch (XmlValueOutOfRangeException e) {
+            // see https://bz.apache.org/bugzilla/show_bug.cgi?id=66827
             return false;
         }
 

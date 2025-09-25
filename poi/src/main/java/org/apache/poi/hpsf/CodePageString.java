@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hpsf;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.*;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class CodePageString {
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
-    private static final Logger LOG = LogManager.getLogger(CodePageString.class);
+    private static final Logger LOG = PoiLogManager.getLogger(CodePageString.class);
 
     private byte[] _value;
 

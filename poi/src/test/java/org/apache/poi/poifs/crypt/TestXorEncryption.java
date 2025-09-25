@@ -32,6 +32,7 @@ import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,23 @@ class TestXorEncryption {
         byte[] xorArrAct = CryptoFunctions.createXorArray1("abc");
         byte[] xorArrExp = HexRead.readFromString("AC-CC-A4-AB-D6-BA-C3-BA-D6-A3-2B-45-D3-79-29-BB");
         assertThat(xorArrExp, equalTo(xorArrAct));
+    }
+
+    @Test
+    void testXorEncryptionEmptyPassword() {
+        // Xor-Password: ""
+        // 2.5.343 XORObfuscation
+        // key = 0
+        // verifier = 0
+        int verifier = CryptoFunctions.createXorVerifier1("");
+        int key = CryptoFunctions.createXorKey1("");
+        assertEquals(0, key);
+        assertEquals(0, verifier);
+
+        byte[] xorArrAct = CryptoFunctions.createXorArray1("");
+        byte[] xorArrExp = HexRead.readFromString("EE-FF-FF-EA-FF-FF-E6-02-00-FA-3C-00-FE-3C-00-00");
+        assertThat("Having: " + HexDump.dump(xorArrAct, 0, 0),
+                xorArrExp, equalTo(xorArrAct));
     }
 
     @Test

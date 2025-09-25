@@ -20,33 +20,24 @@ import java.util.regex.Pattern
 configurations {
     runtimeClasspath {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
 
     compileClasspath {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
 
-    broken
     tests
     javadocs
 }
 
 sourceSets {
     main {
-        if (jdkVersion > 8) {
-            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
-        }
+        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
     }
     test {
-        if (jdkVersion > 8) {
-            output.dir(TEST9_OUT, builtBy: 'cacheTest9')
-        }
+        output.dir(TEST9_OUT, builtBy: 'compileTest9')
     }
 }
 
@@ -67,41 +58,44 @@ dependencies {
     api project(':poi-ooxml-full')
     api project(path: ':poi-ooxml-full', configuration: 'archives')
 
+    // Can be very useful in local testing to comment out the 2 poi-ooxml-full lines above
+    // and uncomment the line below to use a pre-built version of poi-ooxml-full.
+    // Try to use the last release version of poi-ooxml-full. You might be unlucky if
+    // recent unreleased changes in poi-ooxml-full are needed.
+    // api "org.apache.poi:poi-ooxml-full:5.4.1"
+
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
-    api 'com.github.virtuald:curvesapi:1.07'
-    api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
-    api 'org.apache.commons:commons-collections4:4.4'
+    api 'com.github.virtuald:curvesapi:1.08'
+    api 'org.apache.commons:commons-collections4:4.5.0'
 
-    signingImplementation 'org.apache.santuario:xmlsec:3.0.0'
-    signingImplementation "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
-    signingImplementation "org.bouncycastle:bcutil-jdk15on:${bouncyCastleVersion}"
+    signingImplementation "org.apache.santuario:xmlsec:${xmlSecVersion}"
+    signingImplementation "org.bouncycastle:bcpkix-jdk18on:${bouncyCastleVersion}"
+    signingImplementation "org.bouncycastle:bcutil-jdk18on:${bouncyCastleVersion}"
 
-    rendersignImplementation 'org.apache.santuario:xmlsec:3.0.0'
-    rendersignImplementation "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
-    rendersignImplementation "org.bouncycastle:bcutil-jdk15on:${bouncyCastleVersion}"
+    rendersignImplementation "org.apache.santuario:xmlsec:${xmlSecVersion}"
+    rendersignImplementation "org.bouncycastle:bcpkix-jdk18on:${bouncyCastleVersion}"
+    rendersignImplementation "org.bouncycastle:bcutil-jdk18on:${bouncyCastleVersion}"
 
     renderImplementation "org.apache.pdfbox:pdfbox:${pdfboxVersion}"
     renderImplementation "de.rototor.pdfbox:graphics2d:${graphics2dVersion}"
     renderImplementation "org.apache.xmlgraphics:batik-svggen:${batikVersion}"
     renderImplementation("org.apache.xmlgraphics:batik-svgrasterizer:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
     renderImplementation("org.apache.xmlgraphics:batik-codec:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
     renderImplementation("org.apache.xmlgraphics:batik-bridge:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
+    }
+    renderImplementation("org.apache.xmlgraphics:batik-script:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
 
     rendersignImplementation "org.apache.pdfbox:pdfbox:${pdfboxVersion}"
@@ -109,23 +103,20 @@ dependencies {
     rendersignImplementation "org.apache.xmlgraphics:batik-svggen:${batikVersion}"
     rendersignImplementation("org.apache.xmlgraphics:batik-svgrasterizer:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
     rendersignImplementation("org.apache.xmlgraphics:batik-codec:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
     rendersignImplementation("org.apache.xmlgraphics:batik-bridge:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
-
+    rendersignImplementation("org.apache.xmlgraphics:batik-script:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        exclude group: 'xml-apis', module: 'xml-apis'
+    }
 
     if (!NO_SCRATCHPAD) {
          testImplementation project(':poi-scratchpad')
@@ -134,111 +125,69 @@ dependencies {
     testImplementation project(path:':poi', configuration:'tests')
     testImplementation project(path:':poi-ooxml-lite-agent', configuration: 'archives')
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
-    testImplementation 'org.xmlunit:xmlunit-core:2.9.0'
+    testImplementation 'org.xmlunit:xmlunit-core:2.10.4'
     testImplementation 'org.reflections:reflections:0.10.2'
-    testImplementation 'org.openjdk.jmh:jmh-core:1.35'
-    testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.35'
-    testImplementation 'com.google.guava:guava:31.1-jre'
-    testImplementation 'org.tukaani:xz:1.9'
+    testImplementation 'org.openjdk.jmh:jmh-core:1.36'
+    testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.36'
+    testImplementation 'com.google.guava:guava:33.5.0-jre'
     testImplementation 'com.github.rzymek:opczip:1.2.0'
 
     // prevent slf4j warnings coming from xmlsec -> slf4j-api 1.7.x dependency
     // see https://logging.apache.org/log4j/2.x/log4j-slf4j-impl/
-    testImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:${log4jVersion}"
-    testImplementation 'org.slf4j:slf4j-simple:1.7.36'
-
-    if (SAXON_TEST) {
-        testRuntimeOnly "net.sf.saxon:Saxon-HE:${saxonVersion}"
-    }
-
-    broken("org.apache.xmlgraphics:batik-script:${batikVersion}"){
-        exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
-    }
+    testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
+    testImplementation 'org.slf4j:slf4j-simple:2.0.17'
 
     javadocs project(':poi')
     javadocs project(':poi-scratchpad')
 }
 
 final String MODULE_NAME = 'org.apache.poi.ooxml'
-final Pattern MODULE_NOT_REGEX = ~'(poi[/\\\\][^/\\\\]+$|batik-script)'
+final Pattern MODULE_NOT_REGEX = ~'(poi[/\\\\][^/\\\\]+$)'
 final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
-final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique() + files("build/brokenJars")
+final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
 
 final String OOXML_LITE_AGENT = "../build/dist/maven/poi-ooxml-lite-agent/poi-ooxml-lite-agent-${project.version}.jar"
 final String OOXML_LITE_REPORT = '../src/resources/ooxml-lite-report'
 final String OOXML_LITE_INCLUDES = "^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"
 
-compileJava {
-    dependsOn 'fixBatik'
-}
-
-task compileJava9(type: JavaCompile) {
+tasks.register('compileJava9', JavaCompile) {
     dependsOn 'compileJava', ':poi:jar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(jdkVersion)
-        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
     }
+    sourceCompatibility = 1.9
+    targetCompatibility = 1.9
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
     options.compilerArgs = [
-        '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
-        '--module-path', files(MAIN_MODULE_PATH).asPath
+            '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
+            '--module-path', files(MAIN_MODULE_PATH).asPath
     ]
-
-    onlyIf {
-        jdkVersion > 8
-    }
 }
 
-task cacheJava9(type: Copy) {
-    dependsOn 'compileJava9'
-
-    from(file(JAVA9_OUT + VERSIONS9))
-    into(JAVA9_SRC)
-}
-
-task compileTest9(type: JavaCompile) {
+tasks.register('compileTest9', JavaCompile) {
     dependsOn 'compileTestJava', ':poi:testJar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(jdkVersion >= 17 ? 17 : 11)
-        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
     }
+    sourceCompatibility = 1.9
+    targetCompatibility = 1.9
     destinationDirectory = file(TEST9_OUT + VERSIONS9)
     source = file(TEST9_SRC)
     options.compilerArgs = [
-        '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
-        '--module-path', files(TEST_MODULE_PATH).asPath
+            '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
+            '--module-path', files(TEST_MODULE_PATH).asPath
     ]
     classpath = files()
-
-    onlyIf {
-        jdkVersion > 8
-    }
 }
 
-
-task cacheTest9(type: Copy) {
-    dependsOn 'compileTest9'
-
-    from(file(TEST9_OUT + VERSIONS9))
-    into(TEST9_SRC)
-}
 
 jar {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
-
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from JAVA9_SRC include '*.class'
-        }
-    }
 
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
@@ -250,15 +199,9 @@ jar {
 task testJar(type: Jar, dependsOn: testClasses) {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
 
-    classifier 'tests'
+    setArchiveClassifier 'tests'
     // ignore second module-info.class from main
-    duplicatesStrategy = 'exclude'
-
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from TEST9_SRC include '*.class'
-        }
-    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from sourceSets.test.output + sourceSets.main.output
 
@@ -267,26 +210,13 @@ task testJar(type: Jar, dependsOn: testClasses) {
     }
 }
 
-// based on https://github.com/moditect/moditect-gradle-plugin/issues/12
-task fixBatik(type: Zip) {
-    ant.mkdir(dir: "${buildDir}/brokenJars")
-    archiveFileName = "batik-script-${batikVersion}.jar"
-    destinationDirectory = file("${buildDir}/brokenJars")
-    from zipTree(configurations.broken.files.find{ f -> f.name.startsWith("batik-script") })
-    filesMatching("**/org.apache.batik.script.InterpreterFactory") {
-        it.filter{ it2 -> it2.contains("Rhino") ? "#" + it2 : it2 }
-    }
-}
-
 javadoc {
     failOnError = true
     doFirst {
         options {
-            if (JavaVersion.current().isJava9Compatible()) {
-                addBooleanOption('html5', true)
-            }
+            if (jdkVersion > 8) addBooleanOption('html5', true)
             links 'https://poi.apache.org/apidocs/dev/'
-            links 'https://docs.oracle.com/javase/8/docs/api/'
+            if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/javase/8/docs/api/'
             use = true
             splitIndex = true
             source = "1.8"
@@ -320,6 +250,9 @@ test {
     dependsOn { testJar }
 
     systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+    if (jdkVersion == 8)  {
+        systemProperties['sun.java2d.renderer'] = 'sun.java2d.marlin.MarlinRenderingEngine'
+    }
 
     if (NO_SCRATCHPAD) {
         useJUnitPlatform {
@@ -357,4 +290,23 @@ publishing {
             suppressPomMetadataWarningsFor('rendersignRuntimeElements')
         }
     }
+}
+
+cyclonedxBom {
+    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
+    includeConfigs = ["runtimeClasspath"]
+    // skipConfigs is a list of configuration names to exclude when generating the BOM
+    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
+    // Specified the type of project being built. Defaults to 'library'
+    projectType = "library"
+    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
+    schemaVersion = "1.4"
+    // Boms destination directory (defaults to build/reports)
+    destination = file("build/reports")
+    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
+    outputName = "poi-ooxml-${project.version}.bom"
+    // The file format generated, can be xml, json or all for generating both
+    outputFormat = "all"
+    // Exclude BOM Serial Number
+    includeBomSerialNumber = true
 }

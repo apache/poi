@@ -68,7 +68,7 @@ class TestDocument {
             // verify that output is correct
             POIFSDocument document = checkDocument(poifs, LARGER_BIG_BLOCK_SIZE + 1);
             DocumentProperty property = document.getDocumentProperty();
-            UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().get();
 
             property.writeData(stream);
             byte[] output = stream.toByteArray();
@@ -101,8 +101,8 @@ class TestDocument {
         POIFSFileSystem poifs = document.getFileSystem();
         String name = "test" + input.length;
         DirectoryNode root = poifs.getRoot();
-        if (root.hasEntry(name)) {
-            root.deleteEntry((EntryNode)root.getEntry(name));
+        if (root.hasEntryCaseInsensitive(name)) {
+            root.deleteEntry((EntryNode)root.getEntryCaseInsensitive(name));
         }
         return ((DocumentNode)root
             .createDocument(name, new ByteArrayInputStream(input)))
@@ -135,7 +135,7 @@ class TestDocument {
 
         assertEquals(blockCountExp, blockCountAct);
 
-        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().get();
         try (DocumentInputStream dis = document.getFileSystem().createDocumentInputStream(
                 document.getDocumentProperty().getName())) {
             IOUtils.copy(dis, stream);

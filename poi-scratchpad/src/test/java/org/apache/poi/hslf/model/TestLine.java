@@ -18,6 +18,8 @@
 package org.apache.poi.hslf.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -27,9 +29,11 @@ import java.util.Arrays;
 
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFLine;
+import org.apache.poi.hslf.usermodel.HSLFPlaceholder;
 import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextBox;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.junit.jupiter.api.Test;
@@ -62,9 +66,14 @@ public final class TestLine {
     @Test
     void testCreateLines() throws IOException {
 
+        final String title = "Lines tester";
         try (HSLFSlideShow ppt1 = new HSLFSlideShow()) {
             HSLFSlide slide1 = ppt1.createSlide();
-            slide1.addTitle().setText("Lines tester");
+            HSLFTextBox titleBox = slide1.addTitle();
+            titleBox.setText(title);
+            assertInstanceOf(HSLFPlaceholder.class, titleBox);
+            HSLFPlaceholder pl = (HSLFPlaceholder) titleBox;
+            assertNotNull(pl.getPlaceholder());
 
             for (Object[] line : lines) {
                 HSLFLine hslfLine = new HSLFLine();
@@ -85,6 +94,7 @@ public final class TestLine {
 
             try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1)) {
                 HSLFSlide slide2 = ppt2.getSlides().get(0);
+                assertEquals(title, slide2.getTitle());
 
                 int idx = 0;
                 for (HSLFShape shape : slide2.getShapes().subList(1,14)) {

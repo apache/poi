@@ -48,26 +48,16 @@ final class TestSheetNameFormatter {
         confirmFormat("A12220", "'A12220'");
         confirmFormat("TAXRETURN19980415", "TAXRETURN19980415");
 
+        confirmFormat("RC9Sheet", "'RC9Sheet'"); // starts with R1C1 style ref ('RC9')
+        confirmFormat("r", "'r'"); // R1C1 style ref
+        confirmFormat("rc", "'rc'"); // R1C1 style ref
+        confirmFormat("C", "'C'"); // R1C1 style ref
+        confirmFormat("rCsheet", "rCsheet"); // 'rc' + character is not qualified as R1C1 style ref
+        confirmFormat("ra", "ra"); // 'r' + character is not qualified as R1C1 style ref
+        confirmFormat("r1a", "'r1a'"); // 'r1' is R1C1 style ref
+        confirmFormat("Rc1sheet", "'Rc1sheet'"); // 'rc1' is R1C1 style ref
+
         confirmFormat(null, "#REF");
-    }
-
-    private static void confirmFormat(String rawSheetName, String expectedSheetNameEncoding) {
-        // test all variants
-
-        assertEquals(expectedSheetNameEncoding, SheetNameFormatter.format(rawSheetName));
-
-        StringBuilder sb = new StringBuilder();
-        SheetNameFormatter.appendFormat(sb, rawSheetName);
-        assertEquals(expectedSheetNameEncoding, sb.toString());
-
-        sb = new StringBuilder();
-        SheetNameFormatter.appendFormat((Appendable)sb, rawSheetName);
-        assertEquals(expectedSheetNameEncoding, sb.toString());
-
-        StringBuffer sbf = new StringBuffer();
-        //noinspection deprecation
-        SheetNameFormatter.appendFormat(sbf, rawSheetName);
-        assertEquals(expectedSheetNameEncoding, sbf.toString());
     }
 
     @Test
@@ -90,23 +80,6 @@ final class TestSheetNameFormatter {
         confirmFormat("abc", null, "[abc]#REF");
         confirmFormat(null, "abc", "[#REF]abc");
         confirmFormat(null, null, "[#REF]#REF");
-    }
-
-    private static void confirmFormat(String workbookName, String rawSheetName, String expectedSheetNameEncoding) {
-        // test all variants
-
-        StringBuilder sb = new StringBuilder();
-        SheetNameFormatter.appendFormat(sb, workbookName, rawSheetName);
-        assertEquals(expectedSheetNameEncoding, sb.toString());
-
-        sb = new StringBuilder();
-        SheetNameFormatter.appendFormat((Appendable)sb, workbookName, rawSheetName);
-        assertEquals(expectedSheetNameEncoding, sb.toString());
-
-        StringBuffer sbf = new StringBuffer();
-        //noinspection deprecation
-        SheetNameFormatter.appendFormat(sbf, workbookName, rawSheetName);
-        assertEquals(expectedSheetNameEncoding, sbf.toString());
     }
 
     @Test
@@ -143,10 +116,6 @@ final class TestSheetNameFormatter {
         confirmFormat("No", "No");
     }
 
-    private static void confirmCellNameMatch(String rawSheetName, boolean expected) {
-        assertEquals(expected, SheetNameFormatter.nameLooksLikePlainCellReference(rawSheetName));
-    }
-
     /**
      * Tests functionality to determine whether a sheet name containing only letters and digits
      * would look (to Excel) like a cell name.
@@ -162,12 +131,6 @@ final class TestSheetNameFormatter {
         confirmCellNameMatch("A1A1", false);
         confirmCellNameMatch("Sh3", false);
         confirmCellNameMatch("SALES20080101", false); // out of range
-    }
-
-    private static void confirmCellRange(String text, int numberOfPrefixLetters, boolean expected) {
-        String prefix = text.substring(0, numberOfPrefixLetters);
-        String suffix = text.substring(numberOfPrefixLetters);
-        assertEquals(expected, SheetNameFormatter.cellReferenceIsWithinRange(prefix, suffix));
     }
 
     /**
@@ -187,5 +150,51 @@ final class TestSheetNameFormatter {
         confirmCellRange("Sheet1", 6, false);
         confirmCellRange("iV65536", 2, true);  // max cell in Excel 97-2003
         confirmCellRange("IW65537", 2, false);
+    }
+
+    private static void confirmCellNameMatch(String rawSheetName, boolean expected) {
+        assertEquals(expected, SheetNameFormatter.nameLooksLikePlainCellReference(rawSheetName));
+    }
+
+    private static void confirmCellRange(String text, int numberOfPrefixLetters, boolean expected) {
+        String prefix = text.substring(0, numberOfPrefixLetters);
+        String suffix = text.substring(numberOfPrefixLetters);
+        assertEquals(expected, SheetNameFormatter.cellReferenceIsWithinRange(prefix, suffix));
+    }
+
+    private static void confirmFormat(String workbookName, String rawSheetName, String expectedSheetNameEncoding) {
+        // test all variants
+
+        StringBuilder sb = new StringBuilder();
+        SheetNameFormatter.appendFormat(sb, workbookName, rawSheetName);
+        assertEquals(expectedSheetNameEncoding, sb.toString());
+
+        sb = new StringBuilder();
+        SheetNameFormatter.appendFormat((Appendable)sb, workbookName, rawSheetName);
+        assertEquals(expectedSheetNameEncoding, sb.toString());
+
+        StringBuffer sbf = new StringBuffer();
+        //noinspection deprecation
+        SheetNameFormatter.appendFormat(sbf, workbookName, rawSheetName);
+        assertEquals(expectedSheetNameEncoding, sbf.toString());
+    }
+
+    private static void confirmFormat(String rawSheetName, String expectedSheetNameEncoding) {
+        // test all variants
+
+        assertEquals(expectedSheetNameEncoding, SheetNameFormatter.format(rawSheetName));
+
+        StringBuilder sb = new StringBuilder();
+        SheetNameFormatter.appendFormat(sb, rawSheetName);
+        assertEquals(expectedSheetNameEncoding, sb.toString());
+
+        sb = new StringBuilder();
+        SheetNameFormatter.appendFormat((Appendable)sb, rawSheetName);
+        assertEquals(expectedSheetNameEncoding, sb.toString());
+
+        StringBuffer sbf = new StringBuffer();
+        //noinspection deprecation
+        SheetNameFormatter.appendFormat(sbf, rawSheetName);
+        assertEquals(expectedSheetNameEncoding, sbf.toString());
     }
 }

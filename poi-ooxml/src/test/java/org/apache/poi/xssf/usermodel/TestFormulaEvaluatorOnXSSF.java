@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -59,7 +59,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  *
  */
 public final class TestFormulaEvaluatorOnXSSF {
-    private static final Logger LOG = LogManager.getLogger(TestFormulaEvaluatorOnXSSF.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TestFormulaEvaluatorOnXSSF.class);
 
     private static XSSFWorkbook workbook;
     private static Sheet sheet;

@@ -46,8 +46,8 @@ import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.sl.usermodel.AbstractColorStyle;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.Insets2D;
@@ -71,7 +71,7 @@ public class DrawPaint {
 
     // HSL code is public domain - see https://tips4java.wordpress.com/contact-us/
 
-    private static final Logger LOG = LogManager.getLogger(DrawPaint.class);
+    private static final Logger LOG = PoiLogManager.getLogger(DrawPaint.class);
 
     private static final Color TRANSPARENT = new Color(1f,1f,1f,0f);
 
@@ -264,7 +264,7 @@ public class DrawPaint {
 
         ImageRenderer renderer = DrawPictureShape.getImageRenderer(graphics, contentType);
 
-        // TODO: handle tile settings, currently the pattern is always streched 100% in height/width
+        // TODO: handle tile settings, currently the pattern is always stretched 100% in height/width
         Rectangle2D textAnchor = shape.getAnchor();
 
         try (InputStream is = fill.getImageData()) {
@@ -613,7 +613,21 @@ public class DrawPaint {
         // need to remap the fractions, because Java doesn't like repeating fraction values
         Map<Float,Color> m = new TreeMap<>();
         for (float fraction : fill.getGradientFractions()) {
-            m.put(fraction, styles.next());
+            float gradientFraction = fraction;
+
+            // Multiple gradient stops at the same location
+            // can lead to failure when creating AWT gradient, especially
+            // if there are only two stops and they are both on the exact
+            // same location.
+            //   (The example of (only) 2 stops at exactly the same location will cause:
+            //    java.lang.IllegalArgumentException: User must specify at least 2 colors).
+            //
+            // To fix this we nudge the stop a teeny tiny bit.
+            if (m.containsKey(gradientFraction)) {
+                gradientFraction += (gradientFraction == 1.0 ? -1.0 : 1.0) * 0.00000005;
+            }
+
+            m.put(gradientFraction, styles.next());
         }
 
         return init.apply(toArray(m.keySet()), m.values().toArray(new Color[0]));

@@ -27,6 +27,8 @@ import java.util.Map;
 import com.microsoft.schemas.office.visio.x2012.main.MasterType;
 import com.microsoft.schemas.office.visio.x2012.main.MastersDocument;
 import com.microsoft.schemas.office.visio.x2012.main.MastersType;
+import com.microsoft.schemas.office.visio.x2012.main.RelType;
+
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -68,7 +70,10 @@ public class XDGFMasters extends XDGFXMLDocumentPart {
 
             Map<String, MasterType> masterSettings = new HashMap<>();
             for (MasterType master: _mastersObject.getMasterArray()) {
-                masterSettings.put(master.getRel().getId(), master);
+                RelType rel = master.getRel();
+                if (rel != null) {
+                    masterSettings.put(rel.getId(), master);
+                }
             }
 
             // create the masters

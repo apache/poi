@@ -71,7 +71,7 @@ public class XWPFSDTContent implements ISDTContent {
                     bodyElements.add(p);
                     // paragraphs.add(p);
                 } else if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, part);
+                    XWPFTable t = new XWPFTable((CTTbl) o, part,false);
                     bodyElements.add(t);
                     // tables.add(t);
                 } else if (o instanceof CTSdtBlock) {
@@ -82,6 +82,26 @@ public class XWPFSDTContent implements ISDTContent {
                     XWPFRun run = new XWPFRun((CTR) o, parent);
                     // runs.add(run);
                     bodyElements.add(run);
+                }
+            }
+        }
+    }
+
+    public XWPFSDTContent(CTSdtContentRow sdtContentRow, IBody part, IRunBody parent) {
+        if (sdtContentRow == null) {
+            return;
+        }
+        try (final XmlCursor cursor = sdtContentRow.newCursor()) {
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject o = cursor.getObject();
+                if (o instanceof CTSdtRow) {
+                    XWPFSDT c = new XWPFSDT(((CTSdtRow) o), part);
+                    bodyElements.add(c);
+                    // contentControls.add(c);
+                } else if (o instanceof CTRow) {
+                    //can only create XWPFTableRow if you have an XWPFTable instance
+                    //XWPFTableRow tableRow = new XWPFTableRow((CTRow) o, parent);
                 }
             }
         }

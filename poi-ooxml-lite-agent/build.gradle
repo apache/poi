@@ -17,15 +17,13 @@
 
 sourceSets {
     main {
-        if (jdkVersion > 8) {
-            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
-        }
+        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
     }
 }
 
 dependencies {
-    api 'net.bytebuddy:byte-buddy:1.12.14'
-    api 'net.bytebuddy:byte-buddy-agent:1.12.14'
+    api 'net.bytebuddy:byte-buddy:1.17.7'
+    api 'net.bytebuddy:byte-buddy-agent:1.17.7'
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
 }
 
@@ -33,48 +31,32 @@ final MODULE_NAME = 'org.apache.poi.ooxml_lite'
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(jdkVersion))
-        if (jdkVendor != '') vendor.set(JvmVendorSpec.matching(jdkVendor))
-    }
-}
-
-task compileJava9(type: JavaCompile) {
-    dependsOn 'compileJava'
-
-    javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(jdkVersion)
         if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
     }
+}
+
+tasks.register('compileJava9', JavaCompile) {
+    dependsOn 'compileJava'
+
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
+    }
+    sourceCompatibility = 1.9
+    targetCompatibility = 1.9
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
     doFirst {
         options.compilerArgs = [
-            '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
-            '--module-path', sourceSets.main.compileClasspath.asPath
+                '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
+                '--module-path', sourceSets.main.compileClasspath.asPath
         ]
     }
-
-    onlyIf {
-        jdkVersion > 8
-    }
-}
-
-task cacheJava9(type: Copy) {
-    dependsOn 'compileJava9'
-
-    from(file(JAVA9_OUT + VERSIONS9))
-    into(JAVA9_SRC)
 }
 
 jar {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
-
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from JAVA9_SRC include '*.class'
-        }
-    }
 
     manifest {
         attributes (

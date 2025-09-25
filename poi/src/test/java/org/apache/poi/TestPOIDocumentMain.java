@@ -87,7 +87,7 @@ final class TestPOIDocumentMain {
 
     @Test
     void WriteReadProperties() throws IOException {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
 
         // Write them out
         try (POIDocument xls = openSampleWorkbook("DateFormats.xls");

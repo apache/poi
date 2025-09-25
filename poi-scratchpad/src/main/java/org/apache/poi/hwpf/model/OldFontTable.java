@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -32,7 +32,7 @@ import org.apache.poi.util.LittleEndianConsts;
  */
 @Internal
 public final class OldFontTable {
-    private static final Logger LOG = LogManager.getLogger(OldFontTable.class);
+    private static final Logger LOG = PoiLogManager.getLogger(OldFontTable.class);
 
     // added extra facilitator members
     // FFN structure containing strings of font names

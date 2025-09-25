@@ -108,7 +108,7 @@ public final class Trend implements Function {
             eval = arg;
         }
         if (eval == null) {
-            throw new RuntimeException("Parameter may not be null.");
+            throw new IllegalStateException("Parameter may not be null.");
         }
 
         if (eval instanceof AreaEval) {

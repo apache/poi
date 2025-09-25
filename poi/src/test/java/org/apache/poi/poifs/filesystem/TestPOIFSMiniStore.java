@@ -28,7 +28,9 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -390,7 +392,7 @@ final class TestPOIFSMiniStore {
         assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(2));
 
         // Check the data is unchanged and the right length
-        entry = (DocumentEntry) fs.getRoot().getEntry("mini");
+        entry = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("mini");
         assertEquals(data.length, entry.getSize());
         byte[] rdata = new byte[data.length];
         dis = new DocumentInputStream(entry);
@@ -398,7 +400,7 @@ final class TestPOIFSMiniStore {
         assertArrayEquals(data, rdata);
         dis.close();
 
-        entry = (DocumentEntry) fs.getRoot().getEntry("mini2");
+        entry = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("mini2");
         assertEquals(data.length, entry.getSize());
         rdata = new byte[data.length];
         dis = new DocumentInputStream(entry);
@@ -469,5 +471,68 @@ final class TestPOIFSMiniStore {
         dis.close();
         assertArrayEquals(data2B, r2);
         fs.close();
+    }
+
+    /**
+     * Check the computation of the mini stream size when the mini FAT sectors contain unallocated mini sectors.
+     * https://github.com/apache/poi/pull/182
+     */
+    @Test
+    void testComputeSize() throws Exception {
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            fs.getPropertyTable().getRoot().setStorageClsid(new ClassID("000C108400000000C000000000000046")); // MSI storage class
+
+            // create 8 mini FAT sectors fully allocated
+            for (int i = 0; i < 8 * 128; i++) {
+                fs.getRoot().createDocument("Entry " + i, new ByteArrayInputStream(new byte[64]));
+            }
+
+            // Mini FAT Sector #1: Unallocate all the mini sectors
+            for (int i = 0; i < 128; i++) {
+                fs.getRoot().getEntry("Entry " + i).delete();
+            }
+
+            // Mini FAT Sector #2: Unallocate 8 mini sectors at the beginning
+            for (int i = 128; i < 128 + 8; i++) {
+                fs.getRoot().getEntry("Entry " + i).delete();
+            }
+
+            // Mini FAT Sector #3: Unallocate 4 mini sectors in the middle
+            for (int i = 2 * 128 + 64; i < 2 * 128 + 64 + 4; i++) {
+                fs.getRoot().getEntry("Entry " + i).delete();
+            }
+
+            // Mini FAT Sector #4: Unallocate all the mini sectors
+            for (int i = 3 * 128; i < 4 * 128; i++) {
+                fs.getRoot().getEntry("Entry " + i).delete();
+            }
+
+            // Mini FAT Sector #5: Unallocate 32 mini sectors at the end
+            for (int i = 5 * 128 - 32; i < 5 * 128; i++) {
+                fs.getRoot().getEntry("Entry " + i).delete();
+            }
+
+            // Mini FAT Sector #6: Unallocate 64 mini sectors at the beginning and 16 mini sectors at the end
+            for (int i = 5 * 128; i < 5 * 128 + 64; i++) {
+                fs.getRoot().getEntry("Entry " + i).delete();
+            }
+            for (int i = 6 * 128 - 16; i < 6 * 128; i++) {
+                fs.getRoot().getEntry("Entry " + i).delete();
+            }
+
+            // Mini FAT Sector #7: Unallocate all the mini sectors
+            for (int i = 6 * 128; i < 7 * 128; i++) {
+                fs.getRoot().getEntry("Entry " + i).delete();
+            }
+
+            // Mini FAT Sector #8: Unallocate all the mini sectors
+            for (int i = 7 * 128; i < 8 * 128; i++) {
+                fs.getRoot().getEntry("Entry " + i).delete();
+            }
+
+            fs.writeFilesystem(NullOutputStream.INSTANCE);
+
+            assertEquals(48128, fs.getPropertyTable().getRoot().getSize(), "mini stream size");
+        }
     }
 }

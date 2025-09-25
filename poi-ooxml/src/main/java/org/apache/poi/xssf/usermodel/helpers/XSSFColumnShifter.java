@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.usermodel.helpers.ColumnShifter;
 import org.apache.poi.util.Beta;
@@ -33,7 +31,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 // {@link org.apache.poi.hssf.usermodel.helpers.HSSFColumnShifter}
 @Beta
 public final class XSSFColumnShifter extends ColumnShifter {
-    private static final Logger LOG = LogManager.getLogger(XSSFColumnShifter.class);
 
     public XSSFColumnShifter(XSSFSheet sh) {
         super(sh);

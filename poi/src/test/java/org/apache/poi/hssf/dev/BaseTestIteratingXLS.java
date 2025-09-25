@@ -86,6 +86,11 @@ public abstract class BaseTestIteratingXLS {
         excludes.put("61300.xls", RecordFormatException.class);
         // BIFF 5
         excludes.put("64130.xls", OldExcelFormatException.class);
+        // fuzzed binaries
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-6322470200934400.xls", RuntimeException.class);
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4819588401201152.xls", RuntimeException.class);
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-6537773940867072.xls", RuntimeException.class);
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4651309315719168.xls", RuntimeException.class);
         return excludes;
     }
 
@@ -102,9 +107,9 @@ public abstract class BaseTestIteratingXLS {
 
         Executable ex = () -> runOneFile(file);
         if (t == null) {
-            assertDoesNotThrow(ex);
+            assertDoesNotThrow(ex, "Failing file: " + file);
         } else {
-            assertThrows(t, ex);
+            assertThrows(t, ex, "Failing file: " + file);
         }
     }
 

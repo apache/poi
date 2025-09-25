@@ -21,11 +21,11 @@ import static org.apache.poi.poifs.crypt.DataSpaceMapUtils.createEncryptionEntry
 import static org.apache.poi.poifs.crypt.standard.StandardDecryptor.generateSecretKey;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -35,8 +35,8 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.SecretKey;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.DataSpaceMapUtils;
@@ -53,7 +53,7 @@ import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
 
 public class StandardEncryptor extends Encryptor {
-    private static final Logger LOG = LogManager.getLogger(StandardEncryptor.class);
+    private static final Logger LOG = PoiLogManager.getLogger(StandardEncryptor.class);
 
     protected StandardEncryptor() {}
 
@@ -145,7 +145,7 @@ public class StandardEncryptor extends Encryptor {
             // field of the EncryptedPackage field specifies the number of bytes of
             // unencrypted data as specified in section 2.3.4.4.
             super(
-                new CipherOutputStream(new FileOutputStream(fileOut), getCipher(getSecretKey(), "PKCS5Padding"))
+                new CipherOutputStream(Files.newOutputStream(fileOut.toPath()), getCipher(getSecretKey(), "PKCS5Padding"))
             );
             this.deleteFile = deleteFile;
             this.fileOut = fileOut;
@@ -197,7 +197,7 @@ public class StandardEncryptor extends Encryptor {
                 // value, depending on the block size of the chosen encryption algorithm
                 leos.writeLong(countBytes);
 
-                try (FileInputStream fis = new FileInputStream(fileOut)) {
+                try (InputStream fis = Files.newInputStream(fileOut.toPath())) {
                     IOUtils.copy(fis, leos);
                 }
                 if (!fileOut.delete()) {

@@ -81,7 +81,12 @@ final class LinkTable {
             int nCRNs = _countRecord.getNumberOfCRNs();
             CRNRecord[] crns = new CRNRecord[nCRNs];
             for (int i = 0; i < crns.length; i++) {
-                crns[i] = (CRNRecord) rs.getNext();
+                Record record = rs.getNext();
+                if (!(record instanceof CRNRecord)) {
+                    throw new IllegalStateException("Record is not a CRNRecord: " +
+                            (record == null ? "<null>" : record.getClass() + ": " + record) );
+                }
+                crns[i] = (CRNRecord) record;
             }
             _crns = crns;
         }
@@ -243,7 +248,7 @@ final class LinkTable {
 
         int nItems = temp.size();
         if (nItems < 1) {
-            throw new RuntimeException("Expected an EXTERNSHEET record but got ("
+            throw new IllegalStateException("Expected an EXTERNSHEET record but got ("
                     + rs.peekNextClass().getName() + ")");
         }
         if (nItems == 1) {
@@ -274,7 +279,7 @@ final class LinkTable {
         if (idx < 0) {
             idx = findFirstRecordLocBySid(SSTRecord.sid) - 1;
             if (idx < 0) {
-                throw new RuntimeException("CountryRecord or SSTRecord not found");
+                throw new IllegalStateException("CountryRecord or SSTRecord not found");
             }
         }
         _workbookRecordList.add(idx + 1, _externSheetRecord);
@@ -443,7 +448,7 @@ final class LinkTable {
     public int getExternalSheetIndex(String workbookName, String firstSheetName, String lastSheetName) {
         int externalBookIndex = getExternalWorkbookIndex(workbookName);
         if (externalBookIndex == -1) {
-            throw new RuntimeException("No external workbook with name '" + workbookName + "'");
+            throw new IllegalStateException("No external workbook with name '" + workbookName + "'");
         }
         SupBookRecord ebrTarget = _externalBookBlocks[externalBookIndex].getExternalBookRecord();
 
@@ -465,7 +470,7 @@ final class LinkTable {
             }
 
         }
-        throw new RuntimeException("External workbook does not contain sheet '" + sheetName + "'");
+        throw new IllegalStateException("External workbook does not contain sheet '" + sheetName + "'");
     }
 
     /**
@@ -508,10 +513,10 @@ final class LinkTable {
             }
         }
         if (thisWbIndex < 0) {
-            throw new RuntimeException("Could not find 'internal references' EXTERNALBOOK");
+            throw new IllegalStateException("Could not find 'internal references' EXTERNALBOOK");
         }
         if (_externSheetRecord == null) {
-            throw new RuntimeException("Did not have an external sheet record, having blocks: " +
+            throw new IllegalStateException("Did not have an external sheet record, having blocks: " +
                     _externalBookBlocks.length);
         }
 
@@ -543,7 +548,7 @@ final class LinkTable {
         int firstTabIndex = _externSheetRecord.getFirstSheetIndexFromRefIndex(refIndex);
         if (firstTabIndex == -1) {
             // The referenced sheet could not be found
-            throw new RuntimeException("Referenced sheet could not be found");
+            throw new IllegalStateException("Referenced sheet could not be found");
         }
 
         // Does it exist via the external book block?

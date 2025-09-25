@@ -103,7 +103,7 @@ public final class HPBFDumper {
      */
     public void dumpEscher() throws IOException {
         DirectoryNode escherDir = (DirectoryNode)
-            fs.getRoot().getEntry("Escher");
+            fs.getRoot().getEntryCaseInsensitive("Escher");
 
         dumpEscherStm(escherDir);
         dumpEscherDelayStm(escherDir);
@@ -343,9 +343,9 @@ public final class HPBFDumper {
 
     public void dumpQuill() throws IOException {
         DirectoryNode quillDir = (DirectoryNode)
-            fs.getRoot().getEntry("Quill");
+            fs.getRoot().getEntryCaseInsensitive("Quill");
         DirectoryNode quillSubDir = (DirectoryNode)
-            quillDir.getEntry("QuillSub");
+            quillDir.getEntryCaseInsensitive("QuillSub");
 
         dump001CompObj(quillSubDir);
         dumpCONTENTSraw(quillSubDir);

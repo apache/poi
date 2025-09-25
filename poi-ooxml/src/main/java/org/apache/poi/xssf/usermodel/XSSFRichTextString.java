@@ -390,7 +390,7 @@ public class XSSFRichTextString implements RichTextString {
      * Return a copy of the font in use at a particular index.
      *
      * @param index         The index.
-     * @return              A copy of the  font that's currently being applied at that
+     * @return              A copy of the font that's currently being applied at that
      *                      index or null if no font is being applied or the
      *                      index is out of range.
      */
@@ -485,7 +485,7 @@ public class XSSFRichTextString implements RichTextString {
      */
     protected static void preserveSpaces(STXstring xs) {
         String text = xs.getStringValue();
-        if (text != null && text.length() > 0) {
+        if (text != null && !text.isEmpty()) {
             char firstChar = text.charAt(0);
             char lastChar  = text.charAt(text.length() - 1);
             if(Character.isWhitespace(firstChar) || Character.isWhitespace(lastChar)) {

@@ -45,7 +45,7 @@ public abstract class Encryptor implements GenericRecord {
     }
 
     /**
-     * Return a output stream for encrypted data.
+     * Return an output stream for encrypted data.
      *
      * @param dir the node to write to
      * @return encrypted stream

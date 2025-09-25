@@ -121,14 +121,13 @@ final class TestNonStandardWorkbookStreamNames {
         wb.close();
 
         DirectoryNode root = wb2.getDirectory();
-
         // Check that we have the new entries
         assertTrue(root.hasEntry("Workbook"));
         assertFalse(root.hasEntry("BOOK"));
         assertFalse(root.hasEntry("WORKBOOK"));
 
         // As we preserved, should also have a few other streams
-        assertTrue(root.hasEntry(SummaryInformation.DEFAULT_STREAM_NAME));
+        assertTrue(root.hasEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME));
         wb2.close();
     }
 }

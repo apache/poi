@@ -109,7 +109,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
      */
     public void reset(int size){
         TextSpecInfoRun sir = new TextSpecInfoRun(size);
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         try {
             sir.writeOut(bos);
         } catch (IOException e) {
@@ -128,7 +128,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
     public void setParentSize(int size) {
         assert(size > 0);
 
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             TextSpecInfoRun[] runs = getTextSpecInfoRuns();
             int remaining = size;
             int idx = 0;

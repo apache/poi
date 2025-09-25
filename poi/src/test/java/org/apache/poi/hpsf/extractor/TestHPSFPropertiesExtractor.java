@@ -17,20 +17,26 @@
 
 package org.apache.poi.hpsf.extractor;
 
-import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import java.io.IOException;
-import java.io.InputStream;
-
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.extractor.POIOLE2TextExtractor;
+import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hpsf.Thumbnail;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 final class TestHPSFPropertiesExtractor {
     private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
@@ -177,6 +183,25 @@ final class TestHPSFPropertiesExtractor {
                 POIDataSamples.getPOIFSInstance().getFile("61300.bin"))) {
             HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(poifs);
             assertContains(ext.getText(), "PID_CODEPAGE = 1252");
+        }
+    }
+
+    @Test
+    void testNPE() throws IOException {
+        final byte[] bytes = FileUtils.readFileToByteArray(
+                POIDataSamples.getSpreadSheetInstance().getFile(
+                        "clusterfuzz-testcase-minimized-POIHSSFFuzzer-5816431116615680.xls"));
+        try (POITextExtractor extractor = ExtractorFactory.createExtractor(new ByteArrayInputStream(bytes))) {
+            assertInstanceOf(POIOLE2TextExtractor.class, extractor);
+
+            POIOLE2TextExtractor ole2Extractor = (POIOLE2TextExtractor) extractor;
+
+            POITextExtractor[] embedded = ExtractorFactory.getEmbeddedDocsTextExtractors(ole2Extractor);
+            assertEquals(1, embedded.length);
+            for (POITextExtractor poiTextExtractor : embedded) {
+                POITextExtractor metaData = poiTextExtractor.getMetadataTextExtractor();
+                metaData.getText();
+            }
         }
     }
 }

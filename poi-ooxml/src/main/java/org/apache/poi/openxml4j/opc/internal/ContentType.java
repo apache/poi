@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 /**
- * Represents a immutable MIME ContentType value (RFC 2616 &#167;3.7)
+ * Represents an immutable MIME ContentType value (RFC 2616 &#167;3.7)
  * <p>
  * media-type = type "/" subtype *( ";" parameter ) type = token<br>
  * subtype = token<br>

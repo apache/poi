@@ -73,7 +73,10 @@ public final class CustomViewSettingsRecordAggregate extends RecordAggregate {
             return;
         }
         rv.visitRecord(_begin);
-        for (RecordBase rb : _recs) {
+
+        // need to copy list to avoid ConcurrentModificationException
+        // as there are cases where the visitor modifies the list itself
+        for (RecordBase rb : new ArrayList<>(_recs)) {
             if (rb instanceof RecordAggregate) {
                 ((RecordAggregate) rb).visitContainedRecords(rv);
             } else {

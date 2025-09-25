@@ -32,6 +32,11 @@ public class XWPFPicture {
     public XWPFPicture(CTPicture ctPic, XWPFRun run) {
         this.run = run;
         this.ctPic = ctPic;
+
+        if (ctPic == null || ctPic.getNvPicPr() == null || ctPic.getNvPicPr().getCNvPr() == null) {
+            throw new IllegalArgumentException("Found missing data while reading picture data from " + ctPic);
+        }
+
         description = ctPic.getNvPicPr().getCNvPr().getDescr();
     }
 

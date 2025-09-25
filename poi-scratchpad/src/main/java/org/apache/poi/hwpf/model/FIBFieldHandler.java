@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -147,7 +147,7 @@ public final class FIBFieldHandler
   public static final int STTBLISTNAMES = 91;
   public static final int STTBFUSSR = 92;
 
-  private static final Logger LOGGER = LogManager.getLogger(FIBFieldHandler.class);
+  private static final Logger LOGGER = PoiLogManager.getLogger(FIBFieldHandler.class);
 
   private static final int FIELD_SIZE = LittleEndianConsts.INT_SIZE * 2;
 

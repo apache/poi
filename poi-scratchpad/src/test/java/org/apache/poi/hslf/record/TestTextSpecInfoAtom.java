@@ -53,7 +53,7 @@ public final class TestTextSpecInfoAtom  {
     @Test
     void testWrite() throws Exception {
         TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         spec.writeOut(out);
         assertArrayEquals(data_1, out.toByteArray());
     }
@@ -69,7 +69,7 @@ public final class TestTextSpecInfoAtom  {
         assertEquals(32, run[0].getLength());
 
         //serialize and read again
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         spec.writeOut(out);
 
         byte[] result = out.toByteArray();

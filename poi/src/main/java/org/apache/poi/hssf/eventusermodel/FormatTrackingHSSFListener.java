@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.FormatRecord;
@@ -43,7 +43,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * ids.
  */
 public class FormatTrackingHSSFListener implements HSSFListener {
-    private static final Logger LOG = LogManager.getLogger(FormatTrackingHSSFListener.class);
+    private static final Logger LOG = PoiLogManager.getLogger(FormatTrackingHSSFListener.class);
     private final HSSFListener _childListener;
     private final HSSFDataFormatter _formatter;
     private final NumberFormat _defaultFormat;

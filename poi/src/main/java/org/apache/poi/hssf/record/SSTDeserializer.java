@@ -19,8 +19,8 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.util.IntMapper;
 
@@ -29,13 +29,11 @@ import static org.apache.logging.log4j.util.Unbox.box;
 /**
  * Handles the task of deserializing a SST string.  The two main entry points are
  */
-class SSTDeserializer
-{
-    private static final Logger LOG = LogManager.getLogger(SSTDeserializer.class);
+class SSTDeserializer {
+    private static final Logger LOG = PoiLogManager.getLogger(SSTDeserializer.class);
     private IntMapper<UnicodeString> strings;
 
-    public SSTDeserializer( IntMapper<UnicodeString> strings )
-    {
+    public SSTDeserializer(IntMapper<UnicodeString> strings) {
         this.strings = strings;
     }
 
@@ -44,23 +42,23 @@ class SSTDeserializer
      * strings may span across multiple continuations. Read the SST record
      * carefully before beginning to hack.
      */
-    public void manufactureStrings( int stringCount, RecordInputStream in )
-    {
-      for (int i=0;i<stringCount;i++) {
-         // Extract exactly the count of strings from the SST record.
-         UnicodeString str;
-          if (in.available() == 0 && !in.hasNextRecord()) {
-              LOG.atError().log("Ran out of data before creating all the strings! String at index {}", box(i));
-              str = new UnicodeString("");
-          } else {
-              str = new UnicodeString(in);
-          }
-         addToStringTable( strings, str );
-      }
+    public void manufactureStrings(int stringCount, RecordInputStream in) {
+        for (int i = 0; i < stringCount; i++) {
+            // Extract exactly the count of strings from the SST record.
+            UnicodeString str;
+            if (in.available() == 0 && (!in.hasNextRecord() || in.getNextSid() != ContinueRecord.sid)) {
+                LOG.atError().log("Ran out of data before creating all the strings! String at index {}", box(i));
+
+                // not much sense in trying to continue reading in this case, file seems to be broken
+                return;
+            } else {
+                str = new UnicodeString(in);
+            }
+            addToStringTable(strings, str);
+        }
     }
 
-    static public void addToStringTable( IntMapper<UnicodeString> strings, UnicodeString string )
-    {
+    static public void addToStringTable(IntMapper<UnicodeString> strings, UnicodeString string) {
         strings.add(string);
     }
 }

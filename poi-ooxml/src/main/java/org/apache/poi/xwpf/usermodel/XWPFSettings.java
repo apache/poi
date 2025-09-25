@@ -32,6 +32,7 @@ import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STAlgClass;
@@ -66,6 +67,15 @@ public class XWPFSettings extends POIXMLDocumentPart {
         try (InputStream stream = getPackagePart().getInputStream()) {
             readFrom(stream);
         }
+    }
+
+    /**
+     * @return ctSettings instance
+     * @since POI 5.2.4
+     */
+    @Internal
+    public CTSettings getCTSettings() {
+        return ctSettings;
     }
 
     /**
@@ -182,7 +192,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * @param editValue the protection type
      * @param password  the plaintext password, if null no password will be applied
      * @param hashAlgo  the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                  if null, it will default default to sha1
+     *                  if null, it will default to sha1
      */
     public void setEnforcementEditValue(org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect.Enum editValue,
                                         String password, HashAlgorithm hashAlgo) {

@@ -39,6 +39,7 @@ public interface HeaderBlockConstants
     // useful offsets
     int  _signature_offset        = 0;
     int  _bat_count_offset        = 0x2C;
+    int  _property_count_offset   = 0x28;
     int  _property_start_offset   = 0x30;
     int  _sbat_start_offset       = 0x3C;
     int  _sbat_block_count_offset = 0x40;

@@ -43,7 +43,10 @@ public class POIXMLTypeLoader {
         DEFAULT_XML_OPTIONS.setCharacterEncoding("UTF-8");
         DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(true);
         DEFAULT_XML_OPTIONS.setEntityExpansionLimit(1);
-        // Piccolo is disabled for POI builts, i.e. JAXP is used for parsing
+        DEFAULT_XML_OPTIONS.setLoadStripProcinsts(true);
+        DEFAULT_XML_OPTIONS.setLoadStripComments(true);
+
+        // JAXP is used for parsing
         // so only user code using XmlObject/XmlToken.Factory.parse
         // directly can bypass the entity check, which is probably unlikely (... and not within our responsibility :)) 
         // DEFAULT_XML_OPTIONS.setLoadEntityBytesLimit(4096);
@@ -68,6 +71,9 @@ public class POIXMLTypeLoader {
         map.put(MS_EXCEL_URN, "x");
         map.put(MS_WORD_URN, "w10");
         map.put(MS_VML_URN, "v");
+        map.put("http://schemas.microsoft.com/office/word/2010/wordml", "w14");
+        map.put("http://schemas.microsoft.com/office/word/2012/wordml", "w15");
+        map.put("http://schemas.microsoft.com/office/drawing/2012/chart", "c15");
         DEFAULT_XML_OPTIONS.setSaveSuggestedPrefixes(Collections.unmodifiableMap(map));
     }
 }

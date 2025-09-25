@@ -39,6 +39,14 @@ public final class LazyRefEval extends RefEvalBase {
         return _evaluator.getEvalForCell(sheetIndex, getRow(), getColumn());
     }
 
+    /**
+     * @return the Eval of the first sheet associated with this LazyRefEval
+     * @since POI 5.4.0
+     */
+    public ValueEval getInnerValueEvalForFirstSheet() {
+        return _evaluator.getEvalForCell(_evaluator.getFirstSheetIndex(), getRow(), getColumn());
+    }
+
     public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
 
         AreaI area = new OffsetArea(getRow(), getColumn(),

@@ -23,10 +23,11 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
@@ -38,7 +39,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -53,12 +53,13 @@ import org.apache.poi.xwpf.usermodel.XWPFRelation;
  * </p>
  */
 public class POIXMLDocumentPart {
-    private static final Logger LOG = LogManager.getLogger(POIXMLDocumentPart.class);
+    private static final Logger LOG = PoiLogManager.getLogger(POIXMLDocumentPart.class);
 
     private String coreDocumentRel = PackageRelationshipTypes.CORE_DOCUMENT;
     private PackagePart packagePart;
     private POIXMLDocumentPart parent;
     private final Map<String, RelationPart> relations = new LinkedHashMap<>();
+    private final Map<String, ReferenceRelationship> referenceRelationships = new LinkedHashMap<>();
     private boolean isCommitted = false;
 
     /**
@@ -231,9 +232,14 @@ public class POIXMLDocumentPart {
     }
 
     /**
-     * Returns the list of child relations for this POIXMLDocumentPart
+     * Returns the list of child relations for this POIXMLDocumentPart.
+     *
+     * <p>
+     *   Since POI 5.3.0, Reference Relationships are stored separately from other child relations.
+     * </p>
      *
      * @return child relations
+     * @see #getReferenceRelationships() for reference relationships (e.g. hyperlinks)
      */
     public final List<RelationPart> getRelationParts() {
         List<RelationPart> l = new ArrayList<>(relations.values());
@@ -532,6 +538,7 @@ public class POIXMLDocumentPart {
      * @param descriptor The relationship type to find the part number for
      * @param minIdx     The minimum free index to assign, use -1 for any
      * @return The next free part number, or -1 if none available
+     * @throws POIXMLException if the format is invalid
      */
     @Internal
     public final int getNextPartNumber(POIXMLRelation descriptor, int minIdx) {
@@ -639,38 +646,42 @@ public class POIXMLDocumentPart {
 
         // scan breadth-first, so parent-relations are hopefully the shallowest element
         for (PackageRelationship rel : rels) {
-            if (rel.getTargetMode() == TargetMode.INTERNAL) {
-                URI uri = rel.getTargetURI();
+            if (Objects.equals(rel.getRelationshipType(), PackageRelationshipTypes.HYPERLINK_PART)) {
+                referenceRelationships.put(rel.getId(), new HyperlinkRelationship(this, rel.getTargetURI(), rel.getTargetMode() == TargetMode.EXTERNAL, rel.getId()));
+            } else {
+                if (rel.getTargetMode() == TargetMode.INTERNAL) {
+                    URI uri = rel.getTargetURI();
 
-                // check for internal references (e.g. '#Sheet1!A1')
-                PackagePartName relName;
-                if (uri.getRawFragment() != null) {
-                    relName = PackagingURIHelper.createPartName(uri.getPath());
-                } else {
-                    relName = PackagingURIHelper.createPartName(uri);
-                }
-
-                final PackagePart p = packagePart.getPackage().getPart(relName);
-                if (p == null) {
-                    LOG.atError().log("Skipped invalid entry {}", rel.getTargetURI());
-                    continue;
-                }
-
-                POIXMLDocumentPart childPart = context.get(p);
-                if (childPart == null) {
-                    childPart = factory.createDocumentPart(this, p);
-                    //here we are checking if part if embedded and excel then set it to chart class
-                    //so that at the time to writing we can also write updated embedded part
-                    if (this instanceof XDDFChart && childPart instanceof XSSFWorkbook) {
-                        ((XDDFChart) this).setWorkbook((XSSFWorkbook) childPart);
+                    // check for internal references (e.g. '#Sheet1!A1')
+                    PackagePartName relName;
+                    if (uri.getRawFragment() != null) {
+                        relName = PackagingURIHelper.createPartName(uri.getPath());
+                    } else {
+                        relName = PackagingURIHelper.createPartName(uri);
                     }
-                    childPart.parent = this;
-                    // already add child to context, so other children can reference it
-                    context.put(p, childPart);
-                    readLater.add(childPart);
-                }
 
-                addRelation(rel, childPart);
+                    final PackagePart p = packagePart.getPackage().getPart(relName);
+                    if (p == null) {
+                        LOG.atError().log("Skipped invalid entry {}", rel.getTargetURI());
+                        continue;
+                    }
+
+                    POIXMLDocumentPart childPart = context.get(p);
+                    if (childPart == null) {
+                        childPart = factory.createDocumentPart(this, p);
+                        //here we are checking if part if embedded and excel then set it to chart class
+                        //so that at the time to writing we can also write updated embedded part
+                        if (this instanceof XDDFChart && childPart instanceof XSSFWorkbook) {
+                            ((XDDFChart) this).setWorkbook((XSSFWorkbook) childPart);
+                        }
+                        childPart.parent = this;
+                        // already add child to context, so other children can reference it
+                        context.put(p, childPart);
+                        readLater.add(childPart);
+                    }
+
+                    addRelation(rel, childPart);
+                }
             }
         }
 
@@ -734,6 +745,63 @@ public class POIXMLDocumentPart {
     }
 
     /**
+     * Remove the reference relationship to the specified part in this package.
+     *
+     * @param relId the part which is to be removed
+     * @return true, if the relation was removed
+     * @since POI 5.3.0
+     */
+    public final boolean removeReferenceRelationship(String relId) {
+        ReferenceRelationship existing = referenceRelationships.remove(relId);
+        if (existing != null) {
+            packagePart.removeRelationship(relId);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the reference relationship with the specified id.
+     *
+     * @param relId the relation id
+     * @return the reference relationship or {@code null} if not found
+     * @since POI 5.3.0
+     */
+    public final ReferenceRelationship getReferenceRelationship(String relId) {
+        return referenceRelationships.get(relId);
+    }
+
+    /**
+     * Create a new reference relationship for this POIXMLDocumentPart.
+     *
+     * @param uri        the URI of the target part
+     * @param isExternal true, if the target is an external resource
+     * @param relId      the relation id
+     * @return the created reference relationship
+     * @since POI 5.3.0
+     */
+    public final HyperlinkRelationship createHyperlink(URI uri, boolean isExternal, String relId) {
+        PackageRelationship pr = packagePart.addRelationship(uri, isExternal ? TargetMode.EXTERNAL : TargetMode.INTERNAL,
+            PackageRelationshipTypes.HYPERLINK_PART, relId);
+        HyperlinkRelationship hyperlink = new HyperlinkRelationship(this, uri, isExternal, relId);
+        referenceRelationships.put(relId, hyperlink);
+        return hyperlink;
+    }
+
+    /**
+     * Returns an unmodifiable list of reference relationships for this POIXMLDocumentPart.
+     *
+     * @return reference relationships
+     * @since POI 5.3.0
+     * @see #getRelationParts() for child relations
+     */
+    public final List<ReferenceRelationship> getReferenceRelationships() {
+        List<ReferenceRelationship> list = new ArrayList<>(referenceRelationships.values());
+        return Collections.unmodifiableList(list);
+    }
+
+    /**
      * Retrieves the core document part
      *
      * Since POI 4.1.2 - pkg is closed if this method throws an exception
@@ -745,7 +813,7 @@ public class POIXMLDocumentPart {
             if (coreRel != null) {
                 PackagePart pp = pkg.getPart(coreRel);
                 if (pp == null) {
-                    IOUtils.closeQuietly(pkg);
+                    pkg.revert();
                     throw new POIXMLException("OOXML file structure broken/invalid - core document '" + coreRel.getTargetURI() + "' not found.");
                 }
                 return pp;
@@ -753,16 +821,16 @@ public class POIXMLDocumentPart {
 
             coreRel = pkg.getRelationshipsByType(PackageRelationshipTypes.STRICT_CORE_DOCUMENT).getRelationship(0);
             if (coreRel != null) {
-                IOUtils.closeQuietly(pkg);
+                pkg.revert();
                 throw new POIXMLException("Strict OOXML isn't currently supported, please see bug #57699");
             }
 
-            IOUtils.closeQuietly(pkg);
+            pkg.revert();
             throw new POIXMLException("OOXML file structure broken/invalid - no core document found!");
         } catch (POIXMLException e) {
             throw e;
         } catch (RuntimeException e) {
-            IOUtils.closeQuietly(pkg);
+            pkg.revert();
             throw new POIXMLException("OOXML file structure broken/invalid", e);
         }
     }

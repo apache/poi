@@ -19,8 +19,8 @@ package org.apache.poi.hpbf.model;
 
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hpbf.model.qcbits.QCBit;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit;
 import org.apache.poi.hpbf.model.qcbits.QCTextBit;
@@ -34,7 +34,7 @@ import org.apache.poi.util.LocaleUtil;
  * Read Quill Contents (/Quill/QuillSub/CONTENTS) from an HPBF (Publisher .pub) document
  */
 public final class QuillContents extends HPBFPart {
-    private static final Logger LOG = LogManager.getLogger(QuillContents.class);
+    private static final Logger LOG = PoiLogManager.getLogger(QuillContents.class);
 
     private static final String[] PATH = { "Quill", "QuillSub", "CONTENTS", };
     private final QCBit[] bits;

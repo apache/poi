@@ -92,7 +92,7 @@ public final class CompressedStreamStore extends StreamStore {
      * Decompresses the given data, returning it as header + contents
      */
     public static byte[][] decompress(byte[] data, int offset, int length) throws IOException {
-        try (UnsynchronizedByteArrayInputStream bais = new UnsynchronizedByteArrayInputStream(data, offset, length)) {
+        try (UnsynchronizedByteArrayInputStream bais = UnsynchronizedByteArrayInputStream.builder().setByteArray(data).setOffset(offset).setLength(length).get()) {
             // Decompress
             HDGFLZW lzw = new HDGFLZW();
             byte[] decompressed = lzw.decompress(bais);

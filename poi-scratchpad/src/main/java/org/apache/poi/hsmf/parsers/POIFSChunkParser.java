@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.ByteChunk;
 import org.apache.poi.hsmf.datatypes.ByteChunkDeferred;
@@ -55,7 +55,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * data and so on.
  */
 public final class POIFSChunkParser {
-    private static final Logger LOG = LogManager.getLogger(POIFSChunkParser.class);
+    private static final Logger LOG = PoiLogManager.getLogger(POIFSChunkParser.class);
 
     private POIFSChunkParser() {}
 

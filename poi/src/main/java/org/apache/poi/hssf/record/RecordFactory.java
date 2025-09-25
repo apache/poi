@@ -34,8 +34,8 @@ import org.apache.poi.util.RecordFormatException;
 public final class RecordFactory {
     private static final int NUM_RECORDS = 512;
 
-    // how many records we read at max by default (can be adjusted via IOUtils)
-    //increased to 5 million due to https://bz.apache.org/bugzilla/show_bug.cgi?id=65887
+    // how many records we read at max by default (can be adjusted via the static setters)
+    // increased to 5 million due to https://bz.apache.org/bugzilla/show_bug.cgi?id=65887
     private static final int DEFAULT_MAX_NUMBER_OF_RECORDS = 5_000_000;
     private static int MAX_NUMBER_OF_RECORDS = DEFAULT_MAX_NUMBER_OF_RECORDS;
 
@@ -173,7 +173,7 @@ public final class RecordFactory {
      *
      * @param in the InputStream from which the records will be obtained
      *
-     * @return an array of Records created from the InputStream
+     * @return a list of Records created from the InputStream
      *
      * @throws org.apache.poi.util.RecordFormatException on error processing the InputStream
      */

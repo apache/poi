@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hpsf;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -32,7 +32,7 @@ public class ClipboardData {
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
-    private static final Logger LOG = LogManager.getLogger(ClipboardData.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ClipboardData.class);
 
     private int _format;
     private byte[] _value;

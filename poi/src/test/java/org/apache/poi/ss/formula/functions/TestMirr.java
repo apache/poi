@@ -44,43 +44,44 @@ final class TestMirr {
         Mirr mirr = new Mirr();
         double mirrValue;
 
-        double financeRate = 0.12;
-        double reinvestRate = 0.1;
-        double[] values = {-120000d, 39000d, 30000d, 21000d, 37000d, 46000d, reinvestRate, financeRate};
-        // MIRR should not failed with these parameters
+        double financeRate = 0.1;
+        double reinvestRate = 0.12;
+        double[] values = {-120000d, 39000d, 30000d, 21000d, 37000d, 46000d, financeRate, reinvestRate};
         mirrValue = mirr.evaluate(values);
         assertEquals(0.126094130366, mirrValue, 0.0000000001);
 
-        reinvestRate = 0.05;
-        financeRate = 0.08;
-        values = new double[]{-7500d, 3000d, 5000d, 1200d, 4000d, reinvestRate, financeRate};
-        // MIRR should not failed with these parameters
+        financeRate = 0.05;
+        reinvestRate = 0.08;
+        values = new double[]{-7500d, 3000d, 5000d, 1200d, 4000d,  financeRate, reinvestRate};
         mirrValue = mirr.evaluate(values);
         assertEquals(0.18736225093, mirrValue, 0.0000000001);
 
-        reinvestRate = 0.065;
-        financeRate = 0.1;
-        values = new double[]{-10000, 3400d, 6500d, 1000d, reinvestRate, financeRate};
-        // MIRR should not failed with these parameters
+        financeRate = 0.065;
+        reinvestRate = 0.1;
+        values = new double[]{-10000, 3400d, 6500d, 1000d,  financeRate, reinvestRate};
         mirrValue = mirr.evaluate(values);
         assertEquals(0.07039493966, mirrValue, 0.0000000001);
 
-        reinvestRate = 0.07;
-        financeRate = 0.01;
-        values = new double[]{-10000d, -3400d, -6500d, -1000d, reinvestRate, financeRate};
-        // MIRR should not failed with these parameters
+        financeRate = 0.07;
+        reinvestRate = 0.01;
+        values = new double[]{-10000d, -3400d, -6500d, -1000d, financeRate, reinvestRate};
         mirrValue = mirr.evaluate(values);
         assertEquals(-1, mirrValue, 0.0);
 
+        financeRate = 0.1;
+        reinvestRate = 0.12;
+        values = new double[]{-1000d, -4000d, 5000d, 2000d, financeRate, reinvestRate};
+        mirrValue = mirr.evaluate(values);
+        assertEquals(0.179085686035, mirrValue, 0.0000000001);
     }
 
     @Test
     void testMirrErrors_expectDIV0() {
         Mirr mirr = new Mirr();
 
-        double reinvestRate = 0.05;
         double financeRate = 0.08;
-        double[] incomes = {120000d, 39000d, 30000d, 21000d, 37000d, 46000d, reinvestRate, financeRate};
+        double reinvestRate = 0.05;
+        double[] incomes = {120000d, 39000d, 30000d, 21000d, 37000d, 46000d, financeRate, reinvestRate};
 
         EvaluationException e = assertThrows(EvaluationException.class, () -> mirr.evaluate(incomes));
         assertEquals(ErrorEval.DIV_ZERO, e.getErrorEval());
@@ -112,12 +113,47 @@ final class TestMirr {
     }
 
     @Test
+    void testMicrosoftSample() {
+        // https://support.microsoft.com/en-us/office/mirr-function-b020f038-7492-4fb4-93c1-35c345b53524
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet("Sheet1");
+
+        int row = 0;
+        sheet.createRow(row++).createCell(0).setCellValue("Data");
+        sheet.createRow(row++).createCell(0).setCellValue(-120000);
+        sheet.createRow(row++).createCell(0).setCellValue(39000);
+        sheet.createRow(row++).createCell(0).setCellValue(30000);
+        sheet.createRow(row++).createCell(0).setCellValue(21000);
+        sheet.createRow(row++).createCell(0).setCellValue(37000);
+        sheet.createRow(row++).createCell(0).setCellValue(46000);
+        sheet.createRow(row++).createCell(0).setCellValue(0.1);
+        sheet.createRow(row++).createCell(0).setCellValue(0.12);
+
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        HSSFCell cell = sheet.createRow(row).createCell(0);
+        cell.setCellFormula("MIRR(A2:A7, A8, A9)");
+        fe.clearAllCachedResultValues();
+        fe.evaluateFormulaCell(cell);
+        assertEquals(0.126094, cell.getNumericCellValue(), 0.00000015);
+
+        cell.setCellFormula("MIRR(A2:A5, A8, A9)");
+        fe.clearAllCachedResultValues();
+        fe.evaluateFormulaCell(cell);
+        assertEquals(-0.048044655, cell.getNumericCellValue(), 0.00000015);
+
+        cell.setCellFormula("MIRR(A2:A7, A8, .14)");
+        fe.clearAllCachedResultValues();
+        fe.evaluateFormulaCell(cell);
+        assertEquals(0.134759111, cell.getNumericCellValue(), 0.00000015);
+    }
+
+    @Test
     void testMirrFromSpreadsheet() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("mirrTest.xls");
         HSSFSheet sheet = wb.getSheet("Mirr");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
         int failureCount = 0;
-        int[] resultRows = {9, 19, 29, 45};
+        int[] resultRows = {9, 19, 29, 45, 53};
 
         for (int rowNum : resultRows) {
             HSSFRow row = sheet.getRow(rowNum);

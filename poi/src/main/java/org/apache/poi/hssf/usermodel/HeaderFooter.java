@@ -282,7 +282,7 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
         int pos;
 
         // Check we really got something to work on
-        if (pText == null || pText.length() == 0) {
+        if (pText == null || pText.isEmpty()) {
             return pText;
         }
 

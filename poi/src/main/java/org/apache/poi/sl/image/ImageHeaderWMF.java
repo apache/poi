@@ -22,8 +22,8 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -47,7 +47,7 @@ import org.apache.poi.util.Units;
 public class ImageHeaderWMF {
 
     public static final int APMHEADER_KEY = 0x9AC6CDD7;
-    private static final Logger LOG = LogManager.getLogger(ImageHeaderWMF.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ImageHeaderWMF.class);
 
     @SuppressWarnings("unused")
     private final int handle;

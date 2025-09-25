@@ -19,12 +19,17 @@ package org.apache.poi.ddf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+import java.util.Arrays;
+
+@Isolated   // this test changes global static MAX_NUMBER_OF_CHILDREN
 final class TestUnknownEscherRecord {
     @Test
     void testFillFields() {
@@ -159,7 +164,28 @@ final class TestUnknownEscherRecord {
             "\t, \"recordSize\": 8\n" +
             "\t, \"data\": \"\"\n" +
             "}";
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", System.lineSeparator());
         assertEquals(expected, r.toString() );
+    }
+
+    @Test
+    void testTooManyChildren() {
+        UnknownEscherRecord ecr = new UnknownEscherRecord();
+
+        int before = EscherRecord.getMaxNumberOfChildren();
+        try {
+            EscherRecord.setMaxNumberOfChildren(2);
+
+            ecr.addChildRecord(new EscherDgRecord());
+            ecr.addChildRecord(new EscherDgRecord());
+            assertThrows(IllegalStateException.class,
+                    () -> ecr.addChildRecord(new EscherDgRecord()));
+
+            ecr.setChildRecords(Arrays.asList(new EscherDgRecord(), new EscherDgRecord()));
+            assertThrows(IllegalStateException.class,
+                    () -> ecr.setChildRecords(Arrays.asList(new EscherDgRecord(), new EscherDgRecord(), new EscherDgRecord())));
+        } finally {
+            EscherRecord.setMaxNumberOfChildren(before);
+        }
     }
 }

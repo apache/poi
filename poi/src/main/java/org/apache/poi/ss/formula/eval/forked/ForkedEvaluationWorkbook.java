@@ -98,7 +98,7 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
     public Ptg[] getFormulaTokens(EvaluationCell cell) {
         if (cell instanceof ForkedEvaluationCell) {
             // doesn't happen yet because formulas cannot be modified from the master workbook
-            throw new RuntimeException("Updated formulas not supported yet");
+            throw new IllegalStateException("Updated formulas not supported yet");
         }
         return _masterBook.getFormulaTokens(cell);
     }

@@ -21,8 +21,8 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -46,7 +46,7 @@ import org.xml.sax.SAXException;
  */
 public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor {
 
-    private static final Logger LOGGER = LogManager.getLogger(XSSFBEventBasedExcelExtractor.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(XSSFBEventBasedExcelExtractor.class);
 
     public static final List<XSSFRelation> SUPPORTED_TYPES = Collections.singletonList(
             XSSFRelation.XLSB_BINARY_WORKBOOK

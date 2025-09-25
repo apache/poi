@@ -31,15 +31,15 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.usermodel.HSSFPictureData;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.Removal;
 
 public final class EscherMetafileBlip extends EscherBlipRecord {
-    private static final Logger LOGGER = LogManager.getLogger(EscherMetafileBlip.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(EscherMetafileBlip.class);
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
@@ -192,8 +192,8 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
      * @return the inflated picture data.
      */
     private static byte[] inflatePictureData(byte[] data) {
-        try (InflaterInputStream in = new InflaterInputStream(new UnsynchronizedByteArrayInputStream(data));
-             UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+        try (InflaterInputStream in = new InflaterInputStream(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get());
+             UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
             IOUtils.copy(in, out);
             return out.toByteArray();
         } catch (IOException e) {
@@ -410,13 +410,13 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         // "... LZ compression algorithm in the format used by GNU Zip deflate/inflate with a 32k window ..."
         // not sure what to do, when lookup tables exceed 32k ...
 
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             try (DeflaterOutputStream dos = new DeflaterOutputStream(bos)) {
                 dos.write(pictureData);
             }
             raw_pictureData = bos.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException("Can't compress metafile picture data", e);
+            throw new IllegalStateException("Can't compress metafile picture data", e);
         }
 
         setCompressedSize(raw_pictureData.length);

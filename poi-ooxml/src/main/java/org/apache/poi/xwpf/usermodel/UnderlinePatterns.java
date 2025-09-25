@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -133,12 +134,14 @@ public enum UnderlinePatterns {
      */
     NONE(18);
 
-    private static Map<Integer, UnderlinePatterns> imap = new HashMap<>();
+    private static final Map<Integer, UnderlinePatterns> imap;
 
     static {
+        final Map<Integer, UnderlinePatterns> tempMap = new HashMap<>();
         for (UnderlinePatterns p : values()) {
-            imap.put(p.getValue(), p);
+            tempMap.put(p.getValue(), p);
         }
+        imap = Collections.unmodifiableMap(tempMap);
     }
 
     private final int value;

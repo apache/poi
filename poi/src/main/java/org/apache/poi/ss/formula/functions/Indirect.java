@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
@@ -47,7 +47,7 @@ import org.apache.poi.ss.usermodel.Table;
  */
 public final class Indirect implements FreeRefFunction {
 
-    private static final Logger LOGGER = LogManager.getLogger(Indirect.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(Indirect.class);
     public static final FreeRefFunction instance = new Indirect();
 
     private Indirect() {

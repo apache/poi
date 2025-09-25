@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.common.ExtendedColor;
@@ -41,7 +41,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  *  Color Scale in the UI)
  */
 public final class ColorGradientFormatting implements Duplicatable, GenericRecord {
-    private static final Logger LOGGER = LogManager.getLogger(ColorGradientFormatting.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(ColorGradientFormatting.class);
 
     private static final BitField clamp = BitFieldFactory.getInstance(0x01);
     private static final BitField background = BitFieldFactory.getInstance(0x02);

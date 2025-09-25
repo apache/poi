@@ -18,7 +18,7 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -71,7 +71,7 @@ public class Sttb
 
         if ( ffff != (short) 0xffff )
         {
-            LogManager.getLogger(Sttb.class).atWarn().log(
+            PoiLogManager.getLogger(Sttb.class).atWarn().log(
                     "Non-extended character Pascal strings are not supported right now. " +
                             "Creating empty values in the RevisionMarkAuthorTable for now.  " +
                             "Please, contact POI developers for update."
@@ -142,7 +142,7 @@ public class Sttb
                 // cchData
                 size += LittleEndianConsts.SHORT_SIZE;
                 // data
-                size += 2 * data.length();
+                size += 2 * (data == null ? 0 : data.length());
             }
         }
         else
@@ -152,7 +152,7 @@ public class Sttb
                 // cchData
                 size += LittleEndianConsts.BYTE_SIZE;
                 // data
-                size += data.length();
+                size += (data == null ? 0 : data.length());
             }
         }
 

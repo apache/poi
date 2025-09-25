@@ -19,12 +19,14 @@ package org.apache.poi.poifs.macros;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -94,9 +96,9 @@ public class VBAMacroExtractor {
                 System.out.println();
                 System.out.println(moduleCode);
             } else {
-                File out = new File(outputDir, moduleName + extension);
-                try (FileOutputStream fout = new FileOutputStream(out);
-                    OutputStreamWriter fwriter = new OutputStreamWriter(fout, StringUtil.UTF8)) {
+                File out = IOUtils.newFile(outputDir, moduleName + extension);
+                try (OutputStream fout = Files.newOutputStream(out.toPath());
+                     OutputStreamWriter fwriter = new OutputStreamWriter(fout, StringUtil.UTF8)) {
                     fwriter.write(moduleCode);
                 }
                 System.out.println("Extracted " + out);

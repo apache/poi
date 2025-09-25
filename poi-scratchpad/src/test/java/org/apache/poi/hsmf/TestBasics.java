@@ -19,13 +19,20 @@ package org.apache.poi.hsmf;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
+import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.DirectoryChunk;
+import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -193,6 +200,15 @@ public final class TestBasics {
       noRecipientAddress.setReturnNullOnMissingChunk(false);
    }
 
+   @Test
+   public void testAttachmentProperties() {
+      AttachmentChunks[] attachmentChunks = noRecipientAddress.getAttachmentFiles();
+      assertEquals(11, attachmentChunks.length);
+      assertEquals("1.jpg", attachmentChunks[0].getAttachContentLocation().toString());
+      assertEquals("1.jpg", attachmentChunks[0].getAttachDisplayName().toString());
+      assertEquals(4, attachmentChunks[0].getAttachRecordKey().getValue().length);
+   }
+
    /**
     * Test the 7 bit detection
     */
@@ -264,4 +280,33 @@ public final class TestBasics {
          }
       }
    }
+
+    @Test
+    void testBug69315() throws Exception {
+        POIDataSamples testData = POIDataSamples.getPOIFSInstance();
+        try (MAPIMessage mapi = new MAPIMessage(testData.openResourceAsStream("MailSentPropertyMultiple.msg"))) {
+            assertNotNull(mapi.getAttachmentFiles());
+            assertNotNull(mapi.getDisplayBCC());
+            assertNotNull(mapi.getMessageDate());
+
+            Chunks chunks = mapi.getMainChunks();
+            assertNotNull(chunks);
+            assertNotNull(chunks.getRawProperties());
+            assertNotNull(chunks.getRawProperties().get(MAPIProperty.CLIENT_SUBMIT_TIME));
+
+            AttachmentChunks[] attachments = mapi.getAttachmentFiles();
+            for (AttachmentChunks attachment : attachments) {
+                DirectoryChunk chunkDirectory = attachment.getAttachmentDirectory();
+                if (chunkDirectory != null) {
+                    MAPIMessage attachmentMSG = chunkDirectory.getAsEmbeddedMessage();
+                    assertNotNull(attachmentMSG);
+                    String body = attachmentMSG.getTextBody();
+                    assertNotNull(body);
+                }
+            }
+
+            assertNull(mapi.getSummaryInformation());
+            assertNull(mapi.getDocumentSummaryInformation());
+        }
+    }
 }

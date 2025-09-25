@@ -29,8 +29,8 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -45,7 +45,7 @@ import org.apache.poi.util.LittleEndian;
  *  properties, and the indent level if required.
  */
 public class TextPropCollection implements GenericRecord, Duplicatable {
-    private static final Logger LOG = LogManager.getLogger(TextPropCollection.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TextPropCollection.class);
 
     /** All the different kinds of paragraph properties we might handle */
     private static final TextProp[] paragraphTextPropTypes = {
@@ -329,7 +329,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
 
     public void setIndentLevel(short indentLevel) {
         if (textPropType == TextPropType.character) {
-            throw new RuntimeException("trying to set an indent on a character collection.");
+            throw new IllegalStateException("trying to set an indent on a character collection.");
         }
         this.indentLevel = indentLevel;
     }
@@ -379,7 +379,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
         out.append("  bytes that would be written: \n");
 
         try {
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
             writeOut(baos);
             byte[] b = baos.toByteArray();
             out.append(HexDump.dump(b, 0, 0));

@@ -238,7 +238,7 @@ public final class EntryUtils {
                     return isEqual(inpA, inpB);
                 }
             } catch (NoPropertySetStreamException | IOException ex) {
-                throw new RuntimeException(ex);
+                throw new IllegalStateException(ex);
             }
         }
 

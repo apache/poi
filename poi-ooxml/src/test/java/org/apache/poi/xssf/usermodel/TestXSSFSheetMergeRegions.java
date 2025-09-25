@@ -22,15 +22,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
 class TestXSSFSheetMergeRegions {
 
-    private static final Logger LOG = LogManager.getLogger(TestXSSFSheetMergeRegions.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TestXSSFSheetMergeRegions.class);
 
     @Test
     void testMergeRegionsSpeed() throws IOException {

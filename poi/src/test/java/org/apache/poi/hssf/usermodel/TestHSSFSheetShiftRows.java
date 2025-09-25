@@ -18,11 +18,32 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 final class TestHSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     public TestHSSFSheetShiftRows() {
         super(HSSFITestDataProvider.instance);
+    }
+
+    @Test
+    public void testBug69021() throws IOException {
+        try (HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("bug69021.xls")) {
+            Sheet sheet = workbook.getSheetAt(0);
+            int rowIndex = 2;
+            sheet.shiftRows(rowIndex, sheet.getLastRowNum(), 1);
+            Row row = sheet.createRow(rowIndex);
+            row.createCell(0).setCellValue("switch");
+            HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(workbook);
+            assertNotNull(wbBack);
+        }
     }
 }

@@ -19,11 +19,22 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.util.Utils;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * Tests for {@link Value}
@@ -78,6 +89,14 @@ final class TestValue {
     }
 
     @Test
+    void testDates() {
+        confirmValue("1 January 2025", 45658);
+        confirmValue("01 January 2025", 45658);
+        confirmValue("1 Jan 2025", 45658);
+        confirmValue("01 Jan 2025", 45658);
+    }
+
+    @Test
     void testErrors() {
         confirmValueError("1+1");
         confirmValueError("1 1");
@@ -96,5 +115,18 @@ final class TestValue {
         confirmValueError("0.233,4");
         confirmValueError("1e2.5");
         confirmValueError("");
+    }
+
+    @Test
+    void testBlank() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell b1 = row.createCell(1);
+            HSSFCell c1 = row.createCell(2);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            Utils.assertDouble(fe, b1, "VALUE(A1)", 0.0);
+            Utils.assertDouble(fe, c1, "VALUE(B1)", 0.0);
+        }
     }
 }

@@ -105,8 +105,8 @@ public final class ZipFileAssert {
             ArchiveEntry entree;
             while ((entree = zis.getNextEntry()) != null) {
 
-                /* Create a array for the current entry */
-                UnsynchronizedByteArrayOutputStream byteArray = new UnsynchronizedByteArrayOutputStream();
+                /* Create an array for the current entry */
+                UnsynchronizedByteArrayOutputStream byteArray = UnsynchronizedByteArrayOutputStream.builder().get();
                 IOUtils.copy(zis, byteArray);
                 zipContent.put(entree.getName(), byteArray);
             }

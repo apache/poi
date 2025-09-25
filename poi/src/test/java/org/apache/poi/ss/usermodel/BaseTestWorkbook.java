@@ -17,7 +17,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +32,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Spliterator;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
@@ -537,6 +537,7 @@ public abstract class BaseTestWorkbook {
     /**
      * Tests that all the unicode capable string fields can be set, written and then read back
      */
+    @SuppressWarnings("UnnecessaryUnicodeEscape")
     @Test
     protected void unicodeInAll() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
@@ -784,7 +785,7 @@ public abstract class BaseTestWorkbook {
                 c.setCellStyle(cs);
                 c.setCellValue("AAA");
             }
-            assertDoesNotThrow(() -> workbook.write(NULL_OUTPUT_STREAM));
+            assertDoesNotThrow(() -> workbook.write(NullOutputStream.INSTANCE));
         }
     }
 
@@ -850,7 +851,7 @@ public abstract class BaseTestWorkbook {
             wb.removeSheetAt(0);
             wb.removeSheetAt(2);
 
-            // ensure that sheets are moved up and removed sheets are not found any more
+            // ensure that sheets are moved up and removed sheets are not found anymore
             assertEquals(-1, wb.getSheetIndex(sheet1));
             assertEquals(0, wb.getSheetIndex(sheet2));
             assertEquals(1, wb.getSheetIndex(sheet3));
@@ -870,6 +871,14 @@ public abstract class BaseTestWorkbook {
             );
             assertEquals("The workbook already contains a sheet named 'Sheet1'", ex.getMessage());
         }
+    }
+
+    // these 2 values are overridden in TestHSSFWorkbook
+    protected int getDrawingSizeForCreateDrawing1() {
+        return 1609725;
+    }
+    protected int getDrawingSizeForCreateDrawing2() {
+        return 1114425;
     }
 
     // bug 51233 and 55075: correctly size image if added to a row with a custom height
@@ -906,13 +915,13 @@ public abstract class BaseTestWorkbook {
             assertEquals(0, anchor.getRow1());
             assertEquals(0, anchor.getRow2());
             assertEquals(0, anchor.getDy1());
-            assertEquals(1609725, anchor.getDy2()); //HSSF: 225
+            assertEquals(getDrawingSizeForCreateDrawing1(), anchor.getDy2());
 
             // Check drawing width
             assertEquals(0, anchor.getCol1());
             assertEquals(0, anchor.getCol2());
             assertEquals(0, anchor.getDx1());
-            assertEquals(1114425, anchor.getDx2()); //HSSF: 171
+            assertEquals(getDrawingSizeForCreateDrawing2(), anchor.getDx2());
         }
     }
 
@@ -926,6 +935,22 @@ public abstract class BaseTestWorkbook {
             assertThrows(IllegalArgumentException.class,
                     () -> workbook.createSheet("MyVeryLongSheetName_9999999999999998")
             );
+        }
+    }
+
+    @Test
+    void testSheetNameDifferOnlyLowercaseUppercase() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            wb.createSheet("abc");
+            assertEquals(1, wb.getNumberOfSheets());
+
+            assertThrows(IllegalArgumentException.class,
+                    () -> wb.createSheet("ABC"));
+            assertEquals(1, wb.getNumberOfSheets());
+
+            Sheet sheet = wb.getSheet("abc");
+            assertNotNull(sheet);
+            assertEquals("abc", sheet.getSheetName());
         }
     }
 }

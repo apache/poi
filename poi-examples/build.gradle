@@ -19,9 +19,7 @@ import java.util.regex.Pattern
 
 sourceSets {
     main {
-        if (jdkVersion > 8) {
-            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
-        }
+        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
     }
 }
 
@@ -37,63 +35,39 @@ dependencies {
         implementation project(path: ':poi-scratchpad', configuration: 'archives')
     }
 
-    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
-
     testImplementation(project(path: ':poi-ooxml', configuration: 'tests')) {
         if (NO_SCRATCHPAD) {
             exclude group: 'org.apache.poi', module: 'poi-scratchpad'
         }
     }
     testImplementation project(path: ':poi', configuration: 'tests')
-
-    if (SAXON_TEST) {
-         testRuntimeOnly "net.sf.saxon:Saxon-HE:${saxonVersion}"
-    }
 }
 
 final String MODULE_NAME = 'org.apache.poi.examples'
 final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MODULE_COMPILE_PATH = sourceSets.main.compileClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
 
-task compileJava9(type: JavaCompile) {
+tasks.register('compileJava9', JavaCompile) {
     dependsOn 'compileJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(jdkVersion >= 17 ? 17 : 11)
-        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
     }
-
+    sourceCompatibility = 1.9
+    targetCompatibility = 1.9
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
     options.compilerArgs = [
-        '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
-        '--module-path', files(MODULE_COMPILE_PATH).asPath
+            '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
+            '--module-path', files(MODULE_COMPILE_PATH).asPath
     ]
-
-
-    onlyIf {
-        jdkVersion > 8
-    }
-}
-
-task cacheJava9(type: Copy) {
-    dependsOn 'compileJava9'
-
-    from(file(JAVA9_OUT + VERSIONS9))
-    into(JAVA9_SRC)
 }
 
 jar {
-    dependsOn cacheJava9
+    dependsOn compileJava9
 
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
-
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from JAVA9_SRC include '*.class'
-        }
-    }
 
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
@@ -112,4 +86,23 @@ sourcesJar {
         from("$projectDir/../legal/LICENSE")
         from("$projectDir/../legal/NOTICE")
     }
+}
+
+cyclonedxBom {
+    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
+    includeConfigs = ["runtimeClasspath"]
+    // skipConfigs is a list of configuration names to exclude when generating the BOM
+    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
+    // Specified the type of project being built. Defaults to 'library'
+    projectType = "library"
+    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
+    schemaVersion = "1.4"
+    // Boms destination directory (defaults to build/reports)
+    destination = file("build/reports")
+    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
+    outputName = "poi-examples-${project.version}.bom"
+    // The file format generated, can be xml, json or all for generating both
+    outputFormat = "all"
+    // Exclude BOM Serial Number
+    includeBomSerialNumber = true
 }

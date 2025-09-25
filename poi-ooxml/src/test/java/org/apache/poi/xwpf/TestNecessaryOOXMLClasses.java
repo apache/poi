@@ -39,5 +39,7 @@ class TestNecessaryOOXMLClasses {
         assertEquals(STEm.CIRCLE, STEm.Enum.forString("circle"));
         STHexColorAuto stHexColorAuto = STHexColorAuto.Factory.newInstance();
         assertNotNull(stHexColorAuto);
+        CTBdoContentRun bdoContentRun = CTBdoContentRun.Factory.newInstance();
+        assertNotNull(bdoContentRun);
     }
 }

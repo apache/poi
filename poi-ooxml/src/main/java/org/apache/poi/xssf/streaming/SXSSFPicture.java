@@ -21,8 +21,8 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
@@ -51,7 +51,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
  * The main change is to access the rows in the SXSSF sheet, not the always empty rows in the XSSF sheet when checking the row heights.
  */
 public final class SXSSFPicture implements Picture {
-    private static final Logger LOG = LogManager.getLogger(SXSSFPicture.class);
+    private static final Logger LOG = PoiLogManager.getLogger(SXSSFPicture.class);
     /**
      * Column width measured as the number of characters of the maximum digit width of the
      * numbers 0, 1, 2, ..., 9 as rendered in the normal style's font. There are 4 pixels of margin
@@ -85,7 +85,7 @@ public final class SXSSFPicture implements Picture {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with the default font size (Calibri 11pt for .xlsx).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * If the default font is changed the resized image can be stretched vertically or horizontally.
      * </p>
      */
     @Override
@@ -98,7 +98,7 @@ public final class SXSSFPicture implements Picture {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with the default font size (Calibri 11pt for .xlsx).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * If the default font is changed the resized image can be stretched vertically or horizontally.
      * </p>
      *
      * @param scale the amount by which image dimensions are multiplied relative to the original size.

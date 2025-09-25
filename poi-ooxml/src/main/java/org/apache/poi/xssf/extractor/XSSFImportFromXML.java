@@ -35,8 +35,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -72,7 +72,7 @@ public class XSSFImportFromXML {
 
     private final XSSFMap _map;
 
-    private static final Logger LOG = LogManager.getLogger(XSSFImportFromXML.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XSSFImportFromXML.class);
 
     public XSSFImportFromXML(XSSFMap map) {
         _map = map;
@@ -113,7 +113,8 @@ public class XSSFImportFromXML {
                 String textContent = result.getTextContent();
                 LOG.atDebug().log("Extracting with xpath {} : value is '{}'", xpathString, textContent);
                 XSSFCell cell = singleXmlCell.getReferencedCell();
-                LOG.atDebug().log("Setting '{}' to cell {}-{} in sheet {}", textContent, box(cell.getColumnIndex()),box(cell.getRowIndex()),cell.getSheet().getSheetName());
+                LOG.atDebug().log("Setting '{}' to cell {}-{} in sheet {}", textContent,
+                        box(cell.getColumnIndex()), box(cell.getRowIndex()), cell.getSheet().getSheetName());
                 setCellValue(textContent, cell, xmlDataType);
             }
         }
@@ -158,7 +159,8 @@ public class XSSFImportFromXML {
                     if (cell == null) {
                         cell = row.createCell(columnId);
                     }
-                    LOG.atDebug().log("Setting '{}' to cell {}-{} in sheet {}", value, box(cell.getColumnIndex()),box(cell.getRowIndex()),table.getXSSFSheet().getSheetName());
+                    LOG.atDebug().log("Setting '{}' to cell {}-{} in sheet {}", value,
+                            box(cell.getColumnIndex()), box(cell.getRowIndex()), table.getXSSFSheet().getSheetName());
                     setCellValue(value, cell, xmlColumnPr.getXmlDataType());
                 }
             }

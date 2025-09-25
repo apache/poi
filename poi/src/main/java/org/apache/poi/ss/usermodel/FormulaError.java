@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.poi.util.Internal;
@@ -114,7 +115,7 @@ public enum FormulaError {
      */
     CIRCULAR_REF(0xFFFFFFC4, "~CIRCULAR~REF~"),
     /**
-     * POI specific code to indicate that the funcition required is
+     * POI specific code to indicate that the function required is
      *  not implemented in POI
      */
     FUNCTION_NOT_IMPLEMENTED(0xFFFFFFE2, "~FUNCTION~NOT~IMPLEMENTED~");
@@ -149,15 +150,21 @@ public enum FormulaError {
         return repr;
     }
 
-    private static final Map<String, FormulaError> smap = new HashMap<>();
-    private static final Map<Byte, FormulaError> bmap = new HashMap<>();
-    private static final Map<Integer, FormulaError> imap = new HashMap<>();
-    static{
+    private static final Map<String, FormulaError> smap;
+    private static final Map<Byte, FormulaError> bmap;
+    private static final Map<Integer, FormulaError> imap;
+    static {
+        final Map<String, FormulaError> mapS = new HashMap<>();
+        final Map<Byte, FormulaError> mapB = new HashMap<>();
+        final Map<Integer, FormulaError> mapI = new HashMap<>();
         for (FormulaError error : values()) {
-            bmap.put(error.getCode(), error);
-            imap.put(error.getLongCode(), error);
-            smap.put(error.getString(), error);
+            mapB.put(error.getCode(), error);
+            mapI.put(error.getLongCode(), error);
+            mapS.put(error.getString(), error);
         }
+        smap = Collections.unmodifiableMap(mapS);
+        bmap = Collections.unmodifiableMap(mapB);
+        imap = Collections.unmodifiableMap(mapI);
     }
 
     public static boolean isValidCode(int errorCode) {

@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections4.bidimap.TreeBidiMap;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.util.CodePageUtil;
 
@@ -67,7 +67,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * HashMap&lt;String,Object&gt; mapping between Names and Custom Property Values.
  */
 public class CustomProperties implements Map<String,Object> {
-    private static final Logger LOG = LogManager.getLogger(CustomProperties.class);
+    private static final Logger LOG = PoiLogManager.getLogger(CustomProperties.class);
 
     /**
      * The custom properties

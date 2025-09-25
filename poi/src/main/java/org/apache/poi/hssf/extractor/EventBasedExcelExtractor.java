@@ -58,7 +58,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  the XLS2CSVmra example
  * </p>
  *
- * @see <a href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java">XLS2CSVmra</a>
+ * @see <a href="https://github.com/apache/poi/blob/trunk/poi-examples/src/main/java/org/apache/poi/examples/hssf/eventusermodel/XLS2CSVmra.java">XLS2CSVmra</a>
  */
 public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apache.poi.ss.extractor.ExcelExtractor {
     private final POIFSFileSystem poifs;
@@ -140,7 +140,7 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
                text = text + "\n";
            }
        } catch(IOException e) {
-           throw new RuntimeException(e);
+           throw new IllegalStateException(e);
        }
 
        return text;

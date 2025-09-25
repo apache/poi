@@ -51,7 +51,7 @@ public class TestPOIFSDump {
     @BeforeAll
     public static void setUp() throws UnsupportedEncodingException {
         SYSTEM = System.out;
-        System.setOut(new NullPrintStream());
+        System.setOut(NullPrintStream.INSTANCE);
     }
 
     @AfterAll

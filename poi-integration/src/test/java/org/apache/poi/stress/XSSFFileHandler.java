@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.xssf.XSSFTestDataSamples.getSampleFile;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -29,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,6 +36,7 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.examples.ss.ExcelComparator;
@@ -54,6 +55,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.extractor.XSSFExportToXml;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -72,7 +74,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         // make sure the potentially large byte-array is freed up quickly again
         {
 
-            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
             IOUtils.copy(stream, out);
 
             if (pass != null) {
@@ -115,6 +117,13 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         // and finally ensure that exporting to XML works
         exportToXML(wb);
 
+        // also try to read and write the sheet via SXSSF
+        try (SXSSFWorkbook swb = new SXSSFWorkbook(wb)) {
+            try (OutputStream out = NullOutputStream.INSTANCE) {
+                swb.write(out);
+            }
+        }
+
         // this allows to trigger a heap-dump at this point to see which memory is still allocated
         //HeapDump.dumpHeap("/tmp/poi.hprof", false);
 
@@ -156,7 +165,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
             TransformerException {
         for (XSSFMap map : wb.getCustomXMLMappings()) {
             XSSFExportToXml exporter = new XSSFExportToXml(map);
-            exporter.exportToXML(NULL_OUTPUT_STREAM, true);
+            exporter.exportToXML(NullOutputStream.INSTANCE, true);
         }
     }
 
@@ -194,7 +203,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
             XLSX2CSV.main(new String[]{file.getAbsolutePath()});
             ExcelComparator.main(new String[]{file.getAbsolutePath(), file.getAbsolutePath()});
 
-            assertFalse( EXPECTED_ADDITIONAL_FAILURES.contains(testFile), "Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!" );
+            assertFalse(EXPECTED_ADDITIONAL_FAILURES.contains(testFile), "Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!" );
 
         } catch (OLE2NotOfficeXmlFileException e) {
             // we have some files that are not actually OOXML and thus cannot be tested here
@@ -217,6 +226,8 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         }
 
         handleExtracting(file);
+
+        handleAdditional(file);
     }
 
     @Test

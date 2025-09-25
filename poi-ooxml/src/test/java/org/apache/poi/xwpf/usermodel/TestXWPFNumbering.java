@@ -18,12 +18,16 @@
 package org.apache.poi.xwpf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
@@ -163,6 +167,20 @@ class TestXWPFNumbering {
                     .map(e -> e.getCTAbstractNum().getAbstractNumId().intValue())
                     .distinct().count();
             assertEquals(doc.getNumbering().getAbstractNums().size(), count);
+        }
+    }
+
+    @Test
+    void testNPE() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("clusterfuzz-testcase-minimized-POIXWPFFuzzer-6120975439364096.docx");
+            OutputStream out = NullOutputStream.INSTANCE) {
+
+            // settings and numbering are null for this malformed document
+            assertNull(doc.getNumbering());
+            assertNull(doc.getSettings());
+
+            assertThrows(IllegalStateException.class, () ->
+                doc.write(out), "Fails because settings are not populated in this malformed document");
         }
     }
 }

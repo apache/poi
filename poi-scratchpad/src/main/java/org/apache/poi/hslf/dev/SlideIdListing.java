@@ -147,7 +147,7 @@ public final class SlideIdListing {
                 }
 
                 // Increase the position by the on disk size
-                UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
                 r.writeOut(baos);
                 pos += baos.size();
             }

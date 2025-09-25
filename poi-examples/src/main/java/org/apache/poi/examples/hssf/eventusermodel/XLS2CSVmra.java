@@ -253,6 +253,10 @@ public class XLS2CSVmra implements HSSFListener {
 
             // Format
             thisStr = formatListener.formatNumberDateCell(numrec);
+            if (thisStr.contains(",")) {
+                thisStr = '"' + thisStr + '"';
+            }
+
             break;
         case RKRecord.sid:
             RKRecord rkrec = (RKRecord) record;

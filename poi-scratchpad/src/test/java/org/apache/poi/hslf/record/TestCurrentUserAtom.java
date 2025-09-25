@@ -76,7 +76,7 @@ public final class TestCurrentUserAtom {
         // Get raw contents from a known file
         byte[] contents;
         try (POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile))) {
-            DocumentEntry docProps = (DocumentEntry) fs.getRoot().getEntry("Current User");
+            DocumentEntry docProps = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("Current User");
             contents = new byte[docProps.getSize()];
             try (InputStream in = fs.getRoot().createDocumentInputStream("Current User")) {
                 in.read(contents);
@@ -89,7 +89,7 @@ public final class TestCurrentUserAtom {
         cu.setCurrentEditOffset(0x2942);
 
         // Check it matches
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         cu.writeOut(baos);
         byte[] out = baos.toByteArray();
 

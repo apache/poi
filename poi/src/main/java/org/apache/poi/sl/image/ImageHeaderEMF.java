@@ -20,15 +20,15 @@ package org.apache.poi.sl.image;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
 
 @Internal
 public class ImageHeaderEMF {
-    private static final Logger LOG = LogManager.getLogger(ImageHeaderEMF.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ImageHeaderEMF.class);
 
     private static final String EMF_SIGNATURE = " EMF"; // 0x464D4520 (LE)
 

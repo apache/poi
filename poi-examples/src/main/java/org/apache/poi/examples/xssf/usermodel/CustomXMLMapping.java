@@ -38,7 +38,7 @@ public final class CustomXMLMapping {
             for (XSSFMap map : wb.getCustomXMLMappings()) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
 
-                UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
                 exporter.exportToXML(os, true);
                 String xml = os.toString(StandardCharsets.UTF_8);
                 System.out.println(xml);

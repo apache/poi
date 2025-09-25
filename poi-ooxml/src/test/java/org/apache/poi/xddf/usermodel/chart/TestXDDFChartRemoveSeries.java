@@ -67,7 +67,7 @@ class TestXDDFChartRemoveSeries {
         final XDDFValueAxis bottomAxis = chart.createValueAxis(AxisPosition.BOTTOM);
         final XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
 
-        // Initialize data data sources
+        // Initialize data sources
 
         final Double dX[] = new Double[5];
         final Double dY1[] = new Double[5];
@@ -112,21 +112,7 @@ class TestXDDFChartRemoveSeries {
         }
         workbook.close();
     }
-
-    /**
-     * Attempt to remove the first series by calling chartData.getSeries().remove(0).
-     * <p>
-     * This used to corrupt the workbook but the returned <code>List</code> is unmodifiable.
-     */
-    @Test
-    void testRemoveSeries0() {
-        procName = "testRemoveSeries0";
-        fileName = procName + ".xlsx";
-
-        assertThrows(UnsupportedOperationException.class, () -> chartData.getSeries().remove(0));
-        assertEquals(2, chartData.getSeriesCount());
-    }
-
+    
     /**
      * Remove the first series by calling chartData.removeSeries(0).
      * <p>

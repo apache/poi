@@ -28,6 +28,7 @@ import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageProperties;
 import org.apache.poi.openxml4j.opc.ZipPackage;
+import org.apache.poi.openxml4j.opc.OPCComplianceFlags;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.PartUnmarshaller;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
@@ -43,6 +44,23 @@ import org.xml.sax.SAXException;
  * Package properties unmarshaller.
  */
 public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
+
+    /**
+     *  Whether OPC compliance requirements are checked (e.g., M4.2, M4.3, M4.4, and M4.5)
+     */
+    private OPCComplianceFlags opcComplianceFlags;
+
+    public PackagePropertiesUnmarshaller() {
+        this(OPCComplianceFlags.enforceAll());
+    }
+
+    /**
+     * @param opcComplianceFlags Overrides the default OPC compliance settings
+     * @since POI 5.4.1
+     */
+    public PackagePropertiesUnmarshaller(OPCComplianceFlags opcComplianceFlags) {
+        this.opcComplianceFlags = opcComplianceFlags;
+    }
 
     protected static final String KEYWORD_CATEGORY = "category";
 
@@ -234,24 +252,28 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
      */
     public void checkElementForOPCCompliance(Element el)
             throws InvalidFormatException {
-        // Check the current element
-        NamedNodeMap namedNodeMap = el.getAttributes();
-        int namedNodeCount = namedNodeMap.getLength();
-        for (int i = 0; i < namedNodeCount; i++) {
-            Attr attr = (Attr)namedNodeMap.item(0);
 
-            if (attr != null && XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attr.getNamespaceURI())) {
-                // Rule M4.2
-                if (PackageNamespaces.MARKUP_COMPATIBILITY.equals(attr.getValue())) {
-                    throw new InvalidFormatException(
-                            "OPC Compliance error [M4.2]: A format consumer shall consider the use of the Markup Compatibility namespace to be an error.");
+        if (opcComplianceFlags.getForbidMarkupCompatibilityNamespace()) {
+            // Check the current element
+            NamedNodeMap namedNodeMap = el.getAttributes();
+            int namedNodeCount = namedNodeMap.getLength();
+            for (int i = 0; i < namedNodeCount; i++) {
+                Attr attr = (Attr)namedNodeMap.item(0);
+
+                if (attr != null && XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attr.getNamespaceURI())) {
+                    // Rule M4.2
+                    if (PackageNamespaces.MARKUP_COMPATIBILITY.equals(attr.getValue())) {
+                        throw new InvalidFormatException(
+                                "OPC Compliance error [M4.2]: A format consumer shall consider the use of the Markup Compatibility namespace to be an error.");
+                    }
                 }
             }
         }
 
         // Rule M4.3
         String elName = el.getLocalName();
-        if (PackageProperties.NAMESPACE_DCTERMS.equals(el.getNamespaceURI())) {
+        if (opcComplianceFlags.getForbidRefiningDublinCoreElements() &&
+                PackageProperties.NAMESPACE_DCTERMS.equals(el.getNamespaceURI())) {
             if (!(KEYWORD_CREATED.equals(elName) || KEYWORD_MODIFIED.equals(elName))) {
                 throw new InvalidFormatException(
                         "OPC Compliance error [M4.3]: Producers shall not create a document element that contains refinements to the Dublin Core elements, except for the two specified in the schema: <dcterms:created> and <dcterms:modified> Consumers shall consider a document element that violates this constraint to be an error.");
@@ -259,13 +281,15 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
         }
 
         // Rule M4.4
-        if (el.getAttributeNodeNS(XMLConstants.XML_NS_URI, "lang") != null) {
+        if (opcComplianceFlags.getForbidXmlLangAttributes() &&
+                el.getAttributeNodeNS(XMLConstants.XML_NS_URI, "lang") != null) {
             throw new InvalidFormatException(
                     "OPC Compliance error [M4.4]: Producers shall not create a document element that contains the xml:lang attribute. Consumers shall consider a document element that violates this constraint to be an error.");
         }
 
         // Rule M4.5
-        if (PackageProperties.NAMESPACE_DCTERMS.equals(el.getNamespaceURI())) {
+        if (opcComplianceFlags.getRestrictXsiTypeAttribute() &&
+                PackageProperties.NAMESPACE_DCTERMS.equals(el.getNamespaceURI())) {
             // DCTerms namespace only use with 'created' and 'modified' elements
             if (!(elName.equals(KEYWORD_CREATED) || elName.equals(KEYWORD_MODIFIED))) {
                 throw new InvalidFormatException("Namespace error : " + elName

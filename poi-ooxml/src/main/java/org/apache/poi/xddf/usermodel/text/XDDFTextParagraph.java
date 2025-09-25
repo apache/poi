@@ -113,7 +113,7 @@ public class XDDFTextParagraph implements Iterable<XDDFTextRun> {
     }
 
     public List<XDDFTextRun> getTextRuns() {
-        return _runs;
+        return Collections.unmodifiableList(_runs);
     }
 
     @Override
@@ -575,7 +575,7 @@ public class XDDFTextParagraph implements Iterable<XDDFTextRun> {
     /**
      *
      * @return the font of bullet characters within a given paragraph. A
-     *         <code>null</code> value means to use the text font font.
+     *         <code>null</code> value means to use the text font.
      */
     public XDDFFont getBulletFont() {
         return findDefinedParagraphProperty(props -> props.isSetBuFont() || props.isSetBuFontTx(),

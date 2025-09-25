@@ -18,7 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 /**
- * This class is a functon library for common fiscal functions.
+ * This class is a function library for common fiscal functions.
  * <b>Glossary of terms/abbreviations:</b>
  * <br>
  * <ul>

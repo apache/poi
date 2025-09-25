@@ -26,8 +26,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -57,7 +57,7 @@ import org.apache.poi.util.LittleEndian;
  * See {@link ShapeTypes}
  */
 public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,HSLFTextParagraph> {
-    private static final Logger LOG = LogManager.getLogger(HSLFAutoShape.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HSLFAutoShape.class);
 
     static final byte[] SEGMENTINFO_MOVETO   = new byte[]{0x00, 0x40};
     static final byte[] SEGMENTINFO_LINETO   = new byte[]{0x00, (byte)0xAC};

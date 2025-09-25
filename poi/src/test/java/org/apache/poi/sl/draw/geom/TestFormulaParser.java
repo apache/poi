@@ -22,9 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-/**
- * Date: 10/24/11
- */
 class TestFormulaParser {
     @Test
     void testParse(){

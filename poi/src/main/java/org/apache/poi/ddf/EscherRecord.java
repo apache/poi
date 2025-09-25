@@ -45,6 +45,10 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
     private short _options;
     private short _recordId;
 
+    // arbitrarily selected; may need to increase
+    private static final int DEFAULT_MAX_NUMBER_OF_CHILDREN = 100_000;
+    protected static int MAX_NUMBER_OF_CHILDREN = DEFAULT_MAX_NUMBER_OF_CHILDREN;
+
     /**
      * Create a new instance
      */
@@ -82,6 +86,31 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      * @return          The number of bytes written.
      */
     public abstract int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory );
+
+    /**
+     * Internal method to prevent too deep nesting/using too much memory.
+     *
+     * This is done by counting the level of "nesting" via the parameter.
+     *
+     * The default method just forwards to fillFields() so it does not properly
+     * handle nesting. Subclasses which do recursive calls need to pass
+     * around the nesting-level properly.
+     *
+     * Usually both fillFields() methods should be overwritten by subclasses,
+     * the one without the "nesting"-parameter should routes to this one in
+     * classes which overwrite this method and this method should be overwritten
+     * with the actual functionality to fill fields.
+     *
+     * @param data      The byte array containing the serialized escher
+     *                  records.
+     * @param offset    The offset into the byte array.
+     * @param recordFactory     A factory for creating new escher records.
+     * @param nesting   The current nesting factor, usually increased by one on each recursive call
+     * @return          The number of bytes written.
+     */
+    protected int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory, int nesting) {
+        return fillFields(data, offset, recordFactory);
+    }
 
     /**
      * Reads the 8 byte header information and populates the <code>options</code>
@@ -131,7 +160,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
     }
 
     /**
-     * Set the options this this record. Container records should have the
+     * Set the options this record. Container records should have the
      * last nibble set to 0xF.<p>
      *
      * Note that {@code options} is an internal field.
@@ -342,4 +371,18 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
 
     @Override
     public abstract EscherRecord copy();
+
+    /**
+     * @param length the max number of children allowed for EscherRecords which support nesting
+     */
+    public static void setMaxNumberOfChildren(int length) {
+        MAX_NUMBER_OF_CHILDREN = length;
+    }
+
+    /**
+     * @return the max number of children allowed for EscherRecords which support nesting
+     */
+    public static int getMaxNumberOfChildren() {
+        return MAX_NUMBER_OF_CHILDREN;
+    }
 }

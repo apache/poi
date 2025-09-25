@@ -46,7 +46,7 @@ import static org.apache.poi.hsmf.datatypes.Types.TIME;
  */
 @SuppressWarnings("unused")
 public class MAPIProperty {
-    private static Map<Integer, MAPIProperty> attributes = new HashMap<>();
+    private static final Map<Integer, MAPIProperty> attributes = new HashMap<>();
 
     public static final MAPIProperty AB_DEFAULT_DIR =
         new MAPIProperty(0x3d06, BINARY, "AbDefaultDir", "PR_AB_DEFAULT_DIR");

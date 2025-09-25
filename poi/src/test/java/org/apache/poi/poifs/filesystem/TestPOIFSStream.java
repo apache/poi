@@ -960,7 +960,7 @@ final class TestPOIFSStream {
             assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(10));
             assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(11));
 
-            DocumentEntry normal = (DocumentEntry) fs1.getRoot().getEntry("Normal");
+            DocumentEntry normal = (DocumentEntry) fs1.getRoot().getEntryCaseInsensitive("Normal");
             assertEquals(4106, normal.getSize());
             assertEquals(4106, ((DocumentNode) normal).getProperty().getSize());
 
@@ -988,7 +988,7 @@ final class TestPOIFSStream {
             assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(10));
             assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(11));
 
-            normal = (DocumentEntry) fs1.getRoot().getEntry("Normal");
+            normal = (DocumentEntry) fs1.getRoot().getEntryCaseInsensitive("Normal");
             assertEquals(4096, normal.getSize());
             assertEquals(4096, ((DocumentNode) normal).getProperty().getSize());
 
@@ -1011,13 +1011,13 @@ final class TestPOIFSStream {
                 assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(10));
                 assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(11));
 
-                normal = (DocumentEntry) fs2.getRoot().getEntry("Normal");
+                normal = (DocumentEntry) fs2.getRoot().getEntryCaseInsensitive("Normal");
                 assertEquals(4096, normal.getSize());
                 assertEquals(4096, ((DocumentNode) normal).getProperty().getSize());
 
 
                 // Make longer, take 1 block at the end
-                normal = (DocumentEntry) fs2.getRoot().getEntry("Normal");
+                normal = (DocumentEntry) fs2.getRoot().getEntryCaseInsensitive("Normal");
                 try (DocumentOutputStream nout = new DocumentOutputStream(normal)) {
                     nout.write(main4106);
                 }
@@ -1036,14 +1036,14 @@ final class TestPOIFSStream {
                 assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(11));
                 assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(12));
 
-                normal = (DocumentEntry) fs2.getRoot().getEntry("Normal");
+                normal = (DocumentEntry) fs2.getRoot().getEntryCaseInsensitive("Normal");
                 assertEquals(4106, normal.getSize());
                 assertEquals(4106, ((DocumentNode) normal).getProperty().getSize());
 
 
                 // Make it small, will trigger the SBAT stream and free lots up
                 byte[] mini = new byte[]{42, 0, 1, 2, 3, 4, 42};
-                normal = (DocumentEntry) fs2.getRoot().getEntry("Normal");
+                normal = (DocumentEntry) fs2.getRoot().getEntryCaseInsensitive("Normal");
                 try (DocumentOutputStream nout = new DocumentOutputStream(normal)) {
                     nout.write(mini);
                 }
@@ -1062,7 +1062,7 @@ final class TestPOIFSStream {
                 assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(11));
                 assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(12));
 
-                normal = (DocumentEntry) fs2.getRoot().getEntry("Normal");
+                normal = (DocumentEntry) fs2.getRoot().getEntryCaseInsensitive("Normal");
                 assertEquals(7, normal.getSize());
                 assertEquals(7, ((DocumentNode) normal).getProperty().getSize());
 
@@ -1088,7 +1088,7 @@ final class TestPOIFSStream {
                 assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(12));
                 assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(13));
 
-                normal = (DocumentEntry) fs2.getRoot().getEntry("Normal");
+                normal = (DocumentEntry) fs2.getRoot().getEntryCaseInsensitive("Normal");
                 assertEquals(4096, normal.getSize());
                 assertEquals(4096, ((DocumentNode) normal).getProperty().getSize());
 
@@ -1112,7 +1112,7 @@ final class TestPOIFSStream {
                     assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(12));
                     assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(13));
 
-                    normal = (DocumentEntry) fs3.getRoot().getEntry("Normal");
+                    normal = (DocumentEntry) fs3.getRoot().getEntryCaseInsensitive("Normal");
                     assertEquals(4096, normal.getSize());
                     assertEquals(4096, ((DocumentNode) normal).getProperty().getSize());
                 }
@@ -1190,7 +1190,7 @@ final class TestPOIFSStream {
     }
 
     private static HeaderBlock writeOutAndReadHeader(POIFSFileSystem fs) throws IOException {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         fs.writeFilesystem(baos);
         return new HeaderBlock(baos.toInputStream());
     }
@@ -1639,11 +1639,11 @@ final class TestPOIFSStream {
             assertEquals(5, root.getEntryCount());
 
             // Check by the names
-            Entry thumbnail = root.getEntry("Thumbnail");
-            Entry dsi = root.getEntry("\u0005DocumentSummaryInformation");
-            Entry si = root.getEntry("\u0005SummaryInformation");
-            Entry image = root.getEntry("Image");
-            Entry tags = root.getEntry("Tags");
+            Entry thumbnail = root.getEntryCaseInsensitive("Thumbnail");
+            Entry dsi = root.getEntryCaseInsensitive("\u0005DocumentSummaryInformation");
+            Entry si = root.getEntryCaseInsensitive("\u0005SummaryInformation");
+            Entry image = root.getEntryCaseInsensitive("Image");
+            Entry tags = root.getEntryCaseInsensitive("Tags");
 
             assertFalse(thumbnail.isDirectoryEntry());
             assertFalse(dsi.isDirectoryEntry());
@@ -1675,7 +1675,7 @@ final class TestPOIFSStream {
     throws IOException, NoPropertySetStreamException {
         try (POIFSFileSystem fs = opener.apply(file)) {
             DirectoryEntry root = fs.getRoot();
-            Entry si = root.getEntry("\u0005SummaryInformation");
+            Entry si = root.getEntryCaseInsensitive("\u0005SummaryInformation");
 
             assertTrue(si.isDocumentEntry());
             DocumentNode doc = (DocumentNode) si;
@@ -1697,7 +1697,7 @@ final class TestPOIFSStream {
 
 
             // Try the other summary information
-            si = root.getEntry("\u0005DocumentSummaryInformation");
+            si = root.getEntryCaseInsensitive("\u0005DocumentSummaryInformation");
             assertTrue(si.isDocumentEntry());
             doc = (DocumentNode) si;
             assertContentsMatches(null, doc);
@@ -1745,11 +1745,11 @@ final class TestPOIFSStream {
 
                 // Check the contents of them - parse the summary block and check
                 sinf = (SummaryInformation) PropertySetFactory.create(new DocumentInputStream(
-                    (DocumentEntry) root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME)));
+                    (DocumentEntry) root.getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME)));
                 assertEquals(131333, sinf.getOSVersion());
 
                 dinf = (DocumentSummaryInformation) PropertySetFactory.create(new DocumentInputStream(
-                    (DocumentEntry) root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
+                    (DocumentEntry) root.getEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
                 assertEquals(131333, dinf.getOSVersion());
 
 
@@ -1765,7 +1765,7 @@ final class TestPOIFSStream {
                 try (POIFSFileSystem fs3 = writeOutAndReadBack(fs2)) {
 
                     root = fs3.getRoot();
-                    testDir = (DirectoryEntry) root.getEntry("Testing 123");
+                    testDir = (DirectoryEntry) root.getEntryCaseInsensitive("Testing 123");
                     assertEquals(6, root.getEntryCount());
                     assertThat(root.getEntryNames(), hasItem("Thumbnail"));
                     assertThat(root.getEntryNames(), hasItem("Image"));
@@ -1777,21 +1777,21 @@ final class TestPOIFSStream {
 
                     // Check old and new are there
                     sinf = (SummaryInformation) PropertySetFactory.create(new DocumentInputStream(
-                        (DocumentEntry) root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME)));
+                        (DocumentEntry) root.getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME)));
                     assertEquals(131333, sinf.getOSVersion());
 
                     dinf = (DocumentSummaryInformation) PropertySetFactory.create(new DocumentInputStream(
-                        (DocumentEntry) root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
+                        (DocumentEntry) root.getEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
                     assertEquals(131333, dinf.getOSVersion());
 
-                    assertContentsMatches(mini, (DocumentEntry) testDir.getEntry("Mini"));
+                    assertContentsMatches(mini, (DocumentEntry) testDir.getEntryCaseInsensitive("Mini"));
 
 
                     // Write out and read once more, just to be sure
                     try (POIFSFileSystem fs4 = writeOutAndReadBack(fs3)) {
 
                         root = fs4.getRoot();
-                        testDir = (DirectoryEntry) root.getEntry("Testing 123");
+                        testDir = (DirectoryEntry) root.getEntryCaseInsensitive("Testing 123");
                         assertEquals(6, root.getEntryCount());
                         assertThat(root.getEntryNames(), hasItem("Thumbnail"));
                         assertThat(root.getEntryNames(), hasItem("Image"));
@@ -1801,14 +1801,14 @@ final class TestPOIFSStream {
                         assertThat(root.getEntryNames(), hasItem("\u0005SummaryInformation"));
 
                         sinf = (SummaryInformation) PropertySetFactory.create(new DocumentInputStream(
-                            (DocumentEntry) root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME)));
+                            (DocumentEntry) root.getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME)));
                         assertEquals(131333, sinf.getOSVersion());
 
                         dinf = (DocumentSummaryInformation) PropertySetFactory.create(new DocumentInputStream(
-                            (DocumentEntry) root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
+                            (DocumentEntry) root.getEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
                         assertEquals(131333, dinf.getOSVersion());
 
-                        assertContentsMatches(mini, (DocumentEntry) testDir.getEntry("Mini"));
+                        assertContentsMatches(mini, (DocumentEntry) testDir.getEntryCaseInsensitive("Mini"));
 
 
                         // Add a full stream, delete a full stream
@@ -1817,7 +1817,7 @@ final class TestPOIFSStream {
                         main4096[4095] = -11;
                         testDir.createDocument("Normal4096", new ByteArrayInputStream(main4096));
 
-                        root.getEntry("Tags").delete();
+                        assertTrue(root.getEntryCaseInsensitive("Tags").delete());
 
 
                         // Write out, re-load
@@ -1825,7 +1825,7 @@ final class TestPOIFSStream {
 
                             // Check it's all there
                             root = fs5.getRoot();
-                            testDir = (DirectoryEntry) root.getEntry("Testing 123");
+                            testDir = (DirectoryEntry) root.getEntryCaseInsensitive("Testing 123");
                             assertEquals(5, root.getEntryCount());
                             assertThat(root.getEntryNames(), hasItem("Thumbnail"));
                             assertThat(root.getEntryNames(), hasItem("Image"));
@@ -1836,19 +1836,19 @@ final class TestPOIFSStream {
 
                             // Check old and new are there
                             sinf = (SummaryInformation) PropertySetFactory.create(new DocumentInputStream(
-                                (DocumentEntry) root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME)));
+                                (DocumentEntry) root.getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME)));
                             assertEquals(131333, sinf.getOSVersion());
 
                             dinf = (DocumentSummaryInformation) PropertySetFactory.create(new DocumentInputStream(
-                                (DocumentEntry) root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
+                                (DocumentEntry) root.getEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
                             assertEquals(131333, dinf.getOSVersion());
 
-                            assertContentsMatches(mini, (DocumentEntry) testDir.getEntry("Mini"));
-                            assertContentsMatches(main4096, (DocumentEntry) testDir.getEntry("Normal4096"));
+                            assertContentsMatches(mini, (DocumentEntry) testDir.getEntryCaseInsensitive("Mini"));
+                            assertContentsMatches(main4096, (DocumentEntry) testDir.getEntryCaseInsensitive("Normal4096"));
 
 
                             // Delete a directory, and add one more
-                            testDir.getEntry("Testing 456").delete();
+                            assertTrue(testDir.getEntryCaseInsensitive("Testing 456").delete());
                             testDir.createDirectory("Testing ABC");
 
 
@@ -1857,7 +1857,7 @@ final class TestPOIFSStream {
 
                                 // Check
                                 root = fs6.getRoot();
-                                testDir = (DirectoryEntry) root.getEntry("Testing 123");
+                                testDir = (DirectoryEntry) root.getEntryCaseInsensitive("Testing 123");
 
                                 assertEquals(5, root.getEntryCount());
                                 assertThat(root.getEntryNames(), hasItem("Thumbnail"));
@@ -1881,7 +1881,7 @@ final class TestPOIFSStream {
                                 try (POIFSFileSystem fs7 = writeOutAndReadBack(fs6)) {
 
                                     root = fs7.getRoot();
-                                    testDir = (DirectoryEntry) root.getEntry("Testing 123");
+                                    testDir = (DirectoryEntry) root.getEntryCaseInsensitive("Testing 123");
 
                                     assertEquals(5, root.getEntryCount());
                                     assertThat(root.getEntryNames(), hasItem("Thumbnail"));
@@ -1897,13 +1897,13 @@ final class TestPOIFSStream {
                                     assertThat(testDir.getEntryNames(), hasItem("Testing 789"));
                                     assertThat(testDir.getEntryNames(), hasItem("Testing ABC"));
 
-                                    assertContentsMatches(mini, (DocumentEntry) testDir.getEntry("Mini"));
-                                    assertContentsMatches(mini2, (DocumentEntry) testDir.getEntry("Mini2"));
-                                    assertContentsMatches(main4096, (DocumentEntry) testDir.getEntry("Normal4096"));
+                                    assertContentsMatches(mini, (DocumentEntry) testDir.getEntryCaseInsensitive("Mini"));
+                                    assertContentsMatches(mini2, (DocumentEntry) testDir.getEntryCaseInsensitive("Mini2"));
+                                    assertContentsMatches(main4096, (DocumentEntry) testDir.getEntryCaseInsensitive("Normal4096"));
 
 
                                     // Delete a mini stream, add one more
-                                    testDir.getEntry("Mini").delete();
+                                    assertTrue(testDir.getEntryCaseInsensitive("Mini").delete());
 
                                     byte[] mini3 = new byte[]{42, 0, 42, 0, 42, 0, 42};
                                     testDir.createDocument("Mini3", new ByteArrayInputStream(mini3));
@@ -1913,7 +1913,7 @@ final class TestPOIFSStream {
                                     try (POIFSFileSystem fs8 = writeOutAndReadBack(fs7)) {
 
                                         root = fs8.getRoot();
-                                        testDir = (DirectoryEntry) root.getEntry("Testing 123");
+                                        testDir = (DirectoryEntry) root.getEntryCaseInsensitive("Testing 123");
 
                                         assertEquals(5, root.getEntryCount());
                                         assertThat(root.getEntryNames(), hasItem("Thumbnail"));
@@ -1929,19 +1929,19 @@ final class TestPOIFSStream {
                                         assertThat(testDir.getEntryNames(), hasItem("Testing 789"));
                                         assertThat(testDir.getEntryNames(), hasItem("Testing ABC"));
 
-                                        assertContentsMatches(mini2, (DocumentEntry) testDir.getEntry("Mini2"));
-                                        assertContentsMatches(mini3, (DocumentEntry) testDir.getEntry("Mini3"));
-                                        assertContentsMatches(main4096, (DocumentEntry) testDir.getEntry("Normal4096"));
+                                        assertContentsMatches(mini2, (DocumentEntry) testDir.getEntryCaseInsensitive("Mini2"));
+                                        assertContentsMatches(mini3, (DocumentEntry) testDir.getEntryCaseInsensitive("Mini3"));
+                                        assertContentsMatches(main4096, (DocumentEntry) testDir.getEntryCaseInsensitive("Normal4096"));
 
 
                                         // Change some existing streams
-                                        POIFSDocument mini2Doc = new POIFSDocument((DocumentNode) testDir.getEntry("Mini2"));
+                                        POIFSDocument mini2Doc = new POIFSDocument((DocumentNode) testDir.getEntryCaseInsensitive("Mini2"));
                                         mini2Doc.replaceContents(new ByteArrayInputStream(mini));
 
                                         byte[] main4106 = new byte[4106];
                                         main4106[0] = 41;
                                         main4106[4105] = 42;
-                                        POIFSDocument mainDoc = new POIFSDocument((DocumentNode) testDir.getEntry("Normal4096"));
+                                        POIFSDocument mainDoc = new POIFSDocument((DocumentNode) testDir.getEntryCaseInsensitive("Normal4096"));
                                         mainDoc.replaceContents(new ByteArrayInputStream(main4106));
 
 
@@ -1949,7 +1949,7 @@ final class TestPOIFSStream {
                                         try (POIFSFileSystem fs9 = writeOutAndReadBack(fs8)) {
 
                                             root = fs9.getRoot();
-                                            testDir = (DirectoryEntry) root.getEntry("Testing 123");
+                                            testDir = (DirectoryEntry) root.getEntryCaseInsensitive("Testing 123");
 
                                             assertEquals(5, root.getEntryCount());
                                             assertThat(root.getEntryNames(), hasItem("Thumbnail"));
@@ -1965,9 +1965,9 @@ final class TestPOIFSStream {
                                             assertThat(testDir.getEntryNames(), hasItem("Testing 789"));
                                             assertThat(testDir.getEntryNames(), hasItem("Testing ABC"));
 
-                                            assertContentsMatches(mini, (DocumentEntry) testDir.getEntry("Mini2"));
-                                            assertContentsMatches(mini3, (DocumentEntry) testDir.getEntry("Mini3"));
-                                            assertContentsMatches(main4106, (DocumentEntry) testDir.getEntry("Normal4096"));
+                                            assertContentsMatches(mini, (DocumentEntry) testDir.getEntryCaseInsensitive("Mini2"));
+                                            assertContentsMatches(mini3, (DocumentEntry) testDir.getEntryCaseInsensitive("Mini3"));
+                                            assertContentsMatches(main4106, (DocumentEntry) testDir.getEntryCaseInsensitive("Normal4096"));
                                         }
                                     }
                                 }
@@ -2125,6 +2125,7 @@ final class TestPOIFSStream {
                 // Check the header has the right points in it
                 assertEquals(1, header.getBATCount());
                 assertEquals(1, header.getBATArray()[0]);
+                assertEquals(0, header.getPropertyCount());
                 assertEquals(0, header.getPropertyStart());
                 assertEquals(1, header.getSBATCount());
                 assertEquals(21, header.getSBATStart());
@@ -2165,22 +2166,22 @@ final class TestPOIFSStream {
 
                 // Check some data
                 assertEquals(1, fs5.getRoot().getEntryCount());
-                testDir = (DirectoryEntry) fs5.getRoot().getEntry("Test Directory");
+                testDir = (DirectoryEntry) fs5.getRoot().getEntryCaseInsensitive("Test Directory");
                 assertEquals(3, testDir.getEntryCount());
 
-                DocumentEntry miniDoc = (DocumentEntry) testDir.getEntry("Mini");
+                DocumentEntry miniDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Mini");
                 assertContentsMatches(mini, miniDoc);
 
-                DocumentEntry normDoc = (DocumentEntry) testDir.getEntry("Normal4096");
+                DocumentEntry normDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Normal4096");
                 assertContentsMatches(main4096, normDoc);
 
-                normDoc = (DocumentEntry) testDir.getEntry("Normal5124");
+                normDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Normal5124");
                 assertContentsMatches(main5124, normDoc);
 
 
                 // Delete a couple of streams
-                miniDoc.delete();
-                normDoc.delete();
+                assertTrue(miniDoc.delete());
+                assertTrue(normDoc.delete());
 
 
                 // Check - will have un-used sectors now
@@ -2235,6 +2236,7 @@ final class TestPOIFSStream {
             // Will have fat then properties stream
             assertEquals(1, hdr.getBATCount());
             assertEquals(1, hdr.getBATArray()[0]);
+            assertEquals(0, hdr.getPropertyCount());
             assertEquals(0, hdr.getPropertyStart());
             assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getSBATStart());
             assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getXBATIndex());
@@ -2278,10 +2280,10 @@ final class TestPOIFSStream {
 
 
             // Check that we can read the right data pre-write
-            DocumentEntry miniDoc = (DocumentEntry) testDir.getEntry("Mini");
+            DocumentEntry miniDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Mini");
             assertContentsMatches(mini, miniDoc);
 
-            DocumentEntry normDoc = (DocumentEntry) testDir.getEntry("Normal4096");
+            DocumentEntry normDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Normal4096");
             assertContentsMatches(main4096, normDoc);
 
 
@@ -2293,6 +2295,7 @@ final class TestPOIFSStream {
                 assertEquals(1, hdr.getBATCount());
                 assertEquals(1, hdr.getBATArray()[0]);
                 assertEquals(2, hdr.getSBATStart());
+                assertEquals(0, hdr.getPropertyCount());
                 assertEquals(0, hdr.getPropertyStart());
                 assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getXBATIndex());
 
@@ -2319,16 +2322,16 @@ final class TestPOIFSStream {
                 DirectoryEntry fsRoot = fs2.getRoot();
                 assertEquals(1, fsRoot.getEntryCount());
 
-                parentDir = (DirectoryEntry) fsRoot.getEntry("Parent Directory");
+                parentDir = (DirectoryEntry) fsRoot.getEntryCaseInsensitive("Parent Directory");
                 assertEquals(1, parentDir.getEntryCount());
 
-                testDir = (DirectoryEntry) parentDir.getEntry("Test Directory");
+                testDir = (DirectoryEntry) parentDir.getEntryCaseInsensitive("Test Directory");
                 assertEquals(2, testDir.getEntryCount());
 
-                miniDoc = (DocumentEntry) testDir.getEntry("Mini");
+                miniDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Mini");
                 assertContentsMatches(mini, miniDoc);
 
-                normDoc = (DocumentEntry) testDir.getEntry("Normal4096");
+                normDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Normal4096");
                 assertContentsMatches(main4096, normDoc);
 
 
@@ -2347,19 +2350,19 @@ final class TestPOIFSStream {
                     fsRoot = fs3.getRoot();
                     assertEquals(1, fsRoot.getEntryCount());
 
-                    parentDir = (DirectoryEntry) fsRoot.getEntry("Parent Directory");
+                    parentDir = (DirectoryEntry) fsRoot.getEntryCaseInsensitive("Parent Directory");
                     assertEquals(1, parentDir.getEntryCount());
 
-                    testDir = (DirectoryEntry) parentDir.getEntry("Test Directory");
+                    testDir = (DirectoryEntry) parentDir.getEntryCaseInsensitive("Test Directory");
                     assertEquals(4, testDir.getEntryCount());
 
-                    miniDoc = (DocumentEntry) testDir.getEntry("Mini");
+                    miniDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Mini");
                     assertContentsMatches(mini, miniDoc);
 
-                    miniDoc = (DocumentEntry) testDir.getEntry("Mini2");
+                    miniDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Mini2");
                     assertContentsMatches(mini2, miniDoc);
 
-                    normDoc = (DocumentEntry) testDir.getEntry("Normal4106");
+                    normDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Normal4106");
                     assertContentsMatches(main4106, normDoc);
                 }
             }
@@ -2372,15 +2375,15 @@ final class TestPOIFSStream {
             DirectoryNode testDir = fs.getRoot();
             assertEquals(3, testDir.getEntryCount());
 
-            DocumentEntry entry = (DocumentEntry) testDir.getEntry("test-zero-1");
+            DocumentEntry entry = (DocumentEntry) testDir.getEntryCaseInsensitive("test-zero-1");
             assertNotNull(entry);
             assertEquals(0, entry.getSize());
 
-            entry = (DocumentEntry) testDir.getEntry("test-zero-2");
+            entry = (DocumentEntry) testDir.getEntryCaseInsensitive("test-zero-2");
             assertNotNull(entry);
             assertEquals(0, entry.getSize());
 
-            entry = (DocumentEntry) testDir.getEntry("test-zero-3");
+            entry = (DocumentEntry) testDir.getEntryCaseInsensitive("test-zero-3");
             assertNotNull(entry);
             assertEquals(0, entry.getSize());
 
@@ -2419,19 +2422,19 @@ final class TestPOIFSStream {
             testDir.createDocument("empty-3", new ByteArrayInputStream(empty));
 
             // Check
-            miniDoc = (DocumentEntry) testDir.getEntry("Mini2");
+            miniDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Mini2");
             assertContentsMatches(mini2, miniDoc);
 
-            normDoc = (DocumentEntry) testDir.getEntry("Normal4106");
+            normDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Normal4106");
             assertContentsMatches(main4106, normDoc);
 
-            emptyDoc = (DocumentEntry) testDir.getEntry("empty-1");
+            emptyDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("empty-1");
             assertContentsMatches(empty, emptyDoc);
 
-            emptyDoc = (DocumentEntry) testDir.getEntry("empty-2");
+            emptyDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("empty-2");
             assertContentsMatches(empty, emptyDoc);
 
-            emptyDoc = (DocumentEntry) testDir.getEntry("empty-3");
+            emptyDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("empty-3");
             assertContentsMatches(empty, emptyDoc);
 
             // Look at the properties entry, and check the empty ones
@@ -2469,25 +2472,57 @@ final class TestPOIFSStream {
             try (POIFSFileSystem fs2 = writeOutAndReadBack(fs1)) {
                 testDir = fs2.getRoot();
 
-                miniDoc = (DocumentEntry) testDir.getEntry("Mini2");
+                miniDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Mini2");
                 assertContentsMatches(mini2, miniDoc);
 
-                normDoc = (DocumentEntry) testDir.getEntry("Normal4106");
+                normDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("Normal4106");
                 assertContentsMatches(main4106, normDoc);
 
-                emptyDoc = (DocumentEntry) testDir.getEntry("empty-1");
+                emptyDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("empty-1");
                 assertContentsMatches(empty, emptyDoc);
 
-                emptyDoc = (DocumentEntry) testDir.getEntry("empty-2");
+                emptyDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("empty-2");
                 assertContentsMatches(empty, emptyDoc);
 
-                emptyDoc = (DocumentEntry) testDir.getEntry("empty-3");
+                emptyDoc = (DocumentEntry) testDir.getEntryCaseInsensitive("empty-3");
                 assertContentsMatches(empty, emptyDoc);
 
                 // Check that a mini-stream was assigned, with one block used
                 assertEquals(3, testDir.getProperty().getStartBlock());
                 assertEquals(64, testDir.getProperty().getSize());
             }
+        }
+    }
+
+    /**
+     * Test that the property count is always 0 when writing files with a block size of 512 bytes.
+     */
+    @Test
+    void testWritePropertyCount512() throws Exception {
+        try (POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"))) {
+            assertEquals(0, fs.getHeaderBlock().getPropertyCount(), "Property count");
+
+            for (int i = 1; i <= 100; i++) {
+                fs.getRoot().createOrUpdateDocument("Entry " + i, new ByteArrayInputStream(new byte[8192]));
+            }
+
+            assertEquals(0, writeOutAndReadBack(fs).getHeaderBlock().getPropertyCount(), "Property count");
+        }
+    }
+
+    /**
+     * Test that the property count is updated when writing files with a block size of 4096 bytes.
+     */
+    @Test
+    void testWritePropertyCount4096() throws Exception {
+        try (POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"))) {
+            assertEquals(0, fs.getHeaderBlock().getPropertyCount(), "Property count");
+
+            for (int i = 1; i <= 100; i++) {
+                fs.getRoot().createOrUpdateDocument("Entry " + i, new ByteArrayInputStream(new byte[8192]));
+            }
+
+            assertEquals(5, writeOutAndReadBack(fs).getHeaderBlock().getPropertyCount(), "Property count");
         }
     }
 
@@ -2528,7 +2563,7 @@ final class TestPOIFSStream {
             assertEquals(5, src.getRoot().getEntryCount());
 
             // Grab the VBA project root
-            DirectoryEntry vbaProj = (DirectoryEntry) src.getRoot().getEntry("_VBA_PROJECT_CUR");
+            DirectoryEntry vbaProj = (DirectoryEntry) src.getRoot().getEntryCaseInsensitive("_VBA_PROJECT_CUR");
             assertEquals(3, vbaProj.getEntryCount());
             // Can't delete yet, has stuff
             assertFalse(vbaProj.delete());
@@ -2550,7 +2585,7 @@ final class TestPOIFSStream {
         DirectoryEntry dir = (DirectoryEntry) entry;
         String[] names = dir.getEntryNames().toArray(new String[dir.getEntryCount()]);
         for (String name : names) {
-            Entry ce = dir.getEntry(name);
+            Entry ce = dir.getEntryCaseInsensitive(name);
             _recursiveDeletee(ce);
         }
         assertTrue(dir.delete());
@@ -2602,7 +2637,7 @@ final class TestPOIFSStream {
         // Extend it past the 2gb mark
         try (POIFSFileSystem fs = new POIFSFileSystem(big, false)) {
             for (int i = 0; i < 19; i++) {
-                entry = (DocumentEntry) fs.getRoot().getEntry("Entry" + i);
+                entry = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("Entry" + i);
                 assertNotNull(entry);
                 assertEquals(s100mb, entry.getSize());
             }
@@ -2614,11 +2649,11 @@ final class TestPOIFSStream {
         // Check it still works
         try (POIFSFileSystem fs = new POIFSFileSystem(big, false)) {
             for (int i = 0; i < 19; i++) {
-                entry = (DocumentEntry) fs.getRoot().getEntry("Entry" + i);
+                entry = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("Entry" + i);
                 assertNotNull(entry);
                 assertEquals(s100mb, entry.getSize());
             }
-            entry = (DocumentEntry) fs.getRoot().getEntry("Bigger");
+            entry = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("Bigger");
             assertNotNull(entry);
             assertEquals(s512mb, entry.getSize());
         }
@@ -2637,7 +2672,7 @@ final class TestPOIFSStream {
         // Read it
         try (POIFSFileSystem fs = new POIFSFileSystem(big, false)) {
             for (int i = 0; i < 4; i++) {
-                entry = (DocumentEntry) fs.getRoot().getEntry("Entry" + i);
+                entry = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("Entry" + i);
                 assertNotNull(entry);
                 assertEquals(s512mb, entry.getSize());
             }
@@ -2650,7 +2685,7 @@ final class TestPOIFSStream {
         // Check it worked
         try (POIFSFileSystem fs = new POIFSFileSystem(big, false)) {
             for (int i = 0; i < 5; i++) {
-                entry = (DocumentEntry) fs.getRoot().getEntry("Entry" + i);
+                entry = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("Entry" + i);
                 assertNotNull(entry);
                 assertEquals(s512mb, entry.getSize());
             }
@@ -2696,6 +2731,15 @@ final class TestPOIFSStream {
             }
             size += sz;
             return sz;
+        }
+    }
+
+    @Test
+    void testDeepData() throws IOException {
+        try (InputStream stream = POIDataSamples.getPOIFSInstance().openResourceAsStream("deep-data.bin")) {
+            IOException ex = assertThrows(IOException.class,
+                    () -> new POIFSFileSystem(stream));
+            assertEquals("Property tree too deep, likely a corrupt file", ex.getMessage());
         }
     }
 
@@ -2746,4 +2790,5 @@ final class TestPOIFSStream {
             }
         }
     }
+
 }

@@ -18,13 +18,15 @@
 package org.apache.poi.xssf.streaming;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,14 +35,13 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Spliterator;
 
-import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
@@ -98,6 +99,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * Carefully review your memory budget and compatibility needs before deciding
  * whether to enable shared strings or not.
+ *
+ * <p>To release resources used by this workbook (including disposing of the temporary
+ * files backing this workbook on disk) {@link #close} should be called directly or a
+ * try-with-resources statement should be used.</p>
  */
 public class SXSSFWorkbook implements Workbook {
     /**
@@ -108,7 +113,7 @@ public class SXSSFWorkbook implements Workbook {
      * via {@link SXSSFSheet#getRow} anymore.
      */
     public static final int DEFAULT_WINDOW_SIZE = 100;
-    private static final Logger LOG = LogManager.getLogger(SXSSFWorkbook.class);
+    private static final Logger LOG = PoiLogManager.getLogger(SXSSFWorkbook.class);
 
     protected final XSSFWorkbook _wb;
 
@@ -141,7 +146,8 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * Construct a new workbook with default row window size
      */
-    public SXSSFWorkbook(){
+    public SXSSFWorkbook()
+    {
         this(null /*workbook*/);
     }
 
@@ -180,7 +186,7 @@ public class SXSSFWorkbook implements Workbook {
      *
      * @param workbook  the template workbook
      */
-    public SXSSFWorkbook(XSSFWorkbook workbook){
+    public SXSSFWorkbook(XSSFWorkbook workbook) {
         this(workbook, DEFAULT_WINDOW_SIZE);
     }
 
@@ -205,7 +211,7 @@ public class SXSSFWorkbook implements Workbook {
      *
      * @param rowAccessWindowSize the number of rows that are kept in memory until flushed out, see above.
      */
-    public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize){
+    public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize) {
         this(workbook, rowAccessWindowSize, false);
     }
 
@@ -292,7 +298,7 @@ public class SXSSFWorkbook implements Workbook {
      *
      * @param rowAccessWindowSize the number of rows that are kept in memory until flushed out, see above.
      */
-    public SXSSFWorkbook(int rowAccessWindowSize){
+    public SXSSFWorkbook(int rowAccessWindowSize) {
         this(null /*workbook*/, rowAccessWindowSize);
     }
 
@@ -384,24 +390,20 @@ public class SXSSFWorkbook implements Workbook {
         return new SheetDataWriter(_sharedStringSource);
     }
 
-    XSSFSheet getXSSFSheet(SXSSFSheet sheet)
-    {
+    XSSFSheet getXSSFSheet(SXSSFSheet sheet) {
         return _sxFromXHash.get(sheet);
     }
 
-    SXSSFSheet getSXSSFSheet(XSSFSheet sheet)
-    {
+    SXSSFSheet getSXSSFSheet(XSSFSheet sheet) {
         return _xFromSxHash.get(sheet);
     }
 
-    void registerSheetMapping(SXSSFSheet sxSheet,XSSFSheet xSheet)
-    {
+    void registerSheetMapping(SXSSFSheet sxSheet,XSSFSheet xSheet) {
         _sxFromXHash.put(sxSheet,xSheet);
         _xFromSxHash.put(xSheet,sxSheet);
     }
 
-    void deregisterSheetMapping(XSSFSheet xSheet)
-    {
+    void deregisterSheetMapping(XSSFSheet xSheet) {
         SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
         if (sxSheet != null) {
             // ensure that the writer is closed in all cases to not have lingering writers
@@ -411,10 +413,8 @@ public class SXSSFWorkbook implements Workbook {
         }
     }
 
-    protected XSSFSheet getSheetFromZipEntryName(String sheetRef)
-    {
-        for(XSSFSheet sheet : _sxFromXHash.values())
-        {
+    protected XSSFSheet getSheetFromZipEntryName(String sheetRef) {
+        for(XSSFSheet sheet : _sxFromXHash.values()) {
             if(sheetRef.equals(sheet.getPackagePart().getPartName().getName().substring(1))) {
                 return sheet;
             }
@@ -423,7 +423,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException {
-        ArchiveOutputStream zos = createArchiveOutputStream(out);
+        ZipArchiveOutputStream zos = createArchiveOutputStream(out);
         try {
             Enumeration<? extends ZipArchiveEntry> en = zipEntrySource.getEntries();
             while (en.hasMoreElements()) {
@@ -477,31 +477,25 @@ public class SXSSFWorkbook implements Workbook {
 
     // private static void copyStreamAndInjectWorksheet(InputStream in, OutputStream out, InputStream worksheetData) throws IOException {
     private static void copyStreamAndInjectWorksheet(InputStream in, OutputStream out, ISheetInjector sheetInjector) throws IOException {
-        InputStreamReader inReader = new InputStreamReader(in, StandardCharsets.UTF_8);
-        OutputStreamWriter outWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+        Reader inReader = new InputStreamReader(in, StandardCharsets.UTF_8);
+        Writer outWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         boolean needsStartTag = true;
         int c;
         int pos=0;
         String s="<sheetData";
         int n=s.length();
         //Copy from "in" to "out" up to the string "<sheetData/>" or "</sheetData>" (excluding).
-        while(((c=inReader.read())!=-1))
-        {
-            if(c==s.charAt(pos))
-            {
+        while(((c=inReader.read())!=-1)) {
+            if(c==s.charAt(pos)) {
                 pos++;
-                if(pos==n)
-                {
-                    if ("<sheetData".equals(s))
-                    {
+                if(pos==n) {
+                    if ("<sheetData".equals(s)) {
                         c = inReader.read();
-                        if (c == -1)
-                        {
+                        if (c == -1) {
                             outWriter.write(s);
                             break;
                         }
-                        if (c == '>')
-                        {
+                        if (c == '>') {
                             // Found <sheetData>
                             outWriter.write(s);
                             outWriter.write(c);
@@ -511,17 +505,14 @@ public class SXSSFWorkbook implements Workbook {
                             needsStartTag = false;
                             continue;
                         }
-                        if (c == '/')
-                        {
+                        if (c == '/') {
                             // Found <sheetData/
                             c = inReader.read();
-                            if (c == -1)
-                            {
+                            if (c == -1) {
                                 outWriter.write(s);
                                 break;
                             }
-                            if (c == '>')
-                            {
+                            if (c == '>') {
                                 // Found <sheetData/>
                                 break;
                             }
@@ -538,33 +529,25 @@ public class SXSSFWorkbook implements Workbook {
                         outWriter.write(c);
                         pos = 0;
                         continue;
-                    }
-                    else
-                    {
+                    } else {
                         // Found </sheetData>
                         break;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 if(pos>0) {
                     outWriter.write(s,0,pos);
                 }
-                if(c==s.charAt(0))
-                {
+                if(c==s.charAt(0)) {
                     pos=1;
-                }
-                else
-                {
+                } else {
                     outWriter.write(c);
                     pos=0;
                 }
             }
         }
         outWriter.flush();
-        if (needsStartTag)
-        {
+        if (needsStartTag) {
             outWriter.write("<sheetData>\n");
             outWriter.flush();
         }
@@ -578,8 +561,7 @@ public class SXSSFWorkbook implements Workbook {
         outWriter.flush();
     }
 
-    public XSSFWorkbook getXSSFWorkbook()
-    {
+    public XSSFWorkbook getXSSFWorkbook() {
         return _wb;
     }
 
@@ -593,8 +575,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return the index of the active sheet (0-based)
      */
     @Override
-    public int getActiveSheetIndex()
-    {
+    public int getActiveSheetIndex() {
         return _wb.getActiveSheetIndex();
     }
 
@@ -606,8 +587,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param sheetIndex index of the active sheet (0-based)
      */
     @Override
-    public void setActiveSheet(int sheetIndex)
-    {
+    public void setActiveSheet(int sheetIndex) {
         _wb.setActiveSheet(sheetIndex);
     }
 
@@ -617,8 +597,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return the first tab that to display in the list of tabs (0-based).
      */
     @Override
-    public int getFirstVisibleTab()
-    {
+    public int getFirstVisibleTab() {
         return _wb.getFirstVisibleTab();
     }
 
@@ -628,8 +607,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param sheetIndex the first tab that to display in the list of tabs (0-based)
      */
     @Override
-    public void setFirstVisibleTab(int sheetIndex)
-    {
+    public void setFirstVisibleTab(int sheetIndex) {
         _wb.setFirstVisibleTab(sheetIndex);
     }
 
@@ -640,8 +618,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param pos the position that we want to insert the sheet into (0 based)
      */
     @Override
-    public void setSheetOrder(String sheetname, int pos)
-    {
+    public void setSheetOrder(String sheetname, int pos) {
         _wb.setSheetOrder(sheetname,pos);
     }
 
@@ -655,8 +632,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param index the index of the sheet to select (0 based)
      */
     @Override
-    public void setSelectedTab(int index)
-    {
+    public void setSelectedTab(int index) {
         _wb.setSelectedTab(index);
     }
 
@@ -667,8 +643,7 @@ public class SXSSFWorkbook implements Workbook {
      * @throws IllegalArgumentException if the name is greater than 31 chars or contains <code>/\?*[]</code>
      */
     @Override
-    public void setSheetName(int sheet, String name)
-    {
+    public void setSheetName(int sheet, String name) {
         _wb.setSheetName(sheet,name);
     }
 
@@ -679,8 +654,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return Sheet name
      */
     @Override
-    public String getSheetName(int sheet)
-    {
+    public String getSheetName(int sheet) {
         return _wb.getSheetName(sheet);
     }
 
@@ -691,8 +665,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return index of the sheet (0 based)
      */
     @Override
-    public int getSheetIndex(String name)
-    {
+    public int getSheetIndex(String name) {
         return _wb.getSheetIndex(name);
     }
 
@@ -703,8 +676,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return index of the sheet (0 based)
      */
     @Override
-    public int getSheetIndex(Sheet sheet)
-    {
+    public int getSheetIndex(Sheet sheet) {
         return _wb.getSheetIndex(getXSSFSheet((SXSSFSheet)sheet));
     }
 
@@ -715,8 +687,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return Sheet representing the new sheet.
      */
     @Override
-    public SXSSFSheet createSheet()
-    {
+    public SXSSFSheet createSheet() {
         return createAndRegisterSXSSFSheet(_wb.createSheet());
     }
 
@@ -725,7 +696,7 @@ public class SXSSFWorkbook implements Workbook {
         try {
             sxSheet = new SXSSFSheet(this,xSheet);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
+            throw new IllegalStateException(ioe);
         }
         registerSheetMapping(sxSheet,xSheet);
         return sxSheet;
@@ -740,8 +711,7 @@ public class SXSSFWorkbook implements Workbook {
      * @throws IllegalArgumentException if the name is greater than 31 chars or contains <code>/\?*[]</code>
      */
     @Override
-    public SXSSFSheet createSheet(String sheetname)
-    {
+    public SXSSFSheet createSheet(String sheetname) {
         return createAndRegisterSXSSFSheet(_wb.createSheet(sheetname));
     }
 
@@ -755,7 +725,7 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     @NotImplemented
     public Sheet cloneSheet(int sheetNum) {
-        throw new RuntimeException("Not Implemented");
+        throw new IllegalStateException("Not Implemented");
     }
 
 
@@ -765,8 +735,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return the number of sheets
      */
     @Override
-    public int getNumberOfSheets()
-    {
+    public int getNumberOfSheets() {
         return _wb.getNumberOfSheets();
     }
 
@@ -814,6 +783,8 @@ public class SXSSFWorkbook implements Workbook {
          * Unexpected behavior may occur if sheets are reordered after iterator
          * has been created. Support for the remove method may be added in the future
          * if someone can figure out a reliable implementation.
+         *
+         * @throws UnsupportedOperationException Always thrown in this implementation
          */
         @Override
         public void remove() throws IllegalStateException {
@@ -829,20 +800,21 @@ public class SXSSFWorkbook implements Workbook {
      * @return Sheet at the provided index
      */
     @Override
-    public SXSSFSheet getSheetAt(int index)
-    {
+    public SXSSFSheet getSheetAt(int index) {
         return getSXSSFSheet(_wb.getSheetAt(index));
     }
 
     /**
      * Get sheet with the given name
      *
+     * If there are multiple matches, the first sheet from the list
+     * of sheets is returned.
+     *
      * @param name of the sheet
      * @return Sheet with the name provided or <code>null</code> if it does not exist
      */
     @Override
-    public SXSSFSheet getSheet(String name)
-    {
+    public SXSSFSheet getSheet(String name) {
         return getSXSSFSheet(_wb.getSheet(name));
     }
 
@@ -852,8 +824,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param index of the sheet to remove (0-based)
      */
     @Override
-    public void removeSheetAt(int index)
-    {
+    public void removeSheetAt(int index) {
         // Get the sheet to be removed
         XSSFSheet xSheet = _wb.getSheetAt(index);
         SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
@@ -876,8 +847,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return new font object
      */
     @Override
-    public Font createFont()
-    {
+    public Font createFont() {
         return _wb.createFont();
     }
 
@@ -887,8 +857,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return the font with the matched attributes or <code>null</code>
      */
     @Override
-    public Font findFont(boolean bold, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline)
-    {
+    public Font findFont(boolean bold, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
         return _wb.findFont(bold, color, fontHeight, name, italic, strikeout, typeOffset, underline);
     }
 
@@ -900,14 +869,12 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     @Deprecated
     @Removal(version = "6.0.0")
-    public int getNumberOfFontsAsInt()
-    {
+    public int getNumberOfFontsAsInt() {
         return getNumberOfFonts();
     }
 
     @Override
-    public Font getFontAt(int idx)
-    {
+    public Font getFontAt(int idx) {
         return _wb.getFontAt(idx);
     }
 
@@ -917,8 +884,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return the new Cell Style object
      */
     @Override
-    public CellStyle createCellStyle()
-    {
+    public CellStyle createCellStyle() {
         return _wb.createCellStyle();
     }
 
@@ -928,8 +894,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return count of cell styles
      */
     @Override
-    public int getNumCellStyles()
-    {
+    public int getNumCellStyles() {
         return _wb.getNumCellStyles();
     }
 
@@ -940,14 +905,14 @@ public class SXSSFWorkbook implements Workbook {
      * @return CellStyle object at the index
      */
     @Override
-    public CellStyle getCellStyleAt(int idx)
-    {
+    public CellStyle getCellStyleAt(int idx) {
         return _wb.getCellStyleAt(idx);
     }
 
     /**
-     * Closes the underlying {@link XSSFWorkbook} and {@link OPCPackage}
-     *  on which this Workbook is based, if any.
+     * Disposes of the temporary files backing this workbook on disk and closes the
+     * underlying {@link XSSFWorkbook} and {@link OPCPackage} on which this Workbook is
+     * based, if any.
      *
      * <p>Once this has been called, no further
      *  operations, updates or reads should be performed on the
@@ -956,8 +921,7 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     public void close() throws IOException {
         // ensure that any lingering writer is closed
-        for (SXSSFSheet sheet : _xFromSxHash.values())
-        {
+        for (SXSSFSheet sheet : _xFromSxHash.values()) {
             try {
                 SheetDataWriter _writer = sheet.getSheetDataWriter();
                 if (_writer != null) _writer.close();
@@ -966,6 +930,8 @@ public class SXSSFWorkbook implements Workbook {
             }
         }
 
+        // Dispose of any temporary files backing this workbook on disk
+        dispose();
 
         // Tell the base workbook to close, does nothing if
         //  it's a newly created one
@@ -986,7 +952,7 @@ public class SXSSFWorkbook implements Workbook {
         File tmplFile = TempFile.createTempFile("poi-sxssf-template", ".xlsx");
         boolean deleted;
         try {
-            try (FileOutputStream os = new FileOutputStream(tmplFile)) {
+            try (OutputStream os = Files.newOutputStream(tmplFile.toPath())) {
                 _wb.write(os);
             }
 
@@ -1019,14 +985,15 @@ public class SXSSFWorkbook implements Workbook {
         flushSheets();
 
         //Save the template
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             _wb.write(bos);
 
             //Substitute the template entries with the generated sheet data files
             try (
                     InputStream is = bos.toInputStream();
+                    ZipArchiveInputStream zis = new ZipArchiveInputStream(is);
                     ZipInputStreamZipEntrySource source = new ZipInputStreamZipEntrySource(
-                        new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(is)))
+                        new ZipArchiveThresholdInputStream(zis))
             ) {
                 injectData(source, stream);
             }
@@ -1043,13 +1010,17 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * Dispose of temporary files backing this workbook on disk.
      * Calling this method will render the workbook unusable.
+     *
+     * <p>The {@link #close()} method will also dispose of the temporary files so
+     * explicitly calling this method is unnecessary if the workbook will get closed.</p>
+     *
      * @return true if all temporary files were deleted successfully.
+     * @deprecated use {@link #close()} to close the workbook instead which also disposes of the temporary files
      */
-    public boolean dispose()
-    {
+    @Deprecated
+    public boolean dispose() {
         boolean success = true;
-        for (SXSSFSheet sheet : _sxFromXHash.keySet())
-        {
+        for (SXSSFSheet sheet : _sxFromXHash.keySet()) {
             try {
                 success = sheet.dispose() && success;
             } catch (IOException e) {
@@ -1064,8 +1035,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return the total number of defined names in this workbook
      */
     @Override
-    public int getNumberOfNames()
-    {
+    public int getNumberOfNames() {
         return _wb.getNumberOfNames();
     }
 
@@ -1074,8 +1044,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return the defined name with the specified name. <code>null</code> if not found.
      */
     @Override
-    public Name getName(String name)
-    {
+    public Name getName(String name) {
         return _wb.getName(name);
     }
 
@@ -1096,8 +1065,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return all defined names
      */
     @Override
-    public List<? extends Name> getAllNames()
-    {
+    public List<? extends Name> getAllNames() {
         return _wb.getAllNames();
     }
 
@@ -1107,8 +1075,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return new defined name object
      */
     @Override
-    public Name createName()
-    {
+    public Name createName() {
         return _wb.createName();
     }
 
@@ -1118,8 +1085,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param name the name to remove
      */
     @Override
-    public void removeName(Name name)
-    {
+    public void removeName(Name name) {
         _wb.removeName(name);
     }
 
@@ -1131,8 +1097,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param reference Valid name Reference for the Print Area
      */
     @Override
-    public void setPrintArea(int sheetIndex, String reference)
-    {
+    public void setPrintArea(int sheetIndex, String reference) {
         _wb.setPrintArea(sheetIndex,reference);
     }
 
@@ -1146,8 +1111,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param endRow Row to end the printarea
      */
     @Override
-    public void setPrintArea(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow)
-    {
+    public void setPrintArea(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow) {
         _wb.setPrintArea(sheetIndex, startColumn, endColumn, startRow, endRow);
     }
 
@@ -1159,8 +1123,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return String Null if no print area has been defined
      */
     @Override
-    public String getPrintArea(int sheetIndex)
-    {
+    public String getPrintArea(int sheetIndex) {
         return _wb.getPrintArea(sheetIndex);
     }
 
@@ -1170,8 +1133,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param sheetIndex Zero-based sheet index (0 = First Sheet)
      */
     @Override
-    public void removePrintArea(int sheetIndex)
-    {
+    public void removePrintArea(int sheetIndex) {
         _wb.removePrintArea(sheetIndex);
     }
 
@@ -1184,8 +1146,7 @@ public class SXSSFWorkbook implements Workbook {
      * </p>
      */
     @Override
-    public MissingCellPolicy getMissingCellPolicy()
-    {
+    public MissingCellPolicy getMissingCellPolicy() {
         return _wb.getMissingCellPolicy();
     }
 
@@ -1198,8 +1159,7 @@ public class SXSSFWorkbook implements Workbook {
      *  {@link MissingCellPolicy}
      */
     @Override
-    public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy)
-    {
+    public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
         _wb.setMissingCellPolicy(missingCellPolicy);
     }
 
@@ -1209,8 +1169,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return the DataFormat object
      */
     @Override
-    public DataFormat createDataFormat()
-    {
+    public DataFormat createDataFormat() {
         return _wb.createDataFormat();
     }
 
@@ -1229,8 +1188,7 @@ public class SXSSFWorkbook implements Workbook {
      * @see #PICTURE_TYPE_DIB
      */
     @Override
-    public int addPicture(byte[] pictureData, int format)
-    {
+    public int addPicture(byte[] pictureData, int format) {
         return _wb.addPicture(pictureData,format);
     }
 
@@ -1240,8 +1198,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return the list of pictures (a list of {@link PictureData} objects.)
      */
     @Override
-    public List<? extends PictureData> getAllPictures()
-    {
+    public List<? extends PictureData> getAllPictures() {
         return _wb.getAllPictures();
     }
 
@@ -1261,27 +1218,23 @@ public class SXSSFWorkbook implements Workbook {
 
     @Override
     @NotImplemented("XSSFWorkbook#isHidden is not implemented")
-    public boolean isHidden()
-    {
+    public boolean isHidden() {
         return _wb.isHidden();
     }
 
     @Override
     @NotImplemented("XSSFWorkbook#setHidden is not implemented")
-    public void setHidden(boolean hiddenFlag)
-    {
+    public void setHidden(boolean hiddenFlag) {
         _wb.setHidden(hiddenFlag);
     }
 
     @Override
-    public boolean isSheetHidden(int sheetIx)
-    {
+    public boolean isSheetHidden(int sheetIx) {
         return _wb.isSheetHidden(sheetIx);
     }
 
     @Override
-    public boolean isSheetVeryHidden(int sheetIx)
-    {
+    public boolean isSheetVeryHidden(int sheetIx) {
         return _wb.isSheetVeryHidden(sheetIx);
     }
 
@@ -1291,8 +1244,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     @Override
-    public void setSheetHidden(int sheetIx, boolean hidden)
-    {
+    public void setSheetHidden(int sheetIx, boolean hidden) {
         _wb.setSheetHidden(sheetIx,hidden);
     }
 
@@ -1314,12 +1266,12 @@ public class SXSSFWorkbook implements Workbook {
      * @param name The name the workbook will be referenced as in formulas
      * @param workbook The open workbook to fetch the link required information from
      *
-     * @throws RuntimeException stating that this method is not implemented yet.
+     * @throws IllegalStateException stating that this method is not implemented yet.
      */
     @Override
     @NotImplemented
     public int linkExternalWorkbook(String name, Workbook workbook) {
-        throw new RuntimeException("Not Implemented");
+        throw new IllegalStateException("Not Implemented");
     }
 
     /**
@@ -1328,8 +1280,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param toolpack the toolpack to register
      */
     @Override
-    public void addToolPack(UDFFinder toolpack)
-    {
+    public void addToolPack(UDFFinder toolpack) {
         _wb.addToolPack(toolpack);
     }
 
@@ -1346,7 +1297,7 @@ public class SXSSFWorkbook implements Workbook {
      * @since 3.8
      */
     @Override
-    public void setForceFormulaRecalculation(boolean value){
+    public void setForceFormulaRecalculation(boolean value) {
         _wb.setForceFormulaRecalculation(value);
     }
 
@@ -1354,12 +1305,12 @@ public class SXSSFWorkbook implements Workbook {
      * Whether Excel will be asked to recalculate all formulas when the  workbook is opened.
      */
     @Override
-    public boolean getForceFormulaRecalculation(){
+    public boolean getForceFormulaRecalculation() {
         return _wb.getForceFormulaRecalculation();
     }
 
     /**
-     * Returns the spreadsheet version (EXCLE2007) of this workbook
+     * Returns the spreadsheet version (EXCEL2007) of this workbook
      *
      * @return EXCEL2007 SpreadsheetVersion enum
      * @since 3.14 beta 2

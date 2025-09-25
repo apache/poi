@@ -35,6 +35,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Removal;
 
@@ -43,21 +44,32 @@ import org.apache.poi.util.Removal;
  */
 public final class PackageHelper {
 
-    public static OPCPackage open(InputStream is) throws IOException {
-        return open(is, false);
+    /**
+     * @param stream The InputStream to read from - which is closed when it is read
+     * @return OPCPackage
+     * @throws IOException If reading data from the stream fails
+     * @throws POIXMLException If the stream is not a valid OPC package
+     */
+    public static OPCPackage open(InputStream stream) throws IOException {
+        return open(stream, true);
     }
 
     /**
      * @param stream The InputStream to read from
-     * @param closeStream whether to close the stream (default is false)
-     * @since POI 5.2.0
+     * @param closeStream whether to close the stream
      * @return OPCPackage
      * @throws IOException If reading data from the stream fails
+     * @throws POIXMLException If the stream is not a valid OPC package
+     * @since POI 5.2.0
      */
     public static OPCPackage open(InputStream stream, boolean closeStream) throws IOException {
         try {
-            return OPCPackage.open(stream);
-        } catch (InvalidFormatException e){
+            return OPCPackage.open(stream, closeStream);
+        } catch (InvalidFormatException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof InvalidZipException) {
+                throw (InvalidZipException) cause;
+            }
             throw new POIXMLException(e);
         } finally {
             if (closeStream) {

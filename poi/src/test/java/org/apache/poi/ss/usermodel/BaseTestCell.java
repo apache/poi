@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,6 +48,8 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -56,6 +59,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("deprecation")
 public abstract class BaseTestCell {
 
+    protected static TimeZone userTimeZone;
     protected final ITestDataProvider _testDataProvider;
 
     /**
@@ -63,6 +67,19 @@ public abstract class BaseTestCell {
      */
     protected BaseTestCell(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;
+    }
+
+    @BeforeAll
+    public static void setTimeZone() {
+        userTimeZone = LocaleUtil.getUserTimeZone();
+        LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
+        LocaleUtil.setUserLocale(Locale.US);
+    }
+
+    @AfterAll
+    public static void resetTimeZone() {
+        LocaleUtil.setUserTimeZone(userTimeZone);
+        LocaleUtil.setUserLocale(Locale.ROOT);
     }
 
     @Test
@@ -348,6 +365,9 @@ public abstract class BaseTestCell {
             dateStyle.setDataFormat(formatId);
             r.getCell(7).setCellStyle(dateStyle);
 
+            // null rich text
+            r.createCell(8).setCellValue(factory.createRichTextString(null)); // blank
+
             assertEquals("FALSE", r.getCell(0).toString(), "Boolean");
             assertEquals("TRUE", r.getCell(1).toString(), "Boolean");
             assertEquals("1.5", r.getCell(2).toString(), "Numeric");
@@ -357,9 +377,8 @@ public abstract class BaseTestCell {
             assertEquals("", r.getCell(6).toString(), "Blank");
             // toString on a date-formatted cell displays dates as dd-MMM-yyyy, which has locale problems with the month
             String dateCell1 = r.getCell(7).toString();
-            assertTrue(dateCell1.startsWith("02-"), "Date (Day)");
-            assertTrue(dateCell1.endsWith("-2010"), "Date (Year)");
-
+            assertEquals("2/2/10 0:00", dateCell1);
+            assertEquals("", r.getCell(8).toString(), "Blank");
 
             //Write out the file, read it in, and then check cell values
             try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
@@ -373,6 +392,7 @@ public abstract class BaseTestCell {
                 assertEquals("", r.getCell(6).toString(), "Blank");
                 String dateCell2 = r.getCell(7).toString();
                 assertEquals(dateCell1, dateCell2, "Date");
+                assertEquals("", r.getCell(8).toString(), "Blank");
             }
         }
     }
@@ -844,7 +864,7 @@ public abstract class BaseTestCell {
             Cell cell = row.createCell(0);
 
             // different default style indexes for HSSF and XSSF/SXSSF
-            CellStyle defaultStyle = wb.getCellStyleAt(wb instanceof HSSFWorkbook ? (short) 15 : (short) 0);
+            CellStyle defaultStyle = wb.getCellStyleAt(wb instanceof HSSFWorkbook ? 15 : 0);
 
             // Starts out with the default style
             assertEquals(defaultStyle, cell.getCellStyle());
@@ -1408,7 +1428,28 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() throws IOException {
+    void testZeroDate() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cellA1 = getInstance(wb);
+            cellA1.setCellValue(1.0);
+            assertEquals(LocalDate.parse("1900-01-01"),
+                    cellA1.getLocalDateTimeCellValue().toLocalDate());
+
+            cellA1.setCellValue(0.0);
+            // this value is not strictly correct but our time only support relies on this
+            // time only means cells that have values with just times but no date parts
+            assertEquals(LocalDate.parse("1899-12-31"),
+                    cellA1.getLocalDateTimeCellValue().toLocalDate());
+
+            cellA1.setCellValue(0.5);
+            assertEquals(LocalTime.parse("12:00"),
+                    cellA1.getLocalDateTimeCellValue().toLocalTime());
+
+        }
+    }
+
+    @Test
+    protected void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
             cell.getSheet().setArrayFormula("3", CellRangeAddress.valueOf("A1:A2"));
@@ -1430,6 +1471,36 @@ public abstract class BaseTestCell {
         cell.setBlank();
 
         verify(cell).setBlank();
+    }
+
+    @Test
+    protected void setCellNullString() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
+
+            cell.setCellValue((String)null);
+
+            // setting string "null" leads to a BLANK cell
+            assertEquals(CellType.BLANK, cell.getCellType());
+            assertEquals("", cell.getStringCellValue());
+            assertEquals("", cell.toString());
+
+            cell.setCellType(CellType.STRING);
+
+            // forcing to string type leads to STRING cell, but still empty strings
+            assertEquals(CellType.STRING, cell.getCellType());
+            assertEquals("", cell.getStringCellValue());
+            assertEquals("", cell.toString());
+
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb)) {
+                // read first sheet, first row, first cell
+                Cell cellBack = wb2.iterator().next().iterator().next().iterator().next();
+
+                assertEquals(CellType.STRING, cell.getCellType());
+                assertEquals("", cell.getStringCellValue());
+                assertEquals("", cell.toString());
+            }
+        }
     }
 
     private Cell getInstance(Workbook wb) {

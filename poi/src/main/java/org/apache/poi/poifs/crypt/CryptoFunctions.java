@@ -252,9 +252,15 @@ public final class CryptoFunctions {
             if (cipherAlgorithm == CipherAlgorithm.rc4) {
                 cipher = Cipher.getInstance(cipherAlgorithm.jceId);
             } else if (cipherAlgorithm.needsBouncyCastle) {
+                if (chain == null) {
+                    throw new IllegalArgumentException("Did not have a chain for cipher " + cipherAlgorithm);
+                }
                 registerBouncyCastle();
                 cipher = Cipher.getInstance(cipherAlgorithm.jceId + "/" + chain.jceId + "/" + padding, "BC");
             } else {
+                if (chain == null) {
+                    throw new IllegalArgumentException("Did not have a chain for cipher " + cipherAlgorithm);
+                }
                 cipher = Cipher.getInstance(cipherAlgorithm.jceId + "/" + chain.jceId + "/" + padding);
             }
 
@@ -277,7 +283,7 @@ public final class CryptoFunctions {
 
     /**
      * Returns a new byte array with a truncated to the given size.
-     * If the hash has less then size bytes, it will be filled with 0x36-bytes
+     * If the hash has less than size bytes, it will be filled with 0x36-bytes
      *
      * @param hash the to be truncated/filled hash byte array
      * @param size the size of the returned byte array
@@ -289,7 +295,7 @@ public final class CryptoFunctions {
 
     /**
      * Returns a new byte array with a truncated to the given size.
-     * If the hash has less then size bytes, it will be filled with 0-bytes
+     * If the hash has less than size bytes, it will be filled with 0-bytes
      *
      * @param hash the to be truncated/filled hash byte array
      * @param size the size of the returned byte array
@@ -538,7 +544,11 @@ public final class CryptoFunctions {
         // The MS-OFFCRYPTO misses some infos about the various rotation sizes
         byte[] obfuscationArray = new byte[16];
         System.arraycopy(passBytes, 0, obfuscationArray, 0, passBytes.length);
-        System.arraycopy(PAD_ARRAY, 0, obfuscationArray, passBytes.length, PAD_ARRAY.length-passBytes.length+1);
+        if (passBytes.length == 0) {
+            System.arraycopy(PAD_ARRAY, 0, obfuscationArray, passBytes.length, PAD_ARRAY.length);
+        } else {
+            System.arraycopy(PAD_ARRAY, 0, obfuscationArray, passBytes.length, PAD_ARRAY.length - passBytes.length + 1);
+        }
 
         int xorKey = createXorKey1(password);
 
@@ -560,7 +570,7 @@ public final class CryptoFunctions {
      * @param password the password
      * @return the ansi bytes
      *
-     * @see <a href="http://www.ecma-international.org/news/TC45_current_work/Office%20Open%20XML%20Part%204%20-%20Markup%20Language%20Reference.pdf">Part 4 - Markup Language Reference - Ecma International - section 3.2.29 (workbookProtection)</a>
+     * @see <a href="https://www.ecma-international.org/news/TC45_current_work/Office%20Open%20XML%20Part%204%20-%20Markup%20Language%20Reference.pdf">Part 4 - Markup Language Reference - Ecma International - section 3.2.29 (workbookProtection)</a>
      */
     private static byte[] toAnsiPassword(String password) {
         // TODO: charset conversion (see ecma spec)

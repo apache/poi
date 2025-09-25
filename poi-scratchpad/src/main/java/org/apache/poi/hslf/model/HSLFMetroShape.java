@@ -20,8 +20,8 @@ package org.apache.poi.hslf.model;
 import java.io.IOException;
 import java.util.ServiceLoader;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherPropertyTypes;
@@ -42,7 +42,7 @@ public class HSLFMetroShape<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>
 > {
-    private static final Logger LOGGER = LogManager.getLogger(HSLFMetroShape.class);
+    private static final Logger LOGGER = PoiLogManager.getLogger(HSLFMetroShape.class);
 
     private final HSLFShape shape;
 

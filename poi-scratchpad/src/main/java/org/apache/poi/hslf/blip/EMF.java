@@ -69,9 +69,9 @@ public final class EMF extends Metafile {
         header.read(rawdata, CHECKSUM_SIZE);
 
         try (
-                InputStream is = new UnsynchronizedByteArrayInputStream(rawdata);
+                InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(rawdata).get();
                 InflaterInputStream inflater = new InflaterInputStream(is);
-                UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             long len = IOUtils.skipFully(is,header.getSize() + (long)CHECKSUM_SIZE);
             assert(len == header.getSize() + CHECKSUM_SIZE);

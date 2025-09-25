@@ -111,7 +111,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
             partURI = new URI(partName);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(
-                    "partName argmument is not a valid OPC part name !");
+                    "partName argument is not a valid OPC part name !");
         }
 
         if (checkConformance) {
@@ -139,7 +139,8 @@ public final class PackagePartName implements Comparable<PackagePartName> {
             throw new IllegalArgumentException("partUri");
         }
 
-        return partUri.getPath().matches(
+        final String uriPath = partUri.getPath();
+        return uriPath != null && uriPath.matches(
                 "^.*/" + PackagingURIHelper.RELATIONSHIP_PART_SEGMENT_NAME + "/.*\\"
                         + PackagingURIHelper.RELATIONSHIP_PART_EXTENSION_NAME
                         + "$");
@@ -201,7 +202,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
         }
 
         String uriPath = partURI.getPath();
-        if (uriPath.length() == 0
+        if (uriPath == null || uriPath.isEmpty()
                 || ((uriPath.length() == 1) && (uriPath.charAt(0) == PackagingURIHelper.FORWARD_SLASH_CHAR))) {
             throw new InvalidFormatException(
                     "A part name shall not be empty [M1.1]: "
@@ -355,7 +356,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
     private static void throwExceptionIfPartNameNotStartsWithForwardSlashChar(
             URI partUri) throws InvalidFormatException {
         String uriPath = partUri.getPath();
-        if (uriPath.length() > 0
+        if (!uriPath.isEmpty()
                 && uriPath.charAt(0) != PackagingURIHelper.FORWARD_SLASH_CHAR) {
             throw new InvalidFormatException(
                     "A part name shall start with a forward slash ('/') character [M1.4]: "
@@ -364,19 +365,19 @@ public final class PackagePartName implements Comparable<PackagePartName> {
     }
 
     /**
-     * Throws an exception if the specified part name ends with a forwar slash
+     * Throws an exception if the specified part name ends with a forward slash
      * character '/'. [M1.5]
      *
      * @param partUri
      *            The part name to check.
      * @throws InvalidFormatException
-     *             If the specified part name ends with a forwar slash character
+     *             If the specified part name ends with a forward slash character
      *             '/'.
      */
     private static void throwExceptionIfPartNameEndsWithForwardSlashChar(
             URI partUri) throws InvalidFormatException {
         String uriPath = partUri.getPath();
-        if (uriPath.length() > 0
+        if (!uriPath.isEmpty()
                 && uriPath.charAt(uriPath.length() - 1) == PackagingURIHelper.FORWARD_SLASH_CHAR) {
             throw new InvalidFormatException(
                     "A part name shall not have a forward slash as the last character [M1.5]: "
@@ -421,7 +422,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
      */
     public String getExtension() {
         String fragment = this.partNameURI.getPath();
-        if (fragment.length() > 0) {
+        if (!fragment.isEmpty()) {
             int i = fragment.lastIndexOf('.');
             if (i > -1) {
                 return fragment.substring(i + 1);

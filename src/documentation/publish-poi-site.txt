@@ -1,0 +1,75 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+
+             ==============================
+                Publishing POI Web Site
+             ==============================
+
+The Apache POI web site is https://poi.apache.org/
+
+The HTML and other files for the web site are stored in git at https://github.com/apache/poi/tree/asf-site
+Committing files to the `publish` directory of this repo will automatically lead to the web site being updated.
+There may be a small delay and you might need to force a refresh in your browser.
+
+The site is built from using the main POI git at https://github.com/apache/poi/tree/trunk
+
+Prerequisites
+-------------
+
+You will need an up to date version of Apache Ant installed (Ant 1.10 works well).
+You also need to install Apache Forrest. Forrest is no longer maintained but PJ has a fork with a few small changes.
+This is at https://github.com/pjfanning/apache-forrest-0.9
+
+You can use the last official Apache Forrest release but you may notice some diffs when you build the site and try to
+publish it. https://forrest.apache.org/
+
+You will need to create an environment variable called FORREST_HOME and set it to match the directory location
+where you installed Apache Forrest.
+
+Building and Deploying the Site
+-------------------------------
+
+It is recommended that you open a command prompt and set up Java 8 as your default. The web site build will fail
+if you use a very recent Java version.
+
+In your local copy of the POI git (https://github.com/apache/poi/tree/trunk), run using Java 8:
+
+ant site
+
+If you use a newer version, you will get warnings and the output will have issues.
+
+After this completes, you can switch to the `asf-site` branch.
+
+The `ant site` command will have created a directory called `build/site` in your local POI git checkout.
+You can copy the files in `build/site` to the `content` directory.
+This `content` directory is where the files for the web site are stored
+and only appears in the `asf-site` branch.
+
+A command like this might work.
+
+cp -R build/site/* content/
+
+It is recommended that you use `git status` and `git diff` before committing the changes to asf-site.
+
+It is probably a good idea to check the site locally before committing the changes by opening the
+content/index.html file in a browser.
+
+Once you are happy with the changes, you can commit them to the `asf-site` branch.
+
+It is probably a good idea to merge the changes from the `trunk` branch into the `asf-site` branch as well
+but that won't affect the web site.

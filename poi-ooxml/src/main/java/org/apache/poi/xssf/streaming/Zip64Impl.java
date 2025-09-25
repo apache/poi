@@ -46,8 +46,8 @@ class Zip64Impl {
         final String filename;
         long crc;
         long size;
-        int compressedSize;
-        int offset;
+        long compressedSize;
+        long offset;
 
         Entry(String filename) {
             this.filename = filename;
@@ -128,7 +128,7 @@ class Zip64Impl {
     /**
      * Write End of central directory record (EOCD)
      */
-    int writeEND(int entriesCount, int offset, int length) throws IOException {
+    int writeEND(int entriesCount, long offset, long length) throws IOException {
         written = 0;
         writeInt(PK0506);         // "PK\005\006"
         writeShort(0);         // number of this disk
@@ -145,9 +145,10 @@ class Zip64Impl {
      * Writes a 16-bit short to the output stream in little-endian byte order.
      */
     private void writeShort(int v) throws IOException {
-        OutputStream out = this.out;
-        out.write((v >>> 0) & 0xff);
-        out.write((v >>> 8) & 0xff);
+        out.write(new byte[]{
+                        (byte) ((v >>> 0) & 0xff),
+                        (byte) ((v >>> 8) & 0xff)
+        });
         written += 2;
     }
 
@@ -155,11 +156,12 @@ class Zip64Impl {
      * Writes a 32-bit int to the output stream in little-endian byte order.
      */
     private void writeInt(long v) throws IOException {
-        OutputStream out = this.out;
-        out.write((int) ((v >>> 0) & 0xff));
-        out.write((int) ((v >>> 8) & 0xff));
-        out.write((int) ((v >>> 16) & 0xff));
-        out.write((int) ((v >>> 24) & 0xff));
+        out.write(new byte[]{
+                (byte) ((v >>> 0) & 0xff),
+                (byte) ((v >>> 8) & 0xff),
+                (byte) ((v >>> 16) & 0xff),
+                (byte) ((v >>> 24) & 0xff)
+        });
         written += 4;
     }
 
@@ -167,17 +169,17 @@ class Zip64Impl {
      * Writes a 64-bit int to the output stream in little-endian byte order.
      */
     private void writeLong(long v) throws IOException {
-        OutputStream out = this.out;
-        out.write((int) ((v >>> 0) & 0xff));
-        out.write((int) ((v >>> 8) & 0xff));
-        out.write((int) ((v >>> 16) & 0xff));
-        out.write((int) ((v >>> 24) & 0xff));
-        out.write((int) ((v >>> 32) & 0xff));
-        out.write((int) ((v >>> 40) & 0xff));
-        out.write((int) ((v >>> 48) & 0xff));
-        out.write((int) ((v >>> 56) & 0xff));
+        out.write(new byte[]{
+                (byte) ((v >>> 0) & 0xff),
+                (byte) ((v >>> 8) & 0xff),
+                (byte) ((v >>> 16) & 0xff),
+                (byte) ((v >>> 24) & 0xff),
+                (byte) ((v >>> 32) & 0xff),
+                (byte) ((v >>> 40) & 0xff),
+                (byte) ((v >>> 48) & 0xff),
+                (byte) ((v >>> 56) & 0xff)
+        });
         written += 8;
     }
 
 }
-

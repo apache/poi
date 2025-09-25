@@ -167,7 +167,7 @@ public final class NumberToTextConverter {
         NormalisedDecimal rnd = pnd.roundUnits();
         int decExponent = rnd.getDecimalExponent();
         String decimalDigits;
-        if (Math.abs(decExponent)>98) {
+        if (Math.abs(decExponent) > 98) {
             decimalDigits = rnd.getSignificantDecimalDigitsLastDigitRounded();
             if (decimalDigits.length() == 16) {
                 // rounding caused carry
@@ -176,7 +176,7 @@ public final class NumberToTextConverter {
         } else {
             decimalDigits = rnd.getSignificantDecimalDigits();
         }
-        int countSigDigits = countSignifantDigits(decimalDigits);
+        int countSigDigits = countSignificantDigits(decimalDigits);
         if (decExponent < 0) {
             formatLessThanOne(sb, decimalDigits, decExponent, countSigDigits);
         } else {
@@ -236,12 +236,12 @@ public final class NumberToTextConverter {
         return nDigits > MAX_TEXT_LEN;
     }
 
-    private static int countSignifantDigits(String sb) {
-        int result=sb.length()-1;
+    private static int countSignificantDigits(String sb) {
+        int result = sb.length()-1;
         while(sb.charAt(result) == '0') {
             result--;
-            if(result < 0) {
-                throw new RuntimeException("No non-zero digits found");
+            if (result < 0) {
+                throw new IllegalStateException("No non-zero digits found");
             }
         }
         return result + 1;

@@ -28,8 +28,8 @@ import java.util.NoSuchElementException;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.sl.usermodel.PictureData;
@@ -38,7 +38,7 @@ import org.apache.poi.sl.usermodel.RectAlign;
 
 
 public class DrawPictureShape extends DrawSimpleShape {
-    private static final Logger LOG = LogManager.getLogger(DrawPictureShape.class);
+    private static final Logger LOG = PoiLogManager.getLogger(DrawPictureShape.class);
 
     public DrawPictureShape(PictureShape<?,?> shape) {
         super(shape);

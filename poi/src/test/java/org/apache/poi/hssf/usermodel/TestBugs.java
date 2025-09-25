@@ -26,6 +26,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1175,9 +1177,9 @@ final class TestBugs extends BaseTestBugzillaIssues {
     @Test
     void bug32191() throws IOException {
         try (HSSFWorkbook wb = openSampleWorkbook("27394.xls");
-             UnsynchronizedByteArrayOutputStream out1 = new UnsynchronizedByteArrayOutputStream();
-             UnsynchronizedByteArrayOutputStream out2 = new UnsynchronizedByteArrayOutputStream();
-             UnsynchronizedByteArrayOutputStream out3 = new UnsynchronizedByteArrayOutputStream()) {
+             UnsynchronizedByteArrayOutputStream out1 = UnsynchronizedByteArrayOutputStream.builder().get();
+             UnsynchronizedByteArrayOutputStream out2 = UnsynchronizedByteArrayOutputStream.builder().get();
+             UnsynchronizedByteArrayOutputStream out3 = UnsynchronizedByteArrayOutputStream.builder().get()) {
             wb.write(out1);
             wb.write(out2);
             wb.write(out3);
@@ -1541,9 +1543,9 @@ final class TestBugs extends BaseTestBugzillaIssues {
             // Write out and read back
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
                 // Re-check
-                assertEquals("Testing", wb2.getCellStyleAt((short) 21).getUserStyleName());
-                assertEquals("Testing 2", wb2.getCellStyleAt((short) 22).getUserStyleName());
-                assertEquals("Testing 3", wb2.getCellStyleAt((short) 23).getUserStyleName());
+                assertEquals("Testing", wb2.getCellStyleAt(21).getUserStyleName());
+                assertEquals("Testing 2", wb2.getCellStyleAt(22).getUserStyleName());
+                assertEquals("Testing 3", wb2.getCellStyleAt(23).getUserStyleName());
             }
         }
     }
@@ -2316,12 +2318,12 @@ final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    void test46515() throws IOException {
+    void test46515() throws IOException, URISyntaxException {
         try (Workbook wb = openSampleWorkbook("46515.xls")) {
 
             // Get structure from webservice
             String urlString = "https://poi.apache.org/components/spreadsheet/images/calendar.jpg";
-            URL structURL = new URL(urlString);
+            URL structURL = new URI(urlString).toURL();
             BufferedImage bimage;
             try {
                 bimage = ImageIO.read(structURL);
@@ -2331,7 +2333,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
             }
 
             // Convert BufferedImage to byte[]
-            UnsynchronizedByteArrayOutputStream imageBAOS = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream imageBAOS = UnsynchronizedByteArrayOutputStream.builder().get();
             ImageIO.write(bimage, "jpeg", imageBAOS);
             imageBAOS.flush();
             byte[] imageBytes = imageBAOS.toByteArray();
@@ -2451,7 +2453,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
         try (POIFSFileSystem poifs = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("61300.xls"))) {
 
             DocumentEntry entry =
-                    (DocumentEntry) poifs.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+                    (DocumentEntry) poifs.getRoot().getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME);
 
             RuntimeException ex = assertThrows(
                 RuntimeException.class,
@@ -2533,14 +2535,15 @@ final class TestBugs extends BaseTestBugzillaIssues {
     // a simple test which rewrites the file once and evaluates its formulas
     @ParameterizedTest
     @CsvSource({
-        "15228.xls", "13796.xls", "14460.xls", "14330-1.xls", "14330-2.xls", "22742.xls", "12561-1.xls", "12561-2.xls",
+        "15228.xls", "13796.xls", "14460.xls", "14330-1.xls", "14330-2.xls", "12561-1.xls", "12561-2.xls",
         "12843-1.xls", "12843-2.xls", "13224.xls", "19599-1.xls", "19599-2.xls", "32822.xls", "15573.xls",
         "33082.xls", "34775.xls", "37630.xls", "25183.xls", "26100.xls", "27933.xls", "29675.xls", "29982.xls",
         "31749.xls", "37376.xls", "SimpleWithAutofilter.xls", "44201.xls", "37684-1.xls", "37684-2.xls",
         "41139.xls", "ex42564-21435.xls", "ex42564-21503.xls", "28774.xls", "44891.xls", "44235.xls", "36947.xls",
         "39634.xls", "47701.xls", "48026.xls", "47251.xls", "47251_1.xls", "50020.xls", "50426.xls", "50779_1.xls",
         "50779_2.xls", "51670.xls", "54016.xls", "57456.xls", "53109.xls", "com.aida-tour.www_SPO_files_maldives%20august%20october.xls",
-        "named-cell-in-formula-test.xls", "named-cell-test.xls", "bug55505.xls", "SUBSTITUTE.xls", "64261.xls"
+        "named-cell-in-formula-test.xls", "named-cell-test.xls", "bug55505.xls", "chinese-provinces.xls",
+        "SUBSTITUTE.xls", "64261.xls"
     })
     void simpleTest(String fileName) throws IOException {
         simpleTest(fileName, null);
@@ -2607,6 +2610,40 @@ final class TestBugs extends BaseTestBugzillaIssues {
     void test52447() throws IOException {
         try (Workbook wb = openSampleWorkbook("52447.xls")) {
             assertNotNull(wb);
+        }
+    }
+
+    @Test
+    void test66319() throws IOException {
+        try (
+                HSSFWorkbook workbook = openSampleWorkbook("bug66319.xls");
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
+        ) {
+            for (Sheet sheet : workbook) {
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
+                        cell.getCellComment();
+                    }
+                }
+            }
+            workbook.write(bos);
+        }
+    }
+
+    @Test
+    void test66319WithRemove() throws IOException {
+        try (
+                HSSFWorkbook workbook = openSampleWorkbook("bug66319.xls");
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
+        ) {
+            for (Sheet sheet : workbook) {
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
+                        cell.removeCellComment();
+                    }
+                }
+            }
+            workbook.write(bos);
         }
     }
 }

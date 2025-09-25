@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.NotImplemented;
@@ -39,7 +39,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @Beta
 public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
-    private static final Logger LOG = LogManager.getLogger(DeferredSXSSFWorkbook.class);
+    private static final Logger LOG = PoiLogManager.getLogger(DeferredSXSSFWorkbook.class);
 
     public DeferredSXSSFWorkbook() {
         this(null);
@@ -58,7 +58,7 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
     @NotImplemented
     @Override
     protected SheetDataWriter createSheetDataWriter() throws IOException {
-        throw new RuntimeException("Not supported by DeferredSXSSFWorkbook");
+        throw new IllegalStateException("Not supported by DeferredSXSSFWorkbook");
     }
 
     protected StreamingSheetWriter createSheetDataWriter(OutputStream out) throws IOException {
@@ -79,7 +79,7 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
         try {
             sxSheet = new DeferredSXSSFSheet(this, xSheet);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
+            throw new IllegalStateException(ioe);
         }
         registerSheetMapping(sxSheet, xSheet);
         return sxSheet;

@@ -64,7 +64,7 @@ public final class TestTextBytesAtom {
         TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
         tba.setText(alt_text.getBytes(StandardCharsets.ISO_8859_1));
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         tba.writeOut(baos);
         assertArrayEquals(alt_data, baos.toByteArray());
     }
@@ -72,7 +72,7 @@ public final class TestTextBytesAtom {
     @Test
     void testWrite() throws Exception {
         TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         tba.writeOut(baos);
         assertArrayEquals(data, baos.toByteArray());
     }

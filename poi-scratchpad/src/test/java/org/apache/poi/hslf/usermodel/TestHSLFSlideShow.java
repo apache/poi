@@ -40,7 +40,7 @@ public class TestHSLFSlideShow extends BaseTestSlideShow<HSLFShape, HSLFTextPara
 
     @Override
     public HSLFSlideShow reopen(SlideShow<HSLFShape, HSLFTextParagraph> show) throws IOException {
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             show.write(bos);
             try (InputStream is = bos.toInputStream()) {
                 return new HSLFSlideShow(is);

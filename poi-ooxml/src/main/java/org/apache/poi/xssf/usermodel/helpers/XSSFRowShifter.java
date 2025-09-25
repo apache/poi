@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.util.Internal;
@@ -31,7 +29,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 // non-Javadoc: When possible, code should be implemented in the RowShifter abstract class to avoid duplication with
 // {@link org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter}
 public final class XSSFRowShifter extends RowShifter {
-    private static final Logger LOG = LogManager.getLogger(XSSFRowShifter.class);
 
     public XSSFRowShifter(XSSFSheet sh) {
         super(sh);

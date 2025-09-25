@@ -46,7 +46,7 @@ public class StressMap {
     private final Pattern SCRATCH_HANDLER = Pattern.compile("(HSLF|HWPF|HSMF|HMEF)");
 
     public void load(File mapFile) throws IOException {
-        try (Workbook wb = WorkbookFactory.create(mapFile)) {
+        try (Workbook wb = WorkbookFactory.create(mapFile, null, true)) {
             readExMap(wb.getSheet("Exceptions"));
             readHandlerMap(wb.getSheet("Handlers"));
         }
@@ -119,7 +119,7 @@ public class StressMap {
             Row row = iter.next();
 
             if (SCRATCH_IGNORE && handlerIdx > -1) {
-                String handler = row.getCell(handlerIdx).getStringCellValue();
+                String handler = row.getCell(handlerIdx) == null ? "" : row.getCell(handlerIdx).getStringCellValue();
                 if (SCRATCH_HANDLER.matcher(handler).find()) {
                     // ignore exception of ignored files
                     continue;

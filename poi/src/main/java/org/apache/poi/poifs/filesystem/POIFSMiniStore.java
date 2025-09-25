@@ -247,20 +247,32 @@ public class POIFSMiniStore extends BlockStore {
      * based on full blocks used, not the data within the streams
      */
     void syncWithDataSource() throws IOException {
-        int blocksUsed = 0;
         for (BATBlock sbat : _sbat_blocks) {
             ByteBuffer block = _filesystem.getBlockAt(sbat.getOurBlockIndex());
             sbat.writeData(block);
-
-            if (!sbat.hasFreeSectors()) {
-                blocksUsed += _filesystem.getBigBlockSizeDetails().getBATEntriesPerBlock();
-            } else {
-                blocksUsed += sbat.getOccupiedSize();
-            }
         }
+
         // Set the size on the root in terms of the number of SBAT blocks
         // RootProperty.setSize does the sbat -> bytes conversion for us
-        _filesystem._get_property_table().getRoot().setSize(blocksUsed);
+        _filesystem._get_property_table().getRoot().setSize(computeSize());
+    }
+
+    /**
+     * Computes the size of the mini-stream (in number of mini blocks). The trailing
+     * unallocated mini blocks are ignored, the others are counted as allocated. This
+     * behaviour was checked with MSI files signed with signtool.
+     */
+    private int computeSize() {
+        int entriesPerBlock = _filesystem.getBigBlockSizeDetails().getBATEntriesPerBlock();
+        for (int sbatIndex = _sbat_blocks.size() - 1; sbatIndex >= 0; sbatIndex--) {
+            BATBlock sbat = _sbat_blocks.get(sbatIndex);
+            int occupiedSize = sbat.getOccupiedSize();
+            if (occupiedSize > 0) {
+                return (sbatIndex * entriesPerBlock) + occupiedSize;
+            }
+        }
+
+        return 0;
     }
 
     @Override

@@ -82,9 +82,8 @@ public class HSLFTabStopPropCollection extends TextProp {
         leo.writeShort(count);
         for (HSLFTabStop ts : tabStops) {
             leo.writeShort(ts.getPosition());
-            leo.writeShort(ts.getType().nativeId);
+            leo.writeShort(ts.getType() == null ? TabStopType.LEFT.nativeId : ts.getType().nativeId);
         }
-
     }
 
     @Override

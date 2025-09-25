@@ -25,8 +25,8 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
@@ -37,7 +37,7 @@ import org.apache.poi.util.LocaleUtil;
  * used if you want to cancel a message or similar
  */
 public class MessageSubmissionChunk extends Chunk {
-    private static final Logger LOG = LogManager.getLogger(MessageSubmissionChunk.class);
+    private static final Logger LOG = PoiLogManager.getLogger(MessageSubmissionChunk.class);
     private String rawId;
     private Calendar date;
 

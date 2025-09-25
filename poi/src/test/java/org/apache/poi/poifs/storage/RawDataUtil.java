@@ -37,7 +37,7 @@ public final class RawDataUtil {
 
     public static byte[] decode(String[] hexDataLines) {
         try (UnsynchronizedByteArrayOutputStream baos =
-                     new UnsynchronizedByteArrayOutputStream(hexDataLines.length * 32 + 32)) {
+                UnsynchronizedByteArrayOutputStream.builder().setBufferSize(hexDataLines.length * 32 + 32).get()) {
             for (String hexDataLine : hexDataLines) {
                 byte[] lineData = HexRead.readFromString(hexDataLine);
                 baos.write(lineData, 0, lineData.length);
@@ -58,7 +58,7 @@ public final class RawDataUtil {
     public static byte[] decompress(String data) throws IOException {
         byte[] base64Bytes = Base64.getDecoder().decode(data);
         try (
-                InputStream is = new UnsynchronizedByteArrayInputStream(base64Bytes);
+                InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(base64Bytes).get();
                 GZIPInputStream gzis = new GZIPInputStream(is);
         ) {
             return IOUtils.toByteArray(gzis);
@@ -74,7 +74,7 @@ public final class RawDataUtil {
      */
     public static String compress(byte[] data) throws IOException {
         try (
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 java.util.zip.GZIPOutputStream gz = new java.util.zip.GZIPOutputStream(bos)
         ) {
             gz.write(data);

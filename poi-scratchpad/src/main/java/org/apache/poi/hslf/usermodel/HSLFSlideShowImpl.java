@@ -47,8 +47,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.POIDocument;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -72,6 +72,7 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.PictureData;
@@ -85,7 +86,7 @@ import org.apache.poi.util.LittleEndianConsts;
  * "reader". It is only a very basic class for now
  */
 public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
-    private static final Logger LOG = LogManager.getLogger(HSLFSlideShowImpl.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HSLFSlideShowImpl.class);
 
     static final int UNSET_OFFSET = -1;
 
@@ -93,6 +94,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private static final int DEFAULT_MAX_RECORD_LENGTH = 200_000_000;
     private static final int MAX_DOCUMENT_SIZE = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+    private static final int MAX_IMAGE_LENGTH = 150_000_000;
 
     // Holds metadata on where things are in our document
     private CurrentUserAtom currentUser;
@@ -195,10 +197,10 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     private static DirectoryNode handleDualStorage(DirectoryNode dir) throws IOException {
         // when there's a dual storage entry, use it, as the outer document can't be read quite probably ...
-        if (!dir.hasEntry(PP97_DOCUMENT)) {
+        if (!dir.hasEntryCaseInsensitive(PP97_DOCUMENT)) {
             return dir;
         }
-        return (DirectoryNode) dir.getEntry(PP97_DOCUMENT);
+        return (DirectoryNode) dir.getEntryCaseInsensitive(PP97_DOCUMENT);
     }
 
     /**
@@ -224,12 +226,16 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private void readPowerPointStream() throws IOException {
         final DirectoryNode dir = getDirectory();
 
-        if (!dir.hasEntry(POWERPOINT_DOCUMENT) && dir.hasEntry(PP95_DOCUMENT)) {
+        if (!dir.hasEntryCaseInsensitive(POWERPOINT_DOCUMENT) && dir.hasEntryCaseInsensitive(PP95_DOCUMENT)) {
             throw new OldPowerPointFormatException("You seem to have supplied a PowerPoint95 file, which isn't supported");
         }
 
         // Get the main document stream
-        DocumentEntry docProps = (DocumentEntry)dir.getEntry(POWERPOINT_DOCUMENT);
+        final Entry entry = dir.getEntryCaseInsensitive(POWERPOINT_DOCUMENT);
+        if (!(entry instanceof DocumentEntry)) {
+            throw new IllegalArgumentException("Had unexpected type of entry for name: " + POWERPOINT_DOCUMENT + ": " + entry.getClass());
+        }
+        DocumentEntry docProps = (DocumentEntry) entry;
 
         // Grab the document stream
         int len = docProps.getSize();
@@ -252,7 +258,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         // If it has a length, depending on its type it may have children or data
         // If it has children, these will follow straight away
         //      <xx xx yy yy zz zz zz zz <xx xx yy yy zz zz zz zz>>
-        // If it has data, this will come straigh after, and run for the length
+        // If it has data, this will come straight after, and run for the length
         //      <xx xx yy yy zz zz zz zz dd dd dd dd dd dd dd>
         // All lengths given exclude the 8 byte record header
         // (Data records are known as Atoms)
@@ -310,18 +316,23 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     private void initRecordOffsets(byte[] docstream, int usrOffset, NavigableMap<Integer, Record> recordMap, Map<Integer, Integer> offset2id) {
         while (usrOffset != 0) {
-            UserEditAtom usr = (UserEditAtom) Record.buildRecordAtOffset(docstream, usrOffset);
-            if (usr == null) {
-                throw new CorruptPowerPointFileException("Powerpoint document contains no user edit atom");
+            Record builtRecord = Record.buildRecordAtOffset(docstream, usrOffset);
+            if (!(builtRecord instanceof UserEditAtom)) {
+                throw new CorruptPowerPointFileException("Did not have a user edit atom: " + builtRecord);
             }
+            UserEditAtom usr = (UserEditAtom) builtRecord;
 
             recordMap.put(usrOffset, usr);
 
             int psrOffset = usr.getPersistPointersOffset();
-            PersistPtrHolder ptr = (PersistPtrHolder) Record.buildRecordAtOffset(docstream, psrOffset);
-            if (ptr == null) {
+            Record record = Record.buildRecordAtOffset(docstream, psrOffset);
+            if (record == null) {
                 throw new CorruptPowerPointFileException("Powerpoint document is missing a PersistPtrHolder at " + psrOffset);
             }
+            if (!(record instanceof PersistPtrHolder)) {
+                throw new CorruptPowerPointFileException("Record is not a PersistPtrHolder: " + record + " at " + psrOffset);
+            }
+            PersistPtrHolder ptr = (PersistPtrHolder) record;
             recordMap.put(psrOffset, ptr);
 
             for (Map.Entry<Integer, Integer> entry : ptr.getSlideLocationsLookup().entrySet()) {
@@ -388,16 +399,20 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private void readPictures() throws IOException {
 
         // if the presentation doesn't contain pictures, will use an empty collection instead
-        if (!getDirectory().hasEntry("Pictures")) {
+        if (!getDirectory().hasEntryCaseInsensitive("Pictures")) {
             _pictures = new ArrayList<>();
             return;
         }
 
-        DocumentEntry entry = (DocumentEntry) getDirectory().getEntry("Pictures");
+        final Entry en = getDirectory().getEntryCaseInsensitive("Pictures");
+        if (!(en instanceof DocumentEntry)) {
+            throw new IllegalArgumentException("Had unexpected type of entry for name: Pictures: " + en.getClass());
+        }
+        DocumentEntry entry = (DocumentEntry) en;
         EscherContainerRecord blipStore = getBlipStore();
         byte[] pictstream;
         try (DocumentInputStream is = getDirectory().createDocumentInputStream(entry)) {
-            pictstream = IOUtils.toByteArray(is, entry.getSize());
+            pictstream = IOUtils.toByteArray(is, entry.getSize(), MAX_IMAGE_LENGTH);
         }
 
         List<PictureFactory> factories = new ArrayList<>();
@@ -496,6 +511,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         //  records share an offset.
         Map<Integer, List<EscherBSERecord>> unmatchedRecords = new HashMap<>();
         for (EscherRecord child : blipStore) {
+            if (!(child instanceof EscherBSERecord)) {
+                throw new CorruptPowerPointFileException("Did not have a EscherBSERecord: " + child);
+            }
             EscherBSERecord record = (EscherBSERecord) child;
             unmatchedRecords.computeIfAbsent(record.getOffset(), k -> new ArrayList<>()).add(record);
         }
@@ -609,6 +627,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         CountingOS cos = new CountingOS();
         for (Record record : _records) {
             // all top level records are position dependent
+            if (!(record instanceof PositionDependentRecord)) {
+                throw new CorruptPowerPointFileException("Record is not a position dependent record: " + record);
+            }
             PositionDependentRecord pdr = (PositionDependentRecord) record;
             int oldPos = pdr.getLastOnDiskOffset();
             int newPos = cos.size();
@@ -800,7 +821,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             // Write out the Property Streams
             writeProperties(outFS, writtenEntries);
 
-            try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
 
                 // For position dependent records, hold where they were and now are
                 // As we go along, update, and hand over, to any Position Dependent
@@ -841,7 +862,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     }
 
     private static InputStream encryptOnePicture(HSLFSlideShowEncrypted encryptedSS, HSLFPictureData data) {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             data.write(baos);
             byte[] pictBytes = baos.toByteArray();
             encryptedSS.encryptPicture(pictBytes, 0);
@@ -977,7 +998,13 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private EscherContainerRecord getBlipStore() {
         Document documentRecord = null;
         for (Record record : _records) {
+            if (record == null) {
+                throw new CorruptPowerPointFileException("Did not have a valid record: " + record);
+            }
             if (record.getRecordType() == RecordTypes.Document.typeID) {
+                if (!(record instanceof Document)) {
+                    throw new CorruptPowerPointFileException("Did not have a Document: " + record);
+                }
                 documentRecord = (Document) record;
                 break;
             }
@@ -985,6 +1012,10 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         if (documentRecord == null) {
             throw new CorruptPowerPointFileException("Document record is missing");
+        }
+
+        if (documentRecord.getPPDrawingGroup() == null) {
+            throw new CorruptPowerPointFileException("Drawing group is missing");
         }
 
         EscherContainerRecord blipStore;
@@ -1054,17 +1085,17 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         int count;
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(int b) {
             count++;
         }
 
         @Override
-        public void write(byte[] b) throws IOException {
+        public void write(byte[] b) {
             count += b.length;
         }
 
         @Override
-        public void write(byte[] b, int off, int len) throws IOException {
+        public void write(byte[] b, int off, int len) {
             count += len;
         }
 

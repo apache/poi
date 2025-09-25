@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJcTable;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,17 +26,21 @@ import java.util.Map;
  * Sets alignment values allowed for Tables and Table Rows
  */
 public enum TableRowAlign {
-    
-    LEFT(STJcTable.INT_START),
-    CENTER(STJcTable.INT_CENTER),
-    RIGHT(STJcTable.INT_END);
 
-    private static Map<Integer, TableRowAlign> imap = new HashMap<>();
+    LEFT(STJcTable.INT_LEFT),
+    START(STJcTable.INT_START),
+    CENTER(STJcTable.INT_CENTER),
+    RIGHT(STJcTable.INT_RIGHT),
+    END(STJcTable.INT_END);
+
+    private static final Map<Integer, TableRowAlign> imap;
 
     static {
+        final Map<Integer, TableRowAlign> tempMap = new HashMap<>();
         for (TableRowAlign p : values()) {
-            imap.put(p.getValue(), p);
+            tempMap.put(p.getValue(), p);
         }
+        imap = Collections.unmodifiableMap(tempMap);
     }
 
     private final int value;

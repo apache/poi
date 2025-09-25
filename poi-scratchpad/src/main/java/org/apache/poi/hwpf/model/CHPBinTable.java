@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.SprmIterator;
@@ -50,7 +50,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 @Internal
 public class CHPBinTable
 {
-    private static final Logger LOG = LogManager.getLogger(CHPBinTable.class);
+    private static final Logger LOG = PoiLogManager.getLogger(CHPBinTable.class);
 
     /** List of character properties.*/
   protected List<CHPX> _textRuns = new ArrayList<>();

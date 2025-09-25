@@ -19,10 +19,10 @@ package org.apache.poi.hwpf.sprm;
 
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
 
 import static org.apache.logging.log4j.util.Unbox.box;
@@ -32,7 +32,7 @@ import static org.apache.poi.util.HexDump.byteToHex;
 @Internal
 public final class SectionSprmUncompressor extends SprmUncompressor {
 
-  private static final Logger LOG = LogManager.getLogger(SectionSprmUncompressor.class);
+  private static final Logger LOG = PoiLogManager.getLogger(SectionSprmUncompressor.class);
 
   public SectionSprmUncompressor()
   {

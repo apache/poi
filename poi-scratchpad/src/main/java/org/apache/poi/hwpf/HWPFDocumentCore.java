@@ -47,12 +47,13 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
-
 
 /**
  * This class holds much of the core of a Word document, but
@@ -88,7 +89,7 @@ public abstract class HWPFDocumentCore extends POIDocument {
      * Size of the not encrypted part of the FIB
      */
     protected static final int FIB_BASE_LEN = 68;
-    
+
     /**
      * [MS-DOC] 2.2.6.2/3 Office Binary Document ... Encryption:
      * "... The block number MUST be set to zero at the beginning of the stream and
@@ -138,6 +139,9 @@ public abstract class HWPFDocumentCore extends POIDocument {
         FileMagic fm = FileMagic.valueOf(is);
 
         if (fm != FileMagic.OLE2) {
+            if (fm == FileMagic.OOXML) {
+                throw new OfficeXmlFileException("The document is really a OOXML file");
+            }
             throw new IllegalArgumentException("The document is really a "+fm+" file");
         }
 
@@ -185,8 +189,12 @@ public abstract class HWPFDocumentCore extends POIDocument {
         _fib = new FileInformationBlock(_mainStream);
 
         DirectoryEntry objectPoolEntry = null;
-        if (directory.hasEntry(STREAM_OBJECT_POOL)) {
-            objectPoolEntry = (DirectoryEntry) directory.getEntry(STREAM_OBJECT_POOL);
+        if (directory.hasEntryCaseInsensitive(STREAM_OBJECT_POOL)) {
+            final Entry entry = directory.getEntryCaseInsensitive(STREAM_OBJECT_POOL);
+            if (!(entry instanceof DirectoryEntry)) {
+                throw new IllegalArgumentException("Had unexpected type of entry for name: " + STREAM_OBJECT_POOL + ": " + entry.getClass());
+            }
+            objectPoolEntry = (DirectoryEntry) entry;
         }
         _objectPool = new ObjectPoolImpl(objectPoolEntry);
     }
@@ -279,6 +287,9 @@ public abstract class HWPFDocumentCore extends POIDocument {
         EncryptionMode em = fibBase.isFObfuscated() ? EncryptionMode.xor : null;
         EncryptionInfo ei = new EncryptionInfo(leis, em);
         Decryptor dec = ei.getDecryptor();
+        if (dec == null) {
+            throw new EncryptedDocumentException("Invalid encryption info, did not get a matching decryptor");
+        }
         dec.setChunkSize(RC4_REKEYING_INTERVAL);
         try {
             String pass = Biff8EncryptionKey.getCurrentUserPassword();
@@ -337,7 +348,11 @@ public abstract class HWPFDocumentCore extends POIDocument {
      */
     protected byte[] getDocumentEntryBytes(String name, int encryptionOffset, final int len) throws IOException {
         DirectoryNode dir = getDirectory();
-        DocumentEntry documentProps = (DocumentEntry)dir.getEntry(name);
+        final Entry entry = dir.getEntryCaseInsensitive(name);
+        if (!(entry instanceof DocumentEntry)) {
+            throw new IllegalArgumentException("Had unexpected type of entry for name: " + name + ": " + entry);
+        }
+        DocumentEntry documentProps = (DocumentEntry) entry;
         int streamSize = documentProps.getSize();
         boolean isEncrypted = (encryptionOffset > -1 && getEncryptionInfo() != null);
 

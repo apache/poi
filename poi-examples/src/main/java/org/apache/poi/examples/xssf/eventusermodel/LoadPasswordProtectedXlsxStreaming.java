@@ -20,12 +20,12 @@
 package org.apache.poi.examples.xssf.eventusermodel;
 
 import java.io.InputStream;
+import java.util.Iterator;
 
 import org.apache.poi.examples.xssf.usermodel.LoadPasswordProtectedXlsx;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.temp.AesZipFileZipEntrySource;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.eventusermodel.XSSFReader.SheetIterator;
 
 /**
  * An example that loads a password protected workbook and counts the sheets.
@@ -48,11 +48,12 @@ public final class LoadPasswordProtectedXlsxStreaming {
         try (AesZipFileZipEntrySource source = AesZipFileZipEntrySource.createZipEntrySource(inputStream);
              OPCPackage pkg = OPCPackage.open(source)) {
             XSSFReader reader = new XSSFReader(pkg);
-            SheetIterator iter = (SheetIterator)reader.getSheetsData();
+            Iterator<InputStream> iter = reader.getSheetsData();
             int count = 0;
             while(iter.hasNext()) {
-                iter.next();
-                count++;
+                try (InputStream stream = iter.next()) {
+                    count++;
+                }
             }
             System.out.println("sheet count: " + count);
         }

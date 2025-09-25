@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.LocaleID;
 
 /**
@@ -49,7 +49,7 @@ import org.apache.poi.util.LocaleID;
  */
 @SuppressWarnings("unused")
 public final class DateFormatConverter  {
-    private static final Logger LOG = LogManager.getLogger(DateFormatConverter.class);
+    private static final Logger LOG = PoiLogManager.getLogger(DateFormatConverter.class);
 
     private DateFormatConverter() {
     }

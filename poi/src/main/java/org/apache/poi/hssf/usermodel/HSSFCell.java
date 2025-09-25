@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,6 +47,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Hyperlink;
@@ -55,7 +55,6 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
-import org.apache.poi.util.LocaleUtil;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -219,7 +218,7 @@ public class HSSFCell extends CellBase {
                          ? CellType.BOOLEAN
                          : CellType.ERROR;
         }
-        throw new RuntimeException("Bad cell value rec (" + cval.getClass().getName() + ")");
+        throw new IllegalStateException("Bad cell value rec (" + cval.getClass().getName() + ")");
     }
 
     /**
@@ -271,7 +270,7 @@ public class HSSFCell extends CellBase {
      *
      */
 
-    private void setCellType(CellType cellType, boolean setValue, int row,short col, short styleIndex)
+    private void setCellType(CellType cellType, boolean setValue, int row, short col, short styleIndex)
     {
         switch (cellType)
         {
@@ -786,7 +785,7 @@ public class HSSFCell extends CellBase {
     }
 
     /**
-     * set a error value for the cell
+     * set an error value for the cell
      *
      * @param errorCode the error value to set this cell to.  For formulas, we'll set the
      *        precalculated value , for errors we'll set
@@ -802,7 +801,7 @@ public class HSSFCell extends CellBase {
         setCellErrorValue(error);
     }
     /**
-     * set a error value for the cell
+     * set an error value for the cell
      *
      * @param error the error value to set this cell to.  For formulas, we'll set the
      *        precalculated value , for errors we'll set
@@ -946,7 +945,7 @@ public class HSSFCell extends CellBase {
      * the HSSFWorkbook.</p>
      *
      * <p>To change the style of a cell without affecting other cells that use the same style,
-     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, java.util.Map)}</p>
+     * use {@link org.apache.poi.ss.util.CellUtil#setCellStylePropertiesEnum(org.apache.poi.ss.usermodel.Cell, java.util.Map)}</p>
      *
      * @param style  reference contained in the workbook
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
@@ -1002,7 +1001,7 @@ public class HSSFCell extends CellBase {
     }
 
     /**
-     * @throws RuntimeException if the bounds are exceeded.
+     * @throws IllegalStateException if the bounds are exceeded.
      */
     private static void checkBounds(int cellIndex) {
         if (cellIndex < 0 || cellIndex > LAST_COLUMN_NUMBER) {
@@ -1038,21 +1037,20 @@ public class HSSFCell extends CellBase {
             case BLANK:
                 return "";
             case BOOLEAN:
-                return getBooleanCellValue()?"TRUE":"FALSE";
+                return getBooleanCellValue() ? "TRUE" : "FALSE";
             case ERROR:
                 return ErrorEval.getText((( BoolErrRecord ) _record).getErrorValue());
             case FORMULA:
                 return getCellFormula();
             case NUMERIC:
-                //TODO apply the dataformat for this cell
                 if (DateUtil.isCellDateFormatted(this)) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", LocaleUtil.getUserLocale());
-                    sdf.setTimeZone(LocaleUtil.getUserTimeZone());
-                    return sdf.format(getDateCellValue());
+                    DataFormatter df = new DataFormatter();
+                    df.setUseCachedValuesForFormulaCells(true);
+                    return df.formatCellValue(this);
                 }
-                return  String.valueOf(getNumericCellValue());
+                return Double.toString(getNumericCellValue());
             case STRING:
-                return getStringCellValue();
+                return getRichStringCellValue().toString();
             default:
                 return "Unknown Cell Type: " + getCellType();
         }

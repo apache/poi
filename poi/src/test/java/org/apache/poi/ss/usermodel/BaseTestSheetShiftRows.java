@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
  */
 public abstract class BaseTestSheetShiftRows {
 
-    private final ITestDataProvider _testDataProvider;
+    protected final ITestDataProvider _testDataProvider;
 
     protected BaseTestSheetShiftRows(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;
@@ -77,7 +77,7 @@ public abstract class BaseTestSheetShiftRows {
                 assertEquals(5, s.getRow(4).getPhysicalNumberOfCells());
 
                 // Shift rows 1-3 down 3 in the current one.  This tests when
-                // 1 row is blank.  Write to a another temp file
+                // 1 row is blank.  Write to another temp file
                 s.shiftRows(0, 2, 3);
                 try (Workbook wb3 = _testDataProvider.writeOutAndReadBack(wb2)) {
                     // Read and ensure things are where they should be

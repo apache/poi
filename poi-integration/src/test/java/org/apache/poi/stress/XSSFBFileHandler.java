@@ -41,11 +41,11 @@ public class XSSFBFileHandler extends AbstractFileHandler {
     public void handleFile(InputStream stream, String path) throws Exception {
         byte[] bytes = IOUtils.toByteArray(stream);
 
-        try (OPCPackage opcPackage = OPCPackage.open(new UnsynchronizedByteArrayInputStream(bytes))) {
+        try (OPCPackage opcPackage = OPCPackage.open(UnsynchronizedByteArrayInputStream.builder().setByteArray(bytes).get())) {
             testOne(opcPackage);
         }
 
-        testNotHandledByWorkbookException(OPCPackage.open(new UnsynchronizedByteArrayInputStream(bytes)));
+        testNotHandledByWorkbookException(OPCPackage.open(UnsynchronizedByteArrayInputStream.builder().setByteArray(bytes).get()));
     }
 
     private void testNotHandledByWorkbookException(OPCPackage pkg) throws IOException {

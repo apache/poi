@@ -57,7 +57,7 @@ public final class TestTxInteractiveInfoAtom {
     @Test
     void testWrite() throws Exception {
         TxInteractiveInfoAtom atom = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         atom.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
     }
@@ -72,7 +72,7 @@ public final class TestTxInteractiveInfoAtom {
         ia.setEndIndex(56);
 
         // Check it's now the same as a
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ia.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
     }
@@ -87,7 +87,7 @@ public final class TestTxInteractiveInfoAtom {
         ia.setEndIndex(78);
 
         // Check bytes are now the same
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ia.writeOut(baos);
         assertArrayEquals(data_b, baos.toByteArray());
     }

@@ -55,7 +55,7 @@ class TestSlide {
         ppt1.createSlide().setHidden(true);
         ppt1.createSlide();
 
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             ppt1.write(bos);
 
             try (InputStream is = bos.toInputStream();

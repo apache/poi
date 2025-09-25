@@ -24,6 +24,8 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -37,8 +39,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RandomSingleton;
@@ -54,7 +56,7 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
     protected static final String BASIC_AUTH = "Authorization";
     protected static final String REDIRECT_LOCATION = "Location";
 
-    private static final Logger LOG = LogManager.getLogger(TimeStampSimpleHttpClient.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TimeStampSimpleHttpClient.class);
 
     // how large a timestamp response is expected to be
     // can be overwritten via IOUtils.setByteArrayMaxOverride()
@@ -72,7 +74,8 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
      * @return the max timestamp response size allowed
      */
     public static int getMaxTimestampResponseSize() {
-        return MAX_TIMESTAMP_RESPONSE_SIZE;
+        final int ioMaxSize = IOUtils.getByteArrayMaxOverride();
+        return ioMaxSize < 0 ? MAX_TIMESTAMP_RESPONSE_SIZE : Math.min(MAX_TIMESTAMP_RESPONSE_SIZE, ioMaxSize);
     }
 
 
@@ -126,11 +129,11 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
             proxy = Proxy.NO_PROXY;
         } else {
             try {
-                URL pUrl = new URL(proxyUrl);
+                URL pUrl = new URI(proxyUrl).toURL();
                 String host = pUrl.getHost();
                 int port = pUrl.getPort();
                 proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(InetAddress.getByName(host), (port == -1 ? 80 : port)));
-            } catch (IOException ignored) {
+            } catch (IOException | URISyntaxException ignored) {
             }
         }
     }
@@ -204,7 +207,12 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
     }
 
     protected TimeStampHttpClientResponse handleRedirect(String url, MethodHandler handler, boolean followRedirect) throws IOException {
-        HttpURLConnection huc = (HttpURLConnection)new URL(url).openConnection(proxy);
+        final HttpURLConnection huc;
+        try {
+            huc = (HttpURLConnection)new URI(url).toURL().openConnection(proxy);
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
         if (ignoreHttpsCertificates) {
             recklessConnection(huc);
         }

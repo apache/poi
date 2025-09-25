@@ -34,8 +34,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -69,7 +69,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
 @Beta
 public class XSLFPictureShape extends XSLFSimpleShape
     implements PictureShape<XSLFShape,XSLFTextParagraph> {
-    private static final Logger LOG = LogManager.getLogger(XSLFPictureShape.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XSLFPictureShape.class);
 
     private static final String MS_DML_NS = "http://schemas.microsoft.com/office/drawing/2010/main";
     private static final String MS_SVG_NS = "http://schemas.microsoft.com/office/drawing/2016/SVG/main";
@@ -353,6 +353,10 @@ public class XSLFPictureShape extends XSLFSimpleShape
      */
     public static XSLFPictureShape addSvgImage(XSLFSheet sheet, XSLFPictureData svgPic, PictureType previewType, Rectangle2D anchor) throws IOException {
 
+        if (svgPic == null || svgPic.getType() == null) {
+            throw new IllegalArgumentException("Cannot process svgPic with null type");
+        }
+
         SVGImageRenderer renderer = new SVGImageRenderer();
         try (InputStream is = svgPic.getInputStream()) {
             renderer.loadImage(is, svgPic.getType().contentType);
@@ -368,16 +372,17 @@ public class XSLFPictureShape extends XSLFSimpleShape
         }
 
         BufferedImage thmBI = renderer.getImage(dim);
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(100000);
-        // use extension instead of enum name, because of "jpeg"
-        ImageIO.write(thmBI, pt.extension.substring(1), bos);
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(100000).get()) {
+            // use extension instead of enum name, because of "jpeg"
+            ImageIO.write(thmBI, pt.extension.substring(1), bos);
 
-        XSLFPictureData pngPic = sheet.getSlideShow().addPicture(bos.toInputStream(), pt);
+            XSLFPictureData pngPic = sheet.getSlideShow().addPicture(bos.toInputStream(), pt);
 
-        XSLFPictureShape shape = sheet.createPicture(pngPic);
-        shape.setAnchor(anc);
-        shape.setSvgImage(svgPic);
-        return shape;
+            XSLFPictureShape shape = sheet.createPicture(pngPic);
+            shape.setAnchor(anc);
+            shape.setSvgImage(svgPic);
+            return shape;
+        }
     }
 
 
@@ -462,6 +467,29 @@ public class XSLFPictureShape extends XSLFSimpleShape
             }
         }
         return null;
+    }
+
+    private CTApplicationNonVisualDrawingProps getCTApplicationNonVisualDrawing() {
+        CTPictureNonVisual nvPicPr = getCTPictureNonVisual();
+        return nvPicPr == null ? null : nvPicPr.getNvPr();
+    }
+
+    /**
+     * @return boolean; true if the picture is an audio
+     * @since POI 5.2.4
+     */
+    public boolean isAudioFile() {
+        CTApplicationNonVisualDrawingProps nvPr = getCTApplicationNonVisualDrawing();
+        return nvPr != null && nvPr.isSetAudioFile();
+    }
+
+    /**
+     * @return the link ID for the audio file
+     * @since POI 5.2.4
+     */
+    public String getAudioFileLink() {
+        CTApplicationNonVisualDrawingProps nvPr = getCTApplicationNonVisualDrawing();
+        return nvPr != null && nvPr.isSetAudioFile() ? nvPr.getAudioFile().getLink() : null;
     }
 
     private CTPictureNonVisual getCTPictureNonVisual() {

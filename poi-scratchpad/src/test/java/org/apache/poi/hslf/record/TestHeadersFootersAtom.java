@@ -54,7 +54,7 @@ public final class TestHeadersFootersAtom {
     @Test
     void testWrite() throws Exception {
         HeadersFootersAtom record = new HeadersFootersAtom(data, 0, data.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         assertArrayEquals(data, baos.toByteArray());
     }
@@ -66,7 +66,7 @@ public final class TestHeadersFootersAtom {
         record.setFlag(HeadersFootersAtom.fHasTodayDate, true);
         record.setFlag(HeadersFootersAtom.fHasFooter, true);
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         assertArrayEquals(data, baos.toByteArray());
     }

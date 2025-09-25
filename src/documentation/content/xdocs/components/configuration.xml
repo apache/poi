@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+  <header>
+    <title>Apache POI™ - Configuration</title>
+    <authors>
+      <person id="POI" name="POI Developers" email="dev@poi.apache.org"/>
+    </authors>
+  </header>
+
+  <body>
+    <section><title>Overview</title>
+      <p>The best way to learn about using Apache POI is to read through the <a href="index.html">feature documentation</a>
+          and other online examples online.
+      </p>
+      <p>To keep the features documentation focused on the APIs, there is little mention of some of the configuration
+          settings that can be enabled that may prove useful to users who have to handle very large documents or very
+          large throughput.
+      </p>
+    </section>
+    <section><title>Configuration via Java-code when calling Apache POI</title>
+      <p>These API methods allow to configure behavior of Apache POI for special needs, e.g. when processing excessively
+        large files.
+      </p>
+      <table>
+        <tr>
+          <th>Configuration Setting</th>
+          <th>Description</th>
+        </tr>
+
+        <tr>
+          <td>org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS</td>
+          <td>POI support for XSSF APIs relies heavily on <a href="https://xmlbeans.apache.org">XMLBeans</a>.
+            This instance can be <a href="https://xmlbeans.apache.org/docs/5.0.0/org/apache/xmlbeans/XmlOptions.html">configured</a>.
+            It is recommended to take care if you do change any of the config items.
+            In POI 5.1.0, we will disallow Doc Type parsing in the XML files embedded in xlsx/docx/pptx/etc files, by default.
+            DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(false) will undo this change.
+          </td>
+        </tr>
+
+        <tr>
+          <td><a href="https://poi.apache.org/apidocs/5.0/org/apache/poi/util/IOUtils.html#setByteArrayMaxOverride-int-">
+            org.apache.poi.util.IOUtils.setByteArrayMaxOverride(int maxOverride)</a>
+          </td>
+          <td>If this value is set to > 0, IOUtils.safelyAllocate(long, int) will ignore the maximum record length parameter.
+            This is designed to allow users to bypass the hard-coded maximum record lengths if they are willing to accept the risk of allocating memory up to the size specified.
+            It also allows to impose a lower limit than used for very memory constrained systems.
+            <p>
+            <strong>Note</strong>: This is a per-allocation limit and does not allow you to limit overall sum of allocations! Use -1 for using the limits specified per record-type.
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td><a href="https://poi.apache.org/apidocs/5.0/org/apache/poi/openxml4j/util/ZipSecureFile.html#setMinInflateRatio-double-">
+              org.apache.poi.openxml4j.util.ZipSecureFile.setMinInflateRatio(double ratio)</a>
+          </td>
+          <td>Sets the ratio between de- and inflated bytes to detect zipbomb.
+              It defaults to 1% (= 0.01d), i.e. when the compression is better than 1% for any given read package part, the parsing will fail indicating a Zip-Bomb.
+          </td>
+        </tr>
+
+        <tr>
+          <td><a href="https://poi.apache.org/apidocs/5.0/org/apache/poi/openxml4j/util/ZipSecureFile.html#setMaxEntrySize-long-">
+            org.apache.poi.openxml4j.util.ZipSecureFile.setMaxEntrySize(long maxEntrySize)</a>
+          </td>
+          <td>Sets the maximum file size of a single zip entry. It defaults to 4GB, i.e. the 32-bit zip format maximum.
+            This can be used to limit memory consumption and protect against security vulnerabilities when documents are provided by users.
+            POI 5.1.0 removes the previous limit of 4GB on this setting.
+          </td>
+        </tr>
+
+        <tr>
+          <td><a href="https://poi.apache.org/apidocs/5.0/org/apache/poi/openxml4j/util/ZipSecureFile.html#setMaxTextSize-long-">
+            org.apache.poi.openxml4j.util.ZipSecureFile.setMaxTextSize(long maxTextSize)</a>
+          </td>
+          <td>Sets the maximum number of characters of text that are extracted before an exception is thrown during extracting text from documents.
+            This can be used to limit memory consumption and protect against security vulnerabilities when documents are provided by users.
+            The default is approx 10 million chars. Prior to POI 5.1.0, the max allowed was approx 4 billion chars.
+          </td>
+        </tr>
+
+        <tr>
+          <td>org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(int thresholdBytes)
+          </td>
+          <td><strong>Added in POI 5.1.0.</strong>
+            Number of bytes at which a zip entry is regarded as too large for holding in memory
+            and the data is put in a temp file instead - defaults to -1 meaning temp files are not used
+            and that zip entries with more than 2GB of data after decompressing will fail, 0 means all
+            zip entries are stored in temp files. A threshold like 50000000 (approx 50Mb is recommended)
+          </td>
+        </tr>
+
+        <tr>
+          <td>org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource.setEncryptTempFiles(boolean encrypt)
+          </td>
+          <td><strong>Added in POI 5.1.0.</strong>
+            Whether temp files should be encrypted (default false). Only affects temp files related to zip entries.
+          </td>
+        </tr>
+
+        <tr>
+          <td>org.apache.poi.openxml4j.opc.ZipPackage.setUseTempFilePackageParts(boolean tempFilePackageParts)
+          </td>
+          <td><strong>Added in POI 5.1.0.</strong>
+            Whether to save package part data in temp files to save memory (default=false).
+          </td>
+        </tr>
+
+        <tr>
+          <td>org.apache.poi.openxml4j.opc.ZipPackage.setEncryptTempFilePackageParts(boolean encryptTempFiles)
+          </td>
+          <td><strong>Added in POI 5.1.0.</strong>
+            Whether to encrypt package part temp files (default=false).
+          </td>
+        </tr>
+
+        <tr>
+          <td>org.apache.poi.extractor.ExtractorFactory.setThreadPrefersEventExtractors(boolean preferEventExtractors) and
+            org.apache.poi.extractor.ExtractorFactory.setAllThreadsPreferEventExtractors(Boolean preferEventExtractors)
+          </td>
+          <td>
+            When creating text-extractors for documents, allows to choose a different type of extractor which parses documents
+            via an event-based parser.
+          </td>
+        </tr>
+
+        <tr>
+          <td>Various classes: setMaxRecordLength(int length)
+          </td>
+          <td>
+            Allows to override the default max record length for various classes which
+            parse input data. E.g. XMLSlideShow, XSSFBParser, HSLFSlideShow, HWPFDocument,
+            HSSFWorkbook, EmbeddedExtractor, StringUtil, ...
+            <br/>
+            This may be useful if you try to process very large files which otherwise trigger
+            the excessive-memory-allocation prevention in Apache POI.
+          </td>
+        </tr>
+
+        <tr>
+          <td>org.apache.poi.xslf.usermodel.XSLFPictureData.setMaxImageSize(int length)
+          </td>
+          <td>
+            Allows to override the default max image size allowed for XSLF pictures.
+          </td>
+        </tr>
+
+        <tr>
+          <td>org.apache.poi.xssf.usermodel.XSSFPictureData#setMaxImageSize(int length)
+          </td>
+          <td>
+            Allows to override the default max image size allowed for XSSF pictures.
+          </td>
+        </tr>
+
+        <tr>
+          <td>org.apache.poi.xwpf.usermodel.XWPFPictureData#setMaxImageSize(int length)
+          </td>
+          <td>
+            Allows to override the default max image size allowed for XWPF pictures.
+          </td>
+        </tr>
+
+      </table>
+    </section>
+    <section><title>Observed Java System Properties</title>
+      <p>Apache POI supports some Java System Properties.
+      </p>
+      <table>
+        <tr>
+          <th>System property</th>
+          <th>Description</th>
+        </tr>
+
+        <tr>
+          <td>java.io.tmpdir</td>
+          <td>
+            Apache POI uses the default mechanism of the JDK for specifying the location of
+            temporary files.
+          </td>
+        </tr>
+
+        <tr>
+          <td>org.apache.poi.hwpf.preserveBinTables and org.apache.poi.hwpf.preserveTextTable</td>
+          <td>
+            Allows to adjust how parsing Word documents via HWPF is handling tables.
+          </td>
+        </tr>
+
+        <tr>
+          <td>org.apache.poi.ss.ignoreMissingFontSystem</td>
+          <td><strong>Added in POI 5.2.3.</strong>
+            Instructs Apache POI to ignore some errors due to missing fonts and thus allows
+            to perform more functionality even when no fonts are installed.
+            <br/>
+            Note: Some functionality will still not be possible as it cannot use default-values, e.g. rendering
+            slides, drawing, ...
+          </td>
+        </tr>
+      </table>
+    </section>
+  </body>
+
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache
+      POI project logo are trademarks of The Apache Software Foundation.
+    </legal>
+  </footer>
+</document>

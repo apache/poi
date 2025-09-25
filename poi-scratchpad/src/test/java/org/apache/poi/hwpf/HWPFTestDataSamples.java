@@ -34,6 +34,10 @@ public class HWPFTestDataSamples {
         }
     }
 
+    public static InputStream openSampleFileStream(String sampleFileName) {
+        return SAMPLES.openResourceAsStream(sampleFileName);
+    }
+
     public static HWPFOldDocument openOldSampleFile(String sampleFileName) {
        try {
            InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream(sampleFileName);
@@ -48,7 +52,7 @@ public class HWPFTestDataSamples {
      * Useful for verifying that the serialisation round trip
      */
     public static HWPFDocument writeOutAndReadBack(HWPFDocument original) {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(4096)) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(4096).get()) {
             original.write(baos);
             return new HWPFDocument(baos.toInputStream());
         } catch (IOException e) {

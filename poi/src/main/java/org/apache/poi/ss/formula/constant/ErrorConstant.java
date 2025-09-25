@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.constant;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.usermodel.FormulaError;
 
 import static org.apache.logging.log4j.util.Unbox.box;
@@ -30,7 +30,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * {@code ErrorEval}.
  */
 public final class ErrorConstant {
-    private static final Logger LOG = LogManager.getLogger(ErrorConstant.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ErrorConstant.class);
     private static final ErrorConstant NULL = new ErrorConstant(FormulaError.NULL.getCode());
     private static final ErrorConstant DIV_0 = new ErrorConstant(FormulaError.DIV0.getCode());
     private static final ErrorConstant VALUE = new ErrorConstant(FormulaError.VALUE.getCode());

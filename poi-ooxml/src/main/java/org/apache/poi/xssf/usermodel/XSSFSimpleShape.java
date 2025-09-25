@@ -199,7 +199,8 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
             }
             XSSFTextParagraph p = _paragraphs.get(i);
 
-            if (p.isBullet() && p.getText().length() > 0) {
+            final String pText = p.getText();
+            if (p.isBullet() && !pText.isEmpty()) {
 
                 int level = Math.min(p.getLevel(), MAX_LEVELS - 1);
 
@@ -211,11 +212,11 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
                         out.append('\t');
                     }
                     String character = p.getBulletCharacter();
-                    out.append(character.length() > 0 ? character + " " : "- ");
-                    out.append(p.getText());
+                    out.append(!character.isEmpty() ? character + " " : "- ");
+                    out.append(pText);
                 }
             } else {
-                out.append(p.getText());
+                out.append(pText);
 
                 // this paragraph is not a bullet, so reset the count array
                 for (int k = 0; k < MAX_LEVELS; k++) {
@@ -254,9 +255,10 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
         for (int j = 0; j < level; j++) {
             out.append('\t');
         }
-        if (p.getText().length() > 0) {
+        final String pText = p.getText();
+        if (!pText.isEmpty()) {
             out.append(getBulletPrefix(scheme, levelCount.get(level)));
-            out.append(p.getText());
+            out.append(pText);
         }
         while (true) {
             XSSFTextParagraph nextp = (index + 1) == _paragraphs.size() ? null : _paragraphs.get(index + 1);
@@ -291,11 +293,12 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
                 }
                 // check for empty text - only output a bullet if there is text,
                 // but it is still part of the group
-                if (nextp.getText().length() > 0) {
+                final String npText = nextp.getText();
+                if (!npText.isEmpty()) {
                     // increment the count for this level
                     levelCount.set(level, levelCount.get(level) + 1);
                     out.append(getBulletPrefix(nextScheme, levelCount.get(level)));
-                    out.append(nextp.getText());
+                    out.append(npText);
                 }
             } else {
                 // something doesn't match so stop

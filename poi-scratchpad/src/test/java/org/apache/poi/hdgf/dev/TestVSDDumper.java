@@ -13,10 +13,6 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-
-   2012 - Alfresco Software, Ltd.
-   Alfresco Software has modified source of this file
-   The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src
 ==================================================================== */
 package org.apache.poi.hdgf.dev;
 
@@ -33,7 +29,7 @@ public class TestVSDDumper {
     @Test
     void main() {
         PrintStream oldStdOut = System.out;
-        System.setOut(new NullPrintStream());
+        System.setOut(NullPrintStream.INSTANCE);
         try {
             File file = POIDataSamples.getDiagramInstance().getFile("Test_Visio-Some_Random_Text.vsd");
             String[] args = { file.getAbsolutePath() };

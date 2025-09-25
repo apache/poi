@@ -36,6 +36,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
+import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.junit.jupiter.api.AfterEach;
@@ -99,6 +100,17 @@ class TestXWPFRun {
         //fail("Position wrong");
     }
 
+    @Test
+    void testGetTextWithNoBreakHyphen() {
+        ctRun.addNewT().setStringValue("TEST STRING 1");
+        ctRun.addNewInstrText().setStringValue("InstrText");
+        ctRun.addNewNoBreakHyphen();
+        ctRun.addNewDelInstrText().setStringValue("DelInstrText");
+        ctRun.addNewT().setStringValue("1");
+        XWPFRun run = new XWPFRun(ctRun, irb);
+        assertEquals("TEST STRING 1‑1", run.text());
+    }
+
     /*
      * bug 59208
      * Purpose: test all valid boolean-like values
@@ -146,6 +158,20 @@ class TestXWPFRun {
     }
 
     @Test
+    void testSetGetComplexBold() {
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewBCs().setVal(STOnOff1.ON);
+
+        XWPFRun run = new XWPFRun(ctRun, irb);
+        assertTrue(run.isComplexScriptBold());
+
+        run.setComplexScriptBold(false);
+        // Implementation detail: POI natively prefers <w:b w:val="false"/>,
+        // but should correctly read val="0" and val="off"
+        assertEquals("off", rpr.getBCsArray(0).getVal());
+    }
+
+    @Test
     void testSetGetItalic() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewI().setVal(STOnOff1.ON);
@@ -155,6 +181,18 @@ class TestXWPFRun {
 
         run.setItalic(false);
         assertEquals("off", rpr.getIArray(0).getVal());
+    }
+
+    @Test
+    void testSetGetItalicComplex() {
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewICs().setVal(STOnOff1.ON);
+
+        XWPFRun run = new XWPFRun(ctRun, irb);
+        assertTrue(run.isComplexScriptItalic());
+
+        run.setComplexScriptItalic(false);
+        assertEquals("off", rpr.getICsArray(0).getVal());
     }
 
     @Test
@@ -211,6 +249,23 @@ class TestXWPFRun {
         assertEquals("49", rpr.getSzArray(0).getVal().toString());
         assertEquals(25, run.getFontSize());
         assertEquals(24.5, run.getFontSizeAsDouble(), 0.01);
+    }
+
+    @Test
+    void testSetGetFontSizeComplex() {
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewSzCs().setVal(BigInteger.valueOf(14));
+
+        XWPFRun run = new XWPFRun(ctRun, irb);
+
+        assertEquals(7.0, run.getComplexScriptFontSizeAsDouble(), 0.01);
+
+        run.setComplexScriptFontSize(24);
+        assertEquals("48", rpr.getSzCsArray(0).getVal().toString());
+
+        run.setComplexScriptFontSize(24.5f);
+        assertEquals("49", rpr.getSzCsArray(0).getVal().toString());
+        assertEquals(24.5, run.getComplexScriptFontSizeAsDouble(), 0.01);
     }
 
     @Test
@@ -498,7 +553,7 @@ class TestXWPFRun {
         assertEquals(0, doc.getAllPictures().size());
         assertEquals(0, r.getEmbeddedPictures().size());
 
-        r.addPicture(new ByteArrayInputStream(new byte[0]), Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
+        r.addPicture(new ByteArrayInputStream(new byte[0]), PictureType.JPEG, "test.jpg", 21, 32);
 
         assertEquals(1, doc.getAllPictures().size());
         assertEquals(1, r.getEmbeddedPictures().size());
@@ -526,7 +581,7 @@ class TestXWPFRun {
             assertEquals(0, hdr.getAllPictures().size());
             assertEquals(0, r.getEmbeddedPictures().size());
 
-            r.addPicture(new ByteArrayInputStream(new byte[0]), Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
+            r.addPicture(new ByteArrayInputStream(new byte[0]), PictureType.JPEG, "test.jpg", 21, 32);
 
             assertEquals(1, hdr.getAllPictures().size());
             assertEquals(1, r.getEmbeddedPictures().size());
@@ -561,9 +616,9 @@ class TestXWPFRun {
     void testSetFontFamily_52288() throws IOException {
         try (XWPFDocument doc = openSampleDocument("52288.docx")) {
             doc.getParagraphs().stream()
-                .flatMap(p -> p.getRuns().stream())
-                .filter(p -> p != null && p.getText(0) != null)
-                .forEach(r -> assertDoesNotThrow(() -> r.setFontFamily("Times New Roman")));
+                    .flatMap(p -> p.getRuns().stream())
+                    .filter(p -> p != null && p.getText(0) != null)
+                    .forEach(r -> assertDoesNotThrow(() -> r.setFontFamily("Times New Roman")));
         }
     }
 
@@ -573,7 +628,7 @@ class TestXWPFRun {
         try (XWPFDocument document = new XWPFDocument()) {
 
             document.createParagraph().createRun().addPicture(
-                new ByteArrayInputStream(image), Document.PICTURE_TYPE_JPEG, "test.jpg", Units.toEMU(300), Units.toEMU(100));
+                    new ByteArrayInputStream(image), PictureType.JPEG, "test.jpg", Units.toEMU(300), Units.toEMU(100));
 
             try (XWPFDocument docBack = writeOutAndReadBack(document)) {
                 List<XWPFPicture> pictures = docBack.getParagraphArray(0).getRuns().get(0).getEmbeddedPictures();
@@ -804,7 +859,7 @@ class TestXWPFRun {
             assertEquals(0, hdr.getAllPictures().size());
             assertEquals(0, r.getEmbeddedPictures().size());
 
-            r.addPicture(new ByteArrayInputStream(new byte[0]), Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
+            r.addPicture(new ByteArrayInputStream(new byte[0]), PictureType.JPEG, "test.jpg", 21, 32);
 
             assertEquals(1, hdr.getAllPictures().size());
             assertEquals(1, r.getEmbeddedPictures().size());
@@ -846,5 +901,43 @@ class TestXWPFRun {
                 }
             }
         }
+    }
+
+    @Test
+    void testGetNumberOfTexts() {
+        XWPFRun run = p.createRun();
+        assertEquals(0, run.getNumberOfTexts());
+        run.setText("TEST STRING");
+        assertEquals(1, run.getNumberOfTexts());
+    }
+
+    @Test
+    void testGetEmbeddedCharts() throws IOException {
+        try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("61745.docx")) {
+            List<XWPFChart> charts = sampleDoc.getCharts();
+            assertEquals(2, charts.size());
+            List<XWPFChart> run1Charts = sampleDoc.getParagraphArray(0).getRuns().get(0).getEmbeddedCharts();
+            assertEquals(1, run1Charts.size());
+            assertEquals(charts.get(0), run1Charts.get(0));
+            List<XWPFChart> run2Charts = sampleDoc.getParagraphArray(1).getRuns().get(0).getEmbeddedCharts();
+            assertEquals(1, run2Charts.size());
+            assertEquals(charts.get(1), run2Charts.get(0));
+        }
+    }
+
+    @Test
+    void testAddChartGetEmbeddedCharts() throws InvalidFormatException, IOException {
+        XWPFRun run1 = p.createRun();
+        XWPFChart chart1 = doc.createChart(run1, XDDFChart.DEFAULT_WIDTH, XDDFChart.DEFAULT_HEIGHT);
+        assertEquals(1, run1.getEmbeddedCharts().size());
+        assertEquals(chart1, run1.getEmbeddedCharts().get(0));
+
+        XWPFRun run2 = p.createRun();
+        XWPFChart chart2 = doc.createChart(run2, XDDFChart.DEFAULT_WIDTH, XDDFChart.DEFAULT_HEIGHT);
+        assertEquals(1, run2.getEmbeddedCharts().size());
+        assertEquals(chart2, run2.getEmbeddedCharts().get(0));
+
+        XWPFRun run3 = p.createRun();
+        assertEquals(0, run3.getEmbeddedCharts().size());
     }
 }

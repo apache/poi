@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -42,7 +43,7 @@ class TestPOIFSProperties {
 
     @Test
     void testFail() throws IOException, NoPropertySetStreamException, WritingNotSupportedException {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         // read the workbook, adjust the SummaryInformation and write the data to a byte array
         try (POIFSFileSystem fs = openFileSystem();
              HSSFWorkbook wb = new HSSFWorkbook(fs)) {
@@ -61,7 +62,7 @@ class TestPOIFSProperties {
 
     @Test
     void testOK() throws Exception {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         // read the workbook, adjust the SummaryInformation and write the data to a byte array
         try (POIFSFileSystem fs = openFileSystem()) {
 
@@ -89,7 +90,7 @@ class TestPOIFSProperties {
 
         summary1.setTitle(title);
         //write the modified property back to POIFS
-        fs.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME).delete();
+        assertTrue(fs.getRoot().getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME).delete());
         fs.createDocument(summary1.toInputStream(), SummaryInformation.DEFAULT_STREAM_NAME);
 
         // check that the information was added successfully to the filesystem object

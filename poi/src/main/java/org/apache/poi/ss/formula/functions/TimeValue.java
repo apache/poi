@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.DateParser;
@@ -45,7 +45,7 @@ import java.time.LocalDate;
  */
 public class TimeValue extends Fixed1ArgFunction {
 
-    private static final Logger LOG = LogManager.getLogger(TimeValue.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TimeValue.class);
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval dateTimeTextArg) {

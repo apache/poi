@@ -49,7 +49,7 @@ public final class TestExMediaAtom {
     @Test
     void testWrite() throws Exception {
         ExMediaAtom record = new ExMediaAtom(data, 0, data.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
@@ -67,7 +67,7 @@ public final class TestExMediaAtom {
         record.setFlag(HeadersFootersAtom.fHasTodayDate, false);
         record.setFlag(HeadersFootersAtom.fHasFooter, false);
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 

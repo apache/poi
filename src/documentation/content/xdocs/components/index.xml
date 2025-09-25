@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+  <header>
+    <title>Apache POI™ - Component Overview</title>
+    <authors>
+      <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+      <person id="RK" name="Rainer Klute" email="klute@apache.org"/>
+      <person id="DF" name="David Fisher" email="dfisher@jmlafferty.com"/>
+    </authors>
+  </header>
+  <body>
+    <section><title>Apache POI Project Components</title>
+      <p>The Apache POI project is the master project for developing pure
+        Java ports of file formats based on Microsoft's OLE 2 Compound
+        Document Format.  OLE 2 Compound Document Format is used by
+        Microsoft Office Documents, as well as by programs using MFC
+        property sets to serialize their document objects.
+      </p>
+      <p>Apache POI is also the master project for developing pure
+        Java ports of file formats based on Office Open XML (ooxml).
+        OOXML is part of an ECMA / ISO standardisation effort. This
+        documentation is quite large, but you can normally find the bit you
+        need without too much effort!
+        <a href="https://ecma-international.org/publications-and-standards/standards/ecma-376/">ECMA-376 standard is here</a>,
+        and is also under the
+        <a href="https://msdn.microsoft.com/en-us/openspecifications/default">Microsoft OSP</a>.
+      </p>
+
+
+      <section><title>POIFS for OLE 2 Documents</title>
+        <p>
+	  POIFS is the oldest and most stable part of POI.  It is our port of the OLE 2 Compound Document Format to
+          pure Java.  It supports both read and write functionality.  All of our components for the binary (non-XML)
+          Microsoft Office formats ultimately rely on it by
+          definition.  Please see <a href="./poifs/index.html">the POIFS project page</a> for more information.
+	</p>
+      </section>
+      <section><title>HSSF and XSSF for Excel Documents</title>
+        <p>
+	  HSSF is our port of the Microsoft Excel 97 (-2003) file format (BIFF8) to pure
+          Java. XSSF is our port of the Microsoft Excel XML (2007+) file format (OOXML) to
+          pure Java. SS is a package that provides common support for both formats with a common API.
+	  They both support read and write capability. Please see
+          <a href="site:spreadsheet">the HSSF+XSSF project page</a> for more
+          information.
+	</p>
+      </section>
+      <section><title>HWPF and XWPF for Word Documents</title>
+	<p>
+	  HWPF is our port of the Microsoft Word 97 (-2003) file format to pure
+	  Java.  It supports read, and limited write capabilities. It also provides
+      simple text extraction support for the older Word 6 and Word 95 formats.
+      Please see <a href="site:document">the HWPF project page for more
+	    information</a>.  This component remains in early stages of
+	  development. It can already read and write simple files.
+	</p>
+	<p>
+	  We are also working on the XWPF for the WordprocessingML (2007+) format from the
+	  OOXML specification. This provides read and write support for simpler
+      files, along with text extraction capabilities.
+	</p>
+      </section>
+      <section><title>HSLF and XSLF for PowerPoint Documents</title>
+	<p>
+	  HSLF is our port of the Microsoft PowerPoint 97(-2003) file format to pure
+	  Java. It supports read and write capabilities. Please see <a
+	    href="site:slideshow">the HSLF project page for more
+	    information</a>.
+	</p>
+	<p>
+	  We are also working on the XSLF for the PresentationML (2007+) format from the
+	  OOXML specification.
+	</p>
+      </section>
+      <section><title>HPSF for OLE 2 Document Properties</title>
+	<p>
+	  HPSF is our port of the OLE 2 property set format to pure
+	  Java. Property sets are mostly use to store a document's properties
+	  (title, author, date of last modification etc.), but they can be used
+	  for application-specific purposes as well.
+	</p>
+	<p>
+	  HPSF supports both reading and writing of properties.
+	</p>
+	<p>
+	  Please see <a href="./hpsf/index.html">the HPSF project
+	    page</a> for more information.
+	</p>
+      </section>
+      <section><title>HDGF and XDGF for Visio Documents</title>
+	<p>
+	  HDGF is our port of the Microsoft Visio 97(-2003) file format to pure
+	  Java. It currently only supports reading at a very low level, and
+	  simple text extraction. Please see <a
+	    href="./diagram/index.html">the HDGF / Diagram project page for more
+	    information</a>.
+	</p>
+	<p>
+	  XDGF is our port of the Microsoft Visio XML (.vsdx) file format to pure
+	  Java. It has slightly more support than HDGF. Please see <a
+	    href="./diagram/index.html">the XDGF / Diagram project page for more
+	    information</a>.
+	</p>
+      </section>
+      <section><title>HPBF for Publisher Documents</title>
+	<p>
+	  HPBF is our port of the Microsoft Publisher 98(-2007) file format to pure
+	  Java. It currently only supports reading at a low level for around
+	  half of the file parts, and simple text extraction.  Please see <a
+	    href="./hpbf/index.html">the HPBF project page for more
+	    information</a>.
+	</p>
+      </section>
+      <section><title>HMEF for TNEF (winmail.dat) Outlook Attachments</title>
+	<p>
+     HMEF is our port of the Microsoft TNEF (Transport Neutral Encoding
+     Format) file format to pure Java. TNEF is sometimes used by Outlook
+     for encoding the message, and will typically come through as
+     winmail.dat. HMEF currently only supports reading at a low level, but
+     we hope to add text and attachment extraction. Please see <a
+	    href="./hmef/index.html">the HMEF project page for more
+	    information</a>.
+	</p>
+      </section>
+      <section><title>HSMF for Outlook Messages</title>
+	<p>
+	  HSMF is our port of the Microsoft Outlook message file format to pure
+	  Java. It currently only some of the textual content of MSG files, and
+      some attachments. Further support and documentation is coming in slowly.
+	  For now, users are advised to consult the unit tests for example use.
+	  Please see <a href="./hsmf/index.html">the HSMF project page for more
+	    information</a>.
+	</p>
+	<p>
+	  Microsoft has recently added the Outlook file format to its OSP. More information
+	  is now available making implementing this API an easier task.
+	</p>
+      </section>
+    </section>
+    <section id="components"><title>Component Map</title>
+      <p>
+        The Apache POI distribution consists of support for many document file formats. This support is provided
+        in several Jar files. Not all of the Jars are needed for every format. The following tables
+        show the relationships between POI components, Maven repository tags, and the project's Jar files.
+      </p>
+      <table>
+        <tr>
+          <th>Component</th>
+          <th>Application type</th>
+          <th>Maven artifactId</th>
+          <th>Notes</th>
+        </tr>
+        <tr>
+          <td><a href="./poifs/index.html">POIFS</a></td>
+          <td>OLE2 Filesystem</td>
+          <td><em>poi</em></td>
+          <td>Required to work with OLE2 / POIFS based files</td>
+        </tr>
+        <tr>
+          <td><a href="./hpsf/index.html">HPSF</a></td>
+          <td>OLE2 Property Sets</td>
+          <td><em>poi</em></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><a href="site:spreadsheet">HSSF</a></td>
+          <td>Excel XLS</td>
+          <td><em>poi</em></td>
+          <td>For HSSF only, if common SS is needed see below</td>
+        </tr>
+        <tr>
+          <td><a href="site:slideshow">HSLF</a></td>
+          <td>PowerPoint PPT</td>
+          <td><em>poi-scratchpad</em></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><a href="site:document">HWPF</a></td>
+          <td>Word DOC</td>
+          <td><em>poi-scratchpad</em></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><a href="./diagram/index.html">HDGF</a></td>
+          <td>Visio VSD</td>
+          <td><em>poi-scratchpad</em></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><a href="./hpbf/index.html">HPBF</a></td>
+          <td>Publisher PUB</td>
+          <td><em>poi-scratchpad</em></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><a href="./hsmf/index.html">HSMF</a></td>
+          <td>Outlook MSG</td>
+          <td><em>poi-scratchpad</em></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>DDF</td>
+          <td>Escher common drawings</td>
+          <td><em>poi</em></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>HWMF</td>
+          <td>WMF drawings</td>
+          <td><em>poi-scratchpad</em></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><a href="./oxml4j/index.html">OpenXML4J</a></td>
+          <td>OOXML</td>
+          <td><em>poi-ooxml</em> plus either <em>poi-ooxml-lite</em> or<br/>
+              <em>poi-ooxml-full</em></td>
+          <td>See notes below for differences between these options</td>
+        </tr>
+        <tr>
+          <td><a href="site:spreadsheet">XSSF</a></td>
+          <td>Excel XLSX</td>
+          <td><em>poi-ooxml</em></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><a href="site:slideshow">XSLF</a></td>
+          <td>PowerPoint PPTX</td>
+          <td><em>poi-ooxml</em></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><a href="site:document">XWPF</a></td>
+          <td>Word DOCX</td>
+          <td><em>poi-ooxml</em></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><a href="./diagram/index.html">XDGF</a></td>
+          <td>Visio VSDX</td>
+          <td><em>poi-ooxml</em></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><a href="./slideshow/index.html">Common SL</a></td>
+          <td>PowerPoint PPT and PPTX</td>
+          <td><em>poi-scratchpad</em> and <em>poi-ooxml</em></td>
+          <td>SL code is in the core POI jar, but implementations are in poi-scratchpad
+              and poi-ooxml.</td>
+        </tr>
+        <tr>
+          <td><a href="site:spreadsheet">Common SS</a></td>
+          <td>Excel XLS and XLSX</td>
+          <td><em>poi-ooxml</em></td>
+          <td>WorkbookFactory and friends all require poi-ooxml, not just core poi</td>
+        </tr>
+      </table>
+
+      <p><br /></p>
+
+      <p>
+        This table maps artifacts into the jar file name. "version-yyyymmdd" is
+        the POI version stamp. You can see what the latest stamp is on the
+        <a href="site:download">downloads page</a>.
+      </p>
+      <table>
+        <tr>
+          <th>Maven artifactId</th>
+          <th>Prerequisites</th>
+          <th>JAR</th>
+        </tr>
+        <tr>
+          <td>poi</td>
+          <td><a href="https://search.maven.org/#artifactdetails|org.apache.logging.log4j|log4j-api|2.24.3|jar">log4j 2.x</a>,
+              <a href="https://search.maven.org/#artifactdetails|commons-codec|commons-codec|1.17.1|jar">commons-codec</a>,
+              <a href="https://search.maven.org/#artifactdetails|org.apache.commons|commons-collections4|4.4|jar">commons-collections</a>,
+              <a href="https://search.maven.org/#artifactdetails|org.apache.commons|commons-math3|3.6.1|jar">commons-math3</a>
+              <a href="https://search.maven.org/#artifactdetails|commons-io|commons-io|2.20.0|jar">commons-io</a>
+          </td>
+          <td>poi-version-yyyymmdd.jar</td>
+        </tr>
+        <tr>
+          <td>poi-scratchpad</td>
+          <td><a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi">poi</a></td>
+          <td>poi-scratchpad-version-yyyymmdd.jar</td>
+        </tr>
+        <tr>
+          <td>poi-ooxml</td>
+          <td><a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi">poi</a>,
+              <a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi-ooxml-lite">poi-ooxml-lite</a>,
+              <a href="https://search.maven.org/#artifactdetails|org.apache.commons|commons-compress|1.23.0|jar">commons-compress</a>,
+              <a href="https://search.maven.org/#artifactdetails|com.zaxxer|SparseBitSet|1.2|jar">SparseBitSet</a><br/>
+              For SVG support:
+              <a href="https://search.maven.org/#search|gav|1|g:org.apache.xmlgraphics AND a:batik-all">batik-all</a>,
+              <a href="https://search.maven.org/#search|gav|1|g:xml-apis AND a:xml-apis-ext">xml-apis-ext</a>,
+              <a href="https://search.maven.org/#search|gav|1|g:org.apache.xmlgraphics AND a:xmlgraphics-commons">xmlgraphics-commons</a><br/>
+              For PDF support:
+            <a href="https://search.maven.org/#search|gav|1|g:org.apache.pdfbox AND a:pdfbox">pdfbox</a>,
+            <a href="https://search.maven.org/#search|gav|1|g:org.apache.pdfbox AND a:fontbox">fontbox</a>,
+            <a href="https://search.maven.org/#search|gav|1|g:de.rototor.pdfbox AND a:graphics2d">rototor graphics2d</a>
+          </td>
+          <td>poi-ooxml-version-yyyymmdd.jar</td>
+        </tr>
+        <tr>
+          <td>poi-ooxml-lite</td>
+          <td><a href="https://search.maven.org/#artifactdetails|org.apache.xmlbeans|xmlbeans|5.3.0|jar">xmlbeans</a></td>
+          <td>poi-ooxml-lite-version-yyyymmdd.jar</td>
+        </tr>
+        <tr>
+          <td>poi-examples</td>
+          <td><a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi">poi</a>,
+              <a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi-scratchpad">poi-scratchpad</a>,
+              <a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi-ooxml">poi-ooxml</a>
+          </td>
+          <td>poi-examples-version-yyyymmdd.jar</td>
+        </tr>
+        <tr>
+          <td>poi-ooxml-full (known as ooxml-schemas)</td>
+          <td><a href="https://search.maven.org/#artifactdetails|org.apache.xmlbeans|xmlbeans|5.3.0|jar">xmlbeans</a><br/>
+            For signing:
+            <a href="https://search.maven.org/#artifactdetails|org.bouncycastle|bcpkix-jdk18on|1.81|jar">bcpkix-jdk18on</a>,
+            <a href="https://search.maven.org/#artifactdetails|org.bouncycastle|bcutil-jdk18on|1.81|jar">bcprov-jdk18on</a>,
+            <a href="https://search.maven.org/#artifactdetails|org.apache.santuario|xmlsec|3.0.6|bundle">xmlsec</a>,
+            <a href="https://search.maven.org/#artifactdetails|org.slf4j|slf4j-api|2.0.17|jar">slf4j-api</a>
+          </td>
+          <td>poi-ooxml-full-version-yyyymmdd.jar</td>
+        </tr>
+      </table>
+
+      <p>&nbsp;</p>
+      <note>
+        Apache commons-math3 and commons-compress were added as a dependency in POI 4.0.0.<br/>
+        Zaxxer SparseBitSet was added as a dependency in POI 4.1.2<br/>
+        Apache commons-io was added as a dependency in POI 5.1.0
+      </note>
+      <p>
+        poi-ooxml requires poi-ooxml-lite. This is a substantially smaller
+        version of the poi-ooxml-full jar (ooxml-schemas-1.4.jar for POI 4.0.0,
+        ooxml-schemas-1.3.jar for POI 3.14 or to POI 3.17,
+        ooxml-schemas-1.1.jar for POI 3.7 up to POI 3.13, ooxml-schemas-1.0.jar
+        for POI 3.5 and 3.6).
+        The larger poi-ooxml-full (formerly, ooxml-schemas) jar is <a href="../help/index.html#faq-N10025">normally</a>
+        only required for features that are not fully implemented in poi-ooxml.
+        There used to also be an ooxml-security jar, which contained
+        all of the classes relating to encryption and signing. POI 5 no longer needs this jar.
+        The equivalent classes are now in poi-ooxml-full and poi-ooxml-lite.
+        This JAR was ooxml-security-1.1.jar for POI 3.14 and POI 4. ooxml-security-1.0.jar
+        was used prior to that.
+      </p>
+      <p>
+        The OOXML jars require a stax implementation, but now that Apache
+        POI requires Java 8, that dependency is provided by the JRE and no additional
+        stax jars are required. The OOXML jars used to require DOM4J, but
+        the code has now been changed to use JAXP and no additional dom4j
+        jars are required. By the way, look at this <a href="../help/index.html#faq-N1017E">FAQ</a>
+        if you have problems when using a non-Oracle JDK.
+      </p>
+      <p>
+        The ooxml schemas jars are compiled with <a href="https://xmlbeans.apache.org/">Apache XMLBeans</a>.
+        It is recommended that you use the XMLBeans version that was used to build the POI OOXML schemas.
+        It may be possible to use newer XMLBeans jars but there are no guarantees, especially if the XMLBeans version
+        numbers differ a lot.
+      </p>
+    </section>
+    <section><title>Examples</title>
+      <p>
+	    Small sample programs using the POI API are available in the
+        <a href="https://github.com/apache/poi/tree/trunk/poi-examples/src/main/java/org/apache/poi/examples">src/examples</a>
+        (<a href="https://github.com/apache/poi/tree/trunk/poi-examples/src/main/java/org/apache/poi/examples">viewvc</a>) directory of the source distribution.
+      </p>
+      <p>
+        All of the examples are included in POI distributions as a poi-examples artifact.
+      </p>
+    </section>
+    <section><title>Running POI on other JVM languages</title>
+      <p>
+        POI can be run on most languages that run on the JVM. For code examples,
+        see <a href="poi-jvm-languages.html">Running POI on other JVM languages</a>
+      </p>
+    </section>
+    <section><title>Contributed Software</title>
+      <p>
+	    Besides the "official" components outlined above there is some further
+	    software distributed with POI. This is called "contributed" software. It
+        is not explicitly recommended or even maintained by the POI team, but
+        it might still be useful to you.
+      </p>
+      <p>
+          See <a href="poi-ruby.html">POI Ruby Bindings</a>  and other code in the
+          <a
+         href="https://github.com/apache/poi/tree/trunk/src/contrib/">poi-contrib module</a>
+      </p>
+    </section>
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache
+      POI project logo are trademarks of The Apache Software Foundation.
+    </legal>
+  </footer>
+</document>

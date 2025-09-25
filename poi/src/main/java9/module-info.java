@@ -20,7 +20,7 @@ module org.apache.poi.poi {
     requires org.apache.commons.codec;
     requires org.apache.commons.io;
     requires commons.math3;
-    requires SparseBitSet;
+    requires com.zaxxer.sparsebitset;
     requires org.apache.logging.log4j;
     requires java.logging;
     requires java.desktop;
@@ -64,6 +64,7 @@ module org.apache.poi.poi {
     exports org.apache.poi.hssf.usermodel;
     exports org.apache.poi.hssf.usermodel.helpers;
     exports org.apache.poi.hssf.util;
+    exports org.apache.poi.logging;
     exports org.apache.poi.poifs.common;
     exports org.apache.poi.poifs.crypt;
     exports org.apache.poi.poifs.crypt.agile;

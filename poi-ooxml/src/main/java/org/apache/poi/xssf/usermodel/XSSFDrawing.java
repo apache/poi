@@ -29,8 +29,8 @@ import java.util.Spliterator;
 
 import javax.xml.namespace.QName;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -77,7 +77,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
  * Represents a SpreadsheetML drawing
  */
 public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSSFShape> {
-    private static final Logger LOG = LogManager.getLogger(XSSFDrawing.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XSSFDrawing.class);
 
     /**
      * Root element of the SpreadsheetML Drawing part

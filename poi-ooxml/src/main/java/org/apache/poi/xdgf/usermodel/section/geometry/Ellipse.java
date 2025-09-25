@@ -59,6 +59,11 @@ public class Ellipse implements GeometryRow {
         for (CellType cell : row.getCellArray()) {
             String cellName = cell.getN();
 
+            if (cellName == null) {
+                throw new POIXMLException("Invalid cell '" + cellName
+                        + "' in Ellipse row");
+            }
+
             switch (cellName) {
                 case "X":
                     x = XDGFCell.parseDoubleValue(cell);

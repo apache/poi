@@ -20,8 +20,8 @@ package org.apache.poi.hwpf.model;
 import java.util.Arrays;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.model.types.StdfBaseAbstractType;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
@@ -36,7 +36,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 @Internal
 public final class StyleDescription {
 
-    private static final Logger LOG = LogManager.getLogger(StyleDescription.class);
+    private static final Logger LOG = PoiLogManager.getLogger(StyleDescription.class);
 
     private static final int PARAGRAPH_STYLE = 1;
     private static final int CHARACTER_STYLE = 2;

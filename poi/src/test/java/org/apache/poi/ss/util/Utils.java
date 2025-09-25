@@ -27,6 +27,8 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Utils {
+    private static final String provider = System.getProperty("java.locale.providers");
+
     public static void addRow(Sheet sheet, int rownum, Object... values) {
         Row row = sheet.createRow(rownum);
         for (int i = 0; i < values.length; i++) {
@@ -60,7 +62,8 @@ public class Utils {
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
         assertEquals(CellType.STRING, result.getCellType());
-        assertEquals(expectedResult, result.getStringValue());
+        assertEquals(expectedResult, result.getStringValue(),
+                "Failed with locale provider: " + provider);
     }
 
     public static void assertDouble(FormulaEvaluator fe, Cell cell, String formulaText, double expectedResult) {

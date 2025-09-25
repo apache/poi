@@ -46,7 +46,7 @@ public final class LittleEndianByteArrayOutputStream extends OutputStream implem
 
     private void checkPosition(int i) {
         if (i > _endIndex - _writeIndex) {
-            throw new RuntimeException("Buffer overrun");
+            throw new IllegalStateException("Buffer overrun");
         }
     }
 

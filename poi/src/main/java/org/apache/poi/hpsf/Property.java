@@ -31,8 +31,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.HexDump;
@@ -73,7 +73,7 @@ public class Property {
      */
     public static final int DEFAULT_CODEPAGE = CodePageUtil.CP_WINDOWS_1252;
 
-    private static final Logger LOG = LogManager.getLogger(Property.class);
+    private static final Logger LOG = PoiLogManager.getLogger(Property.class);
 
     /** The property's ID. */
     private long id;
@@ -272,7 +272,7 @@ public class Property {
 
         /* Variable length: */
         if (type == Variant.VT_LPSTR || type == Variant.VT_LPWSTR) {
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             try {
                 length = write(bos, property) - 2*LittleEndianConsts.INT_SIZE;
                 /* Pad to multiples of 4. */
@@ -399,7 +399,7 @@ public class Property {
         if (value instanceof String) {
             b.append((String)value);
             b.append("\n");
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             try {
                 write(bos, codepage);
             } catch (Exception e) {

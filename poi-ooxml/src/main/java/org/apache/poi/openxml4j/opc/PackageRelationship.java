@@ -85,18 +85,20 @@ public final class PackageRelationship {
 
     /**
      * Constructor.
+     *
+     * @throws NullPointerException if inputs are null
      */
     public PackageRelationship(OPCPackage pkg, PackagePart sourcePart,
             URI targetUri, TargetMode targetMode, String relationshipType,
             String id) {
         if (pkg == null)
-            throw new IllegalArgumentException("pkg");
+            throw new NullPointerException("pkg cannot be null");
         if (targetUri == null)
-            throw new IllegalArgumentException("targetUri");
+            throw new NullPointerException("targetUri cannot be null");
         if (relationshipType == null)
-            throw new IllegalArgumentException("relationshipType");
+            throw new NullPointerException("relationshipType cannot be null");
         if (id == null)
-            throw new IllegalArgumentException("id");
+            throw new NullPointerException("id cannot be null");
 
         this.container = pkg;
         this.source = sourcePart;
@@ -183,6 +185,12 @@ public final class PackageRelationship {
         // If it's an external target, we don't
         //  need to apply our normal validation rules
         if(targetMode == TargetMode.EXTERNAL) {
+            return targetUri;
+        }
+
+        // If it's an internal hyperlink target, we don't
+        //  need to apply our normal validation rules
+        if (PackageRelationshipTypes.HYPERLINK_PART.equals(relationshipType)) {
             return targetUri;
         }
 

@@ -703,7 +703,7 @@ public final class HemfPlusDraw {
 
             int size = 4 * LittleEndianConsts.INT_SIZE;
 
-            // TOOD: implement Non-Cmap-Lookup correctly
+            // TODO: implement Non-Cmap-Lookup correctly
 
             // If the CMAP_LOOKUP flag in the optionsFlags field is set, each value in this array specifies a
             // Unicode character. Otherwise, each value specifies an index to a character glyph in the EmfPlusFont

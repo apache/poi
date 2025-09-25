@@ -55,6 +55,7 @@ public class XSSFExcelExtractor
 
     private Locale locale;
     private final XSSFWorkbook workbook;
+    private final DataFormatter dataFormatter;
     private boolean includeSheetNames = true;
     private boolean formulasNotResults;
     private boolean includeCellComments;
@@ -67,6 +68,8 @@ public class XSSFExcelExtractor
     }
     public XSSFExcelExtractor(XSSFWorkbook workbook) {
         this.workbook = workbook;
+        this.dataFormatter = new DataFormatter();
+        this.dataFormatter.setUseCachedValuesForFormulaCells(true);
     }
 
     /**
@@ -189,7 +192,7 @@ public class XSSFExcelExtractor
                     for (XSSFShape shape : drawing.getShapes()){
                         if (shape instanceof XSSFSimpleShape){
                             String boxText = ((XSSFSimpleShape)shape).getText();
-                            if (boxText.length() > 0){
+                            if (!boxText.isEmpty()){
                                 text.append(boxText);
                                 text.append('\n');
                             }
@@ -224,6 +227,10 @@ public class XSSFExcelExtractor
         CellType type = cell.getCellType();
         if (type == CellType.FORMULA) {
             type = cell.getCachedFormulaResultType();
+            if (type == CellType.STRING) {
+                handleStringCell(text, cell);
+                return;
+            }
         }
 
         if (type == CellType.NUMERIC) {
@@ -239,8 +246,12 @@ public class XSSFExcelExtractor
         }
 
         // No supported styling applies to this cell
-        String contents = ((XSSFCell)cell).getRawValue();
+        String contents = dataFormatter.formatCellValue(cell);
         if (contents != null) {
+            if (type == CellType.ERROR) {
+                // to match what XSSFEventBasedExcelExtractor does
+                contents = "ERROR:" + contents;
+            }
             checkMaxTextSize(text, contents);
             text.append(contents);
         }

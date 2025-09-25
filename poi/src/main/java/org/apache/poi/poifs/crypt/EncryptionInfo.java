@@ -160,7 +160,7 @@ public class EncryptionInfo implements GenericRecord {
      * Constructs an EncryptionInfo from scratch
      *
      * @param encryptionMode see {@link EncryptionMode} for values, {@link EncryptionMode#cryptoAPI} is for
-     *   internal use only, as it's record based
+     *   internal use only, as its record based
      * @param cipherAlgorithm the cipher algorithm
      * @param hashAlgorithm the hash algorithm
      * @param keyBits the bit count of the key

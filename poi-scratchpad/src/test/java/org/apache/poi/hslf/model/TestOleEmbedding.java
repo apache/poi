@@ -145,7 +145,7 @@ public final class TestOleEmbedding {
         slide2.addShape(oleShape2);
         oleShape2.setAnchor(new Rectangle2D.Double(100,100,100,100));
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         ppt.write(bos);
 
         ppt = new HSLFSlideShow(bos.toInputStream());

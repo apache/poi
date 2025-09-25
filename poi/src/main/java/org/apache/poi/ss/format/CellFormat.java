@@ -28,9 +28,8 @@ import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
@@ -94,7 +93,7 @@ import org.apache.poi.util.LocaleUtil;
  */
 public class CellFormat {
     /** The logger to use in the formatting code. */
-    private static final Logger LOG = LogManager.getLogger(CellFormat.class);
+    private static final Logger LOG = PoiLogManager.getLogger(CellFormat.class);
 
     private static final Pattern ONE_PART = Pattern.compile(
             CellFormatPart.FORMAT_PAT.pattern() + "(;|$)",
@@ -182,19 +181,28 @@ public class CellFormat {
         Matcher m = ONE_PART.matcher(format);
         List<CellFormatPart> parts = new ArrayList<>();
 
-        while (m.find()) {
-            try {
-                String valueDesc = m.group();
+        try {
+            while (m.find()) {
+                try {
+                    String valueDesc = m.group();
 
-                // Strip out the semicolon if it's there
-                if (valueDesc.endsWith(";"))
-                    valueDesc = valueDesc.substring(0, valueDesc.length() - 1);
+                    // Strip out the semicolon if it's there
+                    if (valueDesc.endsWith(";"))
+                        valueDesc = valueDesc.substring(0, valueDesc.length() - 1);
 
-                parts.add(new CellFormatPart(locale, valueDesc));
-            } catch (RuntimeException e) {
-                LOG.log(Level.WARN, "Invalid format: " + CellFormatter.quote(m.group()), e);
-                parts.add(null);
+                    parts.add(new CellFormatPart(locale, valueDesc));
+                } catch (RuntimeException e) {
+                    LOG.warn("Invalid format: {}", CellFormatter.quote(m.group()), e);
+                    parts.add(null);
+                }
             }
+        } catch (StackOverflowError e) {
+            // very complex formats can cause the regex-parsing to exceed the available stack
+            // we want to handle this more gracefully by catching it and reporting a bit more
+            // details in the error message
+            throw new IllegalStateException("The provided format is too complex: " + format +
+                    ", you can try to increase Java Stack size via commandline argument '-Xss' " +
+                    "to allow handling this format");
         }
 
         formatPartCount = parts.size();

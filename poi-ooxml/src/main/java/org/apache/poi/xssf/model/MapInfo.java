@@ -104,7 +104,7 @@ public class MapInfo extends POIXMLDocumentPart {
     /**
      * Gets the
      * @param schemaId the schema ID
-     * @return CTSchema by it's ID
+     * @return CTSchema by its ID
      */
     public CTSchema getCTSchemaById(String schemaId){
         CTSchema xmlSchema = null;

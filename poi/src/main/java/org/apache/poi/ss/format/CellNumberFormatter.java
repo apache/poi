@@ -33,15 +33,15 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.zaxxer.sparsebits.SparseBitSet;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.LocaleUtil;
 
 /**
  * This class implements printing out a value using a number format.
  */
 public class CellNumberFormatter extends CellFormatter {
-    private static final Logger LOG = LogManager.getLogger(CellNumberFormatter.class);
+    private static final Logger LOG = PoiLogManager.getLogger(CellNumberFormatter.class);
 
     private final String desc;
     private final String printfFmt;

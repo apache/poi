@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.hwpf.model.ComplexFileTable;
 import org.apache.poi.hwpf.model.FontTable;
@@ -50,7 +50,7 @@ import org.apache.poi.util.StringUtil;
  */
 public class HWPFOldDocument extends HWPFDocumentCore {
 
-    private static final Logger LOG = LogManager.getLogger(HWPFOldDocument.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HWPFOldDocument.class);
 
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 10_000_000;

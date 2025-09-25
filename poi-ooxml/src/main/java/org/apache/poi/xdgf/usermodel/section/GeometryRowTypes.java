@@ -17,6 +17,7 @@
 
 package org.apache.poi.xdgf.usermodel.section;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -84,6 +85,6 @@ enum GeometryRowTypes {
         return l.constructor.apply(row);
     }
 
-    private static final Map<String, GeometryRowTypes> LOOKUP =
-        Stream.of(values()).collect(Collectors.toMap(GeometryRowTypes::getRowType, Function.identity()));
+    private static final Map<String, GeometryRowTypes> LOOKUP = Collections.unmodifiableMap(
+        Stream.of(values()).collect(Collectors.toMap(GeometryRowTypes::getRowType, Function.identity())));
 }

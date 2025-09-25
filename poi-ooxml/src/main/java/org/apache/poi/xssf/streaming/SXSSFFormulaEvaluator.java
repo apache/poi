@@ -17,8 +17,8 @@
 
 package org.apache.poi.xssf.streaming;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
@@ -36,7 +36,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  *  lookup cells within the current Window.
  */
 public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
-    private static final Logger LOG = LogManager.getLogger(SXSSFFormulaEvaluator.class);
+    private static final Logger LOG = PoiLogManager.getLogger(SXSSFFormulaEvaluator.class);
 
     private final SXSSFWorkbook wb;
 

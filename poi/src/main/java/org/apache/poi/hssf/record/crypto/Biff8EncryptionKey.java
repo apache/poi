@@ -17,6 +17,7 @@
 package org.apache.poi.hssf.record.crypto;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.ThreadLocalUtil;
 
 public final class Biff8EncryptionKey {
     /**
@@ -25,6 +26,10 @@ public final class Biff8EncryptionKey {
      * (e.g. {@link HSSFWorkbook}) that need this functionality.
      */
     private static final ThreadLocal<String> _userPasswordTLS = new ThreadLocal<>();
+    static {
+        // allow to clear all thread-locals via ThreadLocalUtil
+        ThreadLocalUtil.registerCleaner(_userPasswordTLS::remove);
+    }
 
     /**
      * Sets the BIFF8 encryption/decryption password for the current thread.

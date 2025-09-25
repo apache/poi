@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.util.IOUtils;
@@ -34,7 +34,7 @@ import org.apache.poi.util.LittleEndianConsts;
 @Internal
 public class SectionTable {
 
-    private static final Logger LOG = LogManager.getLogger(SectionTable.class);
+    private static final Logger LOG = PoiLogManager.getLogger(SectionTable.class);
     private static final int SED_SIZE = 12;
 
     protected List<SEPX> _sections = new ArrayList<>();

@@ -19,8 +19,8 @@ package org.apache.poi.hwpf.model;
 
 import java.nio.charset.Charset;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
@@ -34,7 +34,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 @Internal
 public final class OldFfn {
 
-    private static final Logger LOG = LogManager.getLogger(OldFfn.class);
+    private static final Logger LOG = PoiLogManager.getLogger(OldFfn.class);
 
     private final byte _chs;// character set identifier
 

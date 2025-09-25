@@ -70,13 +70,13 @@ public final class TestCString {
     @Test
     void testWrite() throws Exception {
         CString ca = new CString(data_a, 0, data_a.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ca.writeOut(baos);
         byte[] b = baos.toByteArray();
         assertArrayEquals(data_a, b);
 
         CString cb = new CString(data_b, 0, data_a.length);
-        UnsynchronizedByteArrayOutputStream baosB = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baosB = UnsynchronizedByteArrayOutputStream.builder().get();
         cb.writeOut(baosB);
         b = baosB.toByteArray();
         assertArrayEquals(data_b, b);
@@ -99,7 +99,7 @@ public final class TestCString {
         }
         assertFalse(equals, "Arrays should not be equals");
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ca.writeOut(baos);
         byte[] b = baos.toByteArray();
         assertArrayEquals(data_b, b);

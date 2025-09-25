@@ -21,11 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -140,6 +143,120 @@ public abstract class BaseTestHyperlink {
         assertEquals(link2, actualHyperlinks.get(1));
 
         wb.close();
+    }
+
+    @Test
+    void testHyperlinkEmailType69265_https() throws IOException {
+        boolean isHSSF = _testDataProvider.getSpreadsheetVersion() == SpreadsheetVersion.EXCEL97;
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            try (Workbook workbook = _testDataProvider.createWorkbook()) {
+                Sheet sheet = workbook.createSheet("Hyperlink Example");
+
+                Row row = sheet.createRow(0);
+                Cell cell = row.createCell(0);
+
+                // Create a hyperlink
+                CreationHelper createHelper = workbook.getCreationHelper();
+                Hyperlink hyperlink = createHelper.createHyperlink(HyperlinkType.EMAIL);
+                hyperlink.setLabel("mylabel");
+                hyperlink.setAddress("https://www.example.com");
+
+                // Set the label and the hyperlink
+                cell.setCellValue("Click here");
+                cell.setHyperlink(hyperlink);
+
+                // Get the cell value and hyperlink address
+                assertEquals("Click here", cell.getStringCellValue());
+                Hyperlink cellHyperlink = cell.getHyperlink();
+                assertEquals("https://www.example.com", cellHyperlink.getAddress());
+
+                // HSSF does not support Email, thus falls back to URL, HSSF also uses a hardcoded "label"
+                assertEquals(
+                        isHSSF ? HyperlinkType.URL : HyperlinkType.EMAIL,
+                        cellHyperlink.getType());
+                assertEquals(
+                        isHSSF ? "url" : "mylabel",
+                        cellHyperlink.getLabel());
+
+                workbook.write(out);
+            }
+
+            out.flush();
+
+            try (Workbook wbBack = WorkbookFactory.create(new ByteArrayInputStream(out.toByteArray()))) {
+                Sheet sheet = wbBack.getSheet("Hyperlink Example");
+                Row row = sheet.getRow(0);
+                Cell cell = row.getCell(0);
+
+                Hyperlink hyperlink = cell.getHyperlink();
+
+                // when not using "mailto:", it is reverted back to URL currently
+                assertEquals(
+                        HyperlinkType.URL,
+                        hyperlink.getType());
+                assertEquals(
+                        isHSSF ? "url" : "mylabel",
+                        hyperlink.getLabel());
+            }
+        }
+    }
+
+    @Test
+    void testHyperlinkEmailType69265_mailto() throws IOException {
+        boolean isHSSF = _testDataProvider.getSpreadsheetVersion() == SpreadsheetVersion.EXCEL97;
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            try (Workbook workbook = _testDataProvider.createWorkbook()) {
+                Sheet sheet = workbook.createSheet("Hyperlink Example");
+
+                Row row = sheet.createRow(0);
+                Cell cell = row.createCell(0);
+
+                // Create a hyperlink
+                CreationHelper createHelper = workbook.getCreationHelper();
+                Hyperlink hyperlink = createHelper.createHyperlink(HyperlinkType.EMAIL);
+                hyperlink.setLabel("mylabel");
+                hyperlink.setAddress("mailto://www.example.com");
+
+                // Set the label and the hyperlink
+                cell.setCellValue("Click here");
+                cell.setHyperlink(hyperlink);
+
+                // Get the cell value and hyperlink address
+                assertEquals("Click here", cell.getStringCellValue());
+                Hyperlink cellHyperlink = cell.getHyperlink();
+                assertEquals("mailto://www.example.com", cellHyperlink.getAddress());
+
+                // "mailto:" is converted to type "EMAIL"
+                assertEquals(
+                        HyperlinkType.EMAIL,
+                        cellHyperlink.getType());
+                assertEquals(
+                        isHSSF ? "url" : "mylabel",
+                        cellHyperlink.getLabel());
+
+                workbook.write(out);
+            }
+
+            out.flush();
+
+            try (Workbook wbBack = WorkbookFactory.create(new ByteArrayInputStream(out.toByteArray()))) {
+                Sheet sheet = wbBack.getSheet("Hyperlink Example");
+                Row row = sheet.getRow(0);
+                Cell cell = row.getCell(0);
+
+                Hyperlink hyperlink = cell.getHyperlink();
+
+                // "mailto:" is converted to type "EMAIL"
+                assertEquals(
+                        HyperlinkType.EMAIL,
+                        hyperlink.getType());
+                assertEquals(
+                        isHSSF ? "url" : "mylabel",
+                        hyperlink.getLabel());
+            }
+        }
     }
 
     public abstract Hyperlink copyHyperlink(Hyperlink link);

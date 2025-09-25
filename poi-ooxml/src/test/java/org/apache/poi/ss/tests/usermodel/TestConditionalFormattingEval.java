@@ -39,8 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class TestConditionalFormattingEval {
-    private CellReference ref;
-    private List<EvaluationConditionalFormatRule> rules;
 
     @Test
     void testFormattingEvaluation() throws IOException {
@@ -49,26 +47,26 @@ class TestConditionalFormattingEval {
             XSSFFormulaEvaluator formulaEval = new XSSFFormulaEvaluator(wb);
             ConditionalFormattingEvaluator cfe = new ConditionalFormattingEvaluator(wb, formulaEval);
 
-            getRulesFor(12, 1, sheet, cfe);
-            assertEquals(1, rules.size(), "wrong # of rules for " + ref);
-            assertEquals("FFFFEB9C", getColor(rules.get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()), "wrong bg color for " + ref);
-            assertFalse(rules.get(0).getRule().getFontFormatting().isItalic(), "should not be italic " + ref);
+            RuleResult result = getRuleResultFor(12, 1, sheet, cfe);
+            assertEquals(1, result.getRules().size(), "wrong # of rules for " + result.getRef());
+            assertEquals("FFFFEB9C", getColor(result.getRules().get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()), "wrong bg color for " + result.getRef());
+            assertFalse(result.getRules().get(0).getRule().getFontFormatting().isItalic(), "should not be italic " + result.getRef());
 
-            getRulesFor(16, 3, sheet, cfe);
-            assertEquals(1, rules.size(), "wrong # of rules for " + ref);
-            assertEquals(0.7999816888943144d, getTint(rules.get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()), 0.000000000000001, "wrong bg color for " + ref);
+            result = getRuleResultFor(16, 3, sheet, cfe);
+            assertEquals(1, result.getRules().size(), "wrong # of rules for " + result.getRef());
+            assertEquals(0.7999816888943144d, getTint(result.getRules().get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()), 0.000000000000001, "wrong bg color for " + result.getRef());
 
-            getRulesFor(12, 3, sheet, cfe);
-            assertEquals(0, rules.size(), "wrong # of rules for " + ref);
+            result = getRuleResultFor(12, 3, sheet, cfe);
+            assertEquals(0, result.getRules().size(), "wrong # of rules for " + result.getRef());
 
             sheet = wb.getSheet("Products2");
 
-            getRulesFor(15, 1, sheet, cfe);
-            assertEquals(1, rules.size(), "wrong # of rules for " + ref);
-            assertEquals("FFFFEB9C", getColor(rules.get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()), "wrong bg color for " + ref);
+            result = getRuleResultFor(15, 1, sheet, cfe);
+            assertEquals(1, result.getRules().size(), "wrong # of rules for " + result.getRef());
+            assertEquals("FFFFEB9C", getColor(result.getRules().get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()), "wrong bg color for " + result.getRef());
 
-            getRulesFor(20, 3, sheet, cfe);
-            assertEquals(0, rules.size(), "wrong # of rules for " + ref);
+            result = getRuleResultFor(20, 3, sheet, cfe);
+            assertEquals(0, result.getRules().size(), "wrong # of rules for " + result.getRef());
 
             // now change a cell value that's an input for the rules
             Cell cell = sheet.getRow(1).getCell(6);
@@ -81,44 +79,44 @@ class TestConditionalFormattingEval {
             cfe.clearAllCachedValues();
 
             // test that the conditional validation evaluations changed
-            getRulesFor(15, 1, sheet, cfe);
-            assertEquals(0, rules.size(), "wrong # of rules for " + ref);
+            result = getRuleResultFor(15, 1, sheet, cfe);
+            assertEquals(0, result.getRules().size(), "wrong # of rules for " + result.getRef());
 
-            getRulesFor(20, 3, sheet, cfe);
-            assertEquals(1, rules.size(), "wrong # of rules for " + ref);
-            assertEquals(0.7999816888943144d, getTint(rules.get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()), 0.000000000000001, "wrong bg color for " + ref);
+            result = getRuleResultFor(20, 3, sheet, cfe);
+            assertEquals(1, result.getRules().size(), "wrong # of rules for " + result.getRef());
+            assertEquals(0.7999816888943144d, getTint(result.getRules().get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()), 0.000000000000001, "wrong bg color for " + result.getRef());
 
-            getRulesFor(20, 1, sheet, cfe);
-            assertEquals(1, rules.size(), "wrong # of rules for " + ref);
-            assertEquals("FFFFEB9C", getColor(rules.get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()), "wrong bg color for " + ref);
+            result = getRuleResultFor(20, 1, sheet, cfe);
+            assertEquals(1, result.getRules().size(), "wrong # of rules for " + result.getRef());
+            assertEquals("FFFFEB9C", getColor(result.getRules().get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()), "wrong bg color for " + result.getRef());
 
             sheet = wb.getSheet("Book tour");
 
-            getRulesFor(8, 2, sheet, cfe);
-            assertEquals(1, rules.size(), "wrong # of rules for " + ref);
+            result = getRuleResultFor(8, 2, sheet, cfe);
+            assertEquals(1, result.getRules().size(), "wrong # of rules for " + result.getRef());
 
             sheet = wb.getSheet("Compare to totals");
-            getRulesFor(3, 2, sheet, cfe);
-            assertEquals(1, rules.size(), "wrong # of rules for " + ref);
-            assertEquals("FFFF0000", getColor(rules.get(0).getRule().getFontFormatting().getFontColor()), "wrong fg color for " + ref);
-            getRulesFor(3, 3, sheet, cfe);
-            assertEquals(0, rules.size(), "wrong # of rules for " + ref);
-            getRulesFor(15, 4, sheet, cfe);
-            assertEquals(0, rules.size(), "wrong # of rules for " + ref);
-            getRulesFor(16, 1, sheet, cfe);
-            assertEquals(1, rules.size(), "wrong # of rules for " + ref);
-            assertEquals("FFFF0000", getColor(rules.get(0).getRule().getFontFormatting().getFontColor()), "wrong fg color for " + ref);
+            result = getRuleResultFor(3, 2, sheet, cfe);
+            assertEquals(1, result.getRules().size(), "wrong # of rules for " + result.getRef());
+            assertEquals("FFFF0000", getColor(result.getRules().get(0).getRule().getFontFormatting().getFontColor()), "wrong fg color for " + result.getRef());
+            result = getRuleResultFor(3, 3, sheet, cfe);
+            assertEquals(0, result.getRules().size(), "wrong # of rules for " + result.getRef());
+            result = getRuleResultFor(15, 4, sheet, cfe);
+            assertEquals(0, result.getRules().size(), "wrong # of rules for " + result.getRef());
+            result = getRuleResultFor(16, 1, sheet, cfe);
+            assertEquals(1, result.getRules().size(), "wrong # of rules for " + result.getRef());
+            assertEquals("FFFF0000", getColor(result.getRules().get(0).getRule().getFontFormatting().getFontColor()), "wrong fg color for " + result.getRef());
 
             sheet = wb.getSheet("Products3");
             sheet.getRow(8).getCell(0).setCellValue(new Date());
-            getRulesFor(8, 0, sheet, cfe);
-            assertEquals(1, rules.size(), "wrong # of rules for " + ref);
-            getRulesFor(8, 3, sheet, cfe);
-            assertEquals(1, rules.size(), "wrong # of rules for " + ref);
+            result = getRuleResultFor(8, 0, sheet, cfe);
+            assertEquals(1, result.getRules().size(), "wrong # of rules for " + result.getRef());
+            result = getRuleResultFor(8, 3, sheet, cfe);
+            assertEquals(1, result.getRules().size(), "wrong # of rules for " + result.getRef());
 
             sheet = wb.getSheet("Customers2");
-            getRulesFor(3, 0, sheet, cfe);
-            assertEquals(0, rules.size(), "wrong # of rules for " + ref);
+            result = getRuleResultFor(3, 0, sheet, cfe);
+            assertEquals(0, result.getRules().size(), "wrong # of rules for " + result.getRef());
         }
     }
 
@@ -129,9 +127,11 @@ class TestConditionalFormattingEval {
             ConditionalFormattingEvaluator cfe = new ConditionalFormattingEvaluator(wb, formulaEval);
 
             Sheet sheet = wb.getSheet("Sales Plan");
-            getRulesFor(9, 2, sheet, cfe);
-            assertNotEquals(0, rules.size(), "No rules for " + ref);
-            assertEquals("FFFFFF00", getColor(rules.get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()), "wrong bg color for " + ref);
+            RuleResult result = getRuleResultFor(9, 2, sheet, cfe);
+            assertNotEquals(0, result.getRules().size(), "No rules for " + result.getRef());
+            assertEquals("FFFFFF00", getColor(
+                    result.getRules().get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()),
+                    "wrong bg color for " + result.getRef());
         }
     }
 
@@ -185,9 +185,14 @@ class TestConditionalFormattingEval {
         }
     }
 
-    private List<EvaluationConditionalFormatRule> getRulesFor(int row, int col, Sheet sheet, ConditionalFormattingEvaluator cfe) {
-        ref = new CellReference(sheet.getSheetName(), row, col, false, false);
-        return rules = cfe.getConditionalFormattingForCell(ref);
+    private RuleResult getRuleResultFor(int row, int col, Sheet sheet, ConditionalFormattingEvaluator cfe) {
+        CellReference ref = new CellReference(sheet.getSheetName(), row, col, false, false);
+        return new RuleResult(ref, cfe.getConditionalFormattingForCell(ref));
+    }
+
+    private List<EvaluationConditionalFormatRule> getRulesFor(
+            int row, int col, Sheet sheet, ConditionalFormattingEvaluator cfe) {
+        return getRuleResultFor(row, col, sheet, cfe).getRules();
     }
 
     private String getColor(Color color) {
@@ -198,5 +203,23 @@ class TestConditionalFormattingEval {
     private double getTint(Color color) {
         final XSSFColor c = XSSFColor.toXSSFColor(color);
         return c.getTint();
+    }
+
+    private static class RuleResult {
+        private final CellReference ref;
+        private final List<EvaluationConditionalFormatRule> rules;
+
+        public RuleResult(CellReference ref, List<EvaluationConditionalFormatRule> rules) {
+            this.ref = ref;
+            this.rules = rules;
+        }
+
+        CellReference getRef() {
+            return ref;
+        }
+
+        List<EvaluationConditionalFormatRule> getRules() {
+            return rules;
+        }
     }
 }

@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -56,7 +56,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  */
 @SuppressWarnings("WeakerAccess")
 public final class HSLFFill {
-    private static final Logger LOG = LogManager.getLogger(HSLFFill.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HSLFFill.class);
 
     /**
      *  Fill with a solid color
@@ -576,9 +576,7 @@ public final class HSLFFill {
         } else {
             EscherBSERecord bse = (EscherBSERecord) bstore.getChild(idx - 1);
             for (HSLFPictureData pd : pict) {
-
-                // Reference equals is safe because these BSE belong to the same slideshow
-                if (pd.bse == bse) {
+                if (pd.getOffset() == bse.getOffset()) {
                     return pd;
                 }
             }

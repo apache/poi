@@ -68,7 +68,7 @@ public class SVGImageRenderer implements ImageRenderer {
 
     @Override
     public void loadImage(byte[] data, String contentType) throws IOException {
-        loadImage(new UnsynchronizedByteArrayInputStream(data), contentType);
+        loadImage(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get(), contentType);
     }
 
     @Override

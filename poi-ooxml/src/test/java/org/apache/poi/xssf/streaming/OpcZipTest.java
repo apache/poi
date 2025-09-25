@@ -34,8 +34,8 @@ class OpcZipTest {
     void compareOutput() throws Exception {
         Map<String, String> contents = createContents();
         try (
-                UnsynchronizedByteArrayOutputStream bos1 = new UnsynchronizedByteArrayOutputStream();
-                UnsynchronizedByteArrayOutputStream bos2 = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos1 = UnsynchronizedByteArrayOutputStream.builder().get();
+                UnsynchronizedByteArrayOutputStream bos2 = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             try (OpcOutputStream zip = new OpcOutputStream(bos1)) {
                 for (Map.Entry<String, String> entry : contents.entrySet()) {

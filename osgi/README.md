@@ -21,15 +21,15 @@ The bundle embeds all the jars from lib/main:
 Required to render WMF/EMF images. The OSGi bundle is provided by ServiceMix and available in Maven Central: https://mvnrepository.com/artifact/org.apache.servicemix.bundles/org.apache.servicemix.bundles.batik/1.14_1
 2. Saxon
 Required if using as the XSLT and XQuery Processor engine in XML Beans.
-Available in Maven Central (but version might be too old): https://mvnrepository.com/artifact/net.sf.saxon/saxon/8.9.0.4-osgi
+Available in Maven Central: https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE/12.3
 3. Apache XML Security for Java, Bouncy Castle and XML Commons Resolver 
 These are required to sign or validate signed Office documents. The OSGi bundles are available in Maven Central:
 
-    - Apache XML Security for Java: https://mvnrepository.com/artifact/org.apache.santuario/xmlsec/3.0.0 (use v2.3.0 with POI v5.2.2)
+    - Apache XML Security for Java: https://mvnrepository.com/artifact/org.apache.santuario/xmlsec/3.0.6
     
     - XML Commons Resolver: https://mvnrepository.com/artifact/xml-resolver/xml-resolver/1.2-osgi
     
-    - Bouncy Castle: https://mvnrepository.com/artifact/org.bouncycastle/bcprov-ext-jdk15on/1.70, https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on/1.70
+    - Bouncy Castle: https://mvnrepository.com/artifact/org.bouncycastle/bcprov-ext-jdk18on/1.81, https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk18on/1.81
 4. PDFBox and PDFBox Graphics2D  
 Required to render to PDF documents.
 The required jars can be downloaded from:

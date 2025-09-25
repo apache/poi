@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Set;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,8 @@ public class XWPFFileHandler extends AbstractFileHandler {
         try (XWPFDocument doc = new XWPFDocument(stream)) {
             new POIXMLDocumentHandler().handlePOIXMLDocument(doc);
             POIXMLDocumentHandler.cursorRecursive(doc.getDocument());
+
+            doc.write(NullOutputStream.INSTANCE);
         } catch (POIXMLException e) {
             Exception cause = (Exception)e.getCause();
             throw cause == null ? e : cause;

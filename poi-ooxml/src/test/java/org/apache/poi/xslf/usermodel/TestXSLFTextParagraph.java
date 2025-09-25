@@ -19,6 +19,8 @@ package org.apache.poi.xslf.usermodel;
 import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,16 +28,22 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.AttributedCharacterIterator;
+import java.text.CharacterIterator;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.sl.draw.DrawTextFragment;
 import org.apache.poi.sl.draw.DrawTextParagraph;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.apache.poi.xslf.util.DummyGraphics2d;
 import org.junit.jupiter.api.Test;
 
 class TestXSLFTextParagraph {
@@ -425,6 +433,66 @@ class TestXSLFTextParagraph {
 
             // "You cannot change text of a line break, it is always '\\n'"
             assertThrows(IllegalStateException.class, () -> r2.setText("aaa"));
+        }
+    }
+
+    @Test
+    void testHighlightRender() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide = ppt.createSlide();
+            XSLFTextShape sh = slide.createAutoShape();
+
+            XSLFTextParagraph p = sh.addNewTextParagraph();
+            XSLFTextRun r1 = p.addNewTextRun();
+            r1.setText("This is a ");
+            XSLFTextRun r2 = p.addNewTextRun();
+            r2.setText("highlight");
+            r2.setHighlightColor(Color.yellow);
+            XSLFTextRun r3 = p.addNewTextRun();
+            r3.setText(" test");
+
+            assertEquals("This is a highlight test", sh.getText());
+
+            DummyGraphics2d dgfx = new DummyGraphics2d(NullPrintStream.INSTANCE) {
+                @Override
+                public void drawString(AttributedCharacterIterator iterator, float x, float y) {
+                    // For the test file, common sl draws textruns one by one and not mixed
+                    // so we evaluate the whole iterator
+                    Map<AttributedCharacterIterator.Attribute, Object> attributes = null;
+                    StringBuilder sb = new StringBuilder();
+
+                    for (char c = iterator.first();
+                         c != CharacterIterator.DONE;
+                         c = iterator.next()) {
+                        sb.append(c);
+                        attributes = iterator.getAttributes();
+                    }
+
+                    if ("This is a".contentEquals(sb)) {
+                        // Should be no background.
+                        assertNotNull(attributes);
+                        Object background = attributes.get(TextAttribute.BACKGROUND);
+                        assertNull(background);
+                    }
+                    if ("highlight".contentEquals(sb)) {
+                        // Should be yellow background.
+                        assertNotNull(attributes);
+                        Object background = attributes.get(TextAttribute.BACKGROUND);
+                        assertNotNull(background);
+                        assertInstanceOf(Color.class, background);
+                        assertEquals(Color.yellow, background);
+                    }
+                    if (" test".contentEquals(sb)) {
+                        // Should be no background.
+                        assertNotNull(attributes);
+                        Object background = attributes.get(TextAttribute.BACKGROUND);
+                        assertNull(background);
+                    }
+
+                }
+            };
+
+            ppt.getSlides().get(0).draw(dgfx);
         }
     }
 }

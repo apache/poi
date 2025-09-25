@@ -116,9 +116,9 @@ final class TestPropertySorter {
         String VBA = "VBA";
 
         DirectoryEntry root = fs.getRoot();
-        DirectoryEntry vba_project = (DirectoryEntry)root.getEntry(_VBA_PROJECT_CUR);
+        DirectoryEntry vba_project = (DirectoryEntry)root.getEntryCaseInsensitive(_VBA_PROJECT_CUR);
 
-        DirectoryNode vba = (DirectoryNode)vba_project.getEntry(VBA);
+        DirectoryNode vba = (DirectoryNode)vba_project.getEntryCaseInsensitive(VBA);
         DirectoryProperty  p = (DirectoryProperty)vba.getProperty();
 
         List<Property> lst = new ArrayList<>();

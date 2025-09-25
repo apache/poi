@@ -31,6 +31,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
@@ -71,11 +72,11 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      */
     public XWPFHeaderFooter(POIXMLDocumentPart parent, PackagePart part) {
         super(parent, part);
-        this.document = (XWPFDocument) getParent();
-
-        if (this.document == null) {
-            throw new NullPointerException();
+        final POIXMLDocumentPart p = getParent();
+        if (!(p instanceof XWPFDocument)) {
+            throw new IllegalArgumentException("Had unexpected type of parent: " + (p == null ? "<null>" : p.getClass()));
         }
+        this.document = (XWPFDocument) p;
     }
 
     @Override
@@ -210,7 +211,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @return a list of {@link XWPFParagraph}
      */
     public List<XWPFParagraph> getListParagraph() {
-        return paragraphs;
+        return Collections.unmodifiableList(paragraphs);
     }
 
     public List<XWPFPictureData> getAllPictures() {
@@ -235,7 +236,10 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
      * @throws InvalidFormatException If the format of the picture is not known.
      * @see #addPictureData(byte[], PictureType)
+     * @deprecated Use {@link #addPictureData(byte[], PictureType)} instead.
      */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public String addPictureData(byte[] pictureData, int format) throws InvalidFormatException {
         return addPictureData(pictureData, PictureType.findByOoxmlId(format));
     }
@@ -545,7 +549,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
                     bodyElements.add(p);
                 }
                 if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this);
+                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
                     tables.add(t);
                     bodyElements.add(t);
                 }

@@ -84,7 +84,7 @@ class TestDecryptor {
         try (ZipArchiveInputStream zin = new ZipArchiveInputStream(d.getDataStream(root))) {
 
             while (true) {
-                ZipArchiveEntry entry = zin.getNextZipEntry();
+                ZipArchiveEntry entry = zin.getNextEntry();
                 if (entry == null) {
                     break;
                 }
@@ -120,7 +120,7 @@ class TestDecryptor {
         ZipArchiveInputStream zin = new ZipArchiveInputStream(new ByteArrayInputStream(buf));
 
         while (true) {
-            ZipArchiveEntry entry = zin.getNextZipEntry();
+            ZipArchiveEntry entry = zin.getNextEntry();
             if (entry==null) {
                 break;
             }
@@ -142,11 +142,11 @@ class TestDecryptor {
             Decryptor d = Decryptor.getInstance(info);
             d.verifyPassword("pwd123");
 
-            final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(10000);
+            final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(10000).get();
             try (final ZipArchiveInputStream zis = new ZipArchiveInputStream(d.getDataStream(fs))) {
                 int[] sizes = { 3711, 1155, 445, 9376, 450, 588, 1337, 2593, 304, 7910 };
                 for (int size : sizes) {
-                    final ZipArchiveEntry ze = zis.getNextZipEntry();
+                    final ZipArchiveEntry ze = zis.getNextEntry();
                     assertNotNull(ze);
                     IOUtils.copy(zis, bos);
                     assertEquals(size, bos.size());

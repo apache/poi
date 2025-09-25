@@ -55,7 +55,7 @@ public final class TestReWrite {
              HSLFSlideShowImpl hss = new HSLFSlideShowImpl(pfs)) {
 
             // Write out to a byte array, and to a temp file
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
             hss.write(baos);
 
             final File file = TempFile.createTempFile("TestHSLF", ".ppt");
@@ -92,20 +92,20 @@ public final class TestReWrite {
             assertSlideShowWritesOutTheSame(hssC, pfsC);
 
             // Currently has a Macros stream
-            assertNotNull(pfsC.getRoot().getEntry("Macros"));
+            assertNotNull(pfsC.getRoot().getEntryCaseInsensitive("Macros"));
 
             // Write out normally, will loose the macro stream
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
             hssC.write(baos);
             try (POIFSFileSystem pfsNew = new POIFSFileSystem(baos.toInputStream())) {
-                assertFalse(pfsNew.getRoot().hasEntry("Macros"));
+                assertFalse(pfsNew.getRoot().hasEntryCaseInsensitive("Macros"));
             }
 
             // But if we write out with nodes preserved, will be there
             baos.reset();
             hssC.write(baos, true);
             try (POIFSFileSystem pfsNew = new POIFSFileSystem(baos.toInputStream())) {
-                assertTrue(pfsNew.getRoot().hasEntry("Macros"));
+                assertTrue(pfsNew.getRoot().hasEntryCaseInsensitive("Macros"));
             }
         }
     }
@@ -134,7 +134,7 @@ public final class TestReWrite {
         assertDoesNotThrow(ss::getNotes);
 
         // Now write out to a byte array
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         hss.write(baos);
 
         // Use POIFS to query that lot
@@ -145,8 +145,8 @@ public final class TestReWrite {
 
     private void assertSame(POIFSFileSystem origPFS, POIFSFileSystem newPFS) throws IOException {
         // Check that the "PowerPoint Document" sections have the same size
-        DocumentEntry oProps = (DocumentEntry) origPFS.getRoot().getEntry(POWERPOINT_DOCUMENT);
-        DocumentEntry nProps = (DocumentEntry) newPFS.getRoot().getEntry(POWERPOINT_DOCUMENT);
+        DocumentEntry oProps = (DocumentEntry) origPFS.getRoot().getEntryCaseInsensitive(POWERPOINT_DOCUMENT);
+        DocumentEntry nProps = (DocumentEntry) newPFS.getRoot().getEntryCaseInsensitive(POWERPOINT_DOCUMENT);
         assertEquals(oProps.getSize(), nProps.getSize());
 
 

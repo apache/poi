@@ -19,9 +19,11 @@ package org.apache.poi.ss.util;
 
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -150,8 +152,8 @@ public class NumberRenderingSpreadsheetGenerator {
 
         File outputFile = new File("ExcelNumberRendering.xls");
 
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
-             FileOutputStream os = new FileOutputStream(outputFile)) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
+             OutputStream os = Files.newOutputStream(outputFile.toPath())) {
             wb.write(baos);
 
             byte[] fileContent = baos.toByteArray();
@@ -159,7 +161,7 @@ public class NumberRenderingSpreadsheetGenerator {
 
             os.write(fileContent);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
 
         System.out.println("Finished writing '" + outputFile.getAbsolutePath() + "'");
@@ -212,7 +214,7 @@ public class NumberRenderingSpreadsheetGenerator {
     }
 
     private static String interpretLong(byte[] fileContent, int offset) {
-        try (InputStream is = new UnsynchronizedByteArrayInputStream(fileContent, offset, 8)) {
+        try (InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(fileContent).setOffset(offset).setLength(8).get()) {
             long l = new DataInputStream(is).readLong();
             return "0x" + Long.toHexString(l).toUpperCase(Locale.ROOT);
         } catch (IOException e) {

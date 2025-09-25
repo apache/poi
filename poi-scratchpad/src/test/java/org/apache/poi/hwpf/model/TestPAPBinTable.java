@@ -59,7 +59,8 @@ public final class TestPAPBinTable {
         HWPFFileSystem fileSys = new HWPFFileSystem();
         ByteArrayOutputStream tableOut = fileSys.getStream( "1Table" );
         ByteArrayOutputStream mainOut = fileSys.getStream( "WordDocument" );
-        _pAPBinTable.writeTo( mainOut, tableOut, fakeTPT );
+        ByteArrayOutputStream dataOut = fileSys.getStream("Data");
+        _pAPBinTable.writeTo(mainOut, tableOut, dataOut, fakeTPT);
 
         byte[] newTableStream = tableOut.toByteArray();
         byte[] newMainStream = mainOut.toByteArray();

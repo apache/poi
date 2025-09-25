@@ -41,6 +41,8 @@ public class TestDAverage {
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "DAVERAGE(A4:E10, \"Yield\", A1:B2)", 12);
             assertDouble(fe, cell, "DAVERAGE(A4:E10, 3, A4:E10)", 13);
+            assertDouble(fe, cell, "DAVERAGE(A4:E10, \"Profit\", A12:A13)", 92.6);
+            assertDouble(fe, cell, "DAVERAGE(A4:E10, \"Profit\", B12:C13)", 82.5);
         }
     }
 
@@ -57,6 +59,9 @@ public class TestDAverage {
         addRow(sheet, 7, "Apple", 14, 15, 10, 75);
         addRow(sheet, 8, "Pear", 9, 8, 8, 76.8);
         addRow(sheet, 9, "Apple", 8, 9, 6, 45);
+        addRow(sheet, 10);
+        addRow(sheet, 11, "Tree", "Height", "Height");
+        addRow(sheet, 12, "<>Apple", "<>12", "<>9");
         return wb;
     }
 }

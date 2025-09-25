@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.util.IOUtils;
@@ -69,6 +70,7 @@ public final class TestSheetDataWriter {
             IOUtils.closeQuietly(writer);
         }
     }
+
     @Test
     void testWriteNewLines() throws IOException {
         SheetDataWriter writer = new SheetDataWriter();
@@ -83,5 +85,18 @@ public final class TestSheetDataWriter {
         } finally {
             IOUtils.closeQuietly(writer);
         }
+    }
+
+    @Test
+    void testDispose() throws IOException {
+        SheetDataWriter writer = new SheetDataWriter();
+        assertTrue(writer.dispose());
+    }
+
+    @Test
+    void testWriterDispose() throws IOException {
+        StringWriter sw = new StringWriter();
+        SheetDataWriter writer = new SheetDataWriter(sw);
+        assertTrue(writer.dispose());
     }
 }

@@ -18,8 +18,6 @@ package org.apache.poi.poifs.filesystem;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,14 +25,16 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -65,7 +65,7 @@ public class POIFSFileSystem extends BlockStore
 
     private static final int MAX_ALLOCATION_SIZE = 250_000_000;
 
-    private static final Logger LOG = LogManager.getLogger(POIFSFileSystem.class);
+    private static final Logger LOG = PoiLogManager.getLogger(POIFSFileSystem.class);
 
     /**
      * Maximum number size (in blocks) of the allocation table as supported by
@@ -370,7 +370,7 @@ public class POIFSFileSystem extends BlockStore
             stream.close();
         } catch (IOException e) {
             if (success) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
             // else not success? Try block did not complete normally
             // just print stack trace and leave original ex to be thrown
@@ -780,9 +780,9 @@ public class POIFSFileSystem extends BlockStore
         // _header.setPropertyStart has been updated on write ...
 
         // HeaderBlock
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(
                 _header.getBigBlockSize().getBigBlockSize()
-        );
+        ).get();
         _header.writeData(baos);
         getBlockAt(-1).put(baos.toByteArray());
 
@@ -822,8 +822,8 @@ public class POIFSFileSystem extends BlockStore
             System.exit(1);
         }
 
-        try (FileInputStream istream = new FileInputStream(args[0])) {
-            try (FileOutputStream ostream = new FileOutputStream(args[1])) {
+        try (InputStream istream = Files.newInputStream(Paths.get(args[0]))) {
+            try (OutputStream ostream = Files.newOutputStream(Paths.get(args[1]))) {
                 try (POIFSFileSystem fs = new POIFSFileSystem(istream)) {
                     fs.writeFilesystem(ostream);
                 }
@@ -959,7 +959,7 @@ public class POIFSFileSystem extends BlockStore
     public static POIFSFileSystem create(File file) throws IOException {
         // Create a new empty POIFS in the file
         try (POIFSFileSystem tmp = new POIFSFileSystem();
-             OutputStream out = new FileOutputStream(file)) {
+             OutputStream out = Files.newOutputStream(file.toPath())) {
             tmp.writeFilesystem(out);
         }
 

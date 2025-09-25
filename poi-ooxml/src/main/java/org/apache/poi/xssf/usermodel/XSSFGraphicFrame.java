@@ -54,19 +54,24 @@ public final class XSSFGraphicFrame extends XSSFShape {
     protected XSSFGraphicFrame(XSSFDrawing drawing, CTGraphicalObjectFrame ctGraphicFrame) {
         this.drawing = drawing; // protected field on XSSFShape
         this.graphicFrame = ctGraphicFrame;
+
         // TODO: there may be a better way to delegate this
-        CTGraphicalObjectData graphicData = graphicFrame.getGraphic().getGraphicData();
+        CTGraphicalObjectData graphicData = graphicFrame.getGraphic() == null ?
+                null : graphicFrame.getGraphic().getGraphicData();
         if (graphicData != null) {
             NodeList nodes = graphicData.getDomNode().getChildNodes();
             for (int i = 0; i < nodes.getLength(); i++) {
                 final Node node = nodes.item(i);
                 // if the frame references a chart, associate the chart with this instance
-                if (node.getNodeName().equals("c:chart")) {
-                    // this better succeed or the document is invalid
-                    POIXMLDocumentPart relation = drawing.getRelationById(node.getAttributes().getNamedItem("r:id").getNodeValue());
-                    // Do XWPF charts need similar treatment?
-                    if (relation instanceof XSSFChart) {
-                        ((XSSFChart) relation).setGraphicFrame(this);
+                if (node.getAttributes() != null) {
+                    Node namedItem = node.getAttributes().getNamedItem("r:id");
+                    if (node.getNodeName().equals("c:chart") && namedItem != null) {
+                        // this better succeed or the document is invalid
+                        POIXMLDocumentPart relation = drawing.getRelationById(namedItem.getNodeValue());
+                        // Do XWPF charts need similar treatment?
+                        if (relation instanceof XSSFChart) {
+                            ((XSSFChart) relation).setGraphicFrame(this);
+                        }
                     }
                 }
             }

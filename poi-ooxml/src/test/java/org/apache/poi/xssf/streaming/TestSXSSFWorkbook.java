@@ -19,7 +19,6 @@
 
 package org.apache.poi.xssf.streaming;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -34,8 +33,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.time.LocalDate;
 import java.util.Arrays;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
@@ -43,7 +45,9 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -352,15 +356,36 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
+    void workbookTempFilesAreDisposedWhenClosingWorkbook() throws IOException {
+        SXSSFWorkbook wb = new SXSSFWorkbook();
+
+        // Closing / auto-closing the workbook should clean up the temp files
+        try {
+            populateData(wb);
+
+            for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+                assertTrue(wb.getSheetAt(i).getSheetDataWriter().getTempFile().exists());
+            }
+            // Not calling SXSSFWorkbook#dispose since closing the workbook should clean up the temp files
+        } finally {
+            wb.close();
+        }
+
+        for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+            assertFalse(wb.getSheetAt(i).getSheetDataWriter().getTempFile().exists());
+        }
+    }
+
+    @Test
     void bug53515() throws Exception {
         try (Workbook wb1 = new SXSSFWorkbook(10)) {
             populateWorkbook(wb1);
-            assertDoesNotThrow(() -> wb1.write(NULL_OUTPUT_STREAM));
-            assertDoesNotThrow(() -> wb1.write(NULL_OUTPUT_STREAM));
+            assertDoesNotThrow(() -> wb1.write(NullOutputStream.INSTANCE));
+            assertDoesNotThrow(() -> wb1.write(NullOutputStream.INSTANCE));
             try (Workbook wb2 = new XSSFWorkbook()) {
                 populateWorkbook(wb2);
-                assertDoesNotThrow(() -> wb2.write(NULL_OUTPUT_STREAM));
-                assertDoesNotThrow(() -> wb2.write(NULL_OUTPUT_STREAM));
+                assertDoesNotThrow(() -> wb2.write(NullOutputStream.INSTANCE));
+                assertDoesNotThrow(() -> wb2.write(NullOutputStream.INSTANCE));
             }
         }
     }
@@ -400,7 +425,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                     //System.gc();
                 }
 
-                    wb.write(outSteam);
+                wb.write(outSteam);
                 // assertTrue(wb.dispose());
                 outSteam.close();
             } finally {
@@ -478,7 +503,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                 }
             }
 
-            assertDoesNotThrow(() -> swb.write(NULL_OUTPUT_STREAM));
+            assertDoesNotThrow(() -> swb.write(NullOutputStream.INSTANCE));
             swb.dispose();
         }
     }
@@ -496,7 +521,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         File input = XSSFTestDataSamples.getSampleFile("sample.xlsx");
 
         try (OPCPackage pkg = OPCPackage.open(input, PackageAccess.READ)) {
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             try (XSSFWorkbook xssf = new XSSFWorkbook(pkg)) {
                 try (SXSSFWorkbook wb = new SXSSFWorkbook(xssf, 2)) {
                     Sheet s = wb.createSheet(sheetName);
@@ -539,7 +564,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     void addHyperlink() throws Exception {
         try (
             SXSSFWorkbook wb = new SXSSFWorkbook();
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             SXSSFSheet sheet = wb.createSheet("s1");
             SXSSFRow row = sheet.createRow(0);
@@ -565,7 +590,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     void addDimension() throws IOException {
         try (
                 SXSSFWorkbook wb = new SXSSFWorkbook();
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             SXSSFSheet sheet = wb.createSheet();
             sheet.createRow(2).createCell(3).setCellValue("top left");
@@ -584,7 +609,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     void addDimension1() throws IOException {
         try (
                 SXSSFWorkbook wb = new SXSSFWorkbook(1);
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             SXSSFSheet sheet = wb.createSheet();
             sheet.createRow(2).createCell(3).setCellValue("top left");
@@ -609,7 +634,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
             assertEquals(6, sheet.getLastRowNum());
             try (
                     SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook(wb);
-                    UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                    UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
             ) {
                 sxssfWorkbook.write(bos);
                 try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
@@ -624,7 +649,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     void addDimensionDisabled() throws IOException {
         try (
                 SXSSFWorkbook wb = new SXSSFWorkbook();
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             wb.setShouldCalculateSheetDimensions(false);
             SXSSFSheet sheet = wb.createSheet();
@@ -645,6 +670,31 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
             assertNotNull(workbook.getXSSFWorkbook().getStylesSource(), "style source available");
             assertNotNull(workbook.getXSSFWorkbook().getStylesSource().getIndexedColors(), "indexed colors available");
+        }
+    }
+
+    @Test
+    void dateStyle() throws IOException {
+        try (
+                SXSSFWorkbook workbook = new SXSSFWorkbook();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
+        ) {
+            SXSSFSheet sheet = workbook.createSheet();
+            SXSSFRow row = sheet.createRow(0);
+            SXSSFCreationHelper createHelper = (SXSSFCreationHelper) workbook.getCreationHelper();
+            CellStyle cellStyle = workbook.createCellStyle();
+            cellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd.MM.yyyy"));
+            SXSSFCell cell = row.createCell(0);
+            cell.setCellValue(LocalDate.parse("2023-03-07"));
+            cell.setCellStyle(cellStyle);
+            workbook.write(bos);
+
+            try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+                DataFormatter dataFormatter = new DataFormatter();
+                final String result = dataFormatter.formatCellValue(xssfSheet.getRow(0).getCell(0));
+                assertEquals("07.03.2023", result);
+            }
         }
     }
 
@@ -697,4 +747,13 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
+    @Test
+    void writeBrokenFile() throws IOException {
+        try (final Workbook wb = _testDataProvider.openSampleWorkbook("clusterfuzz-testcase-minimized-POIXSSFFuzzer-5185049589579776.xlsx")) {
+            try (OutputStream out = NullOutputStream.INSTANCE) {
+                assertThrows(IllegalArgumentException.class,
+                        () -> wb.write(out));
+            }
+        }
+    }
 }

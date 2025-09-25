@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,12 +46,14 @@ public enum VerticalAlign {
      */
     SUBSCRIPT(3);
 
-    private static Map<Integer, VerticalAlign> imap = new HashMap<>();
+    private static final Map<Integer, VerticalAlign> imap;
 
     static {
+        final Map<Integer, VerticalAlign> tempMap = new HashMap<>();
         for (VerticalAlign p : values()) {
-            imap.put(p.getValue(), p);
+            tempMap.put(p.getValue(), p);
         }
+        imap = Collections.unmodifiableMap(tempMap);
     }
 
     private final int value;

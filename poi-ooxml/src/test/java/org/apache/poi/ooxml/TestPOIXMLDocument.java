@@ -17,7 +17,6 @@
 
 package org.apache.poi.ooxml;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -25,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -38,6 +36,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ooxml.util.PackageHelper;
@@ -136,12 +135,11 @@ public final class TestPOIXMLDocument {
                 // see {@link org.apache.poi.openxml4j.opc.ZipPackage#saveImpl(java.io.OutputStream)}
                 OpenXML4JRuntimeException e = assertThrows(OpenXML4JRuntimeException.class, () -> doc.write(out),
                     "Should not be able to write to an output stream that has been closed.");
-                assertTrue(e.getMessage().matches("Fail to save: an error occurs while saving the package : " +
-                    "The part .+ failed to be saved in the stream with marshaller .+"));
+                assertEquals("Failed to save: content types part", e.getMessage());
 
                 // Should not be able to write a document that has been closed
                 doc.close();
-                IOException e2 = assertThrows(IOException.class, () -> doc.write(NULL_OUTPUT_STREAM),
+                IOException e2 = assertThrows(IOException.class, () -> doc.write(NullOutputStream.INSTANCE),
                     "Should not be able to write a document that has been closed.");
                 assertEquals("Cannot write data, document seems to have been closed already", e2.getMessage());
 

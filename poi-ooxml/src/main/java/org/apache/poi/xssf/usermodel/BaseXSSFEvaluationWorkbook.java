@@ -109,7 +109,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         } catch (NumberFormatException e) {}
 
         // Look up an External Link Table for this name
-        List<ExternalLinksTable> tables = _uBook.getExternalLinksTable();
+        List<ExternalLinksTable> tables = _uBook.getExternalLinksTables();
         int index = findExternalLinkIndex(bookName, tables);
         if (index != -1) return index;
 
@@ -126,12 +126,12 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
             // So, add the missing reference and return
             // Note - this is really rather nasty...
             ExternalLinksTable fakeLinkTable = new FakeExternalLinksTable(relBookName);
-            tables.add(fakeLinkTable);
+            _uBook.addExternalLinksTable(fakeLinkTable);
             return tables.size(); // 1 based results, 0 = current workbook
         }
 
         // Not properly referenced
-        throw new RuntimeException("Book not linked for filename " + bookName);
+        throw new IllegalStateException("Book not linked for filename " + bookName);
     }
     /* This is case-sensitive. Is that correct? */
     private int findExternalLinkIndex(String bookName, List<ExternalLinksTable> tables) {
@@ -193,7 +193,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         if (externalWorkbookNumber > 0) {
             // External reference - reference is 1 based, link table is 0 based
             int linkNumber = externalWorkbookNumber - 1;
-            ExternalLinksTable linkTable = _uBook.getExternalLinksTable().get(linkNumber);
+            ExternalLinksTable linkTable = _uBook.getExternalLinksTable(linkNumber);
 
             for (org.apache.poi.ss.usermodel.Name name : linkTable.getDefinedNames()) {
                 if (name.getNameName().equals(nameName)) {
@@ -300,7 +300,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         if (externalWorkbookNumber > 0) {
             // External reference - reference is 1 based, link table is 0 based
             int linkNumber = externalWorkbookNumber - 1;
-            ExternalLinksTable linkTable = _uBook.getExternalLinksTable().get(linkNumber);
+            ExternalLinksTable linkTable = _uBook.getExternalLinksTable(linkNumber);
             workbookName = linkTable.getLinkedFileName();
         } else {
             // Internal reference
@@ -317,7 +317,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
     @Override
     @NotImplemented
     public int getExternalSheetIndex(String workbookName, String sheetName) {
-        throw new RuntimeException("not implemented yet");
+        throw new IllegalStateException("not implemented yet");
     }
     @Override
     public int getSheetIndex(String sheetName) {
@@ -428,7 +428,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
             // TODO - no idea if this is right
             CTDefinedName ctn = _nameRecord.getCTName();
             String strVal = ctn.getStringValue();
-            return !ctn.getFunction() && strVal != null && strVal.length() > 0;
+            return !ctn.getFunction() && strVal != null && !strVal.isEmpty();
         }
 
         @Override

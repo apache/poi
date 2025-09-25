@@ -22,8 +22,8 @@ package org.apache.poi.hssf.record;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -35,7 +35,7 @@ import org.apache.poi.util.LittleEndianOutput;
 
 public final class DimensionsRecord extends StandardRecord {
 
-    private static final Logger LOG = LogManager.getLogger(DimensionsRecord.class);
+    private static final Logger LOG = PoiLogManager.getLogger(DimensionsRecord.class);
 
     public static final short sid = 0x200;
     private int               field_1_first_row;

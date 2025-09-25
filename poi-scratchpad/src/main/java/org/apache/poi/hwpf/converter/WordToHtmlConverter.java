@@ -34,8 +34,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -82,7 +82,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
     }
 
-    private static final Logger LOG = LogManager.getLogger(WordToHtmlConverter.class);
+    private static final Logger LOG = PoiLogManager.getLogger(WordToHtmlConverter.class);
 
     private final Deque<BlockProperies> blocksProperies = new LinkedList<>();
 

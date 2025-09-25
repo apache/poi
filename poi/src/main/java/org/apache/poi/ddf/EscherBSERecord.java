@@ -111,8 +111,13 @@ public final class EscherBSERecord extends EscherRecord {
 
         int bytesRead = 0;
         if (bytesRemaining > 0) {
+            EscherRecord record = recordFactory.createRecord(data, pos + 36);
+            if (!(record instanceof EscherBlipRecord)) {
+                throw new IllegalArgumentException("Did not have a EscherBlipRecord: " + record);
+            }
+
             // Some older escher formats skip this last record
-            field_12_blipRecord = (EscherBlipRecord) recordFactory.createRecord( data, pos + 36 );
+            field_12_blipRecord = (EscherBlipRecord) record;
             bytesRead = field_12_blipRecord.fillFields( data, pos + 36, recordFactory );
         }
         pos += 36 + bytesRead;

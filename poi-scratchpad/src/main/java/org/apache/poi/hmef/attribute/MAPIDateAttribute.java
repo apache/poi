@@ -23,8 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hpsf.Filetime;
@@ -42,7 +42,7 @@ import org.apache.poi.util.LocaleUtil;
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc433490(v=exchg.80).aspx">[MS-OXPROPS]: Exchange Server Protocols Master Property List</a>
  */
 public final class MAPIDateAttribute extends MAPIAttribute {
-   private static final Logger LOG = LogManager.getLogger(MAPIDateAttribute.class);
+   private static final Logger LOG = PoiLogManager.getLogger(MAPIDateAttribute.class);
    private final Date data;
 
    /**
@@ -70,7 +70,7 @@ public final class MAPIDateAttribute extends MAPIAttribute {
    }
 
    /**
-    * Returns the Date of a Attribute, converting as appropriate
+    * Returns the Date of an Attribute, converting as appropriate
     */
    public static Date getAsDate(MAPIAttribute attr) {
       if(attr == null) {

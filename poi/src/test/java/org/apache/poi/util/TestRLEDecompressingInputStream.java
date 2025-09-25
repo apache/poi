@@ -148,7 +148,7 @@ class TestRLEDecompressingInputStream {
 
     private static void checkRLEDecompression(String expected, byte[] runLengthEncodedData) throws IOException {
         InputStream compressedStream = new ByteArrayInputStream(runLengthEncodedData);
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         try (InputStream stream = new RLEDecompressingInputStream(compressedStream)) {
             IOUtils.copy(stream, out);
         }

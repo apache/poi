@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.logging.log4j.message.StringFormattedMessage;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
@@ -43,7 +43,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 public abstract class Record implements GenericRecord
 {
     // For logging
-    protected static final Logger LOG = LogManager.getLogger(Record.class);
+    protected static final Logger LOG = PoiLogManager.getLogger(Record.class);
 
     /**
      * Is this record type an Atom record (only has data),
@@ -166,10 +166,10 @@ public abstract class Record implements GenericRecord
         // We use the RecordTypes class to provide us with the right
         //  class to use for a given type
         // A spot of reflection gets us the (byte[],int,int) constructor
-        // From there, we instanciate the class
+        // From there, we instantiate the class
         // Any special record handling occurs once we have the class
         RecordTypes recordType = RecordTypes.forTypeID((short) type);
-        RecordConstructor c = recordType.recordConstructor;
+        RecordConstructor<?> c = recordType.recordConstructor;
         if (c == null) {
             // How odd. RecordTypes normally substitutes in
             //  a default handler class if it has heard of the record

@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,12 +48,14 @@ public enum LineSpacingRule {
     AT_LEAST(3);
 
 
-    private static Map<Integer, LineSpacingRule> imap = new HashMap<>();
+    private static final Map<Integer, LineSpacingRule> imap;
 
     static {
+        final Map<Integer, LineSpacingRule> tempMap = new HashMap<>();
         for (LineSpacingRule p : values()) {
-            imap.put(p.getValue(), p);
+            tempMap.put(p.getValue(), p);
         }
+        imap = Collections.unmodifiableMap(tempMap);
     }
 
     private final int value;

@@ -102,7 +102,7 @@ public abstract class LZWDecompresser {
      * of the decompressed input.
      */
     public byte[] decompress(InputStream src) throws IOException {
-        UnsynchronizedByteArrayOutputStream res = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream res = UnsynchronizedByteArrayOutputStream.builder().get();
         decompress(src, res);
         return res.toByteArray();
     }

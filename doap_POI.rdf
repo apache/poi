@@ -37,6 +37,48 @@
     <category rdf:resource="https://projects.apache.org/category/library" />
     <release>
       <Version>
+        <name>Apache POI 5.4.1</name>
+        <created>2025-04-06</created>
+        <revision>5.4.1</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>Apache POI 5.4.0</name>
+        <created>2025-01-08</created>
+        <revision>5.4.0</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>Apache POI 5.3.0</name>
+        <created>2024-07-02</created>
+        <revision>5.3.0</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>Apache POI 5.2.5</name>
+        <created>2023-11-25</created>
+        <revision>5.2.5</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>Apache POI 5.2.4</name>
+        <created>2023-09-28</created>
+        <revision>5.2.4</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>Apache POI 5.2.3</name>
+        <created>2022-09-16</created>
+        <revision>5.2.3</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
         <name>Apache POI 5.2.2</name>
         <created>2022-03-20</created>
         <revision>5.2.2</revision>
@@ -211,10 +253,10 @@
       </Version>
     </release>
     <repository>
-      <SVNRepository>
-        <location rdf:resource="https://svn.apache.org/repos/asf/poi/"/>
-        <browse rdf:resource="https://svn.apache.org/viewvc/poi/"/>
-      </SVNRepository>
+      <GitRepository>
+        <location rdf:resource="https://github.com/apache/poi.git"/>
+        <browse rdf:resource="https://github.com/apache/poi/"/>
+      </GitRepository>
     </repository>
    <maintainer>
       <foaf:Person>

@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherBoolProperty;
 import org.apache.poi.ddf.EscherClientDataRecord;
@@ -43,7 +43,7 @@ import org.apache.poi.util.LittleEndian;
 public class HSSFPolygon  extends HSSFSimpleShape {
     public static final short OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 0x1E;
 
-    private static final Logger LOG = LogManager.getLogger(HSSFPolygon.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HSSFPolygon.class);
 
     public HSSFPolygon(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord _textObjectRecord) {
         super(spContainer, objRecord, _textObjectRecord);

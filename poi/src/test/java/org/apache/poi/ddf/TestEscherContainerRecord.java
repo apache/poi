@@ -20,19 +20,23 @@ package org.apache.poi.ddf;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Tests for {@link EscherContainerRecord}
  */
+@Isolated   // this test changes global static MAX_NUMBER_OF_CHILDREN
 final class TestEscherContainerRecord {
     private static final POIDataSamples _samples = POIDataSamples.getDDFInstance();
 
@@ -42,7 +46,7 @@ final class TestEscherContainerRecord {
         byte[] data = HexRead.readFromString("0F 02 11 F1 00 00 00 00");
         EscherRecord r = f.createRecord(data, 0);
         r.fillFields(data, 0, f);
-        assertTrue(r instanceof EscherContainerRecord);
+        assertInstanceOf(EscherContainerRecord.class, r);
         assertEquals((short) 0x020F, r.getOptions());
         assertEquals((short) 0xF111, r.getRecordId());
 
@@ -91,7 +95,7 @@ final class TestEscherContainerRecord {
             "\t, \"recordSize\": 8\n" +
             "\t, \"isContainer\": true\n" +
             "}";
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", System.lineSeparator());
         assertEquals(expected, r.toString());
 
         EscherOptRecord r2 = new EscherOptRecord();
@@ -121,7 +125,7 @@ final class TestEscherContainerRecord {
             "\t\t}\n" +
             "\t]\n" +
             "}";
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", System.lineSeparator());
         assertEquals(expected, r.toString());
 
         r.addChildRecord(r2);
@@ -155,7 +159,7 @@ final class TestEscherContainerRecord {
             "\t\t}\n" +
             "\t]\n" +
             "}";
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", System.lineSeparator());
         assertEquals(expected, r.toString());
     }
 
@@ -170,7 +174,7 @@ final class TestEscherContainerRecord {
         @Override
         public String getRecordName() { return ""; }
         @Override
-        public Enum getGenericRecordType() { return EscherRecordTypes.UNKNOWN; }
+        public Enum<?> getGenericRecordType() { return EscherRecordTypes.UNKNOWN; }
         @Override
         public DummyEscherRecord copy() { return null; }
     }
@@ -230,5 +234,26 @@ final class TestEscherContainerRecord {
         assertEquals(2, children2.size());
         assertEquals(chC, children2.get(0));
         assertEquals(chA, children2.get(1));
+    }
+
+    @Test
+    void testTooManyChildren() {
+        EscherContainerRecord ecr = new EscherContainerRecord();
+
+        int before = EscherRecord.getMaxNumberOfChildren();
+        try {
+            EscherRecord.setMaxNumberOfChildren(2);
+
+            ecr.addChildRecord(new EscherDgRecord());
+            ecr.addChildRecord(new EscherDgRecord());
+            assertThrows(IllegalStateException.class,
+                    () -> ecr.addChildRecord(new EscherDgRecord()));
+
+            ecr.setChildRecords(Arrays.asList(new EscherDgRecord(), new EscherDgRecord()));
+            assertThrows(IllegalStateException.class,
+                    () -> ecr.setChildRecords(Arrays.asList(new EscherDgRecord(), new EscherDgRecord(), new EscherDgRecord())));
+        } finally {
+            EscherRecord.setMaxNumberOfChildren(before);
+        }
     }
 }

@@ -164,7 +164,7 @@ public final class CellRangeUtil {
                 // range2 encloses range1, so replace it with the enclosing one
                 return new CellRangeAddress[] { range2 };
         }
-        throw new RuntimeException("unexpected intersection result (" + x + ")");
+        throw new IllegalStateException("unexpected intersection result (" + x + ")");
     }
 
     private static CellRangeAddress[] toArray(List<CellRangeAddress> temp) {

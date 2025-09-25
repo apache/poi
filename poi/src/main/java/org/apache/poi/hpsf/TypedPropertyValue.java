@@ -20,8 +20,8 @@ package org.apache.poi.hpsf;
 
 import java.math.BigInteger;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
@@ -30,7 +30,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 @Internal
 public class TypedPropertyValue {
-    private static final Logger LOG = LogManager.getLogger(TypedPropertyValue.class);
+    private static final Logger LOG = PoiLogManager.getLogger(TypedPropertyValue.class);
 
     private int _type;
     private Object _value;

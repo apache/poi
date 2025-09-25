@@ -20,9 +20,10 @@
 package org.apache.poi.poifs.crypt.temp;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Enumeration;
 
 import javax.crypto.Cipher;
@@ -35,8 +36,8 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.output.CloseShieldOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
@@ -52,7 +53,7 @@ import org.apache.poi.util.TempFile;
  */
 @Beta
 public final class AesZipFileZipEntrySource implements ZipEntrySource {
-    private static final Logger LOG = LogManager.getLogger(AesZipFileZipEntrySource.class);
+    private static final Logger LOG = PoiLogManager.getLogger(AesZipFileZipEntrySource.class);
 
     private static final String PADDING = "PKCS5Padding";
 
@@ -63,7 +64,7 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
 
     private AesZipFileZipEntrySource(File tmpFile, Cipher ci) throws IOException {
         this.tmpFile = tmpFile;
-        this.zipFile = new ZipFile(tmpFile);
+        this.zipFile = ZipFile.builder().setFile(tmpFile).get();
         this.ci = ci;
         this.closed = false;
     }
@@ -130,11 +131,11 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
         Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
 
         try (ZipArchiveInputStream zis = new ZipArchiveInputStream(is);
-            FileOutputStream fos = new FileOutputStream(tmpFile);
-            ZipArchiveOutputStream zos = new ZipArchiveOutputStream(fos)) {
+             OutputStream fos = Files.newOutputStream(tmpFile.toPath());
+             ZipArchiveOutputStream zos = new ZipArchiveOutputStream(fos)) {
 
             ZipArchiveEntry ze;
-            while ((ze = zis.getNextZipEntry()) != null) {
+            while ((ze = zis.getNextEntry()) != null) {
                 // the cipher output stream pads the data, therefore we can't reuse the ZipEntry with set sizes
                 // as those will be validated upon close()
                 ZipArchiveEntry zeNew = new ZipArchiveEntry(ze.getName());

@@ -57,6 +57,11 @@ public final class HeaderBlock implements HeaderBlockConstants {
      */
     private int _bat_count;
 
+    /**
+     * Number of property blocks (int).
+     */
+    private int _property_count;
+
     /** 
      * Start of the property set block (int index of the property set
      * chain's first big block).
@@ -162,6 +167,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
 
        // Setup the fields to read and write the counts and starts
       _bat_count  = new IntegerField(_bat_count_offset, data).get();
+      _property_count = new IntegerField(_property_count_offset,_data).get();
       _property_start = new IntegerField(_property_start_offset,_data).get();
       _sbat_start = new IntegerField(_sbat_start_offset, _data).get();
       _sbat_count = new IntegerField(_sbat_block_count_offset, _data).get();
@@ -227,6 +233,24 @@ public final class HeaderBlock implements HeaderBlockConstants {
     }
 
     /**
+     * @return the number of property blocks
+     * @since POI 5.4.0
+     */
+    public int getPropertyCount() {
+        return _property_count;
+    }
+
+    /**
+     * Set the number of property blocks
+     *
+     * @param property_count number of property blocks
+     * @since POI 5.4.0
+     */
+    public void setPropertyCount(final int property_count) {
+        this._property_count = property_count;
+    }
+
+    /**
      * get start of Property Table
      *
      * @return the index of the first block of the Property Table
@@ -234,14 +258,15 @@ public final class HeaderBlock implements HeaderBlockConstants {
     public int getPropertyStart() {
         return _property_start;
     }
-   /**
-    * Set start of Property Table
-    *
-    * @param startBlock the index of the first block of the Property Table
-    */
-   public void setPropertyStart(final int startBlock) {
-       _property_start = startBlock;
-   }
+
+    /**
+     * Set start of Property Table
+     *
+     * @param startBlock the index of the first block of the Property Table
+     */
+    public void setPropertyStart(final int startBlock) {
+        _property_start = startBlock;
+    }
 
     /**
      * @return start of small block (MiniFAT) allocation table
@@ -367,6 +392,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
    public void writeData(final OutputStream stream) throws IOException {
       // Update the counts and start positions 
       new IntegerField(_bat_count_offset,      _bat_count, _data);
+      new IntegerField(_property_count_offset, bigBlockSize.getBigBlockSize() == 512 ? 0 : _property_count, _data);
       new IntegerField(_property_start_offset, _property_start, _data);
       new IntegerField(_sbat_start_offset,     _sbat_start, _data);
       new IntegerField(_sbat_block_count_offset, _sbat_count, _data);

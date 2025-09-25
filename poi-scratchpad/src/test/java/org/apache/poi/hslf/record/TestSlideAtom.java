@@ -75,7 +75,7 @@ public final class TestSlideAtom {
     @Test
     void testWrite() throws IOException {
         SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         sa.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
     }

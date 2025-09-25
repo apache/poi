@@ -27,8 +27,8 @@ import org.apache.batik.parser.LengthHandler;
 import org.apache.batik.parser.LengthParser;
 import org.apache.batik.parser.ParseException;
 import org.apache.batik.util.SVGConstants;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
 import org.w3c.dom.svg.SVGDocument;
@@ -39,7 +39,7 @@ import org.w3c.dom.svg.SVGSVGElement;
  */
 @Internal
 public class SVGUserAgent extends UserAgentAdapter {
-    private static final Logger LOG = LogManager.getLogger(SVGUserAgent.class);
+    private static final Logger LOG = PoiLogManager.getLogger(SVGUserAgent.class);
     private Rectangle2D viewbox;
 
     public SVGUserAgent() {

@@ -81,7 +81,7 @@ public class FormulaRenderer {
                     stack.push(attrPtg.toFormulaString(operands));
                     continue;
                 }
-                throw new RuntimeException("Unexpected tAttr: " + attrPtg);
+                throw new IllegalStateException("Unexpected tAttr: " + attrPtg);
             }
 
             if (ptg instanceof WorkbookDependentFormula) {

@@ -50,7 +50,7 @@ public final class TestXSSFChartSheet {
 
             assertFalse(sheet.iterator().hasNext(), "Row iterator for charts sheets should return zero rows");
 
-            //access to a arbitrary row
+            //access to an arbitrary row
             assertNull(sheet.getRow(1));
 
             //some basic get* accessors

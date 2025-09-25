@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
@@ -43,7 +43,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * chain of blocks.
  */
 public final class PropertyTable implements BATManaged {
-    private static final Logger LOG = LogManager.getLogger(PropertyTable.class);
+    private static final Logger LOG = PoiLogManager.getLogger(PropertyTable.class);
 
     private final HeaderBlock    _header_block;
     private final List<Property> _properties = new ArrayList<>();
@@ -83,11 +83,14 @@ public final class PropertyTable implements BATManaged {
 
         for (ByteBuffer bb : dataSource) {
             // Turn it into an array
-            byte[] data;
-            if (bb.hasArray() && bb.arrayOffset() == 0 &&
-                    bb.array().length == _bigBigBlockSize.getBigBlockSize()) {
-                data = bb.array();
-            } else {
+            byte[] data = null;
+            if (bb.hasArray() && bb.arrayOffset() == 0) {
+                final byte[] array = bb.array();
+                if (array.length == _bigBigBlockSize.getBigBlockSize()) {
+                    data = array;
+                }
+            }
+            if (data == null) {
                 data = IOUtils.safelyAllocate(_bigBigBlockSize.getBigBlockSize(), POIFSFileSystem.getMaxRecordLength());
 
                 int toRead = data.length;
@@ -105,11 +108,15 @@ public final class PropertyTable implements BATManaged {
             PropertyFactory.convertToProperties(data, _properties);
         }
 
-        if (_properties.get(0) != null) {
-            populatePropertyTree((DirectoryProperty) _properties.get(0));
+        Property property = _properties.get(0);
+        if (property != null) {
+            if (property instanceof DirectoryProperty) {
+                populatePropertyTree((DirectoryProperty) property, 0);
+            } else {
+                throw new IOException("Invalid format, cannot convert property " + property + " to DirectoryProperty");
+            }
         }
     }
-
 
     /**
      * Add a property to the list of properties we manage
@@ -136,7 +143,13 @@ public final class PropertyTable implements BATManaged {
      */
     public RootProperty getRoot() {
         // it's always the first element in the List
-        return ( RootProperty ) _properties.get(0);
+        Property property = _properties.get(0);
+        if (property instanceof RootProperty) {
+            return (RootProperty) property;
+        } else {
+            throw new IllegalStateException("Invalid format, cannot convert property " +
+                    property + " to RootProperty");
+        }
     }
 
     /**
@@ -209,9 +222,19 @@ public final class PropertyTable implements BATManaged {
        if(getStartBlock() != stream.getStartBlock()) {
           setStartBlock(stream.getStartBlock());
        }
+
+       // Update the number of property blocks in the header
+       _header_block.setPropertyCount(countBlocks());
     }
 
-    private void populatePropertyTree(DirectoryProperty root) throws IOException {
+    // Maximum depth of the property tree to prevent stackoverflow errors
+    private static final int MAX_PROPERTY_DEPTH = 1000;
+
+    private void populatePropertyTree(final DirectoryProperty root, final int depth) throws IOException {
+        if (depth > MAX_PROPERTY_DEPTH) {
+            throw new IOException("Property tree too deep, likely a corrupt file");
+        }
+
         int index = root.getChildIndex();
 
         if (!Property.isValidIndex(index)) {
@@ -230,7 +253,7 @@ public final class PropertyTable implements BATManaged {
 
             root.addChild(property);
             if (property.isDirectory()) {
-                populatePropertyTree(( DirectoryProperty ) property);
+                populatePropertyTree((DirectoryProperty) property, depth + 1);
             }
             index = property.getPreviousChildIndex();
             if (isValidIndex(index)) {

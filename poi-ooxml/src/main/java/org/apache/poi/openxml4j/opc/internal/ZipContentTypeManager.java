@@ -23,8 +23,8 @@ import java.io.OutputStream;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.StreamHelper;
@@ -37,7 +37,7 @@ import org.w3c.dom.Document;
  * @see ContentTypeManager
  */
 public class ZipContentTypeManager extends ContentTypeManager {
-    private static final Logger LOG = LogManager.getLogger(ZipContentTypeManager.class);
+    private static final Logger LOG = PoiLogManager.getLogger(ZipContentTypeManager.class);
 
     /**
      * Delegate constructor to the super constructor.
@@ -61,6 +61,8 @@ public class ZipContentTypeManager extends ContentTypeManager {
 
         ZipArchiveEntry partEntry = new ZipArchiveEntry(CONTENT_TYPES_PART_NAME);
         try {
+            ZipHelper.adjustEntryTime(partEntry);
+
             // Referenced in ZIP
             zos.putArchiveEntry(partEntry);
             try {

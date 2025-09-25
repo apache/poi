@@ -21,8 +21,8 @@ import java.awt.Insets;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherComplexProperty;
@@ -45,7 +45,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * Represents a picture in a PowerPoint document.
  */
 public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HSLFShape,HSLFTextParagraph> {
-    private static final Logger LOG = LogManager.getLogger(HSLFPictureShape.class);
+    private static final Logger LOG = PoiLogManager.getLogger(HSLFPictureShape.class);
 
     /**
      * Create a new <code>Picture</code>
@@ -124,9 +124,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
             LOG.atError().log("no reference to picture data found ");
         } else {
             for (HSLFPictureData pd : pict) {
-
-                // Reference equals is safe because these BSE belong to the same slideshow
-                if (pd.bse == bse) {
+                if (pd.getOffset() == bse.getOffset()) {
                     return pd;
                 }
             }
@@ -181,7 +179,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
     }
 
     /**
-     * By default set the orininal image size
+     * By default set the original image size
      */
     @Override
     protected void afterInsert(HSLFSheet sh){

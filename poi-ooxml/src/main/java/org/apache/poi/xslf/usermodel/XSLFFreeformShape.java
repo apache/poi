@@ -24,8 +24,8 @@ import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.geom.CustomGeometry;
 import org.apache.poi.sl.usermodel.FreeformShape;
@@ -57,7 +57,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
 public class XSLFFreeformShape extends XSLFAutoShape
     implements FreeformShape<XSLFShape,XSLFTextParagraph> {
 
-    private static final Logger LOG = LogManager.getLogger(XSLFFreeformShape.class);
+    private static final Logger LOG = PoiLogManager.getLogger(XSLFFreeformShape.class);
 
     /*package*/ XSLFFreeformShape(CTShape shape, XSLFSheet sheet) {
         super(shape, sheet);
