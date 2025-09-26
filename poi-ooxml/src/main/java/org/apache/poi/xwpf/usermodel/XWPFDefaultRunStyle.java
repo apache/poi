@@ -36,7 +36,12 @@ public class XWPFDefaultRunStyle {
         this.rpr = rpr;
     }
 
-    protected CTRPr getRPr() {
+    /**
+     * Return the underlying XML bean.
+     * @return underlying CTRPr bean.
+     * @since POI 5.5.0
+     */
+    public CTRPr getRPr() {
         return rpr;
     }
 
