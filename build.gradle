@@ -118,7 +118,7 @@ subprojects {
         hamcrestVersion = '3.0'
         xmlbeansVersion = '5.3.0'
         batikVersion = '1.19'
-        graphics2dVersion = '3.0.3'
+        graphics2dVersion = '3.0.5'
         pdfboxVersion = '3.0.5'
         saxonVersion = '12.9'
         xmlSecVersion = '3.0.6'
