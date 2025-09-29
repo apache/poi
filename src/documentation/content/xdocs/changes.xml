@@ -79,6 +79,7 @@
             <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
             <summary-item>Upgrade commons-io dependency to 2.20.0</summary-item>
             <summary-item>Upgrade pdfbox dependency to 3.0.5</summary-item>
+            <summary-item>Upgrade graphics2d dependency to 3.0.5</summary-item>
             <summary-item>Upgrade xmlsec dependency to 3.0.6</summary-item>
             <summary-item>Upgrade JaCoCo code-coverage tooling to 0.8.13</summary-item>
         </summary>
