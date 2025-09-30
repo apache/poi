@@ -209,7 +209,7 @@ public class SheetUtil {
                     String txt = line + defaultChar;
 
                     AttributedString str = new AttributedString(txt);
-                    WithJavaDesktop.copyAttributes(font, str, 0, txt.length());
+                    WithJavaDesktop.modifyAttributedString(str, font, 0, txt.length());
 
                     /*if (rt.numFormattingRuns() > 0) {
                         // TODO: support rich text fragments
@@ -233,7 +233,7 @@ public class SheetUtil {
             if(sval != null) {
                 String txt = sval + defaultChar;
                 AttributedString str = new AttributedString(txt);
-                WithJavaDesktop.copyAttributes(font, str, 0, txt.length());
+                WithJavaDesktop.modifyAttributedString(str, font, 0, txt.length());
 
                 width = WithJavaDesktop.getCellWidth(defaultCharWidth, colspan, style, width, str);
             }
@@ -299,19 +299,19 @@ public class SheetUtil {
         /**
          * Copy text attributes from the supplied Font to Java2D AttributedString
          */
-        private static void copyAttributes(Font font, AttributedString str, @SuppressWarnings("SameParameterValue") int startIdx, int endIdx) {
+        private static void modifyAttributedString(AttributedString str, Font font, final int startIdx, final int endIdx) {
             str.addAttribute(TextAttribute.FAMILY, font.getFontName(), startIdx, endIdx);
-            str.addAttribute(TextAttribute.SIZE, (float)font.getFontHeightInPoints());
+            str.addAttribute(TextAttribute.SIZE, (float) font.getFontHeightInPoints());
             if (font.getBold()) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIdx, endIdx);
             if (font.getItalic() ) str.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, startIdx, endIdx);
             if (font.getUnderline() == Font.U_SINGLE ) str.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, startIdx, endIdx);
         }
 
         private static boolean canComputeColumnWidth(Font font, AttributedString str) {
-            copyAttributes(font, str, 0, "1w".length());
+            modifyAttributedString(str, font, 0, "1w".length());
 
             TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
-            return (layout.getBounds().getWidth() > 0);
+            return layout.getBounds().getWidth() > 0;
         }
         
     }
@@ -383,7 +383,7 @@ public class SheetUtil {
 
         AttributedString str = new AttributedString(String.valueOf(defaultChar));
         try {
-            WithJavaDesktop.copyAttributes(defaultFont, str, 0, 1);
+            WithJavaDesktop.modifyAttributedString(str, defaultFont, 0, 1);
             return WithJavaDesktop.getDefaultCharWidthAsFloat(str);
         } catch (Throwable t) {
             if (shouldIgnoreMissingFontSystem(t)) {
