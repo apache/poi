@@ -652,4 +652,14 @@ class TestXWPFTable {
             assertEquals(0, tbl.getIndent());
         }
     }
+
+    @Test
+    public void testGetTableWidthIfNotPresent() throws Exception {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("table-indent.docx")) {
+            // The first table in this document doesn't have a tblW item.
+            XWPFTable table1 = doc.getTableArray(0);
+            assertEquals(-1,table1.getWidth());
+            assertEquals(TableWidthType.AUTO, table1.getWidthType());
+        }
+    }
 }
