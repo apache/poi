@@ -192,7 +192,6 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
 
         try (FileOutputStream out = new FileOutputStream(File.createTempFile("test62872", ".xlsx"))) {
             workbook.write(out);
-            workbook.dispose();
             workbook.close();
             out.flush();
         }

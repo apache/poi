@@ -66,7 +66,6 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
             cell1.setCellValue(cellValue);
             workbook.write(os);
             workbook.close();
-            workbook.dispose();
         }
         try (XSSFWorkbook xwb = new XSSFWorkbook(os.toInputStream())) {
             XSSFSheet xs1 = xwb.getSheetAt(0);
@@ -90,7 +89,6 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
                 workbook.write(os);
             }
             workbook.close();
-            workbook.dispose();
         }
         try (InputStream is = tempData.getInputStream();
              ZipEntrySource zipEntrySource = AesZipFileZipEntrySource.createZipEntrySource(is)) {
@@ -123,9 +121,8 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
             String text = new String(data, UTF_8);
             assertFalse(text.contains(sheetName));
             assertFalse(text.contains(cellValue));
-        }
-        workbook.dispose();
-        assertFalse(tempFile.exists(), "tempFile deleted after dispose?");
+        }       
         workbook.close();
+        assertFalse(tempFile.exists(), "tempFile deleted after close?");
     }
 }

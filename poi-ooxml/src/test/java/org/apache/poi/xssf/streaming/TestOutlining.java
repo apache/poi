@@ -179,7 +179,6 @@ public final class TestOutlining {
         assertEquals(2, sxssfSheet.getRow(4).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(5).getOutlineLevel());
 
-        sxssfWorkbook.dispose();
         sxssfWorkbook.close();
     }
 
@@ -212,7 +211,6 @@ public final class TestOutlining {
         assertEquals(2, sxssfSheet.getRow(4).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(5).getOutlineLevel());
 
-        sxssfWorkbook.dispose();
         sxssfWorkbook.close();
     }
 }

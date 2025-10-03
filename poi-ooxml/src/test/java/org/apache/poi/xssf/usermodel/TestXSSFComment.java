@@ -357,7 +357,7 @@ public final class TestXSSFComment extends BaseTestCellComment {
         try {
             _testMove(workbook);
         } finally {
-            workbook.dispose();
+            workbook.close();
         }
     }
 
@@ -372,7 +372,7 @@ public final class TestXSSFComment extends BaseTestCellComment {
         try {
             _testMoveCopy(workbook);
         } finally {
-            workbook.dispose();
+            workbook.close();
         }
     }
 
@@ -387,7 +387,7 @@ public final class TestXSSFComment extends BaseTestCellComment {
         try {
             _testMoveIsSaved(workbook);
         } finally {
-            workbook.dispose();
+            workbook.close();
         }
     }
 
@@ -402,7 +402,7 @@ public final class TestXSSFComment extends BaseTestCellComment {
         try {
             _testModificationIsSaved(workbook);
         } finally {
-            workbook.dispose();
+            workbook.close();
         }
     }
 
