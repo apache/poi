@@ -353,11 +353,8 @@ public final class TestXSSFComment extends BaseTestCellComment {
 
     @Test
     void testMoveCommentSXSSF() throws Exception {
-        SXSSFWorkbook workbook = new SXSSFWorkbook();
-        try {
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
             _testMove(workbook);
-        } finally {
-            workbook.close();
         }
     }
 
@@ -368,11 +365,8 @@ public final class TestXSSFComment extends BaseTestCellComment {
 
     @Test
     void testMoveCommentCopySXSSF() throws Exception {
-        SXSSFWorkbook workbook = new SXSSFWorkbook();
-        try {
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
             _testMoveCopy(workbook);
-        } finally {
-            workbook.close();
         }
     }
 
@@ -383,11 +377,8 @@ public final class TestXSSFComment extends BaseTestCellComment {
 
     @Test
     void testMoveCommentIsSavedSXSSF() throws Exception {
-        SXSSFWorkbook workbook = new SXSSFWorkbook();
-        try {
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
             _testMoveIsSaved(workbook);
-        } finally {
-            workbook.close();
         }
     }
 
@@ -398,11 +389,8 @@ public final class TestXSSFComment extends BaseTestCellComment {
 
     @Test
     void testModifiedCommentIsSavedSXSSF() throws Exception {
-        SXSSFWorkbook workbook = new SXSSFWorkbook();
-        try {
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
             _testModificationIsSaved(workbook);
-        } finally {
-            workbook.close();
         }
     }
 

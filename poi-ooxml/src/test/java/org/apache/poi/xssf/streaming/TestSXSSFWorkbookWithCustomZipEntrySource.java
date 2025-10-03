@@ -65,7 +65,6 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
             SXSSFCell cell1 = row1.createCell(1);
             cell1.setCellValue(cellValue);
             workbook.write(os);
-            workbook.close();
         }
         try (XSSFWorkbook xwb = new XSSFWorkbook(os.toInputStream())) {
             XSSFSheet xs1 = xwb.getSheetAt(0);
@@ -88,7 +87,6 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
             try (OutputStream os = tempData.getOutputStream()) {
                 workbook.write(os);
             }
-            workbook.close();
         }
         try (InputStream is = tempData.getInputStream();
              ZipEntrySource zipEntrySource = AesZipFileZipEntrySource.createZipEntrySource(is)) {
