@@ -20,6 +20,13 @@ package org.apache.poi.xssf.eventusermodel;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,11 +35,15 @@ import java.util.List;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.ExcelNumberFormat;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.xssf.binary.XSSFBSharedStringsTable;
 import org.apache.poi.xssf.binary.XSSFBSheetHandler;
 import org.apache.poi.xssf.binary.XSSFBStylesTable;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
+import org.mockito.quality.Strictness;
 
 class TestXSSFBReader {
 
@@ -214,6 +225,177 @@ class TestXSSFBReader {
         @Override
         public String toString() {
             return sb.toString();
+        }
+    }
+
+    private static XSSFBSheetHandler.XSSFBSheetContentsHandler mockSheetContentsHandler() {
+        return mock(
+                XSSFBSheetHandler.XSSFBSheetContentsHandler.class,
+                withSettings().strictness(Strictness.STRICT_STUBS));
+    }
+
+    @Test
+    void testBasicXSSFBSheetContentsHandler() throws Exception {
+        XSSFBSheetHandler.XSSFBSheetContentsHandler handler = mockSheetContentsHandler();
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("testVarious.xlsb"))) {
+            XSSFBReader r = new XSSFBReader(pkg);
+            assertNotNull(r.getXSSFBStylesTable());
+            XSSFBSharedStringsTable sst = new XSSFBSharedStringsTable(pkg);
+            XSSFBStylesTable xssfbStylesTable = r.getXSSFBStylesTable();
+            XSSFBReader.SheetIterator it = (XSSFBReader.SheetIterator) r.getSheetsData();
+
+            while (it.hasNext()) {
+                InputStream is = it.next();
+                XSSFBSheetHandler sheetHandler = new XSSFBSheetHandler(is,
+                        xssfbStylesTable,
+                        it.getXSSFBSheetComments(),
+                        sst,
+                        handler,
+                        false);
+                sheetHandler.parse();
+            }
+            InOrder ordered = inOrder(handler);
+            ordered.verify(handler).startRow(0);
+            ordered.verify(handler).stringCell(eq("A1"), eq("String"), isNull());
+            ordered.verify(handler).stringCell(eq("B1"), eq("This is a string"), isNull());
+            ordered.verify(handler).endRow(0);
+
+            ordered.verify(handler).startRow(1);
+            ordered.verify(handler).stringCell(eq("A2"), eq("integer"), isNull());
+            ordered.verify(handler).doubleCell(eq("B2"), eq(13.0d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).endRow(1);
+
+            ordered.verify(handler).startRow(2);
+            ordered.verify(handler).stringCell(eq("A3"), eq("float"), isNull());
+            ordered.verify(handler).doubleCell(eq("B3"), eq(13.1211231321d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).endRow(2);
+
+            ordered.verify(handler).startRow(3);
+            ordered.verify(handler).stringCell(eq("A4"), eq("currency"), isNull());
+            ordered.verify(handler).doubleCell(eq("B4"), eq(3.03d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).endRow(3);
+
+            ordered.verify(handler).startRow(4);
+            ordered.verify(handler).stringCell(eq("A5"), eq("percent"), isNull());
+            ordered.verify(handler).doubleCell(eq("B5"), eq(0.2d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).endRow(4);
+
+            ordered.verify(handler).startRow(5);
+            ordered.verify(handler).stringCell(eq("A6"), eq("float 2"), isNull());
+            ordered.verify(handler).doubleCell(eq("B6"), eq(13.12131231d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).endRow(5);
+
+            ordered.verify(handler).startRow(6);
+            ordered.verify(handler).stringCell(eq("A7"), eq("long int"), isNull());
+            ordered.verify(handler).doubleCell(eq("B7"), eq(1.23456789012345E14d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).endRow(6);
+
+            ordered.verify(handler).startRow(7);
+            ordered.verify(handler).stringCell(eq("A8"), eq("longer int"), isNull());
+            ordered.verify(handler).doubleCell(eq("B8"), eq(1.23456789012345E15d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).stringCell(eq("C8"), isNull(), notNull(XSSFComment.class));
+            ordered.verify(handler).endRow(7);
+
+            ordered.verify(handler).startRow(8);
+            ordered.verify(handler).stringCell(eq("A9"), eq("fraction"), isNull());
+            ordered.verify(handler).doubleCell(eq("B9"), eq(0.25d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).endRow(8);
+
+            ordered.verify(handler).startRow(9);
+            ordered.verify(handler).stringCell(eq("A10"), eq("date"), isNull());
+            ordered.verify(handler).doubleCell(eq("B10"), eq(42803.0d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).endRow(9);
+
+            ordered.verify(handler).startRow(10);
+            ordered.verify(handler).stringCell(eq("A11"), eq("comment"), isNull());
+            ordered.verify(handler).stringCell(eq("B11"), eq("contents"), notNull(XSSFComment.class));
+            ordered.verify(handler).endRow(10);
+
+            ordered.verify(handler).startRow(11);
+            ordered.verify(handler).stringCell(eq("A12"), eq("hyperlink"), isNull());
+            ordered.verify(handler).stringCell(eq("B12"), eq("tika_link"), isNull());
+            ordered.verify(handler).endRow(11);
+
+            ordered.verify(handler).startRow(12);
+            ordered.verify(handler).stringCell(eq("A13"), eq("formula"), isNull());
+            ordered.verify(handler).doubleCell(eq("B13"), eq(4.0d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).doubleCell(eq("C13"), eq(2.0d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).endRow(12);
+
+            ordered.verify(handler).startRow(13);
+            ordered.verify(handler).stringCell(eq("A14"), eq("formulaErr"), isNull());
+            ordered.verify(handler).errorCell(eq("B14"), eq(FormulaError.NAME), isNull());
+            ordered.verify(handler).endRow(13);
+
+            ordered.verify(handler).startRow(14);
+            ordered.verify(handler).stringCell(eq("A15"), eq("formulaFloat"), isNull());
+            ordered.verify(handler).doubleCell(eq("B15"), eq(0.5d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).stringCell(eq("D15"), eq("March"), isNull());
+            ordered.verify(handler).stringCell(eq("E15"), eq("April"), isNull());
+            ordered.verify(handler).endRow(14);
+
+            ordered.verify(handler).startRow(15);
+            ordered.verify(handler).stringCell(eq("A16"), eq("customFormat1"), isNull());
+            ordered.verify(handler).stringCell(eq("B16"), eq("   46/1963"), isNull());
+            ordered.verify(handler).stringCell(eq("C16"), eq("merchant1"), isNull());
+            ordered.verify(handler).doubleCell(eq("D16"), eq(1.0d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).doubleCell(eq("E16"), eq(3.0d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).endRow(15);
+
+            ordered.verify(handler).startRow(16);
+            ordered.verify(handler).stringCell(eq("A17"), eq("customFormat2"), isNull());
+            ordered.verify(handler).stringCell(eq("B17"), eq("  3/128"), isNull());
+            ordered.verify(handler).stringCell(eq("C17"), eq("merchant2"), isNull());
+            ordered.verify(handler).doubleCell(eq("D17"), eq(2.0d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).doubleCell(eq("E17"), eq(4.0d), isNull(), any(ExcelNumberFormat.class));
+            ordered.verify(handler).endRow(16);
+
+            ordered.verify(handler).startRow(20);
+            ordered.verify(handler).stringCell(eq("C21"), eq("text test"), isNull());
+            ordered.verify(handler).endRow(20);
+
+            ordered.verify(handler).startRow(22);
+            ordered.verify(handler).stringCell(eq("A23"), isNull(), notNull(XSSFComment.class));
+            ordered.verify(handler).endRow(22);
+
+            ordered.verify(handler).startRow(23);
+            ordered.verify(handler).stringCell(eq("C24"), isNull(), notNull(XSSFComment.class));
+            ordered.verify(handler).endRow(23);
+
+            ordered.verify(handler).startRow(27);
+            ordered.verify(handler).stringCell(eq("B28"), isNull(), notNull(XSSFComment.class));
+            ordered.verify(handler).endRow(27);
+
+            ordered.verify(handler).startRow(29);
+            ordered.verify(handler).stringCell(eq("B30"), eq("the"), isNull());
+            ordered.verify(handler).stringCell(eq("C30"), isNull(), notNull(XSSFComment.class));
+            ordered.verify(handler).endRow(29);
+
+            ordered.verify(handler).startRow(32);
+            ordered.verify(handler).stringCell(eq("B33"), eq("the"), isNull());
+            ordered.verify(handler).stringCell(eq("C33"), isNull(), notNull(XSSFComment.class));
+            ordered.verify(handler).stringCell(eq("D33"), eq("quick"), isNull());
+            ordered.verify(handler).endRow(32);
+
+            ordered.verify(handler).startRow(34);
+            ordered.verify(handler).stringCell(eq("B35"), eq("comment6"), notNull(XSSFComment.class));
+            ordered.verify(handler).endRow(34);
+
+            ordered.verify(handler).startRow(64);
+            ordered.verify(handler).stringCell(eq("I65"), isNull(), notNull(XSSFComment.class));
+            ordered.verify(handler).endRow(64);
+
+            ordered.verify(handler).startRow(65);
+            ordered.verify(handler).stringCell(eq("I66"), isNull(), notNull(XSSFComment.class));
+            ordered.verify(handler).endRow(65);
+
+            ordered.verify(handler).headerFooter(eq("OddLeftHeader OddCenterHeader OddRightHeader"), eq(true), eq("header"));
+            ordered.verify(handler).headerFooter(eq("OddLeftFooter OddCenterFooter OddRightFooter"), eq(false), eq("footer"));
+            ordered.verify(handler).headerFooter(eq("EvenLeftHeader EvenCenterHeader EvenRightHeader\n"), eq(true), eq("evenHeader"));
+            ordered.verify(handler).headerFooter(eq("EvenLeftFooter EvenCenterFooter EvenRightFooter"), eq(false), eq("evenFooter"));
+            ordered.verify(handler).headerFooter(eq("FirstPageLeftHeader FirstPageCenterHeader FirstPageRightHeader"), eq(true), eq("firstHeader"));
+            ordered.verify(handler).headerFooter(eq("FirstPageLeftFooter FirstPageCenterFooter FirstPageRightFooter"), eq(false), eq("firstFooter"));
+            ordered.verifyNoMoreInteractions();
         }
     }
 }
