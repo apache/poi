@@ -166,7 +166,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
                 handleFmlaNum(data);
                 break;
             case BrtFmlaError:
-                handleCellError(data);
+                handleFmlaError(data);
                 break;
                 //TODO: All the PCDI and PCDIA
             case BrtEndSheetData:
@@ -185,10 +185,10 @@ public class XSSFBSheetHandler extends XSSFBParser {
         checkMissedComments(currentRow, cellBuffer.getColNum());
     }
 
-    private void handleStringCellValue(String formattedValue) {
+    private void handleStringCellValue(String val) {
         CellAddress cellAddress = getCellAddress();
         XSSFBComment comment = getCellComment(cellAddress);
-        handler.stringCell(cellAddress.formatAsString(), formattedValue, comment);
+        handler.stringCell(cellAddress.formatAsString(), val, comment);
     }
 
     private void handleDoubleCellValue(double val) {
@@ -196,6 +196,18 @@ public class XSSFBSheetHandler extends XSSFBParser {
         XSSFBComment comment = getCellComment(cellAddress);
         ExcelNumberFormat nf = getExcelNumberFormat();
         handler.doubleCell(cellAddress.formatAsString(), val, comment, nf);
+    }
+
+    private void handleErrorCellValue(int val) {
+        FormulaError fe;
+        try {
+            fe = FormulaError.forInt(val);
+        } catch (IllegalArgumentException e) {
+            fe = null;
+        }
+        CellAddress cellAddress = getCellAddress();
+        XSSFBComment comment = getCellComment(cellAddress);
+        handler.errorCell(cellAddress.formatAsString(), fe, comment);
     }
 
     private CellAddress getCellAddress() {
@@ -248,16 +260,14 @@ public class XSSFBSheetHandler extends XSSFBParser {
 
     private void handleCellError(byte[] data) {
         beforeCellValue(data);
-        int bErr = data[XSSFBCellHeader.length] & 0xFF;
-        FormulaError fe;
-        try {
-            fe = FormulaError.forInt(bErr);
-        } catch (IllegalArgumentException e) {
-            fe = null;
-        }
-        CellAddress cellAddress = getCellAddress();
-        XSSFBComment comment = getCellComment(cellAddress);
-        handler.errorCell(cellAddress.formatAsString(), fe, comment);
+        int val = data[XSSFBCellHeader.length] & 0xFF;
+        handleErrorCellValue(val);
+    }
+
+    private void handleFmlaError(byte[] data) {
+        beforeCellValue(data);
+        int val = data[XSSFBCellHeader.length] & 0xFF;
+        handleErrorCellValue(val);
     }
 
     private void handleBoolean(byte[] data) {
