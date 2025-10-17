@@ -89,9 +89,9 @@ public class XSSFBSheetHandler extends XSSFBParser {
     /**
      * Creates a handler that converts numeric and date cells to formatted strings via {@link
      * DataFormatter}.
-     *
-     * <p>This variant mirrors the SAX-based API from {@link XSSFSheetXMLHandler} so existing POI
-     * consumers can reuse their {@link XSSFSheetXMLHandler.SheetContentsHandler} implementations.
+     * 
+     * <p>Select this overload when the consumer expects formatted string values rather than raw
+     * cell representations.
      *
      * @param is XLSB worksheet stream to parse
      * @param styles table providing cell style and number format metadata
