@@ -559,8 +559,10 @@ public class XSSFBSheetHandler extends XSSFBParser {
 
         @Override
         public void errorCell(String cellReference, FormulaError fe, XSSFComment comment) {
-        String errorText = fe != null ? fe.getString() : "ERROR";
-            delegate.cell(cellReference, errorText, comment);
+            // For backward compatibility, we pass "ERROR" as the cell value.
+            // If you need the actual error code, you should implement
+            // XSSFBSheetContentsHandler directly
+            delegate.cell(cellReference, "ERROR", comment);
         }
 
         @Override
