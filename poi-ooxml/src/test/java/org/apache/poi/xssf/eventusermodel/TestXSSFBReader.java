@@ -34,6 +34,7 @@ import org.apache.poi.xssf.usermodel.XSSFComment;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -438,6 +439,24 @@ class TestXSSFBReader {
                 argThat(commentWith("Sven Nissel", "comment top row4 (index3)")));
         ordered.verify(handler).stringCell(eq("B4"), eq("row4"), isNull());
         ordered.verify(handler).endRow(3);
+    }
 
+    @Test
+    void testDateXSSFBSheetContentsHandler() throws Exception {
+        XSSFBSheetHandler.XSSFBSheetContentsHandler handler = mockSheetContentsHandler();
+        testXSSFBSheetContentsHandler("date.xlsb", handler);
+  
+        InOrder ordered = inOrder(handler);
+        ArgumentCaptor<ExcelNumberFormat> numberFormat = ArgumentCaptor.forClass(ExcelNumberFormat.class);
+        ordered.verify(handler).startRow(0);
+        ordered.verify(handler).doubleCell(eq("A1"), eq(41286.0d), isNull(), numberFormat.capture());
+        ordered.verify(handler).endRow(0);
+        ExcelNumberFormat format = numberFormat.getValue();
+        assertNotNull(format);
+        assertEquals(14, format.getIdx());
+        assertEquals("m/d/yy", format.getFormat());
+        ordered.verifyNoMoreInteractions();
+        DataFormatter df = new DataFormatter();
+        assertEquals("1/12/13", df.formatRawCellContents(41286.0d, format.getIdx(), format.getFormat()));
     }
 }
