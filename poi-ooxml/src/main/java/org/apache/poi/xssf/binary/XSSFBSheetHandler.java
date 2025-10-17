@@ -69,8 +69,6 @@ public class XSSFBSheetHandler extends XSSFBParser {
      * @param comments optional comments table, may be {@code null}
      * @param strings shared strings table used by the sheet
      * @param sheetContentsHandler callback receiving native cell events
-     * @param formulasNotResults {@code true} to request formulas rather than cached results
-     *     (currently not implemented)
      */
      public XSSFBSheetHandler(InputStream is,
                               XSSFBStylesTable styles,
@@ -99,8 +97,6 @@ public class XSSFBSheetHandler extends XSSFBParser {
      * @param strings shared strings table used by the sheet
      * @param sheetContentsHandler callback receiving formatted string values
      * @param dataFormatter formatter applied to numeric and date cells
-     * @param formulasNotResults {@code true} to request formulas rather than cached results
-     *     (currently not implemented)
      * @see #XSSFBSheetHandler(InputStream, XSSFBStylesTable, XSSFBCommentsTable, SharedStrings,
      *     XSSFBSheetContentsHandler, boolean)
      */
@@ -209,7 +205,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
     private XSSFBComment getCellComment(CellAddress cellAddress) {
         XSSFBComment comment = null;
         if (comments != null) {
-        comment = comments.get(cellAddress);
+            comment = comments.get(cellAddress);
         }
         return comment;
     }
