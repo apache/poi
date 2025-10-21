@@ -243,7 +243,7 @@ class TestXSSFBReader {
                 && text.equals(comment.getString().toString().trim());
     }
 
-    void testXSSFBSheetContentsHandler(String fileName,
+    private void readAllSheetsFromWorkbook(String fileName,
             XSSFBSheetHandler.XSSFBSheetContentsHandler handler) throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream(fileName))) {
             XSSFBReader r = new XSSFBReader(pkg);
@@ -268,7 +268,7 @@ class TestXSSFBReader {
     @Test
     void testBasicXSSFBSheetContentsHandler() throws Exception {
         XSSFBSheetHandler.XSSFBSheetContentsHandler handler = mockSheetContentsHandler();
-        testXSSFBSheetContentsHandler("testVarious.xlsb", handler);
+        readAllSheetsFromWorkbook("testVarious.xlsb", handler);
   
         InOrder ordered = inOrder(handler);
         ordered.verify(handler).startRow(0);
@@ -417,7 +417,7 @@ class TestXSSFBReader {
     @Test
     void testCommentsXSSFBSheetContentsHandler() throws Exception {
         XSSFBSheetHandler.XSSFBSheetContentsHandler handler = mockSheetContentsHandler();
-        testXSSFBSheetContentsHandler("comments.xlsb", handler);
+        readAllSheetsFromWorkbook("comments.xlsb", handler);
   
         InOrder ordered = inOrder(handler);
         ordered.verify(handler).startRow(0);
@@ -444,7 +444,7 @@ class TestXSSFBReader {
     @Test
     void testDateXSSFBSheetContentsHandler() throws Exception {
         XSSFBSheetHandler.XSSFBSheetContentsHandler handler = mockSheetContentsHandler();
-        testXSSFBSheetContentsHandler("date.xlsb", handler);
+        readAllSheetsFromWorkbook("date.xlsb", handler);
   
         InOrder ordered = inOrder(handler);
         ArgumentCaptor<ExcelNumberFormat> numberFormat = ArgumentCaptor.forClass(ExcelNumberFormat.class);
