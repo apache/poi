@@ -494,12 +494,12 @@ subprojects {
 
     forbiddenApisTest {
         // forbiddenapis:3.8 bundled signatures max supported version is 23
-        targetCompatibility = (JavaVersion.VERSION_17.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_23)
+        targetCompatibility = (JavaVersion.VERSION_23.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_23)
     }
 
     forbiddenApisMain {
         signaturesFiles += files('../src/resources/devtools/forbidden-signatures-prod.txt')
-        targetCompatibility = (JavaVersion.VERSION_17.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_23)
+        targetCompatibility = (JavaVersion.VERSION_23.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_23)
     }
 
     publishing {
