@@ -84,7 +84,6 @@
             <summary-item>Upgrade JaCoCo code-coverage tooling to 0.8.13</summary-item>
         </summary>
         <actions>
-            <action type="fix" fixes-bug="github-879" context="SXSSF">Images in .xlsx-files can lead to temporary files filling up the disk</action>
             <action type="fix" fixes-bug="66687" context="SXSSF">Combination of XSSF and SXSSF may result in invalid files</action>
             <action type="fix" fixes-bug="69646" context="SXSSF">SXSSF: check for null _fd instance in dispose call</action>
             <action type="fix" fixes-bug="69667" context="HSSF">Handle slightly broken WriteAccessRecord gracefully</action>
@@ -92,10 +91,18 @@
             <action type="fix" fixes-bug="69720" context="XWPF">Support null alignment values in XWPFParagraph</action>
             <action type="fix" fixes-bug="69727" context="XSSF">Decrease count when we remove merged regions</action>
             <action type="fix" fixes-bug="69744" context="XWPF">Support all possible alignment values for docx tables</action>
+            <action type="fix" fixes-bug="69812" context="XSSF">Incorrect Rounding in DataFormatter</action>
+            <action type="fix" fixes-bug="69813" context="XSSF">StylesTable uses a catch block for logic flow</action>
             <action type="fix" fixes-bug="github-770" context="XSLF">Issue in setBulletStyle in XSLFTextParagraph</action>
             <action type="add" fixes-bug="github-803" context="SS_Common">Add support for SHEET function</action>
             <action type="add" fixes-bug="github-804" context="XWPF">Add getters and setters for XWPFTable indentation</action>
             <action type="fix" fixes-bug="github-864" context="XDDF">Remove deprecated method XDDFChartData getSeries()</action>
+            <action type="add" fixes-bug="github-870" context="OOXML">Add new parser classes where checked exceptions are thrown</action>
+            <action type="fix" fixes-bug="github-879" context="SXSSF">Images in .xlsx files can lead to temporary files filling up the disk</action>
+            <action type="fix" fixes-bug="github-909" context="SS_Common">Delay initialization of fontRenderContext field</action>
+            <action type="add" fixes-bug="github-910" context="XWPF">Make getters public for XML beans in XWPFDefault*Style</action>
+            <action type="fix" fixes-bug="github-912" context="XWPF">Prevent NullPointerException in XWPFTable.getWidthType()</action>
+            <action type="add" fixes-bug="github-920" context="XSSF">New api for reading XLSB files</action>
         </actions>
     </release>
 
