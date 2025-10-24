@@ -5,7 +5,7 @@
 <meta content="Apache Forrest" name="Generator">
 <meta name="Forrest-version" content="0.9">
 <meta name="Forrest-skin-name" content="pelt">
-<title>Apache POI&trade; - Security guidance</title>
+<title>Apache POI&trade; - Versioning</title>
 <link type="text/css" href="skin/basic.css" rel="stylesheet">
 <link media="screen" type="text/css" href="skin/screen.css" rel="stylesheet">
 <link media="print" type="text/css" href="skin/print.css" rel="stylesheet">
@@ -113,8 +113,8 @@ document.write("Last Published: " + document.lastModified);
 <div class="menuitem">
 <a href="download.html">Download</a>
 </div>
-<div class="menuitem">
-<a href="versioning.html">Versioning</a>
+<div class="menupage">
+<div class="menupagetitle">Versioning</div>
 </div>
 <div class="menuitem">
 <a href="changes.html">Changelog</a>
@@ -128,8 +128,8 @@ document.write("Last Published: " + document.lastModified);
 <div class="menuitem">
 <a href="encryption.html">Encryption support</a>
 </div>
-<div class="menupage">
-<div class="menupagetitle">Secure processing</div>
+<div class="menuitem">
+<a href="security.html">Secure processing</a>
 </div>
 <div class="menuitem">
 <a href="casestudies.html">Case Studies</a>
@@ -179,101 +179,35 @@ document.write("Last Published: " + document.lastModified);
     |start content
     +-->
 <div id="content">
-<h1>Apache POI&trade; - Security guidance</h1>
+<h1>Apache POI&trade; - Versioning</h1>
 <div id="front-matter"></div>
     
-<a name="Overview"></a>
-<h2 class="boxed">Overview</h2>
+<a name="Versioning"></a>
+<h2 class="boxed">Versioning</h2>
 <div class="section">
-<p>This page provides some guidance about how Apache POI can be used in security-sensible areas.</p>
+<p>
+  Apache POI&trade; releases are available under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a>
+  from the <a href="download.html">Download</a> page.
+</p>
+<p>
+  The versioning scheme for Apache POI is based on the principles of
+  <a href="https://semver.org/">Semantic Versioning 2.0.0</a>.
+</p>
+<p>
+  We started using this versioning scheme in Apache POI 4.0.0. Versions prior
+  to this did not follow exactly the same principles with the numbers typically being of the form
+  X.Y. X indicated the major version but there may in some cases, have been big changes between
+  minor versions.
+</p>
+<p>
+  We typically only release new versions and don't usually patch old releases.
+  We may consider patching old releases in exceptional circumstances.
+  It is recommended to always use the latest version of Apache POI.
+</p>
 </div>
 
-    
-<a name="Information+about+related+security+vulnerabilities"></a>
-<h2 class="boxed">Information about related security vulnerabilities</h2>
-<div class="section">
-<p>Information about security issues is included in the <a href="index.html">Project News</a>.</p>
-</div>
-
-    
-<a name="Reporting+security+vulnerabilities"></a>
-<h2 class="boxed">Reporting security vulnerabilities</h2>
-<div class="section">
-<p>Apache POI will try to fix security-related bugs with priority.</p>
-<p>Please follow the general <a href="https://www.apache.org/security/">Apache Security Guidelines</a>
-            for proper handling.</p>
-<p>But please note that by the nature of processing external files, you should design your application
-            in a way which limits impact of malicious documents as much as possible. The higher your security-related
-            requirements are, the more you likely need to invest in your application to contain effects.
-        </p>
-</div>
-
-    
-<a name="Architecting+your+Application"></a>
-<h2 class="boxed">Architecting your Application</h2>
-<div class="section">
-<p>If you are processing documents from an untrusted source, you should add a number of safeguards to
-        your application to contain any unexpected side effects.</p>
-<p>Apache POI cannot fully protect against some documents causing impact on the current process, therefore
-        we suggest the following additional layers of security.</p>
-<ul>
-            
-<li>
-<strong>Expect any type of Exception when processing documents</strong>
-<br>
-                As parsing the various formats is very complex and involved, there are some unexpected types of
-                exceptions which can be thrown. E.g. StackOverflowError or many different types of RuntimeException.
-                <br>
-                Make sure to have a broad catch-statement around your document-parsing functionality and be prepared
-                to handle all those gracefully.
-            </li>
-            
-<li>
-<strong>Expect long parsing time</strong>
-<br>
-                As parsing the various formats is very complex and involved, some documents might cause prolonged CPU
-                usage and long parsing time.
-                <br>
-                If this is a concern, make sure to have a way to stop processing after some time, maybe by the
-                sandboxing approach described below.
-            </li>
-            
-<li>
-<strong>Memory use can be very high</strong>
-<br>
-                The data in Microsoft format files is usually compressed so even small files can have a lot of data.
-                <br>
-                The core POI APIs are not optimized to avoid excessive memory use. POI has streaming APIs for reading
-                and writing xlsx files - so if you are working with large xlsx files, you should consider using the
-                streaming APIs.
-            </li>
-            
-<li>
-<strong>Consider sandboxing document-parsing</strong>
-<br>
-                If you operate in a highly sensitive environment and would like to avoid any side effect from
-                parsing documents on your application, then consider extracting the parsing logic into a separate
-                process which is configured with appropriate memory settings and which you stop after some timeout.
-                It is a good idea to be able to auto-restart the process in case of a crash.
-                <br>
-            
-</li>
-            
-<li>
-<strong>Keep up to date with releases</strong>
-<br>
-                Apache POI does occasionally issue CVEs for security issues. There are also other bug fixes and
-                improvements in each release. Some of these fixes will be to make POI more robust against malicious
-                inputs, even if they are not explicitly security-related.
-                <br>
-            
-</li>
-        
-</ul>
-</div>
-    
 <p align="right">
-<font size="-2">by&nbsp;Dominik Stadler</font>
+<font size="-2">by&nbsp;PJ Fanning</font>
 </p>
 </div>
 <!--+
@@ -299,7 +233,7 @@ document.write("Last Published: " + document.lastModified);
     </div>
 <div id="feedback">
         Send feedback about the website to:
-    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0security.html">dev@poi.apache.org</a>
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0versioning.html">dev@poi.apache.org</a>
 </div>
 <!--+
     |end bottomstrip
