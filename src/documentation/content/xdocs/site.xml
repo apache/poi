@@ -34,6 +34,7 @@ See https://xml.apache.org/forrest/linking.html for more info
     <home label="Overview" tab="home">
         <index label="Home" href="index.html"/>
         <download label="Download" href="download.html"/>
+        <versioning label="Versioning" href="versioning.html"/>
         <changes label="Changelog" href="changes.html"/>
         <javadocs label="Javadocs" href="apidocs/index.html"/>
         <extraction label="Text Extraction" href="text-extraction.html"/>

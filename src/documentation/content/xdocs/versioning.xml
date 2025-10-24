@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+  <header>
+    <title>Apache POI™ - Versioning</title>
+    <authors>
+      <person id="PJF" name="PJ Fanning" email="fanningpj@apache.org"/>
+    </authors>
+  </header>
+
+  <body>
+    <section><title>Versioning</title>
+<p>
+  Apache POI™ releases are available under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a>
+  from the <a href="site:download">Download</a> page.
+</p>
+<p>
+  The versioning scheme for Apache POI is based on the principles of
+  <a href="https://semver.org/">Semantic Versioning 2.0.0</a>.
+</p>
+<p>
+  We started using this versioning scheme in Apache POI 4.0.0. Versions prior
+  to this did not follow exactly the same principles with the numbers typically being of the form
+  X.Y. X indicated the major version but there may in some cases, have been big changes between
+  minor versions.
+</p>
+<p>
+  We typically only release new versions and don't usually patch old releases.
+  We may consider patching old releases in exceptional circumstances.
+  It is recommended to always use the latest version of Apache POI.
+</p>
+</section>
+</body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache 
+      POI project logo are trademarks of The Apache Software Foundation.
+    </legal>
+  </footer>
+</document>
