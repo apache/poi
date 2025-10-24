@@ -47,12 +47,15 @@ public class TempFilePOIFSFileSystem extends POIFSFileSystem {
 
     @Override
     public void close() throws IOException {
-        if (tempFile != null && tempFile.exists()) {
-            if (!tempFile.delete()) {
-                LOG.atDebug().log("temp file was already deleted (probably due to previous call to close this resource)");
+        try {
+            super.close();
+        } finally {
+            if (tempFile != null && tempFile.exists()) {
+                if (!tempFile.delete()) {
+                    LOG.atDebug().log("temp file was already deleted (probably due to previous call to close this resource)");
+                }
             }
         }
-        super.close();
     }
 
 }

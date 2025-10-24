@@ -37,7 +37,7 @@ plugins {
     id 'com.github.spotbugs' version '6.1.13'        // 6.2.0+ requires JDK 11
     id 'de.thetaphi.forbiddenapis' version '3.9'
     id 'org.sonarqube' version '4.0.0.2929'
-    id 'org.cyclonedx.bom' version '2.3.1'
+    id 'org.cyclonedx.bom' version '2.4.1'
     id 'com.adarshr.test-logger' version '4.0.0'
 }
 
@@ -107,7 +107,7 @@ subprojects {
     apply plugin: 'com.adarshr.test-logger'
 
     ext {
-        bouncyCastleVersion = '1.81'
+        bouncyCastleVersion = '1.82'
         commonsCodecVersion = '1.19.0'
         commonsCompressVersion = '1.28.0'
         commonsIoVersion = '2.20.0'
@@ -118,7 +118,7 @@ subprojects {
         hamcrestVersion = '3.0'
         xmlbeansVersion = '5.3.0'
         batikVersion = '1.19'
-        graphics2dVersion = '3.0.3'
+        graphics2dVersion = '3.0.5'
         pdfboxVersion = '3.0.5'
         saxonVersion = '12.9'
         xmlSecVersion = '3.0.6'
@@ -494,12 +494,12 @@ subprojects {
 
     forbiddenApisTest {
         // forbiddenapis:3.8 bundled signatures max supported version is 23
-        targetCompatibility = (JavaVersion.VERSION_17.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_23)
+        targetCompatibility = (JavaVersion.VERSION_23.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_23)
     }
 
     forbiddenApisMain {
         signaturesFiles += files('../src/resources/devtools/forbidden-signatures-prod.txt')
-        targetCompatibility = (JavaVersion.VERSION_17.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_23)
+        targetCompatibility = (JavaVersion.VERSION_23.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_23)
     }
 
     publishing {

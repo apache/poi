@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -669,44 +670,41 @@ class TestEvaluationCache {
     }
 
     @Test
-    void testPlainValueCache()  {
+    void testPlainValueCache() throws IOException {
+        try (Workbook wb = new HSSFWorkbook()) {
+            int numberOfSheets = 4098; // Bug 51448 reported that  Evaluation Cache got messed up after 256 sheets
 
-        Workbook wb = new HSSFWorkbook();
-        int numberOfSheets = 4098; // Bug 51448 reported that  Evaluation Cache got messed up after 256 sheets
+            Row row;
+            Cell cell;
 
-        Row row;
-        Cell cell;
+            //create summary sheet
+            Sheet summary = wb.createSheet("summary");
+            wb.setActiveSheet(wb.getSheetIndex(summary));
 
-        //create summary sheet
-        Sheet summary = wb.createSheet("summary");
-        wb.setActiveSheet(wb.getSheetIndex(summary));
+            //formula referring all sheets created below
+            row = summary.createRow(0);
+            Cell summaryCell = row.createCell(0);
+            summaryCell.setCellFormula("SUM(A2:A" + (numberOfSheets + 2) + ")");
 
-        //formula referring all sheets created below
-        row = summary.createRow(0);
-        Cell summaryCell = row.createCell(0);
-        summaryCell.setCellFormula("SUM(A2:A" + (numberOfSheets + 2) + ")");
+            //create sheets with cells having (different) numbers
+            // and add a row to summary
+            for (int i = 1; i < numberOfSheets; i++) {
+                Sheet sheet = wb.createSheet("new" + i);
 
+                row = sheet.createRow(0);
+                cell = row.createCell(0);
+                cell.setCellValue(i);
 
-        //create sheets with cells having (different) numbers
-        // and add a row to summary
-        for (int i = 1; i < numberOfSheets; i++) {
-            Sheet sheet = wb.createSheet("new" + i);
+                row = summary.createRow(i);
+                cell = row.createCell(0);
+                cell.setCellFormula("new" + i + "!A1");
 
-            row = sheet.createRow(0);
-            cell = row.createCell(0);
-            cell.setCellValue(i);
+            }
 
-            row = summary.createRow(i);
-            cell = row.createCell(0);
-            cell.setCellFormula("new" + i + "!A1");
-
+            //calculate
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            evaluator.evaluateFormulaCell(summaryCell);
+            assertEquals(8394753.0, summaryCell.getNumericCellValue(), 0);
         }
-
-
-        //calculate
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-        evaluator.evaluateFormulaCell(summaryCell);
-        assertEquals(8394753.0, summaryCell.getNumericCellValue(), 0);
     }
-
 }

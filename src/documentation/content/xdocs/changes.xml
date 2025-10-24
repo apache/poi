@@ -73,12 +73,13 @@
     <release version="5.5.0" date="2025-??-??">
         <summary>
             <summary-item>Upgrade batik dependency to 1.19</summary-item>
-            <summary-item>Upgrade bouncycastle dependency to 1.81</summary-item>
+            <summary-item>Upgrade bouncycastle dependency to 1.82</summary-item>
             <summary-item>Upgrade commons-codec dependency to 1.19.0</summary-item>
             <summary-item>Upgrade commons-collections4 dependency to 4.5.0</summary-item>
             <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
             <summary-item>Upgrade commons-io dependency to 2.20.0</summary-item>
             <summary-item>Upgrade pdfbox dependency to 3.0.5</summary-item>
+            <summary-item>Upgrade graphics2d dependency to 3.0.5</summary-item>
             <summary-item>Upgrade xmlsec dependency to 3.0.6</summary-item>
             <summary-item>Upgrade JaCoCo code-coverage tooling to 0.8.13</summary-item>
         </summary>
@@ -90,10 +91,18 @@
             <action type="fix" fixes-bug="69720" context="XWPF">Support null alignment values in XWPFParagraph</action>
             <action type="fix" fixes-bug="69727" context="XSSF">Decrease count when we remove merged regions</action>
             <action type="fix" fixes-bug="69744" context="XWPF">Support all possible alignment values for docx tables</action>
+            <action type="fix" fixes-bug="69812" context="XSSF">Incorrect Rounding in DataFormatter</action>
+            <action type="fix" fixes-bug="69813" context="XSSF">StylesTable uses a catch block for logic flow</action>
             <action type="fix" fixes-bug="github-770" context="XSLF">Issue in setBulletStyle in XSLFTextParagraph</action>
             <action type="add" fixes-bug="github-803" context="SS_Common">Add support for SHEET function</action>
             <action type="add" fixes-bug="github-804" context="XWPF">Add getters and setters for XWPFTable indentation</action>
             <action type="fix" fixes-bug="github-864" context="XDDF">Remove deprecated method XDDFChartData getSeries()</action>
+            <action type="add" fixes-bug="github-870" context="OOXML">Add new parser classes where checked exceptions are thrown</action>
+            <action type="fix" fixes-bug="github-879" context="SXSSF">Images in .xlsx files can lead to temporary files filling up the disk</action>
+            <action type="fix" fixes-bug="github-909" context="SS_Common">Delay initialization of fontRenderContext field</action>
+            <action type="add" fixes-bug="github-910" context="XWPF">Make getters public for XML beans in XWPFDefault*Style</action>
+            <action type="fix" fixes-bug="github-912" context="XWPF">Prevent NullPointerException in XWPFTable.getWidthType()</action>
+            <action type="add" fixes-bug="github-920" context="XSSF">New api for reading XLSB files</action>
         </actions>
     </release>
 
@@ -106,6 +115,7 @@
             <summary-item>Upgrade graphics2d dependency to 3.0.3</summary-item>
         </summary>
         <actions>
+            <action type="fix" fixes-bug="69563" context="XSSF">Avoid int-overflow when handling file with very many rows and columns</action>
             <action type="fix" fixes-bug="69618" context="OOXML">ZipPackage save should check that intermediate steps succeed</action>
             <action type="add" fixes-bug="github-775" context="OOXML">Allow some OPC compliance checks to be tuned</action>
             <action type="fix" fixes-bug="66260" context="XWPF">Add getNumberOfTexts() method</action>

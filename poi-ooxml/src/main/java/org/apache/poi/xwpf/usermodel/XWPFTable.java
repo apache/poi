@@ -1250,12 +1250,13 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * A table width can be specified as an absolute measurement (an integer
      * number of twips), a percentage, or the value "AUTO".
      *
-     * @return The width type. Returns {@link TableWidthType#NIL} as a default.
+     * @return The width type. If table width information does not exist in the document,
+     * it returns {@link TableWidthType#AUTO}.
      * @since 4.0.0
      */
     public TableWidthType getWidthType() {
         CTTblPr pr = getTblPr(false);
-        return pr == null ? TableWidthType.NIL : getWidthType(pr.getTblW());
+        return pr != null && getTblPr().isSetTblW() ? getWidthType(pr.getTblW()) : TableWidthType.AUTO;
     }
 
     /**

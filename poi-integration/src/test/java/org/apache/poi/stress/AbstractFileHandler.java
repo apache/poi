@@ -192,7 +192,10 @@ public abstract class AbstractFileHandler implements FileHandler {
 
                 assertNotNull(streamExtractor.getText());
 
-                assertNotNull(streamExtractor.getMetadataTextExtractor());
+                POITextExtractor metadataTextExtractor = streamExtractor.getMetadataTextExtractor();
+                assertNotNull(metadataTextExtractor);
+
+                assertNotNull(metadataTextExtractor.getText());
             }
         }
     }
