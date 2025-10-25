@@ -35,7 +35,7 @@ import org.apache.poi.util.Removal;
  * Each color has an index (for the standard palette in Excel (tm) ),
  * native (RGB) triplet and string triplet.  The string triplet is as the
  * color would be represented by Gnumeric.  Having (string) this here is a bit of a
- * collision of function between HSSF and the HSSFSerializer but I think it's
+ * collision of function between HSSF and the HSSFSerializer, but I think it's
  * a reasonable one in this case.
  */
 public class HSSFColor implements Color {
@@ -165,8 +165,8 @@ public class HSSFColor implements Color {
      * </pre>
      * or specifying {@link #HSSFColor(int, int, int) RGB directly}.
      *
-     * @param index
-     * @param index2
+     * @param index Index to the standard color palette
+     * @param index2 Index to the alternate color palette
      * @param color color to extract RGB from
      * @deprecated use {@link #HSSFColor(int, int, int)} instead
      */
@@ -179,8 +179,8 @@ public class HSSFColor implements Color {
      * specifying RGB as an {@code int} value. Given {@code blue}, {@code green} and
      * {@code blue} being byte values between {@code 0x00 to 0xFF}, then
      * {@code rgb = blue + (green >> 8) + (red >> 16)}.
-     * @param index
-     * @param index2
+     * @param index Index to the standard color palette
+     * @param index2 Index to the alternate color palette
      * @param rgb combined value of RGB
      * @since POI 5.5.0
      */
@@ -218,11 +218,11 @@ public class HSSFColor implements Color {
         Map<Integer,HSSFColor> result = new HashMap<>(eList.size() * 3 / 2);
 
         for (Map.Entry<HSSFColorPredefined,HSSFColor> colorRef : eList.entrySet()) {
-            Integer index1 = Integer.valueOf(colorRef.getKey().getIndex());
+            Integer index1 = (int) colorRef.getKey().getIndex();
             if (!result.containsKey(index1)) {
                 result.put(index1, colorRef.getValue());
             }
-            Integer index2 = Integer.valueOf(colorRef.getKey().getIndex2());
+            Integer index2 = (int) colorRef.getKey().getIndex2();
             if (index2 != -1 && !result.containsKey(index2)) {
                 result.put(index2, colorRef.getValue());
             }
@@ -357,13 +357,13 @@ public class HSSFColor implements Color {
                Integer.toHexString(getBlue()*0x101)).toUpperCase(Locale.ROOT);
     }
 
-    private final short getBlue() {
+    private short getBlue() {
         return (short) (rgb & 0xFF);
     }
-    private final short getGreen() {
+    private short getGreen() {
         return (short) ((rgb >> 8) & 0xFF);
     }
-    private final short getRed() {
+    private short getRed() {
         return (short) ((rgb >> 16) & 0xFF);
     }
 

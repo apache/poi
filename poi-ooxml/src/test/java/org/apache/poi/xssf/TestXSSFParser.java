@@ -46,8 +46,9 @@ public class TestXSSFParser {
     }
 
     @Test
-    void testFailOnXls() throws Exception {
+    void testFailOnXls() {
         final File file = HSSFTestDataSamples.getSampleFile("44010-SingleChart.xls");
+        //noinspection resource
         XSSFReadException xre = assertThrows(XSSFReadException.class, () -> XSSFParser.parse(file));
         assertInstanceOf(OLE2NotOfficeXmlFileException.class, xre.getCause());
     }
