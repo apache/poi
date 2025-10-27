@@ -26,10 +26,6 @@ RewriteRule ^apidocs/(overview*)$ /apidocs/dev/$1 [R=permanent]
 
 # Security Headers
 Header set Strict-Transport-Security "max-age=31536000"
-# long term CSP header but not detailed enough
-# Header set Content-Security-Policy "frame-src 'self'"
-# CSP header based on the default applied by ASF Infra team
-# Header set Content-Security-Policy "default-src 'self' data: blob: 'unsafe-inline' 'unsafe-eval' https://www.apachecon.com/ https://www.communityovercode.org/ https://*.apache.org/ https://apache.org/ https://*.scarf.sh/ ; script-src 'self' data: blob: 'unsafe-inline' 'unsafe-eval' https://www.apachecon.com/ https://www.communityovercode.org/ https://*.apache.org/ https://apache.org/ https://*.scarf.sh/ ; style-src 'self' data: blob: 'unsafe-inline' 'unsafe-eval' https://www.apachecon.com/ https://www.communityovercode.org/ https://*.apache.org/ https://apache.org/ https://*.scarf.sh/ ; frame-ancestors 'self'; frame-src 'self' data: blob: 'unsafe-inline' 'unsafe-eval' https://www.apachecon.com/ https://www.communityovercode.org/ https://*.apache.org/ https://apache.org/ https://*.scarf.sh/ ; worker-src 'self' data: blob:;"
 Header always set X-Frame-Options SAMEORIGIN
 Header set X-Content-Type-Options nosniff
 Header set X-XSS-Protection "1; mode=block"
