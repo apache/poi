@@ -401,7 +401,14 @@ public interface CellStyle {
     boolean getShrinkToFit();
 
     /**
-     * Get a map of format properties (CellPropertyType -> Object)
+     * Get a map of format properties (CellPropertyType -> Object).
+     * The implementations try to cache the result and
+     * return the cached value on subsequent calls. The cached value
+     * is invalidated when the CellStyle is modified. Thread-safety
+     * of the caching is not guaranteed. If you have another thread updating
+     * the CellStyle while one thread is reading the format properties, the
+     * results may be inconsistent.
+     *
      * @return map of format properties
      * @see org.apache.poi.ss.util.CellUtil#getFormatProperties(CellStyle)
      * @since POI 5.5.0

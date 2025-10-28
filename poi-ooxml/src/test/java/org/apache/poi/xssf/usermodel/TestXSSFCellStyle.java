@@ -27,11 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.EnumMap;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellPropertyType;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -1150,6 +1152,30 @@ class TestXSSFCellStyle {
             assertEquals(FillPatternType.SOLID_FOREGROUND, xssfCellStyle.getFillPattern());
             assertEquals(HorizontalAlignment.RIGHT, xssfCellStyle.getAlignment());
             assertEquals(VerticalAlignment.TOP, xssfCellStyle.getVerticalAlignment());
+        }
+    }
+
+    @Test
+    void cachedPropertiesInvalidation() throws IOException {
+        try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook()) {
+            XSSFCellStyle cellStyle = xssfWorkbook.createCellStyle();
+            DataFormat format = xssfWorkbook.createDataFormat();
+
+            cellStyle.setDataFormat(format.getFormat("###0"));
+
+            cellStyle.setFillBackgroundColor(IndexedColors.DARK_BLUE.getIndex());
+            cellStyle.setFillForegroundColor(IndexedColors.DARK_RED.getIndex());
+            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+            cellStyle.setVerticalAlignment(VerticalAlignment.TOP);
+
+            EnumMap<CellPropertyType, Object> formatProperties = cellStyle.getFormatProperties();
+            assertNotNull(formatProperties);
+            assertEquals(formatProperties, cellStyle.getFormatProperties());
+
+            cellStyle.setVerticalAlignment(VerticalAlignment.BOTTOM);
+            assertNotEquals(formatProperties, cellStyle.getFormatProperties());
         }
     }
 
