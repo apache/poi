@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.util.EnumMap;
+
 import org.apache.poi.util.Removal;
 
 public interface CellStyle {
@@ -397,4 +399,22 @@ public interface CellStyle {
      *  it to fit if this text is too long?
      */
     boolean getShrinkToFit();
+
+    /**
+     * Get a map of format properties (CellPropertyType -> Object)
+     * @return map of format properties
+     * @see org.apache.poi.ss.util.CellUtil#getFormatProperties(CellStyle)
+     * @since POI 5.5.0
+     */
+    EnumMap<CellPropertyType, Object> getFormatProperties();
+
+    /**
+     * Invalidate any cached properties. The CellStyle implementations
+     * should call this method whenever a property is changed.
+     * The API is public just in case users find that the CellStyle implementations
+     * are not calling this method when they should.
+     * 
+     * @since POI 5.5.0
+     */
+    void invalidateCachedProperties();
 }

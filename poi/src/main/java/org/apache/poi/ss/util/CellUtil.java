@@ -614,7 +614,7 @@ public final class CellUtil {
         CellStyle originalStyle = cell.getCellStyle();
 
         CellStyle newStyle = null;
-        EnumMap<CellPropertyType, Object> values = getFormatProperties(originalStyle);
+        EnumMap<CellPropertyType, Object> values = originalStyle.getFormatProperties();
         if (properties.containsKey(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR) && properties.get(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR) == null) {
             values.remove(CellPropertyType.FILL_FOREGROUND_COLOR);
         }
@@ -635,7 +635,7 @@ public final class CellUtil {
 
         for (int i = 0; i < numberCellStyles; i++) {
             CellStyle wbStyle = workbook.getCellStyleAt(i);
-            EnumMap<CellPropertyType, Object> wbStyleMap = getFormatProperties(wbStyle);
+            EnumMap<CellPropertyType, Object> wbStyleMap = wbStyle.getFormatProperties();
 
             // the desired style already exists in the workbook. Use the existing style.
             if (styleMapsMatch(wbStyleMap, values, disableNullColorCheck)) {
@@ -748,8 +748,9 @@ public final class CellUtil {
      * @param style cell style
      * @return map of format properties (CellPropertyType -> Object)
      * @see #setFormatProperties(CellStyle, Workbook, Map)
+     * @since POI 5.5.0
      */
-    private static EnumMap<CellPropertyType, Object> getFormatProperties(CellStyle style) {
+    public static EnumMap<CellPropertyType, Object> getFormatProperties(CellStyle style) {
         EnumMap<CellPropertyType, Object> properties = new EnumMap<>(CellPropertyType.class);
         put(properties, CellPropertyType.ALIGNMENT, style.getAlignment());
         put(properties, CellPropertyType.VERTICAL_ALIGNMENT, style.getVerticalAlignment());
@@ -887,7 +888,7 @@ public final class CellUtil {
         if (src == null || dest == null) {
             throw new IllegalArgumentException("Source and destination styles must not be null");
         }
-        EnumMap<CellPropertyType, Object> properties = getFormatProperties(src);
+        EnumMap<CellPropertyType, Object> properties = src.getFormatProperties();
         setFormatProperties(dest, destWorkbook, properties);
     }
 
