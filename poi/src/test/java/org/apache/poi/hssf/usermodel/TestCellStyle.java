@@ -32,19 +32,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.stream.Stream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellPropertyType;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RandomSingleton;
@@ -498,6 +503,30 @@ final class TestCellStyle {
 
             cellStyle.setRotation((short) 180);
             assertEquals(-90, cellStyle.getRotation());
+        }
+    }
+
+    @Test
+    void cachedPropertiesInvalidation() throws IOException {
+        try (HSSFWorkbook hssfWorkbook = new HSSFWorkbook()) {
+            HSSFCellStyle cellStyle = hssfWorkbook.createCellStyle();
+            DataFormat format = hssfWorkbook.createDataFormat();
+
+            cellStyle.setDataFormat(format.getFormat("###0"));
+
+            cellStyle.setFillBackgroundColor(IndexedColors.DARK_BLUE.getIndex());
+            cellStyle.setFillForegroundColor(IndexedColors.DARK_RED.getIndex());
+            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+            cellStyle.setVerticalAlignment(VerticalAlignment.TOP);
+
+            EnumMap<CellPropertyType, Object> formatProperties = cellStyle.getFormatProperties();
+            assertNotNull(formatProperties);
+            assertEquals(formatProperties, cellStyle.getFormatProperties());
+
+            cellStyle.setVerticalAlignment(VerticalAlignment.BOTTOM);
+            assertNotEquals(formatProperties, cellStyle.getFormatProperties());
         }
     }
 }

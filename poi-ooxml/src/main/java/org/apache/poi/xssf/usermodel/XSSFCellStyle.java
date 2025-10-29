@@ -19,9 +19,12 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
+import java.util.EnumMap;
+
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.CellPropertyType;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
@@ -68,6 +71,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     private XSSFFont _font;
     private XSSFCellAlignment _cellAlignment;
     private ThemesTable _theme;
+    private EnumMap<CellPropertyType, Object> _cachedProperties;
 
     /**
      * Creates a Cell Style from the supplied parts
@@ -84,6 +88,17 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     }
 
     /**
+     * Creates an empty Cell Style
+     */
+    public XSSFCellStyle(StylesTable stylesSource) {
+        _stylesSource = stylesSource;
+        // We need a new CTXf for the main styles
+        // TODO decide on a style ctxf
+        _cellXf = CTXf.Factory.newInstance();
+        _cellStyleXf = null;
+    }
+
+    /**
      * Used so that StylesSource can figure out our location
      */
     @Internal
@@ -97,17 +112,6 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     @Internal
     public CTXf getStyleXf() {
         return _cellStyleXf;
-    }
-
-    /**
-     * Creates an empty Cell Style
-     */
-    public XSSFCellStyle(StylesTable stylesSource) {
-        _stylesSource = stylesSource;
-        // We need a new CTXf for the main styles
-        // TODO decide on a style ctxf
-        _cellXf = CTXf.Factory.newInstance();
-        _cellStyleXf = null;
     }
 
     /**
@@ -662,6 +666,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         _cellXf.setApplyAlignment(true);
 
         getCellAlignment().setHorizontal(align);
+        invalidateCachedProperties();
     }
 
     /**
@@ -682,6 +687,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
+        invalidateCachedProperties();
     }
 
      /**
@@ -701,6 +707,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
+        invalidateCachedProperties();
     }
 
      /**
@@ -720,6 +727,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
+        invalidateCachedProperties();
     }
 
     /**
@@ -739,6 +747,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
+        invalidateCachedProperties();
     }
 
     /**
@@ -770,6 +779,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
+        invalidateCachedProperties();
     }
 
     /**
@@ -782,6 +792,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         // XSSF supports >32,767 formats
         setDataFormat(fmt&0xffff);
     }
+
     /**
      * Set the index of a data format
      *
@@ -790,6 +801,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     public void setDataFormat(int fmt) {
         _cellXf.setApplyNumberFormat(true);
         _cellXf.setNumFmtId(fmt);
+        invalidateCachedProperties();
     }
 
     /**
@@ -828,6 +840,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         }
 
         addFill(ct);
+        invalidateCachedProperties();
     }
 
     /**
@@ -898,6 +911,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         }
 
         addFill(ct);
+        invalidateCachedProperties();
     }
  
     /**
@@ -954,6 +968,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      */
     public void setReadingOrder(ReadingOrder order) {
         getCellAlignment().setReadingOrder(order);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1001,6 +1016,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         }
 
         addFill(ct);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1019,6 +1035,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         } else {
             this._cellXf.setApplyFont(false);
         }
+        invalidateCachedProperties();
     }
 
     /**
@@ -1032,6 +1049,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
              _cellXf.addNewProtection();
          }
         _cellXf.getProtection().setHidden(hidden);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1042,6 +1060,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public void setIndention(short indent) {
         getCellAlignment().setIndent(indent);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1055,6 +1074,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         XSSFColor clr = XSSFColor.from(CTColor.Factory.newInstance(), _stylesSource.getIndexedColors());
         clr.setIndexed(color);
         setLeftBorderColor(clr);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1074,6 +1094,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1087,6 +1108,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
              _cellXf.addNewProtection();
          }
         _cellXf.getProtection().setLocked(locked);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1097,6 +1119,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public void setQuotePrefixed(boolean quotePrefix) {
         _cellXf.setQuotePrefix(quotePrefix);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1110,6 +1133,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         XSSFColor clr = XSSFColor.from(CTColor.Factory.newInstance(), _stylesSource.getIndexedColors());
         clr.setIndexed(color);
         setRightBorderColor(clr);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1129,6 +1153,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1153,8 +1178,8 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public void setRotation(short rotation) {
         getCellAlignment().setTextRotation(rotation);
+        invalidateCachedProperties();
     }
-
 
     /**
      * Set the color to use for the top border
@@ -1167,6 +1192,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         XSSFColor clr = XSSFColor.from(CTColor.Factory.newInstance(), _stylesSource.getIndexedColors());
         clr.setIndexed(color);
         setTopBorderColor(clr);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1186,6 +1212,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1197,6 +1224,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         _cellXf.setApplyAlignment(true);
 
         getCellAlignment().setVertical(align);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1211,6 +1239,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public void setWrapText(boolean wrapped) {
         getCellAlignment().setWrapText(wrapped);
+        invalidateCachedProperties();
     }
 
     /**
@@ -1260,6 +1289,24 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public void setShrinkToFit(boolean shrinkToFit) {
         getCellAlignment().setShrinkToFit(shrinkToFit);
+        invalidateCachedProperties();
+    }
+
+    @Override
+    public EnumMap<CellPropertyType, Object> getFormatProperties() {
+        // this code is not thread safe and POI generally isn't thread safe anyway
+        // you should not have one thread modifying styles while another reads them
+        EnumMap<CellPropertyType, Object> props = _cachedProperties;
+        if (props == null) {
+            props = CellUtil.getFormatProperties(this);
+            _cachedProperties = props;
+        }
+        return props;
+    }
+
+    @Override
+    public void invalidateCachedProperties() {
+        _cachedProperties = null;
     }
 
     private int getFontId() {
