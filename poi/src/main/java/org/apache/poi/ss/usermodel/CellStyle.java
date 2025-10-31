@@ -401,7 +401,7 @@ public interface CellStyle {
     boolean getShrinkToFit();
 
     /**
-     * Get a map of format properties (CellPropertyType -> Object).
+     * Get a map of format properties.
      * The implementations try to cache the result and
      * return the cached value on subsequent calls. The cached value
      * is invalidated when the CellStyle is modified. Thread-safety
