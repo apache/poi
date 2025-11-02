@@ -746,7 +746,7 @@ public final class CellUtil {
      * map will not modify the cell style. The returned map is mutable.
      *
      * @param style cell style
-     * @return map of format properties (CellPropertyType -> Object)
+     * @return map of format properties
      * @see #setFormatProperties(CellStyle, Workbook, Map)
      * @since POI 5.5.0
      */
