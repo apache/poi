@@ -746,7 +746,7 @@ public final class CellUtil {
      * map will not modify the cell style. The returned map is mutable.
      *
      * @param style cell style
-     * @return map of format properties
+     * @return map of format properties (CellPropertyType -&gt; Object)
      * @see #setFormatProperties(CellStyle, Workbook, Map)
      * @since POI 5.5.0
      */
@@ -817,7 +817,7 @@ public final class CellUtil {
      *
      * @param style cell style
      * @param workbook parent workbook (can be null but some fomt info will not be copied if null is passed)
-     * @param properties map of format properties (CellPropertyType -> Object)
+     * @param properties map of format properties (CellPropertyType -&gt; Object)
      * @see #getFormatProperties(CellStyle)
      */
     private static void setFormatProperties(CellStyle style, Workbook workbook, Map<CellPropertyType, Object> properties) {
@@ -895,7 +895,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named short value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return zero if the property does not exist, or is not a {@link Short}
      *         otherwise the property value
@@ -922,7 +922,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named Color value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return null if the property does not exist, or is not a {@link Color}
      *         otherwise the property value
@@ -939,7 +939,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named int value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return zero if the property does not exist, or is not a {@link Integer}
      *         otherwise the property value
@@ -955,7 +955,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named BorderStyle value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return Border style if set, otherwise {@link BorderStyle#NONE}
      */
@@ -981,7 +981,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named FillPatternType value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return FillPatternType style if set, otherwise {@link FillPatternType#NO_FILL}
      * @since POI 3.15 beta 3
@@ -1008,7 +1008,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named HorizontalAlignment value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return HorizontalAlignment style if set, otherwise {@link HorizontalAlignment#GENERAL}
      * @since POI 3.15 beta 3
@@ -1035,7 +1035,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named VerticalAlignment value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return VerticalAlignment style if set, otherwise {@link VerticalAlignment#BOTTOM}
      * @since POI 3.15 beta 3
@@ -1062,7 +1062,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named boolean value from the given map.
      *
-     * @param properties map of properties (CellPropertyType -> Object)
+     * @param properties map of properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return false if the property does not exist, or is not a {@link Boolean},
      *         true otherwise
@@ -1079,7 +1079,7 @@ public final class CellUtil {
     /**
      * Utility method that puts the given value to the given map.
      *
-     * @param properties map of properties (CellPropertyType -> Object)
+     * @param properties map of properties (CellPropertyType -&gt; Object)
      * @param property property
      * @param value property value
      */
