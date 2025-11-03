@@ -841,7 +841,6 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * @return defined style, either explicit or built-in, or null if not found
      *
      * @since 3.17 beta 1
-     * unknown built-in style
      */
     public TableStyle getTableStyle(String name) {
         if (name == null) return null;
