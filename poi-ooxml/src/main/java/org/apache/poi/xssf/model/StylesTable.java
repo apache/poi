@@ -841,15 +841,20 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * @return defined style, either explicit or built-in, or null if not found
      *
      * @since 3.17 beta 1
-     * @throws IllegalArgumentException if there is no explicit table style but the name is an
      * unknown built-in style
      */
     public TableStyle getTableStyle(String name) {
         if (name == null) return null;
         TableStyle tableStyle = getExplicitTableStyle(name);
-        if (tableStyle == null)
-            tableStyle = XSSFBuiltinTableStyle.valueOf(name).getStyle();
-        return tableStyle;
+        if (tableStyle != null) {
+            return tableStyle;
+        }
+
+        try {
+            return XSSFBuiltinTableStyle.valueOf(name).getStyle();
+        } catch (IllegalArgumentException e) {
+            return getExplicitTableStyle(name);
+        }
     }
 
     /**
