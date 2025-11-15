@@ -629,7 +629,7 @@ public class HwmfGraphics implements HwmfCharsetAware {
         }
 
         FontCharset fc = font.getCharset();
-        if (fc == FontCharset.DEFAULT) {
+        if (fc == FontCharset.DEFAULT || fc == null) {
             return charsetProvider.get();
         }
 

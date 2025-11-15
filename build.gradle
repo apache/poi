@@ -34,7 +34,7 @@ plugins {
     id 'com.dorongold.task-tree' version '4.0.1'
     id 'org.nosphere.apache.rat' version '0.8.1'
     id 'distribution'
-    id 'com.github.spotbugs' version '6.1.13'        // 6.2.0+ requires JDK 11
+    id 'com.github.spotbugs' version '6.4.4'        // 6.2.0+ requires JDK 11
     id 'de.thetaphi.forbiddenapis' version '3.9'
     id 'org.sonarqube' version '4.0.0.2929'
     id 'org.cyclonedx.bom' version '2.4.1'
@@ -89,7 +89,7 @@ allprojects {
 //    apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    version = '5.5.0-SNAPSHOT'
+    version = '6.0.0-SNAPSHOT'
 }
 
 /**
@@ -114,7 +114,7 @@ subprojects {
         commonsMathVersion = '3.6.1'
         junitVersion = '5.13.4'
         log4jVersion = '2.24.3'
-        mockitoVersion = '4.11.0'
+        mockitoVersion = '5.20.0'
         hamcrestVersion = '3.0'
         xmlbeansVersion = '5.3.0'
         batikVersion = '1.19'
@@ -124,7 +124,7 @@ subprojects {
         xmlSecVersion = '3.0.6'
         apiGuardianVersion = '1.1.2'
 
-        jdkVersion = (project.properties['jdkVersion'] ?: '8') as int
+        jdkVersion = (project.properties['jdkVersion'] ?: '11') as int
         // see https://github.com/gradle/gradle/blob/master/subprojects/jvm-services/src/main/java/org/gradle/internal/jvm/inspection/JvmVendor.java
         jdkVendor = (project.properties['jdkVendor'] ?: '') as String
 
@@ -205,7 +205,7 @@ subprojects {
 
         doFirst {
             options {
-                if (jdkVersion > 8) addBooleanOption('html5', true)
+                addBooleanOption('html5', true)
                 addBooleanOption('Xdoclint:all,-missing', true)
                 links 'https://poi.apache.org/apidocs/dev/'
                 if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/javase/8/docs/api/'
@@ -213,7 +213,7 @@ subprojects {
                 links 'https://commons.apache.org/proper/commons-compress/apidocs/'
                 use = true
                 splitIndex = true
-                source = "1.8"
+                source = "1.11"
             }
         }
     }
@@ -414,27 +414,25 @@ subprojects {
         systemProperties['java.locale.providers'] = 'JRE,CLDR'
 
         doFirst {
-            if (jdkVersion > 8) {
-                // some options were removed in JDK 18
-                if (jdkVersion < 18) {
-                    jvmArgs += [
-                        '--illegal-access=warn',
-                    ]
-                }
-
+            // some options were removed in JDK 18
+            if (jdkVersion < 18) {
                 jvmArgs += [
-                    // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
-                    // opposed to the recommendation there, it doesn't work to add ... to the dependencies
-                    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.2'
-                    // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
-                    '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=org.apache.poi.poi',
-                    '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
-                    '--add-exports','org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED',
-
-                    '-Dsun.reflect.debugModuleAccessChecks=true',
-                    '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true',
+                    '--illegal-access=warn',
                 ]
             }
+
+            jvmArgs += [
+                // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
+                // opposed to the recommendation there, it doesn't work to add ... to the dependencies
+                // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.2'
+                // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
+                '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=org.apache.poi.poi',
+                '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
+                '--add-exports','org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED',
+
+                '-Dsun.reflect.debugModuleAccessChecks=true',
+                '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true',
+            ]
         }
 
         jacoco {

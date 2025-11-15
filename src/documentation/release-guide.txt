@@ -35,7 +35,7 @@
    2b. You must be a member of the committee group
    3. Release manager must have their public key appended to the KEYS file checked in to SVN and the key published on one of the public key servers.
       More info can be found here: <a href="https://www.apache.org/dev/release-signing.html">https://www.apache.org/dev/release-signing.html</a>
-   4. You must have Java JDK 1.8 installed and active.
+   4. You must have Java JDK 11 installed and active.
    5. You must have the following utilities installed on your local machine and available in your path:
           * <a href="www.openssh.com">ssh</a>
           * <a href="www.gnupg.org">gnupg</a>
@@ -102,9 +102,9 @@ svn update --set-depth infinity dist/release/poi/
      - build.gradle
      - osgi/pom.xml (version and poi.version)
 
-  2. Force a new build at https://ci-builds.apache.org/job/POI/job/POI-DSL-1.8
+  2. Force a new build at https://ci-builds.apache.org/job/POI/job/POI-DSL-1.11
      - when build completes, download the built jars from
-       https://ci-builds.apache.org/job/POI/job/POI-DSL-1.8/lastSuccessfulBuild/artifact/
+       https://ci-builds.apache.org/job/POI/job/POI-DSL-1.11/lastSuccessfulBuild/artifact/
 
   3. To produce the source distributions, run
      - ./gradlew srcDistZip
@@ -146,8 +146,8 @@ find . -name "*.asc" -exec gpg --no-secmem-warning --verify {} \;
 (III) Deploy Jars to Maven Staging
 
   1. Ensure that there has been a build with the right svn commit and then download the jars
-     - https://ci-builds.apache.org/job/POI/job/POI-DSL-1.8
-     - https://ci-builds.apache.org/job/POI/job/POI-DSL-1.8/lastSuccessfulBuild/artifact/
+     - https://ci-builds.apache.org/job/POI/job/POI-DSL-1.11
+     - https://ci-builds.apache.org/job/POI/job/POI-DSL-1.11/lastSuccessfulBuild/artifact/
 
   2. Set up a `poi-prep` directory and copy all the jars other than the `test` jars into it.
      - The artifacts in the archive.zip that you can download (see 1 above) are grouped in different dirs

@@ -338,8 +338,8 @@
           <td>poi-ooxml-full (known as ooxml-schemas)</td>
           <td><a href="https://search.maven.org/#artifactdetails|org.apache.xmlbeans|xmlbeans|5.3.0|jar">xmlbeans</a><br/>
             For signing:
-            <a href="https://search.maven.org/#artifactdetails|org.bouncycastle|bcpkix-jdk18on|1.81|jar">bcpkix-jdk18on</a>,
-            <a href="https://search.maven.org/#artifactdetails|org.bouncycastle|bcutil-jdk18on|1.81|jar">bcprov-jdk18on</a>,
+            <a href="https://search.maven.org/#artifactdetails|org.bouncycastle|bcpkix-jdk18on|1.82|jar">bcpkix-jdk18on</a>,
+            <a href="https://search.maven.org/#artifactdetails|org.bouncycastle|bcutil-jdk18on|1.82|jar">bcprov-jdk18on</a>,
             <a href="https://search.maven.org/#artifactdetails|org.apache.santuario|xmlsec|3.0.6|bundle">xmlsec</a>,
             <a href="https://search.maven.org/#artifactdetails|org.slf4j|slf4j-api|2.0.17|jar">slf4j-api</a>
           </td>

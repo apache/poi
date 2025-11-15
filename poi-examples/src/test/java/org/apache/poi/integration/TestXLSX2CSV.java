@@ -201,7 +201,7 @@ public class TestXLSX2CSV {
 	}
 
     @Test
-    public void testDeepFile() throws Exception {
+    public void testDeepFile() {
         // returns with some System.err
         try {
             assertThrows(IOException.class,

@@ -27,11 +27,14 @@ Before running this, you should execute the "jar" target in the main build.gradl
     <property name="dist" value="../build/dist"/>
     <property name="build" value="../build/distsourcebuild"/>
 
-    <condition property="gradle.executable" value="../gradlew.bat" else="../gradlew">
+    <!-- Gradle is executed in ../build/poi-<version>, so three ".." are needed to use gradle from the root-dir -->
+    <condition property="gradle.executable" value="../../../gradlew.bat" else="../../../gradlew">
         <os family="windows" />
     </condition>
 
     <target name="init" depends="">
+        <echo message="Using Ant: ${ant.version} from ${ant.home}, Ant detected Java ${ant.java.version} (may be different than actual Java sometimes...)" />
+        <echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />
     </target>
 
     <target name="run" depends="init,runSourceBuild,runCompileTest"/>
@@ -55,7 +58,7 @@ Before running this, you should execute the "jar" target in the main build.gradl
             </last>
         </pathconvert>
 
-        <echo message="Found source package at ${srcpackage}"/>
+        <echo message="Found source package with pattern 'apache-poi-src-*.zip' in ${dist} at '${srcpackage}'. Run Gradle-task 'srcDistZip' in the main directory if it is missing"/>
         <unzip src="${srcpackage}" dest="${build}" failOnEmptyArchive="true"/>
 
         <!-- look for name of sub-dir, do this dynamically as it changes with every (beta|rc)-release -->
@@ -74,7 +77,7 @@ Before running this, you should execute the "jar" target in the main build.gradl
         <!-- finally call Ant on the extracted source to check if we can build the packages -->
         <echo message="Building in temporary dir ${dirversion}/"/>
         <!--ant dir="${dirversion}" target="assemble" inheritAll="false" inheritRefs="false" useNativeBasedir="true"/-->
-        <exec executable="${gradle.executable}" dir="." failonerror="true">
+        <exec executable="${gradle.executable}" dir="${dirversion}" failonerror="true">
             <arg value="assemble" />
         </exec>
     </target>
@@ -123,7 +126,7 @@ Before running this, you should execute the "jar" target in the main build.gradl
 
         <echo message="Compiling examples without linking to scratchpad.jar to ensure that only some specific ones require this jar"/>
         <javac srcdir="../poi-examples/src/main/java" destdir="${build}"
-               target="1.8" source="1.8" debug="true"
+               target="11" source="11" debug="true"
                encoding="ASCII" fork="yes" includeantruntime="false"
                excludes="org/apache/poi/examples/hslf/**,org/apache/poi/examples/hsmf/**,org/apache/poi/examples/hwmf/**,**/EmbeddedObjects.java,**/EmeddedObjects.java,**/LoadEmbedded.java,**/Word2Forrest.java"
                classpath="${jarpackage}" classpathref="libs">
@@ -147,7 +150,7 @@ Before running this, you should execute the "jar" target in the main build.gradl
 
         <echo message="Compiling all examples with the additional scratchpad.jar"/>
         <javac srcdir="../poi-examples/src/main/java" destdir="${build}"
-               target="1.8" source="1.8" debug="true"
+               target="11" source="11" debug="true"
                encoding="ASCII" fork="yes" includeantruntime="false"
                classpath="${jarpackagescratchpad}" classpathref="libs">
         </javac>

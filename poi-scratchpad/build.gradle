@@ -58,8 +58,8 @@ tasks.register('compileJava9', JavaCompile) {
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
     }
-    sourceCompatibility = 1.9
-    targetCompatibility = 1.9
+    sourceCompatibility = 11
+    targetCompatibility = 11
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
@@ -75,8 +75,8 @@ tasks.register('compileTest9', JavaCompile) {
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
     }
-    sourceCompatibility = 1.9
-    targetCompatibility = 1.9
+    sourceCompatibility = 11
+    targetCompatibility = 11
     destinationDirectory = file(TEST9_OUT + VERSIONS9)
     source = file(TEST9_SRC)
     options.compilerArgs = [
@@ -147,12 +147,10 @@ test {
     systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
 
     doFirst {
-        if (jdkVersion > 8) {
-            jvmArgs += [
-                '--add-modules', MODULE_NAME,
-                '--module-path', '../build/dist/maven/poi-scratchpad-tests' + File.pathSeparator + files(TEST_MODULE_PATH).asPath,
-            ]
-        }
+        jvmArgs += [
+            '--add-modules', MODULE_NAME,
+            '--module-path', '../build/dist/maven/poi-scratchpad-tests' + File.pathSeparator + files(TEST_MODULE_PATH).asPath,
+        ]
     }
 }
 

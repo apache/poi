@@ -62,7 +62,7 @@ public class XSSFTextRun {
     }
 
     /**
-     * @param rgb
+     * @param rgb The RGB color value to set for the font
      * @since POI 5.5.0
      */
     public void setFontColor(byte[] rgb) {
@@ -272,7 +272,7 @@ public class XSSFTextRun {
 
     /**
      * Set whether the text in this run is formatted as superscript.
-     * Default base line offset is 30%
+     * Default base-line offset is 30%
      *
      * @see #setBaselineOffset(double)
      */
@@ -282,7 +282,7 @@ public class XSSFTextRun {
 
     /**
      * Set whether the text in this run is formatted as subscript.
-     * Default base line offset is -25%.
+     * Default base-line offset is -25%.
      *
      * @see #setBaselineOffset(double)
      */

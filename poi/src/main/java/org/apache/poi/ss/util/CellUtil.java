@@ -614,7 +614,7 @@ public final class CellUtil {
         CellStyle originalStyle = cell.getCellStyle();
 
         CellStyle newStyle = null;
-        EnumMap<CellPropertyType, Object> values = getFormatProperties(originalStyle);
+        EnumMap<CellPropertyType, Object> values = originalStyle.getFormatProperties();
         if (properties.containsKey(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR) && properties.get(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR) == null) {
             values.remove(CellPropertyType.FILL_FOREGROUND_COLOR);
         }
@@ -635,7 +635,7 @@ public final class CellUtil {
 
         for (int i = 0; i < numberCellStyles; i++) {
             CellStyle wbStyle = workbook.getCellStyleAt(i);
-            EnumMap<CellPropertyType, Object> wbStyleMap = getFormatProperties(wbStyle);
+            EnumMap<CellPropertyType, Object> wbStyleMap = wbStyle.getFormatProperties();
 
             // the desired style already exists in the workbook. Use the existing style.
             if (styleMapsMatch(wbStyleMap, values, disableNullColorCheck)) {
@@ -746,10 +746,11 @@ public final class CellUtil {
      * map will not modify the cell style. The returned map is mutable.
      *
      * @param style cell style
-     * @return map of format properties (CellPropertyType -> Object)
+     * @return map of format properties (CellPropertyType -&gt; Object)
      * @see #setFormatProperties(CellStyle, Workbook, Map)
+     * @since POI 5.5.0
      */
-    private static EnumMap<CellPropertyType, Object> getFormatProperties(CellStyle style) {
+    public static EnumMap<CellPropertyType, Object> getFormatProperties(CellStyle style) {
         EnumMap<CellPropertyType, Object> properties = new EnumMap<>(CellPropertyType.class);
         put(properties, CellPropertyType.ALIGNMENT, style.getAlignment());
         put(properties, CellPropertyType.VERTICAL_ALIGNMENT, style.getVerticalAlignment());
@@ -816,7 +817,7 @@ public final class CellUtil {
      *
      * @param style cell style
      * @param workbook parent workbook (can be null but some fomt info will not be copied if null is passed)
-     * @param properties map of format properties (CellPropertyType -> Object)
+     * @param properties map of format properties (CellPropertyType -&gt; Object)
      * @see #getFormatProperties(CellStyle)
      */
     private static void setFormatProperties(CellStyle style, Workbook workbook, Map<CellPropertyType, Object> properties) {
@@ -887,14 +888,14 @@ public final class CellUtil {
         if (src == null || dest == null) {
             throw new IllegalArgumentException("Source and destination styles must not be null");
         }
-        EnumMap<CellPropertyType, Object> properties = getFormatProperties(src);
+        EnumMap<CellPropertyType, Object> properties = src.getFormatProperties();
         setFormatProperties(dest, destWorkbook, properties);
     }
 
     /**
      * Utility method that returns the named short value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return zero if the property does not exist, or is not a {@link Short}
      *         otherwise the property value
@@ -921,7 +922,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named Color value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return null if the property does not exist, or is not a {@link Color}
      *         otherwise the property value
@@ -938,7 +939,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named int value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return zero if the property does not exist, or is not a {@link Integer}
      *         otherwise the property value
@@ -954,7 +955,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named BorderStyle value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return Border style if set, otherwise {@link BorderStyle#NONE}
      */
@@ -980,7 +981,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named FillPatternType value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return FillPatternType style if set, otherwise {@link FillPatternType#NO_FILL}
      * @since POI 3.15 beta 3
@@ -1007,7 +1008,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named HorizontalAlignment value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return HorizontalAlignment style if set, otherwise {@link HorizontalAlignment#GENERAL}
      * @since POI 3.15 beta 3
@@ -1034,7 +1035,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named VerticalAlignment value from the given map.
      *
-     * @param properties map of named properties (CellPropertyType -> Object)
+     * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return VerticalAlignment style if set, otherwise {@link VerticalAlignment#BOTTOM}
      * @since POI 3.15 beta 3
@@ -1061,7 +1062,7 @@ public final class CellUtil {
     /**
      * Utility method that returns the named boolean value from the given map.
      *
-     * @param properties map of properties (CellPropertyType -> Object)
+     * @param properties map of properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return false if the property does not exist, or is not a {@link Boolean},
      *         true otherwise
@@ -1078,7 +1079,7 @@ public final class CellUtil {
     /**
      * Utility method that puts the given value to the given map.
      *
-     * @param properties map of properties (CellPropertyType -> Object)
+     * @param properties map of properties (CellPropertyType -&gt; Object)
      * @param property property
      * @param value property value
      */

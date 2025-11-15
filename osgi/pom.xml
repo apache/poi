@@ -24,12 +24,12 @@
     <groupId>org.apache.poi</groupId>
     <artifactId>poi-bundle</artifactId>
     <packaging>bundle</packaging>
-    <version>5.5.0-SNAPSHOT</version>
+    <version>6.0.0-SNAPSHOT</version>
 
     <name>Apache POI OSGi bundle</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <poi.version>5.5.0-SNAPSHOT</poi.version>
+        <poi.version>6.0.0-SNAPSHOT</poi.version>
         <pax.exam.version>4.14.0</pax.exam.version>
     </properties>
 
@@ -39,8 +39,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>

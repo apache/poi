@@ -18,6 +18,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +31,7 @@ import org.apache.poi.hssf.record.StyleRecord;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.CellPropertyType;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
@@ -51,6 +53,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     private final short                _index;
     private final InternalWorkbook     _workbook;
     private final HSSFWorkbook         _hssfWorkbook;
+    private EnumMap<CellPropertyType, Object> _cachedProperties;
 
     protected HSSFCellStyle(short index, ExtendedFormatRecord rec, HSSFWorkbook workbook)
     {
@@ -114,6 +117,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setDataFormat(short fmt)
     {
         _format.setFormatIndex(fmt);
+        invalidateCachedProperties();
     }
 
     /**
@@ -197,10 +201,12 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setFont(Font font) {
         setFont((HSSFFont)font);
     }
+
     public void setFont(HSSFFont font) {
         _format.setIndentNotParentFont(true);
         short fontindex = (short) font.getIndex();
         _format.setFontIndex(fontindex);
+        invalidateCachedProperties();
     }
 
     /**
@@ -247,6 +253,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         _format.setIndentNotParentCellOptions(true);
         _format.setHidden(hidden);
+        invalidateCachedProperties();
     }
 
     /**
@@ -268,6 +275,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         _format.setIndentNotParentCellOptions(true);
         _format.setLocked(locked);
+        invalidateCachedProperties();
     }
 
     /**
@@ -288,6 +296,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public void setQuotePrefixed(boolean quotePrefix) {
         _format.set123Prefix(quotePrefix);
+        invalidateCachedProperties();
     }
 
     /**
@@ -307,6 +316,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         _format.setIndentNotParentAlignment(true);
         _format.setAlignment(align.getCode());
+        invalidateCachedProperties();
     }
 
     @Override
@@ -324,6 +334,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         _format.setIndentNotParentAlignment(true);
         _format.setWrapText(wrapped);
+        invalidateCachedProperties();
     }
 
     /**
@@ -344,6 +355,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setVerticalAlignment(VerticalAlignment align)
     {
         _format.setVerticalAlignment(align.getCode());
+        invalidateCachedProperties();
     }
 
     @Override
@@ -364,23 +376,24 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public void setRotation(short rotation)
     {
-      if (rotation == 0xff) {
-          // Special cases for vertically aligned text
-      }
-      else if ((rotation < 0)&&(rotation >= -90)) {
-        //Take care of the funny 4th quadrant issue
-        //The 4th quadrant (-1 to -90) is stored as (91 to 180)
-        rotation = (short)(90 - rotation);
-      }
-      else if (rotation > 90 && rotation <= 180) {
-          // stay compatible with the range used by XSSF, map from ]90..180] to ]0..-90]
-          // we actually don't need to do anything here as the internal value is stored in [0-180] anyway!
-      }
-      else if ((rotation < -90)  || (rotation > 90)) {
-        //Do not allow an incorrect rotation to be set
-        throw new IllegalArgumentException("The rotation must be between -90 and 90 degrees, or 0xff");
-      }
-      _format.setRotation(rotation);
+        if (rotation == 0xff) {
+            // Special cases for vertically aligned text
+        }
+        else if ((rotation < 0)&&(rotation >= -90)) {
+            //Take care of the funny 4th quadrant issue
+            //The 4th quadrant (-1 to -90) is stored as (91 to 180)
+            rotation = (short)(90 - rotation);
+        }
+        else if (rotation > 90 && rotation <= 180) {
+            // stay compatible with the range used by XSSF, map from ]90..180] to ]0..-90]
+            // we actually don't need to do anything here as the internal value is stored in [0-180] anyway!
+        }
+        else if ((rotation < -90)  || (rotation > 90)) {
+            //Do not allow an incorrect rotation to be set
+            throw new IllegalArgumentException("The rotation must be between -90 and 90 degrees, or 0xff");
+        }
+        _format.setRotation(rotation);
+        invalidateCachedProperties();
     }
 
     /**
@@ -390,16 +403,16 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public short getRotation()
     {
-      short rotation = _format.getRotation();
-      if (rotation == 0xff) {
-         // Vertical aligned special case
-         return rotation;
-      }
-      if (rotation > 90) {
-        //This is actually the 4th quadrant
-        rotation = (short)(90-rotation);
-      }
-      return rotation;
+        short rotation = _format.getRotation();
+        if (rotation == 0xff) {
+            // Vertical aligned special case
+            return rotation;
+        }
+        if (rotation > 90) {
+            //This is actually the 4th quadrant
+            rotation = (short)(90-rotation);
+        }
+        return rotation;
     }
 
     /**
@@ -410,6 +423,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setIndention(short indent)
     {
         _format.setIndent(indent);
+        invalidateCachedProperties();
     }
 
     /**
@@ -432,6 +446,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         _format.setIndentNotParentBorder(true);
         _format.setBorderLeft(border.getCode());
+        invalidateCachedProperties();
     }
 
     @Override
@@ -450,6 +465,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         _format.setIndentNotParentBorder(true);
         _format.setBorderRight(border.getCode());
+        invalidateCachedProperties();
     }
 
     @Override
@@ -468,6 +484,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         _format.setIndentNotParentBorder(true);
         _format.setBorderTop(border.getCode());
+        invalidateCachedProperties();
     }
 
     @Override
@@ -486,6 +503,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         _format.setIndentNotParentBorder(true);
         _format.setBorderBottom(border.getCode());
+        invalidateCachedProperties();
     }
 
     @Override
@@ -502,6 +520,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setLeftBorderColor(short color)
     {
         _format.setLeftBorderPaletteIdx(color);
+        invalidateCachedProperties();
     }
 
     /**
@@ -523,6 +542,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setRightBorderColor(short color)
     {
         _format.setRightBorderPaletteIdx(color);
+        invalidateCachedProperties();
     }
 
     /**
@@ -544,6 +564,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setTopBorderColor(short color)
     {
         _format.setTopBorderPaletteIdx(color);
+        invalidateCachedProperties();
     }
 
     /**
@@ -565,6 +586,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setBottomBorderColor(short color)
     {
         _format.setBottomBorderPaletteIdx(color);
+        invalidateCachedProperties();
     }
 
     /**
@@ -588,12 +610,30 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setFillPattern(FillPatternType fp)
     {
         _format.setAdtlFillPattern(fp.getCode());
+        invalidateCachedProperties();
     }
 
     @Override
     public FillPatternType getFillPattern()
     {
         return FillPatternType.forInt(_format.getAdtlFillPattern());
+    }
+
+    @Override
+    public EnumMap<CellPropertyType, Object> getFormatProperties() {
+        // this code is not thread safe and POI generally isn't thread safe anyway
+        // you should not have one thread modifying styles while another reads them
+        EnumMap<CellPropertyType, Object> props = _cachedProperties;
+        if (props == null) {
+            props = CellUtil.getFormatProperties(this);
+            _cachedProperties = props;
+        }
+        return props;
+    }
+
+    @Override
+    public void invalidateCachedProperties() {
+        _cachedProperties = null;
     }
 
     /**
@@ -653,6 +693,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         _format.setFillBackground(bg);
         checkDefaultBackgroundFills();
+        invalidateCachedProperties();
     }
 
     /**
@@ -712,6 +753,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         _format.setFillForeground(bg);
         checkDefaultBackgroundFills();
+        invalidateCachedProperties();
     }
 
     /**
@@ -786,6 +828,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
             throw new IllegalArgumentException("Unable to set user specified style names for built in styles!");
         }
         sr.setName(styleName);
+        invalidateCachedProperties();
     }
 
     /**
@@ -795,7 +838,9 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public void setShrinkToFit(boolean shrinkToFit) {
         _format.setShrinkToFit(shrinkToFit);
+        invalidateCachedProperties();
     }
+
     /**
      * Should the Cell be auto-sized by Excel to shrink
      *  it to fit if this text is too long?
@@ -826,6 +871,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
      */
     public void setReadingOrder(short order) {
         _format.setReadingOrder(order);
+        invalidateCachedProperties();
     }
 
     /**
