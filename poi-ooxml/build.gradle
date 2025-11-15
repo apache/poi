@@ -219,7 +219,7 @@ javadoc {
             if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/javase/8/docs/api/'
             use = true
             splitIndex = true
-            source = "1.11"
+            source = "11"
             classpath += configurations.javadocs.files
         }
     }
