@@ -27,10 +27,22 @@
   <body>
     <section><title>Project News</title>
 
+      <!-- latest final release -->
+      <section><title>15 November 2025 - POI 5.5.0 available</title>
+        <p>The Apache POI team is pleased to announce the release of 5.5.0.
+          Several dependencies were updated to their latest versions to pick up security fixes and other improvements.</p>
+        <p>A summary of changes is available in the
+          <a href="https://www.apache.org/dyn/closer.lua/poi/release/RELEASE-NOTES.txt">Release Notes</a>.
+          A full list of changes is available in the <a href="changes.html#5.5.0">change log</a>.
+          People interested should also follow the <a href="site:mailinglists">dev list</a> to track progress.</p>
+        <p>See the <a href="download.html#POI-5.5.0">downloads</a> page for more details.</p>
+        <p>POI requires Java 8 or newer since version 4.0.1.</p>
+      </section>
+
       <section><title>7 July 2025 - Source repository switched from Subversion to Git</title>
-        <p>
+      <p>
 			Apache POI switched hosting of the source repository from Subversion to Git.
-		</p>
+      </p>
 		  <p>
 			After Subversion served the project well for many years, it was time to enable more
 			up-to-date workflows by using more of the features offered by Git-based platforms like
@@ -70,18 +82,6 @@
           <li><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=69620">Bug 69620</a></li>
           <li><a href="https://www.cve.org/CVERecord?id=CVE-2025-31672">CVE-2025-31672</a></li>
         </ul>
-      </section>
-
-      <!-- latest final release -->
-      <section><title>15 November 2025 - POI 5.5.0 available</title>
-        <p>The Apache POI team is pleased to announce the release of 5.5.0.
-          Several dependencies were updated to their latest versions to pick up security fixes and other improvements.</p>
-        <p>A summary of changes is available in the
-          <a href="https://www.apache.org/dyn/closer.lua/poi/release/RELEASE-NOTES.txt">Release Notes</a>.
-          A full list of changes is available in the <a href="changes.html#5.5.0">change log</a>.
-          People interested should also follow the <a href="site:mailinglists">dev list</a> to track progress.</p>
-        <p>See the <a href="download.html#POI-5.5.0">downloads</a> page for more details.</p>
-        <p>POI requires Java 8 or newer since version 4.0.1.</p>
       </section>
 
       <section><title>11 November 2024 - Avoid log4j-api 2.24.1</title>
