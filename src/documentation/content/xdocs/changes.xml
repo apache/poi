@@ -70,7 +70,7 @@
         </p>
     </section>
 
-    <release version="5.5.0" date="2025-??-??">
+    <release version="5.5.0" date="2025-11-15">
         <summary>
             <summary-item>Upgrade batik dependency to 1.19</summary-item>
             <summary-item>Upgrade bouncycastle dependency to 1.82</summary-item>
