@@ -102,7 +102,7 @@
             <action type="fix" fixes-bug="github-909" context="SS_Common">Delay initialization of fontRenderContext field</action>
             <action type="add" fixes-bug="github-910" context="XWPF">Make getters public for XML beans in XWPFDefault*Style</action>
             <action type="fix" fixes-bug="github-912" context="XWPF">Prevent NullPointerException in XWPFTable.getWidthType()</action>
-            <action type="add" fixes-bug="github-920" context="XSSF">New api for reading XLSB files</action>
+            <action type="add" fixes-bug="github-920" context="XSSF">New API for reading XLSB files</action>
         </actions>
     </release>
 
