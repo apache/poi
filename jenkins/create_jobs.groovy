@@ -585,6 +585,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
     }
     axes {
         jdk(
+                'jdk_8_latest',
                 'jdk_11_latest',
                 'jdk_17_latest',
                 'jdk_21_latest',
@@ -592,7 +593,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_24_latest',
                 'jdk_25_latest',
                 'jdk_26_latest',
-                'ibmjdk_1.8.0_261'
+                'ibm_semuru_21.0.2_13'
         )
         // Note H50 is reserved according to its node-description
         label('Nodes','builds22','builds23','builds24','builds25','builds26','builds27','builds28','builds29','builds30','builds31','builds32','builds33','builds34','builds35','builds36','builds37','builds38','builds39','builds40','builds50','builds56','builds57','builds58','builds59','builds60',
