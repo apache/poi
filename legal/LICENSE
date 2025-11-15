@@ -261,6 +261,10 @@ which was released under the Apache 2.0 license.
 Copyright (c) 2002-2023 EPFL
 Copyright (c) 2011-2023 Lightbend, Inc.
 
+LimitInputStream is based on code from the Guava project which was released under
+the Apache 2.0 license.
+Copyright (C) 2007 The Guava Authors
+
 The POI Source Release bundles the Gradle Wrapper. (https://docs.gradle.org/current/userguide/gradle_wrapper.html)
 This is released under the Apache License, v2.0.
 Copyright © 2015-2021 the original authors.

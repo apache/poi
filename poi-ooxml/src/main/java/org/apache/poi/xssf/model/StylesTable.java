@@ -22,16 +22,8 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -42,6 +34,7 @@ import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
 import org.apache.poi.ss.usermodel.TableStyle;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LimitInputStream;
 import org.apache.poi.xssf.usermodel.CustomIndexedColorMap;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.IndexedColorMap;
@@ -77,6 +70,29 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
  * Table of styles shared across all sheets in a workbook.
  */
 public class StylesTable extends POIXMLDocumentPart implements Styles {
+
+    private static long INPUT_STREAM_READ_LIMIT = -1; // negative means no limit
+
+    /**
+     * Sets the read limit for input streams used to read styles.
+     * Negative values mean no limit. The default is -1 (no limit).
+     * @param limit
+     * @since POI 5.4.2
+     */
+    public static void setInputStreamReadLimit(long limit) {
+        INPUT_STREAM_READ_LIMIT = limit;
+    }
+
+    /**
+     * Gets the read limit for input streams used to read styles.
+     * Negative values mean no limit. The default is -1 (no limit).
+     * @return the read limit
+     * @since POI 5.4.2
+     */
+    public static long getInputStreamReadLimit() {
+        return INPUT_STREAM_READ_LIMIT;
+    }
+
     private final SortedMap<Short, String> numberFormats = new TreeMap<>();
     private final List<XSSFFont> fonts = new ArrayList<>();
     private final List<XSSFCellFill> fills = new ArrayList<>();
@@ -155,6 +171,13 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      */
     public StylesTable(PackagePart part) throws IOException {
         super(part);
+        if (INPUT_STREAM_READ_LIMIT >= 0 && part.getSize() > INPUT_STREAM_READ_LIMIT) {
+            throw new IOException(String.format(
+                    Locale.ROOT,
+                    "StylesTable part size (%s) exceeds the read limit (%s)",
+                    part.getSize(),
+                    INPUT_STREAM_READ_LIMIT));
+        }
         try (InputStream stream = part.getInputStream()) {
             readFrom(stream);
         }
@@ -214,9 +237,11 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
      */
-    public void readFrom(InputStream is) throws IOException {
+    public void readFrom(final InputStream is) throws IOException {
+        final InputStream stream = INPUT_STREAM_READ_LIMIT >= 0 ?
+                new LimitInputStream(is, INPUT_STREAM_READ_LIMIT) : is;
         try {
-            doc = StyleSheetDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
+            doc = StyleSheetDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
 
             CTStylesheet styleSheet = doc.getStyleSheet();
 

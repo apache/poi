@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.eventusermodel;
 
+import static org.apache.poi.xssf.model.SharedStringsTable.getInputStreamReadLimit;
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 
 import java.io.IOException;
@@ -23,14 +24,17 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.util.LimitInputStream;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.model.SharedStrings;
+import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.xml.sax.Attributes;
@@ -155,6 +159,13 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
     public ReadOnlySharedStringsTable(PackagePart part, boolean includePhoneticRuns)
         throws IOException, SAXException {
         this.includePhoneticRuns = includePhoneticRuns;
+        if (getInputStreamReadLimit() >= 0 && part.getSize() > getInputStreamReadLimit()) {
+            throw new IOException(String.format(
+                    Locale.ROOT,
+                    "SharedStrings part size (%s) exceeds the read limit (%s)",
+                    part.getSize(),
+                    getInputStreamReadLimit()));
+        }
         try (InputStream stream = part.getInputStream()) {
             readFrom(stream);
         }
@@ -184,9 +195,12 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
      * @throws IOException if an error occurs while reading.
      * @throws SAXException if parsing the XML data fails.
      */
-    public void readFrom(InputStream is) throws IOException, SAXException {
+    public void readFrom(final InputStream is) throws IOException, SAXException {
+        final InputStream stream = getInputStreamReadLimit() >= 0
+                ? new LimitInputStream(is, getInputStreamReadLimit())
+                : is;
         // test if the file is empty, otherwise parse it
-        PushbackInputStream pis = new PushbackInputStream(is, 1);
+        final PushbackInputStream pis = new PushbackInputStream(stream, 1);
         int emptyTest = pis.read();
         if (emptyTest > -1) {
             pis.unread(emptyTest);
