@@ -143,20 +143,13 @@ test {
     dependsOn { testJar }
 
     systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
-    if (jdkVersion == 8)  {
-        systemProperties['sun.java2d.renderer'] = 'sun.java2d.marlin.MarlinRenderingEngine'
-    }
 
     doFirst {
         jvmArgs += [
             "-javaagent:${OOXML_LITE_AGENT}=${OOXML_LITE_REPORT}|${OOXML_LITE_INCLUDES}",
+            '--add-modules', MODULE_NAME,
+            '--module-path', '../build/dist/maven/poi-integration-tests' + File.pathSeparator + files(MODULE_RUNTIME_PATH).asPath,
         ]
-        if (jdkVersion > 8) {
-            jvmArgs += [
-                '--add-modules', MODULE_NAME,
-                '--module-path', '../build/dist/maven/poi-integration-tests' + File.pathSeparator + files(MODULE_RUNTIME_PATH).asPath,
-            ]
-        }
         if (NO_SCRATCHPAD) {
             systemProperty 'scratchpad.ignore', 'true'
         }

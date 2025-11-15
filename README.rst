@@ -55,12 +55,12 @@ Source code:
 
 * Official `Apache Git repo`_ at apache.org
 
-Requires Java 1.8 or later.
+Requires Java 11 or later.
 
 Contributing
 ------------------
 
-* Download and install git, Java JDK 1.8+, and Apache Ant 1.8+ or Gradle
+* Download and install git, Java JDK 11+, and Apache Ant 1.8+ or Gradle
 
 * Check out the code from git
 

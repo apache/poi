@@ -124,7 +124,7 @@ subprojects {
         xmlSecVersion = '3.0.6'
         apiGuardianVersion = '1.1.2'
 
-        jdkVersion = (project.properties['jdkVersion'] ?: '8') as int
+        jdkVersion = (project.properties['jdkVersion'] ?: '11') as int
         // see https://github.com/gradle/gradle/blob/master/subprojects/jvm-services/src/main/java/org/gradle/internal/jvm/inspection/JvmVendor.java
         jdkVendor = (project.properties['jdkVendor'] ?: '') as String
 
@@ -205,7 +205,7 @@ subprojects {
 
         doFirst {
             options {
-                if (jdkVersion > 8) addBooleanOption('html5', true)
+                addBooleanOption('html5', true)
                 addBooleanOption('Xdoclint:all,-missing', true)
                 links 'https://poi.apache.org/apidocs/dev/'
                 if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/javase/8/docs/api/'
@@ -213,7 +213,7 @@ subprojects {
                 links 'https://commons.apache.org/proper/commons-compress/apidocs/'
                 use = true
                 splitIndex = true
-                source = "1.8"
+                source = "1.11"
             }
         }
     }
@@ -414,27 +414,25 @@ subprojects {
         systemProperties['java.locale.providers'] = 'JRE,CLDR'
 
         doFirst {
-            if (jdkVersion > 8) {
-                // some options were removed in JDK 18
-                if (jdkVersion < 18) {
-                    jvmArgs += [
-                        '--illegal-access=warn',
-                    ]
-                }
-
+            // some options were removed in JDK 18
+            if (jdkVersion < 18) {
                 jvmArgs += [
-                    // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
-                    // opposed to the recommendation there, it doesn't work to add ... to the dependencies
-                    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.2'
-                    // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
-                    '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=org.apache.poi.poi',
-                    '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
-                    '--add-exports','org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED',
-
-                    '-Dsun.reflect.debugModuleAccessChecks=true',
-                    '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true',
+                    '--illegal-access=warn',
                 ]
             }
+
+            jvmArgs += [
+                // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
+                // opposed to the recommendation there, it doesn't work to add ... to the dependencies
+                // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.2'
+                // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
+                '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=org.apache.poi.poi',
+                '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
+                '--add-exports','org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED',
+
+                '-Dsun.reflect.debugModuleAccessChecks=true',
+                '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true',
+            ]
         }
 
         jacoco {
@@ -739,7 +737,7 @@ task jenkinsLite(dependsOn: [
     if (!f.exists()) {
     println 'writing file ' + f.getAbsolutePath()
     f.getParentFile().mkdirs()
-    new URL('https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-5.0.0.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
+    new URL('https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.11/lastSuccessfulBuild/artifact/build/xmlbeans-5.0.0.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
     }
 }*/
 

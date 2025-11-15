@@ -126,7 +126,7 @@ Before running this, you should execute the "jar" target in the main build.gradl
 
         <echo message="Compiling examples without linking to scratchpad.jar to ensure that only some specific ones require this jar"/>
         <javac srcdir="../poi-examples/src/main/java" destdir="${build}"
-               target="1.8" source="1.8" debug="true"
+               target="11" source="11" debug="true"
                encoding="ASCII" fork="yes" includeantruntime="false"
                excludes="org/apache/poi/examples/hslf/**,org/apache/poi/examples/hsmf/**,org/apache/poi/examples/hwmf/**,**/EmbeddedObjects.java,**/EmeddedObjects.java,**/LoadEmbedded.java,**/Word2Forrest.java"
                classpath="${jarpackage}" classpathref="libs">
@@ -150,7 +150,7 @@ Before running this, you should execute the "jar" target in the main build.gradl
 
         <echo message="Compiling all examples with the additional scratchpad.jar"/>
         <javac srcdir="../poi-examples/src/main/java" destdir="${build}"
-               target="1.8" source="1.8" debug="true"
+               target="11" source="11" debug="true"
                encoding="ASCII" fork="yes" includeantruntime="false"
                classpath="${jarpackagescratchpad}" classpathref="libs">
         </javac>

@@ -26,7 +26,7 @@ under the License.
     To build the documentation you will need to install forrest and set
     the FORREST_HOME environment variable.
 
-    Since POI 4.0 you will need JDK 1.8 or newer to build and run POI.
+    Since POI 6.0 you will need JDK 11 or newer to build and run POI.
 
     Some people may find the tests hang when run through Ant. If this
     happens to you, try giving Ant some more memory when you run it, eg:
@@ -60,8 +60,8 @@ under the License.
 
 
     <!-- compiler options -->
-    <property name="jdk.version.source" value="1.8" description="JDK version of source code"/>
-    <property name="jdk.version.class" value="1.8" description="JDK version of generated class files"/>
+    <property name="jdk.version.source" value="11" description="JDK version of source code"/>
+    <property name="jdk.version.class" value="11" description="JDK version of generated class files"/>
     <property name="compile.debug" value="true"/>
 
     <condition property="isIBMVM">
@@ -69,7 +69,7 @@ under the License.
     </condition>
 
     <condition property="isJava8" else="false">
-        <equals arg1="${ant.java.version}" arg2="1.8"/>
+        <equals arg1="${ant.java.version}" arg2="11"/>
     </condition>
 
     <!-- add addOpens parameter for Java 9 and higher -->
@@ -296,11 +296,11 @@ under the License.
 
     <!-- xml signature libs - not part of the distribution -->
     <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:3.0.6" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk18on:1.81" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk18on:1.81" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk18on:1.81" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk18on:1.82" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk18on:1.82" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk18on:1.82" usage="ooxml-provided"/>
     <!-- only used for signing the release - not used with the ooxml signatures -->
-    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk18on:1.81" usage="util"/>
+    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk18on:1.82" usage="util"/>
     <dependency prefix="ooxml.test.stax2" artifact="org.codehaus.woodstox:stax2-api:4.2.1" usage="ooxml-provided"/>
 
     <!-- svg/batik/pdf libs - not part of the distribution - move batik to its own directory because of JPMS module-path issues -->

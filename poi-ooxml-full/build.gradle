@@ -60,8 +60,8 @@ tasks.register('compileJava9', JavaCompile) {
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
     }
-    sourceCompatibility = 1.9
-    targetCompatibility = 1.9
+    sourceCompatibility = 1.11
+    targetCompatibility = 1.11
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
