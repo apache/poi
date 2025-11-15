@@ -72,7 +72,7 @@
                     and for SVG/PDF the <a href="site:components/index/batikpdf">additional dependencies</a>.</p>
                 <p>Execute the java command (Unix-paths needs to be replaced for Windows - use "-charset" for non-western WMF/EMFs):</p>
                 <source>
-                    java -cp poi-5.4.1.jar:poi-ooxml-5.4.1.jar:poi-ooxml-lite-5.4.1.jar:poi-scratchpad-5.4.1.jar:lib/*:ooxml-lib/*:auxiliary/* org.apache.poi.xslf.util.PPTX2PNG -format png -fixside long -scale 1000 -charset GBK file.pptx
+                    java -cp poi-5.5.0.jar:poi-ooxml-5.5.0.jar:poi-ooxml-lite-5.5.0.jar:poi-scratchpad-5.5.0.jar:lib/*:ooxml-lib/*:auxiliary/* org.apache.poi.xslf.util.PPTX2PNG -format png -fixside long -scale 1000 -charset GBK file.pptx
                 </source>
                 <p>
                     If you want to use the renderer on the module path (JPMS) there a currently a few more steps necessary:
@@ -80,7 +80,7 @@
                 <ul>
                     <li>Create a build project using Maven, Gradle or your favorite build tool.</li>
                     <li>Alternatively, download the jars from https://repo1.maven.org/maven2/org/apache/poi/</li>
-                    <li>Exclude poi-ooxml-full-5.4.1.jar,poi-javadoc-5.4.1.jar and auxiliary/xml-apis-1.4.01.jar (Java 11+) into new subdirectory "unused"</li>
+                    <li>Exclude poi-ooxml-full-5.5.0.jar,poi-javadoc-5.5.0.jar and auxiliary/xml-apis-1.4.01.jar (Java 11+) into new subdirectory "unused"</li>
                     <li>Move all other jars in current directory into a new subdirectory "poi"</li>
                     <li>Invoke PPTX2PNG:
                         <source>

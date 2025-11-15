@@ -109,7 +109,7 @@
     # Add <a href="site:components">poi jars</a> onto the python classpath or add them at run time
     import sys
     for jar in ('poi', 'poi-ooxml', 'poi-ooxml-lite'):
-        sys.path.append('/path/to/%s-5.4.1.jar')
+        sys.path.append('/path/to/%s-5.5.0.jar')
 
     from java.io import File, FileOutputStream
     from contextlib import closing
@@ -150,9 +150,9 @@
       <source> <!-- lang="scala" -->
     // Add the POI core and OOXML support dependencies into your build.sbt
     libraryDependencies ++= Seq(
-      "org.apache.poi" % "poi" % "5.4.1",
-      "org.apache.poi" % "poi-ooxml" % "5.4.1",
-      "org.apache.poi" % "poi-ooxml-lite" % "5.4.1"
+      "org.apache.poi" % "poi" % "5.5.0",
+      "org.apache.poi" % "poi-ooxml" % "5.5.0",
+      "org.apache.poi" % "poi-ooxml-lite" % "5.5.0"
     )
       </source>
     </section>
@@ -211,8 +211,8 @@ repositories {
 }
 dependencies {
     runtime 'org.codehaus.groovy:groovy-all:2.5.15'
-    runtime 'org.apache.poi:poi:5.4.1'
-    runtime 'org.apache.poi:poi-ooxml:5.4.1'
+    runtime 'org.apache.poi:poi:5.5.0'
+    runtime 'org.apache.poi:poi-ooxml:5.5.0'
 }
       </source>
     </section>

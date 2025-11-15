@@ -76,7 +76,7 @@
              TNEF file to extract, and the directory to place the extracted
              files into, eg:</p>
            <source>
-              java -classpath poi-5.4.1.jar:poi-scratchpad-5.4.1.jar org.apache.poi.hmef.extractor.HMEFContentsExtractor winmail.dat /tmp/extracted/
+              java -classpath poi-5.5.0.jar:poi-scratchpad-5.5.0.jar org.apache.poi.hmef.extractor.HMEFContentsExtractor winmail.dat /tmp/extracted/
            </source>
 
            <p>From Java, there are two method calls on the class, one to
