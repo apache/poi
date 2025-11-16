@@ -17,7 +17,7 @@
 
 package org.apache.poi.hwpf.model;
 
-import static org.apache.poi.POITestCase.assertReflectEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.model.types.DOPAbstractType;
@@ -53,6 +53,8 @@ public final class TestDocumentProperties {
         _documentProperties.serialize(buf, 0);
         DocumentProperties newDocProperties = new DocumentProperties(buf, 0, size);
 
-        assertReflectEquals(_documentProperties, newDocProperties);
+        byte[] newBuf = new byte[size];
+        newDocProperties.serialize(newBuf, 0);
+        assertArrayEquals(buf, newBuf);
     }
 }

@@ -39,7 +39,6 @@ import javax.imageio.ImageIO;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.SuppressForbidden;
-import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 
 /**
  * Util class for POI JUnit TestCases, which provide additional features
@@ -128,18 +127,6 @@ public final class POITestCase {
             throw new RuntimeException("Cannot access field '" + fieldName + "' of class " + clazz, pae.getException());
         }
     }
-
-    /**
-     * Utility method to shallow compare all fields of the objects
-     * Only use this method in test cases!!!
-     */
-    public static void assertReflectEquals(final Object expected, Object actual) {
-        // as long as ReflectionEquals is provided by Mockito, use it ... otherwise use commons.lang for the tests
-
-        // JaCoCo Code Coverage adds its own field, don't look at this one here
-        assertTrue(new ReflectionEquals(expected, "$jacocoData").matches(actual));
-    }
-
 
     /**
      * Ensures that the temporary directory is defined and exists and
