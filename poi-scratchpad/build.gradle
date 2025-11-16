@@ -22,15 +22,6 @@ configurations {
     javadocs
 }
 
-sourceSets {
-    main {
-        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
-    }
-    test {
-        output.dir(TEST9_OUT, builtBy: 'compileTest9')
-    }
-}
-
 dependencies {
     api project(':poi')
     api project(path:':poi', configuration: 'archives')
@@ -52,38 +43,26 @@ final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
 final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique()
 
-tasks.register('compileJava9', JavaCompile) {
-    dependsOn 'compileJava', ':poi:jar'
+compileJava {
+    dependsOn ':poi:jar'
 
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
-    }
     sourceCompatibility = 11
     targetCompatibility = 11
-    destinationDirectory = file(JAVA9_OUT + VERSIONS9)
-    source = file(JAVA9_SRC)
-    classpath = files()
     options.compilerArgs = [
             '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
             '--module-path', files(MAIN_MODULE_PATH).asPath
     ]
 }
 
-tasks.register('compileTest9', JavaCompile) {
-    dependsOn 'compileTestJava', ':poi:jar'
+compileTestJava {
+    dependsOn ':poi:jar'
 
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
-    }
     sourceCompatibility = 11
     targetCompatibility = 11
-    destinationDirectory = file(TEST9_OUT + VERSIONS9)
-    source = file(TEST9_SRC)
     options.compilerArgs = [
             '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
             '--module-path', files(TEST_MODULE_PATH).asPath
     ]
-    classpath = files()
 }
 
 
