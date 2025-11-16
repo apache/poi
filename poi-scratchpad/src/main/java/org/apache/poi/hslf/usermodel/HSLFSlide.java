@@ -32,7 +32,6 @@ import org.apache.poi.hslf.record.CString;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.Comment2000;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.HeadersFootersContainer;
 import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SSSlideInfoAtom;
@@ -419,16 +418,6 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
         }
 
         return comments;
-    }
-
-    /**
-     * Header / Footer settings for this slide.
-     *
-     * @return Header / Footer settings for this slide
-     */
-    @Override
-    public HeadersFooters getHeadersFooters(){
-        return new HeadersFooters(this, HeadersFootersContainer.SlideHeadersFootersContainer);
     }
 
     @Override
