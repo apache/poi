@@ -983,7 +983,7 @@ under the License.
             </classpath>
         </javac>
 
-        <javac release="9"
+        <javac release="11"
                srcdir="${basedir}/poi-ooxml-full/src/main/java9"
                destdir="${basedir}/poi-ooxml-full/src/main/java9"
                includeantruntime="false"
@@ -1083,7 +1083,7 @@ under the License.
             <echo message="Building java9+ classes for @{module}"/>
 
             <!-- compile jigsaw files to sources, so we don't forget to update/provide them for Java 8 builds -->
-            <javac release="9"
+            <javac release="11"
                    srcdir="${basedir}/@{module}/src/main/java9"
                    destdir="${basedir}/@{module}/src/main/java9"
                    includeantruntime="false"
@@ -1122,7 +1122,7 @@ under the License.
             </jar>
 
             <!-- compile the tests -->
-            <javac release="8"
+            <javac release="11"
                    target="${jdk.version.class}"
                    source="${jdk.version.source}"
                    destdir="@{test-classes}"
@@ -1144,7 +1144,7 @@ under the License.
                 <path location="@{test-classes}"/>
             </pathconvert>
 
-            <javac release="9"
+            <javac release="11"
                    srcdir="${basedir}/@{module}/src/test/java9"
                    destdir="${basedir}/@{module}/src/test/java9"
                    includeantruntime="false"
@@ -1272,7 +1272,7 @@ under the License.
 
         <!-- create ooxml-lite-agent jar -->
         <mkdir dir="${ooxml.lite.output.dir}"/>
-        <javac release="8"
+        <javac release="11"
                srcdir="${basedir}/poi-ooxml-lite-agent/src/main/java"
                destdir="${ooxml.lite.output.dir}"
                includeantruntime="false"
@@ -1283,7 +1283,7 @@ under the License.
             </classpath>
         </javac>
 
-        <javac release="9"
+        <javac release="11"
                srcdir="${basedir}/poi-ooxml-lite-agent/src/main/java9"
                destdir="${basedir}/poi-ooxml-lite-agent/src/main/java9"
                includeantruntime="false"
@@ -1491,7 +1491,7 @@ under the License.
     </target>
 
     <target name="compile-integration" depends="compile-scratchpad, compile-main, compile-ooxml, compile-examples">
-        <javac release="8"
+        <javac release="11"
                target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${integration.output.test.dir}"
@@ -1518,7 +1518,7 @@ under the License.
 
         <mkdir dir="${integration.output.test.dir}/META-INF/versions/9"/>
 
-        <javac release="9"
+        <javac release="11"
                srcdir="${basedir}/poi-integration/src/test/java9"
                destdir="${integration.output.test.dir}/META-INF/versions/9"
                includeantruntime="false"
@@ -1892,7 +1892,7 @@ under the License.
 
         <echo output="${basedir}/poi-ooxml-lite/src/main/java9/module-info.java">${full.schema}${lite.exports}}</echo>
 
-        <javac release="9"
+        <javac release="11"
                srcdir="${basedir}/poi-ooxml-lite/src/main/java9"
                destdir="${basedir}/poi-ooxml-lite/src/main/java9"
                includeantruntime="false"
@@ -2245,7 +2245,7 @@ under the License.
 
             <echo message="Building maven-jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8} and src: @{src}"/>
 
-            <javac release="9"
+            <javac release="11"
                    srcdir="${basedir}/@{module}/src/main/java9"
                    destdir="@{src}/META-INF/versions/9"
                    includeantruntime="false"
