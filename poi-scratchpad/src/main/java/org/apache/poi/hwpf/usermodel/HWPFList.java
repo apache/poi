@@ -196,6 +196,7 @@ public final class HWPFList
     /**
      * @deprecated use {@link #isStartAtOverridden(char)}
      */
+    @Deprecated
     @Removal(version = "POI 6.0.0")
     public boolean isStartAtOverriden(char level )
     {

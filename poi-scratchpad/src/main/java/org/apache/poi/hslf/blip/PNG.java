@@ -19,26 +19,13 @@ package org.apache.poi.hslf.blip;
 
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.image.ImageHeaderPNG;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 
 /**
  * Represents a PNG picture data in a PPT file
  */
 public final class PNG extends Bitmap {
-
-    /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], org.apache.poi.sl.usermodel.PictureData.PictureType)} or one of its overloads to create new
-     *             {@link PNG}. This API led to detached {@link PNG} instances (See Bugzilla
-     *             46122) and prevented adding additional functionality.
-     */
-    @Deprecated
-    @Removal(version = "5.3")
-    public PNG() {
-        this(new EscherContainerRecord(), new EscherBSERecord());
-    }
 
     /**
      * Creates a new instance.

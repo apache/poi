@@ -34,7 +34,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,7 +46,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.Transform;
@@ -70,7 +68,6 @@ import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampSimpleHttpClient;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.Removal;
 import org.apache.xml.security.signature.XMLSignature;
 
 /**
@@ -113,12 +110,12 @@ public class SignatureConfig {
     private static final String XMLSEC_SANTUARIO = "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI";
     private static final String XMLSEC_JDK = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
 
-    private static final List<Supplier<SignatureFacet>> DEFAULT_FACETS = Collections.unmodifiableList(Arrays.asList(
-        OOXMLSignatureFacet::new,
-        KeyInfoSignatureFacet::new,
-        XAdESSignatureFacet::new,
-        Office2010SignatureFacet::new
-    ));
+    private static final List<Supplier<SignatureFacet>> DEFAULT_FACETS = List.of(
+            OOXMLSignatureFacet::new,
+            KeyInfoSignatureFacet::new,
+            XAdESSignatureFacet::new,
+            Office2010SignatureFacet::new
+    );
 
     private List<SignatureFacet> signatureFacets = new ArrayList<>();
     private HashAlgorithm digestAlgo = HashAlgorithm.sha256;
@@ -130,7 +127,6 @@ public class SignatureConfig {
      * the optional signature policy service used for XAdES-EPES.
      */
     private SignaturePolicyService signaturePolicyService;
-    private URIDereferencer uriDereferencer = new OOXMLURIDereferencer();
     private String canonicalizationMethod = CanonicalizationMethod.INCLUSIVE;
 
     private boolean includeEntireCertificateChain = true;
@@ -400,28 +396,6 @@ public class SignatureConfig {
      */
     public void setSignaturePolicyService(SignaturePolicyService signaturePolicyService) {
         this.signaturePolicyService = signaturePolicyService;
-    }
-
-    /**
-     * @return the dereferencer used for Reference/@URI attributes, defaults to {@link OOXMLURIDereferencer}
-     *
-     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#getUriDereferencer()} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public URIDereferencer getUriDereferencer() {
-        return uriDereferencer;
-    }
-
-    /**
-     * @param uriDereferencer the dereferencer used for Reference/@URI attributes
-     *
-     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#setUriDereferencer(URIDereferencer)} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public void setUriDereferencer(URIDereferencer uriDereferencer) {
-        this.uriDereferencer = uriDereferencer;
     }
 
     /**

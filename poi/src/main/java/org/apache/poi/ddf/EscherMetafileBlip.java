@@ -36,26 +36,12 @@ import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.usermodel.HSSFPictureData;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 public final class EscherMetafileBlip extends EscherBlipRecord {
     private static final Logger LOGGER = PoiLogManager.getLogger(EscherMetafileBlip.class);
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
-
-    /** @deprecated use EscherRecordTypes.BLIP_EMF.typeID */
-    @Deprecated
-    @Removal(version = "5.3")
-    public static final short RECORD_ID_EMF = EscherRecordTypes.BLIP_EMF.typeID;
-    /** @deprecated use EscherRecordTypes.BLIP_WMF.typeID */
-    @Deprecated
-    @Removal(version = "5.3")
-    public static final short RECORD_ID_WMF = EscherRecordTypes.BLIP_WMF.typeID;
-    /** @deprecated use EscherRecordTypes.BLIP_PICT.typeID */
-    @Deprecated
-    @Removal(version = "5.3")
-    public static final short RECORD_ID_PICT = EscherRecordTypes.BLIP_PICT.typeID;
 
     private static final int HEADER_SIZE = 8;
 

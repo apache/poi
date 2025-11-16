@@ -28,10 +28,8 @@ import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 /**
@@ -39,17 +37,6 @@ import org.apache.poi.util.Units;
  * The data is not compressed and the exact file content is written in the stream.
  */
 public abstract class Bitmap extends HSLFPictureData {
-
-    /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], org.apache.poi.sl.usermodel.PictureData.PictureType)} or one of its overloads to create new
-     *             {@link Bitmap}. This API led to detached {@link Bitmap} instances (See Bugzilla
-     *             46122) and prevented adding additional functionality.
-     */
-    @Deprecated
-    @Removal(version = "5.3")
-    public Bitmap() {
-        this(new EscherContainerRecord(), new EscherBSERecord());
-    }
 
     /**
      * Creates a new instance.

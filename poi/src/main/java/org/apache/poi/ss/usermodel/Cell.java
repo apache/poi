@@ -234,12 +234,12 @@ public interface Cell {
      *
      * <p>In XSSF implementation, there is a <code>XSSFWorkbook.setCellFormulaValidation(boolean)</code>
      * setting that can validate (but also in some cases, reformat) the formula.</p>
-     * 
+     *
      * @param formula the formula to set, e.g. <code>"SUM(C4:E4)"</code>.
      * If the argument is <code>null</code> then the current formula is removed.
      *
      * @see Cell#removeFormula
-     * @see Workbook#setForceFormulaRecalculation(boolean) 
+     * @see Workbook#setForceFormulaRecalculation(boolean)
      * @throws IllegalStateException if this cell is a part of an array formula group containing other cells
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      */
