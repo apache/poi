@@ -32,7 +32,6 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.usermodel.OoxmlSheetExtensions;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
@@ -80,7 +79,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
             readFrom(stream);
         }
     }
-    
+
     public void readFrom(InputStream is) throws IOException {
         try {
             CommentsDocument doc = CommentsDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
@@ -108,22 +107,6 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
         try (OutputStream out = part.getOutputStream()) {
             writeTo(out);
         }
-    }
-
-    /**
-     * Called after the reference is updated, so that
-     *  we can reflect that in our cache
-     * @param oldReference the comment to remove from the commentRefs map
-     * @param comment the comment to replace in the commentRefs map
-     * @deprecated use {@link #referenceUpdated(CellAddress, XSSFComment)}
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    public void referenceUpdated(CellAddress oldReference, CTComment comment) {
-       if(commentRefs != null) {
-          commentRefs.remove(oldReference);
-          commentRefs.put(new CellAddress(comment.getRef()), comment);
-       }
     }
 
     /**
@@ -254,7 +237,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
 
         return new XSSFComment(this, newComment(ref), vmlShape);
     }
-    
+
     /**
      * Create a new comment located at cell address
      *
@@ -266,7 +249,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
         CTComment ct = comments.getCommentList().addNewComment();
         ct.setRef(ref.formatAsString());
         ct.setAuthorId(DEFAULT_AUTHOR_ID);
-        
+
         if(commentRefs != null) {
            commentRefs.put(ref, ct);
         }

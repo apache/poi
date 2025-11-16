@@ -34,7 +34,6 @@ import org.apache.poi.ss.usermodel.ReadingOrder;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
@@ -456,21 +455,6 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     }
 
     /**
-     * Gets the index of the font for this style
-     *
-     * @return font index
-     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(int)
-     * @deprecated use {@link #getFontIndex()} instead
-     * @since 4.0.0
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    @Override
-    public int getFontIndexAsInt() {
-        return getFontId();
-    }
-
-    /**
      * Get whether the cell's using this style are to be hidden
      *
      * @return boolean -  whether the cell using this style is hidden
@@ -858,7 +842,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
             throw new IllegalArgumentException("XSSFCellStyle only accepts XSSFColor instances");
         }
     }
-    
+
     /**
      * Set the background fill color represented as an indexed color value.
      * <p>
@@ -913,7 +897,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         addFill(ct);
         invalidateCachedProperties();
     }
- 
+
     /**
      * Set the foreground fill color represented as a {@link org.apache.poi.ss.usermodel.Color} value.
      * <br>

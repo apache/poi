@@ -19,8 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.EnumMap;
 
-import org.apache.poi.util.Removal;
-
 public interface CellStyle {
 
     /**
@@ -63,16 +61,6 @@ public interface CellStyle {
     int getFontIndex();
 
     /**
-     * gets the index of the font for this style
-     * @see Workbook#getFontAt(int)
-     * @deprecated use {@link #getFontIndex()} instead
-     * @since 4.0.0
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    int getFontIndexAsInt();
-
-    /**
      * set the cell's using this style to be hidden
      * @param hidden - whether the cell using this style should be hidden
      */
@@ -95,7 +83,7 @@ public interface CellStyle {
      * @return hidden - whether the cell using this style should be locked
      */
     boolean getLocked();
-    
+
     /**
      * Turn on or off "Quote Prefix" or "123 Prefix" for the style,
      *  which is used to tell Excel that the thing which looks like
@@ -104,7 +92,7 @@ public interface CellStyle {
      *  like prefixing the cell value with a ' in Excel
      */
     void setQuotePrefixed(boolean quotePrefix);
-    
+
     /**
      * Is "Quote Prefix" or "123 Prefix" enabled for the cell?
      * Having this on is somewhat (but not completely, see {@link IgnoredErrorType})
@@ -154,8 +142,8 @@ public interface CellStyle {
     /**
      * set the degree of rotation for the text in the cell.
      *
-     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF 
-     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges 
+     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF
+     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges
      * accordingly, however the corresponding getter is returning values in the range mandated by the current type
      * of Excel file-format that this CellStyle is applied to.
      *
@@ -166,8 +154,8 @@ public interface CellStyle {
     /**
      * get the degree of rotation for the text in the cell.
      *
-     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF 
-     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges 
+     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF
+     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges
      * value-range as used by the type of Excel file-format that this CellStyle is applied to.
      *
      * @return rotation degrees (see note above)
@@ -328,13 +316,13 @@ public interface CellStyle {
      * @return fill color index, or 0 if not indexed (XSSF only)
      */
     short getFillBackgroundColor();
-    
+
     /**
      * Gets the color object representing the current
      *  background fill, resolving indexes using
      *  the supplied workbook.
      * This will work for both indexed and rgb
-     *  defined colors. 
+     *  defined colors.
      */
     Color getFillBackgroundColorColor();
 
@@ -355,29 +343,29 @@ public interface CellStyle {
     void setFillForegroundColor(Color color);
 
     /**
-     * get the foreground fill color, if the fill  
+     * get the foreground fill color, if the fill
      *  is defined with an indexed color.
      * @return fill color, or 0 if not indexed (XSSF only)
      */
     short getFillForegroundColor();
-    
+
     /**
      * Gets the color object representing the current
      *  foreground fill, resolving indexes using
      *  the supplied workbook.
      * This will work for both indexed and rgb
-     *  defined colors. 
+     *  defined colors.
      */
     Color getFillForegroundColorColor();
 
     /**
      * Clones all the style information from another
-     *  CellStyle, onto this one. This 
+     *  CellStyle, onto this one. This
      *  CellStyle will then have all the same
      *  properties as the source, but the two may
      *  be edited independently.
-     * Any stylings on this CellStyle will be lost! 
-     *  
+     * Any stylings on this CellStyle will be lost!
+     *
      * The source CellStyle could be from another
      *  Workbook if you like. This allows you to
      *  copy styles from one Workbook to another.
@@ -387,7 +375,7 @@ public interface CellStyle {
      *  XSSFCellStyle)
      */
     void cloneStyleFrom(CellStyle source);
-    
+
     /**
      * Controls if the Cell should be auto-sized
      *  to shrink to fit if the text is too long
@@ -420,7 +408,7 @@ public interface CellStyle {
      * should call this method whenever a property is changed.
      * The API is public just in case users find that the CellStyle implementations
      * are not calling this method when they should.
-     * 
+     *
      * @since POI 5.5.0
      */
     void invalidateCachedProperties();

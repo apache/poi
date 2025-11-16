@@ -86,14 +86,6 @@ public final class HSSFFont implements Font {
     @Override
     public int getIndex() { return index; }
 
-    @Deprecated
-    @Removal(version = "6.0.0")
-    @Override
-    public int getIndexAsInt()
-    {
-        return index;
-    }
-
     /**
      * set the font height in unit's of 1/20th of a point.  Maybe you might want to
      * use the setFontHeightInPoints which matches to the familiar 10, 12, 14 etc..

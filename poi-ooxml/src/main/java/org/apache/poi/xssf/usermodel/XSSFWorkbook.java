@@ -1172,13 +1172,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         return stylesSource.getFonts().size();
     }
 
-    @Override
-    @Deprecated
-    @Removal(version = "6.0.0")
-    public int getNumberOfFontsAsInt() {
-        return getNumberOfFonts();
-    }
-
     /**
      * Get the number of named ranges in the this workbook
      *

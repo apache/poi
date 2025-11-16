@@ -110,16 +110,6 @@ public final class DocumentAtom extends RecordAtom {
      */
     public SlideSize getSlideSizeType() { return SlideSize.values()[slideSizeType]; }
 
-    /**
-     * The Size of the Document's slides, {@link DocumentAtom.SlideSize} for values.
-     * @deprecated replaced by {@link #getSlideSizeType()}
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    public SlideSize getSlideSizeTypeEnum() {
-        return SlideSize.values()[slideSizeType];
-    }
-
     public void setSlideSize(SlideSize size) {
         slideSizeType = size.ordinal();
     }
@@ -247,7 +237,7 @@ public final class DocumentAtom extends RecordAtom {
         m.put("notesMasterPersist", this::getNotesMasterPersist);
         m.put("handoutMasterPersist", this::getHandoutMasterPersist);
         m.put("firstSlideNum", this::getFirstSlideNum);
-        m.put("slideSize", this::getSlideSizeTypeEnum);
+        m.put("slideSize", this::getSlideSizeType);
         m.put("saveWithFonts", this::getSaveWithFonts);
         m.put("omitTitlePlace", this::getOmitTitlePlace);
         m.put("rightToLeft", this::getRightToLeft);

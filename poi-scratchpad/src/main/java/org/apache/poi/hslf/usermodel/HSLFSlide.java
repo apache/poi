@@ -489,26 +489,6 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     }
 
     @Override
-    public boolean getDisplayPlaceholder(final Placeholder placeholder) {
-        final HeadersFooters hf = getHeadersFooters();
-        final SlideLayoutType slt = getSlideRecord().getSlideAtom().getSSlideLayoutAtom().getGeometryType();
-        final boolean isTitle =
-            (slt == SlideLayoutType.TITLE_SLIDE || slt == SlideLayoutType.TITLE_ONLY || slt == SlideLayoutType.MASTER_TITLE);
-        switch (placeholder) {
-        case DATETIME:
-            return (hf.isDateTimeVisible() && (hf.isTodayDateVisible() || (hf.isUserDateVisible() && hf.getUserDateAtom() != null))) && !isTitle;
-        case SLIDE_NUMBER:
-            return hf.isSlideNumberVisible() && !isTitle;
-        case HEADER:
-            return hf.isHeaderVisible() && hf.getHeaderAtom() != null && !isTitle;
-        case FOOTER:
-            return hf.isFooterVisible() && hf.getFooterAtom() != null && !isTitle;
-        default:
-            return false;
-        }
-    }
-
-    @Override
     public boolean getDisplayPlaceholder(final SimpleShape<?,?> placeholderRef) {
         Placeholder placeholder = placeholderRef.getPlaceholder();
         if (placeholder == null) {

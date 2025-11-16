@@ -53,25 +53,6 @@ public interface Slide<
      * whereas in HSLF they are activated via a HeadersFooter configuration.
      * This method is used to generalize that handling.
      *
-     * @param placeholder the placeholder type
-     * @return {@code true} if the placeholder should be displayed/rendered
-     * @since POI 3.16-beta2
-     *
-     * @deprecated in POI 5.2.0 - use {@link #getDisplayPlaceholder(SimpleShape)}
-     *
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    default boolean getDisplayPlaceholder(Placeholder placeholder) {
-        return false;
-    }
-
-
-    /**
-     * In XSLF, slidenumber and date shapes aren't marked as placeholders
-     * whereas in HSLF they are activated via a HeadersFooter configuration.
-     * This method is used to generalize that handling.
-     *
      * @param placeholderRefShape the shape which references to the placeholder
      * @return {@code true} if the placeholder should be displayed/rendered
      * @since POI 5.2.0
