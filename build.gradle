@@ -860,8 +860,6 @@ var srcDep = [
     ':poi-ooxml-lite-agent:compileJava9',
     ':poi-ooxml:compileJava9',
     ':poi-ooxml:compileTest9',
-    ':poi-scratchpad:compileJava9',
-    ':poi-scratchpad:compileTest9',
     ':poi-excelant:compileJava9',
     ':poi-excelant:compileTest9',
     ':poi-examples:compileJava9',
