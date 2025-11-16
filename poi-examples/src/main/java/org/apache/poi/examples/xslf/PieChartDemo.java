@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +61,7 @@ public final class PieChartDemo {
         }
 
         try (FileInputStream argIS = new FileInputStream(args[0]);
-             BufferedReader modelReader = Files.newBufferedReader(Paths.get(args[1]), StandardCharsets.UTF_8)) {
+             BufferedReader modelReader = Files.newBufferedReader(Path.of(args[1]), StandardCharsets.UTF_8)) {
             String chartTitle = modelReader.readLine();  // first line is chart title
 
             try (XMLSlideShow pptx = new XMLSlideShow(argIS)) {

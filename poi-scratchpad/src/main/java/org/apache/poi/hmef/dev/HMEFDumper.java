@@ -20,7 +20,7 @@ package org.apache.poi.hmef.dev;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.poi.hmef.HMEFMessage;
@@ -68,7 +68,7 @@ public final class HMEFDumper {
             continue;
          }
 
-          try (InputStream stream = Files.newInputStream(Paths.get(arg))) {
+          try (InputStream stream = Files.newInputStream(Path.of(arg))) {
               HMEFDumper dumper = new HMEFDumper(stream);
               dumper.setTruncatePropertyData(truncatePropData);
               dumper.dump();

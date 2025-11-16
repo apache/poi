@@ -138,7 +138,7 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
     }
 
     private Element setElementTextContent(String localName, NamespaceImpl namespace, Optional<?> property, String propertyValue) {
-        if (!property.isPresent())
+        if (property.isEmpty())
             return null;
 
         Element root = xmlDoc.getDocumentElement();

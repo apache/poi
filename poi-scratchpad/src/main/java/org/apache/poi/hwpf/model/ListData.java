@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.poi.util.Internal;
 
@@ -117,7 +118,7 @@ public final class ListData
 
     int resetListID()
     {
-        _lstf.setLsid( (int) ( Math.random() * System.currentTimeMillis() ) );
+        _lstf.setLsid( (int) ( ThreadLocalRandom.current().nextDouble() * System.currentTimeMillis() ) );
         return _lstf.getLsid();
     }
 

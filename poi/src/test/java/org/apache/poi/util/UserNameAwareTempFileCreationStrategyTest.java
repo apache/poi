@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static org.apache.poi.util.DefaultTempFileCreationStrategy.POIFILES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +32,7 @@ class UserNameAwareTempFileCreationStrategyTest {
         UserNameAwareTempFileCreationStrategy strategy = new UserNameAwareTempFileCreationStrategy();
         String tmpDir = System.getProperty(TempFile.JAVA_IO_TMPDIR);
         String username = System.getProperty("user.name");
-        String expectedPath = Paths.get(tmpDir, POIFILES + "_" + username).toString();
+        String expectedPath = Path.of(tmpDir, POIFILES + "_" + username).toString();
 
         Path actualPath = strategy.getPOIFilesDirectoryPath();
 

@@ -310,7 +310,7 @@ class TestXSSFBReader {
         ordered.verify(handler).startRow(7);
         ordered.verify(handler).stringCell(eq("A8"), eq("longer int"), isNull());
         ordered.verify(handler).doubleCell(eq("B8"), eq(1.23456789012345E15d), isNull(), any(ExcelNumberFormat.class));
-        ordered.verify(handler).stringCell(eq("C8"), isNull(), notNull(XSSFComment.class));
+        ordered.verify(handler).stringCell(eq("C8"), isNull(), notNull());
         ordered.verify(handler).endRow(7);
 
         ordered.verify(handler).startRow(8);
@@ -325,7 +325,7 @@ class TestXSSFBReader {
 
         ordered.verify(handler).startRow(10);
         ordered.verify(handler).stringCell(eq("A11"), eq("comment"), isNull());
-        ordered.verify(handler).stringCell(eq("B11"), eq("contents"), notNull(XSSFComment.class));
+        ordered.verify(handler).stringCell(eq("B11"), eq("contents"), notNull());
         ordered.verify(handler).endRow(10);
 
         ordered.verify(handler).startRow(11);
@@ -372,38 +372,38 @@ class TestXSSFBReader {
         ordered.verify(handler).endRow(20);
 
         ordered.verify(handler).startRow(22);
-        ordered.verify(handler).stringCell(eq("A23"), isNull(), notNull(XSSFComment.class));
+        ordered.verify(handler).stringCell(eq("A23"), isNull(), notNull());
         ordered.verify(handler).endRow(22);
 
         ordered.verify(handler).startRow(23);
-        ordered.verify(handler).stringCell(eq("C24"), isNull(), notNull(XSSFComment.class));
+        ordered.verify(handler).stringCell(eq("C24"), isNull(), notNull());
         ordered.verify(handler).endRow(23);
 
         ordered.verify(handler).startRow(27);
-        ordered.verify(handler).stringCell(eq("B28"), isNull(), notNull(XSSFComment.class));
+        ordered.verify(handler).stringCell(eq("B28"), isNull(), notNull());
         ordered.verify(handler).endRow(27);
 
         ordered.verify(handler).startRow(29);
         ordered.verify(handler).stringCell(eq("B30"), eq("the"), isNull());
-        ordered.verify(handler).stringCell(eq("C30"), isNull(), notNull(XSSFComment.class));
+        ordered.verify(handler).stringCell(eq("C30"), isNull(), notNull());
         ordered.verify(handler).endRow(29);
 
         ordered.verify(handler).startRow(32);
         ordered.verify(handler).stringCell(eq("B33"), eq("the"), isNull());
-        ordered.verify(handler).stringCell(eq("C33"), isNull(), notNull(XSSFComment.class));
+        ordered.verify(handler).stringCell(eq("C33"), isNull(), notNull());
         ordered.verify(handler).stringCell(eq("D33"), eq("quick"), isNull());
         ordered.verify(handler).endRow(32);
 
         ordered.verify(handler).startRow(34);
-        ordered.verify(handler).stringCell(eq("B35"), eq("comment6"), notNull(XSSFComment.class));
+        ordered.verify(handler).stringCell(eq("B35"), eq("comment6"), notNull());
         ordered.verify(handler).endRow(34);
 
         ordered.verify(handler).startRow(64);
-        ordered.verify(handler).stringCell(eq("I65"), isNull(), notNull(XSSFComment.class));
+        ordered.verify(handler).stringCell(eq("I65"), isNull(), notNull());
         ordered.verify(handler).endRow(64);
 
         ordered.verify(handler).startRow(65);
-        ordered.verify(handler).stringCell(eq("I66"), isNull(), notNull(XSSFComment.class));
+        ordered.verify(handler).stringCell(eq("I66"), isNull(), notNull());
         ordered.verify(handler).endRow(65);
 
         ordered.verify(handler).headerFooter(eq("OddLeftHeader OddCenterHeader OddRightHeader"), eq(true), eq("header"));

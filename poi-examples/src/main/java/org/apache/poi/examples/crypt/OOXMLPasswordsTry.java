@@ -21,7 +21,7 @@ package org.apache.poi.examples.crypt;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -72,7 +72,7 @@ public final class OOXMLPasswordsTry {
             };
 
             // Try each password in turn, reporting progress
-            try (Stream<String> lines = Files.lines(Paths.get(words))) {
+            try (Stream<String> lines = Files.lines(Path.of(words))) {
                 Optional<String> found = lines.filter(counter).filter(w -> isValid(d, w)).findFirst();
                 System.out.println(found.map(s -> "Password found: " + s).orElse("Error - No password matched"));
             }

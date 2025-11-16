@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Iterator;
 
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -66,7 +66,7 @@ public final class POIFSDump {
             }
 
             System.out.println("Dumping " + filename);
-            try (InputStream is = Files.newInputStream(Paths.get(filename));
+            try (InputStream is = Files.newInputStream(Path.of(filename));
                  POIFSFileSystem fs = new POIFSFileSystem(is)) {
                 DirectoryEntry root = fs.getRoot();
                 String filenameWithoutPath = new File(filename).getName();

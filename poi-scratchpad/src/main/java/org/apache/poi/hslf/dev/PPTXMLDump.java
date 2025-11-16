@@ -26,7 +26,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -216,7 +216,7 @@ public final class PPTXMLDump {
                 System.out.println("Dumping " + arg);
 
                 if (outFile) {
-                    OutputStream fos = Files.newOutputStream(Paths.get(ppt.getName() + ".xml"));
+                    OutputStream fos = Files.newOutputStream(Path.of(ppt.getName() + ".xml"));
                     OutputStreamWriter out = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
                     dump.dump(out);
                     out.close();

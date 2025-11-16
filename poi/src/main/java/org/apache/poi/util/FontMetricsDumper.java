@@ -25,7 +25,7 @@ import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Properties;
 
 @SuppressWarnings("deprecation")
@@ -67,7 +67,7 @@ public class FontMetricsDumper {
             props.setProperty("font." + fontName + ".widths", widths.toString());
         }
 
-        try (OutputStream fileOut = Files.newOutputStream(Paths.get("font_metrics.properties"))) {
+        try (OutputStream fileOut = Files.newOutputStream(Path.of("font_metrics.properties"))) {
             props.store(fileOut, "Font Metrics");
         }
     }

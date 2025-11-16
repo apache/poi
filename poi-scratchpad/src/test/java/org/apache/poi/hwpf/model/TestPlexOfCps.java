@@ -20,6 +20,8 @@ package org.apache.poi.hwpf.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
+
+import java.util.concurrent.ThreadLocalRandom;
 import org.apache.poi.util.LittleEndian;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +38,7 @@ public final class TestPlexOfCps {
         int last = 0;
         for (int x = 0; x < 110; x++) {
             byte[] intHolder = new byte[4];
-            int span = (int) (110.0f * Math.random());
+            int span = (int) (110.0f * ThreadLocalRandom.current().nextDouble());
             LittleEndian.putInt(intHolder, 0, span);
             _plexOfCps.addProperty(new GenericPropertyNode(last, last + span, intHolder));
             last += span;

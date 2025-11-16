@@ -19,7 +19,6 @@ package org.apache.poi.util;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Username-aware subclass of {@link DefaultTempFileCreationStrategy}
@@ -45,7 +44,7 @@ public class UserNameAwareTempFileCreationStrategy extends DefaultTempFileCreati
         if (null != username && !username.isEmpty()) {
             poifilesDir += "_" + username;
         }
-        return Paths.get(tmpDir, poifilesDir);
+        return Path.of(tmpDir, poifilesDir);
     }
 
 }
