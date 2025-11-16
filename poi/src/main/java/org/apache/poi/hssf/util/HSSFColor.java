@@ -170,6 +170,7 @@ public class HSSFColor implements Color {
      * @param color color to extract RGB from
      * @deprecated use {@link #HSSFColor(int, int, int)} instead
      */
+    @Deprecated
     @Removal(version = "7.0.0")
     public HSSFColor(int index, int index2, java.awt.Color color) {
         this(index, index2, color.getRGB());
