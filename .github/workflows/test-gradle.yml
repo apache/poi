@@ -5,9 +5,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ trunk ]
+    branches: [ trunk, 5.5.x ]
   pull_request:
-    branches: [ trunk ]
+    branches: [ trunk, 5.5.x ]
 
 permissions: {}
 
