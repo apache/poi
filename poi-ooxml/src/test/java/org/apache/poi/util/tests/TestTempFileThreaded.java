@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -83,7 +83,7 @@ class TestTempFileThreaded {
         }
 
         TempFile.setTempFileCreationStrategy(createTempFileCreationStrategy(
-                Paths.get(tmpDir, POIFILES, "TestTempFileThreaded").toFile()));
+                Path.of(tmpDir, POIFILES, "TestTempFileThreaded").toFile()));
     }
 
     @BeforeEach

@@ -33,11 +33,9 @@ import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.image.ImageHeaderPICT;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 /**
@@ -45,17 +43,6 @@ import org.apache.poi.util.Units;
  */
 public final class PICT extends Metafile {
     private static final Logger LOG = PoiLogManager.getLogger(PICT.class);
-
-    /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], org.apache.poi.sl.usermodel.PictureData.PictureType)} or one of its overloads to create new
-     *             PICT. This API led to detached PICT instances (See Bugzilla
-     *             46122) and prevented adding additional functionality.
-     */
-    @Deprecated
-    @Removal(version = "5.3")
-    public PICT() {
-        this(new EscherContainerRecord(), new EscherBSERecord());
-    }
 
     /**
      * Creates a new instance.

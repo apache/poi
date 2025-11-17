@@ -40,7 +40,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.Internal;
-
+import org.apache.poi.util.Removal;
 
 /**
  * Helper methods for when working with Usermodel sheets
@@ -115,6 +115,8 @@ public class SheetUtil {
      * @return  the width in pixels or -1 if cell is empty
      * @deprecated since POI 5.2.5, it is better to pass defaultCharWidth as a float
      */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public static double getCellWidth(Cell cell, int defaultCharWidth, DataFormatter formatter, boolean useMergedCells) {
         return getCellWidth(cell, (float) defaultCharWidth, formatter, useMergedCells);
     }
@@ -150,6 +152,8 @@ public class SheetUtil {
      * @return  the width in pixels or -1 if cell is empty
      * @deprecated since POI 5.2.5, it is better to pass defaultCharWidth as a float
      */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public static double getCellWidth(Cell cell, int defaultCharWidth, DataFormatter formatter, boolean useMergedCells,
                                       List<CellRangeAddress> mergedRegions) {
         return getCellWidth(cell, (float) defaultCharWidth, formatter, useMergedCells, mergedRegions);
@@ -295,7 +299,7 @@ public class SheetUtil {
             TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
             return layout.getAdvance();
         }
-        
+
         /**
          * Copy text attributes from the supplied Font to Java2D AttributedString
          */
@@ -313,7 +317,7 @@ public class SheetUtil {
             TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
             return layout.getBounds().getWidth() > 0;
         }
-        
+
     }
 
     /**
@@ -365,6 +369,8 @@ public class SheetUtil {
      * @deprecated since POI 5.2.5, it is recommended to switch to {@link #getDefaultCharWidthAsFloat(Workbook)}.
      */
     @Internal
+    @Deprecated
+    @Removal(version = "7.0.0")
     public static int getDefaultCharWidth(final Workbook wb) {
         return Math.round(getDefaultCharWidthAsFloat(wb));
     }

@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -76,7 +77,7 @@ public final class TestXSSFSheetRowGrouping {
     }
 
     private boolean isCollapsed() {
-        return Math.random() > 0.5d;
+        return ThreadLocalRandom.current().nextDouble() > 0.5d;
     }
 
     private void writeToFile(Workbook p_wb) {

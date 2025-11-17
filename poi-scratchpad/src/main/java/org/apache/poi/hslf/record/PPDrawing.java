@@ -143,7 +143,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 
     private static Stream<EscherTextboxWrapper> getTextboxHelper(EscherContainerRecord spContainer) {
         Optional<EscherTextboxRecord> oTB = firstEscherRecord(spContainer, EscherRecordTypes.CLIENT_TEXTBOX);
-        if (!oTB.isPresent()) {
+        if (oTB.isEmpty()) {
             return Stream.empty();
         }
 
@@ -309,9 +309,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
         return Stream.of(dgContainer).
                     flatMap(findEscherContainer(EscherRecordTypes.SPGR_CONTAINER)).
                     flatMap(findEscherContainer(EscherRecordTypes.SP_CONTAINER)).
-                    map(PPDrawing::findInSpContainer).
-                    filter(Optional::isPresent).
-                    map(Optional::get).
+                    map(PPDrawing::findInSpContainer).flatMap(Optional::stream).
                     toArray(StyleTextProp9Atom[]::new);
     }
 

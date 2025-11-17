@@ -221,20 +221,6 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     }
 
     /**
-     * gets the index of the font for this style
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(int)
-     * @deprecated use {@link #getFontIndex()} instead
-     * @since 4.0.0
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    @Override
-    public int getFontIndexAsInt()
-    {
-        return _format.getFontIndex();
-    }
-
-    /**
      * gets the font for this style
      * @param parentWorkbook The HSSFWorkbook that this style belongs to
      * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#getFontIndex()

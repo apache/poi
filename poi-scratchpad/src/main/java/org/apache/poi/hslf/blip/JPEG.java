@@ -20,9 +20,7 @@ package org.apache.poi.hslf.blip;
 
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 
 /**
  * Represents a JPEG picture data in a PPT file
@@ -32,17 +30,6 @@ public final class JPEG extends Bitmap {
     public enum ColorSpace { rgb, cymk }
 
     private ColorSpace colorSpace = ColorSpace.rgb;
-
-    /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], org.apache.poi.sl.usermodel.PictureData.PictureType)} or one of its overloads to create new
-     *             {@link JPEG}. This API led to detached {@link JPEG} instances (See Bugzilla
-     *             46122) and prevented adding additional functionality.
-     */
-    @Deprecated
-    @Removal(version = "5.3")
-    public JPEG() {
-        this(new EscherContainerRecord(), new EscherBSERecord());
-    }
 
     /**
      * Creates a new instance.

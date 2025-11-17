@@ -1252,13 +1252,6 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     @Override
-    @Deprecated
-    @Removal(version="6.0.0")
-    public int getNumberOfFontsAsInt() {
-        return getNumberOfFonts();
-    }
-
-    @Override
     public HSSFFont getFontAt(int idx) {
         if (fonts == null) {
             fonts = new HashMap<>();

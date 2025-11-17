@@ -15,9 +15,16 @@ def xercesLib = './xercesImpl-2.6.1.jar'
 
 def poijobs = [
         [ name: 'POI-DSL-1.8',
+          jdk: '1.8',
           trigger: 'H */12 * * *',
           jenkinsLite: true,
           disabled: true  // JDK 8 is no longer supported by POI 6
+        ],
+        [ name: 'POI-DSL-1.8-branch-5.5.x',
+          jdk: '1.8',
+          branch: '5.5.x',
+          trigger: 'H */12 * * *',
+          jenkinsLite: true,
         ],
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
         ],
@@ -108,6 +115,7 @@ def gitBase = 'https://github.com/apache/poi.git'
 def xmlbeansGitBase = 'https://github.com/apache/xmlbeans.git'
 
 def defaultJdk = '1.11'
+def defaultBranch = 'trunk'
 def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'ant_1.10_latest'
@@ -124,7 +132,7 @@ def jdkMapping = [
         '1.24': [ jenkinsJdk: 'jdk_24_latest', jdkVersion: 24, jdkVendor: '' ],
         '1.25': [ jenkinsJdk: 'jdk_25_latest', jdkVersion: 25, jdkVendor: '' ],
         // one of the few IBM JDKs that is still supported on ci-builds.apache.org
-        'IBMJDK': [ jenkinsJdk: 'ibm_semuru_21.0.2_13', jdkVersion: 21, jdkVendor: 'ibm' ]
+        'IBMJDK': [ jenkinsJdk: 'ibm_semeru_21.0.2_13', jdkVersion: 21, jdkVendor: 'ibm' ]
 ]
 
 static def shellEx(def context, String cmd, def poijob) {
@@ -227,6 +235,7 @@ poijobs.each { poijob ->
     def email = poijob.email ?: defaultEmail
     def slaves = poijob.slaves ?: defaultSlaves + (poijob.slaveAdd ?: '')
     def antRT = poijob.windows ? defaultAntWindows : defaultAnt
+    def checkoutBranch = poijob.branch ?: defaultBranch
 
     job('POI/' + poijob.name) {
         if (poijob.disabled) {
@@ -275,7 +284,7 @@ poijobs.each { poijob ->
                 remote {
                     url(gitBase)
                 }
-                branch('*/trunk')
+                branch("*/${checkoutBranch}")
             }
         }
         checkoutRetryCount(3)
@@ -593,7 +602,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_24_latest',
                 'jdk_25_latest',
                 'jdk_26_latest',
-                'ibm_semuru_21.0.2_13'
+                'ibm_semeru_21.0.2_13'
         )
         // Note H50 is reserved according to its node-description
         label('Nodes','builds22','builds23','builds24','builds25','builds26','builds27','builds28','builds29','builds30','builds31','builds32','builds33','builds34','builds35','builds36','builds37','builds38','builds39','builds40','builds50','builds56','builds57','builds58','builds59','builds60',

@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -130,7 +129,7 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
 
     protected Path getPOIFilesDirectoryPath() throws IOException {
         if (initDir == null) {
-            return Paths.get(getJavaIoTmpDir(), POIFILES);
+            return Path.of(getJavaIoTmpDir(), POIFILES);
         } else {
             return initDir.toPath();
         }

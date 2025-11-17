@@ -284,7 +284,7 @@ under the License.
     <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.35" usage="main-tests"/>
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:3.0" usage="main-tests"/>
     <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.10.3" usage="main-tests"/>
-    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:4.11.0" usage="main-tests"/>
+    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:5.20.0" usage="main-tests"/>
     <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.17.5" usage="main-tests"/>
     <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.17.5" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
@@ -670,11 +670,7 @@ under the License.
             <fileset dir="${basedir}/lib/main-tests">
                 <include name="byte-buddy-*1.12*.jar"/>
                 <include name="mockito-core-3*.jar"/>
-                <include name="mockito-core-4.0*.jar"/>
-                <include name="mockito-core-4.2*.jar"/>
-                <include name="mockito-core-4.5*.jar"/>
-                <include name="mockito-core-4.6*.jar"/>
-                <include name="mockito-core-4.8*.jar"/>
+                <include name="mockito-core-4*.jar"/>
                 <include name="hamcrest-core*"/>
                 <include name="junit-4*.jar"/>
                 <include name="*slf4j*.jar"/>
@@ -987,7 +983,7 @@ under the License.
             </classpath>
         </javac>
 
-        <javac release="9"
+        <javac release="11"
                srcdir="${basedir}/poi-ooxml-full/src/main/java9"
                destdir="${basedir}/poi-ooxml-full/src/main/java9"
                includeantruntime="false"
@@ -1087,7 +1083,7 @@ under the License.
             <echo message="Building java9+ classes for @{module}"/>
 
             <!-- compile jigsaw files to sources, so we don't forget to update/provide them for Java 8 builds -->
-            <javac release="9"
+            <javac release="11"
                    srcdir="${basedir}/@{module}/src/main/java9"
                    destdir="${basedir}/@{module}/src/main/java9"
                    includeantruntime="false"
@@ -1126,7 +1122,7 @@ under the License.
             </jar>
 
             <!-- compile the tests -->
-            <javac release="8"
+            <javac release="11"
                    target="${jdk.version.class}"
                    source="${jdk.version.source}"
                    destdir="@{test-classes}"
@@ -1148,7 +1144,7 @@ under the License.
                 <path location="@{test-classes}"/>
             </pathconvert>
 
-            <javac release="9"
+            <javac release="11"
                    srcdir="${basedir}/@{module}/src/test/java9"
                    destdir="${basedir}/@{module}/src/test/java9"
                    includeantruntime="false"
@@ -1276,7 +1272,7 @@ under the License.
 
         <!-- create ooxml-lite-agent jar -->
         <mkdir dir="${ooxml.lite.output.dir}"/>
-        <javac release="8"
+        <javac release="11"
                srcdir="${basedir}/poi-ooxml-lite-agent/src/main/java"
                destdir="${ooxml.lite.output.dir}"
                includeantruntime="false"
@@ -1287,7 +1283,7 @@ under the License.
             </classpath>
         </javac>
 
-        <javac release="9"
+        <javac release="11"
                srcdir="${basedir}/poi-ooxml-lite-agent/src/main/java9"
                destdir="${basedir}/poi-ooxml-lite-agent/src/main/java9"
                includeantruntime="false"
@@ -1495,7 +1491,7 @@ under the License.
     </target>
 
     <target name="compile-integration" depends="compile-scratchpad, compile-main, compile-ooxml, compile-examples">
-        <javac release="8"
+        <javac release="11"
                target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${integration.output.test.dir}"
@@ -1522,7 +1518,7 @@ under the License.
 
         <mkdir dir="${integration.output.test.dir}/META-INF/versions/9"/>
 
-        <javac release="9"
+        <javac release="11"
                srcdir="${basedir}/poi-integration/src/test/java9"
                destdir="${integration.output.test.dir}/META-INF/versions/9"
                includeantruntime="false"
@@ -1896,7 +1892,7 @@ under the License.
 
         <echo output="${basedir}/poi-ooxml-lite/src/main/java9/module-info.java">${full.schema}${lite.exports}}</echo>
 
-        <javac release="9"
+        <javac release="11"
                srcdir="${basedir}/poi-ooxml-lite/src/main/java9"
                destdir="${basedir}/poi-ooxml-lite/src/main/java9"
                includeantruntime="false"
@@ -2249,7 +2245,7 @@ under the License.
 
             <echo message="Building maven-jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8} and src: @{src}"/>
 
-            <javac release="9"
+            <javac release="11"
                    srcdir="${basedir}/@{module}/src/main/java9"
                    destdir="@{src}/META-INF/versions/9"
                    includeantruntime="false"
@@ -2576,29 +2572,30 @@ under the License.
 
         <!-- findbugs successor, spotbugs ... need to use the dependencies used in the spotbugs release. -->
         <!-- compare with the entries found in the MANIFEST.MF of spotbugs.jar -->
-        <dependency prefix="spotbugs" artifact="com.github.spotbugs:spotbugs:4.8.6" usage="${spotbugs.lib}" target="spotbugs.jar"/>
-        <dependency prefix="spotbugs-ant" artifact="com.github.spotbugs:spotbugs-ant:4.8.6" usage="${spotbugs.lib}" target="spotbugs-ant.jar"/>
-        <dependency prefix="spotbugs-anno" artifact="com.github.spotbugs:spotbugs-annotations:4.8.6" usage="${spotbugs.lib}" target="spotbugs-annotations.jar"/>
-        <dependency prefix="spotbugs.asm" artifact="org.ow2.asm:asm:9.7" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.asm-analysis" artifact="org.ow2.asm:asm-analysis:9.7" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.asm-commons" artifact="org.ow2.asm:asm-commons:9.7" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.asm-tree" artifact="org.ow2.asm:asm-tree:9.7" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.asm-util" artifact="org.ow2.asm:asm-util:9.7" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs" artifact="com.github.spotbugs:spotbugs:4.9.8" usage="${spotbugs.lib}" target="spotbugs.jar"/>
+        <dependency prefix="spotbugs-ant" artifact="com.github.spotbugs:spotbugs-ant:4.9.8" usage="${spotbugs.lib}" target="spotbugs-ant.jar"/>
+        <dependency prefix="spotbugs-anno" artifact="com.github.spotbugs:spotbugs-annotations:4.9.8" usage="${spotbugs.lib}" target="spotbugs-annotations.jar"/>
+        <dependency prefix="spotbugs.asm" artifact="org.ow2.asm:asm:9.9" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-analysis" artifact="org.ow2.asm:asm-analysis:9.9" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-commons" artifact="org.ow2.asm:asm-commons:9.9" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-tree" artifact="org.ow2.asm:asm-tree:9.9" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-util" artifact="org.ow2.asm:asm-util:9.9" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.jsr305" artifact="com.google.code.findbugs:jsr305:3.0.2" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.dom4j" artifact="org.dom4j:dom4j:2.1.4" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.dom4j" artifact="org.dom4j:dom4j:2.2.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.jaxen" artifact="jaxen:jaxen:2.0.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.bcel" artifact="org.apache.bcel:bcel:6.9.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.bcel" artifact="org.apache.bcel:bcel:6.11.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.slf4j-api" artifact="org.slf4j:slf4j-api:2.0.17" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.commons-lang" artifact="org.apache.commons:commons-lang3:3.14.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.commons-text" artifact="org.apache.commons:commons-text:1.10.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.commons-lang" artifact="org.apache.commons:commons-lang3:3.19.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.commons-text" artifact="org.apache.commons:commons-text:1.14.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.commons-codec" artifact="commons-codec:commons-codec:1.15" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.commons-io" artifact="commons-io:commons-io:2.20.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.jcip-annotations" artifact="net.jcip:jcip-annotations:1.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.icu4j" artifact="com.ibm.icu:icu4j:68.2" usage="${spotbugs.lib}" target="icu4j-68.2.jar"/>
-        <dependency prefix="spotbugs.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.24.3" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.24.3" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.log4j-slf4j18-impl" artifact="org.apache.logging.log4j:log4j-slf4j2-impl:2.24.3" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.saxon" artifact="net.sf.saxon:Saxon-HE:12.4" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.25.2" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.25.2" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-slf4j18-impl" artifact="org.apache.logging.log4j:log4j-slf4j2-impl:2.25.2" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.saxon" artifact="net.sf.saxon:Saxon-HE:12.9" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.xmlresolver" artifact="org.xmlresolver:xmlresolver:5.2.2" usage="${spotbugs.lib}"/>
 
         <mkdir dir="${basedir}${spotbugs.lib}/config"/>
@@ -2613,6 +2610,7 @@ under the License.
         <downloadfile src="${spotbugs.commons-lang.url}" dest="${spotbugs.commons-lang.jar}"/>
         <downloadfile src="${spotbugs.commons-text.url}" dest="${spotbugs.commons-text.jar}"/>
         <downloadfile src="${spotbugs.commons-codec.url}" dest="${spotbugs.commons-codec.jar}"/>
+        <downloadfile src="${spotbugs.commons-io.url}" dest="${spotbugs.commons-io.jar}"/>
         <downloadfile src="${spotbugs.commons-logging.url}" dest="${spotbugs.commons-logging.jar}"/>
         <downloadfile src="${spotbugs.jcip-annotations.url}" dest="${spotbugs.jcip-annotations.jar}"/>
         <downloadfile src="${spotbugs.jsr305.url}" dest="${spotbugs.jsr305.jar}"/>

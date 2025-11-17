@@ -67,7 +67,6 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFChartSheet;
@@ -864,13 +863,6 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     public int getNumberOfFonts() {
         return _wb.getNumberOfFonts();
-    }
-
-    @Override
-    @Deprecated
-    @Removal(version = "6.0.0")
-    public int getNumberOfFontsAsInt() {
-        return getNumberOfFonts();
     }
 
     @Override

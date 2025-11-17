@@ -32,12 +32,10 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageProperties;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.Removal;
 
 /**
  * Provides handy methods to work with OOXML packages
@@ -76,50 +74,6 @@ public final class PackageHelper {
                 stream.close();
             }
         }
-    }
-
-    /**
-     * Clone the specified package.
-     *
-     * @param   pkg   the package to clone
-     * @param   file  the destination file
-     * @return  the cloned package
-     * @deprecated this method is not used internally and creates temp files that are not well handled
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    public static OPCPackage clone(OPCPackage pkg, File file) throws OpenXML4JException, IOException {
-
-        String path = file.getAbsolutePath();
-
-        try (OPCPackage dest = OPCPackage.create(path)) {
-            PackageRelationshipCollection rels = pkg.getRelationships();
-            for (PackageRelationship rel : rels) {
-                PackagePart part = pkg.getPart(rel);
-                PackagePart part_tgt;
-                if (rel.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES)) {
-                    copyProperties(pkg.getPackageProperties(), dest.getPackageProperties());
-                    continue;
-                }
-                dest.addRelationship(part.getPartName(), rel.getTargetMode(), rel.getRelationshipType());
-                part_tgt = dest.createPart(part.getPartName(), part.getContentType());
-
-                try (
-                        InputStream in = part.getInputStream();
-                        OutputStream out = part_tgt.getOutputStream()
-                ) {
-                    IOUtils.copy(in, out);
-                }
-
-                if (part.hasRelationships()) {
-                    copy(pkg, part, dest, part_tgt);
-                }
-            }
-        }
-
-        //the temp file will be deleted when JVM terminates
-        new File(path).deleteOnExit();
-        return OPCPackage.open(path);
     }
 
     /**

@@ -27,6 +27,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class NumericFunction implements Function {
 
@@ -189,7 +190,7 @@ public abstract class NumericFunction implements Function {
     public static final Function RAND = NumericFunction::evaluateRand;
 
     private static ValueEval evaluateRand(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-        return (args.length != 0) ? ErrorEval.VALUE_INVALID : new NumberEval(Math.random());
+        return (args.length != 0) ? ErrorEval.VALUE_INVALID : new NumberEval(ThreadLocalRandom.current().nextDouble());
     }
 
     public static final Function POISSON = Poisson::evaluate;

@@ -27,7 +27,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import org.apache.poi.xdgf.usermodel.XDGFPage;
 import org.apache.poi.xdgf.usermodel.XDGFShape;
@@ -92,7 +92,7 @@ public class HierarchyPrinter {
         String inFilename = args[0];
         String outDir = args[1];
 
-        try (InputStream is = Files.newInputStream(Paths.get(inFilename))) {
+        try (InputStream is = Files.newInputStream(Path.of(inFilename))) {
             XmlVisioDocument doc = new XmlVisioDocument(is);
             printHierarchy(doc, outDir);
         }

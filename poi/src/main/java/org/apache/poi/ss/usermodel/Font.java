@@ -17,9 +17,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-
-import org.apache.poi.util.Removal;
-
 public interface Font {
     // TODO: refactor and unify Font & FontFormatting in POI 5.0.0
     // TODO: refactor the constants to enums in POI 5.0.0
@@ -270,18 +267,6 @@ public interface Font {
      * @since 5.0.0 (used to return a short)
      */
     int getIndex();
-
-    /**
-     * get the index within the XSSFWorkbook (sequence within the collection of Font objects)
-     *
-     * @deprecated use {@link #getIndex()} instead
-     * @return unique index number of the underlying record this Font represents (probably you don't care
-     *  unless you're comparing which one is which)
-     * @since 4.0.0
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    int getIndexAsInt();
 
     void setBold(boolean bold);
 

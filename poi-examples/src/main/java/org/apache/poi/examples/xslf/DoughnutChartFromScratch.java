@@ -41,7 +41,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +64,7 @@ public final class DoughnutChartFromScratch {
             return;
         }
 
-        try (BufferedReader modelReader = Files.newBufferedReader(Paths.get(args[0]), StandardCharsets.UTF_8)) {
+        try (BufferedReader modelReader = Files.newBufferedReader(Path.of(args[0]), StandardCharsets.UTF_8)) {
 
             String chartTitle = modelReader.readLine();  // first line is chart title
             String seriesText = modelReader.readLine();

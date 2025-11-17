@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.apache.poi.ooxml.util.POIXMLUnits;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 
@@ -30,7 +29,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
  * TODO Share logic with {@link XWPFRun} which also uses CTRPr
  */
 public class XWPFDefaultRunStyle {
-    private CTRPr rpr;
+    private final CTRPr rpr;
 
     public XWPFDefaultRunStyle(CTRPr rpr) {
         this.rpr = rpr;
@@ -43,20 +42,6 @@ public class XWPFDefaultRunStyle {
      */
     public CTRPr getRPr() {
         return rpr;
-    }
-
-    /**
-     * Specifies the font size.
-     *
-     * @return value representing the font size (non-integer size will be rounded with half rounding up,
-     * -1 is returned if size not set)
-     * @deprecated use {@link #getFontSizeAsDouble()}
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    public int getFontSize() {
-        BigDecimal bd = getFontSizeAsBigDecimal(0);
-        return bd == null ? -1 : bd.intValue();
     }
 
     /**

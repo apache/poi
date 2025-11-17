@@ -1,4 +1,4 @@
-# https://cwiki.apache.org/confluence/display/INFRA/Git+-+.asf.yaml+features
+# https://github.com/apache/infrastructure-asfyaml/blob/main/README.md
 
 github:
   description: "Mirror of Apache POI gitbox. The Java API for Microsoft Documents."
@@ -34,6 +34,7 @@ github:
 
   protected_branches:
     trunk: {}
+    5.5.x: {}
 
 notifications:
   commits:              commits@poi.apache.org

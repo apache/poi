@@ -26,7 +26,6 @@ import org.apache.poi.ss.usermodel.FontScheme;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
@@ -349,25 +348,6 @@ public class XSSFFont implements Font {
     /**
      * set character-set to use.
      *
-     * @deprecated use {@link #setCharSet(FontCharset)} instead
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    public void setCharSet(org.apache.poi.ss.usermodel.FontCharset charSet) {
-       CTIntProperty charsetProperty;
-       if(_ctFont.sizeOfCharsetArray() == 0) {
-          charsetProperty = _ctFont.addNewCharset();
-       } else {
-          charsetProperty = _ctFont.getCharsetArray(0);
-       }
-       // We know that FontCharset only has valid entries in it,
-       //  so we can just set the int value from it
-       charsetProperty.setVal( charSet.getValue() );
-    }
-
-    /**
-     * set character-set to use.
-     *
      * @since 5.0.0
      */
     public void setCharSet(FontCharset charSet) {
@@ -656,18 +636,6 @@ public class XSSFFont implements Font {
 
     @Override
     public int getIndex() {
-        return _index;
-    }
-
-    /**
-     * @return index
-     * @deprecated use {@link #getIndex()} instead
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    @Override
-    public int getIndexAsInt()
-    {
         return _index;
     }
 

@@ -30,7 +30,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 /**
  * Escher array properties are the most weird construction ever invented
@@ -70,7 +69,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;
     }
-    
+
     /**
      * Create an instance of an escher array property.
      * This constructor can be used to create emptyComplexParts with a complexSize = 0.
@@ -86,25 +85,6 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
         // if a part is initial empty, don't allow it to contain something again
         super(id, complexSize);
         emptyComplexPart = (complexSize == 0);
-    }
-
-    /**
-     * Create an instance of an escher array property.
-     * This constructor defaults to a 6 bytes header if the complexData is null or byte[0].
-     *
-     * @param propertyNumber the property number part of the property id
-     * @param isBlipId {@code true}, if it references a blip
-     * @param complexData the data
-     *
-     * @deprecated use {@link #EscherArrayProperty(EscherPropertyTypes, boolean, int)} and {@link #setComplexData(byte[])}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public EscherArrayProperty(short propertyNumber, boolean isBlipId, byte[] complexData) {
-        // this is called by user code, if the complexData is empty/null, allocate a space for a valid header
-        // be aware, that there are complex data areas with less than 6 bytes
-        this((short)(propertyNumber | (isBlipId ? IS_BLIP : 0)), safeSize(complexData == null ? 0 : complexData.length));
-        setComplexData(complexData);
     }
 
     /**

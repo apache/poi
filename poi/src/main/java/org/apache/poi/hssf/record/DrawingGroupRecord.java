@@ -25,7 +25,6 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.NullEscherSerializationListener;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 /**
  * Specifies a group of drawing objects.
@@ -93,20 +92,6 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
         }
 
         return writeData( offset, data, buffer );
-    }
-
-    /**
-     * Process the bytes into escher records.
-     * (Not done by default in case we break things,
-     *  unless you set the "poi.deserialize.escher"
-     *  system property)
-     *
-     * @deprecated Call {@link #decode()} instead.
-     */
-    @Removal(version = "5.3")
-    @Deprecated
-    public void processChildRecords() {
-        decode();
     }
 
     public int getRecordSize() {

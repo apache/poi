@@ -40,7 +40,6 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.CodepointsUtil;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
@@ -89,11 +88,8 @@ public class SheetDataWriter implements Closeable {
      * it and specify a different temp directory or filename or suffix, e.g. <code>.gz</code>
      *
      * @return temp file to write sheet data
-     * @deprecated use {@link TempFile#createTempFile(String, String)} directly
      */
-    @Removal(version = "6.0.0")
-    //make this protected or private in POI 6.0.0 - no need for this to be public
-    public File createTempFile() throws IOException {
+    protected File createTempFile() throws IOException {
         return TempFile.createTempFile("poi-sxssf-sheet", ".xml");
     }
 
@@ -101,11 +97,9 @@ public class SheetDataWriter implements Closeable {
      * Create a writer for the sheet data.
      *
      * @param  fd the file to write to
-     * @deprecated this method is due to be made non-public, probably protected
      */
-    @Removal(version = "6.0.0")
     //make this protected or private in POI 6.0.0 - no need for this to be public
-    public Writer createWriter(File fd) throws IOException {
+    protected Writer createWriter(File fd) throws IOException {
         FileOutputStream fos = new FileOutputStream(fd);
         OutputStream decorated;
         try {

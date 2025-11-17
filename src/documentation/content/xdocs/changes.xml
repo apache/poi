@@ -70,6 +70,12 @@
         </p>
     </section>
 
+    <release version="5.5.1" date="2025-12-??">
+        <actions>
+          <action type="fix" fixes-bug="github-932" context="POI_Overall">Add back module-info classes that were omitted from the 5.5.0 jars by accident</action>
+        </actions>
+    </release>
+
     <release version="5.5.0" date="2025-11-15">
         <summary>
             <summary-item>Upgrade batik dependency to 1.19</summary-item>

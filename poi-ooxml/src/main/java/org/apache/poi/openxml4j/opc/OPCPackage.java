@@ -31,7 +31,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -711,7 +711,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         }
         String name = path.substring(path.lastIndexOf(File.separatorChar) + 1);
 
-        try (InputStream is = Files.newInputStream(Paths.get(path))) {
+        try (InputStream is = Files.newInputStream(Path.of(path))) {
             addThumbnail(name, is);
         }
     }

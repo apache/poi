@@ -30,8 +30,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -47,15 +45,12 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 /**
  * A class that represents image data contained in a slide show.
  */
 public abstract class HSLFPictureData implements PictureData, GenericRecord {
-
-    private static final Logger LOGGER = PoiLogManager.getLogger(HSLFPictureData.class);
 
     /**
      * Size of the image checksum calculated using MD5 algorithm.
@@ -109,19 +104,6 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
     final EscherBSERecord bse;
 
     /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], org.apache.poi.sl.usermodel.PictureData.PictureType)} or one of its overloads to create new
-     *             {@link HSLFPictureData}. This API led to detached {@link HSLFPictureData} instances (See Bugzilla
-     *             46122) and prevented adding additional functionality.
-     */
-    @Deprecated
-    @Removal(version = "5.3")
-    public HSLFPictureData() {
-        this(new EscherContainerRecord(), new EscherBSERecord());
-        LOGGER.atWarn().log("The no-arg constructor is deprecated. Some functionality such as updating pictures won't " +
-                "work.");
-    }
-
-    /**
      * Creates a new instance.
      *
      * @param bStore {@link EscherRecordTypes#BSTORE_CONTAINER BStore} record tracking all pictures. Should be attached
@@ -172,43 +154,12 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
     }
 
     /**
-     * Sets the formatted data for this picture.
-     * <p>
-     * Primarily intended for internal POI use. Use {@link #setData(byte[])} to change the picture represented by this
-     * object.
-     *
-     * @param data Picture data formatted for the HSLF format. Excludes the {@link #PREAMBLE_SIZE preamble}.
-     * @see #setData(byte[])
-     * @see #formatImageForSlideshow(byte[])
-     * @deprecated Set image data using {@link #setData(byte[])}.
-     */
-    @Deprecated
-    @Removal(version = "5.3")
-    public void setRawData(byte[] data){
-        formattedData = (data == null) ? null : data.clone();
-    }
-
-    /**
      * File offset in the 'Pictures' stream
      *
      * @return offset in the 'Pictures' stream
      */
     public int getOffset(){
         return bse.getOffset();
-    }
-
-    /**
-     * Set offset of this picture in the 'Pictures' stream.
-     * We need to set it when a new picture is created.
-     *
-     * @param offset in the 'Pictures' stream
-     * @deprecated This function was only intended for POI internal use. If you have a use case you're concerned about,
-     * please open an issue in the POI issue tracker.
-     */
-    @Deprecated
-    @Removal(version = "5.3")
-    public void setOffset(int offset){
-        LOGGER.atWarn().log("HSLFPictureData#setOffset is deprecated.");
     }
 
     /**
@@ -244,29 +195,6 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
         byte[] rd = getRawData();
         LittleEndian.putInt(rd.length, out);
         out.write(rd);
-    }
-
-    /**
-     * Create an instance of {@link HSLFPictureData} by type.
-     *
-     * @param type type of picture.
-     * @return concrete instance of {@link HSLFPictureData}.
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], org.apache.poi.sl.usermodel.PictureData.PictureType)} or one of its overloads to create new
-     *             {@link HSLFPictureData}. This API led to detached {@link HSLFPictureData} instances (See Bugzilla
-     *             46122) and prevented adding additional functionality.
-     */
-    @Deprecated
-    @Removal(version = "5.3")
-     public static HSLFPictureData create(PictureType type){
-        LOGGER.atWarn().log("HSLFPictureData#create(PictureType) is deprecated. Some functionality such " +
-                "as updating pictures won't work.");
-
-        // This record code is a stub. It exists only for API compatibility.
-        EscherContainerRecord record = new EscherContainerRecord();
-        EscherBSERecord bse = new EscherBSERecord();
-        return new HSLFSlideShowImpl.PictureFactory(record, type, new byte[0], 0, 0)
-                .setRecord(bse)
-                .build();
     }
 
     /**

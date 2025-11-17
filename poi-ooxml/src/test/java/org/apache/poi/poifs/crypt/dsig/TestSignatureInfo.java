@@ -253,14 +253,7 @@ class TestSignatureInfo {
             SignatureInfo si = new SignatureInfo();
             si.setOpcPackage(pkg);
             si.setSignatureConfig(sic);
-            boolean isValid = si.verifySignature();
-
-            // We reported https://bugs.openjdk.org/browse/JDK-8320597 because of this, it will be fixed in JDK 22
-            // and maybe in newer JDK 21 patch-levels
-            assumeTrue(isValid && !"21.0.1".equals(System.getProperty("java.version")),
-                    "This fails on JDK 21.0.1, see https://bugs.openjdk.org/browse/JDK-8320597");
-
-            assertTrue(isValid,
+            assertTrue(si.verifySignature(),
                     // add some details to find out why "verifySignature()" returns false sometimes
                     "Failed for " + System.getProperty("java.version") +
                             ": Verifying signature failed, hasNext: " + si.getSignatureParts().iterator().hasNext() + ": " +
@@ -638,8 +631,6 @@ class TestSignatureInfo {
 
     @Test
     void testCertChain() throws Exception {
-        final boolean isIBM = System.getProperty("java.vendor").contains("IBM");
-
         DummyKeystore ks = new DummyKeystore(testdata.getFile("chaintest.pfx"), STORE_PASS);
         KeyCertPair certPair = ks.getKeyPair("poitest", "test");
 
@@ -664,10 +655,7 @@ class TestSignatureInfo {
                 X509Certificate signer = sp.getSigner();
                 assertNotNull(signer, "signer undefined?!");
                 List<X509Certificate> certChainRes = sp.getCertChain();
-
-                // IBM JDK is still buggy, even after fix for APAR IJ21985
-                int exp = isIBM ? 1 : 3;
-                assertEquals(exp, certChainRes.size());
+                assertEquals(3, certChainRes.size());
             }
 
         }

@@ -51,7 +51,6 @@ import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 
@@ -262,50 +261,12 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     }
 
     /**
-     * Returns  escher property by id.
-     *
-     * @return escher property or {@code null} if not found.
-     *
-     * @deprecated use {@link #getEscherProperty(EscherPropertyTypes)} instead
-     */
-     @Deprecated
-     @Removal(version = "5.0.0")
-     public static <T extends EscherProperty> T getEscherProperty(AbstractEscherOptRecord opt, int propId){
-         return (opt == null) ? null : opt.lookup(propId);
-     }
-
-    /**
      * Returns  escher property by type.
      *
      * @return escher property or {@code null} if not found.
      */
     public static <T extends EscherProperty> T getEscherProperty(AbstractEscherOptRecord opt, EscherPropertyTypes type){
         return (opt == null) ? null : opt.lookup(type);
-    }
-
-    /**
-     * Set an escher property for this shape.
-     *
-     * @param opt       The opt record to set the properties to.
-     * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
-     * @param value     value of the property. If value = -1 then the property is removed.
-     *
-     * @deprecated use {@link #setEscherProperty(AbstractEscherOptRecord, EscherPropertyTypes, int)}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public static void setEscherProperty(AbstractEscherOptRecord opt, short propId, int value){
-        List<EscherProperty> props = opt.getEscherProperties();
-        for ( Iterator<EscherProperty> iterator = props.iterator(); iterator.hasNext(); ) {
-            if (iterator.next().getPropertyNumber() == propId){
-                iterator.remove();
-                break;
-            }
-        }
-        if (value != -1) {
-            opt.addEscherProperty(new EscherSimpleProperty(propId, value));
-            opt.sortProperties();
-        }
     }
 
     /**
@@ -333,23 +294,6 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         }
     }
 
-
-
-    /**
-     * Set an simple escher property for this shape.
-     *
-     * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
-     * @param value     value of the property. If value = -1 then the property is removed.
-     *
-     * @deprecated use {@link #setEscherProperty(EscherPropertyTypes, int)}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public void setEscherProperty(short propId, int value){
-        AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, propId, value);
-    }
-
     /**
      * Set an simple escher property for this shape.
      *
@@ -368,7 +312,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      */
     public int getEscherProperty(short propId){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, propId);
+        EscherSimpleProperty prop = (opt == null) ? null : opt.lookup(propId);
         return prop == null ? 0 : prop.getPropertyValue();
     }
 
@@ -381,21 +325,6 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, propType);
         return prop == null ? 0 : prop.getPropertyValue();
-    }
-
-    /**
-     * Get the value of a simple escher property for this shape.
-     *
-     * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
-     *
-     * @deprecated use {@link #getEscherProperty(EscherPropertyTypes, int)} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public int getEscherProperty(short propId, int defaultValue){
-        AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, propId);
-        return prop == null ? defaultValue : prop.getPropertyValue();
     }
 
     /**

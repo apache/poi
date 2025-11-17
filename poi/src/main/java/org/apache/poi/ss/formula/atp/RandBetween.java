@@ -22,7 +22,10 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
+
 import org.apache.poi.ss.formula.OperationEvaluationContext;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Implementation of Excel 'Analysis ToolPak' function RANDBETWEEN()<br>
@@ -75,7 +78,7 @@ final class RandBetween implements FreeRefFunction{
             top = bottom;
         }
 
-        return new NumberEval((bottom + (long)(Math.random() * ((top - bottom) + 1))));
+        return new NumberEval((bottom + (long)(ThreadLocalRandom.current().nextDouble() * ((top - bottom) + 1))));
 
     }
 

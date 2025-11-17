@@ -26,7 +26,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -822,8 +822,8 @@ public class POIFSFileSystem extends BlockStore
             System.exit(1);
         }
 
-        try (InputStream istream = Files.newInputStream(Paths.get(args[0]))) {
-            try (OutputStream ostream = Files.newOutputStream(Paths.get(args[1]))) {
+        try (InputStream istream = Files.newInputStream(Path.of(args[0]))) {
+            try (OutputStream ostream = Files.newOutputStream(Path.of(args[1]))) {
                 try (POIFSFileSystem fs = new POIFSFileSystem(istream)) {
                     fs.writeFilesystem(ostream);
                 }

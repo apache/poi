@@ -73,14 +73,14 @@ public class POIXMLPropertiesTextExtractor implements POIXMLTextExtractor {
     }
 
     private void appendDateIfPresent(StringBuilder text, String thing, Optional<Date> value) {
-        if (!value.isPresent()) {
+        if (value.isEmpty()) {
             return;
         }
         appendIfPresent(text, thing, dateFormat.format(value.get()));
     }
 
     private void appendIfPresent(StringBuilder text, String thing, Optional<String> value) {
-        if (!value.isPresent()) {
+        if (value.isEmpty()) {
             return;
         }
         appendIfPresent(text, thing, value.get());

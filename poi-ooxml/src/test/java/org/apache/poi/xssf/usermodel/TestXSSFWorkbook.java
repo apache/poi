@@ -1420,8 +1420,8 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             ) {
                 CTExternalLink link = workbook2.getExternalLinksTable(0).getCTExternalLink();
                 CTExternalSheetData sheetData = link.getExternalBook().getSheetDataSet().getSheetDataArray(0);
-                assertEquals(Double.valueOf(sheetData.getRowArray(0).getCellArray(0).getV()), v1);
-                assertEquals(Double.valueOf(sheetData.getRowArray(0).getCellArray(1).getV()), v2);
+                assertEquals(v1, Double.valueOf(sheetData.getRowArray(0).getCellArray(0).getV()));
+                assertEquals(v2, Double.valueOf(sheetData.getRowArray(0).getCellArray(1).getV()));
             }
         }
     }

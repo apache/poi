@@ -23,7 +23,7 @@ import org.apache.poi.util.DefaultTempFileCreationStrategy;
 import org.apache.poi.util.TempFile;
 
 import java.io.File;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 public final class TempFileUtils {
     private TempFileUtils() {
@@ -31,7 +31,7 @@ public final class TempFileUtils {
 
     @SuppressWarnings("java:S106")
     public static void checkTempFiles() {
-        File tempDir = Paths.get(System.getProperty(TempFile.JAVA_IO_TMPDIR), DefaultTempFileCreationStrategy.POIFILES).toFile();
+        File tempDir = Path.of(System.getProperty(TempFile.JAVA_IO_TMPDIR), DefaultTempFileCreationStrategy.POIFILES).toFile();
         if(tempDir.exists()) {
             String[] tempFiles = tempDir.list();
             if(tempFiles != null && tempFiles.length > 0) {

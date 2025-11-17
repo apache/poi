@@ -17,7 +17,10 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.apache.poi.ss.usermodel.FontCharset.*;
+import static org.apache.poi.common.usermodel.fonts.FontCharset.ANSI;
+import static org.apache.poi.common.usermodel.fonts.FontCharset.ARABIC;
+import static org.apache.poi.common.usermodel.fonts.FontCharset.DEFAULT;
+import static org.apache.poi.common.usermodel.fonts.FontCharset.RUSSIAN;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.awt.Color;
@@ -88,32 +91,31 @@ public final class TestXSSFFont extends BaseTestFont {
         assertTrue(ctFont.getBArray(0).getVal());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     void testCharSetWithDeprecatedFontCharset() throws IOException {
         CTFont ctFont=CTFont.Factory.newInstance();
         CTIntProperty prop=ctFont.addNewCharset();
-        prop.setVal(ANSI.getValue());
+        prop.setVal(ANSI.getNativeId());
 
         ctFont.setCharsetArray(0,prop);
         XSSFFont xssfFont=new XSSFFont(ctFont);
         assertEquals(Font.ANSI_CHARSET,xssfFont.getCharSet());
 
         xssfFont.setCharSet(DEFAULT);
-        assertEquals(DEFAULT.getValue(),ctFont.getCharsetArray(0).getVal());
+        assertEquals(DEFAULT.getNativeId(),ctFont.getCharsetArray(0).getVal());
 
         // Try with a few less usual ones:
         // Set with the Charset itself
         xssfFont.setCharSet(RUSSIAN);
-        assertEquals(RUSSIAN.getValue(), xssfFont.getCharSet());
+        assertEquals(RUSSIAN.getNativeId(), xssfFont.getCharSet());
         // And set with the Charset index
-        xssfFont.setCharSet(ARABIC.getValue());
-        assertEquals(ARABIC.getValue(), xssfFont.getCharSet());
-        xssfFont.setCharSet((byte)(ARABIC.getValue()));
-        assertEquals(ARABIC.getValue(), xssfFont.getCharSet());
+        xssfFont.setCharSet(ARABIC.getNativeId());
+        assertEquals(ARABIC.getNativeId(), xssfFont.getCharSet());
+        xssfFont.setCharSet((byte)(ARABIC.getNativeId()));
+        assertEquals(ARABIC.getNativeId(), xssfFont.getCharSet());
 
         // This one isn't allowed
-        assertNull(valueOf(9999));
+        assertNull(FontCharset.valueOf(9999));
         assertThrows(POIXMLException.class, () -> xssfFont.setCharSet(9999),
             "Shouldn't be able to set an invalid charset");
 
@@ -138,24 +140,24 @@ public final class TestXSSFFont extends BaseTestFont {
     void testCharSet() throws IOException {
         CTFont ctFont=CTFont.Factory.newInstance();
         CTIntProperty prop=ctFont.addNewCharset();
-        prop.setVal(FontCharset.ANSI.getNativeId());
+        prop.setVal(ANSI.getNativeId());
 
         ctFont.setCharsetArray(0,prop);
         XSSFFont xssfFont=new XSSFFont(ctFont);
         assertEquals(Font.ANSI_CHARSET,xssfFont.getCharSet());
 
-        xssfFont.setCharSet(FontCharset.DEFAULT);
-        assertEquals(FontCharset.DEFAULT.getNativeId(),ctFont.getCharsetArray(0).getVal());
+        xssfFont.setCharSet(DEFAULT);
+        assertEquals(DEFAULT.getNativeId(),ctFont.getCharsetArray(0).getVal());
 
         // Try with a few less usual ones:
         // Set with the Charset itself
-        xssfFont.setCharSet(FontCharset.RUSSIAN);
-        assertEquals(FontCharset.RUSSIAN.getNativeId(), xssfFont.getCharSet());
+        xssfFont.setCharSet(RUSSIAN);
+        assertEquals(RUSSIAN.getNativeId(), xssfFont.getCharSet());
         // And set with the Charset index
-        xssfFont.setCharSet(FontCharset.ARABIC.getNativeId());
-        assertEquals(FontCharset.ARABIC.getNativeId(), xssfFont.getCharSet());
-        xssfFont.setCharSet((byte)(FontCharset.ARABIC.getNativeId()));
-        assertEquals(FontCharset.ARABIC.getNativeId(), xssfFont.getCharSet());
+        xssfFont.setCharSet(ARABIC.getNativeId());
+        assertEquals(ARABIC.getNativeId(), xssfFont.getCharSet());
+        xssfFont.setCharSet((byte)(ARABIC.getNativeId()));
+        assertEquals(ARABIC.getNativeId(), xssfFont.getCharSet());
 
         // This one isn't allowed
         assertNull(FontCharset.valueOf(9999));

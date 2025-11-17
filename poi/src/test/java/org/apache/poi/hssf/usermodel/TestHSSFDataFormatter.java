@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
@@ -365,7 +366,7 @@ public final class TestHSSFDataFormatter {
         log("\n==== DEFAULT NUMBER FORMAT ====");
         while (it.hasNext()) {
             Cell cell = it.next();
-            cell.setCellValue(cell.getNumericCellValue() * Math.random() / 1000000 - 1000);
+            cell.setCellValue(cell.getNumericCellValue() * ThreadLocalRandom.current().nextDouble() / 1000000 - 1000);
             log(formatter.formatCellValue(cell));
 
             String formatted = formatter.formatCellValue(cell);

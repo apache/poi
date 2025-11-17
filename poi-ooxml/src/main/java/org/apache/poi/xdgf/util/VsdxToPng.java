@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
@@ -129,7 +129,7 @@ public class VsdxToPng {
             renderer = new ShapeDebuggerRenderer();
         }
 
-        try (InputStream is = Files.newInputStream(Paths.get(inFilename))) {
+        try (InputStream is = Files.newInputStream(Path.of(inFilename))) {
             XmlVisioDocument doc = new XmlVisioDocument(is);
             renderToPng(doc, pngDir, 2000 / 11.0, renderer);
         }

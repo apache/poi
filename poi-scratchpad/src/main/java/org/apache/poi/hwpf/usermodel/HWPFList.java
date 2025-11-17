@@ -22,6 +22,8 @@ import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.util.Internal;
 
 import org.apache.poi.hwpf.model.LFO;
+
+import java.util.concurrent.ThreadLocalRandom;
 import org.apache.poi.hwpf.model.LFOData;
 import org.apache.poi.hwpf.model.ListData;
 import org.apache.poi.hwpf.model.ListFormatOverrideLevel;
@@ -65,7 +67,7 @@ public final class HWPFList
     public HWPFList( boolean numbered, StyleSheet styleSheet )
     {
         _listData = new ListData(
-                (int) ( Math.random() * System.currentTimeMillis() ), numbered );
+                (int) ( ThreadLocalRandom.current().nextDouble() * System.currentTimeMillis() ), numbered );
         _lfo = new LFO();
         _lfo.setLsid( _listData.getLsid() );
         _lfoData = new LFOData();
@@ -194,6 +196,7 @@ public final class HWPFList
     /**
      * @deprecated use {@link #isStartAtOverridden(char)}
      */
+    @Deprecated
     @Removal(version = "POI 6.0.0")
     public boolean isStartAtOverriden(char level )
     {

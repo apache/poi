@@ -25,7 +25,6 @@ import java.lang.instrument.Instrumentation;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.ProtectionDomain;
 import java.util.HashSet;
@@ -78,7 +77,7 @@ public class OOXMLLiteAgent {
         private static final Set<Integer> hashes = new HashSet<>();
 
         static void load(String path) throws IOException {
-            logPath = Paths.get(path);
+            logPath = Path.of(path);
             if (Files.exists(logPath)) {
                 try (Stream<String> stream = Files.lines(logPath)) {
                     stream.forEach((s) -> hashes.add(s.hashCode()));
@@ -109,7 +108,7 @@ public class OOXMLLiteAgent {
         }
 
         void load(String path) throws IOException {
-            this.logPath = Paths.get(path);
+            this.logPath = Path.of(path);
             if (Files.exists(this.logPath)) {
                 try (Stream<String> stream = Files.lines(this.logPath)) {
                     stream.forEach((s) -> hashes.add(s.hashCode()));

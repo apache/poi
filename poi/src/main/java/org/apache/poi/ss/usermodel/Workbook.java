@@ -29,7 +29,6 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a Excel workbook.  This is the first object most users
@@ -295,16 +294,6 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @return number of fonts (as int since POI 5.0.0)
      */
     int getNumberOfFonts();
-
-    /**
-     * Get the number of fonts in the font table
-     *
-     * @return number of fonts
-     * @since 4.0.0
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    int getNumberOfFontsAsInt();
 
     /**
      * Get the font at the given index number
