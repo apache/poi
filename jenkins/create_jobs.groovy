@@ -15,9 +15,16 @@ def xercesLib = './xercesImpl-2.6.1.jar'
 
 def poijobs = [
         [ name: 'POI-DSL-1.8',
+          jdk: '1.8',
           trigger: 'H */12 * * *',
           jenkinsLite: true,
           disabled: true  // JDK 8 is no longer supported by POI 6
+        ],
+        [ name: 'POI-DSL-1.8-branch-5.5.x',
+          jdk: '1.8',
+          branch: '5.5.x',
+          trigger: 'H */12 * * *',
+          jenkinsLite: true,
         ],
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
         ],
@@ -108,6 +115,7 @@ def gitBase = 'https://github.com/apache/poi.git'
 def xmlbeansGitBase = 'https://github.com/apache/xmlbeans.git'
 
 def defaultJdk = '1.11'
+def defaultBranch = 'trunk'
 def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'ant_1.10_latest'
@@ -227,6 +235,7 @@ poijobs.each { poijob ->
     def email = poijob.email ?: defaultEmail
     def slaves = poijob.slaves ?: defaultSlaves + (poijob.slaveAdd ?: '')
     def antRT = poijob.windows ? defaultAntWindows : defaultAnt
+    def checkoutBranch = poijob.branch ?: defaultBranch
 
     job('POI/' + poijob.name) {
         if (poijob.disabled) {
@@ -275,7 +284,7 @@ poijobs.each { poijob ->
                 remote {
                     url(gitBase)
                 }
-                branch('*/trunk')
+                branch("*/${checkoutBranch}")
             }
         }
         checkoutRetryCount(3)
