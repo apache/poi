@@ -34,6 +34,7 @@ github:
 
   protected_branches:
     trunk: {}
+    5.5.x: {}
 
 notifications:
   commits:              commits@poi.apache.org
