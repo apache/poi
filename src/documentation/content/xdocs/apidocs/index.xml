@@ -33,9 +33,7 @@
    The Javadocs for the latest (development) version of Apache POI
    can be <a href="dev/index.html">accessed online here</a>, or build
    from a <a href="site:git">source code checkout</a>
-   by running the <em>javadocs</em> Ant task. The
-   <a href="dev/index.html">latest (development) Javadocs</a> are generally
-   updated every few weeks, so may lag the most recent development slightly.
+   by running the <em>javadocs</em> Gradle task.
   </p>
   <p>
    For recent releases, the Javadocs for the latest stable release
@@ -47,6 +45,10 @@
     <li><a href="ext:apidocs/v40">Apache POI 4.0.x Javadocs</a></li>
     <li><a href="ext:apidocs/v317">Apache POI 3.17 Javadocs</a></li>
   </ul>
+  <p>
+    <a href="https://javadoc.io/doc/org.apache.poi">Javadoc.io</a> is
+    probably the best resource for browsing Apache POI Javadocs.
+  </p>
 
   <section><title>Older Releases</title>
   <p>

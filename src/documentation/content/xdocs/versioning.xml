@@ -29,27 +29,61 @@
 
   <body>
     <section><title>Versioning</title>
-<p>
-  Apache POI™ releases are available under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a>
-  from the <a href="site:download">Download</a> page.
-</p>
-<p>
-  The versioning scheme for Apache POI is based on the principles of
-  <a href="https://semver.org/">Semantic Versioning 2.0.0</a>.
-</p>
-<p>
-  We started using this versioning scheme in Apache POI 4.0.0. Versions prior
-  to this did not follow exactly the same principles with the numbers typically being of the form
-  X.Y. X indicated the major version but there may in some cases, have been big changes between
-  minor versions.
-</p>
-<p>
-  We typically only release new versions and don't usually patch old releases.
-  We may consider patching old releases in exceptional circumstances.
-  It is recommended to always use the latest version of Apache POI.
-</p>
-</section>
-</body>
+      <p>
+        Apache POI™ releases are available under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a>
+        from the <a href="site:download">Download</a> page.
+      </p>
+      <p>
+        The versioning scheme for Apache POI is based on the principles of
+        <a href="https://semver.org/">Semantic Versioning 2.0.0</a>.
+      </p>
+      <p>
+        We started using this versioning scheme in Apache POI 4.0.0. Versions prior
+        to this did not follow exactly the same principles with the numbers typically being of the form
+        X.Y. X indicated the major version but there may in some cases, have been big changes between
+        minor versions.
+      </p>
+      <p>
+        We typically only release new versions and don't usually patch old releases.
+        We may consider patching old releases in exceptional circumstances.
+        It is recommended to always use the latest version of Apache POI.
+      </p>
+    </section>
+    <section><title>Migrating from older versions</title>
+      <p>
+        Typically, migrating from one major version to the next should be straightforward.
+        Before migrating, you should check if you are using any deprecated APIs and try to update
+        your code by following the deprecation notices.
+      </p>
+      <p>
+        If you are migrating across multiple major versions, it is recommended to do this
+        step by step, i.e. first migrate to the next major version, test your application
+        and then continue to the next major version. A method might have been deprecated
+        in one major version and then removed in the next major version.
+      </p>
+      <p>
+        Minor versions may introduce new features and deprecate existing APIs.
+        They might also contain bug fixes that could potentially affect existing functionality.
+      </p>
+      <p>
+        POI 5.0.0 renamed the ooxml-schemas jar to poi-ooxml-full and
+        poi-ooxml-schemas jar to poi-ooxml-lite. Please check your dependencies
+        when migrating from POI 4.x to POI 5.x.
+      </p>
+      <p>
+        Please check the <a href="changes.html">Change Log</a> for details about
+        what has changed in each version.
+      </p>
+      <p>
+        The <a href="https://poi.apache.org/help/faq.html">FAQ</a> may also contain
+        useful information.
+      </p>
+      <p>
+        If you encounter any issues when migrating, please report them to the
+        <a href="https://poi.apache.org/help/index.html">mailing list</a>.
+      </p>
+    </section>
+  </body>
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation All rights reserved.
