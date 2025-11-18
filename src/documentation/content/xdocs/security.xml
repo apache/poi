@@ -32,7 +32,7 @@
     <section>
         <title>Overview</title>
 
-        <p>This page provides some guidance about how Apache POI can be used in security-sensible areas.</p>
+        <p>This page provides some guidance about how Apache POI can be used in security-sensitive areas.</p>
     </section>
 
     <section>
@@ -97,6 +97,16 @@
                 Apache POI does occasionally issue CVEs for security issues. There are also other bug fixes and
                 improvements in each release. Some of these fixes will be to make POI more robust against malicious
                 inputs, even if they are not explicitly security-related.
+                <br />
+            </li>
+            <li><strong>Monitor security advisories</strong><br/>
+                Keep an eye on security advisories related to Apache POI. You can find them on the
+                <a href="https://poi.apache.org">POI website</a> and they are shared on the
+                <a href="https://poi.apache.org/help/index.html">POI mailing lists</a> as well as
+                the <a href="https://lists.apache.org/list.html?announce@apache.org">Apache Announce Mailing List</a>.
+                <br />
+                <a href="https://app.opencve.io/cve/?product=poi&amp;vendor=apache">OpenCVE</a> is one of a
+                number of services that can help you monitor CVEs for specific products.
                 <br />
             </li>
         </ul>
