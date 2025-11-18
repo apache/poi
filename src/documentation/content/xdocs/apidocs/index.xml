@@ -33,7 +33,7 @@
    The Javadocs for the latest (development) version of Apache POI
    can be <a href="dev/index.html">accessed online here</a>, or build
    from a <a href="site:git">source code checkout</a>
-   by running the <em>javadocs</em> Gradle task.
+   by running the <em>javadoc</em> Gradle task.
   </p>
   <p>
    For recent releases, the Javadocs for the latest stable release
