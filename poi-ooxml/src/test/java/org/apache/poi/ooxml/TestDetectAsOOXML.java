@@ -54,10 +54,6 @@ class TestDetectAsOOXML {
     void testDetectAsPOIFS(String file, FileMagic fm) throws IOException {
         try (InputStream is = FileMagic.prepareToCheckMagic(openSampleFileStream(file))) {
             FileMagic act = FileMagic.valueOf(is);
-
-            assertEquals(act == FileMagic.OOXML, DocumentFactoryHelper.hasOOXMLHeader(is),
-                "OOXML files should be detected, others not");
-
             assertEquals(fm, act, "file magic failed for " + file);
         }
     }
@@ -70,7 +66,7 @@ class TestDetectAsOOXML {
         InputStream is = FileMagic.prepareToCheckMagic(testInput);
 
         // detect header
-        assertFalse(DocumentFactoryHelper.hasOOXMLHeader(is));
+        assertFalse(FileMagic.valueOf(is) == FileMagic.OOXML);
 
         // check if InputStream is still intact
         byte[] act = IOUtils.toByteArray(is);

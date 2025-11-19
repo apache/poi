@@ -28,7 +28,6 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 
 /**
  * A small base class for the various factories, e.g. WorkbookFactory,
@@ -99,23 +98,5 @@ public final class DocumentFactoryHelper {
         } catch (GeneralSecurityException e) {
             throw new IOException(e);
         }
-    }
-
-    /**
-     * Checks that the supplied InputStream (which MUST
-     *  support mark and reset) has a OOXML (zip) header at the start of it.<p>
-     *
-     * If unsure if your InputStream does support mark / reset,
-     *  use {@link FileMagic#prepareToCheckMagic(InputStream)} to wrap it and make
-     *  sure to always use that, and not the original!
-     *
-     * @param inp An InputStream which supports either mark/reset
-     *
-     * @deprecated in 3.17-beta2, use {@link FileMagic#valueOf(InputStream)} == FileMagic.OOXML instead
-     */
-    @Deprecated
-    @Removal(version="4.0")
-    public static boolean hasOOXMLHeader(InputStream inp) throws IOException {
-        return FileMagic.valueOf(inp) == FileMagic.OOXML;
     }
 }
