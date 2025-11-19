@@ -43,18 +43,19 @@ Website: https://poi.apache.org/
 * [Users](https://lists.apache.org/list.html?user@poi.apache.org) Including Announcements 
 * [General](https://lists.apache.org/list.html?general@poi.apache.org)
 
-Bug tracker:
+## Bug trackers
 
 * [Bugzilla](https://bz.apache.org/bugzilla/buglist.cgi?product=POI)
 * [GitHub](https://github.com/apache/poi/issues)
 
-Source code:
+## Source code
 
 * https://github.com/apache/poi
 
-Requires Java 11 or later.
+Requires Java 11 or later. `trunk` branch is used for 6.0.0 development. POI 4 and 5 releases require Java 8 or later.
 
-Jars:
+
+## Jars
 
 A good resource for finding the published jars and forming build tool dependency definitions is https://mvnrepository.com/artifact/org.apache.poi.
 
