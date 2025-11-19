@@ -35,6 +35,7 @@ github:
   protected_branches:
     trunk: {}
     5.5.x: {}
+    asf-site: {}
 
 notifications:
   commits:              commits@poi.apache.org
