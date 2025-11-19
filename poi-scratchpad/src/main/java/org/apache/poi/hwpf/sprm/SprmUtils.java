@@ -45,21 +45,6 @@ public final class SprmUtils {
 
     public SprmUtils() {}
 
-    /**
-     * @deprecated unused by POI internally
-     */
-    @Removal(version= "6.0.0")
-    public static byte[] shortArrayToByteArray(short[] convert) {
-        byte[] buf = IOUtils.safelyAllocate(convert.length * (long)LittleEndianConsts.SHORT_SIZE, MAX_RECORD_LENGTH);
-
-        for (int x = 0; x < convert.length; x++)
-        {
-            LittleEndian.putShort(buf, x * LittleEndianConsts.SHORT_SIZE, convert[x]);
-        }
-
-        return buf;
-    }
-
     public static int addSpecialSprm(short instruction, byte[] varParam, List<byte[]> list)
     {
         byte[] sprm = new byte[varParam.length + 4];
