@@ -31,7 +31,6 @@ import org.apache.poi.hwpf.model.ListLevel;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
-import org.apache.poi.util.Removal;
 
 /**
  * This class is used to create a list in a Word document. It is used in
@@ -185,20 +184,6 @@ public final class HWPFList
      * @since POI 5.2.4
      */
     public boolean isStartAtOverridden(char level )
-    {
-        ListFormatOverrideLevel lfolvl = _lfoData.getRgLfoLvl().length > level ? _lfoData
-                .getRgLfoLvl()[level] : null;
-
-        return lfolvl != null && lfolvl.getIStartAt() != 0
-                && !lfolvl.isFormatting();
-    }
-
-    /**
-     * @deprecated use {@link #isStartAtOverridden(char)}
-     */
-    @Deprecated
-    @Removal(version = "POI 6.0.0")
-    public boolean isStartAtOverriden(char level )
     {
         ListFormatOverrideLevel lfolvl = _lfoData.getRgLfoLvl().length > level ? _lfoData
                 .getRgLfoLvl()[level] : null;
