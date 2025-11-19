@@ -54,6 +54,18 @@ Source code:
 
 Requires Java 11 or later.
 
+Jars:
+
+A good resource for finding the published jars and forming build tool dependency definitions is https://mvnrepository.com/artifact/org.apache.poi.
+
+* poi - main jar, including shared interfaces
+* poi-scratchpad - extra classes to support legacy MS file formats (`H**F`)
+* poi-ooxml - support for newer OOXML file formats (`X**F`)
+* poi-ooxml-lite - generated classes based on MS XSDs used bt poi-ooxml (only includes most commonly used classes)
+* poi-ooxml-full - generated classes based on MS XSDs (can be used instead of poi-ooxml-lite if you need support for less commonly used features)
+* poi-excelant - tools for working with Excel files in Apache Ant scripts
+* poi-examples
+
 # Contributing
 
 * Download and install git, Java JDK 11+, and Apache Ant 1.8+ or Gradle
