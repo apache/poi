@@ -1,6 +1,4 @@
-
-Apache POI™
-======================
+# Apache POI™
 
 A Java library for reading and writing Microsoft Office binary and OOXML file formats.
 
@@ -35,30 +33,28 @@ And lower-level, supporting components:
 | Components named H??F are for reading or writing OLE2 binary formats.
 | Components named X??F are for reading or writing OpenOffice XML (OOXML) formats.
 
-Getting started
-------------------
+# Getting started
 
 Website: https://poi.apache.org/
 
-`Mailing lists`_:
+[Mailing lists](https://poi.apache.org/mailinglists.html):
 
-* `Developers`_
-* `Users`_
-* `General`_ (release announcements)
+* [Developers](https://lists.apache.org/list.html?dev@poi.apache.org)
+* [Users](https://lists.apache.org/list.html?user@poi.apache.org) Including Announcements 
+* [General](https://lists.apache.org/list.html?general@poi.apache.org)
 
 Bug tracker:
 
-* `Bugzilla`_
-* `GitHub pull requests`_
+* [Bugzilla](https://bz.apache.org/bugzilla/buglist.cgi?product=POI)
+* [GitHub](https://github.com/apache/poi/issues)
 
 Source code:
 
-* Official `Apache Git repo`_ at apache.org
+* https://github.com/apache/poi
 
 Requires Java 11 or later.
 
-Contributing
-------------------
+# Contributing
 
 * Download and install git, Java JDK 11+, and Apache Ant 1.8+ or Gradle
 
@@ -80,23 +76,12 @@ Contributing
   * Scratchpad (Binary formats): poi-scratchpad/src/main/java/org/apache/poi/
   * Examples: poi-examples/src/main/java/org/apache/poi/
 
-* More info: `How To Build page`_  at apache.org
+* More info: [How To Build page](https://poi.apache.org/devel/)
 
-Building jar files
-------------------
+# Building jar files
 
 To build the jar files for poi, poi-ooxml, poi-ooxml-lite, poi-ooxml-full and poi-examples::
 
     ./gradlew jar
 
     gradlew jar
-
-.. _Mailing lists: https://poi.apache.org/mailinglists.html
-.. _Developers: https://lists.apache.org/list.html?dev@poi.apache.org
-.. _Users: https://lists.apache.org/list.html?user@poi.apache.org
-.. _General: https://lists.apache.org/list.html?general@poi.apache.org
-.. _Bugzilla: https://bz.apache.org/bugzilla/buglist.cgi?product=POI
-.. _GitHub pull requests: https://github.com/apache/poi/pulls
-
-.. _Apache Git repo: https://github.com/apache/poi
-.. _How To Build page: http://poi.apache.org/devel/
