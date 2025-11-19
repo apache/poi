@@ -30,7 +30,7 @@ public interface Row extends Iterable<Cell> {
      * Use this to create new cells within the row and return it.
      * <p>
      * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
-     * either through calling <code>setCellValue</code> or <code>setCellType</code>.
+     * either through calling <code>setCellValue</code> or <code>setCellFormula</code>.
      *
      * @param column - the column number this cell represents
      * @return Cell a high level representation of the created cell.
@@ -44,7 +44,7 @@ public interface Row extends Iterable<Cell> {
      * <p>
      * The cell that is returned will be of the requested type.
      * The type can be changed either through calling setCellValue 
-     *  or setCellType, but there is a small overhead to doing this,
+     *  or setCellFormula, but there is a small overhead to doing this,
      *  so it is best to create of the required type up front.
      *
      * @param column - the column number this cell represents
