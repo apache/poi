@@ -286,12 +286,12 @@ public class OldExcelExtractor implements POITextExtractor {
                     // Biff 2 and 5+ share the same SID, due to a bug...
                     if (biffVersion == 5) {
                         FormulaRecord fr = new FormulaRecord(ris);
-                        if (fr.getCachedResultTypeEnum() == CellType.NUMERIC) {
+                        if (fr.getCachedResultType() == CellType.NUMERIC) {
                             handleNumericCell(text, fr.getValue());
                         }
                     } else {
                         OldFormulaRecord fr = new OldFormulaRecord(ris);
-                        if (fr.getCachedResultTypeEnum() == CellType.NUMERIC) {
+                        if (fr.getCachedResultType() == CellType.NUMERIC) {
                             handleNumericCell(text, fr.getValue());
                         }
                     }
