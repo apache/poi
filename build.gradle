@@ -21,6 +21,7 @@ import org.w3c.dom.NodeList
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
+import java.util.zip.ZipFile
 
 buildscript {
     repositories {
@@ -94,6 +95,31 @@ allprojects {
     apply plugin: 'idea'
 
     version = '6.0.0-SNAPSHOT'
+}
+
+abstract class VerifyModuleInfoIsPresent extends DefaultTask {
+    @InputFile
+    abstract RegularFileProperty getVerifiedJar()
+
+    @TaskAction
+    void verifyModuleInfo() {
+        def jar = verifiedJar.get().asFile
+        if (jar.getName().contains('poi-integration') || jar.getName().contains('poi-fuzz')) {
+            return
+        }
+
+        new ZipFile(jar).withCloseable { zip ->
+            def moduleInfo9Present = zip.getEntry("META-INF/versions/9/module-info.class") != null
+            def moduleInfoRootPresent = zip.getEntry("module-info.class") != null
+            if (moduleInfo9Present) {
+                if (moduleInfoRootPresent) {
+                    throw new VerificationException("Duplicate module-info in $jar")
+                }
+            } else if (!moduleInfoRootPresent) {
+                throw new VerificationException("Missing module-info in $jar")
+            }
+        }
+    }
 }
 
 /**
@@ -318,6 +344,15 @@ subprojects {
                 'Implementation-Vendor-Id': 'The Apache Software Foundation'
             )
         }
+    }
+
+    // Verify if module-info is present in the jar-file
+    def verifyModuleInfoPresentRef = tasks.register("verifyModuleInfoPresent", VerifyModuleInfoIsPresent) {
+        verifiedJar = tasks.named("jar").flatMap { it.archiveFile }
+    }
+
+    tasks.named("check") {
+        dependsOn(verifyModuleInfoPresentRef)
     }
 
     javadocJar {
