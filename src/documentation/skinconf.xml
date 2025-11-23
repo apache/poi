@@ -86,8 +86,8 @@ which will be used to configure the chosen Forrest skin.
     <copyright-link>https://www.apache.org/</copyright-link>
     <!-- Optional text trademark statement below the copyright statement -->
     <trademark-statement>
-      Apache, Apache POI, the Apache feather logo, and the Apache POI
-      logos are trademarks of The Apache Software Foundation.
+      Apache POI, POI, Apache, the Apache logo, and the Apache
+      POI project logo are trademarks of The Apache Software Foundation.
     </trademark-statement>
     <!-- Some skins use this to form a 'breadcrumb trail' of links.
         Use location="alt" to move the trail to an alternate location
