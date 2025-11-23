@@ -123,28 +123,25 @@ public final class FormulaRecord extends CellRecord {
     /**
      * @return The type of the cached value or CellType.NUMERIC.getCode() if the cached value is empty
      *
-     * @deprecated POI 5.0.0, will be removed in 6.0, use getCachedResultTypeEnum until switch to enum is fully done
+     * @since POI 6.0.0
      */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    public int getCachedResultType() {
+    public CellType getCachedResultType() {
         if (specialCachedValue == null) {
-            return CellType.NUMERIC.getCode();
+            return CellType.NUMERIC;
         }
-        return specialCachedValue.getValueType();
+        return specialCachedValue.getValueTypeEnum();
     }
 
     /**
      * Returns the type of the cached result
      *
      * @return The type of the cached value or CellType.NUMERIC if the cached value is empty
-     * @since POI 5.0.0
+     * @deprecated POI 6.0.0, use {@link #getCachedResultType()} instead
      */
+    @Deprecated
+    @Removal(version="7.0.0")
     public CellType getCachedResultTypeEnum() {
-        if (specialCachedValue == null) {
-            return CellType.NUMERIC;
-        }
-        return specialCachedValue.getValueTypeEnum();
+        return getCachedResultType();
     }
 
     public boolean getCachedBooleanValue() {

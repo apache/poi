@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.Base64;
-import java.util.BitSet;
 import java.util.List;
 
 import com.zaxxer.sparsebits.SparseBitSet;
@@ -492,12 +491,6 @@ public final class TestExtractor {
             for (int i=0; i<expected.length; i+=2) {
                 final String font = expected[i];
                 final String cps = expected[i+1];
-
-                sb.setLength(0);
-
-                BitSet l1 = ppt.getCodepoints(font, null, null);
-                l1.stream().mapToObj(Character::toChars).forEach(sb::append);
-                assertEquals(cps, sb.toString());
 
                 sb.setLength(0);
 

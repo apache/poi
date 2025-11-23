@@ -87,8 +87,7 @@ final class TestFormulaRecord {
         assertEquals(0, record.getRow(), "Row");
         assertEquals(0, record.getColumn(), "Column");
         //noinspection deprecation
-        assertEquals(CellType.ERROR.getCode(), record.getCachedResultType());
-        assertEquals(CellType.ERROR, record.getCachedResultTypeEnum());
+        assertEquals(CellType.ERROR, record.getCachedResultType());
 
         byte[] output = record.serialize();
         // includes sid+recordlength

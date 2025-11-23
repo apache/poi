@@ -18,7 +18,6 @@
 package org.apache.poi.sl.extractor;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -46,7 +45,6 @@ import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.Removal;
 
 /**
  * Common SlideShow extractor
@@ -381,34 +379,6 @@ public class SlideShowExtractor<
         }
 
         return txt;
-    }
-
-    /**
-     * Extract the used codepoints for font embedding / subsetting
-     * @param typeface the typeface/font family of the textruns to examine
-     * @param italic use {@code true} for italic TextRuns, {@code false} for non-italic ones and
-     *      {@code null} if it doesn't matter
-     * @param bold use {@code true} for bold TextRuns, {@code false} for non-bold ones and
-     *      {@code null} if it doesn't matter
-     * @return a bitset with the marked/used codepoints
-     * @deprecated use {@link #getCodepointsInSparseBitSet(String, Boolean, Boolean)}
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    public BitSet getCodepoints(String typeface, Boolean italic, Boolean bold) {
-        final BitSet glyphs = new BitSet();
-
-        Predicate<Object> filterOld = filter;
-        try {
-            filter = o -> filterFonts(o, typeface, italic, bold);
-            slideshow.getSlides().forEach(slide ->
-                getText(slide, s -> s.codePoints().forEach(glyphs::set))
-            );
-        } finally {
-            filter = filterOld;
-        }
-
-        return glyphs;
     }
 
     /**

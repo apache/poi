@@ -114,7 +114,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * Use this to create new cells within the row and return it.
      * <p>
      * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
-     * either through calling <code>setCellValue</code> or <code>setCellType</code>.
+     * either through calling <code>setCellValue</code> or <code>setCellFormula</code>.
      *
      * @param column - the column number this cell represents
      *
@@ -125,7 +125,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
     @Override
     public HSSFCell createCell(int column)
     {
-        return this.createCell(column,CellType.BLANK);
+        return this.createCell(column, CellType.BLANK);
     }
 
     /**
@@ -133,7 +133,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * <p>
      * The cell that is returned will be of the requested type.
      * The type can be changed either through calling setCellValue
-     *  or setCellType, but there is a small overhead to doing this,
+     *  or setCellFormula, but there is a small overhead to doing this,
      *  so it is best to create the required type up front.
      *
      * @param columnIndex - the column number this cell represents

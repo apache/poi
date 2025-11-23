@@ -24,6 +24,7 @@ import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.Removal;
 
 /**
  * Formula Record (0x0006 / 0x0206 / 0x0406) - holds a formula in
@@ -65,26 +66,27 @@ public final class OldFormulaRecord extends OldCellRecord {
     }
 
     /**
-     * @deprecated POI 5.0.0, will be removed in 5.0, use getCachedResultTypeEnum until switch to enum is fully done
+     * Returns the type of the cached result
+     * @return A CellType
+     * @since POI 6.0.0
      */
-    @Deprecated
-    public int getCachedResultType() {
+    public CellType getCachedResultType() {
         if (specialCachedValue == null) {
-            return CellType.NUMERIC.getCode();
+            return CellType.NUMERIC;
         }
-        return specialCachedValue.getValueType();
+        return specialCachedValue.getValueTypeEnum();
     }
 
     /**
      * Returns the type of the cached result
      * @return A CellType
      * @since POI 5.0.0
+     * @deprecated POI 6.0.0, use {@link #getCachedResultType()} instead
      */
+    @Deprecated
+    @Removal(version="7.0.0")
     public CellType getCachedResultTypeEnum() {
-        if (specialCachedValue == null) {
-            return CellType.NUMERIC;
-        }
-        return specialCachedValue.getValueTypeEnum();
+        return getCachedResultType();
     }
 
     public boolean getCachedBooleanValue() {

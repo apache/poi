@@ -111,7 +111,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * Use this to create new cells within the row and return it.
      * <p>
      * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
-     * either through calling {@code setCellValue} or {@code setCellType}.
+     * either through calling {@code setCellValue} or {@code setCellFormula}.
      *
      * @param column - the column number this cell represents (zero-based)
      * @return Cell a high level representation of the created cell.
@@ -128,7 +128,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * Use this to create new cells within the row and return it.
      * <p>
      * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
-     * either through calling setCellValue or setCellType.
+     * either through calling setCellValue or setCellFormula.
      *
      * @param column - the column number this cell represents (zero-based)
      * @return Cell a high level representation of the created cell.
