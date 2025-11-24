@@ -1457,6 +1457,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     private CTSpacing getCTSpacing(boolean create) {
         CTPPr pr = getCTPPr(create);
+        if (pr == null) {
+           return null;
+        }
         CTSpacing ct = pr.getSpacing();
         if (create && ct == null) {
             ct = pr.addNewSpacing();
