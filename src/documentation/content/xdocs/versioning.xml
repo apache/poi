@@ -43,11 +43,6 @@
         X.Y. X indicated the major version but there may in some cases, have been big changes between
         minor versions.
       </p>
-      <p>
-        We typically only release new versions and don't usually patch old releases.
-        We may consider patching old releases in exceptional circumstances.
-        It is recommended to always use the latest version of Apache POI.
-      </p>
     </section>
     <section><title>Version Support</title>
       <p>
