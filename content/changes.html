@@ -230,6 +230,8 @@ document.write("Last Published: " + document.lastModified);
 <h3 class="boxed">Summary</h3>
 <ul>
             
+<li>Upgrade bouncycastle dependency to 1.83</li>
+            
 <li>Upgrade commons-io dependency to 2.21.0</li>
             
 <li>Upgrade commons-codec dependency to 1.20.0</li>
@@ -256,6 +258,10 @@ document.write("Last Published: " + document.lastModified);
 <tr class="action">
 <td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/932">github-932</a></td><td>POI_Overall</td><td>Add back module-info classes that were omitted from the 5.5.0 jars by accident</td>
 </tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/950">github-950</a></td><td>XWPF</td><td>Fix NPE in XWPFParagraph.getCTSpacing()</td>
+</tr>
         
 </tbody>
 </table>
@@ -267,7 +273,7 @@ document.write("Last Published: " + document.lastModified);
                 5.5.0 (2025-11-15)
             </h2>
 <div class="section">
-<a name="Summary-N10060"></a>
+<a name="Summary-N10073"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -292,7 +298,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade JaCoCo code-coverage tooling to 0.8.13</li>
         
 </ul>
-<a name="Changes-N10085"></a>
+<a name="Changes-N10098"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -394,7 +400,7 @@ document.write("Last Published: " + document.lastModified);
                 5.4.1 (2025-04-06)
             </h2>
 <div class="section">
-<a name="Summary-N101D6"></a>
+<a name="Summary-N101E9"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -409,7 +415,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade graphics2d dependency to 3.0.3</li>
         
 </ul>
-<a name="Changes-N101EC"></a>
+<a name="Changes-N101FF"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -499,7 +505,7 @@ document.write("Last Published: " + document.lastModified);
                 5.4.0 (2025-01-08)
             </h2>
 <div class="section">
-<a name="Summary-N1030D"></a>
+<a name="Summary-N10320"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -528,7 +534,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade JaCoCo code-coverage tooling to 0.8.12</li>
         
 </ul>
-<a name="Changes-N10338"></a>
+<a name="Changes-N1034B"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -610,7 +616,7 @@ document.write("Last Published: " + document.lastModified);
                 5.3.0 (2024-07-02)
             </h2>
 <div class="section">
-<a name="Summary-N10439"></a>
+<a name="Summary-N1044C"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -631,7 +637,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade xmlbeans dependency to 5.2.1</li>
         
 </ul>
-<a name="Changes-N10458"></a>
+<a name="Changes-N1046B"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -701,7 +707,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.5 (2023-11-25)
             </h2>
 <div class="section">
-<a name="Summary-N10529"></a>
+<a name="Summary-N1053C"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -718,7 +724,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade xmlbeans dependency to 5.2.0</li>
         
 </ul>
-<a name="Changes-N10542"></a>
+<a name="Changes-N10555"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -772,7 +778,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.4 (2023-09-28)
             </h2>
 <div class="section">
-<a name="Summary-N105D3"></a>
+<a name="Summary-N105E6"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -799,7 +805,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Use jdk18on versions of bouncycastle jars (v1.76)</li>
         
 </ul>
-<a name="Changes-N105FB"></a>
+<a name="Changes-N1060E"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -945,7 +951,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.3 (2022-09-16)
             </h2>
 <div class="section">
-<a name="Summary-N107FC"></a>
+<a name="Summary-N1080F"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -964,7 +970,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Avoid some more possible overly large memory allocations on certain input documents</li>
         
 </ul>
-<a name="Changes-N10818"></a>
+<a name="Changes-N1082B"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1166,14 +1172,14 @@ document.write("Last Published: " + document.lastModified);
                 5.2.2 (2022-03-19)
             </h2>
 <div class="section">
-<a name="Summary-N10AF9"></a>
+<a name="Summary-N10B0C"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
 <li>Upgrade log4j-api dependency to 2.17.2 and graphics2d dependency to 0.35 as well as some test dependencies</li>
         
 </ul>
-<a name="Changes-N10B03"></a>
+<a name="Changes-N10B16"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1227,14 +1233,14 @@ document.write("Last Published: " + document.lastModified);
                 5.2.1 (2022-03-03)
             </h2>
 <div class="section">
-<a name="Summary-N10B94"></a>
+<a name="Summary-N10BA7"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
 <li>Upgrade curvesapi dependency to 1.07</li>
         
 </ul>
-<a name="Changes-N10B9E"></a>
+<a name="Changes-N10BB1"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1308,7 +1314,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.0 (2022-01-14)
             </h2>
 <div class="section">
-<a name="Summary-N10C7F"></a>
+<a name="Summary-N10C92"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1321,7 +1327,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade PDFBox Graphics2d dependency to 0.34 and PDFBox dependency to 2.0.25</li>
         
 </ul>
-<a name="Changes-N10C92"></a>
+<a name="Changes-N10CA5"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1415,7 +1421,7 @@ document.write("Last Published: " + document.lastModified);
                 5.1.0 (2021-11-01)
             </h2>
 <div class="section">
-<a name="Summary-N10DC3"></a>
+<a name="Summary-N10DD6"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1442,7 +1448,7 @@ document.write("Last Published: " + document.lastModified);
 <li>By default, no DTDs will be accepted in XML files. This can be relaxed by setting POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(false).</li>
         
 </ul>
-<a name="Changes-N10DEB"></a>
+<a name="Changes-N10DFE"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1644,7 +1650,7 @@ document.write("Last Published: " + document.lastModified);
                 5.0.0 (2021-01-20)
             </h2>
 <div class="section">
-<a name="Summary-N110CC"></a>
+<a name="Summary-N110DF"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1671,7 +1677,7 @@ document.write("Last Published: " + document.lastModified);
 <li>new experimental DeferredSXSSFWorkbook which creates fewer temp files by lazily generating rows (see DeferredGeneration in poi-examples)</li>
         
 </ul>
-<a name="Changes-N110F1"></a>
+<a name="Changes-N11104"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1981,7 +1987,7 @@ document.write("Last Published: " + document.lastModified);
                 4.1.2 (2020-02-17)
             </h2>
 <div class="section">
-<a name="Summary-N11579"></a>
+<a name="Summary-N1158C"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1996,7 +2002,7 @@ document.write("Last Published: " + document.lastModified);
 <li>updated dependencies to Bouncycastle 1.64</li>
         
 </ul>
-<a name="Changes-N1158F"></a>
+<a name="Changes-N115A2"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2130,7 +2136,7 @@ document.write("Last Published: " + document.lastModified);
                 4.1.1 (2019-10-20)
             </h2>
 <div class="section">
-<a name="Summary-N1175A"></a>
+<a name="Summary-N1176D"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2149,7 +2155,7 @@ document.write("Last Published: " + document.lastModified);
 <li>CVE-2019-12415 - XML External Entity (XXE) Processing in Apache POI</li>
         
 </ul>
-<a name="Changes-N11776"></a>
+<a name="Changes-N11789"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2299,7 +2305,7 @@ document.write("Last Published: " + document.lastModified);
                 4.1.0 (2019-04-09)
             </h2>
 <div class="section">
-<a name="Summary-N1197E"></a>
+<a name="Summary-N11991"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2324,7 +2330,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade to XMLSec 2.1.2</li>
         
 </ul>
-<a name="Changes-N119A3"></a>
+<a name="Changes-N119B6"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2498,7 +2504,7 @@ document.write("Last Published: " + document.lastModified);
                 4.0.1 (2018-12-03)
             </h2>
 <div class="section">
-<a name="Summary-N11C14"></a>
+<a name="Summary-N11C27"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2509,7 +2515,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade to XMLBeans 3.0.2</li>
         
 </ul>
-<a name="Changes-N11C24"></a>
+<a name="Changes-N11C37"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2667,7 +2673,7 @@ document.write("Last Published: " + document.lastModified);
                 4.0.0 (2018-09-07)
             </h2>
 <div class="section">
-<a name="Summary-N11E55"></a>
+<a name="Summary-N11E68"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2676,7 +2682,7 @@ document.write("Last Published: " + document.lastModified);
 <li>New OOXML schema (1.4) necessary, because of incompatible XMLBeans loading not anymore through POIXMLTypeLoader</li>
         
 </ul>
-<a name="Changes-N11E62"></a>
+<a name="Changes-N11E75"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
