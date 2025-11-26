@@ -57,7 +57,7 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      */
     protected static final POIXMLRelation[] RELATIONS;
     static {
-        RELATIONS = new POIXMLRelation[13];
+        RELATIONS = new POIXMLRelation[15];
         RELATIONS[Workbook.PICTURE_TYPE_EMF] = XSSFRelation.IMAGE_EMF;
         RELATIONS[Workbook.PICTURE_TYPE_WMF] = XSSFRelation.IMAGE_WMF;
         RELATIONS[Workbook.PICTURE_TYPE_PICT] = XSSFRelation.IMAGE_PICT;
@@ -69,6 +69,7 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
         RELATIONS[XSSFWorkbook.PICTURE_TYPE_EPS] = XSSFRelation.IMAGE_EPS;
         RELATIONS[XSSFWorkbook.PICTURE_TYPE_BMP] = XSSFRelation.IMAGE_BMP;
         RELATIONS[XSSFWorkbook.PICTURE_TYPE_WPG] = XSSFRelation.IMAGE_WPG;
+		RELATIONS[XSSFWorkbook.PICTURE_TYPE_SVG] = XSSFRelation.IMAGE_SVG;
     }
 
     /**

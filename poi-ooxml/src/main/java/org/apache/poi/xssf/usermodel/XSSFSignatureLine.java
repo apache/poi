@@ -126,6 +126,8 @@ public class XSSFSignatureLine extends SignatureLine {
                 return XSSFRelation.IMAGE_WMF;
             case WPG:
                 return XSSFRelation.IMAGE_WPG;
+			case SVG:
+				return XSSFRelation.IMAGE_SVG;
             default:
                 throw new InvalidFormatException("Unsupported picture format "+type);
         }

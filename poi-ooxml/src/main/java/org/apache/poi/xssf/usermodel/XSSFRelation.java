@@ -239,6 +239,13 @@ public final class XSSFRelation extends POIXMLRelation {
             XSSFPictureData::new, XSSFPictureData::new
     );
 
+	public static final XSSFRelation IMAGE_SVG = new XSSFRelation(
+			PictureData.PictureType.SVG.contentType,
+			PackageRelationshipTypes.IMAGE_PART,
+			"/xl/media/image#.svg",
+			XSSFPictureData::new, XSSFPictureData::new
+	);
+
     public static final XSSFRelation HDPHOTO_WDP = new XSSFRelation(
             PictureData.PictureType.WDP.contentType,
             PackageRelationshipTypes.HDPHOTO_PART,
