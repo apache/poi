@@ -79,6 +79,7 @@
         </summary>
         <actions>
             <action type="fix" fixes-bug="github-932" context="POI_Overall">Add back module-info classes that were omitted from the 5.5.0 jars by accident</action>
+            <action type="fix" fixes-bug="github-950" context="XWPF">Fix NPE in XWPFParagraph.getCTSpacing()</action>
         </actions>
     </release>
 
