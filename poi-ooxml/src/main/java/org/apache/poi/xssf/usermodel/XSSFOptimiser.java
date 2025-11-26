@@ -27,6 +27,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -55,6 +56,7 @@ import java.util.Map;
  * further style explosion and is safe.</p>
  *
  * @see org.apache.poi.hssf.usermodel.HSSFOptimiser
+ * @since 6.0.0
  */
 public final class XSSFOptimiser {
 
@@ -238,7 +240,7 @@ public final class XSSFOptimiser {
             XSSFColor xssfColor = (XSSFColor) color;
             byte[] rgb = xssfColor.getRGB();
             if (rgb != null) {
-                return String.format("#%02X%02X%02X", rgb[0] & 0xFF, rgb[1] & 0xFF, rgb[2] & 0xFF);
+                return String.format(Locale.ROOT, "#%02X%02X%02X", rgb[0] & 0xFF, rgb[1] & 0xFF, rgb[2] & 0xFF);
             }
             return "indexed:" + xssfColor.getIndexed();
         }
