@@ -921,6 +921,50 @@ public final class TestXWPFParagraph {
         }
     }
 
+    @Test
+    void testGettersWithEmptyParagraphProperties() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("emptyPPr.docx")) {
+            XWPFParagraph p = doc.getParagraphArray(0);
+
+            assertNull(p.getNumID());
+            assertNull(p.getNumIlvl());
+            assertNull(p.getNumFmt());
+            assertNull(p.getNumLevelText());
+            assertNull(p.getNumStartOverride());
+            assertFalse(p.isKeepNext());
+
+            assertFalse(p.isAlignmentSet());
+            assertEquals(ParagraphAlignment.LEFT, p.getAlignment());
+            assertEquals(TextAlignment.AUTO, p.getVerticalAlignment());
+
+            assertEquals(Borders.NONE, p.getBorderTop());
+            assertEquals(Borders.NONE, p.getBorderBottom());
+            assertEquals(Borders.NONE, p.getBorderLeft());
+            assertEquals(Borders.NONE, p.getBorderRight());
+            assertEquals(Borders.NONE, p.getBorderBetween());
+
+            assertEquals(-1, p.getSpacingAfter());
+            assertEquals(-1, p.getSpacingAfterLines());
+            assertEquals(-1, p.getSpacingBefore());
+            assertEquals(-1, p.getSpacingBeforeLines());
+            assertEquals(-1, p.getSpacingBetween());
+            assertEquals(LineSpacingRule.AUTO, p.getSpacingLineRule());
+
+            assertEquals(-1, p.getIndentationLeft());
+            assertEquals(-1, p.getIndentationLeftChars());
+            assertEquals(-1, p.getIndentationRight());
+            assertEquals(-1, p.getIndentationRightChars());
+            assertEquals(-1, p.getIndentationHanging());
+            assertEquals(-1, p.getIndentationFirstLine());
+
+            assertFalse(p.isPageBreak());
+            assertFalse(p.isWordWrapped());
+
+            assertNull(p.getStyleID());
+            assertNull(p.getStyle());
+        }
+    }
+
     private static void checkSearchText(XWPFParagraph paragraph, String search, int beginRun, int endRun, int beginText, int endText,
             int beginChar, int endChar) {
         TextSegment result = paragraph.searchText(search, new PositionInParagraph());
