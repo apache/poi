@@ -148,8 +148,10 @@ public final class TestXSSFPictureData {
 		try (XSSFWorkbook wb = new XSSFWorkbook()) {
 			XSSFSheet sheet = wb.createSheet();
 			XSSFDrawing drawing = sheet.createDrawingPatriarch();
-
-			byte[] data = "test svg data".getBytes(LocaleUtil.CHARSET_1252);
+			String svg = "<svg viewBox='0 0 125 80' xmlns='http://www.w3.org/2000/svg'>"
+					+ "<text y=\"75\" font-size=\"100\" font-family=\"serif\"><![CDATA[10]]></text>"
+					+ "</svg>";
+			byte[] data = svg.getBytes(LocaleUtil.CHARSET_1252);
 
 			List<XSSFPictureData> pictures = wb.getAllPictures();
 			assertEquals(0, pictures.size());
