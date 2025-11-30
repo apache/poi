@@ -106,20 +106,19 @@ svn update --set-depth infinity dist/release/poi/
      - when build completes, download the built jars from
        https://ci-builds.apache.org/job/POI/job/POI-DSL-1.11/lastSuccessfulBuild/artifact/
 
-  3. To produce the source distributions, run
-     - ./gradlew srcDistZip
+  3. To produce the source distribution, run
      - ./gradlew srcDistTar
 
   4. Copy the build/dist files to your svn checkout of dist.apache.org (dist/dev/poi/src)
 {code:sh}
 svn co https://dist.apache.org/repos/dist/release/poi /opt/poi-dist
-cp build/dist/*.zip build/*.tgz /opt/poi-dist/dev/
+cp build/*.tgz /opt/poi-dist/dev/
 {code}
 
   5. Generate SHA512 checksums
 
 {code:sh}
-for f in *.zip *.tgz
+for f in *.tgz
 do
   sha512sum $f > $f.sha512
 done
@@ -129,7 +128,7 @@ done
      - The 1556F3A4 key in the command below is just an example, replace the value with your own key id
 
 {code:sh}
-for f in *.zip *.tgz; do gpg --default-key 1556F3A4 -ab $f; done
+for f in *.tgz; do gpg --default-key 1556F3A4 -ab $f; done
 {code}
 
   7. Validate the checksums and signatures
