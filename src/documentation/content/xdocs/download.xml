@@ -70,9 +70,9 @@
             <section id="POI-5.5.1-src"><title>Source Distribution</title>
                 <ul>
                     <li>
-                        <a href="https://www.apache.org/dyn/closer.lua/poi/release/src/apache-poi-src-5.5.1-20251130.tgz">apache-poi-src-5.5.1-20251130.tgz</a>
-                        (117 MB, <a href="https://downloads.apache.org/poi/release/src/apache-poi-src-5.5.1-20251130.tgz.asc">signature (.asc)</a>,
-                        checksum: <a href="https://downloads.apache.org/poi/release/src/apache-poi-src-5.5.1-20251130.tgz.sha512">SHA-512</a>)
+                        <a href="https://www.apache.org/dyn/closer.lua/poi/release/src/apache-poi-src-5.5.1-20251126.tgz">apache-poi-src-5.5.1-20251126.tgz</a>
+                        (117 MB, <a href="https://downloads.apache.org/poi/release/src/apache-poi-src-5.5.1-20251126.tgz.asc">signature (.asc)</a>,
+                        checksum: <a href="https://downloads.apache.org/poi/release/src/apache-poi-src-5.5.1-20251126.tgz.sha512">SHA-512</a>)
                     </li>
                 </ul>
             </section>
