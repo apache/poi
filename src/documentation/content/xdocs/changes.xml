@@ -70,7 +70,7 @@
         </p>
     </section>
 
-    <release version="5.5.1" date="2025-12-??">
+    <release version="5.5.1" date="2025-11-30">
         <summary>
             <summary-item>Upgrade bouncycastle dependency to 1.83</summary-item>
             <summary-item>Upgrade commons-io dependency to 2.21.0</summary-item>
