@@ -234,6 +234,7 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
      * @param other a candidate cell range address to check if contained within this range
      * @return returns true if this range contains other range.
      * @see #isInRange(int, int) for checking if a single cell contains
+     * @since 6.0.0
      */
     public boolean contains(CellRangeAddressBase other) {
         return this._firstRow <= other._firstRow &&

@@ -140,6 +140,7 @@ public class CellRangeAddress extends CellRangeAddressBase {
      * @param rows    rows to shift by.
      * @param columns columns to shift by.
      * @return copy of this {@link CellRangeAddress}, shifted by rows and columns.
+     * @since 6.0.0
      */
     public CellRangeAddress shift(int rows, int columns) {
         return new CellRangeAddress(getFirstRow() + rows, getLastRow() + rows,
