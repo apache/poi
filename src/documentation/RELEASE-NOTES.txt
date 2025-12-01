@@ -18,7 +18,7 @@ Release Contents
 ----------------
 
 This release comes in source form:
- - source archive you can build POI from (poi-src-@VERSION@-@DSTAMP@.zip or poi-src-@VERSION@-@DSTAMP@.tar.gz)
+ - source archive you can build POI from (apache-poi-src-@VERSION@-@DSTAMP@.tgz)
   Unpack the archive and use the following command to build all POI components with JDK 11 or higher:
 
   gradle jar
