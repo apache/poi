@@ -437,7 +437,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * Throws ConcurrentModificationException if cells are added, moved, or
      * removed after the spliterator is created.
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     @SuppressWarnings("unchecked")

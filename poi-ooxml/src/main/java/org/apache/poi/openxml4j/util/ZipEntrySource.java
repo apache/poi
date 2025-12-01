@@ -41,7 +41,7 @@ public interface ZipEntrySource extends Closeable {
      * @param path the path in unix-notation
      * @return the entry or {@code null} if not found
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     ZipArchiveEntry getEntry(String path);
 

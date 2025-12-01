@@ -284,7 +284,7 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
 
     /**
      * Returns an iterator over the CellAddresses in this cell range in row-major order.
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     @Override
     public Iterator<CellAddress> iterator() {
@@ -293,7 +293,7 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
 
     /**
      * Returns a spliterator over the CellAddresses in this cell range in row-major order.
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<CellAddress> spliterator() {

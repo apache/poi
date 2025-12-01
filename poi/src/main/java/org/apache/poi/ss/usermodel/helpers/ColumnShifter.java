@@ -30,7 +30,7 @@ import org.apache.poi.util.Beta;
 /**
  * Helper for shifting columns up or down
  *
- * @since POI 4.0.0
+ * @since 4.0.0
  */
 // non-Javadoc: This abstract class exists to consolidate duplicated code between XSSFColumnShifter and HSSFColumnShifter
 // (currently methods sprinkled throughout HSSFSheet)
@@ -50,7 +50,7 @@ public abstract class ColumnShifter extends BaseRowColShifter {
      * @param endColumn   the column to end shifting
      * @param n        the number of columns to shift
      * @return an array of affected merged regions, doesn't contain deleted ones
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     // Keep this code in sync with {@link RowShifter#shiftMergedRegions}
     @Override

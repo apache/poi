@@ -24,7 +24,7 @@ import java.util.HashMap;
 /**
  * General enum class to define a picture format/type
  *
- * @since POI 5.0
+ * @since 5.0.0
  */
 public enum PictureType {
 

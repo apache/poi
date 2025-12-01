@@ -81,7 +81,7 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
     }
 
     /**
-     * @since POI 4.0.2
+     * @since 4.0.2
      */
     @Override
     public XDDFRunProperties getOrAddTextProperties() {

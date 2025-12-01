@@ -123,7 +123,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      *
      * @param part - The package part that holds xml data representing this sheet.
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     protected XSSFSheet(PackagePart part) {
         super(part);
@@ -796,7 +796,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * @param leftmostColumn   Left column visible in right pane.
      * @param activePane    Active pane.
      * @see PaneType
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, PaneType activePane) {
@@ -875,7 +875,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      *
      * @param addr The address of the cell containing the hyperlink
      * @return hyperlink if there is a hyperlink anchored at {@code addr}; otherwise returns {@code null}
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     @Override
     public XSSFHyperlink getHyperlink(CellAddress addr) {
@@ -1259,7 +1259,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      *
      * @param margin which margin to get
      * @return the size of the margin
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public double getMargin(PageMargin margin) {
@@ -1315,7 +1315,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      *
      * @param margin which margin to set
      * @param size the size of the margin
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public void setMargin(PageMargin margin, double size) {
@@ -2171,7 +2171,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * be the third row if say for instance the second row is undefined.
      * Call getRowNum() on each row if you care which one it is.
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -2959,7 +2959,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * @param policy is the cell copy policy, which can be used to merge the source and destination
      * when the source is blank, copy styles only, paste as value, etc
      * @param context the context - see {@link CellCopyContext}
-     * @since POI 5.4.1
+     * @since 5.4.1
      */
     @Beta
     public void copyRows(List<? extends Row> srcRows, int destStartRow,
@@ -3070,7 +3070,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * @param destStartRow the index of the first row to copy the cells to in this sheet
      * @param cellCopyPolicy the policy to use to determine how cells are copied
      * @param context the context - see {@link CellCopyContext}
-     * @since POI 5.4.1
+     * @since 5.4.1
      */
     @Beta
     public void copyRows(int srcStartRow, int srcEndRow, int destStartRow,
@@ -3614,7 +3614,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * {@link XSSFCell#removeHyperlink()} can be used if the hyperlink is just for that one cell.
      *
      * @param hyperlink the link to remove
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     public void removeHyperlink(XSSFHyperlink hyperlink) {
         hyperlinks.remove(hyperlink);
@@ -4220,7 +4220,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     /**
      * Reads the dimensions of the sheet data
      * @return dimensions of the sheet data as a Cell Range (can be null)
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public CellRangeAddress getDimension() {
         if (dimensionOverride != null) {
@@ -5040,7 +5040,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     /**
      * Currently, this is for internal use. Overrides the default dimensions of the sheet.
      * @param dimension {@link CellRangeAddress}, <code>null</code> removes the existing override
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Beta
     public void setDimensionOverride(CellRangeAddress dimension) {

@@ -81,7 +81,7 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
      * Construct a ThemesTable.
      * @param part A PackagePart.
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public ThemesTable(PackagePart part) throws IOException {
         super(part);
@@ -94,7 +94,7 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
      * Construct a ThemesTable.
      * @param stream input stream.
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public ThemesTable(InputStream stream) throws IOException {
         super();
@@ -114,7 +114,7 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
      *
      * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public void readFrom(InputStream is) throws IOException {
         try {

@@ -68,7 +68,7 @@ public final class XSSFChart extends XDDFChart {
      *            be
      *            {@code application/vnd.openxmlformats-officedocument.drawingml.chart+xml}
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     protected XSSFChart(PackagePart part) throws IOException, XmlException {
         super(part);

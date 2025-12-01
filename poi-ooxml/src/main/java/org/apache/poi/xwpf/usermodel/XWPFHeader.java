@@ -47,7 +47,7 @@ public class XWPFHeader extends XWPFHeaderFooter {
     }
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XWPFHeader(POIXMLDocumentPart parent, PackagePart part) throws IOException {
         super(parent, part);

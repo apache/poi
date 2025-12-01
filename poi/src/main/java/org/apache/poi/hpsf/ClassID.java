@@ -275,7 +275,7 @@ public class ClassID implements Duplicatable, GenericRecord {
      * Converts the ClassID to an UUID
      * @return the ClassID as UUID
      *
-     * @since POI 5.0.0
+     * @since 5.0.0
      */
     public UUID toUUID() {
         final long mostSigBits = ByteBuffer.wrap(bytes, 0, 8).getLong();

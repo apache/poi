@@ -313,7 +313,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public Spliterator<RowRecord> getSpliterator() {
         return _rowRecords.values().spliterator();
@@ -476,7 +476,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
     /**
      * Returns a spliterator for the cell values
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public Spliterator<CellValueRecordInterface> getCellValueSpliterator() {
         return _valuesAgg.spliterator();

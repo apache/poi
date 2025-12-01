@@ -84,7 +84,7 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
     /**
      * Insert a new cell at the given index.
      * @param colIdx the column index.
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     public XSLFTableCell insertCell(int colIdx){
         CTTableCell c = _row.insertNewTc(colIdx);
@@ -102,7 +102,7 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
     /**
      * Remove the cell at the given index.
      * @param colIdx the column index.
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     public void removeCell(int colIdx){
         if (_row.sizeOfTcArray() < colIdx) {

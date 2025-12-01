@@ -151,7 +151,7 @@ public class XMLSlideShow extends POIXMLDocument
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
      * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public XMLSlideShow(InputStream stream, boolean closeStream) throws IOException {
         this(PackageHelper.open(stream, closeStream));
@@ -341,7 +341,7 @@ public class XMLSlideShow extends POIXMLDocument
     /**
      * This method is used to create template for chart XML.
      * @return Xslf chart object
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     public XSLFChart createChart() {
         int chartIdx = findNextAvailableFileNameIndex(XSLFRelation.CHART);

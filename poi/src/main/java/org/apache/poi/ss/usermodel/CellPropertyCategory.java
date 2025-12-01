@@ -22,7 +22,7 @@ package org.apache.poi.ss.usermodel;
  * The CellPropertyCategory enum represents the different categories of cell properties.
  * Each category is used to classify and organize the cell properties based on their characteristics.
  *
- * @since POI 5.4.0
+ * @since 5.4.0
  */
 public enum CellPropertyCategory {
 

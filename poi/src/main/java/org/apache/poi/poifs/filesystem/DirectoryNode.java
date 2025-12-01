@@ -574,7 +574,7 @@ public class DirectoryNode
     /**
      * Returns a Spliterator over all the entries
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<Entry> spliterator() {

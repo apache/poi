@@ -41,7 +41,7 @@ public class XSLFTableStyles extends POIXMLDocumentPart implements Iterable<XSLF
     }
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XSLFTableStyles(PackagePart part) throws IOException, XmlException {
         super(part);

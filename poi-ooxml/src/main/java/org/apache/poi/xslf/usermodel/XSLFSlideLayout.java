@@ -39,7 +39,7 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
     private XSLFSlideMaster _master;
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XSLFSlideLayout(PackagePart part) throws IOException, XmlException {
         super(part);

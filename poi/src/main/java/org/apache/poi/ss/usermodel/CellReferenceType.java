@@ -19,7 +19,7 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * Types of cell references.
- * @since POI 5.2.1
+ * @since 5.2.1
  */
 public enum CellReferenceType {
 

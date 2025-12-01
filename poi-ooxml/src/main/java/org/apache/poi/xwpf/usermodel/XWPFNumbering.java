@@ -47,7 +47,7 @@ public class XWPFNumbering extends POIXMLDocumentPart {
     /**
      * create a new styles object with an existing document
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XWPFNumbering(PackagePart part) {
         super(part);

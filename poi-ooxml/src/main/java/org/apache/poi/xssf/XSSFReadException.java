@@ -26,7 +26,7 @@ import org.apache.poi.POIException;
  * exceptions, but this is not a good practice. This class is a checked
  * class that extends {@link Exception} so needs to be explicitly
  * caught or declared in the method signature.</p>
- * @since POI 5.5.0
+ * @since 5.5.0
  */
 public class XSSFReadException extends POIException {
     private static final long serialVersionUID = 1L;

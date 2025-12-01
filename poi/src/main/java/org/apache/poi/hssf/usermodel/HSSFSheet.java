@@ -971,7 +971,7 @@ public final class HSSFSheet implements Sheet {
      *         be the third row if say for instance the second row is undefined.
      *         Call getRowNum() on each row if you care which one it is.
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     @SuppressWarnings("unchecked") // can this clumsy generic syntax be improved?
@@ -1324,7 +1324,7 @@ public final class HSSFSheet implements Sheet {
      *
      * @param margin which margin to get
      * @return the size of the margin
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public double getMargin(PageMargin margin) {
@@ -1367,7 +1367,7 @@ public final class HSSFSheet implements Sheet {
      *
      * @param margin which margin to set
      * @param size the size of the margin
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public void setMargin(PageMargin margin, double size) {
@@ -1897,7 +1897,7 @@ public final class HSSFSheet implements Sheet {
      * @param leftmostColumn   Left column visible in right pane.
      * @param activePane    Active pane.
      * @see PaneType
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, PaneType activePane) {
@@ -2342,7 +2342,7 @@ public final class HSSFSheet implements Sheet {
      *
      * @param addr The address of the cell containing the hyperlink
      * @return hyperlink if there is a hyperlink anchored at {@code addr}; otherwise returns {@code null}
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     @Override
     public HSSFHyperlink getHyperlink(CellAddress addr) {

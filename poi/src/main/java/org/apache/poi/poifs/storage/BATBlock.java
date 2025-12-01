@@ -199,7 +199,7 @@ public final class BATBlock implements BlockWritable {
      * could be smaller as it does not count unused sectors where there are
      * used ones after it (i.e. fragmentation).
      *
-     * @since POI 5.0.0
+     * @since 5.0.0
      */
     public int getOccupiedSize() {
         for (int k = _values.length - 1; k >= 0; k--) {

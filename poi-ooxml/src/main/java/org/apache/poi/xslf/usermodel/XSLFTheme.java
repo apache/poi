@@ -48,7 +48,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
     }
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XSLFTheme(PackagePart part) throws IOException, XmlException {
         super(part);

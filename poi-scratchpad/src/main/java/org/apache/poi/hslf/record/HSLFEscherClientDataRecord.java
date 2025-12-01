@@ -34,7 +34,7 @@ import org.apache.poi.util.LittleEndian;
  * The number, position, and type of placeholder shapes are determined by
  * the slide layout as specified in the SlideAtom record.
  *
- * @since POI 3.14-Beta2
+ * @since 3.14-Beta2
  */
 public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
 

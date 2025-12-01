@@ -250,7 +250,7 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
      *
      * @return Spliterator of children; may refer to an empty collection
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<Property> spliterator() {

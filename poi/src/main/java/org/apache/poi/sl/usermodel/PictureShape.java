@@ -35,7 +35,7 @@ public interface PictureShape<
      *
      * @return an alternative picture data
      *
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     default PictureData getAlternativePictureData() { return null; }
 

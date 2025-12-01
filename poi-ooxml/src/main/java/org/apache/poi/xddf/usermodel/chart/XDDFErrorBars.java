@@ -27,7 +27,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumRef;
 
 /**
- * @since POI 4.1.2
+ * @since 4.1.2
  */
 @Beta
 public class XDDFErrorBars {

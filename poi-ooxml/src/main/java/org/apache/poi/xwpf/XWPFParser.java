@@ -32,7 +32,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
  * throw {@link XWPFReadException} or {@link IOException} instead of {@link RuntimeException}.
  * You can still get an {@link Error}s like an {@link OutOfMemoryError}.
  *
- * @since POI 5.5.0
+ * @since 5.5.0
  */
 public final class XWPFParser {
 

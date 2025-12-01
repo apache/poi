@@ -65,7 +65,7 @@ public abstract class XDDFChartAxis implements HasShapeProperties {
     public abstract XDDFShapeProperties getOrAddMinorGridProperties();
 
     /**
-     * @since POI 4.0.2
+     * @since 4.0.2
      */
     public abstract XDDFRunProperties getOrAddTextProperties();
 
@@ -357,7 +357,7 @@ public abstract class XDDFChartAxis implements HasShapeProperties {
 
     /**
      * @return tick label position.
-     * @since POI 4.0.2
+     * @since 4.0.2
      */
     public AxisTickLabelPosition getTickLabelPosition() {
         return AxisTickLabelPosition.valueOf(getCTTickLblPos().getVal());
@@ -366,7 +366,7 @@ public abstract class XDDFChartAxis implements HasShapeProperties {
     /**
      * @param labelPosition
      *            tick label position.
-     * @since POI 4.0.2
+     * @since 4.0.2
      */
     public void setTickLabelPosition(AxisTickLabelPosition labelPosition) {
         getCTTickLblPos().setVal(labelPosition.underlying);

@@ -35,20 +35,20 @@ public interface EvaluationSheet {
      *
      * @see WorkbookEvaluator#clearAllCachedResultValues()
      * @see EvaluationWorkbook#clearAllCachedResultValues()
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     void clearAllCachedResultValues();
 
     /**
      * @return last row index referenced on this sheet, for evaluation optimization
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     int getLastRowNum();
 
     /**
      * Used by SUBTOTAL and similar functions that have options to ignore hidden rows
      * @return true if the row is hidden, false if not
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     boolean isRowHidden(int rowIndex);
 }

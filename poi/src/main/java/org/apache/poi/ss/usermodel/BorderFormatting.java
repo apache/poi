@@ -25,19 +25,19 @@ package org.apache.poi.ss.usermodel;
  */
 public interface BorderFormatting {
 
-    /** @since POI 4.0.0 */
+    /** @since 4.0.0 */
     BorderStyle getBorderBottom();
 
-    /** @since POI 4.0.0 */
+    /** @since 4.0.0 */
     BorderStyle getBorderDiagonal();
 
-    /** @since POI 4.0.0 */
+    /** @since 4.0.0 */
     BorderStyle getBorderLeft();
 
-    /** @since POI 4.0.0 */
+    /** @since 4.0.0 */
     BorderStyle getBorderRight();
 
-    /** @since POI 4.0.0 */
+    /** @since 4.0.0 */
     BorderStyle getBorderTop();
 
     /**
@@ -70,26 +70,26 @@ public interface BorderFormatting {
 
     /**
      * Range internal borders. Only relevant for range styles, such as table formatting
-     * @since  3.17 beta 1
+     * @since 3.17 beta 1
      * @return color index
      */
     short getVerticalBorderColor();
     /**
      * Range internal borders. Only relevant for range styles, such as table formatting
-     * @since  3.17 beta 1
+     * @since 3.17 beta 1
      * @return color
      */
     Color getVerticalBorderColorColor();
     
     /**
      * Range internal borders. Only relevant for range styles, such as table formatting
-     * @since  3.17 beta 1
+     * @since 3.17 beta 1
      * @return color index
      */
     short getHorizontalBorderColor();
     /**
      * Range internal borders. Only relevant for range styles, such as table formatting
-     * @since  3.17 beta 1
+     * @since 3.17 beta 1
      * @return color
      */
     Color getHorizontalBorderColorColor();

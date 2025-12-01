@@ -418,7 +418,7 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
      *
      * @param gridSpan the number of columns to be spanned/merged
      *
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     protected void setGridSpan(int gridSpan) {
         this.gridSpan = gridSpan;
@@ -429,7 +429,7 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
      *
      * @param rowSpan the number of rows to be spanned/merged
      *
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     protected void setRowSpan(int rowSpan) {
         this.rowSpan = rowSpan;

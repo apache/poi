@@ -49,7 +49,7 @@ public class XSLFTableStyle {
     }
 
     /**
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     protected CTTablePartStyle getTablePartStyle(TablePartStyle tps) {
         switch (tps) {

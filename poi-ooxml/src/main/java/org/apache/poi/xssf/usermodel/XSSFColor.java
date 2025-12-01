@@ -43,7 +43,7 @@ public class XSSFColor extends ExtendedColor {
     /**
      * @param color The ooxml color object to use
      * @return null if color is null, new instance otherwise
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public static XSSFColor from(CTColor color) {
         return color == null ? null : new XSSFColor(color, null);
@@ -55,7 +55,7 @@ public class XSSFColor extends ExtendedColor {
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public XSSFColor() {
         this(CTColor.Factory.newInstance(), null);
@@ -92,7 +92,7 @@ public class XSSFColor extends ExtendedColor {
 
     /**
      * @param rgb The RGB-byte-values for the Color
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public XSSFColor(byte[] rgb) {
         this(rgb, null);

@@ -64,7 +64,7 @@ public class SXSSFCell extends CellBase {
      * @param row the {@link SXSSFRow}
      * @param cellType the {@link CellType}
      * @param columnIndex the column index (zero based)
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public SXSSFCell(final SXSSFRow row, final CellType cellType, final int columnIndex)
     {

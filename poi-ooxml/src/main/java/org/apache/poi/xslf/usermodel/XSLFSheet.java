@@ -93,7 +93,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     }
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     protected XSLFSheet(PackagePart part) {
         super(part);
@@ -719,7 +719,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * this method will add chart into slide
      * with default height, width, x and y
      * @param chart xslf chart object
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     public void addChart(XSLFChart chart) {
         Rectangle2D rect2D = new Rectangle(XDDFChart.DEFAULT_X, XDDFChart.DEFAULT_Y,
@@ -732,7 +732,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * this method will add chart into slide
      * with given height, width, x and y
      * @param chart xslf chart object
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     public void addChart(XSLFChart chart, Rectangle2D rect2D) {
         RelationPart rp = addRelation(null, XSLFRelation.CHART, chart);

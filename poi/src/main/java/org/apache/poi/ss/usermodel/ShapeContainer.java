@@ -20,7 +20,7 @@ package org.apache.poi.ss.usermodel;
 /**
  * A common interface for shape groups.
  * 
- * @since POI 3.16-beta2
+ * @since 3.16-beta2
  */
 public interface ShapeContainer<T extends Shape> extends Iterable<T> {
 

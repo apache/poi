@@ -56,7 +56,7 @@ public class XSSFComment implements Comment {
     /**
      * Creates a new XSSFComment, associated with a given
      *  low level comment object.
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public XSSFComment(Comments comments, CTComment comment, CTShape vmlShape) {
         _comment = comment;
@@ -258,7 +258,7 @@ public class XSSFComment implements Comment {
 
     /**
      * @return the xml bean holding this comment's properties
-     * @since POI 5.2.0 (was protected before POI 5.2.0)
+     * @since 5.2.0 (was protected before POI 5.2.0)
      */
     public CTComment getCTComment(){
         return _comment;

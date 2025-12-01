@@ -232,7 +232,7 @@ public interface Row extends Iterable<Cell> {
      * @return Cell spliterator of the physically defined cells.  Note element 4 may
      * actually be row cell depending on how many are defined!
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     default Spliterator<Cell> spliterator() {

@@ -31,7 +31,7 @@ import org.apache.poi.util.IOUtils;
 /**
  * Common interface for OLE shapes, i.e. shapes linked to embedded documents
  * 
- * @since POI 4.0.0
+ * @since 4.0.0
  */
 public interface ObjectData {
     

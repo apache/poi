@@ -35,7 +35,7 @@ import java.nio.file.Files;
 /**
  * (Experimental) Temp File version of a package part.
  *
- * @since POI 5.1.0
+ * @since 5.1.0
  */
 @Beta
 public final class TempFilePackagePart extends PackagePart {

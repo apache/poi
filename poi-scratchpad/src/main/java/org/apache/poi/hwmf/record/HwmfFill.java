@@ -54,7 +54,7 @@ public class HwmfFill {
          * @param hasAlpha if true, the background color is rendered transparent - see {@link HwmfMisc.WmfSetBkMode.HwmfBkMode}
          * @return the image
          *
-         * @since POI 4.1.1
+         * @since 4.1.1
          */
         BufferedImage getImage(Color foreground, Color background, boolean hasAlpha);
 
@@ -62,7 +62,7 @@ public class HwmfFill {
          * @return the raw BMP data
          *
          * @see <a href="https://en.wikipedia.org/wiki/BMP_file_format">BMP format</a>
-         * @since POI 4.1.1
+         * @since 4.1.1
          */
         byte[] getBMPData();
     }

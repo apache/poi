@@ -85,7 +85,7 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      *
      * @param part the package part holding the drawing data,
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     protected XSSFPictureData(PackagePart part) {
         super(part);

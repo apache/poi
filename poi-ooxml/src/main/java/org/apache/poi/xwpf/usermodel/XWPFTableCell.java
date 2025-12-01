@@ -448,7 +448,7 @@ public class XWPFTableCell implements IBody, ICell {
      * This was the behaviour of {@link XWPFTableCell#setText(String)} before POI 5.2.4
      *
      * @param text The text to append to the cells content.
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public void appendText(String text) {
         XWPFParagraph par = paragraphs.isEmpty() ? addParagraph() : paragraphs.get(0);

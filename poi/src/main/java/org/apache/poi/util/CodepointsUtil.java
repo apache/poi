@@ -46,7 +46,7 @@ public class CodepointsUtil {
     /**
      * @param text to iterate over
      * @return iterator with ints representing the codepoints
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public static PrimitiveIterator.OfInt primitiveIterator(String text) {
         return text.codePoints().iterator();

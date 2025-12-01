@@ -508,7 +508,7 @@ public class CellReference implements GenericRecord {
      * @return the text representation of this cell reference as it would appear in a formula.
      * @see #formatAsString()
      * @see #formatAsR1C1String(boolean)
-     * @since POI 5.2.1
+     * @since 5.2.1
      */
     public String formatAsR1C1String() {
         return formatAsR1C1String(true);
@@ -560,7 +560,7 @@ public class CellReference implements GenericRecord {
      * @return the text representation of this cell reference as it would appear in a formula.
      * @see #formatAsString(boolean)
      * @see #formatAsR1C1String()
-     * @since POI 5.2.1
+     * @since 5.2.1
      */
     public String formatAsR1C1String(boolean includeSheetName) {
         StringBuilder sb = new StringBuilder(32);

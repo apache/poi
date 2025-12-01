@@ -50,7 +50,7 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
      * @param part the package part holding the notes data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.notes+xml</code>
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     XSLFNotes(PackagePart part) throws IOException, XmlException {
         super(part);

@@ -251,7 +251,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @param pictureType The {@link PictureType} of the picture.
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
      * @throws InvalidFormatException If the format of the picture is not known.
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public String addPictureData(byte[] pictureData, PictureType pictureType) throws InvalidFormatException {
         if (pictureType == null) {
@@ -314,7 +314,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
      * @throws InvalidFormatException If the format of the picture is not known.
      * @throws IOException If reading the picture-data from the stream fails.
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public String addPictureData(InputStream is, PictureType pictureType) throws InvalidFormatException, IOException {
         byte[] data = IOUtils.toByteArrayWithMaxLength(is, XWPFPictureData.getMaxImageSize());

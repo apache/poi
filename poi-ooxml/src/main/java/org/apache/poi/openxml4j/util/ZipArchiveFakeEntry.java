@@ -124,7 +124,7 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
     /**
      * Deletes any temp files and releases any byte arrays.
      * @throws IOException If closing the entry fails.
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     @Override
     public void close() throws IOException {

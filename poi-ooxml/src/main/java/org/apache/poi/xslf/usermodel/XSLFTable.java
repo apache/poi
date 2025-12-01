@@ -170,7 +170,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     /**
      * Insert a new row at the given index.
      * @param rowIdx the row index.
-     * @since POI 5.0.0
+     * @since 5.0.0
      */
     public XSLFTableRow insertRow(int rowIdx) {
         if (getNumberOfRows() < rowIdx) {
@@ -200,7 +200,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
     /**
      * Add a new column at the end of the table.
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     public void addColumn() {
         long width = POIXMLUnits.parseLength(_table.getTblGrid().getGridColArray(getNumberOfColumns() - 1).xgetW());
@@ -215,7 +215,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     /**
      * Insert a new column at the given index.
      * @param colIdx the column index.
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     public void insertColumn(int colIdx) {
         if (getNumberOfColumns() < colIdx) {
@@ -233,7 +233,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     /**
      * Remove the column at the given index.
      * @param colIdx the column index.
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     public void removeColumn(int colIdx) {
         if (getNumberOfColumns() < colIdx) {
@@ -329,7 +329,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
      *
      * @return the assigned TableStyle
      *
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     protected XSLFTableStyle getTableStyle() {
         CTTable tab = getCTTable();

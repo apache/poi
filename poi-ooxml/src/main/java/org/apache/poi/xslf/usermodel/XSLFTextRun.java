@@ -170,7 +170,7 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
      *
      * @see org.apache.poi.sl.draw.DrawPaint#getPaint(java.awt.Graphics2D, PaintStyle)
      * @see SolidPaint#getSolidColor()
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     @Override
     public PaintStyle getHighlightColor() {
@@ -200,7 +200,7 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
      * Sets the font highlight (background) color for this text run - convenience function
      *
      * @param color The highlight (background) color to set.
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     @Override
     public void setHighlightColor(final Color color) {
@@ -214,7 +214,7 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
      * @throws IllegalArgumentException If the supplied paint style is not null or a SolidPaint.
      *
      * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     @Override
     public void setHighlightColor(final PaintStyle color) {

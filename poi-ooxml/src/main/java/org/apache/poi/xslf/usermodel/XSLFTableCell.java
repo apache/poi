@@ -573,7 +573,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     }
 
     /**
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     @Override
     public void setTextDirection(TextDirection orientation) {
@@ -605,7 +605,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     }
 
     /**
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     @Override
     public TextDirection getTextDirection() {
@@ -663,7 +663,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
      * temporarily store the location of the cell for a later retrieval, e.g.
      * for rendering
      *
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     @Override
     public void setAnchor(Rectangle2D anchor) {
@@ -675,7 +675,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     }
 
     /**
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     @Override
     public Rectangle2D getAnchor() {
@@ -688,7 +688,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     }
 
     /**
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     @Override
     public boolean isMerged() {
@@ -697,7 +697,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     }
 
     /**
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     @Override
     protected XSLFCellTextParagraph newTextParagraph(CTTextParagraph p) {
@@ -710,7 +710,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     }
 
     /**
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     private final class XSLFCellTextParagraph extends XSLFTextParagraph {
         private XSLFCellTextParagraph(CTTextParagraph p, XSLFTextShape shape) {
@@ -724,7 +724,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     }
 
     /**
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     private final class XSLFCellTextRun extends XSLFTextRun {
         private XSLFCellTextRun(XmlObject r, XSLFTextParagraph p) {

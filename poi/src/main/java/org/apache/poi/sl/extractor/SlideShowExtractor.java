@@ -49,7 +49,7 @@ import org.apache.poi.util.LocaleUtil;
 /**
  * Common SlideShow extractor
  *
- * @since POI 4.0.0
+ * @since 4.0.0
  */
 public class SlideShowExtractor<
     S extends Shape<S,P>,

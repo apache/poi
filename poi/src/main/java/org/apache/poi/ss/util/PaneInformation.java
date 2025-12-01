@@ -102,7 +102,7 @@ public class PaneInformation
 
     /**
      * @return the active pane type - can return <code>null</code> if no active pane type is set
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public PaneType getActivePaneType() {
         switch (activePane) {

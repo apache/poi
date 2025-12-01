@@ -58,7 +58,7 @@ public final class PackageHelper {
      * @return OPCPackage
      * @throws IOException If reading data from the stream fails
      * @throws POIXMLException If the stream is not a valid OPC package
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public static OPCPackage open(InputStream stream, boolean closeStream) throws IOException {
         try {

@@ -143,7 +143,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      *            the package part holding the chart data, the content type must
      *            be
      *            {@code application/vnd.openxmlformats-officedocument.drawingml.chart+xml}
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     protected XDDFChart(PackagePart part) throws IOException, XmlException {
         super(part);
@@ -186,7 +186,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
 
     /**
      * Clear all properties, as if a new instance had just been created.
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     public void clear() {
         axes.clear();
@@ -322,7 +322,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
 
     /**
      * Remove the chart title.
-     * @since POI 5.0.0
+     * @since 5.0.0
      */
     public void removeTitle() {
         setAutoTitleDeleted(true);
@@ -500,7 +500,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
 
     /**
      * Clear all chart series, as if a new instance had just been created.
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     public void clearChartSeries() {
         CTPlotArea plotArea = getCTPlotArea();
@@ -758,7 +758,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      *            index used to suffix on file
      * @return return relation part which used to write relation in .rels file
      *         and get relation id
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public PackageRelationship createRelationshipInChart(POIXMLRelation chartRelation, POIXMLFactory chartFactory,
         int chartIndex) {
@@ -775,7 +775,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @param chartFactory
      *            factory object of POIXMLFactory (XWPFFactory/XSLFFactory)
      * @return return the new package part
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     private PackagePart createWorksheetPart(POIXMLRelation chartWorkbookRelation, POIXMLFactory chartFactory)
             throws InvalidFormatException {
@@ -788,7 +788,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * this method write the XSSFWorkbook object data into embedded excel file
      *
      * @param workbook XSSFworkbook object
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void saveWorkbook(XSSFWorkbook workbook) throws IOException, InvalidFormatException {
         PackagePart worksheetPart = getWorksheetPart();
@@ -810,21 +810,21 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     /**
      *
      * @return the chart relation in the implementing subclass.
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     protected abstract POIXMLRelation getChartRelation();
 
     /**
      *
      * @return the chart workbook relation in the implementing subclass.
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     protected abstract POIXMLRelation getChartWorkbookRelation();
 
     /**
      *
      * @return the chart factory in the implementing subclass.
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     protected abstract POIXMLFactory getChartFactory();
 
@@ -837,7 +837,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      *            category values
      * @param valuesData
      *            data values
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     protected void fillSheet(XSSFSheet sheet, XDDFDataSource<?> categoryData, XDDFNumericalDataSource<?> valuesData) {
         int numOfPoints = categoryData.getPointCount();
@@ -862,7 +862,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @param index
      *            index of current row
      * @return this method return sheet row on given index
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     private XSSFRow getRow(XSSFSheet sheet, int index) {
         XSSFRow row = sheet.getRow(index);
@@ -882,7 +882,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @param index
      *            index of current cell
      * @return this method return sheet cell on given index
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     private XSSFCell getCell(XSSFRow row, int index) {
         XSSFCell cell = row.getCell(index);
@@ -898,7 +898,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      *
      * @param other
      *            chart object
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void importContent(XDDFChart other) {
         getCTChartSpace().set(other.getCTChartSpace());
@@ -935,7 +935,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @param column
      *            column index
      * @return return cell reference
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public CellReference setSheetTitle(String title, int column) {
         XSSFSheet sheet = getSheet();
@@ -950,7 +950,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     /**
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public String formatRange(CellRangeAddress range) {
         final XSSFSheet sheet = getSheet();
@@ -961,7 +961,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * get sheet object of embedded excel file
      *
      * @return excel sheet object
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     private XSSFSheet getSheet() {
         try {
@@ -977,7 +977,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * writing xssfworkbook object into output stream of embedded part
      *
      * @return returns the packagepart of embedded file
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     private PackagePart getWorksheetPart() throws InvalidFormatException {
         for (RelationPart part : getRelationParts()) {
@@ -999,7 +999,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
 
     /**
      * @return returns the workbook object of embedded excel file
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public XSSFWorkbook getWorkbook() throws IOException, InvalidFormatException {
         if (workbook == null) {
@@ -1028,7 +1028,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      *
      * @param workbook
      *            workbook object which we read from chart embedded part
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setWorkbook(XSSFWorkbook workbook) {
         this.workbook = workbook;
@@ -1041,7 +1041,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @param id
      *            relation id of embedded excel relation id into external data
      *            relation tag
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setExternalId(String id) {
         CTChartSpace ctChartSpace = getCTChartSpace();
@@ -1053,7 +1053,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
 
     /**
      * @return method return chart index
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     protected int getChartIndex() {
         return chartIndex;
@@ -1075,7 +1075,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @param newSheet
      *          sheet to be used in the data references.
      *
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     public void replaceReferences(XSSFSheet newSheet) {
         for (XDDFChartData data : getChartSeries()) {

@@ -148,7 +148,7 @@ public abstract class PageBreakRecord extends StandardRecord {
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public final Spliterator<Break> getBreaksSpliterator() {
         return _breaks.spliterator();

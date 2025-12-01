@@ -48,7 +48,7 @@ public class XSSFChartSheet extends XSSFSheet  {
     protected CTChartsheet chartsheet;
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     protected XSSFChartSheet(PackagePart part) {
         super(part);

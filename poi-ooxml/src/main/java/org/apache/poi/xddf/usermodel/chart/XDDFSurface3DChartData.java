@@ -124,7 +124,7 @@ public class XDDFSurface3DChartData extends XDDFChartData {
         }
 
         /**
-         * @since POI 5.2.3
+         * @since 5.2.3
          */
         public CTSurfaceSer getCTSurfaceSer() {
             return series;

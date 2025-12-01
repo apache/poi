@@ -326,7 +326,7 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public Spliterator<FormatRun> formatSpliterator() {
         if (field_4_format_runs != null) {

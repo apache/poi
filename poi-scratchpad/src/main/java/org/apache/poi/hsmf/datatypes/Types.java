@@ -140,7 +140,7 @@ public final class Types {
 
         /**
          * @return whether the type is a pointer
-         * @since POI 5.2.4
+         * @since 5.2.4
          */
         public boolean isPointer() {
             return (length == -1) || (length > 8);

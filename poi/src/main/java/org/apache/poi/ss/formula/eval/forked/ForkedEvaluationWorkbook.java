@@ -165,7 +165,7 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
      * leave the map alone, if it needs resetting, reusing this class is probably a bad idea.
      * @see org.apache.poi.ss.formula.EvaluationSheet#clearAllCachedResultValues()
      *
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     @Override
     public void clearAllCachedResultValues() {

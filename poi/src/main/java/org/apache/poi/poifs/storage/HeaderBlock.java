@@ -234,7 +234,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
 
     /**
      * @return the number of property blocks
-     * @since POI 5.4.0
+     * @since 5.4.0
      */
     public int getPropertyCount() {
         return _property_count;
@@ -244,7 +244,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
      * Set the number of property blocks
      *
      * @param property_count number of property blocks
-     * @since POI 5.4.0
+     * @since 5.4.0
      */
     public void setPropertyCount(final int property_count) {
         this._property_count = property_count;

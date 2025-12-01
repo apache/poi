@@ -28,7 +28,7 @@ import org.apache.poi.util.ExceptionUtil;
  * throw {@link HSSFReadException} or {@link IOException} instead of {@link RuntimeException}.
  * You can still get an {@link Error}s like an {@link OutOfMemoryError}.
  *
- * @since POI 5.5.0
+ * @since 5.5.0
  */
 public final class HSSFParser {
 

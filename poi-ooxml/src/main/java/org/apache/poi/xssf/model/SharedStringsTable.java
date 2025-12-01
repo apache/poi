@@ -104,7 +104,7 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
     }
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public SharedStringsTable(PackagePart part) throws IOException {
         super(part);
@@ -213,7 +213,7 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
      * </p>
      *
      * @param string the entry to add
-     * @since POI 4.0.0
+     * @since 4.0.0
      * @return index the index of added entry
      */
     public int addSharedStringItem(RichTextString string) {

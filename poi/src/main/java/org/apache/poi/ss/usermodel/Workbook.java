@@ -235,7 +235,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      *
      * @return a spliterator of the sheets.
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     default Spliterator<Sheet> spliterator() {
@@ -545,7 +545,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      *
      * @param sheetIx  the index of the sheet
      * @return the sheet visibility
-     * @since POI 3.16 beta 2
+     * @since 3.16 beta 2
      */
     SheetVisibility getSheetVisibility(int sheetIx);
 
@@ -557,7 +557,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      *
      * @param sheetIx     the sheet index (0-based)
      * @param visibility  the sheet visibility to set
-     * @since POI 3.16 beta 2
+     * @since 3.16 beta 2
      */
     void setSheetVisibility(int sheetIx, SheetVisibility visibility);
 
@@ -623,13 +623,13 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
 
     /**
      * @return the type of cell references used
-     * @since POI 5.2.1
+     * @since 5.2.1
      */
     CellReferenceType getCellReferenceType();
 
     /**
      * @param cellReferenceType the type of cell references used
-     * @since POI 5.2.1
+     * @since 5.2.1
      */
     void setCellReferenceType(CellReferenceType cellReferenceType);
 }

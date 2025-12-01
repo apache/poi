@@ -392,7 +392,7 @@ public interface Sheet extends Iterable<Row> {
      * @return a spliterator of the PHYSICAL rows.  Meaning the 3rd element may not
      * be the third row if say for instance the second row is undefined.
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     default Spliterator<Row> spliterator() {
@@ -635,7 +635,7 @@ public interface Sheet extends Iterable<Row> {
      *
      * @param margin which margin to get
      * @return the size of the margin
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     double getMargin(PageMargin margin);
 
@@ -655,7 +655,7 @@ public interface Sheet extends Iterable<Row> {
      *
      * @param margin which margin to set
      * @param size the size of the margin
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     void setMargin(PageMargin margin, double size);
 
@@ -816,7 +816,7 @@ public interface Sheet extends Iterable<Row> {
      * @param leftmostColumn   Left column visible in right pane.
      * @param activePane    Active pane.
      * @see PaneType
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, PaneType activePane);
 
@@ -1233,7 +1233,7 @@ public interface Sheet extends Iterable<Row> {
      *
      * @param addr The address of the cell containing the hyperlink
      * @return hyperlink if there is a hyperlink anchored at {@code addr}; otherwise returns {@code null}
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     Hyperlink getHyperlink(CellAddress addr);
 

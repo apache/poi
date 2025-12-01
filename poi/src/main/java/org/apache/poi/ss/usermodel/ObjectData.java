@@ -24,7 +24,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 /**
  * Common interface for OLE shapes, i.e. shapes linked to embedded documents
  * 
- * @since POI 3.16-beta2
+ * @since 3.16-beta2
  */
 public interface ObjectData extends SimpleShape {
     /**

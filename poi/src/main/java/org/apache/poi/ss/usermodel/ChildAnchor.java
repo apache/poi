@@ -23,7 +23,7 @@ package org.apache.poi.ss.usermodel;
  * An anchor is what specifics the position of a shape within a client object
  * or within another containing shape.
  * 
- * @since POI 3.16-beta2
+ * @since 3.16-beta2
  */
 public interface ChildAnchor {
     /**

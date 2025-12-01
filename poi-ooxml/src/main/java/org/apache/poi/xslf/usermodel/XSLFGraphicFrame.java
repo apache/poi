@@ -194,7 +194,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public boolean hasDiagram() {
         String uri = getGraphicalData().getUri();

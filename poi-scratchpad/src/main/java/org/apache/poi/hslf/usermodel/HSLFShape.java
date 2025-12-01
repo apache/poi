@@ -239,7 +239,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     }
 
     /**
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     public static <T extends EscherRecord> T getEscherChild(EscherContainerRecord owner, EscherRecordTypes recordId){
         return getEscherChild(owner, recordId.typeID);
@@ -254,7 +254,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     }
 
     /**
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     public <T extends EscherRecord> T getEscherChild(EscherRecordTypes recordId){
         return getEscherChild(recordId.typeID);

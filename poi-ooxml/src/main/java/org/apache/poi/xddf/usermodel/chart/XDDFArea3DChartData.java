@@ -151,7 +151,7 @@ public class XDDFArea3DChartData extends XDDFChartData {
         }
 
         /**
-         * @since POI 5.2.3
+         * @since 5.2.3
          */
         public CTAreaSer getCTAreaSer() {
             return series;

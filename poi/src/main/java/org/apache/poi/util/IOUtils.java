@@ -71,7 +71,7 @@ public final class IOUtils {
     /**
      * @param maxOverride the max init size of ByteArrayOutputStream.
      * -1 (the default) means init size of ByteArrayOutputStream could be up to {@link Integer#MAX_VALUE}
-     * @since POI 5.2.2
+     * @since 5.2.2
      */
     public static void setMaxByteArrayInitSize(final int maxOverride) {
         MAX_BYTE_ARRAY_INIT_SIZE = maxOverride;
@@ -80,7 +80,7 @@ public final class IOUtils {
     /**
      * @return the max init size of ByteArrayOutputStream.
      * -1 (the default) means init size of ByteArrayOutputStream could be up to {@link Integer#MAX_VALUE}
-     * @since POI 5.2.2
+     * @since 5.2.2
      */
     public static int getMaxByteArrayInitSize() {
         return MAX_BYTE_ARRAY_INIT_SIZE;
@@ -229,7 +229,7 @@ public final class IOUtils {
      * @return A byte array with the read bytes.
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
      * @throws RecordFormatException If the requested length is invalid.
-     * @since POI 5.4.1
+     * @since 5.4.1
      */
     public static byte[] toByteArray(InputStream stream, final long length, final int maxLength) throws IOException {
         return toByteArray(stream,
@@ -248,7 +248,7 @@ public final class IOUtils {
      * @return A byte array with the read bytes.
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
      * @throws RecordFormatException If the requested length is invalid.
-     * @since POI 5.2.1
+     * @since 5.2.1
      */
     public static byte[] toByteArrayWithMaxLength(InputStream stream, final int maxLength) throws IOException {
         return toByteArray(stream, maxLength, maxLength, false, false);
@@ -626,7 +626,7 @@ public final class IOUtils {
      * @param name The name of the file to create.
      * @return The created file.
      * @throws IOException If path traversal is detected.
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     public static File newFile(final File parent, final String name) throws IOException {
         final File file = new File(parent, name);

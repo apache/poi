@@ -24,7 +24,7 @@ package org.apache.poi;
  * class that extends {@link Exception} so needs to be explicitly
  * caught or declared in the method signature.
  *
- * @since POI 5.5.0
+ * @since 5.5.0
  */
 public class POIException extends Exception {
     private static final long serialVersionUID = 1L;

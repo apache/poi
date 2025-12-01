@@ -52,7 +52,7 @@ public class XDGFBaseContents extends XDGFXMLDocumentPart {
     protected List<XDGFConnection> _connections = new ArrayList<>();
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XDGFBaseContents(PackagePart part) {
         super(part);

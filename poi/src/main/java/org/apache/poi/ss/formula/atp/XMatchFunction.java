@@ -31,7 +31,7 @@ import org.apache.poi.ss.formula.functions.LookupUtils;
  *
  * https://support.microsoft.com/en-us/office/xmatch-function-d966da31-7a6b-4a13-a1c6-5a33ed6a0312
  * 
- * @since POI 5.2.0
+ * @since 5.2.0
  */
 final class XMatchFunction implements FreeRefFunction {
 

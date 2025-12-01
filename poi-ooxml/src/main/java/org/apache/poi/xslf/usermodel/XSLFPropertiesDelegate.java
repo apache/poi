@@ -46,7 +46,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperti
  * This class is experimental and not (yet) supposed for public usage.
  * Maybe the xml schemas might be enhanced with interfaces to make this class superfluous
  * 
- * @since POI 3.15-beta2
+ * @since 3.15-beta2
  */
 @Internal
 /* package */ class XSLFPropertiesDelegate {

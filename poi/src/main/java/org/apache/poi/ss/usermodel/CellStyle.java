@@ -177,56 +177,56 @@ public interface CellStyle {
     /**
      * set the type of border to use for the left border of the cell
      * @param border type
-     * @since POI 3.15
+     * @since 3.15
      */
     void setBorderLeft(BorderStyle border);
 
     /**
      * get the type of border to use for the left border of the cell
      * @return border type
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     BorderStyle getBorderLeft();
 
     /**
      * set the type of border to use for the right border of the cell
      * @param border type
-     * @since POI 3.15
+     * @since 3.15
      */
     void setBorderRight(BorderStyle border);
 
     /**
      * get the type of border to use for the right border of the cell
      * @return border type
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     BorderStyle getBorderRight();
 
     /**
      * set the type of border to use for the top border of the cell
      * @param border type
-     * @since POI 3.15
+     * @since 3.15
      */
     void setBorderTop(BorderStyle border);
 
     /**
      * get the type of border to use for the top border of the cell
      * @return border type
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     BorderStyle getBorderTop();
 
     /**
      * set the type of border to use for the bottom border of the cell
      * @param border type
-     * @since POI 3.15
+     * @since 3.15
      */
     void setBorderBottom(BorderStyle border);
 
     /**
      * get the type of border to use for the bottom border of the cell
      * @return border type
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     BorderStyle getBorderBottom();
 
@@ -282,7 +282,7 @@ public interface CellStyle {
      * other values
      *
      * @param fp  fill pattern (set to {@link FillPatternType#SOLID_FOREGROUND} to fill w/foreground color)
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     void setFillPattern(FillPatternType fp);
 
@@ -290,7 +290,7 @@ public interface CellStyle {
      * Get the fill pattern
      *
      * @return the fill pattern, default value is {@link FillPatternType#NO_FILL}
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     FillPatternType getFillPattern();
 
@@ -306,7 +306,7 @@ public interface CellStyle {
      * Uses a {@link org.apache.poi.ss.usermodel.Color} instead of an indexed color.
      *
      * @param color org.apache.poi.ss.usermodel.Color to set
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     void setFillBackgroundColor(Color color);
 
@@ -338,7 +338,7 @@ public interface CellStyle {
      * Uses a {@link org.apache.poi.ss.usermodel.Color} instead of an indexed color.
      *
      * @param color org.apache.poi.ss.usermodel.Color to set
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     void setFillForegroundColor(Color color);
 
@@ -399,7 +399,7 @@ public interface CellStyle {
      *
      * @return map of format properties
      * @see org.apache.poi.ss.util.CellUtil#getFormatProperties(CellStyle)
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     EnumMap<CellPropertyType, Object> getFormatProperties();
 
@@ -409,7 +409,7 @@ public interface CellStyle {
      * The API is public just in case users find that the CellStyle implementations
      * are not calling this method when they should.
      *
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     void invalidateCachedProperties();
 }

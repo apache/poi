@@ -369,7 +369,7 @@ public interface TextParagraph<
      *
      * @return true if this paragraph is part of a header or footer placeholder
      *
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     boolean isHeaderOrFooter();
 
@@ -382,7 +382,7 @@ public interface TextParagraph<
      *
      * @return the tabstop collection or {@code null} if no tabstops are defined
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     @SuppressWarnings("java:S1452")
     List<? extends TabStop> getTabStops();
@@ -390,7 +390,7 @@ public interface TextParagraph<
     /**
      * Set the {@link TabStop} collection
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     void addTabStops(double positionInPoints, TabStop.TabStopType tabStopType);
 
@@ -398,7 +398,7 @@ public interface TextParagraph<
      * Removes the tabstops of this paragraphs.
      * This doesn't affect inherited tabstops, e.g. inherited by the slide master
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     void clearTabStops();
 }

@@ -28,7 +28,7 @@ import org.apache.poi.util.Internal;
  * An interface to provide support for get/set of highlight color in <code>XLSFTextRuns</code> instances.
  * Spec Ref: 21.1.2.3.4 (ECMA-376-1 5th ed. Ecma Office Open XML Part 1 - Fundamentals And Markup Language Reference.pdf)
  *
- * @since POI 5.2.4
+ * @since 5.2.4
  */
 @SuppressWarnings({"unused","java:S1452"})
 public interface HighlightColorSupport
@@ -42,7 +42,7 @@ public interface HighlightColorSupport
      *
      * @see org.apache.poi.sl.draw.DrawPaint#getPaint(java.awt.Graphics2D, PaintStyle)
      * @see SolidPaint#getSolidColor()
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     PaintStyle getHighlightColor();
 
@@ -52,7 +52,7 @@ public interface HighlightColorSupport
      * @param color The highlight (background) color to set.
      *
      * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     void setHighlightColor(final PaintStyle color);
 
@@ -60,7 +60,7 @@ public interface HighlightColorSupport
      * Sets the font highlight (background) color for this text run - convenience function
      *
      * @param color The highlight (background) color to set.
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     void setHighlightColor(final Color color);
 

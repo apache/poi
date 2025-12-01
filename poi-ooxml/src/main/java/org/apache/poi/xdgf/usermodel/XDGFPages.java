@@ -47,7 +47,7 @@ public class XDGFPages extends XDGFXMLDocumentPart {
     List<XDGFPage> _pages = new ArrayList<>();
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XDGFPages(PackagePart part) {
         super(part);

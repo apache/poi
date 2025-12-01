@@ -145,7 +145,7 @@ public interface TextShape<
      * 
      * @return the text string for this textbox.
      * 
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     String getText();
     
@@ -169,7 +169,7 @@ public interface TextShape<
      * @param newParagraph if true, a new paragraph will be added,
      *        which will contain the added text
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     TextRun appendText(String text, boolean newParagraph);
     
@@ -204,7 +204,7 @@ public interface TextShape<
      * 
      * @return the cumulative height occupied by the text
      * 
-     * @since POI 3.17-beta2
+     * @since 3.17-beta2
      */
     double getTextHeight(Graphics2D graphics);
     
@@ -293,7 +293,7 @@ public interface TextShape<
      *
      * @return a {@code Rectangle2D} that is the bounds of this shape.
      * 
-     * @since POI 3.17-beta2
+     * @since 3.17-beta2
      */
     Rectangle2D resizeToFitText();
 
@@ -304,7 +304,7 @@ public interface TextShape<
      *
      * @return a {@code Rectangle2D} that is the bounds of this shape.
      * 
-     * @since POI 3.17-beta2
+     * @since 3.17-beta2
      */
     Rectangle2D resizeToFitText(Graphics2D graphics);
 

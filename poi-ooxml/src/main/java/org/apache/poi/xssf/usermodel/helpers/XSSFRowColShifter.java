@@ -40,7 +40,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
 /**
  * Class for code common to {@link XSSFRowShifter} and {@link XSSFColumnShifter}
  *
- * @since POI 4.0.0
+ * @since 4.0.0
  */
 @Internal
 /*private*/ final class XSSFRowColShifter {

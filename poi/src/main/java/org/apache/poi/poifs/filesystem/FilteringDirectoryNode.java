@@ -118,7 +118,7 @@ public class FilteringDirectoryNode implements DirectoryEntry
    }
 
    /**
-    * @since POI 5.2.0
+    * @since 5.2.0
     */
    @Override
    public Spliterator<Entry> spliterator() {

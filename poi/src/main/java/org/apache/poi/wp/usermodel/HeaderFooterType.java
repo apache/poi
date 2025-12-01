@@ -18,7 +18,7 @@
 package org.apache.poi.wp.usermodel;
 
 /**
- * @since POI v3.16 beta 1
+ * @since v3.16 beta 1
  */
 public enum HeaderFooterType {
 

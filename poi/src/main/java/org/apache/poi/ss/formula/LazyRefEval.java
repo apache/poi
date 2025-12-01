@@ -41,7 +41,7 @@ public final class LazyRefEval extends RefEvalBase {
 
     /**
      * @return the Eval of the first sheet associated with this LazyRefEval
-     * @since POI 5.4.0
+     * @since 5.4.0
      */
     public ValueEval getInnerValueEvalForFirstSheet() {
         return _evaluator.getEvalForCell(_evaluator.getFirstSheetIndex(), getRow(), getColumn());

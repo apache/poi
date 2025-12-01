@@ -87,7 +87,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<EscherRecord> spliterator() {
@@ -290,7 +290,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 
     /**
      * @return the container record for drawings
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     public EscherContainerRecord getDgContainer() {
         return dgContainer;

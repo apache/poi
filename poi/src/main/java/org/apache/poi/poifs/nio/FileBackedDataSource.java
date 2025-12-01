@@ -70,7 +70,7 @@ public class FileBackedDataSource extends DataSource implements Closeable {
     }
 
     /**
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     public FileBackedDataSource(FileChannel channel, boolean readOnly, boolean closeChannelOnClose) {
         this(null, channel, readOnly, closeChannelOnClose);

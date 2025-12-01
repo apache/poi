@@ -22,7 +22,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 /**
  * Methods exposed by XSSF, SXSSF and related sheets - that are additional to the ones on the {@link Sheet} interface.
  *
- * @since POI 5.2.0
+ * @since 5.2.0
  */
 public interface OoxmlSheetExtensions {
     /**

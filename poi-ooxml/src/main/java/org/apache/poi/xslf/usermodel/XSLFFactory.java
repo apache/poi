@@ -35,7 +35,7 @@ public final class XSLFFactory extends POIXMLFactory  {
     private XSLFFactory() {}
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     @Override
     protected POIXMLRelation getDescriptor(String relationshipType) {

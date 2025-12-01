@@ -50,7 +50,7 @@ public class HSSFColor implements Color {
     /**
      * Predefined HSSFColors with their given palette index (and an optional 2nd index)
      *
-     * @since POI 3.16 beta 2
+     * @since 3.16 beta 2
      */
     public enum HSSFColorPredefined {
         BLACK                (0x08,   -1, 0x000000),
@@ -183,7 +183,7 @@ public class HSSFColor implements Color {
      * @param index Index to the standard color palette
      * @param index2 Index to the alternate color palette
      * @param rgb combined value of RGB
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     public HSSFColor(int index, int index2, int rgb) {
         this.index = index;

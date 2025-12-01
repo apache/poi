@@ -78,7 +78,7 @@ public interface Document {
     /**
      * SVG graphics (.svg)
      *
-     * @since POI 5.3.0
+     * @since 5.3.0
      */
     public static final int PICTURE_TYPE_SVG = PictureType.SVG.ooxmlId;
 }

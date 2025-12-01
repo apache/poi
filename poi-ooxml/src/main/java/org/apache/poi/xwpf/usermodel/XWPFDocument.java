@@ -159,7 +159,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
      * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public XWPFDocument(InputStream stream, boolean closeStream) throws IOException {
         super(PackageHelper.open(stream, closeStream));
@@ -379,7 +379,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * returns a Spliterator with paragraphs and tables
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public Spliterator<IBodyElement> getBodyElementsSpliterator() {
         return bodyElements.spliterator();
@@ -484,7 +484,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * @return Theme document (can be null)
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public XWPFTheme getTheme() {
         return theme;
@@ -1054,7 +1054,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * Creates an empty styles for the document if one does not already exist
      *
      * @return styles
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public XWPFTheme createTheme() {
         if (theme == null) {
@@ -1585,7 +1585,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * @return document level settings
-     * @since POI 5.2.1
+     * @since 5.2.1
      */
     public XWPFSettings getSettings() {
         return settings;
@@ -1640,7 +1640,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return the index to this picture (0 based), the added picture can be
      * obtained from {@link #getAllPictures()} .
      * @throws InvalidFormatException if the format is not known
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public String addPictureData(byte[] pictureData, PictureType pictureType) throws InvalidFormatException {
         if (pictureType == null) {
@@ -1707,7 +1707,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return the index to this picture (0 based), the added picture can be
      * obtained from {@link #getAllPictures()} .
      * @throws InvalidFormatException if the pictureType is not known
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public String addPictureData(InputStream is, PictureType pictureType) throws InvalidFormatException {
         try {
@@ -1739,7 +1739,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @param pictureType the {@link PictureType}
      * @return the next free ImageNumber
      * @throws InvalidFormatException If the pictureType of the picture is not known.
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public int getNextPicNameNumber(PictureType pictureType) throws InvalidFormatException {
         if (pictureType == null) {
@@ -1817,7 +1817,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public Spliterator<XWPFTable> getTablesSpliterator() {
         return tables.spliterator();
@@ -1828,7 +1828,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public Spliterator<XWPFParagraph> getParagraphsSpliterator() {
         return paragraphs.spliterator();
@@ -1907,7 +1907,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * no need to read MS-Word file and modify charts
      *
      * @return This method return object of XWPFChart Object with default height and width
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public XWPFChart createChart() throws InvalidFormatException, IOException {
         return createChart(XDDFChart.DEFAULT_WIDTH, XDDFChart.DEFAULT_HEIGHT);
@@ -1920,7 +1920,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @param width  width of chart in document
      * @param height height of chart in document
      * @return This method return object of XWPFChart
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public XWPFChart createChart(int width, int height) throws InvalidFormatException, IOException {
         return createChart(createParagraph().createRun(), width, height);
@@ -1932,7 +1932,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @param width in EMU.
      * @param height in EMU.
      * @return the new chart.
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     public XWPFChart createChart(XWPFRun run, int width, int height) throws InvalidFormatException, IOException {
         //get chart number

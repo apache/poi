@@ -261,7 +261,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     /**
      * Sets the anchor type
      * @param anchorType the anchor type to set
-     * @since POI 3.14
+     * @since 3.14
      */
     @Override
     public void setAnchorType(AnchorType anchorType) {

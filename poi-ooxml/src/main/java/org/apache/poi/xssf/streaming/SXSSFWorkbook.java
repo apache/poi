@@ -361,7 +361,7 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * @param shouldCalculateSheetDimensions defaults to <code>true</code>, set to <code>false</code> if
      *                                       the calculated dimensions are causing trouble
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public void setShouldCalculateSheetDimensions(boolean shouldCalculateSheetDimensions) {
         this.shouldCalculateSheetDimensions = shouldCalculateSheetDimensions;
@@ -370,7 +370,7 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * @return shouldCalculateSheetDimensions defaults to <code>true</code>, set to <code>false</code> if
      * the calculated dimensions are causing trouble
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public boolean shouldCalculateSheetDimensions() {
         return shouldCalculateSheetDimensions;
@@ -755,7 +755,7 @@ public class SXSSFWorkbook implements Workbook {
      *
      * @return a spliterator of the sheets.
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<Sheet> spliterator() {
@@ -970,7 +970,7 @@ public class SXSSFWorkbook implements Workbook {
      *
      * @param stream - the java OutputStream you wish to write to
      * @throws IOException if anything can't be written.
-     * @since POI 5.1.0 (experimental and still liable to change or be removed)
+     * @since 5.1.0 (experimental and still liable to change or be removed)
      */
     @Beta
     public void writeAvoidingTempFiles(OutputStream stream) throws IOException {

@@ -122,7 +122,7 @@ public class XDDFTextParagraph implements Iterable<XDDFTextRun> {
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<XDDFTextRun> spliterator() {

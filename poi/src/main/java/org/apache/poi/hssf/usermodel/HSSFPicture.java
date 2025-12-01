@@ -149,7 +149,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * Calculate the preferred size for this picture.
      *
      * @return HSSFClientAnchor with the preferred size for this image
-     * @since POI 3.0.2
+     * @since 3.0.2
      */
     @Override
     public HSSFClientAnchor getPreferredSize(){
@@ -161,7 +161,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      *
      * @param scale the amount by which image dimensions are multiplied relative to the original size.
      * @return HSSFClientAnchor with the preferred size for this image
-     * @since POI 3.0.2
+     * @since 3.0.2
      */
     public HSSFClientAnchor getPreferredSize(double scale){
         return getPreferredSize(scale, scale);
@@ -173,7 +173,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @param scaleX the amount by which image width is multiplied relative to the original width.
      * @param scaleY the amount by which image height is multiplied relative to the original height.
      * @return HSSFClientAnchor with the preferred size for this image
-     * @since POI 3.11
+     * @since 3.11
      */
     @Override
     public HSSFClientAnchor getPreferredSize(double scaleX, double scaleY){

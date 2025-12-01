@@ -122,7 +122,7 @@ public class XDDFScatterChartData extends XDDFChartData {
         }
 
         /**
-         * @since POI 5.2.3
+         * @since 5.2.3
          */
         public CTScatterSer getCTScatterSer() {
             return series;
@@ -205,35 +205,35 @@ public class XDDFScatterChartData extends XDDFChartData {
         }
 
         /**
-         * @since POI 4.1.2
+         * @since 4.1.2
          */
         public int getErrorBarsCount() {
             return series.sizeOfErrBarsArray();
         }
 
         /**
-         * @since POI 4.1.2
+         * @since 4.1.2
          */
         public XDDFErrorBars getErrorBars(int index) {
             return new XDDFErrorBars(series.getErrBarsArray(index));
         }
 
         /**
-         * @since POI 4.1.2
+         * @since 4.1.2
          */
         public XDDFErrorBars addNewErrorBars() {
             return new XDDFErrorBars(series.addNewErrBars());
         }
 
         /**
-         * @since POI 4.1.2
+         * @since 4.1.2
          */
         public XDDFErrorBars insertNewErrorBars(int index) {
             return new XDDFErrorBars(series.insertNewErrBars(index));
         }
 
         /**
-         * @since POI 4.1.2
+         * @since 4.1.2
          */
         public void removeErrorBars(int index) {
             series.removeErrBars(index);

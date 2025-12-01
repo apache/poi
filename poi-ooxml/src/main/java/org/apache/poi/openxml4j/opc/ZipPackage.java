@@ -110,7 +110,7 @@ public final class ZipPackage extends OPCPackage {
      * Constructor. Creates a new, empty ZipPackage.
      * @param opcComplianceFlags
      *            The level of OPC compliance to enforce when reading the package
-     * @since POI 5.4.1
+     * @since 5.4.1
      */
     public ZipPackage(OPCComplianceFlags opcComplianceFlags) {
         super(defaultPackageAccess, opcComplianceFlags);
@@ -156,7 +156,7 @@ public final class ZipPackage extends OPCPackage {
      *             ZipInputStream.
      * @throws IOException
      *            if input stream cannot be opened, read, or closed
-     * @since POI 5.4.1
+     * @since 5.4.1
      */
     ZipPackage(InputStream in, PackageAccess access, OPCComplianceFlags opcComplianceFlags) throws IOException {
         super(access, opcComplianceFlags);
@@ -180,7 +180,7 @@ public final class ZipPackage extends OPCPackage {
      *             ZipInputStream.
      * @throws IOException
      *            if input stream cannot be opened, read, or closed
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     ZipPackage(InputStream in, PackageAccess access, boolean closeStream) throws IOException {
         this(in, access, closeStream, OPCComplianceFlags.enforceAll());
@@ -203,7 +203,7 @@ public final class ZipPackage extends OPCPackage {
      *             ZipInputStream.
      * @throws IOException
      *            if input stream cannot be opened, read, or closed
-     * @since POI 5.4.1
+     * @since 5.4.1
      */
     ZipPackage(InputStream in, PackageAccess access, boolean closeStream, OPCComplianceFlags opcComplianceFlags) throws IOException {
         super(access, opcComplianceFlags);
@@ -235,7 +235,7 @@ public final class ZipPackage extends OPCPackage {
      * @param opcComplianceFlags
      *            The level of OPC compliance to enforce when reading the package
      * @throws InvalidOperationException If the zip file cannot be opened.
-     * @since POI 5.4.1
+     * @since 5.4.1
      */
     ZipPackage(String path, PackageAccess access, OPCComplianceFlags opcComplianceFlags) throws InvalidOperationException {
         this(new File(path), access, opcComplianceFlags);
@@ -264,7 +264,7 @@ public final class ZipPackage extends OPCPackage {
      * @param opcComplianceFlags
      *            The level of OPC compliance to enforce when reading the package
      * @throws InvalidOperationException If the zip file cannot be opened.
-     * @since POI 5.4.1
+     * @since 5.4.1
      */
     ZipPackage(File file, PackageAccess access, OPCComplianceFlags opcComplianceFlags) throws InvalidOperationException {
         super(access, opcComplianceFlags);
@@ -348,7 +348,7 @@ public final class ZipPackage extends OPCPackage {
      *            The package access mode.
      * @param access
      *            The package access mode.
-     * @since POI 5.4.1
+     * @since 5.4.1
      */
     ZipPackage(ZipEntrySource zipEntry, PackageAccess access, OPCComplianceFlags opcComplianceFlags) {
         super(access, opcComplianceFlags);

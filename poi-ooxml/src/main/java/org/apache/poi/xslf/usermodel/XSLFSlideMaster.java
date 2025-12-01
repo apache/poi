@@ -58,7 +58,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
     private Map<String, XSLFSlideLayout> _layouts;
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     protected XSLFSlideMaster(PackagePart part) throws IOException, XmlException {
         super(part);

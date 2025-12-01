@@ -21,7 +21,7 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.util.Internal;
 
 /**
- * @since POI 3.15 beta 3
+ * @since 3.15 beta 3
  */
 public enum CellType {
     /**
@@ -63,7 +63,7 @@ public enum CellType {
     ERROR(5);
 
     /**
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      * @deprecated POI 3.15 beta 3
      */
     @Deprecated
@@ -74,7 +74,7 @@ public enum CellType {
     }
 
     /**
-     * @since POI 3.15 beta 3.
+     * @since 3.15 beta 3.
      * @deprecated POI 3.15 beta 3. Used to transition code from <code>int</code>s to <code>CellType</code>s.
      */
     @Deprecated
@@ -88,7 +88,7 @@ public enum CellType {
     }
     
     /**
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      * @deprecated POI 3.15 beta 3
      */
     @Deprecated

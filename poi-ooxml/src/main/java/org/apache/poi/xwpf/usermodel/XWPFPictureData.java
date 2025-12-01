@@ -90,7 +90,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      *
      * @param part the package part holding the drawing data,
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XWPFPictureData(PackagePart part) {
         super(part);
@@ -175,7 +175,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      * Return a {@link PictureType} that specifies type of this picture
      *
      * @return a {@link PictureType}, returns null if an unknown type
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public PictureType getPictureTypeEnum() {
         return PictureType.findByOoxmlId(getPictureType());

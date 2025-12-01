@@ -68,7 +68,7 @@ import java.util.List;
  * how to render the diagram. Rendering diagrams from these files is not trivial, they support for loops, if/elses, etc.
  * Integrating such a change into POI would be quite sophisticated and challenging.
  *
- * @since POI 5.2.3
+ * @since 5.2.3
  */
 @Beta
 public class XSLFDiagram extends XSLFGraphicFrame {

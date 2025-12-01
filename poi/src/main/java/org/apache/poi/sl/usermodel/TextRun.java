@@ -139,7 +139,7 @@ public interface TextRun {
      *    if {@code null}, the font group matching the first character will be returned
      * @return  font info or {@code null} if not set
      *
-     * @since POI 3.17-beta2
+     * @since 3.17-beta2
      */
     FontInfo getFontInfo(FontGroup fontGroup);
 
@@ -150,7 +150,7 @@ public interface TextRun {
      *      The value of {@code null} removes the run specific font setting, so the default setting is activated again.
      * @param fontGroup the font group, i.e. the range of glyphs to be covered. defaults to latin, if {@code null}.
      *
-     * @since POI 3.17-beta2
+     * @since 3.17-beta2
      */
     void setFontInfo(FontInfo fontInfo, FontGroup fontGroup);
 
@@ -222,7 +222,7 @@ public interface TextRun {
      *
      * @return the associated hyperlink or null if no hyperlink was set
      *
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     Hyperlink<?,?> getHyperlink();
 
@@ -233,7 +233,7 @@ public interface TextRun {
      *
      * @return the associated hyperlink
      *
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     Hyperlink<?,?> createHyperlink();
 
@@ -248,7 +248,7 @@ public interface TextRun {
     /**
      * @return the paragraph which contains this TextRun
      *
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     TextParagraph<?,?,?> getParagraph();
 }

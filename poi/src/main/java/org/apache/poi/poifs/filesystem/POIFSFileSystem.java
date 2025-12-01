@@ -237,7 +237,7 @@ public class POIFSFileSystem extends BlockStore
      *                     {@link #close()} is called, or when this constructor throws
      *                     an exception
      * @throws IOException on errors reading, or on invalid data
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     public POIFSFileSystem(FileChannel channel, boolean readOnly, boolean closeChannel)
             throws IOException {

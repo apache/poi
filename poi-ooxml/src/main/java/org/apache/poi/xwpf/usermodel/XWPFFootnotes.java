@@ -49,7 +49,7 @@ public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
      *
      * @param part the package part holding the data of the footnotes,
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XWPFFootnotes(PackagePart part) {
         super(part);

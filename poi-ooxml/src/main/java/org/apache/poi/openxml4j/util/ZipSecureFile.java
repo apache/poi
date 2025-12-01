@@ -93,7 +93,7 @@ public class ZipSecureFile extends ZipFile {
      * See setMaxFileCount() for details.
      *
      * @return The max accepted file count (i.e. the max number of files we allow inside zip files that we read - including OOXML files like xlsx, docx, pptx, etc.).
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public static long getMaxFileCount() {
         return MAX_FILE_COUNT;
@@ -104,7 +104,7 @@ public class ZipSecureFile extends ZipFile {
      * including OOXML files like xlsx, docx, pptx, etc. The default is 1000.
      *
      * @param maxFileCount The max accepted file count
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public static void setMaxFileCount(final long maxFileCount) {
         MAX_FILE_COUNT = maxFileCount;
@@ -151,7 +151,7 @@ public class ZipSecureFile extends ZipFile {
      *
      * @param graceEntrySize the grace entry size of a single zip entry
      * @throws IllegalArgumentException for negative graceEntrySize
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public static void setGraceEntrySize(long graceEntrySize) {
         if (graceEntrySize < 0) {
@@ -167,7 +167,7 @@ public class ZipSecureFile extends ZipFile {
      * See setGraceEntrySize() for details.
      *
      * @return The current grace entry size
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public static long getGraceEntrySize() {
         return GRACE_ENTRY_SIZE;

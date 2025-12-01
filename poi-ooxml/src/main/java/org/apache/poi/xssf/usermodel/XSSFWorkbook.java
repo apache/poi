@@ -312,7 +312,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
      * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public XSSFWorkbook(InputStream stream, boolean closeStream) throws IOException {
         this(PackageHelper.open(stream, closeStream));
@@ -368,7 +368,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
      * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public XSSFWorkbook(PackagePart part) throws IOException {
         this(part.getInputStream(), true);
@@ -376,7 +376,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
     /**
      * @return the XSSFFactory
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     public XSSFFactory getXssfFactory() {
         return xssfFactory;
@@ -1323,7 +1323,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      *
      * @return a spliterator of the sheets.
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -2101,7 +2101,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Adds an External Links Table to the workbook.
      *
      * @param externalLinksTable the External Links Table to add
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     @Internal
     public void addExternalLinksTable(ExternalLinksTable externalLinksTable) {
@@ -2114,7 +2114,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     /**
      * @param index the index at which to add the External Links Table
      * @return  externalLinksTable the External Links Table to add
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     @Internal
     public ExternalLinksTable getExternalLinksTable(int index) {
@@ -2151,7 +2151,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @param name The name the workbook will be referenced as in formulas
      * @param workbook The open workbook to fetch the link required information from
      * @return index position for external workbook
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     @Beta
     @Override

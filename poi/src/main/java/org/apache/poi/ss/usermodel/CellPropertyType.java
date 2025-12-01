@@ -22,7 +22,7 @@ package org.apache.poi.ss.usermodel;
  * Each type is associated with a specific category {@link CellPropertyCategory}, which classifies and organizes
  * the properties based on their characteristics.
  *
- * @since POI 5.4.0
+ * @since 5.4.0
  */
 public enum CellPropertyType {
 

@@ -117,7 +117,7 @@ public class XDDFRadarChartData extends XDDFChartData {
         }
 
         /**
-         * @since POI 5.2.3
+         * @since 5.2.3
          */
         public CTRadarSer getCTRadarSer() {
             return series;

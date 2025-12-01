@@ -138,7 +138,7 @@ public class XDDFDoughnutChartData extends XDDFChartData {
         }
 
         /**
-         * @since POI 5.2.3
+         * @since 5.2.3
          */
         public CTPieSer getCTPieSer() {
             return series;

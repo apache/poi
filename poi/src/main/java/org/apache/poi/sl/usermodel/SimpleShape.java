@@ -68,7 +68,7 @@ public interface SimpleShape<
     /**
      * @return an accessor for placeholder details
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     PlaceholderDetails getPlaceholderDetails();
 
@@ -78,7 +78,7 @@ public interface SimpleShape<
      *
      * @return {@code true} if the shape is a placeholder
      * 
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     boolean isPlaceholder();
     
@@ -108,7 +108,7 @@ public interface SimpleShape<
      * @return the hyperlink assigned to this shape
      * or <code>null</code> if not found.
      * 
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     Hyperlink<S,P> getHyperlink();
     
@@ -118,7 +118,7 @@ public interface SimpleShape<
      *
      * @return the hyperlink assigned to this shape
      * 
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     Hyperlink<S,P> createHyperlink();
 }

@@ -71,7 +71,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     }
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public CommentsTable(PackagePart part) throws IOException {
         super(part);
@@ -115,7 +115,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      * @param oldReference the comment to remove from the commentRefs map
      * @param comment the comment to replace in the commentRefs map
      * @see #commentUpdated(XSSFComment)
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public void referenceUpdated(CellAddress oldReference, XSSFComment comment) {
@@ -129,7 +129,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      * Called after the comment is updated, so that
      *  we can reflect that in our cache
      * @param comment the comment to replace in the commentRefs map
-     * @since POI 5.2.0
+     * @since 5.2.0
      * @see #referenceUpdated(CellAddress, XSSFComment)
      */
     @Override
@@ -211,7 +211,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      * Create a new comment and add to the CommentTable.
      * @param clientAnchor the anchor for this comment
      * @return new XSSFComment
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public XSSFComment createNewComment(ClientAnchor clientAnchor) {

@@ -117,7 +117,7 @@ public class XDDFLineChartData extends XDDFChartData {
         }
 
         /**
-         * @since POI 5.2.3
+         * @since 5.2.3
          */
         public CTLineSer getCTLineSer() {
             return series;

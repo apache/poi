@@ -72,7 +72,7 @@ public class DrawFontManagerDefault implements DrawFontManager {
      *
      * @return the mapped string, typically consists of chars in the range of 0xf000 to 0xf0ff
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     @Override
     public String mapFontCharset(Graphics2D graphics, FontInfo fontInfo, String text) {

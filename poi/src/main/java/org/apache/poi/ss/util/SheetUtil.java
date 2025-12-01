@@ -130,7 +130,7 @@ public class SheetUtil {
      * @param formatter formatter used to prepare the text to be measured
      * @param useMergedCells    whether to use merged cells
      * @return  the width in pixels or -1 if cell is empty
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public static double getCellWidth(Cell cell, float defaultCharWidth, DataFormatter formatter, boolean useMergedCells) {
         List<CellRangeAddress> mergedRegions = cell.getSheet().getMergedRegions();
@@ -172,7 +172,7 @@ public class SheetUtil {
      * @param useMergedCells    whether to use merged cells
      * @param mergedRegions The list of merged regions as received via cell.getSheet().getMergedRegions()
      * @return  the width in pixels or -1 if cell is empty
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public static double getCellWidth(Cell cell, float defaultCharWidth, DataFormatter formatter, boolean useMergedCells,
                                       List<CellRangeAddress> mergedRegions) {
@@ -381,7 +381,7 @@ public class SheetUtil {
      *
      * @param wb the workbook to get the default character width from
      * @return default character width in pixels (as a float)
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     @Internal
     public static float getDefaultCharWidthAsFloat(final Workbook wb) {
@@ -407,7 +407,7 @@ public class SheetUtil {
      * @param <D> the type of the fourth input to the function
      * @param <E> the type of the fifth input to the function
      * @param <R> the return type of the function
-     * @since POI 5.4.1
+     * @since 5.4.1
      */
     @FunctionalInterface
     public interface Function5Arity<A, B, C, D, E, R> {
@@ -427,7 +427,7 @@ public class SheetUtil {
      * <p>
      *     The default function will return the default character width.
      * </p>
-     * @since POI 5.4.1
+     * @since 5.4.1
      */
     public static void setFailoverFunction(Function5Arity<Float, Integer, CellStyle, Double, AttributedString, Float> failoverFunction) {
         FAILOVER_FUNCTION = failoverFunction == null ? DEFAULT_FAILOVER_FUNCTION : failoverFunction;

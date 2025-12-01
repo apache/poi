@@ -82,7 +82,7 @@ public interface TempFileCreationStrategy {
      *
      * @throws IOException If no temporary directory could be created.
      *
-     * @since POI 3.15 beta 3.
+     * @since 3.15 beta 3.
      */
     File createTempDirectory(String prefix) throws IOException;
 }
