@@ -152,9 +152,27 @@ public abstract class BaseTestRangeCopier {
         transSheetRangeCopier.copyRange(tileRange, tileRange, false, true);
         assertEquals(cellContent, getCellContent(destSheet, "D6"));
         assertFalse(destSheet.getMergedRegions().isEmpty());
-        destSheet.getMergedRegions().forEach((mergedRegion) -> {
-            assertEquals(mergedRangeAddress, mergedRegion);
-        });
+        destSheet.getMergedRegions().forEach(mergedRegion ->
+                assertEquals(mergedRangeAddress, mergedRegion)
+        );
+    }
+
+    @Test
+    void testSameSheetMergedRanges() {
+        String cellContent = "D6 merged to E7";
+
+        // create cell merged from D6 to E7
+        CellRangeAddress mergedRangeAddress = new CellRangeAddress(5,6,3,4);
+        Cell cell = sheet1.createRow(5).createCell(3);
+        cell.setCellValue(cellContent);
+        sheet1.addMergedRegion(mergedRangeAddress);
+
+        CellRangeAddress tileRange = CellRangeAddress.valueOf("D6:E7");
+        CellRangeAddress targetRange = CellRangeAddress.valueOf("D8:E9");
+        rangeCopier.copyRange(tileRange, targetRange, false, true);
+        assertEquals(cellContent, getCellContent(sheet1, "D8"));
+        assertFalse(sheet1.getMergedRegions().isEmpty());
+        assertTrue(sheet1.getMergedRegions().stream().anyMatch(targetRange::equals));
     }
 
    protected static String getCellContent(Sheet sheet, String coordinates) {

@@ -54,9 +54,11 @@ public abstract class RangeCopier {
     }
 
     /** Uses input pattern to tile destination region, overwriting existing content. Works in following manner :
-     * 1.Start from top-left of destination.
-     * 2.Paste source but only inside of destination borders.
-     * 3.If there is space left on right or bottom side of copy, process it as in step 2.
+     * <ol>
+     *     <li>Start from top-left of destination.</li>
+     *     <li>Paste source but only inside of destination borders.</li>
+     *     <li>If there is space left on right or bottom side of copy, process it as in step 2.</li>
+     * </ol>
      * @param tilePatternRange source range which should be copied in tiled manner
      * @param tileDestRange    destination range, which should be overridden
      * @param copyStyles       whether to copy the cell styles
@@ -90,7 +92,12 @@ public abstract class RangeCopier {
         } while (nextRowIndexToCopy <= tileDestRange.getLastRow());
 
         if (copyMergedRanges) {
-            sourceSheet.getMergedRegions().forEach((mergedRangeAddress) -> destSheet.addMergedRegion(mergedRangeAddress));
+            int rowOffset = tileDestRange.getFirstRow() - tilePatternRange.getFirstRow();
+            int columnOffset = tileDestRange.getFirstColumn() - tilePatternRange.getFirstColumn();
+            sourceSheet.getMergedRegions().stream()
+                    .filter(tilePatternRange::contains)
+                    .map(sourceMergedRegion -> sourceMergedRegion.shift(rowOffset, columnOffset))
+                    .forEach(destSheet::addMergedRegion);
         }
 
         int tempCopyIndex = sourceSheet.getWorkbook().getSheetIndex(sourceCopy);
