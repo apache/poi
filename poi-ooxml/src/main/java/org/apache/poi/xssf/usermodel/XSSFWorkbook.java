@@ -209,7 +209,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * List of all pivot tables in workbook
      */
     private final List<XSSFPivotTable> pivotTables = new ArrayList<>();
-    private List<CTPivotCache> pivotCaches;
 
     private final XSSFFactory xssfFactory;
 
@@ -387,9 +386,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         if (getCorePart().getContentType().equals(XSSFRelation.XLSB_BINARY_WORKBOOK.getContentType())) {
             throw new XLSBUnsupportedException();
         }
-
-        // Create arrays for parts attached to the workbook itself
-        pivotCaches = new ArrayList<>();
     }
 
     @Override
@@ -1115,6 +1111,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      *
      * @param nameIndex the index of the named range
      * @return the XSSFName at the given index
+     *
+     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
+     * Use {@link #getName(String)} instead.
      */
     @Deprecated
     XSSFName getNameAt(int nameIndex) {
@@ -2088,7 +2087,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         return externalLinks;
     }
 
-    @Deprecated // use getExternalLinksTables() instead
+    /**
+     * Returns the list of {@link ExternalLinksTable} object for this workbook
+     *
+     * <p>The external links table specifies details of named ranges etc
+     *  that are referenced from other workbooks, along with the last seen
+     *  values of what they point to.</p>
+     *
+     * <p>Note that Excel uses index 0 for the current workbook, so the first
+     *  External Links in a formula would be '[1]Foo' which corresponds to
+     *  entry 0 in this list.</p>
+
+     * @return the {@code ExternalLinksTable} list, which may be empty
+     *
+     * @deprecated use getExternalLinksTables() instead
+     */
+    @Deprecated
     @Removal(version = "7.0.0")
     @Internal
     public List<ExternalLinksTable> getExternalLinksTable() {
@@ -2426,10 +2440,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         final int tableId = pivotTables.size() + 1;
         cache.setCacheId(tableId);
         cache.setId(rId);
-        if(pivotCaches == null) {
-            pivotCaches = new ArrayList<>();
-        }
-        pivotCaches.add(cache);
         return cache;
     }
 
