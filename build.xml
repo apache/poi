@@ -2097,6 +2097,7 @@ under the License.
 
     <!-- Generates the latest/development API documentation. -->
     <target name="javadocs"
+            depends="compile-ooxml"
             description="Generates the API documentation">
         <echo message="Generating latest Javadocs in ${javadocs.report.dir}"/>
         <javadoc verbose="false" author="true" destdir="${javadocs.report.dir}"
