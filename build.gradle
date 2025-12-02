@@ -208,7 +208,7 @@ subprojects {
                 addBooleanOption('html5', true)
                 addBooleanOption('Xdoclint:all,-missing', true)
                 links 'https://poi.apache.org/apidocs/dev/'
-                if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/javase/8/docs/api/'
+                if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
                 links 'https://xmlbeans.apache.org/docs/5.0.0/'
                 links 'https://commons.apache.org/proper/commons-compress/apidocs/'
                 use = true

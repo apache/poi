@@ -216,7 +216,7 @@ javadoc {
         options {
             addBooleanOption('html5', true)
             links 'https://poi.apache.org/apidocs/dev/'
-            if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/javase/8/docs/api/'
+            if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
             use = true
             splitIndex = true
             source = "11"

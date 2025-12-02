@@ -99,7 +99,7 @@ public class FileBackedDataSource extends DataSource implements Closeable {
         }
 
         // TODO Could we do the read-only case with MapMode.PRIVATE instead?
-        // See https://docs.oracle.com/javase/7/docs/api/java/nio/channels/FileChannel.MapMode.html#PRIVATE
+        // See https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/nio/channels/FileChannel.MapMode.html
         // Or should we have 3 modes instead of the current boolean -
         //  read-write, read-only, read-to-write-elsewhere?
 
