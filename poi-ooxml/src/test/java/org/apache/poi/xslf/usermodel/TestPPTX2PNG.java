@@ -45,7 +45,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.internal.util.io.IOUtil;
 
 /**
  * Test class for testing PPTX2PNG utility which renders .ppt and .pptx slideshows
@@ -86,9 +85,11 @@ class TestPPTX2PNG {
     }
 
     @AfterAll
-    public static void resetStdin() {
+    public static void resetStdin() throws IOException {
         System.setIn(defStdin);
-        IOUtil.closeQuietly(archive);
+        if (archive != null) {
+            archive.close();
+        }
     }
 
     public static Stream<Arguments> data() throws IOException {
