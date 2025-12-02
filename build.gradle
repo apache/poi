@@ -503,8 +503,8 @@ subprojects {
     publishing {
         publications {
             POI(MavenPublication) {
-                groupId 'org.apache.poi'
-                artifactId project.archivesBaseName
+                groupId = 'org.apache.poi'
+                artifactId = project.archivesBaseName
 
                 from components.java
 

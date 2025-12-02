@@ -156,9 +156,13 @@ test {
     }
 }
 
-javadoc { enabled(false) }
+javadoc {
+    enabled = false
+}
 
-sourcesJar { enabled(false) }
+sourcesJar {
+    enabled = false
+}
 
 generateMetadataFileForPOIPublication.enabled = false
 publishPOIPublicationToMavenLocal.enabled = false
