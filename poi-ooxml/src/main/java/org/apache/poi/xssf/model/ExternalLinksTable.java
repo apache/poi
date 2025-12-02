@@ -97,6 +97,7 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
      */
     @Internal
     @Removal(version = "6.0.0")
+    @Deprecated(forRemoval = true)
     public CTExternalLink getCTExternalLink(){
         return link;
     }
