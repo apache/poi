@@ -249,7 +249,7 @@ public class ZipSecureFile extends ZipFile {
      * @return the path name of the ZIP file
      * @deprecated there is no need for this method - it will be removed in a future version of POI (deprecated since POI 5.3.0)
      */
-    @Deprecated(since = "5.3.0", forRemoval = true)
+    @Deprecated // since 5.3.0
     @Removal(version = "7.0.0")
     public String getName() {
         return fileName;
