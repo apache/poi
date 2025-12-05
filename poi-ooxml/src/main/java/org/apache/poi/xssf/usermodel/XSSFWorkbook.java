@@ -122,6 +122,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public static final int PICTURE_TYPE_EPS = 10;
     public static final int PICTURE_TYPE_BMP = 11;
     public static final int PICTURE_TYPE_WPG = 12;
+	// Picture Type WDP has ooxmlId 13 but is currently not implemented
 	public static final int PICTURE_TYPE_SVG = 14;
 
     /**
