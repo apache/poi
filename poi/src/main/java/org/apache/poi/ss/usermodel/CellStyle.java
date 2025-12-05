@@ -19,6 +19,8 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.EnumMap;
 
+import org.apache.poi.ss.util.CellUtil;
+
 public interface CellStyle {
 
     /**
@@ -401,7 +403,9 @@ public interface CellStyle {
      * @see org.apache.poi.ss.util.CellUtil#getFormatProperties(CellStyle)
      * @since 5.5.0
      */
-    EnumMap<CellPropertyType, Object> getFormatProperties();
+    default EnumMap<CellPropertyType, Object> getFormatProperties() {
+        return CellUtil.getFormatProperties(this);
+    }
 
     /**
      * Invalidate any cached properties. The CellStyle implementations
@@ -411,5 +415,7 @@ public interface CellStyle {
      *
      * @since 5.5.0
      */
-    void invalidateCachedProperties();
+    default void invalidateCachedProperties() {
+        // default implementation does nothing
+    }
 }
