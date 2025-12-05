@@ -44,6 +44,7 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlCursor;
@@ -512,6 +513,8 @@ public final class TestXWPFDocument {
             try (XWPFDocument doc = new XWPFDocument(
                     POIDataSamples.getDocumentInstance().openResourceAsStream("unicode-path.docx"))) {
                 // expect exception here
+
+                assertNotNull(doc);
             }
         });
         assertEquals("InvalidFormatException", ex.getCause().getClass().getSimpleName());
@@ -543,5 +546,14 @@ public final class TestXWPFDocument {
                 assertEquals(origText, ext2.getText());
             }
         }
+    }
+
+    @Test
+    void testFileHandleLeak() {
+        //noinspection resource
+        assertThrows(POIXMLException.class,
+                // Use XSSFWorkbook on purpose here to trigger missing closing of file-handle
+                () -> new XSSFWorkbook(
+                        POIDataSamples.getDocumentInstance().getFile("clusterfuzz-testcase-minimized-POIXWPFFuzzer-4791943399604224.docx")));
     }
 }

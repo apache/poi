@@ -256,15 +256,24 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     public XSSFWorkbook(OPCPackage pkg) throws IOException {
         super(pkg);
-        this.xssfFactory = XSSFFactory.getInstance();
 
-        beforeDocumentRead();
+        try {
+            this.xssfFactory = XSSFFactory.getInstance();
 
-        // Build a tree of POIXMLDocumentParts, this workbook being the root
-        load(this.xssfFactory);
+            beforeDocumentRead();
 
-        // some broken Workbooks miss this...
-        setBookViewsIfMissing();
+            // Build a tree of POIXMLDocumentParts, this workbook being the root
+            load(this.xssfFactory);
+
+            // some broken Workbooks miss this...
+            setBookViewsIfMissing();
+        } catch (IOException | RuntimeException e) {
+            // close the package on exception to avoid file handle leaks
+            pkg.revert();
+
+            // rethrow exception
+            throw e;
+        }
     }
 
     /**
