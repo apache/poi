@@ -614,7 +614,7 @@ public final class CellUtil {
         CellStyle originalStyle = cell.getCellStyle();
 
         CellStyle newStyle = null;
-        EnumMap<CellPropertyType, Object> values = originalStyle.getFormatProperties();
+        EnumMap<CellPropertyType, Object> values = nullSafeFormatProperties(originalStyle);
         if (properties.containsKey(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR) && properties.get(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR) == null) {
             values.remove(CellPropertyType.FILL_FOREGROUND_COLOR);
         }
@@ -635,7 +635,7 @@ public final class CellUtil {
 
         for (int i = 0; i < numberCellStyles; i++) {
             CellStyle wbStyle = workbook.getCellStyleAt(i);
-            EnumMap<CellPropertyType, Object> wbStyleMap = wbStyle.getFormatProperties();
+            EnumMap<CellPropertyType, Object> wbStyleMap = nullSafeFormatProperties(wbStyle);
 
             // the desired style already exists in the workbook. Use the existing style.
             if (styleMapsMatch(wbStyleMap, values, disableNullColorCheck)) {
@@ -651,6 +651,13 @@ public final class CellUtil {
         }
 
         cell.setCellStyle(newStyle);
+    }
+
+    // try to get format properties from CellStyle but the method may return null
+    // in some implementations, so we need to be null safe here
+    private static EnumMap<CellPropertyType, Object> nullSafeFormatProperties(CellStyle style) {
+        EnumMap<CellPropertyType, Object> props = style.getFormatProperties();
+        return props == null ? getFormatProperties(style) : props;
     }
 
     private static boolean styleMapsMatch(final Map<CellPropertyType, Object> newProps,
@@ -888,7 +895,7 @@ public final class CellUtil {
         if (src == null || dest == null) {
             throw new IllegalArgumentException("Source and destination styles must not be null");
         }
-        EnumMap<CellPropertyType, Object> properties = src.getFormatProperties();
+        EnumMap<CellPropertyType, Object> properties = nullSafeFormatProperties(src);
         setFormatProperties(dest, destWorkbook, properties);
     }
 
