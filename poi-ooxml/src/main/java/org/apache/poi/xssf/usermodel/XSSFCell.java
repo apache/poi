@@ -219,6 +219,7 @@ public final class XSSFCell extends CellBase {
      */
     @Override
     public void setCellValue(boolean value) {
+        removeInlineString();
         _cell.setT(STCellType.B);
         _cell.setV(value ? TRUE_AS_STRING : FALSE_AS_STRING);
     }
@@ -263,6 +264,7 @@ public final class XSSFCell extends CellBase {
 
     @Override
     public void setCellValueImpl(double value) {
+        removeInlineString();
         _cell.setT(STCellType.N);
         _cell.setV(String.valueOf(value));
     }
@@ -356,27 +358,23 @@ public final class XSSFCell extends CellBase {
 
     @Override
     protected void setCellValueImpl(RichTextString str) {
+        removeInlineString();
         CellType cellType = getCellType();
         if (cellType == CellType.FORMULA) {
             _cell.setV(str.getString());
             _cell.setT(STCellType.STR);
+        } else if (str instanceof XSSFRichTextString) {
+            _cell.setT(STCellType.S);
+            XSSFRichTextString rt = (XSSFRichTextString)str;
+            rt.setStylesTableReference(_stylesSource);
+            int sRef = _sharedStringSource.addSharedStringItem(rt);
+            _cell.setV(Integer.toString(sRef));
         } else {
-            if(_cell.getT() == STCellType.INLINE_STR) {
-                //set the 'pre-evaluated result
-                _cell.setV(str.getString());
-            } else if (str instanceof XSSFRichTextString) {
-                _cell.setT(STCellType.S);
-                XSSFRichTextString rt = (XSSFRichTextString)str;
-                rt.setStylesTableReference(_stylesSource);
-                int sRef = _sharedStringSource.addSharedStringItem(rt);
-                _cell.setV(Integer.toString(sRef));
-            } else {
-                _cell.setT(STCellType.S);
-                XSSFRichTextString rt = new XSSFRichTextString(str.getString());
-                rt.setStylesTableReference(_stylesSource);
-                int sRef = _sharedStringSource.addSharedStringItem(rt);
-                _cell.setV(Integer.toString(sRef));
-            }
+            _cell.setT(STCellType.S);
+            XSSFRichTextString rt = new XSSFRichTextString(str.getString());
+            rt.setStylesTableReference(_stylesSource);
+            int sRef = _sharedStringSource.addSharedStringItem(rt);
+            _cell.setV(Integer.toString(sRef));
         }
     }
 
@@ -518,6 +516,12 @@ public final class XSSFCell extends CellBase {
         if (_cell.isSetF()) {
             _row.getSheet().onDeleteFormula(this, null);
             _cell.unsetF();
+        }
+    }
+
+    private void removeInlineString() {
+        if (_cell.isSetIs()) {
+            _cell.unsetIs();
         }
     }
 
