@@ -791,7 +791,7 @@ and
             Tomcat is reporting memory leaks caused by some class in Apache POI which uses ThreadLocal
         </h2>
 <div class="section">
-<p>Apache POI uses Java <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/ThreadLocal.html">ThreadLocals</a>
+<p>Apache POI uses Java <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/ThreadLocal.html">ThreadLocals</a>
                 in order to cache some data when Apache POI is used in a multi-threading environment (see also the FAQ about thread-safety above!)
             </p>
 <p>WebServers like Tomcat use thread-pooling to re-use threads to avoid the cost of frequent thread-startup and shutdown.
