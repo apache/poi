@@ -38,7 +38,7 @@ public class XWPFDefaultRunStyle {
     /**
      * Return the underlying XML bean.
      * @return underlying CTRPr bean.
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     public CTRPr getRPr() {
         return rpr;
@@ -48,7 +48,7 @@ public class XWPFDefaultRunStyle {
      * Specifies the font size.
      *
      * @return value representing the font size (can be null if size is not set)
-     * @since POI 5.0.0
+     * @since 5.0.0
      */
     public Double getFontSizeAsDouble() {
         BigDecimal bd = getFontSizeAsBigDecimal(1);

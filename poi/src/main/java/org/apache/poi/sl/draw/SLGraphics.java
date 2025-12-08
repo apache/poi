@@ -385,7 +385,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      * @see         Graphics#clipRect
      * @see         Graphics#setClip(int, int, int, int)
      * @see         Graphics#setClip(Shape)
-     * @since       JDK1.1
+     * @since      JDK1.1
      */
     @NotImplemented
     public Shape getClip(){
@@ -586,7 +586,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      * @param       yPoints an array of <i>y</i> points
      * @param       nPoints the total number of points
      * @see         Graphics#drawPolygon(int[], int[], int)
-     * @since       JDK1.1
+     * @since      JDK1.1
      */
     public void drawPolyline(int[] xPoints, int[] yPoints,
                              int nPoints){
@@ -753,7 +753,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      * @see         Image
      * @see         ImageObserver
      * @see         ImageObserver#imageUpdate(Image, int, int, int, int, int)
-     * @since       JDK1.1
+     * @since      JDK1.1
      */
     @NotImplemented
     public boolean drawImage(Image img,
@@ -815,7 +815,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      * @see         Image
      * @see         ImageObserver
      * @see         ImageObserver#imageUpdate(Image, int, int, int, int, int)
-     * @since       JDK1.1
+     * @since      JDK1.1
      */
     @NotImplemented
     public boolean drawImage(Image img,
@@ -1043,7 +1043,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      * @see         Graphics#getClip()
      * @see         Graphics#clipRect
      * @see         Graphics#setClip(int, int, int, int)
-     * @since       JDK1.1
+     * @since      JDK1.1
      */
     @NotImplemented
     public void setClip(Shape clip) {
@@ -1065,7 +1065,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      * @see         Graphics#clipRect
      * @see         Graphics#setClip(int, int, int, int)
      * @see         Graphics#setClip(Shape)
-     * @since       JDK1.1
+     * @since      JDK1.1
      */
     public Rectangle getClipBounds(){
         logNotImplemented();
@@ -1130,7 +1130,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      * @param       height the height of the new clip rectangle.
      * @see         Graphics#clipRect
      * @see         Graphics#setClip(Shape)
-     * @since       JDK1.1
+     * @since      JDK1.1
      */
     public void setClip(int x, int y, int width, int height){
         setClip(new Rectangle(x, y, width, height));
@@ -1220,7 +1220,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      * @see FontRenderContext
      * @see Font#createGlyphVector(FontRenderContext,char[])
      * @see TextLayout
-     * @since     JDK1.2
+     * @since    JDK1.2
      */
     public FontRenderContext getFontRenderContext() {
         boolean isAntiAliased = RenderingHints.VALUE_TEXT_ANTIALIAS_ON.equals(

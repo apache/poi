@@ -27,7 +27,7 @@ import org.apache.poi.logging.PoiLogManager;
  * Charset represents the basic set of characters associated with a font (that it can display), and
  * corresponds to the ANSI codepage (8-bit or DBCS) of that character set used by a given language.
  *
- * @since POI 3.17-beta2
+ * @since 3.17-beta2
  */
 @SuppressWarnings("java:S1192")
 public enum FontCharset {

@@ -23,7 +23,7 @@ import java.net.URI;
 /**
  * Represents a hyperlink relationship.
  *
- * @since POI 5.3.0
+ * @since 5.3.0
  */
 public class HyperlinkRelationship extends ReferenceRelationship {
     /**

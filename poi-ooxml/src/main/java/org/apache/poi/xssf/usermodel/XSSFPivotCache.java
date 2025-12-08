@@ -50,7 +50,7 @@ public class XSSFPivotCache extends POIXMLDocumentPart {
      *
      * @param part - The package part that holds xml data representing this pivot cache definition.
      * 
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     @Beta
     protected XSSFPivotCache(PackagePart part) throws IOException {

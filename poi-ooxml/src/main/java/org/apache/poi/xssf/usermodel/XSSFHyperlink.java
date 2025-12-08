@@ -421,7 +421,7 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
 
     /**
      * @return a new XSSFHyperlink based on this
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     @Override
     public Duplicatable copy() {

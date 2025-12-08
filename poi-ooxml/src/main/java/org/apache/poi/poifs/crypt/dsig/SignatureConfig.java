@@ -232,14 +232,14 @@ public class SignatureConfig {
     /**
      * if true, the signature is added to the existing signatures
      *
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     private boolean allowMultipleSignatures = false;
 
     /**
      * Switch to enable/disable secure validation - see setter for more information
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     private boolean secureValidation = true;
 
@@ -249,7 +249,7 @@ public class SignatureConfig {
      * Switch to enable/disable automatic CRL download - by default the download is with all https hostname
      * and certificate verifications disabled.
      *
-     * @since POI 5.2.1
+     * @since 5.2.1
      */
     private boolean allowCRLDownload = false;
 
@@ -358,7 +358,7 @@ public class SignatureConfig {
     /**
      * @return the formatted execution time ({@link #SIGNATURE_TIME_FORMAT})
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public String formatExecutionTime() {
         final DateFormat fmt = new SimpleDateFormat(SIGNATURE_TIME_FORMAT, Locale.ROOT);
@@ -370,7 +370,7 @@ public class SignatureConfig {
      * Sets the executionTime which is in standard format ({@link #SIGNATURE_TIME_FORMAT})
      * @param executionTime the execution time
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setExecutionTime(String executionTime) {
         if (executionTime != null && !executionTime.isEmpty()){
@@ -572,7 +572,7 @@ public class SignatureConfig {
     /**
      * @return the http client used for timestamp server connections
      *
-     * @since POI 5.2.1
+     * @since 5.2.1
      */
     public TimeStampHttpClient getTspHttpClient() {
         return tspHttpClient;
@@ -581,7 +581,7 @@ public class SignatureConfig {
     /**
      * @param tspHttpClient the http client used for timestamp server connections
      *
-     * @since POI 5.2.1
+     * @since 5.2.1
      */
     public void setTspHttpClient(TimeStampHttpClient tspHttpClient) {
         this.tspHttpClient = tspHttpClient;
@@ -664,7 +664,7 @@ public class SignatureConfig {
      * @param xadesDigestAlgo hash algorithm used for XAdES.
      * When {@code null}, defaults to {@link #getDigestAlgo()}
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setXadesDigestAlgo(String xadesDigestAlgo) {
         this.xadesDigestAlgo = getDigestMethodAlgo(xadesDigestAlgo);
@@ -925,7 +925,7 @@ public class SignatureConfig {
      *
      * @param signatureMethodUri the method uri
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setSignatureMethodFromUri(final String signatureMethodUri) {
         switch (signatureMethodUri) {
@@ -992,7 +992,7 @@ public class SignatureConfig {
     /**
      * @return true, if the signature config is to be updated based on the successful validated document
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public boolean isUpdateConfigOnValidate() {
         return updateConfigOnValidate;
@@ -1005,7 +1005,7 @@ public class SignatureConfig {
      *
      * @param updateConfigOnValidate if true, update config on validate
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setUpdateConfigOnValidate(boolean updateConfigOnValidate) {
         this.updateConfigOnValidate = updateConfigOnValidate;
@@ -1014,7 +1014,7 @@ public class SignatureConfig {
     /**
      * @return true, if multiple signatures can be attached
      *
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     public boolean isAllowMultipleSignatures() {
         return allowMultipleSignatures;
@@ -1026,7 +1026,7 @@ public class SignatureConfig {
      * @param allowMultipleSignatures if true, the signature will be added,
      *          otherwise all existing signatures will be replaced by the current
      *
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     public void setAllowMultipleSignatures(boolean allowMultipleSignatures) {
         this.allowMultipleSignatures = allowMultipleSignatures;
@@ -1035,7 +1035,7 @@ public class SignatureConfig {
     /**
      * @return is secure validation enabled?
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public boolean isSecureValidation() {
         return secureValidation;
@@ -1061,7 +1061,7 @@ public class SignatureConfig {
      *
      * @see <a href="https://santuario.apache.org/faq.html#faq-4.SecureValidation">XmlSec SecureValidation</a>
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public void setSecureValidation(boolean secureValidation) {
         this.secureValidation = secureValidation;

@@ -151,7 +151,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     }
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public StylesTable(PackagePart part) throws IOException {
         super(part);
@@ -161,7 +161,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public StylesTable(InputStream stream) throws IOException {
         super();

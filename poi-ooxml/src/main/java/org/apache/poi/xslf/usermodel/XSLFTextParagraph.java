@@ -50,7 +50,7 @@ import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_PRESENTATIONML;
  * Represents a paragraph of text within the containing text body.
  * The paragraph is the highest level text separation mechanism.
  *
- * @since POI-3.8
+ * @since -3.8
  */
 @Beta
 public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagraph,XSLFTextRun> {
@@ -130,7 +130,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      *
      * @param  textRun a run of text
      * @return whether the run was removed
-     * @since POI 5.2.2
+     * @since 5.2.2
      */
     public boolean removeTextRun(XSLFTextRun textRun) {
         if (_runs.remove(textRun)) {
@@ -1057,7 +1057,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      *
      * @return a new text paragraph
      *
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     protected XSLFTextRun newTextRun(XmlObject r) {
         return new XSLFTextRun(r, this);

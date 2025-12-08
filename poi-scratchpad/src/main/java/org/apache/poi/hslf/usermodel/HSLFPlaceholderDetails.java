@@ -24,7 +24,7 @@ import org.apache.poi.sl.usermodel.PlaceholderDetails;
 /**
  * Extended placeholder details for HSLF sheets - mainly for headers and footers
  *
- * @since POI 4.0.0
+ * @since 4.0.0
  */
 public class HSLFPlaceholderDetails implements PlaceholderDetails {
     private final HSLFSheet sheet;

@@ -27,7 +27,7 @@ import org.apache.poi.util.SuppressForbidden;
  * <p>Internal use only.</p>
  * <p>Fails over to a No-Op logger if there are problems creating log4j logger.</p>
  *
- * @since POI 5.4.0
+ * @since 5.4.0
  */
 public final class PoiLogManager {
 

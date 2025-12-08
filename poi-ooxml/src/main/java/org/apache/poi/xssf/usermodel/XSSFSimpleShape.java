@@ -169,7 +169,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<XSSFTextParagraph> spliterator() {

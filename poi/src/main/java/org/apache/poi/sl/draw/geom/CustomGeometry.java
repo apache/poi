@@ -112,7 +112,7 @@ public final class CustomGeometry implements Iterable<PathIf>{
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<PathIf> spliterator() {

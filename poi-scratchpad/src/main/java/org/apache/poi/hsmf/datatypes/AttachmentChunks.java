@@ -150,7 +150,7 @@ public class AttachmentChunks implements ChunkGroup {
 
     /**
      * @return long path name for the attachment
-     * @since POI 5.4.0
+     * @since 5.4.0
      */
     public StringChunk getAttachLongPathName() {
         return attachLongPathName;
@@ -158,7 +158,7 @@ public class AttachmentChunks implements ChunkGroup {
 
     /**
      * @return attachment content location -- relative or absolute URI matching reference in html body
-     * @since POI 5.4.0
+     * @since 5.4.0
      */
     public StringChunk getAttachContentLocation() {
         return attachContentLocation;
@@ -166,7 +166,7 @@ public class AttachmentChunks implements ChunkGroup {
 
     /**
      * @return the display name of the attachment
-     * @since POI 5.4.0
+     * @since 5.4.0
      */
     public StringChunk getAttachDisplayName() {
         return attachDisplayName;
@@ -174,7 +174,7 @@ public class AttachmentChunks implements ChunkGroup {
 
     /**
      * @return the language property for the attachment
-     * @since POI 5.4.0
+     * @since 5.4.0
      */
     public StringChunk getAttachLanguage() {
         return attachLanguage;
@@ -210,7 +210,7 @@ public class AttachmentChunks implements ChunkGroup {
 
     /**
      * @return record key
-     * @since POI 5.4.0
+     * @since 5.4.0
      */
     public ByteChunk getAttachRecordKey() {
         return attachRecordKey;

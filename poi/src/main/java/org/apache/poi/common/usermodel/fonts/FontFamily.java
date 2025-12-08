@@ -20,7 +20,7 @@ package org.apache.poi.common.usermodel.fonts;
 /**
  * A property of a font that describes its general appearance.
  * 
- * @since POI 3.17-beta2
+ * @since 3.17-beta2
  */
 public enum FontFamily {
     /**

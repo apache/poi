@@ -92,7 +92,7 @@ public class IntMapper<T> implements Duplicatable, Iterable<T> {
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public Spliterator<T> spliterator() {
         return elements.spliterator();

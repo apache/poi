@@ -102,7 +102,7 @@ public final class XPathHelper {
      *      thrown if the AlternateContent is not allowed by the surrounding element or if the
      *      extracted object is of the generic type XmlAnyTypeImpl.
      *
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     @SuppressWarnings("unchecked")
     @Internal

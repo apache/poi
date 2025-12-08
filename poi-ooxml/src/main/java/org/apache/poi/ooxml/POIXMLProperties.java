@@ -316,11 +316,11 @@ public class POIXMLProperties {
         public void setLastPrinted(String date) throws InvalidFormatException {
             part.setLastPrintedProperty(date);
         }
-        /** @since POI 3.15 beta 3 */
+        /** @since 3.15 beta 3 */
         public String getLastModifiedByUser() {
             return part.getLastModifiedByProperty().orElse(null);
         }
-        /** @since POI 3.15 beta 3 */
+        /** @since 3.15 beta 3 */
         public void setLastModifiedByUser(String user) {
             part.setLastModifiedByProperty(user);
         }
@@ -349,7 +349,7 @@ public class POIXMLProperties {
         /**
          * Sets the version property.
          * @param version property value
-         * @since POI 5.2.3
+         * @since 5.2.3
          */
         public void setVersion(String version) {
             part.setVersionProperty(version);
@@ -358,7 +358,7 @@ public class POIXMLProperties {
         /**
          * Returns the version property value.
          * @return version property (can be null)
-         * @since POI 5.2.3
+         * @since 5.2.3
          */
         public String getVersion() {
             return part.getVersionProperty().orElse(null);
@@ -399,7 +399,7 @@ public class POIXMLProperties {
             }
             return null;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setTemplate(String template) {
             props.getProperties().setTemplate(template);
         }
@@ -409,7 +409,7 @@ public class POIXMLProperties {
             }
             return null;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setManager(String manager) {
             props.getProperties().setManager(manager);
         }
@@ -419,7 +419,7 @@ public class POIXMLProperties {
             }
             return null;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setCompany(String company) {
             props.getProperties().setCompany(company);
         }
@@ -429,7 +429,7 @@ public class POIXMLProperties {
             }
             return null;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setPresentationFormat(String presentationFormat) {
             props.getProperties().setPresentationFormat(presentationFormat);
         }
@@ -439,7 +439,7 @@ public class POIXMLProperties {
             }
             return null;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setApplication(String application) {
             props.getProperties().setApplication(application);
         }
@@ -449,7 +449,7 @@ public class POIXMLProperties {
             }
             return null;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setAppVersion(String appVersion) {
             props.getProperties().setAppVersion(appVersion);
         }
@@ -460,7 +460,7 @@ public class POIXMLProperties {
             }
             return -1;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setPages(int pages) {
             props.getProperties().setPages(pages);
         }
@@ -470,7 +470,7 @@ public class POIXMLProperties {
             }
             return -1;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setWords(int words) {
             props.getProperties().setWords(words);
         }
@@ -480,7 +480,7 @@ public class POIXMLProperties {
             }
             return -1;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setCharacters(int characters) {
             props.getProperties().setCharacters(characters);
         }
@@ -490,7 +490,7 @@ public class POIXMLProperties {
             }
             return -1;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setCharactersWithSpaces(int charactersWithSpaces) {
             props.getProperties().setCharactersWithSpaces(charactersWithSpaces);
         }
@@ -500,7 +500,7 @@ public class POIXMLProperties {
             }
             return -1;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setLines(int lines) {
             props.getProperties().setLines(lines);
         }
@@ -510,7 +510,7 @@ public class POIXMLProperties {
             }
             return -1;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setParagraphs(int paragraphs) {
             props.getProperties().setParagraphs(paragraphs);
         }
@@ -520,7 +520,7 @@ public class POIXMLProperties {
             }
             return -1;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setSlides(int slides) {
             props.getProperties().setSlides(slides);
         }
@@ -530,7 +530,7 @@ public class POIXMLProperties {
             }
             return -1;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setNotes(int notes) {
             props.getProperties().setNotes(notes);
         }
@@ -540,7 +540,7 @@ public class POIXMLProperties {
             }
             return -1;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setTotalTime(int totalTime) {
             props.getProperties().setTotalTime(totalTime);
         }
@@ -550,7 +550,7 @@ public class POIXMLProperties {
             }
             return -1;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setHiddenSlides(int hiddenSlides) {
             props.getProperties().setHiddenSlides(hiddenSlides);
         }
@@ -560,7 +560,7 @@ public class POIXMLProperties {
             }
             return -1;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setMMClips(int mmClips) {
             props.getProperties().setMMClips(mmClips);
         }
@@ -571,7 +571,7 @@ public class POIXMLProperties {
             }
             return null;
         }
-        /** @since POI 4.1.1 */
+        /** @since 4.1.1 */
         public void setHyperlinkBase(String hyperlinkBase) {
             props.getProperties().setHyperlinkBase(hyperlinkBase);
         }

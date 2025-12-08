@@ -54,7 +54,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
     }
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     protected XSLFNotesMaster(PackagePart part) throws IOException, XmlException {
         super(part);

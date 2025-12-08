@@ -155,7 +155,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
      * @return the document's embedded files
      *
      * @throws OpenXML4JException if the embedded parts can't be determined
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public abstract List<PackagePart> getAllEmbeddedParts() throws OpenXML4JException;
 

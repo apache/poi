@@ -27,7 +27,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * This holds the common functionality for all read-only
  *  POI Document classes, i.e. ones which don't support writing.
  *
- *  @since POI 3.15 beta 3
+ *  @since 3.15 beta 3
  */
 public abstract class POIReadOnlyDocument extends POIDocument {
     protected POIReadOnlyDocument(DirectoryNode dir) {

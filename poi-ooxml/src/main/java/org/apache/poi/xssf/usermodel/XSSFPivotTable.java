@@ -70,7 +70,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      *
      * @param part - The package part that holds xml data representing this pivot table.
      * 
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     @Beta
     protected XSSFPivotTable(PackagePart part) throws IOException {

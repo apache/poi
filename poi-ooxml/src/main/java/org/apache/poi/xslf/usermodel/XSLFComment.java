@@ -33,7 +33,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentAuthorList;
 /**
  * XSLF Comment
  *
- * @since POI 4.0.0
+ * @since 4.0.0
  */
 public class XSLFComment implements Comment {
 

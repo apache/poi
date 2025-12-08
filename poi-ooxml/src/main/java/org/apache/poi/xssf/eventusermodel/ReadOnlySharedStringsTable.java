@@ -118,7 +118,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
      *
      * @param pkg The {@link OPCPackage} to use as basis for the shared-strings table.
      * @param includePhoneticRuns whether or not to concatenate phoneticRuns onto the shared string
-     * @since POI 3.14-Beta3
+     * @since 3.14-Beta3
      * @throws IOException If reading the data from the package fails.
      * @throws SAXException if parsing the XML data fails.
      */
@@ -143,14 +143,14 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
      * Calls {@link #ReadOnlySharedStringsTable(PackagePart, boolean)}, with a
      * value of <code>true</code> to include phonetic runs.
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public ReadOnlySharedStringsTable(PackagePart part) throws IOException, SAXException {
         this(part, true);
     }
 
     /**
-     * @since POI 3.14-Beta3
+     * @since 3.14-Beta3
      */
     public ReadOnlySharedStringsTable(PackagePart part, boolean includePhoneticRuns)
         throws IOException, SAXException {
@@ -161,7 +161,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public ReadOnlySharedStringsTable(InputStream stream)
             throws IOException, SAXException {
@@ -169,7 +169,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public ReadOnlySharedStringsTable(InputStream stream, boolean includePhoneticRuns)
             throws IOException, SAXException {

@@ -175,7 +175,7 @@ public class CellAddress implements Comparable<CellAddress> {
     /**
      * @return R1C1-style cell address string representation
      * @see #formatAsString()
-     * @since POI 5.2.1
+     * @since 5.2.1
      */
     public String formatAsR1C1String() {
         return new CellReference(_row, _col).formatAsR1C1String();

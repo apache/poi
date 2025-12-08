@@ -73,7 +73,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
      * @param part the package part holding the slide data,
      * the content type must be {@code application/vnd.openxmlformats-officedocument.slide+xml}
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     XSLFSlide(PackagePart part) throws IOException, XmlException {
         super(part);
@@ -165,7 +165,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
 
     /**
      * @return the comments part or {@code null} if there weren't any comments
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     @SuppressWarnings("WeakerAccess")
     public XSLFComments getCommentsPart() {
@@ -183,7 +183,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
 
     /**
      * @return the comment authors part or {@code null} if there weren't any comments
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     @SuppressWarnings("WeakerAccess")
     public XSLFCommentAuthors getCommentAuthorsPart() {

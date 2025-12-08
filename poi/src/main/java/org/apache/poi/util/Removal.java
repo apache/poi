@@ -43,7 +43,7 @@ import java.lang.annotation.Documented;
  * the POI 3.17 release series, and may be deleted immediately after POI 3.16 is
  * released. This would be annotated {@code @Removal(version="3.17")}</p>.
  *
- * @since POI-3.15 beta 3
+ * @since -3.15 beta 3
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

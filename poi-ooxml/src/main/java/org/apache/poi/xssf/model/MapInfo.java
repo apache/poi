@@ -59,7 +59,7 @@ public class MapInfo extends POIXMLDocumentPart {
     }
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public MapInfo(PackagePart part) throws IOException {
         super(part);

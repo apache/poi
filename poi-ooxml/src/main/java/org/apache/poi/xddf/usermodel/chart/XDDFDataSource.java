@@ -33,12 +33,12 @@ public interface XDDFDataSource<T> {
     T getPointAt(int index);
 
     /**
-     * @since POI 4.0.2
+     * @since 4.0.2
      */
     boolean isLiteral();
 
     /**
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     boolean isCellRange();
 
@@ -57,7 +57,7 @@ public interface XDDFDataSource<T> {
     String getFormatCode();
 
     /**
-     * @since POI 5.0.0
+     * @since 5.0.0
      */
     @Internal
     default void fillNumericalCache(CTNumData cache) {
@@ -95,7 +95,7 @@ public interface XDDFDataSource<T> {
     }
 
     /**
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     @Internal
     default void fillStringCache(CTStrData cache) {

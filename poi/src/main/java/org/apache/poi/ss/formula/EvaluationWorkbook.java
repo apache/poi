@@ -101,7 +101,7 @@ public interface EvaluationWorkbook {
      * Implementations must call the same method on all referenced {@link EvaluationSheet} instances, as well as clearing local caches.
      * @see WorkbookEvaluator#clearAllCachedResultValues()
      *
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     void clearAllCachedResultValues();
 

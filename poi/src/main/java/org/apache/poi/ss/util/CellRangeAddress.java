@@ -133,4 +133,18 @@ public class CellRangeAddress extends CellRangeAddressBase {
         }
         return new CellRangeAddress(a.getRow(), b.getRow(), a.getCol(), b.getCol());
     }
+
+    /**
+     * Shifts cell range by specified number of rows and columns.
+     *
+     * @param rows    rows to shift by.
+     * @param columns columns to shift by.
+     * @return copy of this {@link CellRangeAddress}, shifted by rows and columns.
+     * @since 6.0.0
+     */
+    public CellRangeAddress shift(int rows, int columns) {
+        return new CellRangeAddress(getFirstRow() + rows, getLastRow() + rows,
+                getFirstColumn() + columns, getLastColumn() + columns);
+    }
+
 }

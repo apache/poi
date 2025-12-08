@@ -62,7 +62,7 @@ public final class XSLFChart extends XDDFChart {
      *
      * @param part the package part holding the chart data,
      *             the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     protected XSLFChart(PackagePart part) throws IOException, XmlException {
         super(part);
@@ -112,7 +112,7 @@ public final class XSLFChart extends XDDFChart {
      * @param rID relation id
      * @param anchor size and location of chart
      * @return graphic frame object
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     static CTGraphicalObjectFrame prototype(int shapeId, String rID, Rectangle2D anchor) {
         CTGraphicalObjectFrame frame = CTGraphicalObjectFrame.Factory.newInstance();

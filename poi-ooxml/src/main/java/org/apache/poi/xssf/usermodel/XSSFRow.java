@@ -125,7 +125,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return a spliterator over cells in this row.
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     @SuppressWarnings("unchecked")

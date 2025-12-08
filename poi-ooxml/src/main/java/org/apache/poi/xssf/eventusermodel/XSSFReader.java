@@ -127,7 +127,7 @@ public class XSSFReader {
      *
      * @param useReadOnlySharedStringsTable if true, the ReadOnlySharedStringsTable is used,
      *                                      SharedStringsTable otherwise
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public void setUseReadOnlySharedStringsTable(boolean useReadOnlySharedStringsTable) {
         this.useReadOnlySharedStringsTable = useReadOnlySharedStringsTable;
@@ -136,7 +136,7 @@ public class XSSFReader {
     /**
      * @return whether {@link #getSharedStringsTable()} uses {@link SharedStringsTable}
      * or {@link ReadOnlySharedStringsTable}.
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public boolean useReadOnlySharedStringsTable() {
         return useReadOnlySharedStringsTable;
@@ -280,7 +280,7 @@ public class XSSFReader {
      *
      * @throws InvalidFormatException if the sheet data format is invalid
      * @throws IOException if there is an I/O issue reading the data
-     * @since POI 5.4.0
+     * @since 5.4.0
      */
     public SheetIterator getSheetIterator() throws IOException, InvalidFormatException {
         return new SheetIterator(workbookPart);

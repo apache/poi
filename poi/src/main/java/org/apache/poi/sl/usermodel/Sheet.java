@@ -54,7 +54,7 @@ public interface Sheet<
      * @param placeholder the placeholder type
      * @return the placeholder details or {@code null}, if the placeholder isn't contained in the sheet
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     PlaceholderDetails getPlaceholderDetails(Placeholder placeholder);
 }

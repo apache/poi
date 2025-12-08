@@ -34,7 +34,7 @@ public class XDGFMasterContents extends XDGFBaseContents {
     protected XDGFMaster _master;
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XDGFMasterContents(PackagePart part) {
         super(part);

@@ -69,7 +69,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
      * @param comments optional comments table, may be {@code null}
      * @param strings shared strings table used by the sheet
      * @param sheetContentsHandler callback receiving native cell events
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
      public XSSFBSheetHandler(InputStream is,
                               XSSFBStylesTable styles,
@@ -414,7 +414,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
      * Receives streaming callbacks while {@link XSSFBSheetHandler} parses an XLSB sheet.
      *
      * @see XSSFBSheetHandler
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     public interface XSSFBSheetContentsHandler {
         /**

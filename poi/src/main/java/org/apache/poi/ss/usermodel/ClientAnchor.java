@@ -34,7 +34,7 @@ import org.apache.poi.util.Internal;
 public interface ClientAnchor {
     
     /**
-     * @since POI 3.14beta1
+     * @since 3.14beta1
      */
     public static enum AnchorType {
         /**
@@ -260,7 +260,7 @@ public interface ClientAnchor {
     /**
      * Sets the anchor type
      * @param anchorType the anchor type to set
-     * @since POI 3.14
+     * @since 3.14
      */
     public void setAnchorType( AnchorType anchorType );
 

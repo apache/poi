@@ -80,7 +80,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
      *
      * @param part the package part holding the drawing data
      * 
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XSLFPictureData(PackagePart part) {
         super(part);

@@ -58,7 +58,7 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
     }
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public ExternalLinksTable(PackagePart part) throws IOException {
         super(part);
@@ -97,6 +97,7 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
      */
     @Internal
     @Removal(version = "6.0.0")
+    @Deprecated(forRemoval = true)
     public CTExternalLink getCTExternalLink(){
         return link;
     }

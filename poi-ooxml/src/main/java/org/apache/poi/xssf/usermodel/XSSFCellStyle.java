@@ -658,7 +658,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      *
      * @param border - type of border to use
      * @see org.apache.poi.ss.usermodel.BorderStyle
-     * @since POI 3.15
+     * @since 3.15
      */
     @Override
     public void setBorderBottom(BorderStyle border) {
@@ -678,7 +678,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * Set the type of border to use for the left border of the cell
       *
      * @param border the type of border to use
-     * @since POI 3.15
+     * @since 3.15
      */
     @Override
     public void setBorderLeft(BorderStyle border) {
@@ -698,7 +698,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * Set the type of border to use for the right border of the cell
       *
      * @param border the type of border to use
-     * @since POI 3.15
+     * @since 3.15
      */
     @Override
     public void setBorderRight(BorderStyle border) {
@@ -718,7 +718,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * Set the type of border to use for the top border of the cell
      *
      * @param border the type of border to use
-     * @since POI 3.15
+     * @since 3.15
      */
     @Override
     public void setBorderTop(BorderStyle border) {
@@ -832,7 +832,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * <br>
      * @param color org.apache.poi.ss.usermodel.Color to set
      * @throws IllegalArgumentException if you provide a <code>Color</code> instance that is not a {@link XSSFColor}
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public void setFillBackgroundColor(org.apache.poi.ss.usermodel.Color color) {
@@ -903,7 +903,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * <br>
      * @param color the color to use
      * @throws IllegalArgumentException if you provide a <code>Color</code> instance that is not a {@link XSSFColor}
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public void setFillForegroundColor(org.apache.poi.ss.usermodel.Color color) {

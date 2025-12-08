@@ -31,7 +31,7 @@ import org.apache.poi.util.IOUtils;
 /**
  * An shape which references an embedded OLE object
  *
- * @since POI 4.0.0
+ * @since 4.0.0
  */
 public interface ObjectShape<
     S extends Shape<S,P>,

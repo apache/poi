@@ -27,7 +27,7 @@ import java.util.TreeMap;
  * Text runs can contain characters which will be handled (if configured) by a different font,
  * because the default font (latin) doesn't contain corresponding glyphs.
  *
- * @since POI 3.17-beta2
+ * @since 3.17-beta2
  *
  * @see <a href="https://blogs.msdn.microsoft.com/officeinteroperability/2013/04/22/office-open-xml-themes-schemes-and-fonts/">Office Open XML Themes, Schemes, and Fonts</a>
  */

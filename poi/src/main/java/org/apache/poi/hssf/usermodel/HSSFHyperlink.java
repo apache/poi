@@ -264,7 +264,7 @@ public class HSSFHyperlink implements Hyperlink, Duplicatable {
 
     /**
      * @return a new HSSFHyperlink based on this
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     @Override
     public Duplicatable copy() {

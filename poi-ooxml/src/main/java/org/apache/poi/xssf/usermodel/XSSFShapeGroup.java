@@ -232,7 +232,7 @@ public final class XSSFShapeGroup extends XSSFShape implements ShapeContainer<XS
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<XSSFShape> spliterator() {

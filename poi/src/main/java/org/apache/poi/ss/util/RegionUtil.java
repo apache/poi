@@ -56,7 +56,7 @@ public final class RegionUtil {
         /**
          * @param property The property to set
          * @param value The value to set the property to
-         * @since POI 5.4.0
+         * @since 5.4.0
          */
         public CellPropertySetter(CellPropertyType property, int value) {
             this.property = property;
@@ -66,7 +66,7 @@ public final class RegionUtil {
         /**
          * @param property The property to set
          * @param value The value to set the property to
-         * @since POI 5.4.0
+         * @since 5.4.0
          */
         public CellPropertySetter(CellPropertyType property, BorderStyle value) {
             this.property = property;
@@ -87,7 +87,7 @@ public final class RegionUtil {
      * @param border The new border
      * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
-     * @since POI 3.16 beta 1
+     * @since 3.16 beta 1
      */
     public static void setBorderLeft(BorderStyle border, CellRangeAddress region, Sheet sheet) {
         int rowStart = region.getFirstRow();
@@ -107,7 +107,7 @@ public final class RegionUtil {
      * @param color The color of the border
      * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
-     * @since POI 3.15 beta 2
+     * @since 3.15 beta 2
      */
     public static void setLeftBorderColor(int color, CellRangeAddress region, Sheet sheet) {
         int rowStart = region.getFirstRow();
@@ -127,7 +127,7 @@ public final class RegionUtil {
      * @param border The new border
      * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
-     * @since POI 3.16 beta 1
+     * @since 3.16 beta 1
      */
     public static void setBorderRight(BorderStyle border, CellRangeAddress region, Sheet sheet) {
         int rowStart = region.getFirstRow();
@@ -147,7 +147,7 @@ public final class RegionUtil {
      * @param color The color of the border
      * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
-     * @since POI 3.15 beta 2
+     * @since 3.15 beta 2
      */
     public static void setRightBorderColor(int color, CellRangeAddress region, Sheet sheet) {
         int rowStart = region.getFirstRow();
@@ -167,7 +167,7 @@ public final class RegionUtil {
      * @param border The new border
      * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
-     * @since POI 3.16 beta 1
+     * @since 3.16 beta 1
      */
     public static void setBorderBottom(BorderStyle border, CellRangeAddress region, Sheet sheet) {
         int colStart = region.getFirstColumn();
@@ -187,7 +187,7 @@ public final class RegionUtil {
      * @param color The color of the border
      * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
-     * @since POI 3.15 beta 2
+     * @since 3.15 beta 2
      */
     public static void setBottomBorderColor(int color, CellRangeAddress region, Sheet sheet) {
         int colStart = region.getFirstColumn();
@@ -207,7 +207,7 @@ public final class RegionUtil {
      * @param border The new border
      * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
-     * @since POI 3.16 beta 1
+     * @since 3.16 beta 1
      */
     public static void setBorderTop(BorderStyle border, CellRangeAddress region, Sheet sheet) {
         int colStart = region.getFirstColumn();
@@ -227,7 +227,7 @@ public final class RegionUtil {
      * @param color The color of the border
      * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
-     * @since POI 3.15 beta 2
+     * @since 3.15 beta 2
      */
     public static void setTopBorderColor(int color, CellRangeAddress region, Sheet sheet) {
         int colStart = region.getFirstColumn();

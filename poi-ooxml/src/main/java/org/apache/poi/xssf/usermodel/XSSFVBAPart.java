@@ -34,7 +34,7 @@ public class XSSFVBAPart extends POIXMLDocumentPart {
      *
      * @param part the package part holding the VBA data,
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     protected XSSFVBAPart(PackagePart part) {
         super(part);

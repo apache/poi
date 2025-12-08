@@ -255,7 +255,7 @@ public class XSLFFontInfo implements FontInfo {
      * @return a font data object
      * @throws IOException if the font data can't be stored
      *
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     public static XSLFFontInfo addFontToSlideShow(XMLSlideShow ppt, InputStream fontStream)
     throws IOException {

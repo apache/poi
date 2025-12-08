@@ -22,7 +22,7 @@ import java.io.IOException;
 /**
  * Thrown if the zip file is invalid.
  *
- * @since POI 5.4.0
+ * @since 5.4.0
  */
 public class InvalidZipException extends IOException {
     public InvalidZipException(String message) {

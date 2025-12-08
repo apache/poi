@@ -19,7 +19,7 @@ package org.apache.poi.util;
 /**
  * Utility methods for dealing with exceptions/throwables
  *
- * @since POI 5.2.4
+ * @since 5.2.4
  */
 public class ExceptionUtil {
     private ExceptionUtil() {}

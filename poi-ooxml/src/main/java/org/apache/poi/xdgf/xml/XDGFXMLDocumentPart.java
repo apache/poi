@@ -26,14 +26,14 @@ public class XDGFXMLDocumentPart extends POIXMLDocumentPart {
     protected XDGFDocument _document;
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XDGFXMLDocumentPart(PackagePart part) {
         super(part);
     }
 
     /**
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     @Internal
     public void setDocument(XDGFDocument document) {

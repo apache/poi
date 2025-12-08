@@ -229,7 +229,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
      * Add a SVG image reference
      * @param svgPic a previously imported svg image
      *
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     public void setSvgImage(XSLFPictureData svgPic) {
         CTBlip blip = getBlip();
@@ -275,7 +275,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
     /**
      * @return picture name, can be null
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     public String getName() {
         String name = null;
@@ -292,7 +292,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
     /**
      * @param name picture name
      * @return returns true if the name was set
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     public boolean setName(String name) {
         XmlObject xmlObject = getXmlObject();
@@ -349,7 +349,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
      * @param anchor the image anchor (for calculating the preview image size) or
      *               null (the preview size is taken from the svg picture bounds)
      *
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     public static XSLFPictureShape addSvgImage(XSLFSheet sheet, XSLFPictureData svgPic, PictureType previewType, Rectangle2D anchor) throws IOException {
 
@@ -439,7 +439,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
     /**
      * @return boolean; true if the picture is a video
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public boolean isVideoFile() {
         CTPictureNonVisual nvPicPr = getCTPictureNonVisual();
@@ -454,7 +454,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
     /**
      * @return the link ID for the video file
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public String getVideoFileLink() {
         if (isVideoFile()) {
@@ -476,7 +476,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
     /**
      * @return boolean; true if the picture is an audio
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public boolean isAudioFile() {
         CTApplicationNonVisualDrawingProps nvPr = getCTApplicationNonVisualDrawing();
@@ -485,7 +485,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
     /**
      * @return the link ID for the audio file
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public String getAudioFileLink() {
         CTApplicationNonVisualDrawingProps nvPr = getCTApplicationNonVisualDrawing();

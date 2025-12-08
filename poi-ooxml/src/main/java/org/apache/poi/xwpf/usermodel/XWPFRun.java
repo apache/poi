@@ -281,7 +281,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * characters in the contents of this run when displayed in a document.
      *
      * @return {@code true} if the bold property for complex scripts is applied
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public boolean isComplexScriptBold() {
         CTRPr pr = getRunProperties(false);
@@ -340,7 +340,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * </p>
      *
      * @param value {@code true} if the bold property is applied for complex characters
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public void setComplexScriptBold(boolean value) {
         CTRPr pr = getRunProperties(true);
@@ -378,7 +378,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Returns number of text element
      *
      * @return number of text elements
-     * @since POI 5.4.1
+     * @since 5.4.1
      */
     public int getNumberOfTexts() {
         return run.sizeOfTArray();
@@ -442,7 +442,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * characters in the contents of this run when displayed in a document.
      *
      * @return {@code true} if the italic property is applied for complex characters.
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public boolean isComplexScriptItalic() {
         CTRPr pr = getRunProperties(false);
@@ -497,7 +497,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * applied to the complex characters.
      *
      * @param value {@code true} if the italic property is applied for complex characters.
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public void setComplexScriptItalic(boolean value) {
         CTRPr pr = getRunProperties(true);
@@ -963,7 +963,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * characters in the contents of this run when displayed.
      *
      * @return value representing the font size (can be null if size not set)
-     * @since POI 5.0.0
+     * @since 5.0.0
      */
     @Override
     public Double getFontSizeAsDouble() {
@@ -976,7 +976,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * characters in the contents of this run when displayed.
      *
      * @return value representing the font size for the complex scripts (can be null if size not set)
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public Double getComplexScriptFontSizeAsDouble() {
         BigDecimal bd = getComplexScriptFontSizeAsBigDecimal(1);
@@ -1031,7 +1031,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @param size The font size as number of point measurements.
      * @see #setComplexScriptFontSize(double)
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public void setComplexScriptFontSize(int size) {
         CTRPr pr = getRunProperties(true);
@@ -1053,7 +1053,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @param size The font size as number of point measurements.
      * @see #setFontSize(int)
-     * @since POI 5.0.0
+     * @since 5.0.0
      */
     @Override
     public void setFontSize(double size) {
@@ -1077,7 +1077,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @param size The font size as number of point measurements.
      * @see #setFontSize(int)
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public void setComplexScriptFontSize(double size) {
         CTRPr pr = getRunProperties(true);
@@ -1257,7 +1257,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param height      height in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
      * @throws InvalidFormatException If the format of the picture is not known.
      * @throws IOException            If reading the picture-data from the stream fails.
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public XWPFPicture addPicture(InputStream pictureData, PictureType pictureType, String filename, int width, int height)
             throws InvalidFormatException, IOException {
@@ -1370,7 +1370,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * this method add chart template into document
      *
      * @param chartRelId relation id of chart in document relation file
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     @Internal
     public CTInline addChart(String chartRelId) throws InvalidFormatException, IOException {
@@ -1428,7 +1428,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Set the style ID for the run.
      *
      * @param styleId ID (not name) of the style to set for the run, e.g. "BoldItalic" (not "Bold Italic").
-     * @since POI 4.1.1
+     * @since 4.1.1
      */
     public void setStyle(String styleId) {
         CTRPr pr = getCTR().getRPr();
@@ -1842,7 +1842,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Returns the charts embedded in the run.
      * @return A list of the XWPFChart objects embedded in the run.
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     public List<XWPFChart> getEmbeddedCharts() {
         return Collections.unmodifiableList(charts);

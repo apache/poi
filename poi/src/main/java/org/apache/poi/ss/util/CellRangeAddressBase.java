@@ -229,6 +229,21 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
     }
 
     /**
+     * Determines whether this CellRangeAddress fully contains CellRangeAddress.
+     *
+     * @param other a candidate cell range address to check if contained within this range
+     * @return returns true if this range contains other range.
+     * @see #isInRange(int, int) for checking if a single cell contains
+     * @since 6.0.0
+     */
+    public boolean contains(CellRangeAddressBase other) {
+        return this._firstRow <= other._firstRow &&
+                this._lastRow >= other._lastRow &&
+                this._firstCol <= other._firstCol &&
+                this._lastCol >= other._lastCol;
+    }
+
+    /**
      * Useful for logic like table/range styling, where some elements apply based on relative position in a range.
      * @return set of {@link CellPosition}s occupied by the given coordinates.  Empty if the coordinates are not in the range, never null.
      * @since 3.17 beta 1
@@ -284,7 +299,7 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
 
     /**
      * Returns an iterator over the CellAddresses in this cell range in row-major order.
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     @Override
     public Iterator<CellAddress> iterator() {
@@ -293,7 +308,7 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
 
     /**
      * Returns a spliterator over the CellAddresses in this cell range in row-major order.
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<CellAddress> spliterator() {

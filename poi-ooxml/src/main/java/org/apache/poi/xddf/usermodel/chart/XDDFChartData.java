@@ -159,7 +159,7 @@ public abstract class XDDFChartData {
         /**
          * Set the Chart Series title.
          * @param title chart series title
-         * @since POI 5.2.3
+         * @since 5.2.3
          */
         public void setTitle(String title) {
             setTitle(title, null);
@@ -224,7 +224,7 @@ public abstract class XDDFChartData {
         /**
          * @param fill
          *      fill property for the shape representing the series.
-         * @since POI 4.1.1
+         * @since 4.1.1
          */
         public void setFillProperties(XDDFFillProperties fill) {
             XDDFShapeProperties properties = getShapeProperties();
@@ -238,7 +238,7 @@ public abstract class XDDFChartData {
         /**
          * @param line
          *      line property for the shape representing the series.
-         * @since POI 4.1.1
+         * @since 4.1.1
          */
         public void setLineProperties(XDDFLineProperties line) {
             XDDFShapeProperties properties = getShapeProperties();
@@ -255,7 +255,7 @@ public abstract class XDDFChartData {
          *
          * @param index
          *      data point index.
-         * @since POI 5.1.0
+         * @since 5.1.0
          */
         public void clearDataPoint(long index) {
             List<CTDPt> points = getDPtList();
@@ -275,7 +275,7 @@ public abstract class XDDFChartData {
          *      data point index.
          * @return
          *      the data point with the given {@code index}.
-         * @since POI 5.1.0
+         * @since 5.1.0
          */
         public XDDFDataPoint getDataPoint(long index) {
             List<CTDPt> points = getDPtList();

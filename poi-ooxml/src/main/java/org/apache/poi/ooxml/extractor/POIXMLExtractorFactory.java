@@ -119,7 +119,7 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
      * Clears the setting for this thread made by {@link #setThreadPrefersEventExtractors(boolean) }
      *
      * @see #setThreadPrefersEventExtractors(boolean)
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public static void removeThreadPrefersEventExtractorsSetting() {
         ExtractorFactory.removeThreadPrefersEventExtractorsSetting();

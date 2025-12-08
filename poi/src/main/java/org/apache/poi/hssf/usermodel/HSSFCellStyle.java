@@ -425,7 +425,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     /**
      * set the type of border to use for the left border of the cell
      * @param border type
-     * @since POI 3.15
+     * @since 3.15
      */
     @Override
     public void setBorderLeft(BorderStyle border)
@@ -444,7 +444,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     /**
      * set the type of border to use for the right border of the cell
      * @param border type
-     * @since POI 3.15
+     * @since 3.15
      */
     @Override
     public void setBorderRight(BorderStyle border)
@@ -463,7 +463,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     /**
      * set the type of border to use for the top border of the cell
      * @param border type
-     * @since POI 3.15
+     * @since 3.15
      */
     @Override
     public void setBorderTop(BorderStyle border)
@@ -687,7 +687,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
      * <br>
      * @param color the color to use
      * @throws IllegalArgumentException if you provide a <code>Color</code> instance that is not a {@link HSSFColor}
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public void setFillBackgroundColor(org.apache.poi.ss.usermodel.Color color)
@@ -747,7 +747,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
      * <br>
      * @param color the color to use
      * @throws IllegalArgumentException if you provide a <code>Color</code> instance that is not a {@link HSSFColor}
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public void setFillForegroundColor(org.apache.poi.ss.usermodel.Color color)

@@ -29,7 +29,7 @@ import java.util.Map;
  * empty space on the edges of each printed page
  * </p>
  *
- * @since POI 5.2.3
+ * @since 5.2.3
  */
 public enum PageMargin {
 

@@ -987,7 +987,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *
      * @return a spliterator of the sheets.
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -1782,7 +1782,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *     writing HSSFWorkbook.
      * </p>
      * @param cellReferenceType the type of cell references used
-     * @since POI 5.2.1
+     * @since 5.2.1
      */
     @Override
     public void setCellReferenceType(CellReferenceType cellReferenceType) {

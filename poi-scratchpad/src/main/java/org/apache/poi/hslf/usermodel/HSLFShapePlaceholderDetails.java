@@ -44,7 +44,7 @@ import org.apache.poi.util.LocaleUtil;
 /**
  * Extended placeholder details for HSLF shapes
  *
- * @since POI 4.0.0
+ * @since 4.0.0
  */
 public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
 

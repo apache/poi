@@ -106,7 +106,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      *            must be
      *            <code>application/vnd.openxmlformats-officedocument.drawing+xml</code>
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XSSFDrawing(PackagePart part) throws IOException, XmlException {
         super(part);
@@ -710,7 +710,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<XSSFShape> spliterator() {

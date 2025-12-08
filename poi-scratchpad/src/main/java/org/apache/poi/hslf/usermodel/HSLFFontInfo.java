@@ -35,7 +35,7 @@ import org.apache.poi.util.Internal;
  * 
  * In PowerPoint Font is a shared resource and can be shared among text object in the presentation.
  * 
- * @since POI 3.17-beta2
+ * @since 3.17-beta2
  */
 @SuppressWarnings("WeakerAccess")
 public class HSLFFontInfo implements FontInfo {

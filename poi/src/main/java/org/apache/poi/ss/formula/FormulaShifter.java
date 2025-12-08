@@ -41,9 +41,9 @@ public final class FormulaShifter {
     private enum ShiftMode {
         RowMove,
         RowCopy,
-        /** @since POI 4.0.0 */
+        /** @since 4.0.0 */
         ColumnMove,
-        /** @since POI 4.0.0 */
+        /** @since 4.0.0 */
         ColumnCopy,
         SheetMove,
     }
@@ -116,7 +116,7 @@ public final class FormulaShifter {
     }
 
     /**
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public static FormulaShifter createForColumnShift(int externSheetIndex, String sheetName, int firstMovedColumnIndex, int lastMovedColumnIndex, int numberOfColumnsToMove,
             SpreadsheetVersion version) {
@@ -124,7 +124,7 @@ public final class FormulaShifter {
     }
     
     /**
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public static FormulaShifter createForColumnCopy(int externSheetIndex, String sheetName, int firstMovedColumnIndex, int lastMovedColumnIndex, int numberOfColumnsToMove,
                                                       SpreadsheetVersion version) {

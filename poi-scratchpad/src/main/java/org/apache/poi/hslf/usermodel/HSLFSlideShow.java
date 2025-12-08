@@ -919,7 +919,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
      *
      * @return the registered HSLFFontInfo - the font info object is unique based on the typeface
      *
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     @Override
     public HSLFFontInfo addFont(InputStream fontData) throws IOException {

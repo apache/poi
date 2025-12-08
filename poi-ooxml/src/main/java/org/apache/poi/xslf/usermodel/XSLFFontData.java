@@ -31,7 +31,7 @@ import org.apache.poi.util.Beta;
  * A container for fontdata files, i.e. MTX fonts derived from
  * true (TTF) or open (OTF) type fonts.
  *
- * @since POI 4.1.0
+ * @since 4.1.0
  */
 @Beta
 public class XSLFFontData extends POIXMLDocumentPart {

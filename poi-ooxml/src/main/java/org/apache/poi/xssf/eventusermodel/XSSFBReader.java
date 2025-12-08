@@ -107,7 +107,7 @@ public class XSSFBReader extends XSSFReader {
      * @return iterator of {@link InputStream}s
      * @throws InvalidFormatException if the sheet data format is invalid
      * @throws IOException if there is an I/O issue reading the data
-     * @since POI 5.4.0
+     * @since 5.4.0
      */
     @Override
     public SheetIterator getSheetIterator() throws IOException, InvalidFormatException {

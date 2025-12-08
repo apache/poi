@@ -287,7 +287,7 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
 
     /**
      * Is this collection empty?
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public boolean isEmpty() {
         return relationshipsByID.isEmpty();
@@ -386,7 +386,7 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
     /**
      * Get this collection's spliterator.
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<PackageRelationship> spliterator() {

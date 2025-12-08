@@ -20,7 +20,7 @@ package org.apache.poi.ss.usermodel;
 /**
  * Common interface for all drawing shapes
  * 
- * @since POI 3.16-beta2
+ * @since 3.16-beta2
  */
 public interface Shape {
     /**

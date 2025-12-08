@@ -94,7 +94,7 @@ final class HSSFEvaluationCell implements EvaluationCell {
     }
     
     /**
-     * @since POI 4.0
+     * @since 4.0
      * @return cell type of cached formula result
      */
     @Override

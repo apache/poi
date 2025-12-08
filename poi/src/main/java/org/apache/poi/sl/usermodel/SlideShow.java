@@ -123,7 +123,7 @@ public interface SlideShow<
     /**
      * @return an extractor for the slideshow metadata
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     POITextExtractor getMetadataTextExtractor();
 
@@ -132,7 +132,7 @@ public interface SlideShow<
      * which is either a subclass of {@link org.apache.poi.POIDocument}
      * or {@link org.apache.poi.ooxml.POIXMLDocument}
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     Object getPersistDocument();
 

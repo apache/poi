@@ -51,7 +51,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
      *                       and the data is put in a temp file instead - defaults to -1 meaning temp files are not used
      *                       and that zip entries with more than 2GB of data after decompressing will fail, 0 means all
      *                       zip entries are stored in temp files. A threshold like 50000000 (approx 50Mb is recommended)
-     * @since POI 5.1.0
+     * @since 5.1.0
      * @see #setEncryptTempFiles(boolean)
      */
     public static void setThresholdBytesForTempFiles(int thresholdBytes) {
@@ -62,7 +62,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
      * Get the threshold at which a zip entry is regarded as too large for holding in memory
      * and the data is put in a temp file instead (defaults to -1 meaning temp files are not used)
      * @return threshold in bytes
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     public static int getThresholdBytesForTempFiles() {
         return thresholdForTempFiles;
@@ -71,7 +71,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
     /**
      * Encrypt temp files when they are used. Only affects temp files related to zip entries.
      * @param encrypt whether temp files should be encrypted
-     * @since POI 5.1.0
+     * @since 5.1.0
      * @see #setThresholdBytesForTempFiles(int)
      */
     public static void setEncryptTempFiles(boolean encrypt) {
@@ -80,7 +80,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 
     /**
      * Whether temp files should be encrypted (default false). Only affects temp files related to zip entries.
-     * @since POI 5.1.0
+     * @since 5.1.0
      */
     public static boolean shouldEncryptTempFiles() {
         return encryptTempFiles;

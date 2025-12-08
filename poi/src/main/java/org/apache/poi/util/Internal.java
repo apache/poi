@@ -34,7 +34,7 @@ import java.lang.annotation.Documented;
  * not subject to the POI project policy of deprecating an element for 2 major
  * releases before removing.
  *
- * @since POI-3.6
+ * @since -3.6
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

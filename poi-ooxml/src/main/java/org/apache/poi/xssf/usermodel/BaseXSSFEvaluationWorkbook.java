@@ -63,7 +63,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
     }
 
     /* (non-JavaDoc), inherit JavaDoc from EvaluationWorkbook
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     @Override
     public void clearAllCachedResultValues() {

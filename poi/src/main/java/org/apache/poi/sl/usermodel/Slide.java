@@ -55,7 +55,7 @@ public interface Slide<
      *
      * @param placeholderRefShape the shape which references to the placeholder
      * @return {@code true} if the placeholder should be displayed/rendered
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     default boolean getDisplayPlaceholder(SimpleShape<?,?> placeholderRefShape) {
         return false;
@@ -66,14 +66,14 @@ public interface Slide<
      *
      * @param hidden slide visibility, if {@code true} the slide is hidden, {@code false} shows the slide
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     void setHidden(boolean hidden);
 
     /**
      * @return the slide visibility, the slide is hidden when {@code true} - or shown when {@code false}
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     boolean isHidden();
 
@@ -86,14 +86,14 @@ public interface Slide<
     /**
      * @return the assigned slide layout
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     MasterSheet<S,P> getSlideLayout();
 
     /**
      * @return the slide name, defaults to "Slide[slideNumber]"
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     String getSlideName();
 }

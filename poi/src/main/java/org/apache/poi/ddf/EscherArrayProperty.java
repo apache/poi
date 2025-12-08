@@ -246,7 +246,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<byte[]> spliterator() {

@@ -75,7 +75,7 @@ public abstract class POIXMLFactory {
      * @param relationshipType the relationship type of the descriptor
      * @return the descriptor or null if type is unknown
      *
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     protected abstract POIXMLRelation getDescriptor(String relationshipType);
 
@@ -104,7 +104,7 @@ public abstract class POIXMLFactory {
       *
       * @throws POIXMLException if the relations are erroneous or the part is not related
       *
-      * @since POI 3.14-Beta1
+      * @since 3.14-Beta1
       */
      protected PackageRelationship getPackageRelationship(POIXMLDocumentPart parent, PackagePart part) {
          try {

@@ -35,7 +35,7 @@ import org.apache.poi.util.Internal;
  * Common class for {@link ExcelToFoConverter} and {@link ExcelToHtmlConverter}
  *
  * @see AbstractWordUtils
- * @since POI 3.8 beta 5
+ * @since 3.8 beta 5
  */
 @Internal
 class AbstractExcelUtils {

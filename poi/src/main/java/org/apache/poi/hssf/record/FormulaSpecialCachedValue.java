@@ -165,7 +165,7 @@ public final class FormulaSpecialCachedValue implements GenericRecord {
     /**
      * Returns the type of the cached value
      * @return A CellType
-     * @since POI 5.0.0
+     * @since 5.0.0
      */
     public CellType getValueTypeEnum() {
         int typeCode = getTypeCode();

@@ -89,7 +89,7 @@ public interface TableCell<
      *
      * @return the grid span
      * 
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     int getGridSpan();
     
@@ -98,7 +98,7 @@ public interface TableCell<
      *
      * @return the row span
      * 
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     int getRowSpan();
 
@@ -108,7 +108,7 @@ public interface TableCell<
      *
      * @return true if this a merged cell
      * 
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     boolean isMerged();
 }

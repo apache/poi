@@ -371,7 +371,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
 
     /**
      * @return absolute top-left position, or null if position is determined from the "from" cell
-     * @since POI 3.17 beta 1
+     * @since 3.17 beta 1
      */
     public CTPoint2D getPosition() {
         return position;
@@ -379,7 +379,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
 
     /**
      * Sets the top-left absolute position of the object.  To use this, "from" must be set to null.
-     * @since POI 3.17 beta 1
+     * @since 3.17 beta 1
      */
     public void setPosition(CTPoint2D position) {
         this.position = position;
@@ -388,7 +388,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     /**
      *
      * @return size or null, if size is determined from the to and from cells
-     * @since POI 3.17 beta 1
+     * @since 3.17 beta 1
      */
     public CTPositiveSize2D getSize() {
         return size;
@@ -396,7 +396,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
 
     /**
      * Sets the size of the object.  To use this, "to" must be set to null.
-     * @since POI 3.17 beta 1
+     * @since 3.17 beta 1
      */
     public void setSize(CTPositiveSize2D size) {
         this.size = size;
@@ -405,7 +405,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     /**
      * Sets the anchor type
      * @param anchorType the anchor type to set
-     * @since POI 3.14
+     * @since 3.14
      */
     @Override
     public void setAnchorType( AnchorType anchorType )

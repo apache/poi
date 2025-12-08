@@ -91,7 +91,7 @@ public final class Insets2D implements Duplicatable {
      * <code>bottom</code>, and <code>right</code> are all equal.
      * @return      <code>true</code> if the two insets are equal;
      *                          otherwise <code>false</code>.
-     * @since       JDK1.1
+     * @since      JDK1.1
      */
     public boolean equals(Object obj) {
     if (obj instanceof Insets2D) {

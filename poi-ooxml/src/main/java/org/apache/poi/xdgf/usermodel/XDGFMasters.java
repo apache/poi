@@ -48,7 +48,7 @@ public class XDGFMasters extends XDGFXMLDocumentPart {
     protected Map<Long, XDGFMaster> _masters = new HashMap<>();
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XDGFMasters(PackagePart part) {
         super(part);

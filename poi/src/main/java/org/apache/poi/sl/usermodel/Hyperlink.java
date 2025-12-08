@@ -19,7 +19,7 @@ package org.apache.poi.sl.usermodel;
 
 /**
  * A PowerPoint hyperlink
- * @since POI 3.14 beta 2
+ * @since 3.14 beta 2
  */
 public interface Hyperlink<
     S extends Shape<S,P>,
@@ -29,7 +29,7 @@ public interface Hyperlink<
      * Link to an email
      *
      * @param emailAddress the email address
-     * @since POI 3.14-Beta2 
+     * @since 3.14-Beta2 
      */
     void linkToEmail(String emailAddress);
     
@@ -37,7 +37,7 @@ public interface Hyperlink<
      * Link to a web page / URL
      *
      * @param url the url
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     void linkToUrl(String url);
 
@@ -45,35 +45,35 @@ public interface Hyperlink<
      * Link to a slide in this slideshow
      *
      * @param slide the linked slide
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     void linkToSlide(Slide<S,P> slide);
 
     /**
      * Link to the next slide (relative from the current)
      * 
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     void linkToNextSlide();
 
     /**
      * Link to the previous slide (relative from the current)
      * 
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     void linkToPreviousSlide();
 
     /**
      * Link to the first slide in this slideshow
      * 
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     void linkToFirstSlide();
 
     /**
      * Link to the last slide in this slideshow
      * 
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     void linkToLastSlide();
 }

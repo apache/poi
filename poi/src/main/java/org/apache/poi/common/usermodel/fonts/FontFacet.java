@@ -35,7 +35,7 @@ public interface FontFacet {
      *
      * @return the font weight
      *
-     * @since POI 4.1.0
+     * @since 4.1.0
      */
     default int getWeight() {
         return FontHeader.REGULAR_WEIGHT;

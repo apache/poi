@@ -85,7 +85,7 @@ public class XDDFTitle {
     }
 
     /**
-     * @since POI 4.1.2
+     * @since 4.1.2
      */
     public XDDFRunProperties getOrAddTextProperties() {
         CTTextBody text;

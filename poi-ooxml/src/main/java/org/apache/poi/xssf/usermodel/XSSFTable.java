@@ -81,7 +81,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     /**
      * @param part The part used to initialize the table
      * @throws IOException If reading data from the part fails.
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XSSFTable(PackagePart part) throws IOException {
         super(part);
@@ -624,7 +624,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     }
 
     /**
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     private void setCellReferences() {
         String ref = ctTable.getRef();
@@ -646,7 +646,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * cell references with the underlying {@code CTTable}.
      * Thus this method is inexpensive.
      *
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     public void updateReferences() {
         startCellReference = null;

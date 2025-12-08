@@ -47,7 +47,7 @@ public final class XSLFObjectData extends POIXMLDocumentPart implements ObjectDa
      *
      * @param part the package part holding the ole data
      * 
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XSLFObjectData(final PackagePart part) {
         super(part);

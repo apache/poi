@@ -32,7 +32,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 
 /**
- * @since POI 5.2.3
+ * @since 5.2.3
  */
 @Beta
 public class XDDFBubbleChartData extends XDDFChartData {
@@ -125,7 +125,7 @@ public class XDDFBubbleChartData extends XDDFChartData {
         }
 
         /**
-         * @since POI 5.2.3
+         * @since 5.2.3
          */
         public CTBubbleSer getCTBubbleSer() {
             return series;

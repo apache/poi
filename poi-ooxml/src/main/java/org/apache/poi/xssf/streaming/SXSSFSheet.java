@@ -385,7 +385,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * @param autoCreate if true, then a new VML drawing part is created
      *
      * @return the VML drawing of {@code null} if the drawing was not found and autoCreate=false
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public XSSFVMLDrawing getVMLDrawing(boolean autoCreate) {
         XSSFSheet xssfSheet = getWorkbook().getXSSFSheet(this);
@@ -550,7 +550,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * @return a spliterator of the PHYSICAL rows.  Meaning the 3rd element may not
      * be the third row if say for instance the second row is undefined.
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -841,7 +841,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      *
      * @param margin which margin to get
      * @return the size of the margin
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public double getMargin(PageMargin margin) {
@@ -873,7 +873,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      *
      * @param margin which margin to set
      * @param size the size of the margin
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public void setMargin(PageMargin margin, double size) {
@@ -1087,7 +1087,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * @param leftmostColumn   Left column visible in right pane.
      * @param activePane    Active pane.
      * @see PaneType
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     @Override
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, PaneType activePane) {
@@ -1717,7 +1717,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      *
      * @param addr The address of the cell containing the hyperlink
      * @return hyperlink if there is a hyperlink anchored at {@code addr}; otherwise returns {@code null}
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     @Override
     public XSSFHyperlink getHyperlink(CellAddress addr) {
@@ -1732,7 +1732,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * explicitly cell the value, eg B2 or B2:C3 (the 4 cells with B2 at top left and C3 at bottom right)
      *
      * @param hyperlink the link to add
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public void addHyperlink(XSSFHyperlink hyperlink) {
         _sh.addHyperlink(hyperlink);

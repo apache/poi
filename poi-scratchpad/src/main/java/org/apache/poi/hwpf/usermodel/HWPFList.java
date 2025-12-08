@@ -181,7 +181,7 @@ public final class HWPFList
     }
 
     /**
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     public boolean isStartAtOverridden(char level )
     {

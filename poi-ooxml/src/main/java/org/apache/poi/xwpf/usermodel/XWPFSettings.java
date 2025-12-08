@@ -50,7 +50,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
     private CTSettings ctSettings;
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     public XWPFSettings(PackagePart part) throws IOException {
         super(part);
@@ -71,7 +71,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
 
     /**
      * @return ctSettings instance
-     * @since POI 5.2.4
+     * @since 5.2.4
      */
     @Internal
     public CTSettings getCTSettings() {

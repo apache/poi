@@ -35,7 +35,7 @@ public class XDGFFactory extends POIXMLFactory {
     }
 
     /**
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     protected POIXMLRelation getDescriptor(String relationshipType) {
         return XDGFRelation.getInstance(relationshipType);

@@ -122,7 +122,7 @@ public final class SSCellRange<K extends Cell> implements CellRange<K> {
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<K> spliterator() {

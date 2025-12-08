@@ -1180,7 +1180,7 @@ public class HSSFCell extends CellBase {
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
      *
-     * @since POI 4.0
+     * @since 4.0
      */
     @Override
     public CellType getCachedFormulaResultType() {

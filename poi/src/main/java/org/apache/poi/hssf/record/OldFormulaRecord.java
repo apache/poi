@@ -68,7 +68,7 @@ public final class OldFormulaRecord extends OldCellRecord {
     /**
      * Returns the type of the cached result
      * @return A CellType
-     * @since POI 6.0.0
+     * @since 6.0.0
      */
     public CellType getCachedResultType() {
         if (specialCachedValue == null) {
@@ -80,7 +80,7 @@ public final class OldFormulaRecord extends OldCellRecord {
     /**
      * Returns the type of the cached result
      * @return A CellType
-     * @since POI 5.0.0
+     * @since 5.0.0
      * @deprecated POI 6.0.0, use {@link #getCachedResultType()} instead
      */
     @Deprecated

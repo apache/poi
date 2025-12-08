@@ -27,7 +27,7 @@ import java.lang.annotation.Documented;
  * Calling this method will result in a raised Exception
  * at runtime.
  *
- * @since POI-3.14beta1
+ * @since -3.14beta1
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

@@ -94,9 +94,9 @@ Before running this, you should execute the "jar" target in the main build.gradl
             <sort>
                 <resources>
                     <fileset dir="${dist}">
-                        <include name="**/poi-5.*.jar"/>
-                        <include name="**/poi-ooxml-5.*.jar"/>
-                        <include name="**/poi-ooxml-lite-5.*.jar"/>
+                        <include name="**/poi-6.*.jar"/>
+                        <include name="**/poi-ooxml-6.*.jar"/>
+                        <include name="**/poi-ooxml-lite-6.*.jar"/>
                         <exclude name="**/*-javadoc*"/>
                         <exclude name="**/*-sources*"/>
                     </fileset>
@@ -137,10 +137,10 @@ Before running this, you should execute the "jar" target in the main build.gradl
             <sort>
                 <resources>
                     <fileset dir="${dist}">
-                        <include name="**/poi-5.*.jar"/>
-                        <include name="**/poi-ooxml-5.*.jar"/>
-                        <include name="**/poi-ooxml-lite-5.*.jar"/>
-                        <include name="**/poi-scratchpad-5.*.jar"/>
+                        <include name="**/poi-6.*.jar"/>
+                        <include name="**/poi-ooxml-6.*.jar"/>
+                        <include name="**/poi-ooxml-lite-6.*.jar"/>
+                        <include name="**/poi-scratchpad-6.*.jar"/>
                         <exclude name="**/*-javadoc*"/>
                         <exclude name="**/*-sources*"/>
                     </fileset>

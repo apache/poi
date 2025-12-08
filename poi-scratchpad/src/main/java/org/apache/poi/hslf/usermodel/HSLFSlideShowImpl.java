@@ -712,7 +712,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      *
      * @throws IOException           thrown on errors writing to the file
      * @throws IllegalStateException if this isn't from a writable File
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     @Override
     public void write() throws IOException {

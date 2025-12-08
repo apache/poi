@@ -23,7 +23,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Extended details about placholders
  *
- * @since POI 4.0.0
+ * @since 4.0.0
  */
 public interface PlaceholderDetails {
     enum PlaceholderSize {
@@ -56,7 +56,7 @@ public interface PlaceholderDetails {
      *
      * @return the text of the shape / placeholder
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     String getText();
 
@@ -65,7 +65,7 @@ public interface PlaceholderDetails {
      *
      * @param text the placeholder text
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     void setText(String text);
 
@@ -73,7 +73,7 @@ public interface PlaceholderDetails {
     /**
      * @return the stored / fixed user specified date
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     default String getUserDate() {
         return null;
@@ -82,7 +82,7 @@ public interface PlaceholderDetails {
     /**
      * @return Get the date format for the datetime placeholder
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     default DateTimeFormatter getDateFormat() {
         return DateTimeFormatter.ISO_LOCAL_DATE;

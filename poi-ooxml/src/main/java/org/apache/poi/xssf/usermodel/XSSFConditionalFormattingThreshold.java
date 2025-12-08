@@ -84,7 +84,7 @@ public class XSSFConditionalFormattingThreshold implements org.apache.poi.ss.use
 
     /**
      * @return true if 'gte' attribute is set to true (defaults to true)
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public boolean isGte() {
         return cfvo.getGte();
@@ -92,7 +92,7 @@ public class XSSFConditionalFormattingThreshold implements org.apache.poi.ss.use
 
     /**
      * @param gte set 'gte' attribute (defaults to true)
-     * @since POI 5.2.3
+     * @since 5.2.3
      */
     public void setGte(boolean gte) {
         cfvo.setGte(gte);

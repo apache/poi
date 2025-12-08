@@ -37,7 +37,7 @@ public class XDDFLineProperties {
     /**
      * @param fill
      *      fill properties to set on the new line properties.
-     * @since POI 4.0.2
+     * @since 4.0.2
      */
     public XDDFLineProperties(XDDFFillProperties fill) {
         this();

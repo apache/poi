@@ -93,7 +93,7 @@ public class XmlVisioDocument extends POIXMLDocument {
      * @param stream InputStream
      * @param closeStream Whether to close the InputStream
      * @throws IOException If parsing the document fails
-     * @since POI 5.2.5
+     * @since 5.2.5
      */
     public XmlVisioDocument(InputStream stream, boolean closeStream) throws IOException {
         this(PackageHelper.open(stream, closeStream));

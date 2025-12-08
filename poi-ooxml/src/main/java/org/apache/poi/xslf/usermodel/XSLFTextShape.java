@@ -90,7 +90,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<XSLFTextParagraph> spliterator() {
@@ -239,7 +239,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     /**
      * @param paragraph paragraph to remove
      * @return whether the paragraph was removed
-     * @since POI 5.2.2
+     * @since 5.2.2
      */
     public boolean removeTextParagraph(XSLFTextParagraph paragraph) {
         CTTextParagraph ctTextParagraph = paragraph.getXmlObject();
@@ -807,7 +807,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
      *
      * @return a new text paragraph
      *
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     protected XSLFTextParagraph newTextParagraph(CTTextParagraph p) {
         return new XSLFTextParagraph(p, this);

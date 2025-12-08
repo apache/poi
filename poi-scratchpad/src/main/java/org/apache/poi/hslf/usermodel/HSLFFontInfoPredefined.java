@@ -25,7 +25,7 @@ import org.apache.poi.common.usermodel.fonts.FontPitch;
 /**
  * Predefined fonts
  * 
- * @since POI 3.17-beta2
+ * @since 3.17-beta2
  */
 public enum HSLFFontInfoPredefined implements FontInfo {
     ARIAL("Arial", FontCharset.ANSI, FontPitch.VARIABLE, FontFamily.FF_SWISS),

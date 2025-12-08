@@ -31,7 +31,7 @@ import java.util.List;
  * Class for code common to {@link RowShifter} and {@link ColumnShifter}
  * Helper for shifting rows up or down and columns left and right
  *
- * @since POI 4.0.0
+ * @since 4.0.0
  */
 @Internal
 public abstract class BaseRowColShifter {

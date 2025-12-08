@@ -25,7 +25,7 @@ import java.nio.file.Path;
  * that avoids permission issues when deploying applications with multiple users on the same server.
  * Other than adding the username to the temporary directory, all other behavior is the same as the superclass.
  *
- * @since POI 5.4.0
+ * @since 5.4.0
  */
 public class UserNameAwareTempFileCreationStrategy extends DefaultTempFileCreationStrategy {
 

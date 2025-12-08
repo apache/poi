@@ -684,7 +684,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      *
      * @return {@link RoundTripHFPlaceholder12} or {@code null} if not found
      *
-     * @since POI 3.14-Beta2
+     * @since 3.14-Beta2
      */
     public RoundTripHFPlaceholder12 getHFPlaceholderAtom() {
         // special case for files saved in Office 2007
@@ -706,7 +706,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     }
 
     /**
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<HSLFTextParagraph> spliterator() {

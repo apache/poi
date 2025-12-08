@@ -26,7 +26,7 @@ public interface MasterSheet<
      * 
      * @return the shape or {@code null} if it is not defined in this mastersheet
      * 
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     SimpleShape<S,P> getPlaceholder(Placeholder type);
 }

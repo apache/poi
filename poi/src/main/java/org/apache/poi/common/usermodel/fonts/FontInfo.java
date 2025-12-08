@@ -31,7 +31,7 @@ import org.apache.poi.util.Beta;
  *
  * Setting an unsupported property results in an {@link UnsupportedOperationException}.
  *
- * @since POI 3.17-beta2
+ * @since 3.17-beta2
  *
  * @see <a href="https://msdn.microsoft.com/en-us/library/dd145037.aspx">LOGFONT structure</a>
  */

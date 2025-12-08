@@ -63,7 +63,7 @@ public class XSSFTextRun {
 
     /**
      * @param rgb The RGB color value to set for the font
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     public void setFontColor(byte[] rgb) {
         CTTextCharacterProperties rPr = getRPr();
@@ -89,7 +89,7 @@ public class XSSFTextRun {
 
     /**
      * @return the font color as a byte array.
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     public byte[] getFontColorAsBytes() {
 

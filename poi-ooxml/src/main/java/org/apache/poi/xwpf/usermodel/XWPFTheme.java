@@ -41,7 +41,7 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 /**
  * A shared style sheet in a .docx document
  *
- * @since POI 5.2.4
+ * @since 5.2.4
  */
 public class XWPFTheme extends POIXMLDocumentPart {
     private CTOfficeStyleSheet _theme;

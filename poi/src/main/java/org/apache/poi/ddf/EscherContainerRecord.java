@@ -193,7 +193,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
     /**
      * @return a spliterator over the child records
      *
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Override
     public Spliterator<EscherRecord> spliterator() {

@@ -279,7 +279,7 @@ public class DataFormatter {
 
     /**
      * @param emulateCSV whether to emulate CSV output (default false).
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public void setEmulateCSV(boolean emulateCSV) {
         this.emulateCSV = emulateCSV;
@@ -287,7 +287,7 @@ public class DataFormatter {
 
     /**
      * @return whether to emulate CSV output (default false).
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public boolean isEmulateCSV() {
         return emulateCSV;
@@ -298,7 +298,7 @@ public class DataFormatter {
      *                                       for cells with formulas, we will return the cached value for the cell (if available),
      *                                       otherwise - we return the formula itself.
      *                                       The default is false and this means we return the formula itself.
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public void setUseCachedValuesForFormulaCells(boolean useCachedValuesForFormulaCells) {
         this.useCachedValuesForFormulaCells = useCachedValuesForFormulaCells;
@@ -309,7 +309,7 @@ public class DataFormatter {
      *                                        for cells with formulas, we will return the cached value for the cell (if available),
      *                                        otherwise - we return the formula itself.
      *                                        The default is false and this means we return the formula itself.
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public boolean useCachedValuesForFormulaCells() {
         return useCachedValuesForFormulaCells;
@@ -318,7 +318,7 @@ public class DataFormatter {
     /**
      * @param use4DigitYearsInAllDateFormats set to true if you want to have all dates formatted with 4 digit
      *                                       years (even if the format associated with the cell specifies just 2)
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public void setUse4DigitYearsInAllDateFormats(boolean use4DigitYearsInAllDateFormats) {
         this.use4DigitYearsInAllDateFormats = use4DigitYearsInAllDateFormats;
@@ -327,7 +327,7 @@ public class DataFormatter {
     /**
      * @return use4DigitYearsInAllDateFormats set to true if you want to have all dates formatted with 4 digit
      *                                        years (even if the format associated with the cell specifies just 2)
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     public boolean use4DigitYearsInAllDateFormats() {
         return use4DigitYearsInAllDateFormats;

@@ -569,7 +569,7 @@ public abstract class BaseTestCellUtil {
     /**
      * bug 55555
      *
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     @Test
     protected void setFillForegroundColorBeforeFillBackgroundColorEnumByEnum() throws IOException {
@@ -591,7 +591,7 @@ public abstract class BaseTestCellUtil {
     /**
      * bug 55555
      *
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     @Test
     protected void setFillForegroundColorBeforeFillBackgroundColorEnum() throws IOException {
@@ -613,7 +613,7 @@ public abstract class BaseTestCellUtil {
     /**
      * bug 63268
      *
-     * @since POI 4.1.0
+     * @since  4.1.0
      */
     @Test
     void setFontShouldNotCreateDuplicateStyle() throws IOException {

@@ -135,7 +135,7 @@ public interface ImageRenderer {
      * @param dim the dimension in pixels of the returned image
      * @return the image as buffered image or null if image could not be loaded
      *
-     * @since POI 3.15-beta2
+     * @since 3.15-beta2
      */
     BufferedImage getImage(Dimension2D dim);
 

@@ -58,7 +58,7 @@ public enum FormulaType {
     /** formula is expected to return a single value vs. multiple values */
     private final boolean isSingleValue ;
     /**
-     * @since POI 3.15 beta 3.
+     * @since 3.15 beta 3.
      */
     FormulaType(boolean singleValue) {
         this.isSingleValue = singleValue;
@@ -75,7 +75,7 @@ public enum FormulaType {
      * Used to transition from {@code int}s (possibly stored in the Excel file) to {@code FormulaType}s.
      * @return FormulaType
      * @throws IllegalArgumentException if code is out of range
-     * @since POI 3.15 beta 3.
+     * @since 3.15 beta 3.
      */
     public static FormulaType forInt(int code) {
         if (code >= 0 && code < values().length) {

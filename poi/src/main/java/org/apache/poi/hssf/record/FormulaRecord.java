@@ -123,7 +123,7 @@ public final class FormulaRecord extends CellRecord {
     /**
      * @return The type of the cached value or CellType.NUMERIC.getCode() if the cached value is empty
      *
-     * @since POI 6.0.0
+     * @since 6.0.0
      */
     public CellType getCachedResultType() {
         if (specialCachedValue == null) {

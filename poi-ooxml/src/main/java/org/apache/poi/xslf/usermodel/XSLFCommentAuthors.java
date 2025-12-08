@@ -49,7 +49,7 @@ public class XSLFCommentAuthors extends POIXMLDocumentPart {
      * @param part the package part holding the comment authors data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.commentAuthors+xml</code>
      * 
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     XSLFCommentAuthors(PackagePart part) throws IOException, XmlException {
         super(part);

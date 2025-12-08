@@ -397,7 +397,7 @@ public final class CellUtil {
      * @param context The context for copying, see {@link CellCopyContext}
      * @throws IllegalArgumentException if copy cell style and srcCell is from a different workbook
      * @throws IllegalStateException if srcCell hyperlink is not an instance of {@link Duplicatable}
-     * @since POI 5.2.0
+     * @since 5.2.0
      */
     @Beta
     public static void copyCell(Cell srcCell, Cell destCell, CellCopyPolicy policy, CellCopyContext context) {
@@ -499,7 +499,7 @@ public final class CellUtil {
      * @param align the horizontal alignment to use.
      *
      * @see HorizontalAlignment for alignment options
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     public static void setAlignment(Cell cell, HorizontalAlignment align) {
         setCellStyleProperty(cell, CellPropertyType.ALIGNMENT, align);
@@ -518,7 +518,7 @@ public final class CellUtil {
      * @param align the vertical alignment to use.
      *
      * @see VerticalAlignment for alignment options
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     public static void setVerticalAlignment(Cell cell, VerticalAlignment align) {
         setCellStyleProperty(cell, CellPropertyType.VERTICAL_ALIGNMENT, align);
@@ -568,7 +568,7 @@ public final class CellUtil {
      *
      * @param cell The cell to change the style of
      * @param properties The properties to be added to a cell style, as {property: propertyValue}.
-     * @since POI 3.14 beta 2
+     * @since 3.14 beta 2
      * @deprecated as of POI 5.4.0. See {@link #setCellStylePropertiesEnum(Cell, Map)}
      */
     @Deprecated
@@ -602,7 +602,7 @@ public final class CellUtil {
      *
      * @param cell       The cell to change the style of
      * @param properties The properties to be added to a cell style, as {property: propertyValue}.
-     * @since POI 5.4.0
+     * @since 5.4.0
      */
     public static void setCellStylePropertiesEnum(Cell cell, Map<CellPropertyType, Object> properties) {
         setCellStyleProperties(cell, properties, false);
@@ -614,7 +614,7 @@ public final class CellUtil {
         CellStyle originalStyle = cell.getCellStyle();
 
         CellStyle newStyle = null;
-        EnumMap<CellPropertyType, Object> values = originalStyle.getFormatProperties();
+        EnumMap<CellPropertyType, Object> values = nullSafeFormatProperties(originalStyle);
         if (properties.containsKey(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR) && properties.get(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR) == null) {
             values.remove(CellPropertyType.FILL_FOREGROUND_COLOR);
         }
@@ -635,7 +635,7 @@ public final class CellUtil {
 
         for (int i = 0; i < numberCellStyles; i++) {
             CellStyle wbStyle = workbook.getCellStyleAt(i);
-            EnumMap<CellPropertyType, Object> wbStyleMap = wbStyle.getFormatProperties();
+            EnumMap<CellPropertyType, Object> wbStyleMap = nullSafeFormatProperties(wbStyle);
 
             // the desired style already exists in the workbook. Use the existing style.
             if (styleMapsMatch(wbStyleMap, values, disableNullColorCheck)) {
@@ -651,6 +651,13 @@ public final class CellUtil {
         }
 
         cell.setCellStyle(newStyle);
+    }
+
+    // try to get format properties from CellStyle but the method may return null
+    // in some implementations, so we need to be null safe here
+    private static EnumMap<CellPropertyType, Object> nullSafeFormatProperties(CellStyle style) {
+        EnumMap<CellPropertyType, Object> props = style.getFormatProperties();
+        return props == null ? getFormatProperties(style) : props;
     }
 
     private static boolean styleMapsMatch(final Map<CellPropertyType, Object> newProps,
@@ -688,7 +695,7 @@ public final class CellUtil {
      * @param property The name of the property that is to be changed.
      * @param propertyValue The value of the property that is to be changed.
      * @throws NullPointerException if {@code cell} or {@code property} is null
-     * @since POI 5.4.0
+     * @since 5.4.0
      */
     public static void setCellStyleProperty(Cell cell, CellPropertyType property, Object propertyValue) {
         if (cell == null) {
@@ -748,7 +755,7 @@ public final class CellUtil {
      * @param style cell style
      * @return map of format properties (CellPropertyType -&gt; Object)
      * @see #setFormatProperties(CellStyle, Workbook, Map)
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     public static EnumMap<CellPropertyType, Object> getFormatProperties(CellStyle style) {
         EnumMap<CellPropertyType, Object> properties = new EnumMap<>(CellPropertyType.class);
@@ -881,14 +888,14 @@ public final class CellUtil {
      * @param dest destination cell style
      * @param destWorkbook destination workbook (can be null but some font info will not be copied if null is passed)
      * @throws IllegalArgumentException if source or destination styles are null
-     * @since POI 5.5.0
+     * @since 5.5.0
      */
     @Internal
     public static void cloneStyle(CellStyle src, CellStyle dest, Workbook destWorkbook) {
         if (src == null || dest == null) {
             throw new IllegalArgumentException("Source and destination styles must not be null");
         }
-        EnumMap<CellPropertyType, Object> properties = src.getFormatProperties();
+        EnumMap<CellPropertyType, Object> properties = nullSafeFormatProperties(src);
         setFormatProperties(dest, destWorkbook, properties);
     }
 
@@ -984,7 +991,7 @@ public final class CellUtil {
      * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return FillPatternType style if set, otherwise {@link FillPatternType#NO_FILL}
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     private static FillPatternType getFillPattern(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
@@ -1011,7 +1018,7 @@ public final class CellUtil {
      * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return HorizontalAlignment style if set, otherwise {@link HorizontalAlignment#GENERAL}
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     private static HorizontalAlignment getHorizontalAlignment(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
@@ -1038,7 +1045,7 @@ public final class CellUtil {
      * @param properties map of named properties (CellPropertyType -&gt; Object)
      * @param property property
      * @return VerticalAlignment style if set, otherwise {@link VerticalAlignment#BOTTOM}
-     * @since POI 3.15 beta 3
+     * @since 3.15 beta 3
      */
     private static VerticalAlignment getVerticalAlignment(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);

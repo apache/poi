@@ -19,7 +19,7 @@ package org.apache.poi.common.usermodel;
 import org.apache.poi.util.Internal;
 
 /**
- * @since POI 3.15 beta 3
+ * @since 3.15 beta 3
  */
 public enum HyperlinkType {
     /** Not a hyperlink */

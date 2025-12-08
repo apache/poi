@@ -34,7 +34,7 @@ import java.io.*;
 /**
  * (Experimental) Encrypted Temp File version of a package part.
  *
- * @since POI 5.1.0
+ * @since 5.1.0
  */
 @Beta
 public final class EncryptedTempFilePackagePart extends PackagePart {

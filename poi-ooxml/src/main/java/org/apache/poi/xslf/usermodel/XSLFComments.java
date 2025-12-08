@@ -46,7 +46,7 @@ public class XSLFComments extends POIXMLDocumentPart {
      *
      * @param part the package part holding the comments data,
      *             the content type must be <code>application/vnd.openxmlformats-officedocument.comments+xml</code>
-     * @since POI 3.14-Beta1
+     * @since 3.14-Beta1
      */
     XSLFComments(PackagePart part) throws IOException, XmlException {
         super(part);
