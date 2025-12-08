@@ -60,6 +60,13 @@
         are strongly encouraged to upgrade to the latest version of POI.
       </p>
     </section>
+    <section><title>Commercial Support</title>
+      <p>
+        <a href="https://www.herodevs.com/support?utm_source=Referral&amp;utm_medium=link&amp;utm_campaign=PoiReferralLink&amp;utm_id=Poi">HeroDevs</a>
+        offers security and compatibility support for EOL versions of Apache POI. Find out more about their
+        <a href="https://www.herodevs.com/support?utm_source=Referral&amp;utm_medium=link&amp;utm_campaign=PoiReferralLink&amp;utm_id=Poi">Never Ending Support options</a>.
+      </p>
+    </section>
     <section><title>Migrating from older versions</title>
       <p>
         Typically, migrating from one major version to the next should be straightforward.

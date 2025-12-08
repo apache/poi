@@ -67,6 +67,18 @@
 
                 </p>
             </section>
+            <section><title>Apache Linkis</title>
+              <p>
+                <a href="https://linkis.apache.org/">Apache Linkis</a> is a computation middleware layer.
+                The linkis-storage component has an Excel read capability built using Apache Poi.
+              </p>
+            </section>
+            <section><title>Apache Seatunnel</title>
+              <p>
+                <a href="https://seatunnel.apache.org/">Apache Seatunnel</a> is a high-performance, distributed, massive data integration framework.
+                The seatunnel-connector-spark-email component uses Apache Poi.
+              </p>
+            </section>
             <section>
                 <title>Worksheet plugin for JSPWiki</title>
                 <p>
@@ -78,25 +90,17 @@
         </section>
         <section>
             <title>Apache incubating projects</title>
-                <section><title>Apache Linkis</title>
-                    <p>
-                        <a href="https://linkis.apache.org/">Apache Linkis (incubating)</a> is a computation middleware layer.
-                        The linkis-storage component has an Excel read capability built using Apache Poi.
-                    </p>
-                </section>
-                <section><title>Apache Seatunnel</title>
-                    <p>
-                        <a href="https://seatunnel.apache.org/">Apache Seatunnel (incubating)</a> is a high-performance, distributed, massive data integration framework.
-                        The seatunnel-connector-spark-email component uses Apache Poi.
-                    </p>
-                </section>
-              <section><title>Apache ODF Toolkit (retired)</title>
+            <section><title>Apache Fesod (incubating)</title>
+              <p>
+                <a href="https://fesod.apache.org/">Apache Fesod</a> is a high-performance and memory-efficient Java library for reading and writing spreadsheet files, designed to simplify development and ensure reliability.
+              </p>
+            </section>
+            <section><title>Apache ODF Toolkit (retired)</title>
               <p>
               <a href="https://incubator.apache.org/projects/odftoolkit.html">Apache ODF Toolkit (incubating)</a> is a set of Java modules that allow programmatic creation, scanning and manipulation of OpenDocument Format (ISO/IEC 26300 == ODF) documents.
-              See also <a href="https://odftoolkit.org/">new website</a>.
+              The project has continued with a <a href="https://odftoolkit.org/">new website</a>.
               </p>
               </section>
-
               <section><title>Apache Corinthia (retired)</title>
               <p>
               <a href="https://corinthia.incubator.apache.org/">Apache Corinthia (incubating)</a> is a toolkit/application written in C++ for converting between and editing common office file formats, with an initial focus on word processing.
