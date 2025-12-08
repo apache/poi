@@ -45,12 +45,9 @@
         <section>
             <title>Submitting a Case Study</title>
             <p>
-                We are actively seeking case studies for this page (after all it
-                just started). To submit a case study, either
-                <a href="site:guidelines">
-                    submit a patch for this page</a> or email it to the
-                <a href="site:mailinglists">mailing list
-                </a> (with [PATCH] prefixed subject, please).
+                We are actively seeking case studies for this page. If you want to submit a case study,
+                please raise an issue with the text that you would like to include in our
+                <a href="site:help">Bug Database</a>.
             </p>
         </section>
         <section>
