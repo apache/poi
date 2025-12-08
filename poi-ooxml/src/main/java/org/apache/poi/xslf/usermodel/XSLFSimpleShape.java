@@ -535,7 +535,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
             @Override
             public boolean fetch(XSLFShape shape) {
                 CTLineProperties ln = getLn(shape, false);
-                if (ln == null || !ln.isSetPrstDash()) {
+                if (ln == null || !ln.isSetPrstDash() || ln.getPrstDash().getVal() == null) {
                     return false;
                 }
 
@@ -548,7 +548,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
         LineDash dash = fetcher.getValue();
         if (dash == null) {
             CTLineProperties defaultLn = getDefaultLineProperties();
-            if (defaultLn != null && defaultLn.isSetPrstDash()) {
+            if (defaultLn != null && defaultLn.isSetPrstDash() && defaultLn.getPrstDash().getVal() != null) {
                 dash = LineDash.fromOoxmlId(defaultLn.getPrstDash().getVal().intValue());
             }
         }
