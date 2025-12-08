@@ -42,6 +42,7 @@ See https://xml.apache.org/forrest/linking.html for more info
         <encryption label="Secure processing" href="security.html"/>
         <casestudies label="Case Studies" href="casestudies.html"/>
         <related label="Related projects" href="related-projects.html"/>
+        <commercialsupport label="Commercial Support" href="commercial-support.html"/>
         <legal label="Legal" href="legal.html"/>
     </home>
     <apache label="Apache Wide" tab="home">
