@@ -1062,13 +1062,15 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * of sheets is returned.
      *
      * <p>
-     *     Note that Excel limits sheet names to 31 characters. If you try to look up
-     *     a sheet by a name longer than that, a warning will be logged, since
-     *     such a sheet cannot exist in Excel and the lookup will likely return {@code null}.
+     * Note that Excel and the underlying Apache POI library limit sheet names
+     * to **31 characters**. This method will throw an exception if the
+     * provided {@code name} is longer than 31 characters, as such a sheet
+     * cannot exist in a valid Excel workbook.
      * </p>
      *
      * @param name of the sheet
      * @return HSSFSheet with the name provided or {@code null} if it does not exist
+     * @throws IllegalArgumentException if the sheet name is longer than 31 characters
      */
     @Override
     public HSSFSheet getSheet(String name) {
@@ -1078,11 +1080,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         }
 
         if(name.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
-            LOGGER.atWarn().log(
-                    "Sheet lookup requested with name '{}' which exceeds Excel's {} character limit. " +
-                            "Sheets are stored with truncated names, so this lookup will likely return null.",
-                    name, MAX_SENSITIVE_SHEET_NAME_LEN
-            );
+            throw new IllegalArgumentException("Sheet name must not be longer than " +
+                    MAX_SENSITIVE_SHEET_NAME_LEN + " characters. Otherwise it cannot exist in Excel.");
         }
 
         for (int k = 0; k < _sheets.size(); k++) {

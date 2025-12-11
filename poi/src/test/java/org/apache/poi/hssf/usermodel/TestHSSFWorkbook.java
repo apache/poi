@@ -395,21 +395,23 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
+    /**
+     * Getting a sheet by name that exceeds 31 characters should throw
+     * an IllegalArgumentException
+     */
     @Test
-    void searchSheetExceed31CharactersName() throws IOException {
-        String sheetName = "ThisIsAVeryLongSheetNameExceeding31Chars";
-
+    void testGetSheetWithNameExceeding31Characters() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
-            wb.createSheet(sheetName);
 
-            // Sheet name is truncated to 31 characters
-            Sheet sheetByOriginalName = wb.getSheet(sheetName);
-            assertNull(sheetByOriginalName, "Sheet lookup using original name >31 chars must return null");
+            // Attempting to GET a sheet with a name > 31 chars should throw
+            String sheetName = "ThisIsAVeryLongSheetNameExceeding31Chars";
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> wb.getSheet(sheetName),
+                    "getSheet() should reject names longer than 31 characters"
+            );
 
-            // Truncated name SHOULD resolve
-            String truncated = sheetName.substring(0, 31);
-            Sheet sheetByTruncatedName = wb.getSheet(truncated);
-            assertNotNull(sheetByTruncatedName, "Sheet lookup using truncated name must return the sheet");
+            assertTrue(exception.getMessage().contains("31 characters"));
         }
     }
 
