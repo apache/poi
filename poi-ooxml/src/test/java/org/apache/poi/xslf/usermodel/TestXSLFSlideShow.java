@@ -16,10 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
@@ -33,6 +29,8 @@ import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestXSLFSlideShow {
     @Test
@@ -325,6 +323,98 @@ class TestXSLFSlideShow {
             for (SlideLayout sl : layTypes){
                 assertNotNull(ppt.getSlideMasters().get(0).getLayout(sl));
             }
+        }
+    }
+
+    /**
+     * Test getting the first slide number, which defaults to 1.
+     * The first slide number is stored in the presentation.xml part.
+     */
+    @Test
+    void testGetFirstSlideNumberDefault() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            // Default value when attribute is not present should be 1 (as per OOXML standard and CTPresentation logic)
+            assertEquals(1, ppt.getFirstSlideNumber());
+        }
+    }
+
+    /**
+     * Test setting, getting, and persisting the custom first slide number.
+     */
+    @Test
+    void testSetAndPersistFirstSlideNumber() throws IOException {
+        final int customStartNum = 5;
+        final int zeroStartNum = 0;
+        final int maxStartNum = 9999;
+
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            // 1. Set to a custom positive number (e.g., 5)
+            ppt.setFirstSlideNumber(customStartNum);
+            assertEquals(customStartNum, ppt.getFirstSlideNumber());
+
+            // Check persistence by writing out and reading back
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(customStartNum, ppt2.getFirstSlideNumber(),
+                        "The custom first slide number should persist after save/load.");
+            }
+
+            // 2. Set to minimum valid number (0)
+            ppt.setFirstSlideNumber(zeroStartNum);
+            assertEquals(zeroStartNum, ppt.getFirstSlideNumber());
+
+            // 3. Set to maximum valid number (9999)
+            ppt.setFirstSlideNumber(maxStartNum);
+            assertEquals(maxStartNum, ppt.getFirstSlideNumber());
+        }
+    }
+
+    /**
+     * Test unsetting the first slide number, which should revert it to the default (1).
+     */
+    @Test
+    void testUnsetFirstSlideNumber() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            // 1. Set a custom number
+            ppt.setFirstSlideNumber(50);
+            assertEquals(50, ppt.getFirstSlideNumber());
+
+            // 2. Unset it
+            ppt.unsetFirstSlideNumber();
+
+            // It should return the default value (1) after unsetting
+            assertEquals(1, ppt.getFirstSlideNumber(),
+                    "Unsetting the first slide number should revert it to the default of 1.");
+
+            // Check persistence after unsetting
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(1, ppt2.getFirstSlideNumber(),
+                        "The first slide number should remain the default (1) after unset and save/load.");
+                // Ensure the attribute is actually removed from the CTPresentation object
+                // Note: We access the internal object to confirm removal, which is acceptable in test code.
+                assertFalse(ppt2.getCTPresentation().isSetFirstSlideNum(),
+                        "The 'firstSlideNum' attribute should be unset (removed) in the XML.");
+            }
+        }
+    }
+
+    /**
+     * Test that setting an invalid first slide number (outside [0, 9999]) throws an exception.
+     */
+    @Test
+    void testSetFirstSlideNumberValidation() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            // Test case: Negative number
+            assertThrows(IllegalArgumentException.class, () ->
+                            ppt.setFirstSlideNumber(-1),
+                    "Negative number should throw IllegalArgumentException.");
+
+            // Test case: Number greater than 9999
+            assertThrows(IllegalArgumentException.class, () ->
+                            ppt.setFirstSlideNumber(10000),
+                    "Number greater than 9999 should throw IllegalArgumentException.");
+
+            // Ensure the value hasn't changed from the default after failed attempts
+            assertEquals(1, ppt.getFirstSlideNumber());
         }
     }
 }

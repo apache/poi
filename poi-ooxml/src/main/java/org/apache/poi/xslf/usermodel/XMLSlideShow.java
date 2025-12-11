@@ -748,4 +748,48 @@ public class XMLSlideShow extends POIXMLDocument
         RelationPart rp = target.addRelation(null, XSLFRelation.IMAGES, pictureData);
         return rp.getRelationship().getId();
     }
+
+    /**
+     * Returns the number that shall be displayed on the first slide of the presentation.
+     * Subsequent slides will be numbered sequentially from this number.
+     * The default value is 1 if the property is not set in the presentation file.
+     *
+     * @return The starting number for the first slide (default is 1).
+     */
+    public int getFirstSlideNumber() {
+        // CTPresentation.getFirstSlideNum() returns the default value of 1
+        // if the 'firstSlideNum' attribute is not set, as per OOXML standard.
+        return getCTPresentation().getFirstSlideNum();
+    }
+
+    /**
+     * Sets the custom number that shall be displayed on the first slide of the presentation.
+     * Subsequent slides will be numbered sequentially from this number.
+     *
+     * The value is restricted to the range [0, 9999] as defined in the Microsoft Office
+     * Implementation Information for ISO/IEC 29500 (MS-OI29500), specifically in
+     * Part 1, Section 19.2.1.26, presentation (Presentation), which restricts the
+     * XML Schema int datatype.
+     *
+     * @param num The starting number for the first slide (must be between 0 and 9999).
+     * @throws IllegalArgumentException if the provided number is outside the allowed range [0, 9999].
+     */
+    public void setFirstSlideNumber(int num) {
+        // We enforce the PowerPoint application constraint (0 <= num <= 9999)
+        // to ensure that a valid file, as rendered by PowerPoint, is created.
+        if (num < 0 || num > 9999) {
+            throw new IllegalArgumentException(
+                    "First slide number must be between 0 and 9999 (inclusive), as required by MS-OI29500 (Part 1, Section 19.2.1.26).");
+        }
+        // Sets the attribute on the underlying CTPresentation object.
+        getCTPresentation().setFirstSlideNum(num);
+    }
+
+    /**
+     * Unsets the custom first slide number, reverting the numbering to the default (1).
+     * This removes the 'firstSlideNum' attribute from presentation.xml.
+     */
+    public void unsetFirstSlideNumber() {
+        getCTPresentation().unsetFirstSlideNum();
+    }
 }
