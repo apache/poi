@@ -755,6 +755,7 @@ public class XMLSlideShow extends POIXMLDocument
      * The default value is 1 if the property is not set in the presentation file.
      *
      * @return The starting number for the first slide (default is 1).
+     * @since 6.0.0
      */
     public int getFirstSlideNumber() {
         // CTPresentation.getFirstSlideNum() returns the default value of 1
@@ -773,6 +774,7 @@ public class XMLSlideShow extends POIXMLDocument
      *
      * @param num The starting number for the first slide (must be between 0 and 9999).
      * @throws IllegalArgumentException if the provided number is outside the allowed range [0, 9999].
+     * @since 6.0.0
      */
     public void setFirstSlideNumber(int num) {
         // We enforce the PowerPoint application constraint (0 <= num <= 9999)
@@ -788,6 +790,7 @@ public class XMLSlideShow extends POIXMLDocument
     /**
      * Unsets the custom first slide number, reverting the numbering to the default (1).
      * This removes the 'firstSlideNum' attribute from presentation.xml.
+     * @since 6.0.0
      */
     public void unsetFirstSlideNumber() {
         getCTPresentation().unsetFirstSlideNum();
