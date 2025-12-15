@@ -36,12 +36,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.sl.draw.DrawTableShape;
-import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.sl.usermodel.Slide;
-import org.apache.poi.sl.usermodel.StrokeStyle;
+import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.TableCell.BorderEdge;
-import org.apache.poi.sl.usermodel.TextParagraph;
-import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.XSLFTestDataSamples;
@@ -362,4 +358,70 @@ class TestXSLFTable {
         }
     }
 
+    private void verifyTableCellStyleColors(XSLFTableCell cell, String text, Color fontColor, Color fillColor) {
+        assertEquals(text, cell.getText());
+        PaintStyle colorText1 = cell.getTextParagraphs().getFirst().getTextRuns().getFirst().getFontColor();
+        assertTrue(colorText1 instanceof PaintStyle.SolidPaint);
+        assertEquals(fontColor, ((PaintStyle.SolidPaint)colorText1).getSolidColor().getColor());
+        assertEquals(fillColor, cell.getFillColor());
+    }
+
+    @Test
+    void testTableCellStyle() throws IOException {
+        XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("table-with-different-font-colors.pptx");
+
+        // First slide: test row-related table styles
+
+        List<XSLFShape> shapes = ppt.getSlides().get(0).getShapes();
+        assertEquals(1, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSLFTable);
+        XSLFTable tbl = (XSLFTable)shapes.get(0);
+        assertEquals(4, tbl.getNumberOfColumns());
+        assertEquals(4, tbl.getNumberOfRows());
+        assertNotNull(tbl.getCTTable());
+
+        // Yellow font color due to "first row" table style
+        verifyTableCellStyleColors(tbl.getRows().getFirst().getCells().getFirst(), "Text 1",
+                new Color(255, 255, 0), new Color(21, 96, 130));
+        // Dark green font color due to direct format
+        verifyTableCellStyleColors(tbl.getRows().getFirst().getCells().get(2), "Text 3",
+                new Color(0, 176, 80), new Color(21, 96, 130));
+        // Grey font color due to "even row" table style + fallback
+        verifyTableCellStyleColors(tbl.getRows().get(1).getCells().getFirst(), "Text 5",
+                new Color(119, 119, 119), new Color(204, 210, 216));
+        // Light blue font color due to "odd row" table style
+        verifyTableCellStyleColors(tbl.getRows().get(2).getCells().getFirst(), "Text 9",
+                new Color(0, 255, 255), new Color(231, 234, 237));
+        // Red font color due to direct format
+        verifyTableCellStyleColors(tbl.getRows().get(2).getCells().get(2), "Text 11",
+                new Color(255, 0, 0), new Color(231, 234, 237));
+        // Blue font color due to "last row" table style
+        verifyTableCellStyleColors(tbl.getRows().get(3).getCells().getFirst(), "Text 13",
+                new Color(0, 0, 255), new Color(21, 96, 130));
+
+        // Second slide: test column-related table styles
+
+        shapes = ppt.getSlides().get(1).getShapes();
+        assertEquals(1, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSLFTable);
+        tbl = (XSLFTable)shapes.get(0);
+        assertEquals(4, tbl.getNumberOfColumns());
+        assertEquals(4, tbl.getNumberOfRows());
+        assertNotNull(tbl.getCTTable());
+
+        // Green font color due to "first column" table style
+        verifyTableCellStyleColors(tbl.getRows().getFirst().getCells().getFirst(), "Text 1",
+                new Color(0, 255, 0), new Color(21, 96, 130));
+        // Grey font color due to "even column" table style + fallback
+        verifyTableCellStyleColors(tbl.getRows().getFirst().getCells().get(1), "Text 2",
+                new Color(119, 119, 119), new Color(204, 210, 216));
+        // Light blue font color due to "odd column" table style
+        verifyTableCellStyleColors(tbl.getRows().getFirst().getCells().get(2), "Text 3",
+                new Color(0, 255, 255), new Color(231, 234, 237));
+        // Red font color due to "last column" table style
+        verifyTableCellStyleColors(tbl.getRows().getFirst().getCells().get(3), "Text 4",
+                new Color(255, 0, 0), new Color(21, 96, 130));
+
+        ppt.close();
+    }
 }
