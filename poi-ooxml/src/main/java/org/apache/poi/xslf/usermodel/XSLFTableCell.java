@@ -438,7 +438,8 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         }
 
         CTTablePartStyle tps = getTablePartStyle(null);
-        if (tps == null || !tps.isSetTcStyle()) {
+        if (tps == null || !tps.isSetTcStyle() ||
+                (!tps.getTcStyle().isSetFill() && !tps.getTcStyle().isSetFillRef())) {
             tps = getTablePartStyle(TablePartStyle.wholeTbl);
             if (tps == null || !tps.isSetTcStyle()) {
                 return null;
@@ -504,10 +505,18 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
 
             int br = row + (firstRow ? 1 : 0);
             int bc = col + (firstCol ? 1 : 0);
-            if (bandRow && (br & 1) == 0) {
-                tps = TablePartStyle.band1H;
-            } else if (bandCol && (bc & 1) == 0) {
-                tps = TablePartStyle.band1V;
+            if (bandRow) {
+                if ((br & 1) == 0) {
+                    tps = TablePartStyle.band1H;
+                } else {
+                    tps = TablePartStyle.band2H;
+                }
+            } else if (bandCol) {
+                if ((bc & 1) == 0) {
+                    tps = TablePartStyle.band1V;
+                } else {
+                    tps = TablePartStyle.band2V;
+                }
             }
         }
 
@@ -734,6 +743,9 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         @Override
         public PaintStyle getFontColor() {
             CTTableStyleTextStyle txStyle = getTextStyle();
+            if (!containsColor(txStyle)) {
+                txStyle = getFallbackTextStyle();
+            }
             if (txStyle == null) {
                 // No table styling, so just use the text run output
                 return super.getFontColor();
@@ -798,11 +810,27 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             }
         }
 
+        private boolean containsColor(CTTableStyleTextStyle tcTxStyle) {
+            if (tcTxStyle == null) {
+                return false;
+            }
+            if (!tcTxStyle.isSetHslClr() && !tcTxStyle.isSetPrstClr() && !tcTxStyle.isSetSchemeClr()
+                    && !tcTxStyle.isSetScrgbClr() && !tcTxStyle.isSetSrgbClr() && !tcTxStyle.isSetSysClr()) {
+                return false;
+            }
+            return true;
+        }
+
         private CTTableStyleTextStyle getTextStyle() {
             CTTablePartStyle tps = getTablePartStyle(null);
             if (tps == null || !tps.isSetTcTxStyle()) {
-                tps = getTablePartStyle(TablePartStyle.wholeTbl);
+                return getFallbackTextStyle();
             }
+            return tps.getTcTxStyle();
+        }
+
+        private CTTableStyleTextStyle getFallbackTextStyle() {
+            CTTablePartStyle tps = getTablePartStyle(TablePartStyle.wholeTbl);
             return (tps == null) ? null : tps.getTcTxStyle();
         }
     }
