@@ -136,10 +136,21 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 if (o instanceof CTSdtBlock block) {
                     XWPFSDT cc = new XWPFSDT(block, part);
                     iruns.add(cc);
+                    CTSdtContentBlock content = ((CTSdtBlock)o).getSdtContent();
+                    if (content != null) {
+                        for (CTP ctp : content.getPList()) {
+                            processCTRs(ctp.getRList());
+                        }
+                    }
                 }
                 if (o instanceof CTSdtRun run) {
                     XWPFSDT cc = new XWPFSDT(run, part);
                     iruns.add(cc);
+                    CTSdtContentRun sdtContent = ((CTSdtRun)o).getSdtContent();
+                    if (sdtContent != null) {
+                        processCTRs(sdtContent.getRList());
+                    }
+                    processSdtRuns();
                 }
                 if (o instanceof CTRunTrackChange parentRecord) {
                     for (CTR r : parentRecord.getRArray()) {
@@ -156,6 +167,33 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     // Smart Tags can be nested many times.
                     // This implementation does not preserve the tagging information
                     buildRunsInOrderFromXml(o);
+                }
+            }
+        }
+    }
+
+    private void processCTRs(List<CTR> ctrs) {
+        if (ctrs == null) {
+            return;
+        }
+        for (CTR ctr : ctrs) {
+            if (ctr.getRPr() != null) {
+                runs.add(new XWPFRun(ctr, (IRunBody)this));
+            }
+        }
+    }
+
+    private void processSdtRuns() {
+        try (XmlCursor cursor = getCTP().newCursor()) {
+            cursor.selectPath("child::*");
+
+            while (cursor.toNextSelection()) {
+                XmlObject xmlObject = cursor.getObject();
+                if (xmlObject instanceof CTSdtRun) {
+                    CTSdtContentRun content = ((CTSdtRun)xmlObject).getSdtContent();
+                    if (content != null) {
+                        processCTRs(content.getRList());
+                    }
                 }
             }
         }

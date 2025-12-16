@@ -30,6 +30,8 @@ import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJcTable;
@@ -169,23 +171,58 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             createEmptyTable(table);
         }
 
-        for (CTRow row : table.getTrList()) {
-            StringBuilder rowText = new StringBuilder();
-            XWPFTableRow tabRow = new XWPFTableRow(row, this);
-            tableRows.add(tabRow);
-            for (CTTc cell : row.getTcList()) {
-                for (CTP ctp : cell.getPList()) {
-                    XWPFParagraph p = new XWPFParagraph(ctp, part);
-                    if (!rowText.isEmpty()) {
-                        rowText.append('\t');
+        try (XmlCursor cursor = table.newCursor()) {
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject xmlObject = cursor.getObject();
+                if (xmlObject instanceof CTRow) {
+                    processCTRow((CTRow)xmlObject);
+                }
+                else if (xmlObject instanceof CTSdtRow) {
+                    List<CTRow> rows = new ArrayList<>();
+                    collectCTRowsInnerSdtRow((CTSdtRow)xmlObject, rows);
+                    for (CTRow row : rows)
+                    {
+                        processCTRow(row);
                     }
-                    rowText.append(p.getText());
                 }
             }
-            if (!rowText.isEmpty()) {
-                this.text.append(rowText);
-                this.text.append('\n');
+        }
+    }
+
+    private void processCTRow(CTRow row) {
+        StringBuilder rowText = new StringBuilder();
+        XWPFTableRow tableRow = new XWPFTableRow(row, this);
+        tableRows.add(tableRow);
+        for (CTTc cell : row.getTcList()) {
+            for (CTP ctp : cell.getPList()) {
+                XWPFParagraph p = new XWPFParagraph(ctp, part);
+                if (rowText.length() > 0) {
+                    rowText.append('\t');
+                }
+                rowText.append(p.getText());
             }
+        }
+        if (rowText.length() > 0) {
+            this.text.append(rowText);
+            this.text.append('\n');
+        }
+    }
+
+    private void collectCTRowsInnerSdtRow(CTSdtRow sdtRow, List<CTRow> rows) {
+        CTSdtContentRow sdtContent = sdtRow.getSdtContent();
+        if (sdtContent == null) {
+            return;
+        }
+
+        List<CTRow> rowsInnerSdtContent = sdtContent.getTrList();
+        if (!rowsInnerSdtContent.isEmpty()) {
+            rows.addAll(rowsInnerSdtContent);
+            return;
+        }
+
+        for (CTSdtRow innerSdt : sdtContent.getSdtList()) {
+            collectCTRowsInnerSdtRow(innerSdt, rows);
         }
     }
 
