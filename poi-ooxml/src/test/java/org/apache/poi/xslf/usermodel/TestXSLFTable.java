@@ -360,7 +360,7 @@ class TestXSLFTable {
 
     private void verifyTableCellStyleColors(XSLFTableCell cell, String text, Color fontColor, Color fillColor) {
         assertEquals(text, cell.getText());
-        PaintStyle colorText1 = cell.getTextParagraphs().getFirst().getTextRuns().getFirst().getFontColor();
+        PaintStyle colorText1 = cell.getTextParagraphs().get(0).getTextRuns().get(0).getFontColor();
         assertTrue(colorText1 instanceof PaintStyle.SolidPaint);
         assertEquals(fontColor, ((PaintStyle.SolidPaint)colorText1).getSolidColor().getColor());
         assertEquals(fillColor, cell.getFillColor());
@@ -381,22 +381,22 @@ class TestXSLFTable {
         assertNotNull(tbl.getCTTable());
 
         // Yellow font color due to "first row" table style
-        verifyTableCellStyleColors(tbl.getRows().getFirst().getCells().getFirst(), "Text 1",
+        verifyTableCellStyleColors(tbl.getRows().get(0).getCells().get(0), "Text 1",
                 new Color(255, 255, 0), new Color(21, 96, 130));
         // Dark green font color due to direct format
-        verifyTableCellStyleColors(tbl.getRows().getFirst().getCells().get(2), "Text 3",
+        verifyTableCellStyleColors(tbl.getRows().get(0).getCells().get(2), "Text 3",
                 new Color(0, 176, 80), new Color(21, 96, 130));
         // Grey font color due to "even row" table style + fallback
-        verifyTableCellStyleColors(tbl.getRows().get(1).getCells().getFirst(), "Text 5",
+        verifyTableCellStyleColors(tbl.getRows().get(1).getCells().get(0), "Text 5",
                 new Color(119, 119, 119), new Color(204, 210, 216));
         // Light blue font color due to "odd row" table style
-        verifyTableCellStyleColors(tbl.getRows().get(2).getCells().getFirst(), "Text 9",
+        verifyTableCellStyleColors(tbl.getRows().get(2).getCells().get(0), "Text 9",
                 new Color(0, 255, 255), new Color(231, 234, 237));
         // Red font color due to direct format
         verifyTableCellStyleColors(tbl.getRows().get(2).getCells().get(2), "Text 11",
                 new Color(255, 0, 0), new Color(231, 234, 237));
         // Blue font color due to "last row" table style
-        verifyTableCellStyleColors(tbl.getRows().get(3).getCells().getFirst(), "Text 13",
+        verifyTableCellStyleColors(tbl.getRows().get(3).getCells().get(0), "Text 13",
                 new Color(0, 0, 255), new Color(21, 96, 130));
 
         // Second slide: test column-related table styles
@@ -410,16 +410,16 @@ class TestXSLFTable {
         assertNotNull(tbl.getCTTable());
 
         // Green font color due to "first column" table style
-        verifyTableCellStyleColors(tbl.getRows().getFirst().getCells().getFirst(), "Text 1",
+        verifyTableCellStyleColors(tbl.getRows().get(0).getCells().get(0), "Text 1",
                 new Color(0, 255, 0), new Color(21, 96, 130));
         // Grey font color due to "even column" table style + fallback
-        verifyTableCellStyleColors(tbl.getRows().getFirst().getCells().get(1), "Text 2",
+        verifyTableCellStyleColors(tbl.getRows().get(0).getCells().get(1), "Text 2",
                 new Color(119, 119, 119), new Color(204, 210, 216));
         // Light blue font color due to "odd column" table style
-        verifyTableCellStyleColors(tbl.getRows().getFirst().getCells().get(2), "Text 3",
+        verifyTableCellStyleColors(tbl.getRows().get(0).getCells().get(2), "Text 3",
                 new Color(0, 255, 255), new Color(231, 234, 237));
         // Red font color due to "last column" table style
-        verifyTableCellStyleColors(tbl.getRows().getFirst().getCells().get(3), "Text 4",
+        verifyTableCellStyleColors(tbl.getRows().get(0).getCells().get(3), "Text 4",
                 new Color(255, 0, 0), new Color(21, 96, 130));
 
         ppt.close();
