@@ -30,16 +30,16 @@ import org.apache.poi.util.LocaleUtil;
  * Helper for shifting rows up or down
  */
 // non-Javadoc: This abstract class exists to consolidate duplicated code between
-// {@link org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter} and
-// {@link org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter}
+// org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter and
+// org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter
 // (currently methods sprinkled throughout HSSFSheet)
 public abstract class RowShifter extends BaseRowColShifter {
     protected final Sheet sheet;
 
-    public RowShifter(Sheet sh) { 
-        sheet = sh; 
-    } 
- 
+    public RowShifter(Sheet sh) {
+        sheet = sh;
+    }
+
   /**
      * Shifts, grows, or shrinks the merged regions due to a row shift.
      * Merged regions that are completely overlaid by shifting will be deleted.
@@ -83,7 +83,7 @@ public abstract class RowShifter extends BaseRowColShifter {
                 removedIndices.add(i);
             }
         }
-        
+
         if(!removedIndices.isEmpty()) {
             sheet.removeMergedRegions(removedIndices);
         }

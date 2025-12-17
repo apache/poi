@@ -473,6 +473,7 @@ public abstract class POIDocument implements Closeable {
      * to a new POIFSFileSystem
      *
      * @param newDirectory the new directory
+     * @throws IOException if accessing the file-system fails.
      */
     @Internal
     protected void replaceDirectory(DirectoryNode newDirectory) throws IOException {
