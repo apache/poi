@@ -439,6 +439,7 @@ public class XDDFDataSourcesFactory {
 		public final Type type;
 
 		public XDDFCategoryDataSourceImpl(CTAxDataSource categoryDS) {
+			this.categoryDS=categoryDS;
 			if (categoryDS.getNumRef() != null && categoryDS.getNumRef().getNumCache() != null) {
 				type = Type.FROM_NUMBER_REFERENCE;
 				categoryNumber = (CTNumData) categoryDS.getNumRef().getNumCache().copy();
@@ -457,7 +458,6 @@ public class XDDFDataSourcesFactory {
 				categoryString = (CTStrData) categoryDS.getStrLit().copy();
 				categoryNumber = null;
 			} else {
-				this.categoryDS = categoryDS;
 				categoryNumber = null;
 				categoryString = null;
 				type = Type.ERROR; // in some weird cases the element is empty
