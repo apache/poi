@@ -410,7 +410,9 @@ public final class XSSFCell extends CellBase {
             /* In an excel generated array formula, the formula property might be set, but the string is empty in related cells */
             if (f == null || f.getStringValue().isEmpty()) {
                 XSSFCell cell = getSheet().getFirstCellInArrayFormula(this);
-                return cell.getCellFormula(fpb);
+                if (cell != this) {
+                    return cell.getCellFormula(fpb);
+                }
             }
         }
         if (f == null) {
