@@ -1144,8 +1144,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * copies content of a paragraph to an existing paragraph in the list paragraphs at position pos
      */
     public void setParagraph(XWPFParagraph paragraph, int pos) {
-        paragraphs.set(pos, paragraph);
         ctDocument.getBody().setPArray(pos, paragraph.getCTP());
+        paragraphs.set(pos, (XWPFParagraph) bodyElements.get(pos));
         /* TODO update body element, update xwpf element, verify that
          * incoming paragraph belongs to this document or if not, XML was
          * copied properly (namespace-abbreviations, etc.)
