@@ -67,7 +67,7 @@ tasks.register('compileJava9', JavaCompile) {
 jar {
     dependsOn compileJava9
 
-    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+    destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
 
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')

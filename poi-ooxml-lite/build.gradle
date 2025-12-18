@@ -107,7 +107,7 @@ task compileJava9(type: JavaCompile, dependsOn: 'compileJava') {
 }
 
 jar {
-    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+    destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
 
     doFirst {
         File clazzFile = file("${OOXML_LITE_REPORT}.clazz")

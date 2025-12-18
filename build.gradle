@@ -227,14 +227,14 @@ subprojects {
 
     tasks.withType(Jar).configureEach {
         duplicatesStrategy = DuplicatesStrategy.FAIL
-        destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+        destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
 
         doLast {
             // make sure we do not have distribution jar-files with different versions
             // in the build-dir as those lead to strange errors about "duplicate modules"
             // when building java9 JPMS class files ("java9")
             ant.delete(failOnError: true, verbose: true) {
-                fileset(dir: "../build/dist/maven/${project.archivesBaseName}", erroronmissingdir: false) {
+                fileset(dir: "../build/dist/maven/${base.archivesName.get()}", erroronmissingdir: false) {
                     include(name: '*.jar')
                     exclude(name: "*${version}.jar")
                     exclude(name: "*${version}-sources.jar")
@@ -260,7 +260,7 @@ subprojects {
             }
             // use failOnError=false for -javadoc and -tests as not all modules create this directory
             ant.delete(failOnError: false, verbose: true) {
-                fileset(dir: "../build/dist/maven/${project.archivesBaseName}-javadoc", erroronmissingdir: false) {
+                fileset(dir: "../build/dist/maven/${base.archivesName.get()}-javadoc", erroronmissingdir: false) {
                     include(name: '*-javadoc.jar')
                     exclude(name: "*${version}-javadoc.jar")
 
@@ -275,7 +275,7 @@ subprojects {
                 }
             }
             ant.delete(failOnError: false, verbose: true) {
-                fileset(dir: "../build/dist/maven/${project.archivesBaseName}-tests", erroronmissingdir: false) {
+                fileset(dir: "../build/dist/maven/${base.archivesName.get()}-tests", erroronmissingdir: false) {
                     include(name: '*-tests.jar')
                     exclude(name: "*${version}-tests.jar")
 
@@ -290,8 +290,8 @@ subprojects {
                 }
             }
 
-            ant.checksum(file: it.archivePath, algorithm: 'SHA-256', fileext: '.sha256', format: 'MD5SUM')
-            ant.checksum(file: it.archivePath, algorithm: 'SHA-512', fileext: '.sha512', format: 'MD5SUM')
+            ant.checksum(file: it.archiveFile.get().asFile, algorithm: 'SHA-256', fileext: '.sha256', format: 'MD5SUM')
+            ant.checksum(file: it.archiveFile.get().asFile, algorithm: 'SHA-512', fileext: '.sha512', format: 'MD5SUM')
         }
     }
 
@@ -319,11 +319,11 @@ subprojects {
     javadocJar {
         // if javadocs and binaries are in the same directory, JPMS complaints about duplicated modules
         // in the module-path
-        destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-javadoc")
+        destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}-javadoc")
     }
 
     sourcesJar {
-        destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+        destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
         exclude 'META-INF/services/**'
     }
 
@@ -504,7 +504,7 @@ subprojects {
         publications {
             POI(MavenPublication) {
                 groupId = 'org.apache.poi'
-                artifactId = project.archivesBaseName
+                artifactId = base.archivesName.get()
 
                 from components.java
 
@@ -585,7 +585,7 @@ subprojects {
         }
     }
 
-    generatePomFileForPOIPublication.destination = "../build/dist/maven/${project.archivesBaseName}/${project.archivesBaseName}-${project.version}.pom"
+    generatePomFileForPOIPublication.destination = "../build/dist/maven/${base.archivesName.get()}/${base.archivesName.get()}-${project.version}.pom"
 
     tasks.withType(GenerateModuleMetadata).configureEach {
         enabled = false

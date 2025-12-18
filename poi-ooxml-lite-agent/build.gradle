@@ -56,7 +56,7 @@ tasks.register('compileJava9', JavaCompile) {
 }
 
 jar {
-    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+    destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
 
     manifest {
         attributes (
