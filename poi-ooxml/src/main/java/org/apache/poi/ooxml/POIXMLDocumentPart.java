@@ -680,6 +680,8 @@ public class POIXMLDocumentPart {
                                 // issues like zip bomb exceptions need to thrown and not ignored
                                 LOG.atWarn().log("Skipped unsupported part: {}", e.getMessage());
                                 continue;
+                            } else {
+                                throw e;
                             }
                         }
                         //here we are checking if part is embedded and excel then set it to chart class
