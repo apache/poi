@@ -439,7 +439,7 @@ public class XDDFDataSourcesFactory {
 		public final Type type;
 
 		public XDDFCategoryDataSourceImpl(CTAxDataSource categoryDS) {
-			this.categoryDS = categoryDS;
+			this.categoryDS=categoryDS;
 			if (categoryDS.getNumRef() != null && categoryDS.getNumRef().getNumCache() != null) {
 				type = Type.FROM_NUMBER_REFERENCE;
 				categoryNumber = (CTNumData) categoryDS.getNumRef().getNumCache().copy();
@@ -488,6 +488,10 @@ public class XDDFDataSourcesFactory {
 			return (type == Type.FROM_NUMBER_REFERENCE || type == Type.FROM_STRING_REFERENCE);
 		}
 
+		public boolean isReference() {
+			return (type == Type.FROM_NUMBER_REFERENCE || type == Type.FROM_STRING_REFERENCE);
+		}
+		
 		public String getDataRangeReference() {
 			switch (type) {
 			case FROM_NUMBER_REFERENCE:
@@ -501,5 +505,14 @@ public class XDDFDataSourcesFactory {
 		public String getFormatCode() {
 			return formatCode;
 		}
+		
+	    public boolean isNumeric() {
+              return (type == Type.FROM_NUMBER_REFERENCE || type == Type.FROM_NUMBER_LITERAL);
+        }
+	    
+	    public boolean isLiteral() {
+            return (type == Type.FROM_STRING_LITERAL || type == Type.FROM_NUMBER_LITERAL);
+      }
+
 	}
 }
