@@ -669,13 +669,13 @@ public class POIXMLDocumentPart {
 
                     POIXMLDocumentPart childPart = context.get(p);
                     if (childPart == null) {
-                        try {
-							       childPart = factory.createDocumentPart(this, p);
+                       try {
+							    childPart = factory.createDocumentPart(this, p);
 					      	} catch (SchemaTypeLoaderException |POIXMLException e) {
       							//ChartEx (new charts introduced in Office 2016) will crash here, we catch it here in order to still be able to load the document without them
       							 LOG.atError().log("Skipped unsupported part: "+e.getMessage());
       							 continue;
-					      	}
+					    }
                         //here we are checking if part if embedded and excel then set it to chart class
                         //so that at the time to writing we can also write updated embedded part
                         if (this instanceof XDDFChart && childPart instanceof XSSFWorkbook) {
