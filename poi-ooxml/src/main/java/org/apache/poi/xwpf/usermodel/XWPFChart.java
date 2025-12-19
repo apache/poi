@@ -40,6 +40,8 @@ import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFDataSource;
 import org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory;
 import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
 
@@ -70,7 +72,7 @@ public class XWPFChart extends XDDFChart {
      * constructor to
      * Create a new chart in document
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     protected XWPFChart() {
         super();
@@ -81,7 +83,7 @@ public class XWPFChart extends XDDFChart {
      *
      * @param part the package part holding the chart data,
      *             the content type must be {@code application/vnd.openxmlformats-officedocument.drawingml.chart+xml}
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     protected XWPFChart(PackagePart part) throws IOException, XmlException {
         super(part);
@@ -128,7 +130,7 @@ public class XWPFChart extends XDDFChart {
      *
      * @param chartRelId the relation id of this chart in its parent document.
      * @param run the text run to which this chart will be inlined.
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     protected void attach(String chartRelId, XWPFRun run)
         throws InvalidFormatException, IOException {
@@ -141,7 +143,7 @@ public class XWPFChart extends XDDFChart {
      * set chart height
      *
      * @param height height of chart
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setChartHeight(long height) {
         ctInline.getExtent().setCy(height);
@@ -151,7 +153,7 @@ public class XWPFChart extends XDDFChart {
      * set chart width
      *
      * @param width width of chart
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setChartWidth(long width) {
         ctInline.getExtent().setCx(width);
@@ -160,7 +162,7 @@ public class XWPFChart extends XDDFChart {
     /**
      * get chart height
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public long getChartHeight() {
         return ctInline.getExtent().getCy();
@@ -169,7 +171,7 @@ public class XWPFChart extends XDDFChart {
     /**
      * get chart width
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public long getChartWidth() {
         return ctInline.getExtent().getCx();
@@ -180,7 +182,7 @@ public class XWPFChart extends XDDFChart {
      *
      * @param width  width of chart
      * @param height height of chart
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setChartBoundingBox(long width, long height) {
         this.setChartWidth(width);
@@ -191,7 +193,7 @@ public class XWPFChart extends XDDFChart {
      * set margin from top
      *
      * @param margin margin from top
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setChartTopMargin(long margin) {
         ctInline.setDistT(margin);
@@ -200,7 +202,7 @@ public class XWPFChart extends XDDFChart {
     /**
      * get margin from Top
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public long getChartTopMargin(long margin) {
         return ctInline.getDistT();
@@ -210,7 +212,7 @@ public class XWPFChart extends XDDFChart {
      * set margin from bottom
      *
      * @param margin margin from Bottom
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setChartBottomMargin(long margin) {
         ctInline.setDistB(margin);
@@ -219,7 +221,7 @@ public class XWPFChart extends XDDFChart {
     /**
      * get margin from Bottom
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public long getChartBottomMargin(long margin) {
         return ctInline.getDistB();
@@ -229,7 +231,7 @@ public class XWPFChart extends XDDFChart {
      * set margin from left
      *
      * @param margin margin from left
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setChartLeftMargin(long margin) {
         ctInline.setDistL(margin);
@@ -238,7 +240,7 @@ public class XWPFChart extends XDDFChart {
     /**
      * get margin from left
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public long getChartLeftMargin(long margin) {
         return ctInline.getDistL();
@@ -248,7 +250,7 @@ public class XWPFChart extends XDDFChart {
      * set margin from Right
      *
      * @param margin from right
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setChartRightMargin(long margin) {
         ctInline.setDistR(margin);
@@ -257,7 +259,7 @@ public class XWPFChart extends XDDFChart {
     /**
      * get margin from Right
      *
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public long getChartRightMargin(long margin) {
         return ctInline.getDistR();
@@ -270,7 +272,7 @@ public class XWPFChart extends XDDFChart {
      * @param right  margin from right
      * @param bottom margin from bottom
      * @param left   margin from left
-     * @since POI 4.0.0
+     * @since 4.0.0
      */
     public void setChartMargin(long top, long right, long bottom, long left) {
         this.setChartBottomMargin(bottom);
@@ -280,12 +282,11 @@ public class XWPFChart extends XDDFChart {
     }
     /**
 	 * Word keeps cached values that need be refreshed after the embedded workbook
-	 * has been updated. This is just the first step refreshing categories and
-	 * series labels (tested for bar charts). TODO ultimately a function should be
-	 * provided to refresh the entire cache
+	 * has been updated.
 	 */
 	public void refreshCachedLabels() {
-		Workbook wb;
+
+		XSSFWorkbook wb;
 		try {
 			wb = getWorkbook();
 		} catch (InvalidFormatException | IOException e) {
@@ -294,52 +295,19 @@ public class XWPFChart extends XDDFChart {
 		for (XDDFChartData chartData : getChartSeries()) {
 			for (int chartIndex = 0; chartIndex < chartData.getSeriesCount(); chartIndex++) {
 				XDDFChartData.Series series = chartData.getSeries(chartIndex);
-				String freshSeriesTitle=getWorkbookCellValue( series.getTitleReference(),wb);
-				series.setTitleCached(freshSeriesTitle);
 				XDDFDataSource<?> catData = series.getCategoryData();
 				if (catData == null)
 					continue;
-				String referenceFormula = catData.getFormula();
-				if (referenceFormula != null) {
-					List<Cell> cells = getWorkbookCells(referenceFormula, wb);
-					String[] freshCategories = new String[cells.size()];
-					int categIndex = 0;
-					for (Cell cell : cells) {
-						freshCategories[categIndex++] = cell.toString();
-					}
-					// create categories from a range formula and the values below, it will create then as "cached" values like word expects
-					XDDFDataSource<String> freshCategoryDataSrouce = XDDFDataSourcesFactory.fromArray(freshCategories,referenceFormula);
-					series.replaceData(freshCategoryDataSrouce, (XDDFNumericalDataSource<?>) series.getValuesData());
+				if (catData.isReference()) {
+					String ref = catData.getDataRangeReference();
+					String sheet=ref.substring(0,ref.indexOf('!') );
+					XSSFSheet sheet2 = wb.getSheet(sheet);
+					//calling this function and asking it to replace its sheet with the same sheet will refresh the cache
+					replaceReferences(sheet2);
 				}
 			}
-			//this mystery "plot" will somehow update the underlying document XML
-			plot(chartData);
+
 		}
 	}
-	/**
-	 * 
-	 * @param cell must include the sheet reference
-	 * @param wb
-	 * @return toString() value of the cell
-	 */
-	private static String getWorkbookCellValue(CellReference cell, Workbook wb) {
-		
-		return wb.getSheet( cell.getSheetName()).getRow(cell.getRow()).getCell(cell.getCol()).toString();
-		
-	}
-	/**
-	 * 
-	 * @param rangeFormula for example: "Sheet1!$A$2:$A$5"
-	 * @return
-	 */
-	private static List<Cell> getWorkbookCells(String rangeFormula, Workbook wb) {
-		List<Cell> cells = new ArrayList<Cell>();
-		String[] parts = rangeFormula.split("!");// get formula gives the ref like: Sheet1!$A$2:$A$5
-		Sheet sheet = wb.getSheet(parts[0]);
-		CellRangeAddress range = CellRangeAddress.valueOf(parts[1]);
-		for (CellAddress cellAddress : range) {// the iterator goes top to bottom, left to right
-			cells.add(sheet.getRow(cellAddress.getRow()).getCell(cellAddress.getColumn()));
-		}
-		return cells;
-	}
+
 }
