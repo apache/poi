@@ -676,7 +676,7 @@ public class POIXMLDocumentPart {
                             LOG.atWarn().log("Skipped unsupported part: {}", e.getMessage());
                             continue;
                         }
-                        //here we are checking if part if embedded and excel then set it to chart class
+                        //here we are checking if part is embedded and excel then set it to chart class
                         //so that at the time to writing we can also write updated embedded part
                         if (this instanceof XDDFChart && childPart instanceof XSSFWorkbook) {
                             ((XDDFChart) this).setWorkbook((XSSFWorkbook) childPart);
