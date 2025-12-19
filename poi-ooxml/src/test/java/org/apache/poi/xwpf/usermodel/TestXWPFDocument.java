@@ -518,6 +518,15 @@ public final class TestXWPFDocument {
     }
 
     @Test
+    void testChartExIgnored() throws IOException {
+        // see https://github.com/apache/poi/pull/982
+        try (XWPFDocument doc = new XWPFDocument(
+                POIDataSamples.getDocumentInstance().openResourceAsStream("chartex.docx"))) {
+            assertNotNull(doc);
+        }
+    }
+
+    @Test
     @Disabled("XWPF should be able to write to a new Stream when opened Read-Only")
     void testWriteFromReadOnlyOPC() throws Exception {
         try (OPCPackage opc = OPCPackage.open(
