@@ -45,7 +45,7 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
-import org.apache.xmlbeans.SchemaTypeLoaderException;
+import org.apache.xmlbeans.XmlException;
 
 /**
  * Represents an entry of a OOXML package.
@@ -671,10 +671,13 @@ public class POIXMLDocumentPart {
                     if (childPart == null) {
                         try {
                             childPart = factory.createDocumentPart(this, p);
-                        } catch (SchemaTypeLoaderException | POIXMLException e) {
-                            if (XSSFRelation.CHART.getRelation().equals(rel.getRelationshipType())) {
+                        } catch (POIXMLException e) {
+                            if (e.getCause() instanceof XmlException
+                                    && XSSFRelation.CHART.getRelation().equals(rel.getRelationshipType())) {
                                 // https://github.com/apache/poi/pull/982
                                 // only allow this skipping event for charts
+                                // we need to be careful about not catching every exception here because
+                                // issues like zip bomb exceptions need to thrown and not ignored
                                 LOG.atWarn().log("Skipped unsupported part: {}", e.getMessage());
                                 continue;
                             }
