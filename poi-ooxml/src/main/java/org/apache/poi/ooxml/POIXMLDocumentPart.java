@@ -673,7 +673,7 @@ public class POIXMLDocumentPart {
                             childPart = factory.createDocumentPart(this, p);
                         } catch (SchemaTypeLoaderException | POIXMLException e) {
                             // ChartEx (new charts introduced in Office 2016) will crash here, we catch it here in order to still be able to load the document without them
-                            LOG.atWarn().log("Skipped unsupported part: " + e.getMessage());
+                            LOG.atWarn().log("Skipped unsupported part: {}", e.getMessage());
                             continue;
                         }
                         //here we are checking if part if embedded and excel then set it to chart class
