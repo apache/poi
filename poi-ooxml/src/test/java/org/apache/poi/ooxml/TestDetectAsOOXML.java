@@ -19,7 +19,7 @@ package org.apache.poi.ooxml;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
@@ -28,7 +28,6 @@ import java.io.InputStream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -66,7 +65,7 @@ class TestDetectAsOOXML {
         InputStream is = FileMagic.prepareToCheckMagic(testInput);
 
         // detect header
-        assertFalse(FileMagic.valueOf(is) == FileMagic.OOXML);
+        assertNotEquals(FileMagic.OOXML, FileMagic.valueOf(is));
 
         // check if InputStream is still intact
         byte[] act = IOUtils.toByteArray(is);
