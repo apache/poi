@@ -68,7 +68,7 @@ public class XWPFTheme extends POIXMLDocumentPart {
         _theme = theme.getXmlObject();
     }
 
-    public CTOfficeStyleSheet getCTStyleSheet() {
+    public CTOfficeStyleSheet getCTOfficeStyleSheet() {
         return _theme;
     }
 
