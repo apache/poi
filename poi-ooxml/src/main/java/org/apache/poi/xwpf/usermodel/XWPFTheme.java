@@ -27,6 +27,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBaseStyles;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorScheme;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTFontCollection;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeStyleSheet;
 import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
@@ -65,6 +66,42 @@ public class XWPFTheme extends POIXMLDocumentPart {
     @SuppressWarnings("WeakerAccess")
     public void importTheme(XSLFTheme theme) {
         _theme = theme.getXmlObject();
+    }
+
+    public CTOfficeStyleSheet getCTStyleSheet() {
+        return _theme;
+    }
+
+    public String getMajorFontForScript(String script){
+        if (_theme == null
+            || _theme.getThemeElements() == null
+            || _theme.getThemeElements().getFontScheme() == null
+            || _theme.getThemeElements().getFontScheme().getMajorFont() == null) {
+            return null;
+        }
+        var majorFonts = _theme.getThemeElements().getFontScheme().getMajorFont();
+        return getFontTypeface(majorFonts, script);
+    }
+
+    public String getMinorFontForScript(String script){
+        if (_theme == null
+            || _theme.getThemeElements() == null
+            || _theme.getThemeElements().getFontScheme() == null
+            || _theme.getThemeElements().getFontScheme().getMinorFont() == null) {
+            return null;
+        }
+        var minorFonts = _theme.getThemeElements().getFontScheme().getMinorFont();
+        return getFontTypeface(minorFonts, script);
+    }
+
+    private static String getFontTypeface(CTFontCollection fontCollection, String script) {
+        var fonts = fontCollection.getFontArray();
+        for (var font : fonts) {
+            if (font.getScript() != null && font.getScript().equals(script)) {
+                return font.getTypeface();
+            }
+        }
+        return null;
     }
 
     /**
