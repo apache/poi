@@ -21,11 +21,13 @@ import org.apache.poi.xslf.usermodel.XSLFColor;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeStyleSheet;
 
 import java.awt.*;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public final class TestXWPFTheme {
 
@@ -36,6 +38,11 @@ public final class TestXWPFTheme {
             assertEquals("Office Theme", theme.getName());
             assertEquals("Cambria", theme.getMajorFont());
             assertEquals("Calibri", theme.getMinorFont());
+            assertEquals("Angsana New", theme.getMajorFontForScript("Thai"));
+            assertEquals("Cordia New", theme.getMinorFontForScript("Thai"));
+            CTOfficeStyleSheet styleSheet = theme.getCTOfficeStyleSheet();
+            assertNotNull(styleSheet);
+            assertEquals("Office", styleSheet.getThemeElements().getFontScheme().getName());
             CTColor accent1 = theme.getCTColor("accent1");
             XSLFColor color = new XSLFColor(accent1, null, null, null);
             assertEquals(new Color(79, 129, 189), color.getColor());

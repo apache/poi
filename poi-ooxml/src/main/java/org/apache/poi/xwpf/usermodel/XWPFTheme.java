@@ -68,40 +68,12 @@ public class XWPFTheme extends POIXMLDocumentPart {
         _theme = theme.getXmlObject();
     }
 
+    /**
+     * @return the underlying CTOfficeStyleSheet instance.
+     * @since 6.0.0
+     */
     public CTOfficeStyleSheet getCTOfficeStyleSheet() {
         return _theme;
-    }
-
-    public String getMajorFontForScript(String script){
-        if (_theme == null
-            || _theme.getThemeElements() == null
-            || _theme.getThemeElements().getFontScheme() == null
-            || _theme.getThemeElements().getFontScheme().getMajorFont() == null) {
-            return null;
-        }
-        var majorFonts = _theme.getThemeElements().getFontScheme().getMajorFont();
-        return getFontTypeface(majorFonts, script);
-    }
-
-    public String getMinorFontForScript(String script){
-        if (_theme == null
-            || _theme.getThemeElements() == null
-            || _theme.getThemeElements().getFontScheme() == null
-            || _theme.getThemeElements().getFontScheme().getMinorFont() == null) {
-            return null;
-        }
-        var minorFonts = _theme.getThemeElements().getFontScheme().getMinorFont();
-        return getFontTypeface(minorFonts, script);
-    }
-
-    private static String getFontTypeface(CTFontCollection fontCollection, String script) {
-        var fonts = fontCollection.getFontArray();
-        for (var font : fonts) {
-            if (font.getScript() != null && font.getScript().equals(script)) {
-                return font.getTypeface();
-            }
-        }
-        return null;
     }
 
     /**
@@ -186,6 +158,48 @@ public class XWPFTheme extends POIXMLDocumentPart {
     @SuppressWarnings("WeakerAccess")
     public String getMinorFont(){
         return _theme.getThemeElements().getFontScheme().getMinorFont().getLatin().getTypeface();
+    }
+
+    /**
+     * @param script a 4-letter script code, e.g. "Latn", "Jpan"
+     * @return typeface of the major font for the given script
+     * @since 6.0.0
+     */
+    public String getMajorFontForScript(String script){
+    if (_theme == null
+        || _theme.getThemeElements() == null
+        || _theme.getThemeElements().getFontScheme() == null
+        || _theme.getThemeElements().getFontScheme().getMajorFont() == null) {
+        return null;
+    }
+    var majorFonts = _theme.getThemeElements().getFontScheme().getMajorFont();
+    return getFontTypeface(majorFonts, script);
+    }
+
+    /**
+     * @param script a 4-letter script code, e.g. "Latn", "Jpan"
+     * @return typeface of the minor font for the given script
+     * @since 6.0.0
+     */
+    public String getMinorFontForScript(String script){
+        if (_theme == null
+            || _theme.getThemeElements() == null
+            || _theme.getThemeElements().getFontScheme() == null
+            || _theme.getThemeElements().getFontScheme().getMinorFont() == null) {
+            return null;
+        }
+        var minorFonts = _theme.getThemeElements().getFontScheme().getMinorFont();
+        return getFontTypeface(minorFonts, script);
+    }
+
+    private static String getFontTypeface(CTFontCollection fontCollection, String script) {
+        var fonts = fontCollection.getFontArray();
+        for (var font : fonts) {
+            if (font.getScript() != null && font.getScript().equals(script)) {
+                return font.getTypeface();
+            }
+        }
+        return null;
     }
 
     /**
