@@ -165,7 +165,7 @@ public class XWPFTheme extends POIXMLDocumentPart {
      * @return typeface of the major font for the given script
      * @since 6.0.0
      */
-    public String getMajorFontForScript(String script){
+    public String getMajorFontForScript(String script) {
     if (_theme == null
         || _theme.getThemeElements() == null
         || _theme.getThemeElements().getFontScheme() == null
