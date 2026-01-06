@@ -1875,7 +1875,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     public abstract boolean isClosed();
 
     protected void closeParts() {
-        partList.closeParts();
+        // might not be initialized fully yet
+        if (partList != null) {
+            partList.closeParts();
+        }
     }
 
     @Override
