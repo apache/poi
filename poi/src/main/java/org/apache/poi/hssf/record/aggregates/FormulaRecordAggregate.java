@@ -39,7 +39,7 @@ import org.apache.poi.util.RecordFormatException;
 public final class FormulaRecordAggregate extends RecordAggregate implements CellValueRecordInterface {
 
     private final FormulaRecord _formulaRecord;
-    private SharedValueManager _sharedValueManager;
+    private final SharedValueManager _sharedValueManager;
     /** caches the calculated result of the formula */
     private StringRecord _stringRecord;
     private SharedFormulaRecord _sharedFormulaRecord;
@@ -195,6 +195,9 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
         CellReference expRef = _formulaRecord.getFormula().getExpReference();
         if (expRef != null) {
             ArrayRecord arec = _sharedValueManager.getArrayRecord(expRef.getRow(), expRef.getCol());
+            if (arec == null) {
+                throw new IllegalStateException("Could not get ArrayRecord for cell-reference " + expRef.formatAsString());
+            }
             return arec.getFormulaTokens();
         }
         return _formulaRecord.getParsedExpression();
