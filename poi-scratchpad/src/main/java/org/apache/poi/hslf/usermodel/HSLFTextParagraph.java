@@ -1665,6 +1665,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                     return null;
                 }
                 ColorSchemeAtom ca = sheet.getColorScheme();
+                if (ca == null) {
+                    throw new IllegalStateException("Cannot read color scheme from sheet");
+                }
                 tmp = new Color(ca.getColor(cidx), true);
                 break;
             // Color is an sRGB value specified by red, green, and blue fields.

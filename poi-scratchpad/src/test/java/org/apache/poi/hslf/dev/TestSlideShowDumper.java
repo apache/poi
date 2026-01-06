@@ -39,6 +39,7 @@ public class TestSlideShowDumper extends BaseTestPPTIterating {
         FAILING.add("41384.ppt");
         FAILING.add("bug56240.ppt");
         FAILING.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
+        FAILING.add("60f557c0a46bcb0068b1c3e15589dac383307bc8.ppt");
     }
 
     static final Set<String> LOCAL_EXCLUDED = new HashSet<>();

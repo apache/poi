@@ -408,11 +408,13 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         if (fSchemeIndex && sheet != null) {
             //red is the index to the color scheme
             ColorSchemeAtom ca = sheet.getColorScheme();
-            int schemeColor = ca.getColor(ecr.getSchemeIndex());
+            if (ca != null) {
+                int schemeColor = ca.getColor(ecr.getSchemeIndex());
 
-            rgb[0] = (schemeColor >> 0) & 0xFF;
-            rgb[1] = (schemeColor >> 8) & 0xFF;
-            rgb[2] = (schemeColor >> 16) & 0xFF;
+                rgb[0] = (schemeColor >> 0) & 0xFF;
+                rgb[1] = (schemeColor >> 8) & 0xFF;
+                rgb[2] = (schemeColor >> 16) & 0xFF;
+            }
         } else if (fPaletteIndex) {
             //TODO
         } else if (fPaletteRGB) {
