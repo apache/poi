@@ -244,7 +244,12 @@ public final class HSLFFill {
 
         if (!FILL_USE_FILLED.isSet(propVal) && masterProp != null) {
             int masterId = masterProp.getPropertyValue();
-            HSLFShape o = shape.getSheet().getMasterSheet().getShapes().stream().filter(s -> s.getShapeId() == masterId).findFirst().orElse(null);
+            HSLFMasterSheet masterSheet = shape.getSheet().getMasterSheet();
+            if (masterSheet == null) {
+                return null;
+            }
+
+            HSLFShape o = masterSheet.getShapes().stream().filter(s -> s.getShapeId() == masterId).findFirst().orElse(null);
             return o != null ? o.getFillStyle().getPaint() : null;
         }
 
