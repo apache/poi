@@ -225,6 +225,10 @@ public class XSLFPictureShape extends XSLFSimpleShape
             POIXMLUnits.parsePercent(r.xgetR()));
     }
 
+    public int getAlpha() {
+        return getBlip().sizeOfAlphaModFixArray() > 0 ? POIXMLUnits.parsePercent(getBlip().getAlphaModFixArray(0).xgetAmt()) : 100000;
+    }
+
     /**
      * Add a SVG image reference
      * @param svgPic a previously imported svg image

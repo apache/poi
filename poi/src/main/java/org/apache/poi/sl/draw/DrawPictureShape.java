@@ -50,6 +50,7 @@ public class DrawPictureShape extends DrawSimpleShape {
 
         Rectangle2D anchor = getAnchor(graphics, ps);
         Insets insets = ps.getClipping();
+        int alpha = ps.getAlpha();
 
         PictureData[] pics = { ps.getAlternativePictureData(), ps.getPictureData() };
         for (PictureData data : pics) {
@@ -66,6 +67,9 @@ public class DrawPictureShape extends DrawSimpleShape {
                 ImageRenderer renderer = getImageRenderer(graphics, ct);
                 if (renderer.canRender(ct)) {
                     renderer.loadImage(dataBytes, ct);
+                    if (0 <= alpha && alpha < 100000) {
+                        renderer.setAlpha(alpha/100000.f);
+                    }
                     renderer.drawImage(graphics, anchor, insets);
                     return;
                 }

@@ -289,7 +289,8 @@ public class BitmapImageRenderer implements ImageRenderer {
             return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         }
 
-        if (alpha == 0) {
+        if (alpha == 100000) {
+            // Do not apply any rescale for a fully opaque alpha value
             return image;
         }
 

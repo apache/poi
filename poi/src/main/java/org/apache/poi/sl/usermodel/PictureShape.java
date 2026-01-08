@@ -47,4 +47,6 @@ public interface PictureShape<
      * @return the clipping rectangle, which is given in percent in relation to the image width/height
      */
     Insets getClipping();
+
+    int getAlpha();
 }
