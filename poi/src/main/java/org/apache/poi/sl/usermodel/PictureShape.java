@@ -48,5 +48,11 @@ public interface PictureShape<
      */
     Insets getClipping();
 
+    /**
+     * Returns alpha value in percentage scaled to 100000 (=100%).
+     * Value 0 represents complete transparency and 100% represents complete opacity.
+     * @return alpha value in percentage scaled to 100000.
+     * @since 6.0.0
+     */
     int getAlpha();
 }

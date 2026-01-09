@@ -229,5 +229,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
         return Units.fixedPointToDouble(fixedPoint);
     }
 
-    public int getAlpha() { return (int)(super.getAlpha(EscherPropertyTypes.FILL__FILLOPACITY)*100000.0); }
+    public int getAlpha() {
+        return (int)(super.getAlpha(EscherPropertyTypes.FILL__FILLOPACITY)*100000.0);
+    }
 }
