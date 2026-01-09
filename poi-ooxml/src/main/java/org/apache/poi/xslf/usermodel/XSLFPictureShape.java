@@ -226,6 +226,8 @@ public class XSLFPictureShape extends XSLFSimpleShape
     }
 
     public int getAlpha() {
+        // Percentages are scaled by 1000 as usual in Office.
+        // If not specified, we return 100000 (=100%), which means fully opaque.
         return getBlip().sizeOfAlphaModFixArray() > 0 ? POIXMLUnits.parsePercent(getBlip().getAlphaModFixArray(0).xgetAmt()) : 100000;
     }
 
