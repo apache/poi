@@ -166,14 +166,14 @@ public class XWPFTheme extends POIXMLDocumentPart {
      * @since 6.0.0
      */
     public String getMajorFontForScript(String script) {
-    if (_theme == null
-        || _theme.getThemeElements() == null
-        || _theme.getThemeElements().getFontScheme() == null
-        || _theme.getThemeElements().getFontScheme().getMajorFont() == null) {
-        return null;
-    }
-    var majorFonts = _theme.getThemeElements().getFontScheme().getMajorFont();
-    return getFontTypeface(majorFonts, script);
+        if (_theme == null
+            || _theme.getThemeElements() == null
+            || _theme.getThemeElements().getFontScheme() == null
+            || _theme.getThemeElements().getFontScheme().getMajorFont() == null) {
+            return null;
+        }
+        String majorFonts = _theme.getThemeElements().getFontScheme().getMajorFont();
+        return getFontTypeface(majorFonts, script);
     }
 
     /**
@@ -181,22 +181,24 @@ public class XWPFTheme extends POIXMLDocumentPart {
      * @return typeface of the minor font for the given script
      * @since 6.0.0
      */
-    public String getMinorFontForScript(String script){
+    public String getMinorFontForScript(String script) {
         if (_theme == null
             || _theme.getThemeElements() == null
             || _theme.getThemeElements().getFontScheme() == null
             || _theme.getThemeElements().getFontScheme().getMinorFont() == null) {
             return null;
         }
-        var minorFonts = _theme.getThemeElements().getFontScheme().getMinorFont();
+        String minorFonts = _theme.getThemeElements().getFontScheme().getMinorFont();
         return getFontTypeface(minorFonts, script);
     }
 
     private static String getFontTypeface(CTFontCollection fontCollection, String script) {
         var fonts = fontCollection.getFontArray();
-        for (var font : fonts) {
-            if (font.getScript() != null && font.getScript().equals(script)) {
-                return font.getTypeface();
+        if (fonts != null) {
+            for (var font : fonts) {
+                if (font.getScript() != null && font.getScript().equals(script)) {
+                    return font.getTypeface();
+                }
             }
         }
         return null;
