@@ -97,23 +97,23 @@ public final class TestXWPFSDT {
 
     @Test
     void testGetSDTContentBodyElements() throws Exception {
-        try (XWPFDocument doc =XWPFTestDataSamples.openSampleDocument("Bug54849.docx")) {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx")) {
             IBodyElement sdtBodyElement = doc.getBodyElements().get(2);
-            assert(sdtBodyElement instanceof XWPFSDT);
+            assertTrue(sdtBodyElement instanceof XWPFSDT, "sdtBodyElement instance of XWPFSDT");
             XWPFSDTContent content = (XWPFSDTContent) ((XWPFSDT) sdtBodyElement).getContent();
-            assertEquals(3, content.getBodyElements().size());
+            assertEquals(3, content.getBodyElements().size(), "elements inside SDT");
 
             ISDTContents c1 = content.getBodyElements().get(0);
-            assert(c1 instanceof XWPFParagraph);
+            assertTrue(c1 instanceof XWPFParagraph, "c1 instance of XWPFParagraph");
             assertEquals("Rich_text_pre_table", ((XWPFParagraph) c1).getText());
 
             ISDTContents c2 = content.getBodyElements().get(1);
-            assert(c2 instanceof XWPFTable);
-            assertEquals(3, ((XWPFTable) c2).getNumberOfRows());
+            assertTrue(c2 instanceof XWPFTable, "c2 instance of XWPFTable");
+            assertEquals(3, ((XWPFTable) c2).getNumberOfRows(), "rows in table inside SDT");
             assertEquals("Rich_text_cell1", ((XWPFTable) c2).getRow(0).getCell(0).getText());
 
             ISDTContents c3 = content.getBodyElements().get(2);
-            assert(c3 instanceof XWPFParagraph);
+            assertTrue(c3 instanceof XWPFParagraph, "c3 instance of XWPFParagraph");
             assertEquals("Rich_text_post_table", ((XWPFParagraph) c3).getText());
         }
     }

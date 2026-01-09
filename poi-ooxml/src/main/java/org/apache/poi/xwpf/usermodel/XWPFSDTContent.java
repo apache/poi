@@ -111,7 +111,7 @@ public class XWPFSDTContent implements ISDTContent {
     /**
      * Get the body elements inside this SDT content element.
      * @return Unmodifiable list containing body elements.
-     * @since 5.5.2
+     * @since 6.0.0
      */
     public List<ISDTContents> getBodyElements() {
         return Collections.unmodifiableList(bodyElements);
