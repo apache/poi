@@ -95,6 +95,29 @@ public final class TestXWPFSDT {
         }
     }
 
+    @Test
+    void testGetSDTContentBodyElements() throws Exception {
+        try (XWPFDocument doc =XWPFTestDataSamples.openSampleDocument("Bug54849.docx")) {
+            IBodyElement sdtBodyElement = doc.getBodyElements().get(2);
+            assert(sdtBodyElement instanceof XWPFSDT);
+            XWPFSDTContent content = (XWPFSDTContent) ((XWPFSDT) sdtBodyElement).getContent();
+            assertEquals(3, content.getBodyElements().size());
+
+            ISDTContents c1 = content.getBodyElements().get(0);
+            assert(c1 instanceof XWPFParagraph);
+            assertEquals("Rich_text_pre_table", ((XWPFParagraph) c1).getText());
+
+            ISDTContents c2 = content.getBodyElements().get(1);
+            assert(c2 instanceof XWPFTable);
+            assertEquals(3, ((XWPFTable) c2).getNumberOfRows());
+            assertEquals("Rich_text_cell1", ((XWPFTable) c2).getRow(0).getCell(0).getText());
+
+            ISDTContents c3 = content.getBodyElements().get(2);
+            assert(c3 instanceof XWPFParagraph);
+            assertEquals("Rich_text_post_table", ((XWPFParagraph) c3).getText());
+        }
+    }
+
     /**
      * POI-54771 and TIKA-1317
      */
