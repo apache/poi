@@ -142,7 +142,7 @@ public class XWPFTheme extends POIXMLDocumentPart {
     }
 
     /**
-     * @return typeface of the major font to use in a document.
+     * @return typeface of the major font to use in a document (possibly <code>null</code>).
      * Typically, the major font is used for heading areas of a document.
      *
      */
@@ -154,7 +154,7 @@ public class XWPFTheme extends POIXMLDocumentPart {
     }
 
     /**
-     * @return typeface of the minor font to use in a document.
+     * @return typeface of the minor font to use in a document (possibly <code>null</code>).
      * Typically, the minor font is used for normal text or paragraph areas.
      *
      */
@@ -167,7 +167,7 @@ public class XWPFTheme extends POIXMLDocumentPart {
 
     /**
      * @param script a 4-letter script code, e.g. "Latn", "Jpan"
-     * @return typeface of the major font for the given script
+     * @return typeface of the major font for the given script (possibly <code>null</code>)
      * @since 6.0.0
      */
     public String getMajorFontForScript(String script) {
@@ -177,7 +177,7 @@ public class XWPFTheme extends POIXMLDocumentPart {
 
     /**
      * @param script a 4-letter script code, e.g. "Latn", "Jpan"
-     * @return typeface of the minor font for the given script
+     * @return typeface of the minor font for the given script (possibly <code>null</code>)
      * @since 6.0.0
      */
     public String getMinorFontForScript(String script) {
