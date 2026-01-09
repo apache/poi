@@ -17,6 +17,7 @@
 package org.apache.poi.xwpf.usermodel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.util.Beta;
@@ -105,6 +106,15 @@ public class XWPFSDTContent implements ISDTContent {
                 }
             }
         }
+    }
+
+    /**
+     * Get the body elements inside this SDT content element.
+     * @return Unmodifiable list containing body elements.
+     * @since 6.0.0
+     */
+    public List<ISDTContents> getBodyElements() {
+        return Collections.unmodifiableList(bodyElements);
     }
 
     @Override
