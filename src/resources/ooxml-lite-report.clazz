@@ -2551,3 +2551,5 @@ org/openxmlformats/schemas/drawingml/x2006/main/impl/CTAudioFileImpl
 org/openxmlformats/schemas/drawingml/x2006/main/CTAudioFile
 org/openxmlformats/schemas/drawingml/x2006/chart/impl/STHoleSizePercentImpl
 org/openxmlformats/schemas/drawingml/x2006/chart/impl/STHoleSizeUByteImpl
+org/openxmlformats/schemas/drawingml/x2006/main/CTSupplementalFont
+org/openxmlformats/schemas/drawingml/x2006/main/impl/CTSupplementalFontImpl
