@@ -189,7 +189,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
     }
 
     protected CTBlip getBlip(){
-        return getBlipFill().getBlip();
+        return getBlipFill() == null ? null : getBlipFill().getBlip();
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -216,7 +216,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
     @Override
     public Insets getClipping(){
-        CTRelativeRect r = getBlipFill().getSrcRect();
+        CTRelativeRect r = getBlipFill() == null ? null : getBlipFill().getSrcRect();
 
         return (r == null) ? null : new Insets(
             POIXMLUnits.parsePercent(r.xgetT()),
