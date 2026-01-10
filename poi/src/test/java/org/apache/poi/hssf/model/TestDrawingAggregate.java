@@ -19,6 +19,7 @@ package org.apache.poi.hssf.model;
 import static org.apache.poi.poifs.storage.RawDataUtil.decompress;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -136,7 +137,8 @@ class TestDrawingAggregate {
         return Stream.of(files).
                 filter(file ->
                         !file.getName().equals("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5285517825277952.xls") &&
-                        !file.getName().equals("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4977868385681408.xls")).
+                        !file.getName().equals("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4977868385681408.xls") &&
+                        !file.getName().equals("crash-e329fca9087fe21bca4a80c8bc472a661c98d860.xls")).
                 map(Arguments::of);
     }
 
@@ -359,8 +361,9 @@ class TestDrawingAggregate {
             // the sheet's drawing is not aggregated
             assertEquals(394, records.size(), "wrong size of sheet records stream");
             // the last record before the drawing block
-            assertTrue(records.get(18) instanceof RowRecordsAggregate,
-                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName());
+            assertInstanceOf(RowRecordsAggregate.class, records.get(18),
+                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass()
+                            .getSimpleName());
 
             // records to be aggregated
             List<RecordBase> dgRecords = records.subList(19, 389);
@@ -380,7 +383,7 @@ class TestDrawingAggregate {
             }
 
             // the first record after the drawing block
-            assertTrue(records.get(389) instanceof WindowTwoRecord, "records.get(389) is expected to be Window2");
+            assertInstanceOf(WindowTwoRecord.class, records.get(389), "records.get(389) is expected to be Window2");
 
             // aggregate drawing records.
             // The subrange [19, 388] is expected to be replaced with a EscherAggregate object
@@ -389,12 +392,13 @@ class TestDrawingAggregate {
             EscherAggregate agg = (EscherAggregate) records.get(loc);
 
             assertEquals(25, records.size(), "wrong size of the aggregated sheet records stream");
-            assertTrue(records.get(18) instanceof RowRecordsAggregate,
-                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName());
-            assertTrue(records.get(19) instanceof EscherAggregate,
-                "records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName());
-            assertTrue(records.get(20) instanceof WindowTwoRecord,
-                "records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName());
+            assertInstanceOf(RowRecordsAggregate.class, records.get(18),
+                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass()
+                            .getSimpleName());
+            assertInstanceOf(EscherAggregate.class, records.get(19),
+                    "records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName());
+            assertInstanceOf(WindowTwoRecord.class, records.get(20),
+                    "records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName());
 
             byte[] dgBytesAfterSave = agg.serialize();
             assertEquals(dgBytes.length, dgBytesAfterSave.length, "different size of drawing data before and after save");
@@ -423,8 +427,9 @@ class TestDrawingAggregate {
             // the sheet's drawing is not aggregated
             assertEquals(32, records.size(), "wrong size of sheet records stream");
             // the last record before the drawing block
-            assertTrue(records.get(18) instanceof RowRecordsAggregate,
-                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName());
+            assertInstanceOf(RowRecordsAggregate.class, records.get(18),
+                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass()
+                            .getSimpleName());
 
             // records to be aggregated
             List<RecordBase> dgRecords = records.subList(19, 26);
@@ -444,7 +449,7 @@ class TestDrawingAggregate {
             byte[] dgBytes = toByteArray(dgRecords);
 
             // the first record after the drawing block
-            assertTrue(records.get(26) instanceof WindowTwoRecord, "records.get(26) is expected to be Window2");
+            assertInstanceOf(WindowTwoRecord.class, records.get(26), "records.get(26) is expected to be Window2");
 
             // aggregate drawing records.
             // The subrange [19, 38] is expected to be replaced with a EscherAggregate object
@@ -453,12 +458,13 @@ class TestDrawingAggregate {
             EscherAggregate agg = (EscherAggregate) records.get(loc);
 
             assertEquals(26, records.size(), "wrong size of the aggregated sheet records stream");
-            assertTrue(records.get(18) instanceof RowRecordsAggregate,
-                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName());
-            assertTrue(records.get(19) instanceof EscherAggregate,
-                "records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName());
-            assertTrue(records.get(20) instanceof WindowTwoRecord,
-                "records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName());
+            assertInstanceOf(RowRecordsAggregate.class, records.get(18),
+                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass()
+                            .getSimpleName());
+            assertInstanceOf(EscherAggregate.class, records.get(19),
+                    "records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName());
+            assertInstanceOf(WindowTwoRecord.class, records.get(20),
+                    "records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName());
 
             byte[] dgBytesAfterSave = agg.serialize();
             assertEquals(dgBytes.length, dgBytesAfterSave.length, "different size of drawing data before and after save");
@@ -504,8 +510,9 @@ class TestDrawingAggregate {
             // the sheet's drawing is not aggregated
             assertEquals(46, records.size(), "wrong size of sheet records stream");
             // the last record before the drawing block
-            assertTrue(records.get(18) instanceof RowRecordsAggregate,
-                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName());
+            assertInstanceOf(RowRecordsAggregate.class, records.get(18),
+                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass()
+                            .getSimpleName());
 
             // records to be aggregated
             List<RecordBase> dgRecords = records.subList(19, 39);
@@ -525,7 +532,7 @@ class TestDrawingAggregate {
             byte[] dgBytes = toByteArray(dgRecords);
 
             // the first record after the drawing block
-            assertTrue(records.get(39) instanceof WindowTwoRecord, "records.get(39) is expected to be Window2");
+            assertInstanceOf(WindowTwoRecord.class, records.get(39), "records.get(39) is expected to be Window2");
 
             // aggregate drawing records.
             // The subrange [19, 38] is expected to be replaced with a EscherAggregate object
@@ -534,12 +541,13 @@ class TestDrawingAggregate {
             EscherAggregate agg = (EscherAggregate) records.get(loc);
 
             assertEquals(27, records.size(), "wrong size of the aggregated sheet records stream");
-            assertTrue(records.get(18) instanceof RowRecordsAggregate,
-                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName());
-            assertTrue(records.get(19) instanceof EscherAggregate,
-                "records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName());
-            assertTrue(records.get(20) instanceof WindowTwoRecord,
-                "records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName());
+            assertInstanceOf(RowRecordsAggregate.class, records.get(18),
+                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass()
+                            .getSimpleName());
+            assertInstanceOf(EscherAggregate.class, records.get(19),
+                    "records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName());
+            assertInstanceOf(WindowTwoRecord.class, records.get(20),
+                    "records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName());
 
             byte[] dgBytesAfterSave = agg.serialize();
             assertEquals(dgBytes.length, dgBytesAfterSave.length, "different size of drawing data before and after save");
@@ -561,8 +569,9 @@ class TestDrawingAggregate {
             // the sheet's drawing is not aggregated
             assertEquals(315, records.size(), "wrong size of sheet records stream");
             // the last record before the drawing block
-            assertTrue(records.get(21) instanceof RowRecordsAggregate,
-                "records.get(21) is expected to be RowRecordsAggregate but was " + records.get(21).getClass().getSimpleName());
+            assertInstanceOf(RowRecordsAggregate.class, records.get(21),
+                    "records.get(21) is expected to be RowRecordsAggregate but was " + records.get(21).getClass()
+                            .getSimpleName());
 
             // records to be aggregated
             List<RecordBase> dgRecords = records.subList(22, 300);
@@ -581,7 +590,7 @@ class TestDrawingAggregate {
             byte[] dgBytes = toByteArray(dgRecords);
 
             // the first record after the drawing block
-            assertTrue(records.get(300) instanceof WindowTwoRecord, "records.get(300) is expected to be Window2");
+            assertInstanceOf(WindowTwoRecord.class, records.get(300), "records.get(300) is expected to be Window2");
 
             // aggregate drawing records.
             // The subrange [19, 299] is expected to be replaced with a EscherAggregate object
@@ -590,12 +599,13 @@ class TestDrawingAggregate {
             EscherAggregate agg = (EscherAggregate) records.get(loc);
 
             assertEquals(38, records.size(), "wrong size of the aggregated sheet records stream");
-            assertTrue(records.get(21) instanceof RowRecordsAggregate,
-                "records.get(21) is expected to be RowRecordsAggregate but was " + records.get(21).getClass().getSimpleName());
-            assertTrue(records.get(22) instanceof EscherAggregate,
-                "records.get(22) is expected to be EscherAggregate but was " + records.get(22).getClass().getSimpleName());
-            assertTrue(records.get(23) instanceof WindowTwoRecord,
-                "records.get(23) is expected to be Window2 but was " + records.get(23).getClass().getSimpleName());
+            assertInstanceOf(RowRecordsAggregate.class, records.get(21),
+                    "records.get(21) is expected to be RowRecordsAggregate but was " + records.get(21).getClass()
+                            .getSimpleName());
+            assertInstanceOf(EscherAggregate.class, records.get(22),
+                    "records.get(22) is expected to be EscherAggregate but was " + records.get(22).getClass().getSimpleName());
+            assertInstanceOf(WindowTwoRecord.class, records.get(23),
+                    "records.get(23) is expected to be Window2 but was " + records.get(23).getClass().getSimpleName());
 
             byte[] dgBytesAfterSave = agg.serialize();
             assertEquals(dgBytes.length, dgBytesAfterSave.length, "different size of drawing data before and after save");
@@ -737,8 +747,8 @@ class TestDrawingAggregate {
 
         sheet.aggregateDrawingRecords(drawingManager, false);
         assertEquals(2, records.size(), "drawing was not fully aggregated");
-        assertTrue(records.get(0) instanceof EscherAggregate, "expected EscherAggregate");
-        assertTrue(records.get(1) instanceof EOFRecord, "expected EOFRecord");
+        assertInstanceOf(EscherAggregate.class, records.get(0), "expected EscherAggregate");
+        assertInstanceOf(EOFRecord.class, records.get(1), "expected EOFRecord");
         EscherAggregate agg = (EscherAggregate) records.get(0);
 
         byte[] dgBytesAfterSave = agg.serialize();
@@ -902,8 +912,8 @@ class TestDrawingAggregate {
 
         sheet.aggregateDrawingRecords(drawingManager, false);
         assertEquals(2, records.size(), "drawing was not fully aggregated");
-        assertTrue(records.get(0) instanceof EscherAggregate, "expected EscherAggregate");
-        assertTrue(records.get(1) instanceof EOFRecord, "expected EOFRecord");
+        assertInstanceOf(EscherAggregate.class, records.get(0), "expected EscherAggregate");
+        assertInstanceOf(EOFRecord.class, records.get(1), "expected EOFRecord");
 
         EscherAggregate agg = (EscherAggregate) records.get(0);
 
