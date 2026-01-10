@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
@@ -217,7 +218,7 @@ public final class HSLFFill {
     /**
      * The shape this background applies to
      */
-    private HSLFShape shape;
+    private final HSLFShape shape;
 
     /**
      * Construct a {@code Fill} object for a shape.
@@ -457,7 +458,6 @@ public final class HSLFFill {
         }
     }
 
-    @SuppressWarnings("resource")
     EscherBSERecord getEscherBSERecord(int idx){
         HSLFSheet sheet = shape.getSheet();
         if(sheet == null) {
@@ -560,11 +560,10 @@ public final class HSLFFill {
     /**
      * {@code PictureData} object used in a texture, pattern of picture fill.
      */
-    @SuppressWarnings("resource")
     public HSLFPictureData getPictureData(){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__PATTERNTEXTURE);
-        if (p == null) {
+        EscherProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__PATTERNTEXTURE);
+        if (!(p instanceof EscherSimpleProperty)) {
             return null;
         }
 
@@ -575,7 +574,7 @@ public final class HSLFFill {
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
         EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
 
-        int idx = p.getPropertyValue();
+        int idx = ((EscherSimpleProperty)p).getPropertyValue();
         if (idx == 0){
             LOG.atWarn().log("no reference to picture data found ");
         } else {
