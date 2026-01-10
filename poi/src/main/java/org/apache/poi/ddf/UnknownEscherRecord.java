@@ -103,7 +103,7 @@ public final class UnknownEscherRecord extends EscherRecord {
                 bytesWritten += childBytesWritten;
                 offset += childBytesWritten;
                 bytesRemaining -= childBytesWritten;
-                getChildRecords().add( child );
+                addChildRecord( child );
             }
             return bytesWritten;
         }
