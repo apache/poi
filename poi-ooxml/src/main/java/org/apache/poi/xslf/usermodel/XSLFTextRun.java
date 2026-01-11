@@ -191,6 +191,10 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
         }
 
         final CTSRgbColor rgbCol = col.getSrgbClr();
+        if (rgbCol == null) {
+            return;
+        }
+
         final byte[] cols = rgbCol.getVal();
         final SolidPaint paint = DrawPaint.createSolidPaint(new Color(0xFF & cols[0], 0xFF & cols[1], 0xFF & cols[2]));
         highlightColor.accept(paint);
