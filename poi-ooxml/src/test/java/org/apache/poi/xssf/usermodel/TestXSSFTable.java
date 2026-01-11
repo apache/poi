@@ -39,7 +39,6 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -782,6 +781,21 @@ public final class TestXSSFTable {
                     assertEquals(0, sheet1.getTables().size());
                 }
             }
+        }
+    }
+
+    @Test
+    void testGetStyleNameNull() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sh = wb.createSheet();
+            AreaReference tableArea = new AreaReference("B2:B6", wb.getSpreadsheetVersion());
+            XSSFTable table = sh.createTable(tableArea);
+
+            assertNull(table.getStyleName());
+
+            table.getCTTable().setTableStyleInfo(CTTableStyleInfo.Factory.newInstance());
+
+            assertNull(table.getStyleName());
         }
     }
 }
