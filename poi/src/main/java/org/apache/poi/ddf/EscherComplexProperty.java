@@ -193,7 +193,7 @@ public class EscherComplexProperty extends EscherProperty {
         }
 
         if (complexData == null) {
-            // if coomplexData is not initialized, it is equal only if
+            // if complexData is not initialized, it is equal only if
             // complexData is also uninitialized or equals an empty array
             return escherComplexProperty.complexData == null ||
                     Arrays.equals(escherComplexProperty.complexData, new byte[escherComplexProperty.complexSize]);

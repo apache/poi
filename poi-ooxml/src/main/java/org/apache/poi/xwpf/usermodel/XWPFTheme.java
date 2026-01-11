@@ -81,7 +81,7 @@ public class XWPFTheme extends POIXMLDocumentPart {
      *
      * @return name of this theme, e.g. "Office Theme"
      */
-    public String getName(){
+    public String getName() {
         return _theme.getName();
     }
 
@@ -90,7 +90,7 @@ public class XWPFTheme extends POIXMLDocumentPart {
      *
      * @param name name of this theme
      */
-    public void setName(String name){
+    public void setName(String name) {
         _theme.setName(name);
     }
 
