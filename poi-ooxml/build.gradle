@@ -211,6 +211,8 @@ task testJar(type: Jar, dependsOn: testClasses) {
 }
 
 javadoc {
+    dependsOn configurations.javadocs.dependencies.collect{ ':' + project.project(it.path).name + ':compileJava' }
+
     failOnError = true
     doFirst {
         options {
