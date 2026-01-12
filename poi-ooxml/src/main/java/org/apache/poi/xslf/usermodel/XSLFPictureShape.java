@@ -226,8 +226,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
     }
 
     public int getAlpha() {
-        // Percentages are scaled by 1000 as usual in Office.
-        // If not specified, we return 100000 (=100%), which means fully opaque.
+        // If not specified, we return 100000, which means fully opaque.
         int FULLY_OPAQUE = 100000;
         CTBlip blip = getBlip();
         if (blip == null) {
