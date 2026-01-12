@@ -115,6 +115,10 @@ public abstract class HSSFShape implements Shape {
      */
     void setShapeId(int shapeId){
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        if (spRecord == null) {
+            throw new IllegalStateException("Did not have an EscherSpRecord, cannot set shape id " + shapeId);
+        }
+
         spRecord.setShapeId(shapeId);
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
         cod.setObjectId((short) (shapeId%1024));

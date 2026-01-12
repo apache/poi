@@ -1075,6 +1075,10 @@ public final class InternalSheet {
     }
 
     private void setColumn(int column, Short xfStyle, Integer width, Integer level, Boolean hidden, Boolean collapsed) {
+        if (_columnInfos == null) {
+            throw new IllegalStateException("Cannot group column range with missing column-infos");
+        }
+
         _columnInfos.setColumn( column, xfStyle, width, level, hidden, collapsed );
     }
 
@@ -1087,6 +1091,9 @@ public final class InternalSheet {
      *                      if false indenting will be removed by one level.
      */
     public void groupColumnRange(int fromColumn, int toColumn, boolean indent) {
+        if (_columnInfos == null) {
+            throw new IllegalStateException("Cannot group column range with missing column-infos");
+        }
 
         // Set the level for each column
         _columnInfos.groupColumnRange( fromColumn, toColumn, indent);

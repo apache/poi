@@ -263,10 +263,15 @@ public final class XSSFPicture extends XSSFShape implements Picture {
     /**
      * Return picture data for this shape
      *
-     * @return picture data for this shape
+     * @return picture data for this shape or null if
+     *      the data cannot be retrieved
      */
     @Override
     public XSSFPictureData getPictureData() {
+        if (ctPicture.getBlipFill().getBlip() == null) {
+            return null;
+        }
+
         String blipId = ctPicture.getBlipFill().getBlip().getEmbed();
         return  (XSSFPictureData)getDrawing().getRelationById(blipId);
     }

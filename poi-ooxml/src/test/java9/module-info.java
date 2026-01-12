@@ -200,6 +200,7 @@ module org.apache.poi.ooxml {
     opens org.apache.poi.xssf.streaming to org.junit.platform.commons;
     opens org.apache.poi.xssf.util to org.junit.platform.commons;
     opens org.apache.poi.xslf.draw to org.junit.platform.commons;
+    opens org.apache.poi.xslf.draw.geom to org.junit.platform.commons;
     opens org.apache.poi.xslf.usermodel to org.junit.platform.commons;
     opens org.apache.poi.xslf.model to org.junit.platform.commons;
     opens org.apache.poi.xslf.util to org.junit.platform.commons;

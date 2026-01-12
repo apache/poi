@@ -591,10 +591,10 @@ public class DrawTextParagraph implements Drawable {
         final Map<Attribute,Object> att = new HashMap<>();
         final List<AttributedStringData> attList = new ArrayList<>();
 
-        for (TextRun run : paragraph){
+        for (TextRun run : paragraph) {
             String runText = getRenderableText(graphics, run);
             // skip empty runs
-            if (runText.isEmpty()) {
+            if (runText == null || runText.isEmpty()) {
                 continue;
             }
 

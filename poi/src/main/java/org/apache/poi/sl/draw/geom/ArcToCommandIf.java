@@ -60,6 +60,10 @@ public interface ArcToCommandIf extends PathCommand {
         double invStart = Math.atan2(rx * Math.sin(radStart), ry * Math.cos(radStart));
 
         Point2D pt = path.getCurrentPoint();
+        if (pt == null) {
+            throw new IllegalStateException("Cannot draw arc without valid point");
+        }
+
         // calculate top/left corner
         double x0 = pt.getX() - rx * Math.cos(invStart) - rx;
         double y0 = pt.getY() - ry * Math.sin(invStart) - ry;

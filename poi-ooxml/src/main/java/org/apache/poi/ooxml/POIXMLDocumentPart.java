@@ -259,7 +259,7 @@ public class POIXMLDocumentPart {
      */
     public final POIXMLDocumentPart getRelationById(String id) {
         RelationPart rp = getRelationPartById(id);
-        return (rp == null) ? null : rp.getDocumentPart();
+        return rp == null ? null : rp.getDocumentPart();
     }
 
     /**
@@ -797,7 +797,7 @@ public class POIXMLDocumentPart {
      * @since 5.3.0
      */
     public final HyperlinkRelationship createHyperlink(URI uri, boolean isExternal, String relId) {
-        PackageRelationship pr = packagePart.addRelationship(uri, isExternal ? TargetMode.EXTERNAL : TargetMode.INTERNAL,
+        packagePart.addRelationship(uri, isExternal ? TargetMode.EXTERNAL : TargetMode.INTERNAL,
             PackageRelationshipTypes.HYPERLINK_PART, relId);
         HyperlinkRelationship hyperlink = new HyperlinkRelationship(this, uri, isExternal, relId);
         referenceRelationships.put(relId, hyperlink);
