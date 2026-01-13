@@ -30,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -980,6 +982,38 @@ class TestXSLFTextShape {
             String textExp = " ___ ___ ___ ________ __  _______ ___  ___________  __________ __ _____ ___ ___ ___ _______ ____ ______ ___________  _____________ ___ _______ ______  ____ ______ __ ___________  __________ ___ _________  _____ ________ __________  ___ _______ __________ ";
             textAct = xsh.getText();
             assertEquals(textExp, textAct);
+        }
+    }
+
+    @Test
+    void testClearTextMaintainOneParagraph() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide = ppt.createSlide();
+            XSLFAutoShape shape = slide.createAutoShape();
+
+            XSLFTextParagraph p = shape.addNewTextParagraph();
+            p.addNewTextRun().setText("This text will be cleared");
+
+            shape.clearText();
+
+            assertEquals(1, shape.getTextParagraphs().size(),
+              "After clearText(), there should be exactly one empty paragraph for OOXML compliance.");
+
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                ppt.write(baos);
+
+                try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                     XMLSlideShow reopened = new XMLSlideShow(bais)) {
+
+                    XSLFTextShape reopenedShape = (XSLFTextShape) reopened.getSlides().get(0).getShapes().get(0);
+
+                    assertEquals(1, reopenedShape.getTextParagraphs().size(),
+                      "The re-loaded presentation should also have one empty paragraph.");
+
+                    assertTrue(reopenedShape.getTextParagraphs().get(0).getTextRuns().isEmpty(),
+                      "The paragraph should have no text runs.");
+                }
+            }
         }
     }
 }
