@@ -30,14 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Placeholder;
@@ -999,11 +998,11 @@ class TestXSLFTextShape {
             assertEquals(1, shape.getTextParagraphs().size(),
               "After clearText(), there should be exactly one empty paragraph for OOXML compliance.");
 
-            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 ppt.write(baos);
 
-                try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-                     XMLSlideShow reopened = new XMLSlideShow(bais)) {
+                try (InputStream is = baos.toInputStream();
+                     XMLSlideShow reopened = new XMLSlideShow(is)) {
 
                     XSLFTextShape reopenedShape = (XSLFTextShape) reopened.getSlides().get(0).getShapes().get(0);
 
