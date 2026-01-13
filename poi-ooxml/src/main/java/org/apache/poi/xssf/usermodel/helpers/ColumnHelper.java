@@ -264,9 +264,10 @@ public class ColumnHelper {
         CTCol col = getOrCreateColumn1Based(index+1, false);
         col.setBestFit(bestFit);
     }
-    public void setCustomWidth(long index, boolean bestFit) {
+
+    public void setCustomWidth(long index, boolean useCustomWidth) {
         CTCol col = getOrCreateColumn1Based(index+1, true);
-        col.setCustomWidth(bestFit);
+        col.setCustomWidth(useCustomWidth);
     }
 
     public void setColWidth(long index, double width) {
