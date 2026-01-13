@@ -115,7 +115,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     public void clearText() {
         _paragraphs.clear();
         CTTextBody txBody = getTextBody(true);
-        txBody.setPArray(null); // remove any existing paragraphs
+        txBody.setPArray(new CTTextParagraph[0]);
+        addNewTextParagraph();
     }
 
     @Override
