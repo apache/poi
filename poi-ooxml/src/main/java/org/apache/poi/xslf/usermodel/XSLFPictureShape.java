@@ -226,13 +226,11 @@ public class XSLFPictureShape extends XSLFSimpleShape
     }
 
     public int getAlpha() {
-        // If not specified, we return 100000, which means fully opaque.
-        int FULLY_OPAQUE = 100000;
         CTBlip blip = getBlip();
         if (blip == null) {
-            return FULLY_OPAQUE;
+            return FULLY_OPAQUE_ALPHA_VALUE;
         }
-        return blip.sizeOfAlphaModFixArray() > 0 ? POIXMLUnits.parsePercent(blip.getAlphaModFixArray(0).xgetAmt()) : FULLY_OPAQUE;
+        return blip.sizeOfAlphaModFixArray() > 0 ? POIXMLUnits.parsePercent(blip.getAlphaModFixArray(0).xgetAmt()) : FULLY_OPAQUE_ALPHA_VALUE;
     }
 
     /**

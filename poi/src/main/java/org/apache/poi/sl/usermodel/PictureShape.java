@@ -23,6 +23,9 @@ public interface PictureShape<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>
 > extends SimpleShape<S,P> {
+    public static final int FULLY_TRANSPARENT_ALPHA_VALUE = 0;
+    public static final int FULLY_OPAQUE_ALPHA_VALUE = 100000;
+
     /**
      * Returns the picture data for this picture.
      *

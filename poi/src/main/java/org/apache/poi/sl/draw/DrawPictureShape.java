@@ -36,6 +36,9 @@ import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.RectAlign;
 
+import static org.apache.poi.sl.usermodel.PictureShape.FULLY_OPAQUE_ALPHA_VALUE;
+import static org.apache.poi.sl.usermodel.PictureShape.FULLY_TRANSPARENT_ALPHA_VALUE;
+
 
 public class DrawPictureShape extends DrawSimpleShape {
     private static final Logger LOG = PoiLogManager.getLogger(DrawPictureShape.class);
@@ -67,8 +70,8 @@ public class DrawPictureShape extends DrawSimpleShape {
                 ImageRenderer renderer = getImageRenderer(graphics, ct);
                 if (renderer.canRender(ct)) {
                     renderer.loadImage(dataBytes, ct);
-                    if (0 <= alpha && alpha < 100000) {
-                        renderer.setAlpha(alpha/100000.f);
+                    if (FULLY_TRANSPARENT_ALPHA_VALUE <= alpha && alpha < FULLY_OPAQUE_ALPHA_VALUE) {
+                        renderer.setAlpha(alpha/(float) FULLY_OPAQUE_ALPHA_VALUE);
                     }
                     renderer.drawImage(graphics, anchor, insets);
                     return;
