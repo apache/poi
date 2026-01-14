@@ -436,8 +436,16 @@ public class XSSFReader {
                         sheetPkg.getRelationshipsByType(XSSFRelation.SHEET_COMMENTS.getRelation());
                 if (!commentsList.isEmpty()) {
                     PackageRelationship comments = commentsList.getRelationship(0);
+                    if (comments == null) {
+                        LOGGER.warn("Failed to find sheet comments packageRelationship");
+                        return null;
+                    }
                     PackagePartName commentsName = PackagingURIHelper.createPartName(comments.getTargetURI());
                     PackagePart commentsPart = sheetPkg.getPackage().getPart(commentsName);
+                    if (commentsPart == null) {
+                        LOGGER.warn("Failed to find sheet comments: {}", commentsName);
+                        return null;
+                    }
                     return parseComments(commentsPart);
                 }
             } catch (InvalidFormatException|IOException e) {
