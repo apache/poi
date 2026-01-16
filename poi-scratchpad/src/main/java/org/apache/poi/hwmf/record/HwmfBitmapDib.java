@@ -243,7 +243,8 @@ public class HwmfBitmapDib implements GenericRecord {
         // The size and format of this data is determined by information in the DIBHeaderInfo field. If
         // it is a BitmapCoreHeader, the size in bytes MUST be calculated as follows:
 
-        int bodySize = ((((headerWidth * headerPlanes * headerBitCount.flag + 31) & ~31) / 8) * Math.abs(headerHeight));
+        int bodySize = ((((headerWidth * headerPlanes *
+                (headerBitCount == null ? 0 : headerBitCount.flag) + 31) & ~31) / 8) * Math.abs(headerHeight));
 
         // This formula SHOULD also be used to calculate the size of aData when DIBHeaderInfo is a
         // BitmapInfoHeader Object, using values from that object, but only if its Compression value is
@@ -348,6 +349,10 @@ public class HwmfBitmapDib implements GenericRecord {
     }
 
     protected int readColors(LittleEndianInputStream leis) throws IOException {
+        if (headerBitCount == null) {
+            return 0;
+        }
+
         switch (headerBitCount) {
         default:
         case BI_BITCOUNT_0:

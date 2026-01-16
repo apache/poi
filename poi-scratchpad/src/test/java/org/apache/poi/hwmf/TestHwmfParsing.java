@@ -54,7 +54,8 @@ public class TestHwmfParsing {
     @CsvSource({
         "santa.wmf, 581",
         /* Bug 65063 */
-        "empty-polygon-close.wmf, 272"
+        "empty-polygon-close.wmf, 272",
+        "file-45.wmf, 1315"
     })
     void parse(String file, int recordCnt) throws IOException {
         try (InputStream fis = samples.openResourceAsStream(file)) {
