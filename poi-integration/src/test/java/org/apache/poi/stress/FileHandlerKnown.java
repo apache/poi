@@ -29,6 +29,7 @@ public enum FileHandlerKnown {
     HSLF,
     HSMF,
     HSSF,
+    HWMF,
     HWPF,
     OPC,
     POIFS,
