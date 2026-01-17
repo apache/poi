@@ -58,7 +58,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
-import org.openxmlformats.schemas.drawingml.x2006.main.impl.CTSRgbColorImpl;
 
 /**
  * Represents a run of text within the containing text body. The run element is the
@@ -815,6 +814,9 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
             if (typeface.startsWith("+mj-") || typeface.startsWith("+mn-")) {
                 //  "+mj-lt".equals(typeface) || "+mn-lt".equals(typeface)
                 final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
+                if (theme == null) {
+                    return null;
+                }
                 CTFontScheme fontTheme = theme.getXmlObject().getThemeElements().getFontScheme();
                 CTFontCollection coll = typeface.startsWith("+mj-")
                     ? fontTheme.getMajorFont() : fontTheme.getMinorFont();
