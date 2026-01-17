@@ -236,7 +236,7 @@ class TestXSLFBugs {
             try (XMLSlideShow ppt3 = writeOutAndReadBack(dest)) {
                 XSLFSlide slide3 = ppt3.getSlides().get(0);
                 XSLFTextBox shape3 = (XSLFTextBox) slide3.getShapes().get(0);
-                XSLFTextParagraph p3 = shape3.getTextParagraphs().get(1);
+                XSLFTextParagraph p3 = shape3.getTextParagraphs().get(2);
                 XSLFHyperlink h1 = p3.getTextRuns().get(0).getHyperlink();
                 assertNotNull(h1);
                 assertEquals("https://poi.apache.org", h1.getAddress());
