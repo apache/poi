@@ -230,6 +230,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
     }
 
     public int getAlpha() {
-        return (int)(super.getAlpha(EscherPropertyTypes.FILL__FILLOPACITY)*100000.0);
+        return Math.toIntExact(
+            (long) (super.getAlpha(EscherPropertyTypes.FILL__FILLOPACITY) * 100000));
     }
 }
