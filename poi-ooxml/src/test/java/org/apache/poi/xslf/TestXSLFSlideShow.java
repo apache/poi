@@ -165,7 +165,7 @@ class TestXSLFSlideShow {
             XSLFSlide copySlide = ppt.createSlide();
             copySlide.importContent(templateSlide);
             XSLFTextShape copyTextShape = (XSLFTextShape) copySlide.getShapes().get(0);
-            XmlObject copyTextRunXmlObject = copyTextShape.getTextParagraphs().get(0).getTextRuns().get(0).getXmlObject();
+            XmlObject copyTextRunXmlObject = copyTextShape.getTextParagraphs().get(1).getTextRuns().get(0).getXmlObject();
             assertNotEquals(templateTextRunXmlObject, copyTextRunXmlObject);
         }
     }

@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Placeholder;
@@ -980,6 +981,38 @@ class TestXSLFTextShape {
             String textExp = " ___ ___ ___ ________ __  _______ ___  ___________  __________ __ _____ ___ ___ ___ _______ ____ ______ ___________  _____________ ___ _______ ______  ____ ______ __ ___________  __________ ___ _________  _____ ________ __________  ___ _______ __________ ";
             textAct = xsh.getText();
             assertEquals(textExp, textAct);
+        }
+    }
+
+    @Test
+    void testClearTextMaintainOneParagraph() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide = ppt.createSlide();
+            XSLFAutoShape shape = slide.createAutoShape();
+
+            XSLFTextParagraph p = shape.addNewTextParagraph();
+            p.addNewTextRun().setText("This text will be cleared");
+
+            shape.clearText();
+
+            assertEquals(1, shape.getTextParagraphs().size(),
+              "After clearText(), there should be exactly one empty paragraph for OOXML compliance.");
+
+            try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                ppt.write(baos);
+
+                try (InputStream is = baos.toInputStream();
+                     XMLSlideShow reopened = new XMLSlideShow(is)) {
+
+                    XSLFTextShape reopenedShape = (XSLFTextShape) reopened.getSlides().get(0).getShapes().get(0);
+
+                    assertEquals(1, reopenedShape.getTextParagraphs().size(),
+                      "The re-loaded presentation should also have one empty paragraph.");
+
+                    assertTrue(reopenedShape.getTextParagraphs().get(0).getTextRuns().isEmpty(),
+                      "The paragraph should have no text runs.");
+                }
+            }
         }
     }
 }
