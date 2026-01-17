@@ -23,6 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.GenericRecordJsonWriter;
@@ -37,6 +39,8 @@ import org.apache.poi.util.LittleEndianInputStream;
  */
 @SuppressWarnings("WeakerAccess")
 public class HwmfEscape implements HwmfRecord {
+    private static final Logger log = LogManager.getLogger(HwmfEscape.class);
+
     private static final int MAX_OBJECT_SIZE = 0xFFFF;
 
     public enum EscapeFunction {
@@ -307,7 +311,9 @@ public class HwmfEscape implements HwmfRecord {
             // A 32-bit unsigned integer that identifies the type of comment in this record.
             // This value MUST be 0x00000001.
             commentType = leis.readInt();
-            assert(commentType == 0x00000001);
+            if (commentType != 0x00000001) {
+                HwmfEscape.log.atWarn().log("Unexpected comment-type: {}", commentType);
+            }
 
             // A 32-bit unsigned integer that specifies EMF metafile interoperability. This SHOULD be 0x00010000.
             version = leis.readInt();

@@ -19,8 +19,10 @@ package org.apache.poi.hwmf;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,6 +37,7 @@ import org.apache.poi.hwmf.record.HwmfRecord;
 import org.apache.poi.hwmf.record.HwmfRecordType;
 import org.apache.poi.hwmf.record.HwmfText;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Disabled;
@@ -42,6 +45,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@SuppressWarnings("UnnecessaryUnicodeEscape")
 public class TestHwmfParsing {
 
     private static final POIDataSamples samples = POIDataSamples.getSlideShowInstance();
@@ -72,6 +76,20 @@ public class TestHwmfParsing {
         }
     }
 
+    @Test
+    void testInvalid() throws Exception {
+        try (InputStream is = samples.openResourceAsStream("santa.wmf")) {
+            byte[] bytes = IOUtils.toByteArray(is);
+
+            // simulate an invalid commentType, it should be logged and ignored
+            bytes[34] = (byte)255;
+            bytes[35] = (byte)255;
+
+            HwmfPicture wmf = new HwmfPicture(new ByteArrayInputStream(bytes));
+            List<HwmfRecord> records = wmf.getRecords();
+            assertEquals(581, records.size());
+        }
+    }
 
     @Test
     @Disabled("If we decide we can use common crawl file specified, we can turn this back on")
@@ -92,6 +110,8 @@ public class TestHwmfParsing {
                 charset = (font.getCharset().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharset().getCharset();
             }
             if (r.getWmfRecordType().equals(HwmfRecordType.extTextOut)) {
+                assertInstanceOf(HwmfText.WmfExtTextOut.class, r);
+
                 HwmfText.WmfExtTextOut textOut = (HwmfText.WmfExtTextOut)r;
                 sb.append(textOut.getText(charset)).append("\n");
             }
@@ -104,7 +124,7 @@ public class TestHwmfParsing {
     @Test
     void testShift_JIS() throws Exception {
         //this file derives from common crawl: see Bug 60677
-        HwmfPicture wmf = null;
+        final HwmfPicture wmf;
         try (InputStream fis = samples.openResourceAsStream("60677.wmf")) {
             wmf = new HwmfPicture(fis);
         }
@@ -120,6 +140,8 @@ public class TestHwmfParsing {
                 charset = (font.getCharset().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharset().getCharset();
             }
             if (r.getWmfRecordType().equals(HwmfRecordType.extTextOut)) {
+                assertInstanceOf(HwmfText.WmfExtTextOut.class, r);
+
                 HwmfText.WmfExtTextOut textOut = (HwmfText.WmfExtTextOut)r;
                 sb.append(textOut.getText(charset)).append("\n");
             }
@@ -129,11 +151,11 @@ public class TestHwmfParsing {
     }
 
     @Test
-    void testLengths() throws Exception {
+    void testLengths() {
         //both substring and length rely on char, not codepoints.
         //This test confirms that the substring calls in HwmfText
         //will not truncate even beyond-bmp data.
-        //The last character (Deseret AY U+1040C) is comprised of 2 utf16 surrogates/codepoints
+        //The last character (Deseret AY U+1040C) consists of 2 utf16 surrogates/codepoints
         String s = "\u666E\u6797\u65AF\uD801\uDC0C";
         Charset utf16LE = StandardCharsets.UTF_16LE;
         byte[] bytes = s.getBytes(utf16LE);
