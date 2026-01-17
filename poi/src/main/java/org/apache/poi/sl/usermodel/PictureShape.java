@@ -23,6 +23,9 @@ public interface PictureShape<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>
 > extends SimpleShape<S,P> {
+    public static final int FULLY_TRANSPARENT_ALPHA_VALUE = 0;
+    public static final int FULLY_OPAQUE_ALPHA_VALUE = 100000;
+
     /**
      * Returns the picture data for this picture.
      *
@@ -47,4 +50,12 @@ public interface PictureShape<
      * @return the clipping rectangle, which is given in percent in relation to the image width/height
      */
     Insets getClipping();
+
+    /**
+     * Returns alpha value in a range between 0 and 100000.
+     * Value 0 represents complete transparency and 100000 represents complete opacity.
+     * @return alpha value in the range 0..100000.
+     * @since 6.0.0
+     */
+    int getAlpha();
 }

@@ -225,6 +225,14 @@ public class XSLFPictureShape extends XSLFSimpleShape
             POIXMLUnits.parsePercent(r.xgetR()));
     }
 
+    public int getAlpha() {
+        CTBlip blip = getBlip();
+        if (blip == null) {
+            return FULLY_OPAQUE_ALPHA_VALUE;
+        }
+        return blip.sizeOfAlphaModFixArray() > 0 ? POIXMLUnits.parsePercent(blip.getAlphaModFixArray(0).xgetAmt()) : FULLY_OPAQUE_ALPHA_VALUE;
+    }
+
     /**
      * Add a SVG image reference
      * @param svgPic a previously imported svg image
