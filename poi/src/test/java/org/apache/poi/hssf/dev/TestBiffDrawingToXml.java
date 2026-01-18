@@ -36,6 +36,7 @@ import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 import org.apache.tools.ant.util.NullOutputStream;
 
@@ -57,6 +58,7 @@ class TestBiffDrawingToXml extends BaseTestIteratingXLS {
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5436547081830400.xls", IllegalArgumentException.class);
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5889658057523200.xls", IndexOutOfBoundsException.class);
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4977868385681408.xls", IllegalArgumentException.class);
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4734163573080064.xls", RecordFormatException.class);
         return excludes;
     }
 

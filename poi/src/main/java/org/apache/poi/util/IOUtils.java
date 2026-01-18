@@ -460,7 +460,7 @@ public final class IOUtils {
     public static long copy(InputStream srcStream, File destFile) throws IOException {
         File destDirectory = destFile.getParentFile();
         if (!(destDirectory.exists() || destDirectory.mkdirs())) {
-            throw new IllegalStateException("Can't create destination directory: "+destDirectory);
+            throw new IllegalStateException("Can't create destination directory: " + destDirectory);
         }
         try (OutputStream destStream = Files.newOutputStream(destFile.toPath())) {
             return IOUtils.copy(srcStream, destStream);
@@ -581,7 +581,7 @@ public final class IOUtils {
             throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
         }
         if (length > (long)Integer.MAX_VALUE) {
-            throw new RecordFormatException("Can't allocate an array > "+Integer.MAX_VALUE);
+            throw new RecordFormatException("Can't allocate an array > " + Integer.MAX_VALUE);
         }
         checkLength(length, maxLength);
     }
@@ -643,7 +643,7 @@ public final class IOUtils {
         throw new RecordFormatException(String.format(Locale.ROOT, "Tried to allocate an array of length %,d" +
                         ", but the maximum length for this record type is %,d.%n" +
                         "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
-                        "increasing the maximum allowable size for this record type.%n"+
+                        "increasing the maximum allowable size for this record type.%n" +
                         "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", length, maxLength));
     }
 
@@ -651,7 +651,7 @@ public final class IOUtils {
         throw new RecordFormatException(String.format(Locale.ROOT, "Tried to read data but the maximum length " +
                 "for this record type is %,d.%n" +
                 "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
-                "increasing the maximum allowable size for this record type.%n"+
+                "increasing the maximum allowable size for this record type.%n" +
                 "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", maxLength));
     }
 }
