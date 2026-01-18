@@ -118,7 +118,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
 
     private void rewriteArray(int numberOfElements, boolean copyToNewLen) {
         int expectedArraySize = numberOfElements * getActualSizeOfElements(getSizeOfElements()) + FIXED_SIZE;
-        resizeComplexData(expectedArraySize, copyToNewLen ? expectedArraySize : getComplexData().length);
+        resizeComplexData(expectedArraySize, copyToNewLen ? expectedArraySize : getComplexSize());
     }
 
     public int getNumberOfElementsInMemory() {
@@ -181,7 +181,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
 
             // the code here seems to depend on complexData already being
             // sized correctly via the constructor
-            int cdLen = getComplexData().length;
+            int cdLen = getComplexSize();
             int arraySize = getActualSizeOfElements(sizeOfElements) * numElements;
             if (arraySize == cdLen) {
                 // The stored data size in the simple block excludes the header size
@@ -190,7 +190,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
             }
             setComplexData(data, offset);
         }
-        return getComplexData().length;
+        return getComplexSize();
     }
 
     /**
@@ -202,7 +202,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
     @Override
     public int serializeSimplePart(byte[] data, int pos) {
         LittleEndian.putShort(data, pos, getId());
-        int recordSize = getComplexData().length;
+        int recordSize = getComplexSize();
         if (!sizeIncludesHeaderSize) {
             recordSize -= 6;
         }

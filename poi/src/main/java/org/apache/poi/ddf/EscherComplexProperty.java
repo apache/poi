@@ -135,6 +135,10 @@ public class EscherComplexProperty extends EscherProperty {
         return complexData;
     }
 
+    public int getComplexSize() {
+        return complexSize;
+    }
+
     public int setComplexData(byte[] complexData) {
         return setComplexData(complexData, 0);
     }
