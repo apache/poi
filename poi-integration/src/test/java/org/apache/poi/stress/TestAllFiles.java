@@ -146,8 +146,12 @@ public class TestAllFiles {
         "diagram/clusterfuzz-testcase-minimized-POIHDGFFuzzer-4913778037489664.vsd",
         "diagram/clusterfuzz-testcase-minimized-POIHDGFFuzzer-6478389109981184.vsd",
         "publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-4918886059278336.pub",
-        "publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-4918886059278336.pub"
-    });
+        "publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-4918886059278336.pub",
+        "publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-6325615354773504.pub",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-4734163573080064.xls",
+        "spreadsheet/rde.imf.ru_sites_default_files_rde_documents_vodootvedenie_2020.xlsb.xls",
+        "publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-6325615354773504.pub",
+});
 
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
             "document/truncated62886.docx",
