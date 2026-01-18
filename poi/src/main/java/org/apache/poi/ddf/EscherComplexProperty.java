@@ -67,9 +67,9 @@ public class EscherComplexProperty extends EscherProperty {
         this.complexSize = complexSize;
     }
 
-    private void ensureComplexData() {
+    private void ensureComplexData(int size) {
         if (this.complexData == null) {
-            complexData = IOUtils.safelyAllocate(complexSize, MAX_RECORD_LENGTH);
+            complexData = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
         }
     }
 
@@ -131,7 +131,9 @@ public class EscherComplexProperty extends EscherProperty {
      * @return the complex bytes
      */
     public byte[] getComplexData() {
-        ensureComplexData();
+        // we need to allocate here as sometimes the array is written to
+        ensureComplexData(complexSize);
+
         return complexData;
     }
 
@@ -147,8 +149,8 @@ public class EscherComplexProperty extends EscherProperty {
         if (complexData == null) {
             return 0;
         } else {
-            ensureComplexData();
-            int copySize = Math.max(0, Math.min(this.complexData.length, complexData.length - offset));
+            int copySize = Math.max(0, Math.min(complexSize, complexData.length - offset));
+            ensureComplexData(copySize);
             System.arraycopy(complexData, offset, this.complexData, 0, copySize);
             return copySize;
         }
@@ -165,6 +167,8 @@ public class EscherComplexProperty extends EscherProperty {
 
         // no need to copy if data was not initialized yet
         if (complexData == null) {
+            complexSize = newSize;
+
             return;
         }
 
@@ -218,13 +222,13 @@ public class EscherComplexProperty extends EscherProperty {
 
     @Override
     public int hashCode() {
-        ensureComplexData();
+        ensureComplexData(complexSize);
         return Arrays.deepHashCode(new Object[]{complexData, getId()});
     }
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {
-        ensureComplexData();
+        ensureComplexData(complexSize);
         return GenericRecordUtil.getGenericProperties(
             "base", super::getGenericProperties,
             "data", this::getComplexData
