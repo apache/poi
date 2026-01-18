@@ -181,6 +181,10 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         textShapeCT.setNvSpPr((CTShapeNonVisual) nonVisualCt.copy());
         textShapeCT.getNvSpPr().getCNvSpPr().setTxBox(true);
 
+        if (msShapeCt.getSpPr() == null || msShapeCt.getSpPr().getXfrm() == null || msShapeCt.getTxXfrm() == null) {
+            throw new IllegalStateException("Invalid content in diagram, cannot extract text");
+        }
+
         textShapeProps.setXfrm(msShapeCt.getTxXfrm());
         int shapeRotation = msShapeCt.getSpPr().getXfrm().getRot();
         int textRotation = msShapeCt.getTxXfrm().getRot();
