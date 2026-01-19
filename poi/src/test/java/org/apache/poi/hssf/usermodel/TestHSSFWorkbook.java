@@ -396,6 +396,26 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     /**
+     * Getting a sheet by name that exceeds 31 characters should throw
+     * an IllegalArgumentException
+     */
+    @Test
+    void testGetSheetWithNameExceeding31Characters() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+
+            // Attempting to GET a sheet with a name > 31 chars should throw
+            String sheetName = "ThisIsAVeryLongSheetNameExceeding31Chars";
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> wb.getSheet(sheetName),
+                    "getSheet() should reject names longer than 31 characters"
+            );
+
+            assertTrue(exception.getMessage().contains("31 characters"));
+        }
+    }
+
+    /**
      * Checks that us and HSSFName play nicely with named ranges
      *  that point to deleted sheets
      */

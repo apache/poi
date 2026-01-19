@@ -1213,11 +1213,29 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * If there are multiple matches, the first sheet from the list
      * of sheets is returned.
      *
+     * <p>
+     * Note that Excel and the underlying Apache POI library limit sheet names
+     * to **31 characters**. This method will throw an exception if the
+     * provided {@code name} is longer than 31 characters, as such a sheet
+     * cannot exist in a valid Excel workbook.
+     * </p>
+     *
      * @param name of the sheet
      * @return XSSFSheet with the name provided or {@code null} if it does not exist
+     * @throws IllegalArgumentException if the sheet name is longer than 31 characters
      */
     @Override
     public XSSFSheet getSheet(String name) {
+
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+
+        if(name.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
+            throw new IllegalArgumentException("Sheet name must not be longer than " +
+                    MAX_SENSITIVE_SHEET_NAME_LEN + " characters. Otherwise it cannot exist in Excel.");
+        }
+
         for (XSSFSheet sheet : sheets) {
             if (name.equalsIgnoreCase(sheet.getSheetName())) {
                 return sheet;

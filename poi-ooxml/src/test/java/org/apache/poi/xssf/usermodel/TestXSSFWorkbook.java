@@ -1245,6 +1245,26 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
+    /**
+     * Getting a sheet by name that exceeds 31 characters should throw
+     * an IllegalArgumentException
+     */
+    @Test
+    void testGetSheetWithNameExceeding31Characters() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+
+            // Attempting to GET a sheet with a name > 31 chars should throw
+            String sheetName = "ThisIsAVeryLongSheetNameExceeding31Chars";
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> wb.getSheet(sheetName),
+                    "getSheet() should reject names longer than 31 characters"
+            );
+
+            assertTrue(exception.getMessage().contains("31 characters"));
+        }
+    }
+
     @Test
     void test501RC1Failure() throws Exception {
         String filename = "0-www-crossref-org.lib.rivier.edu_education-files_suffix-generator.xlsm";
