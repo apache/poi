@@ -39,10 +39,14 @@ import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.hwmf.record.HwmfDraw.WmfSelectObject;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public final class HemfDraw {
+    // arbitrary limit to avoid OOM on malformed files. This may need increasing if "normal" files have more than this
+    public static final int MAX_NUMBER_OF_POLYGONS = 100_000;
+
     private HemfDraw() {}
 
     /**
@@ -501,6 +505,7 @@ public final class HemfDraw {
             size += 2 * LittleEndianConsts.INT_SIZE;
 
             // An array of 32-bit unsigned integers that specifies the point count for each polygon.
+            IOUtils.safelyAllocateCheck(numberOfPolygons, MAX_NUMBER_OF_POLYGONS);
             long[] polygonPointCount = new long[(int)numberOfPolygons];
 
             size += numberOfPolygons * LittleEndianConsts.INT_SIZE;
