@@ -1218,6 +1218,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     @Override
     public XSSFSheet getSheet(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Encountered an empty name when looking up sheets by name");
+        }
+
         for (XSSFSheet sheet : sheets) {
             if (name.equalsIgnoreCase(sheet.getSheetName())) {
                 return sheet;
