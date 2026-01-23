@@ -714,7 +714,10 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             return getDefaultFontFamily();
         }
         HSLFFontInfo ppFont = getSheet().getSlideShow().getFont(tp.getValue());
-        assert(ppFont != null);
+        if (ppFont == null) {
+            throw new IllegalStateException("Could not get font from slide-show for bullet-font '" + tp.getValue() + "'");
+        }
+
         return ppFont.getTypeface();
     }
 
