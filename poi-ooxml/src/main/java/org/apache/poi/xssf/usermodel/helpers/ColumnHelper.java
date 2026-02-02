@@ -38,7 +38,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
  */
 public class ColumnHelper {
 
-    private CTWorksheet worksheet;
+    private final CTWorksheet worksheet;
 
     public ColumnHelper(CTWorksheet worksheet) {
         super();
@@ -303,10 +303,15 @@ public class ColumnHelper {
         col.setStyle(styleId);
     }
     
-    // Returns -1 if no column is found for the given index
+    /**
+     * Get the default style index for the given column index
+     *
+     * @return The style-index or -1 if no column is found for the given index
+     */
     public int getColDefaultStyle(long index) {
-        if (getColumn(index, false) != null) {
-            return (int) getColumn(index, false).getStyle();
+        final CTCol column = getColumn(index, false);
+        if (column != null) {
+            return (int) column.getStyle();
         }
         return -1;
     }
