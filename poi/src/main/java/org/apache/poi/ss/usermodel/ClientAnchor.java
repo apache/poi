@@ -125,7 +125,7 @@ public interface ClientAnchor {
      * Sets the column (0 based) of the first cell.
      *
      * @param col1 0-based column of the first cell.
-     * @since TBD
+     * @since 6.0.0
      */
     default void setCol1(short col1) {
         setCol1((int) col1);
@@ -151,7 +151,7 @@ public interface ClientAnchor {
      * Sets the column (0 based) of the second cell.
      *
      * @param col2 0-based column of the second cell.
-     * @since TBD
+     * @since 6.0.0
      */
     default void setCol2(short col2) {
         setCol2((int) col2);
