@@ -32,6 +32,7 @@ public class TestSlideIdListing extends BaseTestPPTIterating {
     static {
         LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-5306877435838464.ppt");
         LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6028723156746240.ppt");
     }
 
     @Test

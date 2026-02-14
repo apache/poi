@@ -24,12 +24,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.poi.EmptyFileException;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 
 public class TestUserEditAndPersistListing extends BaseTestPPTIterating {
     static final Set<String> LOCAL_EXCLUDED = new HashSet<>();
     static {
         LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6028723156746240.ppt");
     }
 
     @Test
@@ -42,7 +44,7 @@ public class TestUserEditAndPersistListing extends BaseTestPPTIterating {
     void runOneFile(File pFile) throws Exception {
         try {
             UserEditAndPersistListing.main(new String[]{pFile.getAbsolutePath()});
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | RecordFormatException e) {
             if (!LOCAL_EXCLUDED.contains(pFile.getName())) {
                 throw e;
             }
