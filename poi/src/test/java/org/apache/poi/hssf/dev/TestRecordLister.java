@@ -52,6 +52,7 @@ class TestRecordLister extends BaseTestIteratingXLS {
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-6483562584932352.xls", RecordFormatException.class);
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5816431116615680.xls", RecordFormatException.class);
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4734163573080064.xls", IndexOutOfBoundsException.class);
+        excludes.put("cf9f845e73447b092477d0472402a5baea4b8c9f.xls", RecordFormatException.class);
 
         return excludes;
     }

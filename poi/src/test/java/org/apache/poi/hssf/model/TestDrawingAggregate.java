@@ -138,7 +138,8 @@ class TestDrawingAggregate {
                 filter(file ->
                         !file.getName().equals("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5285517825277952.xls") &&
                         !file.getName().equals("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4977868385681408.xls") &&
-                        !file.getName().equals("crash-e329fca9087fe21bca4a80c8bc472a661c98d860.xls")).
+                        !file.getName().equals("crash-e329fca9087fe21bca4a80c8bc472a661c98d860.xls") &&
+                        !file.getName().equals("cf9f845e73447b092477d0472402a5baea4b8c9f.xls")).
                 map(Arguments::of);
     }
 
