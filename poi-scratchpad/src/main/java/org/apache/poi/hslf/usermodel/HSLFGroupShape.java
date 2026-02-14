@@ -78,7 +78,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     public void setAnchor(Rectangle2D anchor) {
         EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
         boolean isInitialized = !(clientAnchor.getDx1() == 0 && clientAnchor.getRow1() == 0);
-        
+
         if (isInitialized) {
             moveAndScale(anchor);
         } else {
@@ -113,7 +113,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
 
     protected void setExteriorAnchor(Rectangle2D anchor) {
         EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
-        
+
         //hack. internal variable EscherClientAnchorRecord.shortRecord can be
         //initialized only in fillFields(). We need to set shortRecord=false;
         byte[] header = new byte[16];
@@ -131,7 +131,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
         // TODO: does this make sense?
         setInteriorAnchor(anchor);
     }
-    
+
     /**
      * Create a new ShapeGroup and create an instance of <code>EscherSpgrContainer</code> which represents a group of shapes
      */
@@ -186,7 +186,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
         double scaleY = (anchorSrc.getHeight() == 0) ? 0 : anchorDest.getHeight() / anchorSrc.getHeight();
 
         setExteriorAnchor(anchorDest);
-        
+
         for (HSLFShape shape : getShapes()) {
             Rectangle2D chanchor = shape.getAnchor();
             double x = anchorDest.getX()+(chanchor.getX()-anchorSrc.getX())*scaleX;
@@ -204,12 +204,16 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
      * @return the anchor of this shape group
      */
     @Override
-    public Rectangle2D getAnchor(){
+    public Rectangle2D getAnchor() {
         EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
         int x1,y1,x2,y2;
-        if(clientAnchor == null){
+        if(clientAnchor == null) {
             LOG.atInfo().log("EscherClientAnchorRecord was not found for shape group. Searching for EscherChildAnchorRecord.");
             EscherChildAnchorRecord rec = getEscherChild(EscherChildAnchorRecord.RECORD_ID);
+            if (rec == null) {
+                throw new IllegalStateException("Cannot get anchor, neither had an EscherClientAnchorRecord nor an EscherChildAnchorRecord");
+            }
+
             x1 = rec.getDx1();
             y1 = rec.getDy1();
             x2 = rec.getDx2();
@@ -293,7 +297,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
                 isFirst = false;
                 continue;
             }
-            
+
             if(r instanceof EscherContainerRecord) {
                 // Create the Shape for it
                 EscherContainerRecord container = (EscherContainerRecord)r;
