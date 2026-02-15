@@ -268,7 +268,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      */
     @Override
     public XSSFPictureData getPictureData() {
-        if (ctPicture.getBlipFill().getBlip() == null) {
+        if (ctPicture.getBlipFill() == null || ctPicture.getBlipFill().getBlip() == null) {
             return null;
         }
 
