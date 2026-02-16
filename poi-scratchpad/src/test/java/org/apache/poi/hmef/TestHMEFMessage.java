@@ -237,9 +237,8 @@ public final class TestHMEFMessage {
     static void assertContents(String filename, byte[] actual) throws IOException {
         try (InputStream stream = _samples.openResourceAsStream("quick-contents/" + filename)) {
             byte[] expected = IOUtils.toByteArray(stream);
-            assertArrayEquals(expected, actual);
+            assertArrayEquals(expected, actual, "Data comparison failed for " + filename);
         }
     }
 
 }
-

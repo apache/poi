@@ -19,11 +19,20 @@ package org.apache.poi.openxml4j;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ooxml.TrackingInputStream;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartCollection;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 class TestOPCPackage {
     @Test
@@ -48,4 +57,10 @@ class TestOPCPackage {
         }
     }
 
+    @Test
+    void testCloseWithEmptyList() throws IOException {
+        OPCPackage pkg = new ZipPackage();
+
+        pkg.close();
+    }
 }

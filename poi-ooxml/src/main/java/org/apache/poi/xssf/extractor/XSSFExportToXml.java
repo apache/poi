@@ -156,7 +156,7 @@ public class XSSFExportToXml implements Comparator<String>{
         indexMap.clear();
         xpaths.sort(this);
         indexMap.clear();
-        
+
         for(String xpath : xpaths) {
 
             XSSFSingleXmlCell simpleXmlCell = singleXmlCellsMappings.get(xpath);
@@ -170,7 +170,7 @@ public class XSSFExportToXml implements Comparator<String>{
                     if (cell!=null) {
                         Node currentNode = getNodeByXPath(xpath,doc.getFirstChild(),doc,false);
                         mapCellOnNode(cell,currentNode);
-                        
+
                         //remove nodes which are empty in order to keep the output xml valid
                         // FIXME: what should be done if currentNode.getTextContent() is null?
                         if ("".equals(currentNode.getTextContent()) && currentNode.getParentNode() != null) {
@@ -191,6 +191,11 @@ public class XSSFExportToXml implements Comparator<String>{
 
                     for(int i = startRow; i<= endRow; i++) {
                         XSSFRow row = sheet.getRow(i);
+
+                        // some external created files can miss rows
+                        if (row == null) {
+                            continue;
+                        }
 
                         Node tableRootNode = getNodeByXPath(table.getCommonXpath(), doc.getFirstChild(), doc, true);
 
@@ -255,7 +260,7 @@ public class XSSFExportToXml implements Comparator<String>{
             Schema schema = factory.newSchema(source);
             Validator validator = schema.newValidator();
             validator.validate(new DOMSource(xml));
-            
+
             //if no exceptions where raised, the document is valid
             return true;
         } catch(IOException e) {
@@ -289,8 +294,8 @@ public class XSSFExportToXml implements Comparator<String>{
                }
            }
            break;
-        
-        case NUMERIC: 
+
+        case NUMERIC:
              if (DateUtil.isCellDateFormatted(cell)) {
                   value = getFormattedDate(cell);
               } else {
@@ -459,7 +464,7 @@ public class XSSFExportToXml implements Comparator<String>{
         }
         return Integer.compare(leftIndexOf, rightIndexOf);
     }
-    
+
     private int getAndStoreIndex(String samePath,String withoutNamespace) {
         String withPath = samePath+"/"+withoutNamespace;
         return indexMap.getOrDefault(withPath, -1);
@@ -470,7 +475,7 @@ public class XSSFExportToXml implements Comparator<String>{
         if(returnNode != null) {
             return returnNode;
         }
-        
+
         return node.getAttributes().getNamedItem("name");
     }
 

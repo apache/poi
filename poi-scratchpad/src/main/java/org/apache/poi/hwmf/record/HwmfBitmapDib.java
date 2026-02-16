@@ -51,6 +51,9 @@ import org.apache.poi.util.RecordFormatException;
  * The DeviceIndependentBitmap Object defines an image in device-independent bitmap (DIB) format.
  */
 public class HwmfBitmapDib implements GenericRecord {
+    // arbitrarily selected; may need to increase
+    private static final int DEFAULT_MAX_HEIGHT_WIDTH = 10_000;
+    protected static int MAX_HEIGHT_WIDTH = DEFAULT_MAX_HEIGHT_WIDTH;
 
     private static final Logger LOG = PoiLogManager.getLogger(HwmfBitmapDib.class);
     private static final int BMP_HEADER_SIZE = 14;
@@ -243,7 +246,8 @@ public class HwmfBitmapDib implements GenericRecord {
         // The size and format of this data is determined by information in the DIBHeaderInfo field. If
         // it is a BitmapCoreHeader, the size in bytes MUST be calculated as follows:
 
-        int bodySize = ((((headerWidth * headerPlanes * headerBitCount.flag + 31) & ~31) / 8) * Math.abs(headerHeight));
+        int bodySize = ((((headerWidth * headerPlanes *
+                (headerBitCount == null ? 0 : headerBitCount.flag) + 31) & ~31) / 8) * Math.abs(headerHeight));
 
         // This formula SHOULD also be used to calculate the size of aData when DIBHeaderInfo is a
         // BitmapInfoHeader Object, using values from that object, but only if its Compression value is
@@ -348,6 +352,10 @@ public class HwmfBitmapDib implements GenericRecord {
     }
 
     protected int readColors(LittleEndianInputStream leis) throws IOException {
+        if (headerBitCount == null) {
+            return 0;
+        }
+
         switch (headerBitCount) {
         default:
         case BI_BITCOUNT_0:
@@ -527,6 +535,13 @@ public class HwmfBitmapDib implements GenericRecord {
             return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         }
 
+        if (headerHeight > MAX_HEIGHT_WIDTH || headerWidth > MAX_HEIGHT_WIDTH) {
+            throw new RecordFormatException("The width or height specified in the header exceed the current "
+                    + "limit. Height: " + headerHeight + ", width: " + headerWidth +
+                    ", Max width/height: " + MAX_HEIGHT_WIDTH +
+                    ". Limits can be adjusted via 'HwmfBitmapDib.setMaxHeightWidth'");
+        }
+
         BufferedImage bi = new BufferedImage(headerWidth, headerHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bi.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -553,5 +568,22 @@ public class HwmfBitmapDib implements GenericRecord {
         g.drawRoundRect(0, 0, headerWidth-1, headerHeight-1, arcs, arcs);
         g.dispose();
         return bi;
+    }
+
+    /**
+     * Adjust limit to prevent broken images from exceeding available
+     * memory when being drawn.
+     *
+     * @param length the max number of pixel of width/height to allow for images
+     */
+    public static void setMaxHeightWidth(int length) {
+        MAX_HEIGHT_WIDTH = length;
+    }
+
+    /**
+     * @return the max number of pixel of width/height to allow for images
+     */
+    public static int getMaxHeightWidth() {
+        return MAX_HEIGHT_WIDTH;
     }
 }

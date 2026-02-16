@@ -86,28 +86,36 @@
                 and writing xlsx files - so if you are working with large xlsx files, you should consider using the
                 streaming APIs.
             </li>
+            <li><strong>Use of Temp Files</strong><br/>
+                Apache POI makes significant use of temporary files. You need to ensure that the directory used
+                for temp files cannot be manipulated or even read by untrusted users.
+                <br/>
+                <em>DefaultTempFileCreationStrategy</em> is the default implementation but you can provide your own
+                strategy implementation. It is possible to configure POI to avoid temp file usage in some parts of
+                the code.
+            </li>
             <li><strong>Consider sandboxing document-parsing</strong><br/>
                 If you operate in a highly sensitive environment and would like to avoid any side effect from
                 parsing documents on your application, then consider extracting the parsing logic into a separate
                 process which is configured with appropriate memory settings and which you stop after some timeout.
                 It is a good idea to be able to auto-restart the process in case of a crash.
-                <br />
+                <br/>
             </li>
             <li><strong>Keep up to date with releases</strong><br/>
                 Apache POI does occasionally issue CVEs for security issues. There are also other bug fixes and
                 improvements in each release. Some of these fixes will be to make POI more robust against malicious
                 inputs, even if they are not explicitly security-related.
-                <br />
+                <br/>
             </li>
             <li><strong>Monitor security advisories</strong><br/>
                 Keep an eye on security advisories related to Apache POI. You can find them on the
                 <a href="https://poi.apache.org">POI website</a> and they are shared on the
                 <a href="https://poi.apache.org/help/index.html">POI mailing lists</a> as well as
                 the <a href="https://lists.apache.org/list.html?announce@apache.org">Apache Announce Mailing List</a>.
-                <br />
+                <br/>
                 <a href="https://app.opencve.io/cve/?product=poi&amp;vendor=apache">OpenCVE</a> is one of a
                 number of services that can help you monitor CVEs for specific products.
-                <br />
+                <br/>
             </li>
         </ul>
     </section>

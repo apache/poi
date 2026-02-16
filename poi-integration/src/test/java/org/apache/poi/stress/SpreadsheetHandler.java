@@ -37,6 +37,8 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
         // try to access some of the content
         readContent(wb);
 
+        extractEmbedded(wb);
+
         // write out the file
         writeToArray(wb);
 

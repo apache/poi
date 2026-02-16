@@ -292,6 +292,9 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
             // Write the matching OBJ record
             Record obj = shapeToObj.get(shapes.get(i));
+            if (obj == null) {
+                throw new IllegalStateException("Cannot serialize EscherAggregate with missing shape-object");
+            }
             pos += obj.serialize(pos, data);
 
             isFirst = false;

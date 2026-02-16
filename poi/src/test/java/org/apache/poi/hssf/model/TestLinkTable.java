@@ -141,6 +141,9 @@ final class TestLinkTable {
         // Bug 47001b: Expected an EXTERNSHEET record but got (org.apache.poi.hssf.record.SSTRecord)
         LinkTable lt = new LinkTable(recList, 0, wrl, Collections.emptyMap());
         assertNotNull(lt);
+
+        assertThrows(IllegalStateException.class,
+                () -> lt.getExternalBookAndSheetName(0));
     }
 
     @Test

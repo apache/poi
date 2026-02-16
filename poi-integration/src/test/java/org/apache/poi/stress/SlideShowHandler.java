@@ -29,6 +29,7 @@ import java.lang.ref.WeakReference;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.GroupShape;
+import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.Shape;
@@ -76,8 +77,11 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
                 }
             }
 
-            for (Shape<?,?> shape : s.getMasterSheet()) {
-                readShapes(shape);
+            MasterSheet<?, ?> masterSheet = s.getMasterSheet();
+            if (masterSheet != null) {
+                for (Shape<?,?> shape : masterSheet) {
+                    readShapes(shape);
+                }
             }
         }
     }

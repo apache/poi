@@ -228,4 +228,9 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
         int fixedPoint = prop.getPropertyValue();
         return Units.fixedPointToDouble(fixedPoint);
     }
+
+    public int getAlpha() {
+        return Math.toIntExact(
+            (long) (super.getAlpha(EscherPropertyTypes.FILL__FILLOPACITY) * 100000));
+    }
 }

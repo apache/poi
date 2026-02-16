@@ -20,7 +20,7 @@ import java.util.Locale;
 
 /**
  * Represents a XSSF-style color (based on either a
- *  {@link org.apache.poi.xssf.usermodel.XSSFColor} or a
+ *  org.apache.poi.xssf.usermodel.XSSFColor or a
  *  {@link org.apache.poi.hssf.record.common.ExtendedColor}
  */
 public abstract class ExtendedColor implements Color {

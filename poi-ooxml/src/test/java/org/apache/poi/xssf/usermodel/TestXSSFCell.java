@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
@@ -61,6 +62,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
@@ -761,5 +763,90 @@ public final class TestXSSFCell extends BaseTestXCell {
     void getErrorCellValue_returns0_onABlankCell() {
         Cell cell = new XSSFWorkbook().createSheet().createRow(0).createCell(0);
         assertThrows(IllegalStateException.class, cell::getErrorCellValue);
+    }
+
+    @Test
+    void setStringToBlank() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFCell cell = sheet.createRow(0).createCell(0);
+            cell.setCellValue("test123");
+            cell.setCellType(CellType.BLANK);
+            assertEquals("", cell.getStringCellValue());
+        }
+    }
+
+    @Test
+    void setInlineStringToNewStringValue() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFCell cell = sheet.createRow(0).createCell(0);
+            setInlineString(cell, "text123");
+            cell.setCellValue("newValue");
+            assertEquals("newValue", cell.getStringCellValue());
+            assertFalse(cell.getCTCell().isSetIs(), "cell has InlineString XML struct still?");
+        }
+    }
+
+    @Test
+    void setInlineStringToNewNumberValue() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFCell cell = sheet.createRow(0).createCell(0);
+            setInlineString(cell, "text123");
+            cell.setCellValue(123.456d);
+            assertEquals(123.456d, cell.getNumericCellValue());
+            assertFalse(cell.getCTCell().isSetIs(), "cell has InlineString XML struct still?");
+        }
+    }
+
+    @Test
+    void setInlineStringToNewLocalDateValue() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFCell cell = sheet.createRow(0).createCell(0);
+            setInlineString(cell, "text123");
+            LocalDateTime ldt = LocalDateTime.parse("2025-12-18T19:01:34");
+            cell.setCellValue(ldt);
+            assertEquals(ldt, cell.getLocalDateTimeCellValue());
+            assertFalse(cell.getCTCell().isSetIs(), "cell has InlineString XML struct still?");
+        }
+    }
+
+    @Test
+    void setInlineStringToBlank() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFCell cell = sheet.createRow(0).createCell(0);
+            setInlineString(cell, "text123");
+            cell.setCellType(CellType.BLANK);
+            assertEquals("", cell.getStringCellValue());
+            assertFalse(cell.getCTCell().isSetIs(), "cell has InlineString XML struct still?");
+        }
+    }
+
+    @Test
+    void setFormulaToBlank() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFCell cell = sheet.createRow(0).createCell(0);
+            cell.setCellFormula("ISODD(1)");
+            cell.setCellValue("3.14");
+            assertTrue(cell.getCTCell().isSetF(), "cell has formula XML struct?");
+            assertEquals("ISODD(1)", cell.getCellFormula());
+            assertEquals("3.14", cell.getStringCellValue());
+            cell.setCellType(CellType.BLANK);
+            assertEquals("", cell.getStringCellValue());
+            assertFalse(cell.getCTCell().isSetF(), "cell has formula XML struct still?");
+        }
+    }
+
+    private static void setInlineString(XSSFCell cell, String text) {
+        cell.setCellType(CellType.STRING);
+        CTRst rst = CTRst.Factory.newInstance();
+        rst.setT(text);
+        cell.getCTCell().setT(STCellType.INLINE_STR);
+        cell.getCTCell().setIs(rst);
+        assertEquals(text, cell.getStringCellValue());
     }
 }

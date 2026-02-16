@@ -22,10 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -362,6 +364,7 @@ final class TestHSSFComment extends BaseTestCellComment {
     void existingFileWithComment() throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls")) {
             HSSFSheet sheet = wb.getSheet("comments");
+            assertNotNull(sheet);
             HSSFPatriarch drawing = sheet.getDrawingPatriarch();
             assertEquals(1, drawing.getChildren().size());
             HSSFComment comment = (HSSFComment) drawing.getChildren().get(0);
@@ -433,5 +436,12 @@ final class TestHSSFComment extends BaseTestCellComment {
             assertEquals(2024, comment.getShapeId(), 2024);
             assertEquals(2024, comment.getNoteRecord().getShapeId());
         }
+    }
+
+    @Test
+    void getEmptyShape() throws IOException {
+        HSSFComment shape = new HSSFComment(new EscherContainerRecord(), null, null, null);
+        assertThrows(IllegalStateException.class,
+                () -> shape.setShapeId(1));
     }
 }

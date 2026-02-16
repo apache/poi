@@ -677,6 +677,20 @@ public final class TestXSSFExportToXML {
         }
     }
 
+    @Test
+    void testMissingRow() throws Exception {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("xxe_in_schema.xlsx")) {
+            // delete the row to cause a null-row
+            wb.getSheetAt(0).removeRow(wb.getSheetAt(0).getRow(9));
+
+            for (XSSFMap map : wb.getCustomXMLMappings()) {
+                XSSFExportToXml exporter = new XSSFExportToXml(map);
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+                assertThrows(SAXParseException.class, () -> exporter.exportToXML(bos, true));
+            }
+        }
+    }
+
     private static class XPathNSContext implements NamespaceContext {
         final Map<String,String> nsMap = new HashMap<>();
 

@@ -31,6 +31,7 @@ import org.apache.poi.hssf.record.TableRecord;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Manages various auxiliary records while constructing a
@@ -42,6 +43,7 @@ import org.apache.poi.ss.util.CellReference;
  * </ul>
  */
 public final class SharedValueManager {
+    private static final int MAX_NUMBER_AGGS = 10_000;
 
     private static final class SharedFormulaGroup {
         private final SharedFormulaRecord _sfr;
@@ -63,7 +65,12 @@ public final class SharedValueManager {
             _firstCell = firstCell;
             int width = sfr.getLastColumn() - sfr.getFirstColumn() + 1;
             int height = sfr.getLastRow() - sfr.getFirstRow() + 1;
-            _frAggs = new FormulaRecordAggregate[width * height];
+
+            // ensure we do not try to initialize a very large amount of formula-record-aggregates
+            int allocateSize = width * height;
+            IOUtils.safelyAllocateCheck(allocateSize, MAX_NUMBER_AGGS);
+
+            _frAggs = new FormulaRecordAggregate[allocateSize];
             _numberOfFormulas = 0;
         }
 

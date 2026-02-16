@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.jupiter.api.TestInstance;
@@ -91,12 +92,14 @@ public abstract class BaseTestIteratingXLS {
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4819588401201152.xls", RuntimeException.class);
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-6537773940867072.xls", RuntimeException.class);
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4651309315719168.xls", RuntimeException.class);
+        excludes.put("rde.imf.ru_sites_default_files_rde_documents_vodootvedenie_2020.xlsb.xls", OfficeXmlFileException.class);
+
         return excludes;
     }
 
     @ParameterizedTest
     @MethodSource("files")
-    void testMain(File file, Class<? extends Throwable> t) throws Exception {
+    void testMain(File file, Class<? extends Throwable> t) {
         // avoid running files leftover from previous failed runs
         // or created by tests running in parallel
         // otherwise this would cause sporadic failures with

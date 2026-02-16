@@ -81,7 +81,7 @@ public final class EscherPropertyFactory {
                 pos += eap.setArrayData(data, pos);
             } else if (p instanceof EscherComplexProperty) {
                 EscherComplexProperty ecp = (EscherComplexProperty)p;
-                int cdLen = ecp.getComplexData().length;
+                int cdLen = ecp.getComplexSize();
                 int leftover = data.length - pos;
                 if (leftover < cdLen) {
                     throw new IllegalStateException("Could not read complex escher property, length was " +

@@ -22,8 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -116,5 +117,34 @@ class TestDrawPictureShape {
         } else {
             return val;
         }
+    }
+
+    @Test
+    void testAlphaXSLFPictureShape() throws IOException {
+        SlideShow<?,?> ss = openSampleDocument("picture-transparency.pptx");
+
+        // First slide contains a fully opaque bitmap
+        verifySlideFirstPixelColor(ss.getSlides().get(0), new Color(0, 0, 0, 255));
+        // Second slide contains a 20% transparency bitmap (255*0.8=204)
+        verifySlideFirstPixelColor(ss.getSlides().get(1), new Color(0, 0, 0, 204));
+        // Third slide contains a 60% transparency bitmap (255*0.4=102)
+        verifySlideFirstPixelColor(ss.getSlides().get(2), new Color(0, 0, 0, 102));
+        // Fourth slide contains a fully transparent bitmap
+        verifySlideFirstPixelColor(ss.getSlides().get(3), new Color(0, 0, 0, 0));
+    }
+
+    private void verifySlideFirstPixelColor(Slide<?,?> slide, Color color) {
+        PictureShape<?,?> picShape = null;
+        for (Shape<?,?> shape : slide.getShapes()) {
+            if (shape instanceof PictureShape) {
+                picShape = (PictureShape<?,?>)shape;
+                break;
+            }
+        }
+        assertNotNull(picShape);
+        BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+        new DrawPictureShape(picShape).draw(img.createGraphics());
+        assertEquals(Transparency.TRANSLUCENT, img.getTransparency());
+        assertEquals(color, new Color(img.getRGB(0, 0), true));
     }
 }

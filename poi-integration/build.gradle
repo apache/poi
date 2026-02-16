@@ -109,7 +109,7 @@ tasks.register('compileTest9', JavaCompile) {
 
 
 jar {
-    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+    destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
 
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
@@ -119,7 +119,7 @@ jar {
 // Create a separate jar for test-code to depend on it in other projects
 // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
 task testJar(type: Jar, dependsOn: [ testClasses, compileTest9 ] ) {
-    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
+    destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}-tests")
 
     setArchiveClassifier 'tests'
     // ignore second module-info.class from main
@@ -156,9 +156,13 @@ test {
     }
 }
 
-javadoc { enabled(false) }
+javadoc {
+    enabled = false
+}
 
-sourcesJar { enabled(false) }
+sourcesJar {
+    enabled = false
+}
 
 generateMetadataFileForPOIPublication.enabled = false
 publishPOIPublicationToMavenLocal.enabled = false

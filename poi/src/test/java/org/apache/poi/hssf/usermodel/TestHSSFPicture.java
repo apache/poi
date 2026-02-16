@@ -21,6 +21,7 @@ import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -28,6 +29,10 @@ import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherPropertyTypes;
+import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalSheet;
@@ -285,4 +290,25 @@ final class TestHSSFPicture extends BaseTestPicture {
         }
     }
 
+    @Test
+    void testEmptyOptRecord() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sh = wb.createSheet("Pictures");
+            HSSFPatriarch dr = sh.createDrawingPatriarch();
+            HSSFShapeGroup gr = dr.createGroup(new HSSFClientAnchor());
+            HSSFPicture pic = new HSSFPicture(gr, new HSSFClientAnchor()) {
+                @Override
+                protected EscherContainerRecord createSpContainer() {
+                    EscherContainerRecord spContainer = super.createSpContainer();
+                    EscherOptRecord opt = spContainer.getChildById(EscherOptRecord.RECORD_ID);
+                    spContainer.removeChildRecord(opt);
+                    spContainer.removeChildRecord(spContainer.getChildById(EscherTextboxRecord.RECORD_ID));
+                    return spContainer;
+                }
+            };
+
+            assertNull(pic.getOptRecord());
+            assertEquals(-1, pic.getPictureIndex());
+        }
+    }
 }

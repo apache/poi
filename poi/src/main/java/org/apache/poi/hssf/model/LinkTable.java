@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -248,8 +247,9 @@ final class LinkTable {
 
         int nItems = temp.size();
         if (nItems < 1) {
+            Class<? extends Record> nextClass = rs.peekNextClass();
             throw new IllegalStateException("Expected an EXTERNSHEET record but got ("
-                    + rs.peekNextClass().getName() + ")");
+                    + (nextClass == null ? "<null>" : nextClass.getName()) + ")");
         }
         if (nItems == 1) {
             // this is the normal case. There should be just one ExternSheetRecord
@@ -368,6 +368,10 @@ final class LinkTable {
     }
 
     public String[] getExternalBookAndSheetName(int extRefIndex) {
+        if (_externSheetRecord == null) {
+            throw new IllegalStateException("ExternSheetRecord is not set");
+        }
+
         int ebIx = _externSheetRecord.getExtbookIndexFromRefIndex(extRefIndex);
         SupBookRecord ebr = _externalBookBlocks[ebIx].getExternalBookRecord();
         if (!ebr.isExternalReferences()) {
@@ -378,11 +382,12 @@ final class LinkTable {
         int shIx2 = _externSheetRecord.getLastSheetIndexFromRefIndex(extRefIndex);
         String firstSheetName = null;
         String lastSheetName = null;
-        if (shIx1 >= 0) {
-            firstSheetName = ebr.getSheetNames()[shIx1];
+        String[] sheetNames = ebr.getSheetNames();
+        if (shIx1 >= 0 && sheetNames != null) {
+            firstSheetName = sheetNames[shIx1];
         }
-        if (shIx2 >= 0) {
-            lastSheetName = ebr.getSheetNames()[shIx2];
+        if (shIx2 >= 0 && sheetNames != null) {
+            lastSheetName = sheetNames[shIx2];
         }
         if (shIx1 == shIx2) {
             return new String[]{
@@ -452,8 +457,12 @@ final class LinkTable {
         }
         SupBookRecord ebrTarget = _externalBookBlocks[externalBookIndex].getExternalBookRecord();
 
-        int firstSheetIndex = getSheetIndex(ebrTarget.getSheetNames(), firstSheetName);
-        int lastSheetIndex = getSheetIndex(ebrTarget.getSheetNames(), lastSheetName);
+        String[] sheetNames = ebrTarget.getSheetNames();
+        if (sheetNames == null) {
+            throw new IllegalStateException("Sheet names are not available for the ExternalBookRecord");
+        }
+        int firstSheetIndex = getSheetIndex(sheetNames, firstSheetName);
+        int lastSheetIndex = getSheetIndex(sheetNames, lastSheetName);
 
         // Find or add the external sheet record definition for this
         int result = _externSheetRecord.getRefIxForSheet(externalBookIndex, firstSheetIndex, lastSheetIndex);

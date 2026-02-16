@@ -252,7 +252,7 @@ public final class TestColumnHelper {
     }
 
     /**
-     * Creates and adds a hidden column and then a best fit column with the given min/max pairs.
+     * Creates and adds a hidden column and then the best fit column with the given min/max pairs.
      * Suitable for testing handling of overlap.
      */
     private static CTCols createHiddenAndBestFitColsWithHelper(int hiddenMin, int hiddenMax, int bestFitMin, int bestFitMax) {
@@ -404,7 +404,6 @@ public final class TestColumnHelper {
         return count;
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     void testColumnsCollapsed() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {

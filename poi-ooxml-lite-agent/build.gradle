@@ -22,8 +22,8 @@ sourceSets {
 }
 
 dependencies {
-    api 'net.bytebuddy:byte-buddy:1.18.2'
-    api 'net.bytebuddy:byte-buddy-agent:1.18.2'
+    api 'net.bytebuddy:byte-buddy:1.18.5'
+    api 'net.bytebuddy:byte-buddy-agent:1.18.5'
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
 }
 
@@ -56,7 +56,7 @@ tasks.register('compileJava9', JavaCompile) {
 }
 
 jar {
-    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+    destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
 
     manifest {
         attributes (

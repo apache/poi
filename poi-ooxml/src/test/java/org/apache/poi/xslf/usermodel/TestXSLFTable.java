@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -36,12 +37,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.sl.draw.DrawTableShape;
-import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.sl.usermodel.Slide;
-import org.apache.poi.sl.usermodel.StrokeStyle;
+import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.TableCell.BorderEdge;
-import org.apache.poi.sl.usermodel.TextParagraph;
-import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.XSLFTestDataSamples;
@@ -84,6 +81,7 @@ class TestXSLFTable {
         tab.removeColumn(0);
         tab.removeColumn(tab.getNumberOfColumns() - 1);
         assertEquals(data[0].length, tab.getNumberOfColumns());
+        assertNull(tab.getTableStyle());
 
         int startRow = rowIdx-1;
 
@@ -167,7 +165,7 @@ class TestXSLFTable {
         XSLFSlide slide = ppt.getSlides().get(3);
         List<XSLFShape> shapes = slide.getShapes();
         assertEquals(1, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSLFTable);
+        assertInstanceOf(XSLFTable.class, shapes.get(0));
         XSLFTable tbl = (XSLFTable)shapes.get(0);
         assertEquals(3, tbl.getNumberOfColumns());
         assertEquals(6, tbl.getNumberOfRows());
@@ -179,6 +177,7 @@ class TestXSLFTable {
         assertEquals(90.0, tbl.getColumnWidth(0), 0);
         assertEquals(240.0, tbl.getColumnWidth(1), 0);
         assertEquals(150.0, tbl.getColumnWidth(2), 0);
+        assertNotNull(tbl.getTableStyle());
 
         for(XSLFTableRow row : tbl){
             // all rows have the same height
@@ -211,7 +210,7 @@ class TestXSLFTable {
         assertNotNull(tbl.getCTTable());
         assertNotNull(tbl.getCTTable().getTblGrid());
         assertNotNull(tbl.getCTTable().getTblPr());
-        assertTrue(tbl.getXmlObject() instanceof CTGraphicalObjectFrame);
+        assertInstanceOf(CTGraphicalObjectFrame.class, tbl.getXmlObject());
         assertEquals("Table 2", tbl.getShapeName());
         assertEquals(2, tbl.getShapeId());
         assertEquals(0, tbl.getRows().size());
@@ -220,6 +219,7 @@ class TestXSLFTable {
 
         assertEquals(0, tbl.getNumberOfColumns());
         assertEquals(0, tbl.getNumberOfRows());
+        assertNull(tbl.getTableStyle());
 
         XSLFTableRow row0 = tbl.addRow();
         assertNotNull(row0.getXmlObject());
@@ -285,6 +285,7 @@ class TestXSLFTable {
         XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
         XSLFSlide sl = ss.getSlides().get(0);
         XSLFTable tab = (XSLFTable)sl.getShapes().get(4);
+        assertNotNull(tab.getTableStyle());
         sl.removeShape(tab);
 
         XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss);
@@ -309,6 +310,7 @@ class TestXSLFTable {
         XSLFTableCell tc0 = tr.addCell();
         tc0.setText("bla bla bla bla");
         tab.setColumnWidth(0, 50);
+        assertNull(tab.getTableStyle());
 
         // usually text height == 88, but font rendering is platform dependent
         // so we use something more reliable
@@ -359,7 +361,76 @@ class TestXSLFTable {
             new DrawTableShape(newTable).setAllBorders(3., StrokeStyle.LineDash.LG_DASH_DOT, Color.BLUE);
 
             assertEquals(3, newTable.getCTTable().getTblGrid().sizeOfGridColArray());
+            assertNull(newTable.getTableStyle());
         }
     }
 
+    private void verifyTableCellStyleColors(XSLFTableCell cell, String text, Color fontColor, Color fillColor) {
+        assertEquals(text, cell.getText());
+        PaintStyle colorText1 = cell.getTextParagraphs().get(0).getTextRuns().get(0).getFontColor();
+        assertInstanceOf(PaintStyle.SolidPaint.class, colorText1);
+        assertEquals(fontColor, ((PaintStyle.SolidPaint)colorText1).getSolidColor().getColor());
+        assertEquals(fillColor, cell.getFillColor());
+    }
+
+    @Test
+    void testTableCellStyle() throws IOException {
+        XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("table-with-different-font-colors.pptx");
+
+        // First slide: test row-related table styles
+
+        List<XSLFShape> shapes = ppt.getSlides().get(0).getShapes();
+        assertEquals(1, shapes.size());
+        assertInstanceOf(XSLFTable.class, shapes.get(0));
+        XSLFTable tbl = (XSLFTable)shapes.get(0);
+        assertEquals(4, tbl.getNumberOfColumns());
+        assertEquals(4, tbl.getNumberOfRows());
+        assertNotNull(tbl.getCTTable());
+        assertNotNull(tbl.getTableStyle());
+
+        // Yellow font color due to "first row" table style
+        verifyTableCellStyleColors(tbl.getRows().get(0).getCells().get(0), "Text 1",
+                new Color(255, 255, 0), new Color(21, 96, 130));
+        // Dark green font color due to direct format
+        verifyTableCellStyleColors(tbl.getRows().get(0).getCells().get(2), "Text 3",
+                new Color(0, 176, 80), new Color(21, 96, 130));
+        // Grey font color due to "even row" table style + fallback
+        verifyTableCellStyleColors(tbl.getRows().get(1).getCells().get(0), "Text 5",
+                new Color(119, 119, 119), new Color(204, 210, 216));
+        // Light blue font color due to "odd row" table style
+        verifyTableCellStyleColors(tbl.getRows().get(2).getCells().get(0), "Text 9",
+                new Color(0, 255, 255), new Color(231, 234, 237));
+        // Red font color due to direct format
+        verifyTableCellStyleColors(tbl.getRows().get(2).getCells().get(2), "Text 11",
+                new Color(255, 0, 0), new Color(231, 234, 237));
+        // Blue font color due to "last row" table style
+        verifyTableCellStyleColors(tbl.getRows().get(3).getCells().get(0), "Text 13",
+                new Color(0, 0, 255), new Color(21, 96, 130));
+
+        // Second slide: test column-related table styles
+
+        shapes = ppt.getSlides().get(1).getShapes();
+        assertEquals(1, shapes.size());
+        assertInstanceOf(XSLFTable.class, shapes.get(0));
+        tbl = (XSLFTable)shapes.get(0);
+        assertEquals(4, tbl.getNumberOfColumns());
+        assertEquals(4, tbl.getNumberOfRows());
+        assertNotNull(tbl.getCTTable());
+        assertNotNull(tbl.getTableStyle());
+
+        // Green font color due to "first column" table style
+        verifyTableCellStyleColors(tbl.getRows().get(0).getCells().get(0), "Text 1",
+                new Color(0, 255, 0), new Color(21, 96, 130));
+        // Grey font color due to "even column" table style + fallback
+        verifyTableCellStyleColors(tbl.getRows().get(0).getCells().get(1), "Text 2",
+                new Color(119, 119, 119), new Color(204, 210, 216));
+        // Light blue font color due to "odd column" table style
+        verifyTableCellStyleColors(tbl.getRows().get(0).getCells().get(2), "Text 3",
+                new Color(0, 255, 255), new Color(231, 234, 237));
+        // Red font color due to "last column" table style
+        verifyTableCellStyleColors(tbl.getRows().get(0).getCells().get(3), "Text 4",
+                new Color(255, 0, 0), new Color(21, 96, 130));
+
+        ppt.close();
+    }
 }

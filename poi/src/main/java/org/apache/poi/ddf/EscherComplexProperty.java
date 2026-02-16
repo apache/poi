@@ -35,6 +35,7 @@ public class EscherComplexProperty extends EscherProperty {
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
+    private int complexSize;
     private byte[] complexData;
 
     /**
@@ -61,7 +62,15 @@ public class EscherComplexProperty extends EscherProperty {
      */
     public EscherComplexProperty(short id, int complexSize) {
         super((short)(id | IS_COMPLEX));
-        complexData = IOUtils.safelyAllocate(complexSize, MAX_RECORD_LENGTH);
+
+        // lazy-allocate the data
+        this.complexSize = complexSize;
+    }
+
+    private void ensureComplexData(int size) {
+        if (this.complexData == null) {
+            complexData = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+        }
     }
 
     /**
@@ -94,7 +103,7 @@ public class EscherComplexProperty extends EscherProperty {
     @Override
     public int serializeSimplePart(byte[] data, int pos) {
         LittleEndian.putShort(data, pos, getId());
-        LittleEndian.putInt(data, pos + 2, complexData.length);
+        LittleEndian.putInt(data, pos + 2, complexSize);
         return 6;
     }
 
@@ -107,8 +116,13 @@ public class EscherComplexProperty extends EscherProperty {
      */
     @Override
     public int serializeComplexPart(byte[] data, int pos) {
-        System.arraycopy(complexData, 0, data, pos, complexData.length);
-        return complexData.length;
+        if (complexData == null) {
+            // initialize empty array if complexData was never allocated
+            Arrays.fill(data, pos, pos + complexSize, (byte)0);
+        } else {
+            System.arraycopy(complexData, 0, data, pos, complexData.length);
+        }
+        return complexSize;
     }
 
     /**
@@ -117,7 +131,14 @@ public class EscherComplexProperty extends EscherProperty {
      * @return the complex bytes
      */
     public byte[] getComplexData() {
+        // we need to allocate here as sometimes the array is written to
+        ensureComplexData(complexSize);
+
         return complexData;
+    }
+
+    public int getComplexSize() {
+        return complexSize;
     }
 
     public int setComplexData(byte[] complexData) {
@@ -128,25 +149,33 @@ public class EscherComplexProperty extends EscherProperty {
         if (complexData == null) {
             return 0;
         } else {
-            int copySize = Math.max(0, Math.min(this.complexData.length, complexData.length - offset));
+            int copySize = Math.max(0, Math.min(complexSize, complexData.length - offset));
+            ensureComplexData(copySize);
             System.arraycopy(complexData, offset, this.complexData, 0, copySize);
             return copySize;
         }
     }
-
-
 
     protected void resizeComplexData(int newSize) {
         resizeComplexData(newSize, Integer.MAX_VALUE);
     }
 
     protected void resizeComplexData(int newSize, int copyLen) {
-        if (newSize == complexData.length) {
+        if (newSize == complexSize) {
             return;
         }
+
+        // no need to copy if data was not initialized yet
+        if (complexData == null) {
+            complexSize = newSize;
+
+            return;
+        }
+
         byte[] newArray = IOUtils.safelyAllocate(newSize, MAX_RECORD_LENGTH);
         System.arraycopy(complexData, 0, newArray, 0, Math.min(Math.min(complexData.length, copyLen),newSize));
         complexData = newArray;
+        complexSize = newSize;
     }
 
     /**
@@ -166,6 +195,18 @@ public class EscherComplexProperty extends EscherProperty {
 
         EscherComplexProperty escherComplexProperty = (EscherComplexProperty) o;
 
+        // not equal if size differs
+        if (complexSize != escherComplexProperty.complexSize) {
+            return false;
+        }
+
+        if (complexData == null) {
+            // if complexData is not initialized, it is equal only if
+            // complexData is also uninitialized or equals an empty array
+            return escherComplexProperty.complexData == null ||
+                    Arrays.equals(escherComplexProperty.complexData, new byte[escherComplexProperty.complexSize]);
+        }
+
         return Arrays.equals(complexData, escherComplexProperty.complexData);
     }
 
@@ -176,16 +217,18 @@ public class EscherComplexProperty extends EscherProperty {
      */
     @Override
     public int getPropertySize() {
-        return 6 + complexData.length;
+        return 6 + complexSize;
     }
 
     @Override
     public int hashCode() {
+        ensureComplexData(complexSize);
         return Arrays.deepHashCode(new Object[]{complexData, getId()});
     }
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {
+        ensureComplexData(complexSize);
         return GenericRecordUtil.getGenericProperties(
             "base", super::getGenericProperties,
             "data", this::getComplexData

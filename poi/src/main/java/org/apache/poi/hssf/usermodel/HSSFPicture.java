@@ -52,25 +52,27 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     /**
      * Constructs a picture object.
      */
-    public HSSFPicture( HSSFShape parent, HSSFAnchor anchor )
-    {
+    public HSSFPicture( HSSFShape parent, HSSFAnchor anchor ) {
         super( parent, anchor );
         super.setShapeType(OBJECT_TYPE_PICTURE);
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
         cod.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_PICTURE);
     }
 
-    public int getPictureIndex()
-    {
-        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.BLIP__BLIPTODISPLAY);
-        if (null == property){
+    public int getPictureIndex() {
+        EscherOptRecord optRecord = getOptRecord();
+        if (optRecord == null) {
+            return -1;
+        }
+
+        EscherSimpleProperty property = optRecord.lookup(EscherPropertyTypes.BLIP__BLIPTODISPLAY);
+        if (null == property) {
             return -1;
         }
         return property.getPropertyValue();
     }
 
-    public void setPictureIndex( int pictureIndex )
-    {
+    public void setPictureIndex( int pictureIndex ) {
         setPropertyValue(new EscherSimpleProperty( EscherPropertyTypes.BLIP__BLIPTODISPLAY, false, true, pictureIndex));
     }
 
@@ -95,7 +97,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * </p>
      */
     @Override
-    public void resize(){
+    public void resize() {
         resize(Double.MAX_VALUE);
     }
 
@@ -152,7 +154,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @since 3.0.2
      */
     @Override
-    public HSSFClientAnchor getPreferredSize(){
+    public HSSFClientAnchor getPreferredSize() {
         return getPreferredSize(1.0);
     }
 
@@ -163,7 +165,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return HSSFClientAnchor with the preferred size for this image
      * @since 3.0.2
      */
-    public HSSFClientAnchor getPreferredSize(double scale){
+    public HSSFClientAnchor getPreferredSize(double scale) {
         return getPreferredSize(scale, scale);
     }
 
@@ -176,7 +178,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @since 3.11
      */
     @Override
-    public HSSFClientAnchor getPreferredSize(double scaleX, double scaleY){
+    public HSSFClientAnchor getPreferredSize(double scaleX, double scaleY) {
         ImageUtils.setPreferredSize(this, scaleX, scaleY);
         return getClientAnchor();
     }
@@ -187,7 +189,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return image dimension in pixels
      */
     @Override
-    public Dimension getImageDimension(){
+    public Dimension getImageDimension() {
         InternalWorkbook iwb = getPatriarch().getSheet().getWorkbook().getWorkbook();
         EscherBSERecord bse = iwb.getBSERecord(getPictureIndex());
         byte[] data = bse.getBlipRecord().getPicturedata();
@@ -206,7 +208,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return picture data for this shape or {@code null} if picture wasn't embedded, i.e. external linked
      */
     @Override
-    public HSSFPictureData getPictureData(){
+    public HSSFPictureData getPictureData() {
         int picIdx = getPictureIndex();
         if (picIdx == -1) {
             return null;
@@ -249,7 +251,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
             : StringUtil.getFromUnicodeLE(propFile.getComplexData()).trim();
     }
 
-    public void setFileName(String data){
+    public void setFileName(String data) {
         // TODO: add trailing \u0000?
         byte[] bytes = StringUtil.getToUnicodeLE(data);
         EscherComplexProperty prop = new EscherComplexProperty(EscherPropertyTypes.BLIP__BLIPFILENAME, true, bytes.length);

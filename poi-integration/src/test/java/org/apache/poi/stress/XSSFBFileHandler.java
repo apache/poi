@@ -78,7 +78,7 @@ public class XSSFBFileHandler extends AbstractFileHandler {
         XSSFBEventBasedExcelExtractor ex = new XSSFBEventBasedExcelExtractor(pkg);
         String txt = ex.getText();
         if (txt.length() < 1) {
-            throw new RuntimeException("Should have gotten some text.");
+            throw new IllegalArgumentException("Should have gotten some text.");
         }
     }
 

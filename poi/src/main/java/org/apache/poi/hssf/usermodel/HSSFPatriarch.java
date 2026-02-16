@@ -558,6 +558,9 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
 
     private void setFlipFlags(HSSFShape shape){
         EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+        if (shape.getAnchor() == null || sp == null) {
+            return;
+        }
         if (shape.getAnchor().isHorizontallyFlipped()) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
         }

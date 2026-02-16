@@ -112,6 +112,10 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
             return null;
         }
         final TxMasterStyleAtom t = _txmaster[txtype];
+        if (t == null) {
+            throw new IllegalStateException("Cannot get master-style for type " + txtype);
+        }
+
         final List<TextPropCollection> styles = isCharacter ? t.getCharacterStyles() : t.getParagraphStyles();
         // TODO: what is the reaction for readOnly=false and styles.isEmpty()?
         final int minLevel = Math.min(level, styles.size()-1);

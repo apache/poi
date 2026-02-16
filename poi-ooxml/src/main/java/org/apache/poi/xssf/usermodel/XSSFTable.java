@@ -211,7 +211,9 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
            List<XSSFTableColumn> columns = new ArrayList<>();
             CTTableColumns ctTableColumns = ctTable.getTableColumns();
             if (ctTableColumns != null) {
-                for (CTTableColumn column : ctTableColumns.getTableColumnList()) {
+                // Use Array and not List-based access, as list-iteration is
+                // very slow for large tables
+                for (CTTableColumn column : ctTableColumns.getTableColumnArray()) {
                     XSSFTableColumn tableColumn = new XSSFTableColumn(this, column);
                     columns.add(tableColumn);
                 }
@@ -308,10 +310,11 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
                     tableStart.getCol() + newColumnCount - 1);
             AreaReference newTableArea = new AreaReference(tableStart, newTableEnd, version);
 
+            // setCellRef also calls updateHeaders()
             setCellRef(newTableArea);
+        } else {
+            updateHeaders();
         }
-
-        updateHeaders();
 
         return getColumns().get(columnIndex);
     }
@@ -353,7 +356,9 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
 
         CTTableColumns tableColumns = ctTable.getTableColumns();
         tableColumns.removeTableColumn(columnIndex);
-        tableColumns.setCount(tableColumns.getTableColumnList().size());
+        // Use Array and not List-based access, as list-iteration is
+        // very slow for large tables
+        tableColumns.setCount(tableColumns.getTableColumnArray().length);
         updateReferences();
         updateHeaders();
     }
@@ -406,7 +411,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
                 try {
                     ctTable.getTableStyleInfo().unsetName();
                 } catch (Exception e) {
-                    LOG.atDebug().log("Failed to unset style name", e);
+                    LOG.atDebug().log("Failed to unset style name: {}", e);
                 }
             }
             styleName = null;
@@ -821,13 +826,19 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             int cellnum = firstHeaderColumn;
             CTTableColumns ctTableColumns = getCTTable().getTableColumns();
             if(ctTableColumns != null) {
-                for (CTTableColumn col : ctTableColumns.getTableColumnList()) {
+                // Use Array and not List-based access, as list-iteration is
+                // very slow for large tables
+                for (CTTableColumn col : ctTableColumns.getTableColumnArray()) {
                     XSSFCell cell = row.getCell(cellnum);
                     if (cell != null) {
                         String colName = formatter.formatCellValue(cell);
                         colName = colName.replace("\n", "_x000a_");
                         colName = colName.replace("\r", "_x000d_");
-                        col.setName(colName);
+
+                        // setName() is costly, let's only run it when necessary
+                        if (!colName.equals(col.getName())) {
+                            col.setName(colName);
+                        }
                     }
                     cellnum++;
                 }

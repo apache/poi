@@ -34,9 +34,16 @@ plugins {
     id 'com.dorongold.task-tree' version '4.0.1'
     id 'org.nosphere.apache.rat' version '0.8.1'
     id 'distribution'
-    id 'com.github.spotbugs' version '6.4.7'        // 6.2.0+ requires JDK 11
+
+    // 6.2.0+ requires JDK 11
+    // this is the version of the Gradle plugin, it usually includes a
+    // different version of spotbugs itself
+    // Latest spotbugs: https://github.com/spotbugs/spotbugs
+    // Latest gradle plugin: https://plugins.gradle.org/plugin/com.github.spotbugs
+    id 'com.github.spotbugs' version '6.4.8'
+
     id 'de.thetaphi.forbiddenapis' version '3.10'
-    id 'org.sonarqube' version '7.1.0.6387'
+    id 'org.sonarqube' version '7.2.2.6593'
     id 'org.cyclonedx.bom' version '2.4.1'
     id 'com.adarshr.test-logger' version '4.0.0'
 }
@@ -108,13 +115,13 @@ subprojects {
 
     ext {
         bouncyCastleVersion = '1.83'
-        commonsCodecVersion = '1.20.0'
+        commonsCodecVersion = '1.21.0'
         commonsCompressVersion = '1.28.0'
         commonsIoVersion = '2.21.0'
         commonsMathVersion = '3.6.1'
         junitVersion = '5.13.4'
-        log4jVersion = '2.24.3'
-        mockitoVersion = '5.20.0'
+        log4jVersion = '2.25.3'
+        mockitoVersion = '5.21.0'
         hamcrestVersion = '3.0'
         xmlbeansVersion = '5.3.0'
         batikVersion = '1.19'
@@ -210,7 +217,7 @@ subprojects {
                 links 'https://poi.apache.org/apidocs/dev/'
                 if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
                 links 'https://xmlbeans.apache.org/docs/5.0.0/'
-                links 'https://commons.apache.org/proper/commons-compress/apidocs/'
+                links 'https://javadoc.io/doc/org.apache.commons/commons-compress/1.27.1/'
                 use = true
                 splitIndex = true
                 source = "11"
@@ -227,14 +234,14 @@ subprojects {
 
     tasks.withType(Jar).configureEach {
         duplicatesStrategy = DuplicatesStrategy.FAIL
-        destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+        destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
 
         doLast {
             // make sure we do not have distribution jar-files with different versions
             // in the build-dir as those lead to strange errors about "duplicate modules"
             // when building java9 JPMS class files ("java9")
             ant.delete(failOnError: true, verbose: true) {
-                fileset(dir: "../build/dist/maven/${project.archivesBaseName}", erroronmissingdir: false) {
+                fileset(dir: "../build/dist/maven/${base.archivesName.get()}", erroronmissingdir: false) {
                     include(name: '*.jar')
                     exclude(name: "*${version}.jar")
                     exclude(name: "*${version}-sources.jar")
@@ -260,7 +267,7 @@ subprojects {
             }
             // use failOnError=false for -javadoc and -tests as not all modules create this directory
             ant.delete(failOnError: false, verbose: true) {
-                fileset(dir: "../build/dist/maven/${project.archivesBaseName}-javadoc", erroronmissingdir: false) {
+                fileset(dir: "../build/dist/maven/${base.archivesName.get()}-javadoc", erroronmissingdir: false) {
                     include(name: '*-javadoc.jar')
                     exclude(name: "*${version}-javadoc.jar")
 
@@ -275,7 +282,7 @@ subprojects {
                 }
             }
             ant.delete(failOnError: false, verbose: true) {
-                fileset(dir: "../build/dist/maven/${project.archivesBaseName}-tests", erroronmissingdir: false) {
+                fileset(dir: "../build/dist/maven/${base.archivesName.get()}-tests", erroronmissingdir: false) {
                     include(name: '*-tests.jar')
                     exclude(name: "*${version}-tests.jar")
 
@@ -290,8 +297,8 @@ subprojects {
                 }
             }
 
-            ant.checksum(file: it.archivePath, algorithm: 'SHA-256', fileext: '.sha256', format: 'MD5SUM')
-            ant.checksum(file: it.archivePath, algorithm: 'SHA-512', fileext: '.sha512', format: 'MD5SUM')
+            ant.checksum(file: it.archiveFile.get().asFile, algorithm: 'SHA-256', fileext: '.sha256', format: 'MD5SUM')
+            ant.checksum(file: it.archiveFile.get().asFile, algorithm: 'SHA-512', fileext: '.sha512', format: 'MD5SUM')
         }
     }
 
@@ -319,11 +326,11 @@ subprojects {
     javadocJar {
         // if javadocs and binaries are in the same directory, JPMS complaints about duplicated modules
         // in the module-path
-        destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-javadoc")
+        destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}-javadoc")
     }
 
     sourcesJar {
-        destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+        destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
         exclude 'META-INF/services/**'
     }
 
@@ -503,8 +510,8 @@ subprojects {
     publishing {
         publications {
             POI(MavenPublication) {
-                groupId 'org.apache.poi'
-                artifactId project.archivesBaseName
+                groupId = 'org.apache.poi'
+                artifactId = base.archivesName.get()
 
                 from components.java
 
@@ -585,7 +592,7 @@ subprojects {
         }
     }
 
-    generatePomFileForPOIPublication.destination = "../build/dist/maven/${project.archivesBaseName}/${project.archivesBaseName}-${project.version}.pom"
+    generatePomFileForPOIPublication.destination = "../build/dist/maven/${base.archivesName.get()}/${base.archivesName.get()}-${project.version}.pom"
 
     tasks.withType(GenerateModuleMetadata).configureEach {
         enabled = false

@@ -340,6 +340,9 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
         String styleId = tab.getTblPr().getTableStyleId();
         XSLFTableStyles styles = getSheet().getSlideShow().getTableStyles();
+        if (styles == null) {
+            return null;
+        }
         for (XSLFTableStyle style : styles.getStyles()) {
             if (style.getStyleId().equals(styleId)) {
                 return style;

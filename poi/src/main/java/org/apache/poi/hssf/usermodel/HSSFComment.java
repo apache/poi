@@ -285,7 +285,11 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         byte [] inSp = getEscherContainer().serialize();
         spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
         ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
-        NoteRecord note = (NoteRecord) getNoteRecord().cloneViaReserialise();
+        NoteRecord noteRecord = getNoteRecord();
+        if (noteRecord == null) {
+            throw new IllegalStateException("Could not clone the note record for this comment because it is null");
+        }
+        NoteRecord note = (NoteRecord) noteRecord.cloneViaReserialise();
         return new HSSFComment(spContainer, obj, txo, note);
     }
 

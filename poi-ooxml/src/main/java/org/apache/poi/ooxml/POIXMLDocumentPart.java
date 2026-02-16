@@ -45,6 +45,7 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
+import org.apache.xmlbeans.XmlException;
 
 /**
  * Represents an entry of a OOXML package.
@@ -258,7 +259,7 @@ public class POIXMLDocumentPart {
      */
     public final POIXMLDocumentPart getRelationById(String id) {
         RelationPart rp = getRelationPartById(id);
-        return (rp == null) ? null : rp.getDocumentPart();
+        return rp == null ? null : rp.getDocumentPart();
     }
 
     /**
@@ -668,8 +669,22 @@ public class POIXMLDocumentPart {
 
                     POIXMLDocumentPart childPart = context.get(p);
                     if (childPart == null) {
-                        childPart = factory.createDocumentPart(this, p);
-                        //here we are checking if part if embedded and excel then set it to chart class
+                        try {
+                            childPart = factory.createDocumentPart(this, p);
+                        } catch (POIXMLException e) {
+                            if (e.getCause() instanceof XmlException
+                                    && XSSFRelation.CHART.getRelation().equals(rel.getRelationshipType())) {
+                                // https://github.com/apache/poi/pull/982
+                                // only allow this skipping event for charts
+                                // we need to be careful about not catching every exception here because
+                                // issues like zip bomb exceptions need to thrown and not ignored
+                                LOG.atWarn().log("Skipped unsupported part: {}", e.getMessage());
+                                continue;
+                            } else {
+                                throw e;
+                            }
+                        }
+                        //here we are checking if part is embedded and excel then set it to chart class
                         //so that at the time to writing we can also write updated embedded part
                         if (this instanceof XDDFChart && childPart instanceof XSSFWorkbook) {
                             ((XDDFChart) this).setWorkbook((XSSFWorkbook) childPart);
@@ -782,7 +797,7 @@ public class POIXMLDocumentPart {
      * @since 5.3.0
      */
     public final HyperlinkRelationship createHyperlink(URI uri, boolean isExternal, String relId) {
-        PackageRelationship pr = packagePart.addRelationship(uri, isExternal ? TargetMode.EXTERNAL : TargetMode.INTERNAL,
+        packagePart.addRelationship(uri, isExternal ? TargetMode.EXTERNAL : TargetMode.INTERNAL,
             PackageRelationshipTypes.HYPERLINK_PART, relId);
         HyperlinkRelationship hyperlink = new HyperlinkRelationship(this, uri, isExternal, relId);
         referenceRelationships.put(relId, hyperlink);

@@ -88,7 +88,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
     /**
      * Creates a handler that converts numeric and date cells to formatted strings via {@link
      * DataFormatter}.
-     * 
+     *
      * <p>Select this overload when the consumer expects formatted string values rather than raw
      * cell representations.
      *
@@ -224,6 +224,10 @@ public class XSSFBSheetHandler extends XSSFBParser {
     }
 
     private ExcelNumberFormat getExcelNumberFormat() {
+        if (styles == null) {
+            throw new IllegalStateException("Cannot read information because styles-table is not available");
+        }
+
         int styleIdx = cellBuffer.getStyleIdx();
         String formatString = styles.getNumberFormatString(styleIdx);
         short styleIndex = styles.getNumberFormatIndex(styleIdx);
@@ -399,7 +403,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
 
         rkBuffer[4] = b0;
         System.arraycopy(data, offset + 1, rkBuffer, 5, 3);
-        double d = 0.0;
+        double d;
         if (floatingPoint) {
             d = LittleEndian.getDouble(rkBuffer);
         } else {

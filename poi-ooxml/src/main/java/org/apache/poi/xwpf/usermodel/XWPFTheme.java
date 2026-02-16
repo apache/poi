@@ -27,7 +27,9 @@ import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBaseStyles;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorScheme;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTFontCollection;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeStyleSheet;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSupplementalFont;
 import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
@@ -68,10 +70,18 @@ public class XWPFTheme extends POIXMLDocumentPart {
     }
 
     /**
+     * @return the underlying CTOfficeStyleSheet instance.
+     * @since 6.0.0
+     */
+    public CTOfficeStyleSheet getCTOfficeStyleSheet() {
+        return _theme;
+    }
+
+    /**
      *
      * @return name of this theme, e.g. "Office Theme"
      */
-    public String getName(){
+    public String getName() {
         return _theme.getName();
     }
 
@@ -80,7 +90,7 @@ public class XWPFTheme extends POIXMLDocumentPart {
      *
      * @param name name of this theme
      */
-    public void setName(String name){
+    public void setName(String name) {
         _theme.setName(name);
     }
 
@@ -132,23 +142,79 @@ public class XWPFTheme extends POIXMLDocumentPart {
     }
 
     /**
-     * @return typeface of the major font to use in a document.
+     * @return typeface of the major font to use in a document (possibly <code>null</code>).
      * Typically, the major font is used for heading areas of a document.
      *
      */
     @SuppressWarnings("WeakerAccess")
-    public String getMajorFont(){
-        return _theme.getThemeElements().getFontScheme().getMajorFont().getLatin().getTypeface();
+    public String getMajorFont() {
+        CTFontCollection majorFonts = getMajorFonts();
+        return majorFonts == null || majorFonts.getLatin() == null ?
+                null : majorFonts.getLatin().getTypeface();
     }
 
     /**
-     * @return typeface of the minor font to use in a document.
+     * @return typeface of the minor font to use in a document (possibly <code>null</code>).
      * Typically, the minor font is used for normal text or paragraph areas.
      *
      */
     @SuppressWarnings("WeakerAccess")
-    public String getMinorFont(){
-        return _theme.getThemeElements().getFontScheme().getMinorFont().getLatin().getTypeface();
+    public String getMinorFont() {
+        CTFontCollection minorFonts = getMinorFonts();
+        return minorFonts == null || minorFonts.getLatin() == null ?
+                null : minorFonts.getLatin().getTypeface();
+    }
+
+    /**
+     * @param script a 4-letter script code, e.g. "Latn", "Jpan"
+     * @return typeface of the major font for the given script (possibly <code>null</code>)
+     * @since 6.0.0
+     */
+    public String getMajorFontForScript(String script) {
+        CTFontCollection majorFonts = getMajorFonts();
+        return majorFonts == null ? null : getFontTypeface(majorFonts, script);
+    }
+
+    /**
+     * @param script a 4-letter script code, e.g. "Latn", "Jpan"
+     * @return typeface of the minor font for the given script (possibly <code>null</code>)
+     * @since 6.0.0
+     */
+    public String getMinorFontForScript(String script) {
+        CTFontCollection minorFonts = getMinorFonts();
+        return minorFonts == null ? null : getFontTypeface(minorFonts, script);
+    }
+
+    private CTFontCollection getMajorFonts() {
+        if (_theme == null
+                || _theme.getThemeElements() == null
+                || _theme.getThemeElements().getFontScheme() == null
+                || _theme.getThemeElements().getFontScheme().getMajorFont() == null) {
+            return null;
+        }
+        return _theme.getThemeElements().getFontScheme().getMajorFont();
+    }
+
+    private CTFontCollection getMinorFonts() {
+        if (_theme == null
+                || _theme.getThemeElements() == null
+                || _theme.getThemeElements().getFontScheme() == null
+                || _theme.getThemeElements().getFontScheme().getMinorFont() == null) {
+            return null;
+        }
+        return _theme.getThemeElements().getFontScheme().getMinorFont();
+    }
+
+    private static String getFontTypeface(CTFontCollection fontCollection, String script) {
+        CTSupplementalFont[] fonts = fontCollection.getFontArray();
+        if (fonts != null) {
+            for (CTSupplementalFont font : fonts) {
+                if (font.getScript() != null && font.getScript().equals(script)) {
+                    return font.getTypeface();
+                }
+            }
+        }
+        return null;
     }
 
     /**

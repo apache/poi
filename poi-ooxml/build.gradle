@@ -62,7 +62,7 @@ dependencies {
     // and uncomment the line below to use a pre-built version of poi-ooxml-full.
     // Try to use the last release version of poi-ooxml-full. You might be unlucky if
     // recent unreleased changes in poi-ooxml-full are needed.
-    // api "org.apache.poi:poi-ooxml-full:5.5.0"
+    // api "org.apache.poi:poi-ooxml-full:5.5.1"
 
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
@@ -187,7 +187,7 @@ tasks.register('compileTest9', JavaCompile) {
 
 
 jar {
-    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
+    destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
 
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
@@ -197,7 +197,7 @@ jar {
 // Create a separate jar for test-code to depend on it in other projects
 // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
 task testJar(type: Jar, dependsOn: testClasses) {
-    destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
+    destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}-tests")
 
     setArchiveClassifier 'tests'
     // ignore second module-info.class from main

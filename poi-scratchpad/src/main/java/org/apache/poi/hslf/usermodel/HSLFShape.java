@@ -266,7 +266,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      * @return escher property or {@code null} if not found.
      */
     public static <T extends EscherProperty> T getEscherProperty(AbstractEscherOptRecord opt, EscherPropertyTypes type){
-        return (opt == null) ? null : opt.lookup(type);
+        return opt == null ? null : opt.lookup(type);
     }
 
     /**
@@ -408,11 +408,13 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         if (fSchemeIndex && sheet != null) {
             //red is the index to the color scheme
             ColorSchemeAtom ca = sheet.getColorScheme();
-            int schemeColor = ca.getColor(ecr.getSchemeIndex());
+            if (ca != null) {
+                int schemeColor = ca.getColor(ecr.getSchemeIndex());
 
-            rgb[0] = (schemeColor >> 0) & 0xFF;
-            rgb[1] = (schemeColor >> 8) & 0xFF;
-            rgb[2] = (schemeColor >> 16) & 0xFF;
+                rgb[0] = (schemeColor >> 0) & 0xFF;
+                rgb[1] = (schemeColor >> 8) & 0xFF;
+                rgb[2] = (schemeColor >> 16) & 0xFF;
+            }
         } else if (fPaletteIndex) {
             //TODO
         } else if (fPaletteRGB) {
@@ -657,9 +659,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     }
 
     /**
-     * Search for EscherClientDataRecord, if found, convert its contents into an array of HSLF records
+     * Search for EscherClientDataRecord, if found, convert its contents into a list of HSLF records
      *
-     * @return an array of HSLF records contained in the shape's EscherClientDataRecord or {@code null}
+     * @return a list of HSLF records contained in the shape's EscherClientDataRecord or {@code null}
      */
     protected List<? extends Record> getClientRecords() {
         HSLFEscherClientDataRecord clientData = getClientData(false);

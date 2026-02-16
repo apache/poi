@@ -123,6 +123,11 @@ public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
 
     @Override
     protected void commit() throws IOException {
+        // cannot save anything if class is not initialized fully
+        if (ctEndnotes == null) {
+            return;
+        }
+
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTEndnotes.type.getName().getNamespaceURI(), "endnotes"));
         PackagePart part = getPackagePart();

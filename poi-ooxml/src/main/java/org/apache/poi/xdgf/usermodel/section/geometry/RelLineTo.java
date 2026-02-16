@@ -47,6 +47,10 @@ public class RelLineTo implements GeometryRow {
         for (CellType cell : row.getCellArray()) {
             String cellName = cell.getN();
 
+            if (cellName == null) {
+                throw new IllegalStateException("Cannot create a ReLineTo object without a cell-name indicating 'X' or 'Y' direction");
+            }
+
             if (cellName.equals("X")) {
                 x = XDGFCell.parseDoubleValue(cell);
             } else if (cellName.equals("Y")) {

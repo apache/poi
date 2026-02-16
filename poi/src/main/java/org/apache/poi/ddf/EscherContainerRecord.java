@@ -102,14 +102,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
         while (bytesRemaining > 0 && offset < data.length) {
             EscherRecord child = recordFactory.createRecord(data, offset);
 
-            final int childBytesWritten;
-            if (child instanceof EscherContainerRecord) {
-                childBytesWritten = ((EscherContainerRecord)child).fillFields(data, offset, recordFactory, nesting + 1);
-            } else if (child instanceof UnknownEscherRecord) {
-                childBytesWritten = ((UnknownEscherRecord)child).fillFields(data, offset, recordFactory, nesting + 1);
-            } else {
-                childBytesWritten = child.fillFields(data, offset, recordFactory, nesting + 1);
-            }
+            final int childBytesWritten = child.fillFields(data, offset, recordFactory, nesting + 1);
 
             bytesWritten += childBytesWritten;
             offset += childBytesWritten;
