@@ -20,6 +20,7 @@ package org.apache.poi.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -101,9 +102,8 @@ public class RLEDecompressingInputStream extends InputStream {
 
     @Override
     public int read(byte[] b, int off, int l) throws IOException {
-        if (len == -1) {
-            return -1;
-        }
+        Objects.requireNonNull(b, "b == null");
+        Objects.checkFromIndexSize(off, l, b.length);
         int offset = off;
         int length = l;
         while (length > 0) {
