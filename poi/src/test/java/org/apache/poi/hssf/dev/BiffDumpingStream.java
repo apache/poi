@@ -20,6 +20,7 @@ package org.apache.poi.hssf.dev;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.LittleEndian;
@@ -63,9 +64,8 @@ final class BiffDumpingStream extends InputStream {
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
-        if (b == null || off < 0 || len < 0 || b.length < off + len) {
-            throw new IllegalArgumentException();
-        }
+        Objects.requireNonNull(b, "b == null");
+        Objects.checkFromIndexSize(off, len, b.length);
         if (_currentPos >= _currentSize) {
             fillNextBuffer();
         }
