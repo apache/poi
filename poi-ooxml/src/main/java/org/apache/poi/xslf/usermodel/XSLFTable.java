@@ -427,6 +427,10 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
                 for (int col2=col+1; col2<col+tc.getGridSpan(); col2++) {
                     assert(col2 < cols);
                     XSLFTableCell tc2 = getCell(row, col2);
+                    if (tc2 == null) {
+                        LOG.warn("unavailable table span - rendering result is probably wrong");
+                        continue;
+                    }
                     if (tc2.getGridSpan() != 1 || tc2.getRowSpan() != 1) {
                         LOG.warn("invalid table span - rendering result is probably wrong");
                     }
@@ -435,6 +439,10 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
                 for (int row2=row+1; row2<row+tc.getRowSpan(); row2++) {
                     assert(row2 < rows);
                     XSLFTableCell tc2 = getCell(row2, col);
+                    if (tc2 == null) {
+                        LOG.warn("unavailable table span - rendering result is probably wrong");
+                        continue;
+                    }
                     if (tc2.getGridSpan() != 1 || tc2.getRowSpan() != 1) {
                         LOG.warn("invalid table span - rendering result is probably wrong");
                     }
