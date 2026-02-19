@@ -355,7 +355,11 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         EscherContainerRecord containerRecord = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER);
         EscherSpRecord spRecord = containerRecord.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setShapeId(shapeId);
-        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
+        ObjRecord objRecord = getObjRecord();
+        if (objRecord == null) {
+            throw new IllegalStateException("Did not have an ObjRecord for the HSSFShapeGroup");
+        }
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) objRecord.getSubRecords().get(0);
         cod.setObjectId((short) (shapeId % 1024));
     }
 
