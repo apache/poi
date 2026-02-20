@@ -226,7 +226,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
       _current_offset = _marked_offset;
     }
 
-   @Override
+    @Override
     public long skip(long n) throws IOException {
         dieIfClosed();
         if (n < 0) {
@@ -259,7 +259,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
         return _current_offset == _document_size;
     }
 
-    private void checkAvaliable(int requestedSize) {
+    private void checkAvailable(int requestedSize) {
         if (_closed) {
             throw new IllegalStateException("cannot perform requested operation on a closed stream");
         }
@@ -280,7 +280,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
            throw new IllegalArgumentException("Can't read negative number of bytes, but had: " + len);
         }
 
-        checkAvaliable(len);
+        checkAvailable(len);
 
         int read = 0;
         while(read < len) {
@@ -314,7 +314,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 
    @Override
     public long readLong() {
-        checkAvaliable(LONG_SIZE);
+        checkAvailable(LONG_SIZE);
         byte[] data = new byte[LONG_SIZE];
         readFully(data, 0, LONG_SIZE);
         return LittleEndian.getLong(data, 0);
@@ -322,7 +322,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 
    @Override
    public short readShort() {
-      checkAvaliable(SHORT_SIZE);
+      checkAvailable(SHORT_SIZE);
       byte[] data = new byte[SHORT_SIZE];
       readFully(data, 0, SHORT_SIZE);
       return LittleEndian.getShort(data);
@@ -330,7 +330,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 
    @Override
     public int readInt() {
-        checkAvaliable(INT_SIZE);
+        checkAvailable(INT_SIZE);
       byte[] data = new byte[INT_SIZE];
       readFully(data, 0, INT_SIZE);
       return LittleEndian.getInt(data);
@@ -343,7 +343,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 
     @Override
     public int readUShort() {
-        checkAvaliable(SHORT_SIZE);
+        checkAvailable(SHORT_SIZE);
       byte[] data = new byte[SHORT_SIZE];
       readFully(data, 0, SHORT_SIZE);
       return LittleEndian.getUShort(data);
@@ -351,7 +351,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 
     @Override
     public int readUByte() {
-        checkAvaliable(1);
+        checkAvailable(1);
         byte[] data = new byte[1];
         readFully(data, 0, 1);
         if (data[0] >= 0)
