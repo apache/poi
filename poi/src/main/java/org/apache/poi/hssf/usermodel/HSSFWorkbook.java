@@ -293,6 +293,27 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         this(fs.getRoot(), fs, preserveNodes);
     }
 
+    /**
+     * Given a POI POIFSFileSystem object, read in its Workbook and populate
+     * the high and low level models.  If you're reading in a workbook... start here!
+     *
+     * @param fs            the POI filesystem that contains the Workbook stream.
+     * @param preserveNodes whether to preserve other nodes, such as
+     *                      macros.  This takes more memory, so only say yes if you
+     *                      need to. If set, will store all of the POIFSFileSystem
+     *                      in memory
+     * @param password      in char array format (can be null)
+     * @throws IOException if the stream cannot be read
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @since 6.0.0
+     * @see POIFSFileSystem
+     */
+    public HSSFWorkbook(POIFSFileSystem fs, boolean preserveNodes, char[] password)
+            throws IOException {
+        this(fs.getRoot(), preserveNodes, password);
+    }
+
     public static String getWorkbookDirEntryName(DirectoryNode directory) {
         if (directory.hasEntryCaseInsensitive(WORKBOOK)) {
             return WORKBOOK;
