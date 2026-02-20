@@ -119,10 +119,8 @@ public final class RecordFactoryInputStream {
             return createDecryptingStream(original, pwdString);
         }
 
-        /**
-         * @since 6.0.0
-         */
-        public RecordInputStream createDecryptingStream(InputStream original, String password) {
+        // keep this private because with new API methods, we want to encourage use of char array for passwords
+        private RecordInputStream createDecryptingStream(InputStream original, String password) {
             if (password == null) {
                 password = Biff8EncryptionKey.getCurrentUserPassword();
                 if (password == null) {
