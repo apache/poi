@@ -19,7 +19,6 @@ package org.apache.poi.hssf.extractor;
 
 import static org.apache.poi.hssf.model.InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME;
 import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK;
-import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 import java.io.BufferedInputStream;
 import java.io.Closeable;
