@@ -102,19 +102,39 @@ public final class RecordFactoryInputStream {
             _lastRecord = rec;
         }
 
+        /**
+         * This method requires that you store the password in {@link Biff8EncryptionKey}.
+         * Since 6.0.0, we have overloaded methods where you can pass the password as a param instead.
+         */
         @SuppressWarnings({"squid:S2068"})
         public RecordInputStream createDecryptingStream(InputStream original) {
-            String userPassword = Biff8EncryptionKey.getCurrentUserPassword();
-            if (userPassword == null) {
-                userPassword = Decryptor.DEFAULT_PASSWORD;
-            }
+            return createDecryptingStream(original, (String) null);
+        }
 
+        /**
+         * @since 6.0.0
+         */
+        public RecordInputStream createDecryptingStream(InputStream original, char[] password) {
+            final String pwdString = password == null ? null : new String(password);
+            return createDecryptingStream(original, pwdString);
+        }
+
+        /**
+         * @since 6.0.0
+         */
+        public RecordInputStream createDecryptingStream(InputStream original, String password) {
+            if (password == null) {
+                password = Biff8EncryptionKey.getCurrentUserPassword();
+                if (password == null) {
+                    password = Decryptor.DEFAULT_PASSWORD;
+                }
+            }
             EncryptionInfo info = _filePassRec.getEncryptionInfo();
             try {
-                if (!info.getDecryptor().verifyPassword(userPassword)) {
+                if (!info.getDecryptor().verifyPassword(password)) {
                     throw new EncryptedDocumentException(
-                            (Decryptor.DEFAULT_PASSWORD.equals(userPassword) ? "Default" : "Supplied")
-                            + " password is invalid for salt/verifier/verifierHash");
+                            (Decryptor.DEFAULT_PASSWORD.equals(password) ? "Default" : "Supplied")
+                                    + " password is invalid for salt/verifier/verifierHash");
                 }
             } catch (GeneralSecurityException e) {
                 throw new EncryptedDocumentException(e);
@@ -176,17 +196,29 @@ public final class RecordFactoryInputStream {
 
     /**
      * @param in the InputStream to read from
-     * 
      * @param shouldIncludeContinueRecords caller can pass <code>false</code> if loose
      * {@link ContinueRecord}s should be skipped (this is sometimes useful in event based
      * processing).
      */
     public RecordFactoryInputStream(InputStream in, boolean shouldIncludeContinueRecords) {
+        this(in, shouldIncludeContinueRecords, null);
+    }
+
+    /**
+     * @param in the InputStream to read from
+     * @param shouldIncludeContinueRecords caller can pass <code>false</code> if loose
+     * @param password password in char array format (can be null)
+     * {@link ContinueRecord}s should be skipped (this is sometimes useful in event based
+     * processing).
+     * @since 6.0.0
+     */
+    public RecordFactoryInputStream(InputStream in, boolean shouldIncludeContinueRecords,
+                                    char[] password) {
         RecordInputStream rs = new RecordInputStream(in);
         List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
         StreamEncryptionInfo sei = new StreamEncryptionInfo(rs, records);
         if (sei.hasEncryption()) {
-            rs = sei.createDecryptingStream(in);
+            rs = sei.createDecryptingStream(in, password);
         } else {
             // typical case - non-encrypted stream
         }
@@ -201,22 +233,22 @@ public final class RecordFactoryInputStream {
         _lastRecord = sei.getLastRecord();
 
         /*
-        * How to recognise end of stream?
-        * In the best case, the underlying input stream (in) ends just after the last EOF record
-        * Usually however, the stream is padded with an arbitrary byte count.  Excel and most apps
-        * reliably use zeros for padding and if this were always the case, this code could just
-        * skip all the (zero sized) records with sid==0.  However, bug 46987 shows a file with
-        * non-zero padding that is read OK by Excel (Excel also fixes the padding).
-        *
-        * So to properly detect the workbook end of stream, this code has to identify the last
-        * EOF record.  This is not so easy because the worbook bof+eof pair do not bracket the
-        * whole stream.  The worksheets follow the workbook, but it is not easy to tell how many
-        * sheet sub-streams should be present.  Hence we are looking for an EOF record that is not
-        * immediately followed by a BOF record.  One extra complication is that bof+eof sub-
-        * streams can be nested within worksheet streams and it's not clear in these cases what
-        * record might follow any EOF record.  So we also need to keep track of the bof/eof
-        * nesting level.
-        */
+         * How to recognise end of stream?
+         * In the best case, the underlying input stream (in) ends just after the last EOF record
+         * Usually however, the stream is padded with an arbitrary byte count.  Excel and most apps
+         * reliably use zeros for padding and if this were always the case, this code could just
+         * skip all the (zero sized) records with sid==0.  However, bug 46987 shows a file with
+         * non-zero padding that is read OK by Excel (Excel also fixes the padding).
+         *
+         * So to properly detect the workbook end of stream, this code has to identify the last
+         * EOF record.  This is not so easy because the workbook bof+eof pair do not bracket the
+         * whole stream.  The worksheets follow the workbook, but it is not easy to tell how many
+         * sheet sub-streams should be present.  Hence we are looking for an EOF record that is not
+         * immediately followed by a BOF record.  One extra complication is that bof+eof sub-
+         * streams can be nested within worksheet streams and it's not clear in these cases what
+         * record might follow any EOF record.  So we also need to keep track of the bof/eof
+         * nesting level.
+         */
         _bofDepth = sei.hasBOFRecord() ? 1 : 0;
         _lastRecordWasEOFLevelZero = false;
     }

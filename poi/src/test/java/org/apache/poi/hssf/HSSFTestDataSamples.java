@@ -49,6 +49,15 @@ public final class HSSFTestDataSamples {
             throw new RuntimeException(e);
         }
     }
+
+    public static HSSFWorkbook openSampleWorkbook(String sampleFileName, char[] password) {
+        try (InputStream stream = _inst.openResourceAsStream(sampleFileName)){
+            return new HSSFWorkbook(stream, password);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Writes a spreadsheet to a {@code ByteArrayOutputStream} and reads it back
      * from a {@code ByteArrayInputStream}.<p>

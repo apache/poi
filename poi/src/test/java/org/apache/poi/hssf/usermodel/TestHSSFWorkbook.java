@@ -1249,6 +1249,44 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
+    @Test
+    void testPassword() throws Exception {
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(
+                "xor-encryption-abc.xls", "abc".toCharArray())) {
+            validateXorEncryptionDoc(wb);
+            try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                // testing that when we write that no password is applied
+                wb.write(baos);
+                try (HSSFWorkbook wbOut = new HSSFWorkbook(baos.toInputStream())) {
+                    validateXorEncryptionDoc(wbOut);
+                }
+            }
+        }
+    }
+
+    @Test
+    void testChangePassword() throws Exception {
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(
+                "xor-encryption-abc.xls", "abc".toCharArray())) {
+            validateXorEncryptionDoc(wb);
+            String newPassword = "newPassword";
+            try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                // testing that when we write that the newPassword is applied
+                wb.setOutputPassword(newPassword.toCharArray());
+                wb.write(baos);
+                try (HSSFWorkbook wbOut = new HSSFWorkbook(baos.toInputStream(), newPassword.toCharArray())) {
+                    validateXorEncryptionDoc(wbOut);
+                }
+            }
+        }
+    }
+
+    private void validateXorEncryptionDoc(HSSFWorkbook wb) {
+        HSSFSheet sheet = wb.getSheetAt(0);
+        double value = sheet.getRow(0).getCell(0).getNumericCellValue();
+        assertEquals(1.0, value);
+    }
+
     private static class WrappedStream extends FilterInputStream {
         private boolean closed;
 
