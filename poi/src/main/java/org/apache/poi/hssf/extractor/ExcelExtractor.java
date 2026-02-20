@@ -72,8 +72,22 @@ public class ExcelExtractor implements POIOLE2TextExtractor, org.apache.poi.ss.e
         this(fs.getRoot());
     }
 
+    /**
+     * @since 6.0.0
+     */
+    public ExcelExtractor(POIFSFileSystem fs, char[] password) throws IOException {
+        this(fs.getRoot(), password);
+    }
+
     public ExcelExtractor(DirectoryNode dir) throws IOException {
         this(new HSSFWorkbook(dir, true));
+    }
+
+    /**
+     * @since 6.0.0
+     */
+    public ExcelExtractor(DirectoryNode dir, char[] password) throws IOException {
+        this(new HSSFWorkbook(dir, true, password));
     }
 
     private static final class CommandParseException extends Exception {
