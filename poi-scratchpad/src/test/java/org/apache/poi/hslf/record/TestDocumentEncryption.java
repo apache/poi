@@ -17,12 +17,6 @@
 
 package org.apache.poi.hslf.record;
 
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.Base64;
@@ -49,6 +43,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Tests that DocumentEncryption works properly.
  */
@@ -66,7 +62,7 @@ public class TestDocumentEncryption {
         try {
             try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
                  HSLFSlideShow ppt = new HSLFSlideShow(fs)) {
-                assertTrue(ppt.getSlides().size() > 0);
+                assertFalse(ppt.getSlides().isEmpty());
             }
         } finally {
             Biff8EncryptionKey.setCurrentUserPassword(null);
