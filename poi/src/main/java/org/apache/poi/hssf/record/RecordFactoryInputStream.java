@@ -115,7 +115,8 @@ public final class RecordFactoryInputStream {
          * @since 6.0.0
          */
         public RecordInputStream createDecryptingStream(InputStream original, char[] password) {
-            return createDecryptingStream(original, new String(password));
+            final String pwdString = password == null ? null : new String(password);
+            return createDecryptingStream(original, pwdString);
         }
 
         /**
