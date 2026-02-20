@@ -1249,6 +1249,16 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
+    @Test
+    void testPassword() throws Exception {
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(
+                "xor-encryption-abc.xls", "abc".toCharArray())) {
+            HSSFSheet hssfSheet = wb.getSheetAt(0);
+            double a1Value = hssfSheet.getRow(0).getCell(0).getNumericCellValue();
+            assertEquals(1.0, a1Value);
+        }
+    }
+
     private static class WrappedStream extends FilterInputStream {
         private boolean closed;
 

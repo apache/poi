@@ -172,19 +172,31 @@ public final class RecordFactory {
      * Create an array of records from an input stream
      *
      * @param in the InputStream from which the records will be obtained
-     *
      * @return a list of Records created from the InputStream
-     *
      * @throws org.apache.poi.util.RecordFormatException on error processing the InputStream
      */
     public static List<org.apache.poi.hssf.record.Record> createRecords(InputStream in) throws RecordFormatException {
+        return createRecords(in, null);
+    }
+
+    /**
+     * Create an array of records from an input stream
+     *
+     * @param in the InputStream from which the records will be obtained
+     * @param password in char array format (can be null)
+     * @return a list of Records created from the InputStream
+     * @throws org.apache.poi.util.RecordFormatException on error processing the InputStream
+     * @since 6.0.0
+     */
+    public static List<org.apache.poi.hssf.record.Record> createRecords(
+            InputStream in, char[] password) throws RecordFormatException {
 
         List<org.apache.poi.hssf.record.Record> records = new ArrayList<>(NUM_RECORDS);
 
-        RecordFactoryInputStream recStream = new RecordFactoryInputStream(in, true);
+        RecordFactoryInputStream recStream = new RecordFactoryInputStream(in, true, password);
 
         Record record;
-        while ((record = recStream.nextRecord())!=null) {
+        while ((record = recStream.nextRecord()) != null) {
             records.add(record);
 
             IOUtils.safelyAllocateCheck(records.size(), MAX_NUMBER_OF_RECORDS);
@@ -192,4 +204,5 @@ public final class RecordFactory {
 
         return records;
     }
+
 }
