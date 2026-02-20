@@ -224,6 +224,23 @@ public final class HWPFDocument extends HWPFDocumentCore {
     }
 
     /**
+     * This constructor loads a Word document from an InputStream.
+     *
+     * @param istream The InputStream that contains the Word document.
+     * @param password in char array format (can be null)
+     * @throws IOException If there is an unexpected IOException from the passed
+     *                     in InputStream.
+     * @throws org.apache.poi.EmptyFileException If the given stream is empty
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @since 6.0.0
+     */
+    public HWPFDocument(InputStream istream, final char[] password) throws IOException {
+        //do Ole stuff
+        this(verifyAndBuildPOIFS(istream), password);
+    }
+
+    /**
      * This constructor loads a Word document from a POIFSFileSystem
      *
      * @param pfilesystem The POIFSFileSystem that contains the Word document.
@@ -234,6 +251,21 @@ public final class HWPFDocument extends HWPFDocumentCore {
      */
     public HWPFDocument(POIFSFileSystem pfilesystem) throws IOException {
         this(pfilesystem.getRoot());
+    }
+
+    /**
+     * This constructor loads a Word document from a POIFSFileSystem
+     *
+     * @param pfilesystem The POIFSFileSystem that contains the Word document.
+     * @throws IOException If there is an unexpected IOException from the passed
+     *                     in POIFSFileSystem.
+     * @param password in char array format (can be null)
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @since 6.0.0
+     */
+    public HWPFDocument(POIFSFileSystem pfilesystem, final char[] password) throws IOException {
+        this(pfilesystem.getRoot(), password);
     }
 
     /**
@@ -248,9 +280,26 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * input format
      */
     public HWPFDocument(DirectoryNode directory) throws IOException {
+        this(directory, null);
+    }
+
+    /**
+     * This constructor loads a Word document from a specific point
+     * in a POIFSFileSystem, probably not the default.
+     * Used typically to open embedded documents.
+     *
+     * @param directory The DirectoryNode that contains the Word document.
+     * @param password in char array format (can be null)
+     * @throws IOException If there is an unexpected IOException from the passed
+     *                     in POIFSFileSystem.
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @since 6.0.0
+     */
+    public HWPFDocument(DirectoryNode directory, final char[] password) throws IOException {
         // Load the main stream and FIB
         // Also handles HPSF bits
-        super(directory);
+        super(directory, password);
 
         // Is this document too old for us?
         if (_fib.getFibBase().getNFib() < 106) {
