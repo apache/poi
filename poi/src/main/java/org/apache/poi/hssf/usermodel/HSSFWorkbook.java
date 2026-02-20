@@ -206,10 +206,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     private final UDFFinder _udfFinder = new IndexedUDFFinder(AggregatingUDFFinder.DEFAULT);
 
     /**
-     * The password needed to decrypt this workbook.
+     * The password used to decrypt this workbook when writing out.
      * @since 6.0.0
      */
-    private char[] passwordChars;
+    private char[] outputPasswordChars;
 
     public static HSSFWorkbook create(InternalWorkbook book) {
         return new HSSFWorkbook(book);
@@ -412,7 +412,6 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         String workbookName = getWorkbookDirEntryName(directory);
 
         this.preserveNodes = preserveNodes;
-        this.passwordChars = password;
 
         // If we're not preserving nodes, don't track the
         //  POIFS any more
@@ -1572,6 +1571,16 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
+     * Set the password to be used to password protect the spreadsheet when we output the data.
+     * @param password as a char array (null is supported and means use @{link Biff8EncryptionKey}
+     *                 and no password if none set there)
+     * @since 6.0.0
+     */
+    public void setOutputPassword(final char[] password) {
+        this.outputPasswordChars = password;
+    }
+
+    /**
      * Method getBytes - get the bytes of just the HSSF portions of the XLS file.
      * Use this to construct a POI POIFSFileSystem yourself.
      *
@@ -1585,8 +1594,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         int nSheets = sheets.length;
 
         String pwdString;
-        if (passwordChars != null) {
-            pwdString = new String(passwordChars);
+        if (outputPasswordChars != null) {
+            pwdString = new String(outputPasswordChars);
         } else {
             // from POI 6.0.0, using Biff8EncryptionKey is discouraged
             pwdString = Biff8EncryptionKey.getCurrentUserPassword();
