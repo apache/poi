@@ -325,7 +325,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * low level models.  If you're reading in a workbook...start here.
      *
      * @param directory     the POI filesystem directory to process from
-     * @param fs            the POI filesystem that contains the Workbook stream.
+     * @param fs            the POI filesystem that contains the Workbook stream (ignored).
      * @param preserveNodes whether to preserve other nodes, such as
      *                      macros.  This takes more memory, so only say yes if you
      *                      need to. If set, will store all of the POIFSFileSystem
@@ -333,8 +333,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * @throws IOException if the stream cannot be read
      * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
+     * @deprecated use the contructor that omits the ignored <code>fs</code> param instead
      * @see POIFSFileSystem
      */
+    @Removal(version = "7.0.0")
     public HSSFWorkbook(DirectoryNode directory, POIFSFileSystem fs, boolean preserveNodes)
             throws IOException {
         this(directory, preserveNodes);
