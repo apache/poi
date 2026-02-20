@@ -133,6 +133,22 @@ final class TestRecordFactoryInputStream {
                 + SAMPLE_WINDOW1_ENCR2
         );
 
+        RecordFactoryInputStream rfis = createRFIS(dataCorrectDefault, "passw0rd");
+        confirmReadInitialRecords(rfis);
+    }
+
+    @Test
+    void suppliedPasswordOKBiff8EncryptionKey() {
+        // This encoding depends on docId, password and stream position
+        final String SAMPLE_WINDOW1_ENCR2 = "3D 00 12 00"
+                + "45, B9, 90, FE, B6, C6, EC, 73, EE, 3F, 52, 45, 97, DB, E3, C1, D6, FE";
+
+        byte[] dataCorrectDefault = HexRead.readFromString(""
+                + COMMON_HEX_DATA
+                + "C728659A C38E35E0 568A338F C3FC9D70" // correct saltHash for supplied password (and docId/saltHash)
+                + SAMPLE_WINDOW1_ENCR2
+        );
+
         Biff8EncryptionKey.setCurrentUserPassword("passw0rd");
         try {
             RecordFactoryInputStream rfis = createRFIS(dataCorrectDefault);
@@ -141,7 +157,6 @@ final class TestRecordFactoryInputStream {
             Biff8EncryptionKey.setCurrentUserPassword(null);
         }
     }
-
 
     /**
      * makes sure the record stream starts with {@link BOFRecord}, {@link FilePassRecord} and then {@link WindowOneRecord}
@@ -156,5 +171,12 @@ final class TestRecordFactoryInputStream {
 
     private static RecordFactoryInputStream createRFIS(byte[] data) {
         return new RecordFactoryInputStream(new ByteArrayInputStream(data), true);
+    }
+
+    private static RecordFactoryInputStream createRFIS(byte[] data, String password) {
+        return new RecordFactoryInputStream(
+                new ByteArrayInputStream(data),
+                true,
+                password.toCharArray());
     }
 }
