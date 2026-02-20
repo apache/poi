@@ -64,7 +64,7 @@ final class TestHSSFEventFactory {
         try (InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
              POIFSFileSystem fs = new POIFSFileSystem(is)) {
             HSSFEventFactory factory = new HSSFEventFactory();
-            factory.processWorkbookEvents(req, fs);
+            factory.processWorkbookEvents(req, fs, password.toCharArray());
         }
         return records;
     }
@@ -135,6 +135,45 @@ final class TestHSSFEventFactory {
 
     @Test
     void testWithPasswordProtectedWorkbooks() throws Exception {
+        final List<org.apache.poi.hssf.record.Record> records =
+                openSample("xor-encryption-abc.xls", "abc");
+
+        // Check we got the sheet and the contents
+        assertTrue(records.size() > 50);
+
+        // Has one sheet, with values 1,2,3 in column A rows 1-3
+        boolean hasSheet = false, hasA1 = false, hasA2 = false, hasA3 = false;
+        for (org.apache.poi.hssf.record.Record r : records) {
+            if (r instanceof BoundSheetRecord) {
+                BoundSheetRecord bsr = (BoundSheetRecord) r;
+                assertEquals("Sheet1", bsr.getSheetname());
+                hasSheet = true;
+            }
+            if (r instanceof NumberRecord) {
+                NumberRecord nr = (NumberRecord) r;
+                if (nr.getColumn() == 0 && nr.getRow() == 0) {
+                    assertEquals(1, (int) nr.getValue());
+                    hasA1 = true;
+                }
+                if (nr.getColumn() == 0 && nr.getRow() == 1) {
+                    assertEquals(2, (int) nr.getValue());
+                    hasA2 = true;
+                }
+                if (nr.getColumn() == 0 && nr.getRow() == 2) {
+                    assertEquals(3, (int) nr.getValue());
+                    hasA3 = true;
+                }
+            }
+        }
+
+        assertTrue(hasSheet, "Sheet record not found");
+        assertTrue(hasA1, "Numeric record for A1 not found");
+        assertTrue(hasA2, "Numeric record for A2 not found");
+        assertTrue(hasA3, "Numeric record for A3 not found");
+    }
+
+    @Test
+    void testWithPasswordProtectedWorkbooksBiff8EncryptionKey() throws Exception {
         // With the password, is properly processed
         Biff8EncryptionKey.setCurrentUserPassword("abc");
         try {
