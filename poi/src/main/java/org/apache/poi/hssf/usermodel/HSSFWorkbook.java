@@ -333,7 +333,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * @throws IOException if the stream cannot be read
      * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
-     * @deprecated use the contructor that omits the ignored <code>fs</code> param instead
+     * @deprecated use the constructor that omits the ignored <code>fs</code> param instead
      * @see POIFSFileSystem
      */
     @Removal(version = "7.0.0")
