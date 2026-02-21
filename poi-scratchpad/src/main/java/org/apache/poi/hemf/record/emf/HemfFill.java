@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
@@ -45,6 +46,7 @@ import org.apache.poi.hwmf.record.HwmfFill;
 import org.apache.poi.hwmf.record.HwmfFill.ColorUsage;
 import org.apache.poi.hwmf.record.HwmfRegionMode;
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
@@ -52,6 +54,8 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public final class HemfFill {
+    private static final Logger LOG = PoiLogManager.getLogger(HemfFill.class);
+
     private HemfFill() {}
 
     /**
@@ -194,11 +198,6 @@ public final class HemfFill {
             super.draw(ctx);
         }
 
-        @Override
-        public String toString() {
-            return GenericRecordJsonWriter.marshal(this);
-        }
-
         public Rectangle2D getBounds() {
             return bounds;
         }
@@ -321,13 +320,7 @@ public final class HemfFill {
         public HemfRecordType getEmfRecordType() {
             return HemfRecordType.bitBlt;
         }
-
-        @Override
-        protected boolean srcEqualsDstDimension() {
-            return false;
-        }
     }
-
 
     /** The EMR_FRAMERGN record draws a border around the specified region using the specified brush. */
     public static class EmfFrameRgn extends HwmfDraw.WmfFrameRegion implements HemfRecord {
@@ -611,9 +604,13 @@ public final class HemfFill {
             size += readBounds2(leis, destRect);
 
             blendOperation = leis.readByte();
-            assert (blendOperation == 0);
+            if (blendOperation != 0) {
+                LOG.atWarn().log("Unexpected blend-operation in emf file: {}", blendOperation);
+            }
             blendFlags = leis.readByte();
-            assert (blendOperation == 0);
+            if (blendFlags != 0) {
+                LOG.atWarn().log("Unexpected blend-flags in emf file: {}", blendFlags);
+            }
             srcConstantAlpha = leis.readUByte();
             alphaFormat = leis.readByte();
 
