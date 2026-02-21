@@ -70,8 +70,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      *
      * @see #fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)
      */
-    protected int fillFields( byte[] data, EscherRecordFactory f )
-    {
+    protected int fillFields( byte[] data, EscherRecordFactory f ) {
         return fillFields( data, 0, f );
     }
 
@@ -154,8 +153,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      * @return The options field for this record. All records have one.
      */
     @Internal
-    public short getOptions()
-    {
+    public short getOptions() {
         return _options;
     }
 
@@ -183,8 +181,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      * @return  the serialized record.
      * @see #serialize(int, byte[])
      */
-    public byte[] serialize()
-    {
+    public byte[] serialize() {
         byte[] retval = new byte[getRecordSize()];
 
         serialize( 0, retval );
@@ -201,8 +198,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      *
      * @see #serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)
      */
-    public int serialize( int offset, byte[] data)
-    {
+    public int serialize( int offset, byte[] data) {
         return serialize( offset, data, new NullEscherSerializationListener() );
     }
 
@@ -252,7 +248,9 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      *
      * @see EscherContainerRecord
      */
-    public List<EscherRecord> getChildRecords() { return Collections.emptyList(); }
+    public List<EscherRecord> getChildRecords() {
+        return Collections.emptyList();
+    }
 
     /**
      * Sets the child records for this record.  By default this will throw
@@ -281,8 +279,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      * @param w         The print writer to output to.
      * @param indent    The current indent level.
      */
-    public void display(PrintWriter w, int indent)
-    {
+    public void display(PrintWriter w, int indent) {
         for (int i = 0; i < indent * 4; i++) {
             w.print(' ');
         }
@@ -301,8 +298,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      *
      * @return The instance part of the record
      */
-    public short getInstance()
-    {
+    public short getInstance() {
         return fInstance.getShortValue( _options );
     }
 
@@ -311,8 +307,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      *
      * @param value instance part value
      */
-    public void setInstance( short value )
-    {
+    public void setInstance( short value ) {
         _options = fInstance.setShortValue( _options, value );
     }
 
@@ -321,8 +316,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      *
      * @return The version part of the option record
      */
-    public short getVersion()
-    {
+    public short getVersion() {
         return fVersion.getShortValue( _options );
     }
 
@@ -331,12 +325,11 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      *
      * @param value version part value
      */
-    public void setVersion( short value )
-    {
+    public void setVersion( short value ) {
         _options = fVersion.setShortValue( _options, value );
     }
 
-    public String toXml(){
+    public String toXml() {
         return toXml("");
     }
 
@@ -344,7 +337,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      * @param tab - each children must be indented right relative to its parent
      * @return xml representation of this record
      */
-    public final String toXml(String tab){
+    public final String toXml(String tab) {
         return GenericRecordXmlWriter.marshal(this);
     }
 
