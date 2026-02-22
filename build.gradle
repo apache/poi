@@ -217,7 +217,7 @@ subprojects {
                 links 'https://poi.apache.org/apidocs/dev/'
                 if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
                 links 'https://xmlbeans.apache.org/docs/5.0.0/'
-                links 'https://javadoc.io/doc/org.apache.commons/commons-compress/1.27.1/'
+                links 'https://www.javadocs.dev/org.apache.commons/commons-compress/1.28.0/'
                 use = true
                 splitIndex = true
                 source = "11"
