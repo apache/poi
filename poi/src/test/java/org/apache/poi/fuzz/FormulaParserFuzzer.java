@@ -1,20 +1,21 @@
-// Copyright 2026 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-////////////////////////////////////////////////////////////////////////////////
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
 
-package org.apache.poi;
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+package org.apache.poi.fuzz;
 
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
@@ -23,15 +24,13 @@ import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 
 import java.nio.BufferUnderflowException;
 import java.util.NoSuchElementException;
 
 /**
- * Targeted fuzzer for the Apache POI Formula Parser.
- * This target was created to address low coverage in the formula parsing engine.
+ * Fuzz target for the Apache POI Formula Parser.
+ * Used by Google's OSS-Fuzz for continuous security testing.
  */
 public class FormulaParserFuzzer {
     private static HSSFWorkbook workbook;
@@ -47,17 +46,17 @@ public class FormulaParserFuzzer {
             FormulaType formulaType = data.pickValue(FormulaType.values());
             int sheetIndex = data.consumeInt(-1, 10);
             String formula = data.consumeRemainingAsString();
-            
+
             if (formula == null || formula.isEmpty()) {
                 return;
             }
 
             FormulaParser.parse(formula, evalWorkbook, formulaType, sheetIndex);
-            
-        } catch (FormulaParseException | IllegalArgumentException | IllegalStateException | 
+
+        } catch (FormulaParseException | IllegalArgumentException | IllegalStateException |
                  IndexOutOfBoundsException | ArithmeticException | NegativeArraySizeException |
-                 RecordFormatException | BufferUnderflowException | OpenXML4JRuntimeException |
-                 POIXMLException | UnsupportedOperationException | NoSuchElementException e) {
+                 RecordFormatException | BufferUnderflowException |
+                 UnsupportedOperationException | NoSuchElementException e) {
             // Expected exceptions on malformed formula syntax
         }
     }
