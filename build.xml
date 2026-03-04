@@ -291,6 +291,8 @@ under the License.
     <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.25.3" usage="main-tests"/>
     <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main-tests"/>
 
+    <dependency prefix="main.jazzer-api" artifact="com.code-intelligence:jazzer-api:0.22.0" usage="main-tests"/>
+
     <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.15" usage="excelant"/>
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.15" usage="excelant"/>
 
@@ -442,6 +444,7 @@ under the License.
         <pathelement location="${main.objenesis.jar}"/>
         <pathelement location="${main.log4j-core.jar}"/>
         <pathelement location="${main.commons-logging.jar}"/>
+        <pathelement location="${main.jazzer-api.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
