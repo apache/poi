@@ -115,8 +115,14 @@ public class StressMap {
                 if (file != null && !file.isBlank()) {
                     ExcInfo info = new ExcInfo();
                     info.setFile(file);
-                    info.setTests(record.get("Tests"));
-                    info.setHandler(record.get("Handler"));
+                    String tests = record.get("Tests");
+                    if (tests != null && !tests.isBlank()) {
+                        info.setTests(tests);
+                    }
+                    String handler = record.get("Handler");
+                    if (handler != null && !handler.isBlank()) {
+                        info.setHandler(handler);
+                    }
                     String password = record.get("Password");
                     if (password != null && !password.isBlank()) {
                         info.setPassword(password);
