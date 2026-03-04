@@ -86,7 +86,7 @@ public class StressMap {
                 final String filePart = record.get(0);
                 if (filePart != null && !filePart.isBlank()) {
                     String handlerType = record.get(2);
-                    if (SCRATCH_IGNORE || handlerType == null) {
+                    if (SCRATCH_IGNORE || handlerType == null || handlerType.isBlank()) {
                         handlerType = record.get(1);
                     }
                     handlerMap.put(filePart, handlerType);
@@ -118,7 +118,10 @@ public class StressMap {
                     info.setTests(record.get("Tests"));
                     info.setHandler(record.get("Handler"));
                     info.setPassword(record.get("Password"));
-                    info.setExClazz(record.get("Exception Class"));
+                    String exClass = record.get("Exception Class");
+                    if (exClass != null && !exClass.isBlank()) {
+                        info.setExClazz(exClass);
+                    }
                     info.setExMessage(record.get("Exception Message"));
                     final boolean ignore =
                             SCRATCH_IGNORE && SCRATCH_HANDLER.matcher(info.getHandler()).find();

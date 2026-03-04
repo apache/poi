@@ -1,4 +1,4 @@
-﻿File Part,Handler NoScratchpad,Handler,,
+﻿File Part,Handler NoScratchpad,Handler
 .xls,HSSF,,,
 .xlsx,XSSF,,,
 .xlsm,XSSF,,,
