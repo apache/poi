@@ -301,7 +301,8 @@ public class TestAllFiles {
             // it sometimes has a message and sometimes not!
             if (NullPointerException.class.isAssignableFrom(exClass)) {
                 if (actMsg != null) {
-                    assertTrue(actMsg.contains(exMessage), errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
+                    assertTrue(normalizeWhitespace(actMsg).contains(normalizeWhitespace(exMessage)),
+                            errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
                 }
             } else {
                 // verify that message is either null for both or set for both
@@ -315,7 +316,7 @@ public class TestAllFiles {
                         (exMessage != null || !IndexOutOfBoundsException.class.isAssignableFrom(exClass))) {
                     assertNotNull(exMessage,
                             errPrefix + "Expected message was null, but actMsg wasn't: Message: " + actMsg + ": " + e);
-                    assertTrue(actMsg.contains(exMessage),
+                    assertTrue(normalizeWhitespace(actMsg).contains(normalizeWhitespace(exMessage)),
                             errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
                 }
             }
@@ -324,16 +325,12 @@ public class TestAllFiles {
         }
     }
 
+    private static String normalizeWhitespace(final String str) {
+        return str.replace("\r\n", "\n");
+    }
+
     private static boolean isBlank(final String str) {
-        if (str != null) {
-            final int strLen = str.length();
-            for (int i = 0; i < strLen; i++) {
-                if (!Character.isWhitespace(str.charAt(i))) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return str == null || str.isBlank();
     }
 
     private static String pathReplace(String msg) {
