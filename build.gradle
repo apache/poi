@@ -707,8 +707,7 @@ rat {
         // ignore svn conflict artifacts
         "**/module-info.*",
         "poi-examples/src/main/groovy/settings.gradle",
-        "poi-examples/src/main/groovy/.gradle/**",
-        "**/*.dict"
+        "poi-examples/src/main/groovy/.gradle/**"
     ]
 
     /*

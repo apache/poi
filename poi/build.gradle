@@ -44,7 +44,6 @@ dependencies {
 
     testImplementation 'org.reflections:reflections:0.10.2'
     testImplementation 'org.apache.ant:ant:1.10.15'
-    testImplementation 'com.code-intelligence:jazzer-api:0.22.0'
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
