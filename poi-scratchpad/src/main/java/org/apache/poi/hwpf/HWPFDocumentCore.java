@@ -297,7 +297,7 @@ public abstract class HWPFDocumentCore extends POIDocument {
                 pass = Decryptor.DEFAULT_PASSWORD;
             }
             if (!dec.verifyPassword(pass)) {
-                throw new EncryptedDocumentException("document is encrypted, password is invalid - use Biff8EncryptionKey.setCurrentUserPassword() to set password before opening");
+                throw new EncryptedDocumentException("document is encrypted, password is invalid - use Biff8EncryptionKey.setCurrentUserPasswort() to set password before opening");
             }
         } catch (GeneralSecurityException e) {
             throw new IOException(e.getMessage(), e);
