@@ -32,6 +32,7 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.input.BOMInputStream;
 
 public class StressMap {
     private final MultiValuedMap<String, ExcInfo> exMap = new ArrayListValuedHashMap<>();
@@ -75,9 +76,12 @@ public class StressMap {
                 .setSkipHeaderRecord(true)   // skip the header row when iterating records
                 .get();
         File inputFile = new File(TestAllFiles.ROOT_DIR, "poi-integration-handlers.csv");
-        try (FileInputStream in = new FileInputStream(inputFile)) {
+        try (
+                FileInputStream in = new FileInputStream(inputFile);
+                BOMInputStream bomInputStream = BOMInputStream.builder().setInputStream(in).get()
+        ) {
             Iterable<CSVRecord> records = csvFormat.parse(
-                    new InputStreamReader(in, StandardCharsets.UTF_8));
+                    new InputStreamReader(bomInputStream, StandardCharsets.UTF_8));
             records.forEach(record -> {
                 final String filePart = record.get(0);
                 if (filePart != null && !filePart.isBlank()) {
@@ -99,9 +103,13 @@ public class StressMap {
                 .setSkipHeaderRecord(true)   // skip the header row when iterating records
                 .get();
         File inputFile = new File(TestAllFiles.ROOT_DIR, "poi-integration-exceptions.csv");
-        try (FileInputStream in = new FileInputStream(inputFile)) {
+        try (
+                FileInputStream in = new FileInputStream(inputFile);
+                BOMInputStream bomInputStream = BOMInputStream.builder().setInputStream(in).get()
+
+        ) {
             Iterable<CSVRecord> records = csvFormat.parse(
-                    new InputStreamReader(in, StandardCharsets.UTF_8));
+                    new InputStreamReader(bomInputStream, StandardCharsets.UTF_8));
             records.forEach(record -> {
                 final String file = record.get("File");
                 if (file != null && !file.isBlank()) {
