@@ -117,12 +117,18 @@ public class StressMap {
                     info.setFile(file);
                     info.setTests(record.get("Tests"));
                     info.setHandler(record.get("Handler"));
-                    info.setPassword(record.get("Password"));
+                    String password = record.get("Password");
+                    if (password != null && !password.isBlank()) {
+                        info.setPassword(password);
+                    }
                     String exClass = record.get("Exception Class");
                     if (exClass != null && !exClass.isBlank()) {
                         info.setExClazz(exClass);
                     }
-                    info.setExMessage(record.get("Exception Message"));
+                    String exMessage = record.get("Exception Message");
+                    if (exMessage != null && !exMessage.isBlank()) {
+                        info.setExMessage(exMessage);
+                    }
                     final boolean ignore =
                             SCRATCH_IGNORE && SCRATCH_HANDLER.matcher(info.getHandler()).find();
                     if (!ignore) {
