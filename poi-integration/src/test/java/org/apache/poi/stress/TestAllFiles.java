@@ -103,7 +103,7 @@ public class TestAllFiles {
         // invalid files
         "spreadsheet/bug69769.xlsx",
 
-        // NOTE: Expected failures should usually be added in file "stress.xlsx" instead
+        // NOTE: Expected failures should usually be added in file "poi-integration-exceptions.csv" instead
         // of being listed here in order to also verify the expected exception details!
     };
 
@@ -161,7 +161,7 @@ public class TestAllFiles {
 
     public static Stream<Arguments> allfiles(String testName) throws IOException {
         StressMap sm = new StressMap();
-        sm.load(new File(ROOT_DIR, "spreadsheet/stress.xlsx"));
+        sm.loadDataFiles();
 
         boolean noScratch = Boolean.getBoolean("scratchpad.ignore");
 

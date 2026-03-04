@@ -337,6 +337,7 @@ under the License.
     <dependency prefix="ooxml.commons-lang3" artifact="org.apache.commons:commons-lang3:3.18.0" usage="ooxml"/>
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
+    <dependency prefix="ooxml.test.commons-csv" artifact="org.apache.commons:commons-csv:1.14.1" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.10.2" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:33.4.8-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava.failureaccess" artifact="com.google.guava:failureaccess:1.0.3" usage="ooxml-tests"/>
@@ -463,6 +464,7 @@ under the License.
         <pathelement location="${ooxml.commons-lang3.jar}"/>
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
+        <pathelement location="${ooxml.test.commons-csv.jar}"/>
         <pathelement location="${ooxml.test.guava.jar}"/>
         <pathelement location="${ooxml.test.guava.failureaccess.jar}"/>
         <pathelement location="${ooxml.test.opczip.jar}"/>
@@ -831,6 +833,7 @@ under the License.
                     <available file="${ooxml.xmlbeans.jar}"/>
                     <available file="${ooxml.commons-compress.jar}"/>
                     <available file="${ooxml.commons-lang3.jar}"/>
+                    <available file="${ooxml.test.commons-csv.jar}"/>
                     <available file="${ooxml.test.reflections.jar}"/>
                     <available file="${ooxml.test.guava.jar}"/>
                     <available file="${ooxml.test.guava.failureaccess.jar}"/>
@@ -875,6 +878,7 @@ under the License.
         <downloadfile src="${ooxml.xmlbeans.url}" dest="${ooxml.xmlbeans.jar}"/>
         <downloadfile src="${ooxml.commons-compress.url}" dest="${ooxml.commons-compress.jar}"/>
         <downloadfile src="${ooxml.commons-lang3.url}" dest="${ooxml.commons-lang3.jar}"/>
+        <downloadfile src="${ooxml.test.commons-csv.url}" dest="${ooxml.test.commons-csv.jar}"/>
         <downloadfile src="${ooxml.test.reflections.url}" dest="${ooxml.test.reflections.jar}"/>
         <downloadfile src="${ooxml.test.guava.url}" dest="${ooxml.test.guava.jar}"/>
         <downloadfile src="${ooxml.test.guava.failureaccess.url}" dest="${ooxml.test.guava.failureaccess.jar}"/>

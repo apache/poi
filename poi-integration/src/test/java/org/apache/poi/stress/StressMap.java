@@ -17,27 +17,21 @@
 package org.apache.poi.stress;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 
 public class StressMap {
     private final MultiValuedMap<String, ExcInfo> exMap = new ArrayListValuedHashMap<>();
@@ -45,11 +39,9 @@ public class StressMap {
     private final boolean SCRATCH_IGNORE = Boolean.getBoolean("scratchpad.ignore");
     private final Pattern SCRATCH_HANDLER = Pattern.compile("(HSLF|HWPF|HSMF|HMEF)");
 
-    public void load(File mapFile) throws IOException {
-        try (Workbook wb = WorkbookFactory.create(mapFile, null, true)) {
-            readExMap(wb.getSheet("Exceptions"));
-            readHandlerMap(wb.getSheet("Handlers"));
-        }
+    public void loadDataFiles() throws IOException {
+        readExMap();
+        readHandlerMap();
     }
 
     public List<FileHandlerKnown> getHandler(String file) {
@@ -75,81 +67,59 @@ public class StressMap {
             .findFirst().orElse(null);
     }
 
-    public void readHandlerMap(Sheet sh) {
-        if (sh == null) {
-            return;
-        }
-
+    public void readHandlerMap() throws IOException {
         handlerMap.clear();
 
-        boolean isFirst = true;
-        for (Row row : sh) {
-            if (isFirst) {
-                isFirst = false;
-                continue;
-            }
-            Cell cell = row.getCell(2);
-            if (SCRATCH_IGNORE || cell == null || cell.getCellType() != CellType.STRING) {
-                cell = row.getCell(1);
-            }
-            handlerMap.put(row.getCell(0).getStringCellValue(), cell.getStringCellValue());
+        CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
+                .setHeader()                 // empty => parse header from first record
+                .setSkipHeaderRecord(true)   // skip the header row when iterating records
+                .get();
+        File inputFile = new File(TestAllFiles.ROOT_DIR, "poi-integration-handlers.csv");
+        try (FileInputStream in = new FileInputStream(inputFile)) {
+            Iterable<CSVRecord> records = csvFormat.parse(
+                    new InputStreamReader(in, StandardCharsets.UTF_8));
+            records.forEach(record -> {
+                final String filePart = record.get(0);
+                if (filePart != null && !filePart.isBlank()) {
+                    String handlerType = record.get(2);
+                    if (SCRATCH_IGNORE || handlerType == null) {
+                        handlerType = record.get(1);
+                    }
+                    handlerMap.put(filePart, handlerType);
+                }
+            });
         }
     }
 
-
-    public void readExMap(Sheet sh) {
-        if (sh == null) {
-            return;
-        }
-
+    public void readExMap() throws IOException {
         exMap.clear();
 
-        Iterator<Row> iter = sh.iterator();
-        List<Map.Entry<String, BiConsumer<ExcInfo,String>>> cols = initCols(iter.next());
-
-        int idx = 0, handlerIdx = -1;
-        for (Map.Entry<String, BiConsumer<ExcInfo, String>> e : cols) {
-            if ("Handler".equals(e.getKey())) {
-                handlerIdx = idx;
-            }
-            idx++;
-        }
-
-        while (iter.hasNext()) {
-            Row row = iter.next();
-
-            if (SCRATCH_IGNORE && handlerIdx > -1) {
-                String handler = row.getCell(handlerIdx) == null ? "" : row.getCell(handlerIdx).getStringCellValue();
-                if (SCRATCH_HANDLER.matcher(handler).find()) {
-                    // ignore exception of ignored files
-                    continue;
+        CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
+                .setHeader()                 // empty => parse header from first record
+                .setSkipHeaderRecord(true)   // skip the header row when iterating records
+                .get();
+        File inputFile = new File(TestAllFiles.ROOT_DIR, "poi-integration-exceptions.csv");
+        try (FileInputStream in = new FileInputStream(inputFile)) {
+            Iterable<CSVRecord> records = csvFormat.parse(
+                    new InputStreamReader(in, StandardCharsets.UTF_8));
+            records.forEach(record -> {
+                final String file = record.get("File");
+                if (file != null && !file.isBlank()) {
+                    ExcInfo info = new ExcInfo();
+                    info.setFile(file);
+                    info.setTests(record.get("Tests"));
+                    info.setHandler(record.get("Handler"));
+                    info.setPassword(record.get("Password"));
+                    info.setExClazz(record.get("Exception Class"));
+                    info.setExMessage(record.get("Exception Message"));
+                    final boolean ignore =
+                            SCRATCH_IGNORE && SCRATCH_HANDLER.matcher(info.getHandler()).find();
+                    if (!ignore) {
+                        exMap.put(file, info);
+                    }
                 }
-            }
-
-            ExcInfo info = new ExcInfo();
-            for (Cell cell : row) {
-                if (cell.getCellType() == CellType.STRING) {
-                    cols.get(cell.getColumnIndex()).getValue().accept(info, cell.getStringCellValue());
-                }
-            }
-            exMap.put(info.getFile(), info);
+            });
         }
-    }
-
-    private static List<Map.Entry<String, BiConsumer<ExcInfo,String>>> initCols(Row row) {
-        Map<String,BiConsumer<ExcInfo,String>> m = new HashMap<>();
-        m.put("File", ExcInfo::setFile);
-        m.put("Tests", ExcInfo::setTests);
-        m.put("Handler", ExcInfo::setHandler);
-        m.put("Password", ExcInfo::setPassword);
-        m.put("Exception Class", ExcInfo::setExClazz);
-        m.put("Exception Message", ExcInfo::setExMessage);
-
-        return StreamSupport
-            .stream(row.spliterator(), false)
-            .map(Cell::getStringCellValue)
-            .map(v -> new SimpleEntry<>(v, m.getOrDefault(v, (e,s) -> {})))
-            .collect(Collectors.toList());
     }
 
     private static String secondHandler(String handlerStr) {
