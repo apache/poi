@@ -47,7 +47,18 @@ public final class WordExtractor implements POIOLE2TextExtractor {
      *            InputStream containing the word file
      */
     public WordExtractor( InputStream is ) throws IOException {
-        this(HWPFDocumentCore.verifyAndBuildPOIFS(is ) );
+        this(HWPFDocumentCore.verifyAndBuildPOIFS(is));
+    }
+
+    /**
+     * Create a new Word Extractor
+     *
+     * @param is InputStream containing the word file
+     * @param password as a char array (can be null)
+     * @since 6.0.0
+     */
+    public WordExtractor( InputStream is, char[] password ) throws IOException {
+        this(HWPFDocumentCore.verifyAndBuildPOIFS(is), password);
     }
 
     /**
@@ -60,8 +71,35 @@ public final class WordExtractor implements POIOLE2TextExtractor {
         this( new HWPFDocument( fs ) );
     }
 
+    /**
+     * Create a new Word Extractor
+     *
+     * @param fs POIFSFileSystem containing the word file
+     * @param password as a char array (can be null)
+     * @since 6.0.0
+     */
+    public WordExtractor( POIFSFileSystem fs, char[] password ) throws IOException {
+        this( new HWPFDocument( fs, password ) );
+    }
+
+    /**
+     * Create a new Word Extractor
+     *
+     * @param dir DirectoryNode containing the word file
+     */
     public WordExtractor( DirectoryNode dir ) throws IOException {
         this( new HWPFDocument( dir ) );
+    }
+
+    /**
+     * Create a new Word Extractor
+     *
+     * @param dir DirectoryNode containing the word file
+     * @param password as a char array (can be null)
+     * @since 6.0.0
+     */
+    public WordExtractor( DirectoryNode dir, char[] password ) throws IOException {
+        this( new HWPFDocument( dir, password ) );
     }
 
     /**
