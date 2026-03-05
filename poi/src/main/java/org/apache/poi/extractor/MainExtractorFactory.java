@@ -31,6 +31,7 @@ import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.ExceptionUtil;
 
 /**
  * ExtractorFactory for HSSF and Old Excel format
@@ -44,16 +45,38 @@ public class MainExtractorFactory implements ExtractorProvider {
     @SuppressWarnings({"java:S2095"})
     @Override
     public POITextExtractor create(File file, String password) throws IOException {
-        try (POIFSFileSystem fs = new POIFSFileSystem(file)) {
-            return create(fs.getRoot(), password);
+        POIFSFileSystem fs = new POIFSFileSystem(file, true);
+        POITextExtractor extractor = null;
+        try {
+            extractor = create(fs.getRoot(), password);
+        } catch (Throwable t) {
+            if (!ExceptionUtil.isFatal(t)) {
+                fs.close();
+                throw t;
+            }
         }
+        if (extractor == null) {
+            fs.close();
+        }
+        return extractor;
     }
 
     @Override
     public POITextExtractor create(InputStream inputStream, String password) throws IOException {
-        try (POIFSFileSystem fs = new POIFSFileSystem(inputStream)) {
-            return create(fs.getRoot(), password);
+        POIFSFileSystem fs = new POIFSFileSystem(inputStream);
+        POITextExtractor extractor = null;
+        try {
+            extractor = create(fs.getRoot(), password);
+        } catch (Throwable t) {
+            if (!ExceptionUtil.isFatal(t)) {
+                fs.close();
+                throw t;
+            }
         }
+        if (extractor == null) {
+            fs.close();
+        }
+        return extractor;
     }
 
     @SuppressWarnings("java:S2093")
