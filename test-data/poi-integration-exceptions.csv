@@ -1,8 +1,8 @@
 ﻿File,Tests,Handler,Password,Exception Class,Exception Message,Comment
 spreadsheet/51832.xls,handle,HSSF,,org.apache.poi.EncryptedDocumentException,Default password is invalid for salt/verifier/verifierHash,
 spreadsheet/51832.xls,extract,"HSSF,HPSF",,org.apache.poi.EncryptedDocumentException,Default password is invalid for salt/verifier/verifierHash,
-document/PasswordProtected.doc,handle,HWPF,,org.apache.poi.EncryptedDocumentException,"document is encrypted, password is invalid - use Biff8EncryptionKey.setCurrentUserPassword() to set password before opening",
-document/PasswordProtected.doc,extract,"HWPF,HPSF",,org.apache.poi.EncryptedDocumentException,"document is encrypted, password is invalid - use Biff8EncryptionKey.setCurrentUserPassword() to set password before opening",
+document/PasswordProtected.doc,handle,HWPF,,org.apache.poi.EncryptedDocumentException,"document is encrypted, password is invalid - use constructor to set the password",
+document/PasswordProtected.doc,extract,"HWPF,HPSF",,org.apache.poi.EncryptedDocumentException,"document is encrypted, password is invalid - use constructor to set the password",
 spreadsheet/CustomXMLMapping-singleattributenamespace.xlsx,handle,XSSF,,org.xml.sax.SAXParseException,access is not allowed,Oracle/OpenJDK and IBM-JDK error differs slightly
 spreadsheet/55864.xlsx,handle,XSSF,,org.xml.sax.SAXParseException,cvc-complex-type.2.4.b: The content of element 'PersonData' is not complete. One of '{FirstName}' is expected.,
 spreadsheet/57890.xlsx,handle,XSSF,,org.xml.sax.SAXParseException,cvc-complex-type.2.4.b: The content of element 'TestData' is not complete. One of '{Date}' is expected.,
