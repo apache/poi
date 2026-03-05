@@ -58,6 +58,19 @@ public class TestDocumentEncryption {
         "Password_Protected-np-hello.ppt"
     })
     void cryptoAPIDecryptionOther(String pptFile) throws Exception {
+        try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
+             HSLFSlideShow ppt = new HSLFSlideShow(fs, "hello".toCharArray())) {
+            assertFalse(ppt.getSlides().isEmpty());
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "Password_Protected-56-hello.ppt",
+            "Password_Protected-hello.ppt",
+            "Password_Protected-np-hello.ppt"
+    })
+    void cryptoAPIDecryptionOtherBiff8EncryptionKey(String pptFile) throws Exception {
         Biff8EncryptionKey.setCurrentUserPassword("hello");
         try {
             try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
@@ -72,9 +85,8 @@ public class TestDocumentEncryption {
     @Test
     void cryptoAPIChangeKeySize() throws Exception {
         String pptFile = "cryptoapi-proc2356.ppt";
-        Biff8EncryptionKey.setCurrentUserPassword("crypto");
         try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
-             HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs)) {
+             HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs, "crypto".toCharArray())) {
             // need to cache data (i.e. read all data) before changing the key size
             List<HSLFPictureData> picsExpected = hss.getPictureData();
             hss.getDocumentSummaryInformation();
@@ -95,8 +107,6 @@ public class TestDocumentEncryption {
                     assertArrayEquals(picsExpected.get(i).getRawData(), picsActual.get(i).getRawData());
                 }
             }
-        } finally {
-            Biff8EncryptionKey.setCurrentUserPassword(null);
         }
     }
 
@@ -139,9 +149,8 @@ public class TestDocumentEncryption {
     void cryptoAPIDecryption() throws Exception {
         // taken from a msdn blog:
         // http://blogs.msdn.com/b/openspecification/archive/2009/05/08/dominic-salemno.aspx
-        Biff8EncryptionKey.setCurrentUserPassword("crypto");
         try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile("cryptoapi-proc2356.ppt"));
-             HSLFSlideShow ss = new HSLFSlideShow(fs)) {
+             HSLFSlideShow ss = new HSLFSlideShow(fs, "crypto".toCharArray())) {
 
             HSLFSlide slide = ss.getSlides().get(0);
             String rawText = HSLFTextParagraph.getRawText(slide.getTextParagraphs().get(0));
@@ -181,8 +190,6 @@ public class TestDocumentEncryption {
                 assertTrue(ps.isDocumentSummaryInformation());
                 assertEquals("On-screen Show (4:3)", ps.getProperties()[1].getValue());
             }
-        } finally {
-            Biff8EncryptionKey.setCurrentUserPassword(null);
         }
     }
 }
