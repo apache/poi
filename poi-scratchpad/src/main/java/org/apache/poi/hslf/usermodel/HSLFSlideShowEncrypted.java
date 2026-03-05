@@ -79,7 +79,23 @@ public class HSLFSlideShowEncrypted implements Closeable {
         this.dea = dea;
     }
 
-    protected HSLFSlideShowEncrypted(byte[] docstream, NavigableMap<Integer,Record> recordMap) {
+    protected HSLFSlideShowEncrypted(byte[] docstream, NavigableMap<Integer, Record> recordMap) {
+        this(docstream, recordMap, (String) null);
+    }
+
+    /**
+     * @param docstream
+     * @param recordMap
+     * @param password in char array format (can be null)
+     * @since 6.0.0
+     */
+    protected HSLFSlideShowEncrypted(byte[] docstream, NavigableMap<Integer, Record> recordMap,
+                                     char[] password) {
+        this(docstream, recordMap, password == null ? null : new String(password));
+    }
+
+    private HSLFSlideShowEncrypted(byte[] docstream, NavigableMap<Integer, Record> recordMap,
+                                   String password) {
         // check for DocumentEncryptionAtom, which would be at the last offset
         // need to ignore already set UserEdit and PersistAtoms
         UserEditAtom userEditAtomWithEncryption = null;
@@ -125,7 +141,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
         }
         this.dea = (DocumentEncryptionAtom)r;
 
-        String pass = Biff8EncryptionKey.getCurrentUserPassword();
+        final String pass = password == null ? Biff8EncryptionKey.getCurrentUserPassword() : password;
         EncryptionInfo ei = getEncryptionInfo();
         try {
             if (ei == null || ei.getDecryptor() == null) {
@@ -137,7 +153,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
         } catch (GeneralSecurityException e) {
             throw new EncryptedPowerPointFileException(e);
         }
-     }
+    }
 
     public DocumentEncryptionAtom getDocumentEncryptionAtom() {
         return dea;
