@@ -44,34 +44,39 @@ public class MainExtractorFactory implements ExtractorProvider {
     @SuppressWarnings({"java:S2095"})
     @Override
     public POITextExtractor create(File file, String password) throws IOException {
-        return create(new POIFSFileSystem(file, true).getRoot(), password);
+        try (POIFSFileSystem fs = new POIFSFileSystem(file)) {
+            return create(fs.getRoot(), password);
+        }
     }
 
     @Override
     public POITextExtractor create(InputStream inputStream, String password) throws IOException {
-        return create(new POIFSFileSystem(inputStream).getRoot(), password);
+        try (POIFSFileSystem fs = new POIFSFileSystem(inputStream)) {
+            return create(fs.getRoot(), password);
+        }
     }
 
     @SuppressWarnings("java:S2093")
     @Override
     public POITextExtractor create(DirectoryNode poifsDir, String password) throws IOException {
         final String oldPW = Biff8EncryptionKey.getCurrentUserPassword();
-        try {
+
+        if (poifsDir.hasEntry(InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME)) {
             Biff8EncryptionKey.setCurrentUserPassword(password);
-
-            if (poifsDir.hasEntry(InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME)) {
+            try {
                 return new OldExcelExtractor(poifsDir);
+            } finally {
+                Biff8EncryptionKey.setCurrentUserPassword(oldPW);
             }
+        }
 
-            // Look for certain entries in the stream, to figure it out from
-            for (String workbookName : WORKBOOK_DIR_ENTRY_NAMES_CASE_INSENSITIVE) {
-                if (poifsDir.hasEntryCaseInsensitive(workbookName)) {
-                    return ExtractorFactory.getPreferEventExtractor() ? new EventBasedExcelExtractor(poifsDir) : new ExcelExtractor(poifsDir);
-                }
+        // Look for certain entries in the stream, to figure it out from
+        for (String workbookName : WORKBOOK_DIR_ENTRY_NAMES_CASE_INSENSITIVE) {
+            if (poifsDir.hasEntryCaseInsensitive(workbookName)) {
+                return ExtractorFactory.getPreferEventExtractor() ?
+                        new EventBasedExcelExtractor(poifsDir, password.toCharArray()) :
+                        new ExcelExtractor(poifsDir, password.toCharArray());
             }
-
-        } finally {
-            Biff8EncryptionKey.setCurrentUserPassword(oldPW);
         }
 
         return null;

@@ -174,7 +174,7 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
         HSSFRequest request = new HSSFRequest();
         request.addListenerForAllRecords(ft);
 
-        factory.processWorkbookEvents(request, _dir);
+        factory.processWorkbookEvents(request, _dir, _password);
 
         return tl;
     }
