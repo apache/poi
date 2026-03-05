@@ -73,9 +73,10 @@ public class MainExtractorFactory implements ExtractorProvider {
         // Look for certain entries in the stream, to figure it out from
         for (String workbookName : WORKBOOK_DIR_ENTRY_NAMES_CASE_INSENSITIVE) {
             if (poifsDir.hasEntryCaseInsensitive(workbookName)) {
+                final char[] passArray = password == null ? null : password.toCharArray();
                 return ExtractorFactory.getPreferEventExtractor() ?
-                        new EventBasedExcelExtractor(poifsDir, password.toCharArray()) :
-                        new ExcelExtractor(poifsDir, password.toCharArray());
+                        new EventBasedExcelExtractor(poifsDir, passArray) :
+                        new ExcelExtractor(poifsDir, passArray);
             }
         }
 
