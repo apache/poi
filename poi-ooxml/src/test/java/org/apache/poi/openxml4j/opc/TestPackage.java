@@ -799,6 +799,15 @@ public final class TestPackage {
     }
 
     @Test
+    void testFakeZipBomb() throws IOException, InvalidFormatException {
+        String file = getSampleFileName("fake-zipbomb-reproducer.docx");
+        try (POITextExtractor extractor = ExtractorFactory.createExtractor(new File(file))) {
+            assertNotNull(extractor);
+            extractor.getText();
+        }
+    }
+
+    @Test
     void zipBombCheckSizesWithinLimits() throws IOException, EncryptedDocumentException {
         getZipStatsAndConsume((max_size, min_ratio) -> {
             // use values close to, but within the limits

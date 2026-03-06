@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.zip.ZipException;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.utils.InputStreamStatistics;
@@ -118,6 +119,17 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
             // therefore we try to handle this gracefully for now
             // this try/catch can be removed when COMPRESS-598 is fixed
             rawSize = 0;
+        }
+
+        // If available, read compressed size via ZipArchiveEntry.getCompressedSize() which takes
+        // data from the Zip central directory header. This is because the ZipArchiveInputStream
+        // "may return unknown sizes and CRC values for entries until the next entry has been
+        // reached if the archive uses the data descriptor feature."
+        if (entry != null) {
+            long entryCompressedSize = entry.getCompressedSize();
+            if (entryCompressedSize != ArchiveEntry.SIZE_UNKNOWN) {
+                rawSize = entryCompressedSize;
+            }
         }
 
         final String entryName = entry == null ? "not set" : entry.getName();
