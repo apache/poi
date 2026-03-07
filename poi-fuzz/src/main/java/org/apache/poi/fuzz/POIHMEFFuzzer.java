@@ -15,28 +15,34 @@
    limitations under the License.
 ==================================================================== */
 
-// Fuzz targets for OSS-Fuzz integration.
-// Jazzer is provided at runtime by the OSS-Fuzz build environment; we only
-// need the API jar at compile time.
+package org.apache.poi.fuzz;
 
-dependencies {
-    implementation project(':poi')
-    implementation project(':poi-scratchpad')
-    implementation project(':poi-examples')
-    implementation project(path:':poi-integration', configuration:'tests')
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
-    implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
-    implementation 'org.apache.commons:commons-lang3:3.20.0'
-    implementation 'org.opentest4j:opentest4j:1.2.0'
+import org.apache.poi.fuzz.POIFuzzer;
+import org.apache.poi.hmef.HMEFMessage;
+import org.apache.poi.util.RecordFormatException;
 
-    compileOnly 'com.code-intelligence:jazzer-api:0.22.0'
+public class POIHMEFFuzzer {
+	public static void fuzzerInitialize() {
+		POIFuzzer.adjustLimits();
+	}
+
+	public static void fuzzerTestOneInput(byte[] input) {
+		try {
+			HMEFMessage msg = new HMEFMessage(new ByteArrayInputStream(input));
+			//noinspection ResultOfMethodCallIgnored
+			msg.getAttachments();
+			msg.getBody();
+			//noinspection ResultOfMethodCallIgnored
+			msg.getMessageAttributes();
+			msg.getSubject();
+			//noinspection ResultOfMethodCallIgnored
+			msg.getMessageMAPIAttributes();
+		} catch (IOException | IllegalArgumentException | IllegalStateException | RecordFormatException |
+				ArrayIndexOutOfBoundsException e) {
+			// expected here
+		}
+	}
 }
-
-// Fuzz targets are not standard JUnit tests; disable the test task.
-test.enabled = false
-
-javadoc.enabled = false
-sourcesJar.enabled = false
-
-generateMetadataFileForPOIPublication.enabled = false
-publishPOIPublicationToMavenLocal.enabled = false
