@@ -33,6 +33,7 @@ import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.input.BOMInputStream;
+import org.opentest4j.AssertionFailedError;
 
 public class StressMap {
     private final MultiValuedMap<String, ExcInfo> exMap = new ArrayListValuedHashMap<>();
@@ -113,32 +114,37 @@ public class StressMap {
             records.forEach(record -> {
                 final String file = record.get("File");
                 if (file != null && !file.isBlank()) {
-                    ExcInfo info = new ExcInfo();
-                    info.setFile(file);
-                    String tests = record.get("Tests");
-                    if (tests != null && !tests.isBlank()) {
-                        info.setTests(tests);
-                    }
-                    String handler = record.get("Handler");
-                    if (handler != null && !handler.isBlank()) {
-                        info.setHandler(handler);
-                    }
-                    String password = record.get("Password");
-                    if (password != null && !password.isBlank()) {
-                        info.setPassword(password);
-                    }
-                    String exClass = record.get("Exception Class");
-                    if (exClass != null && !exClass.isBlank()) {
-                        info.setExClazz(exClass);
-                    }
-                    String exMessage = record.get("Exception Message");
-                    if (exMessage != null && !exMessage.isBlank()) {
-                        info.setExMessage(exMessage);
-                    }
-                    final boolean ignore =
-                            SCRATCH_IGNORE && SCRATCH_HANDLER.matcher(info.getHandler()).find();
-                    if (!ignore) {
-                        exMap.put(file, info);
+                    try {
+                        ExcInfo info = new ExcInfo();
+                        info.setFile(file);
+                        String tests = record.get("Tests");
+                        if (tests != null && !tests.isBlank()) {
+                            info.setTests(tests);
+                        }
+                        String handler = record.get("Handler");
+                        if (handler != null && !handler.isBlank()) {
+                            info.setHandler(handler);
+                        }
+                        String password = record.get("Password");
+                        if (password != null && !password.isBlank()) {
+                            info.setPassword(password);
+                        }
+                        String exClass = record.get("Exception Class");
+                        if (exClass != null && !exClass.isBlank()) {
+                            info.setExClazz(exClass);
+                        }
+                        String exMessage = record.get("Exception Message");
+                        if (exMessage != null && !exMessage.isBlank()) {
+                            info.setExMessage(exMessage);
+                        }
+                        final boolean ignore =
+                                SCRATCH_IGNORE && SCRATCH_HANDLER.matcher(info.getHandler()).find();
+                        if (!ignore) {
+                            exMap.put(file, info);
+                        }
+                    } catch (AssertionFailedError assertionFailedError) {
+                        // can happen when testing with poi-scratchpad
+                        // see ExcInfo#setExClazz
                     }
                 }
             });
