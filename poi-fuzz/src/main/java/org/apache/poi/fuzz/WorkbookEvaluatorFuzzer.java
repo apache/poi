@@ -18,40 +18,25 @@
 package org.apache.poi.fuzz;
 
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.FormulaParseException;
-import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.RecordFormatException;
 
 /**
  * Fuzz target for the Apache POI WorkbookEvaluator engine.
- * <p>
- * This fuzzer exercises the core formula evaluation pipeline by
- * setting fuzz-generated formulas on a pre-populated workbook and
- * evaluating them through the {@link WorkbookEvaluator}. A 20x20 data
- * grid with mixed cell types (numbers, strings, booleans, errors)
- * ensures that referential functions (SUM, VLOOKUP, INDEX, etc.)
- * reach deep evaluation branches.
- * <p>
- * Used by Google's OSS-Fuzz for continuous security testing.
  */
 public class WorkbookEvaluatorFuzzer {
-    private static HSSFWorkbook workbook;
-    private static HSSFSheet sheet;
-    private static HSSFCell fuzzerCell;
-    private static HSSFEvaluationWorkbook evalWorkbook;
-    private static EvaluationCell fuzzerEvalCell;
-    private static WorkbookEvaluator evaluator;
 
     private static final String[] EXCEL_FUNCTIONS = {
-        "SUM(", "IF(", "VLOOKUP(", "HLOOKUP(", "INDEX(", "MATCH(", "OFFSET(", "INDIRECT(",
+        "SUM(", "IF(", "VLOOKUP(", "HLOOKUP(", "INDEX(", "MATCH(", "OFFSET(", "INDIRECT(", 
         "CHOOSE(", "ADDRESS(", "AREAS(", "CELL(", "COLUMN(", "COLUMNS(", "ROW(", "ROWS(",
         "SUMPRODUCT(", "SUMIFS(", "COUNTIFS(", "AVERAGEIFS(", "MAXIFS(", "MINIFS(",
         "NPV(", "XIRR(", "PMT(", "FV(", "IRR(", "MIRR(", "NPER(", "RATE(",
@@ -61,16 +46,15 @@ public class WorkbookEvaluatorFuzzer {
         "DATE(", "TIME(", "NOW(", "TODAY(", "DATEDIF(", "WORKDAY(", "NETWORKDAYS("
     };
 
-    public static void fuzzerInitialize() {
-        workbook = new HSSFWorkbook();
-        sheet = workbook.createSheet("FuzzSheet");
-
-        // Target cell for the fuzzer (A1)
+    public static void fuzzerTestOneInput(FuzzedDataProvider data) {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("FuzzSheet");
+        
+        // Target Cell for the fuzzer (A1)
         HSSFRow fuzzerRow = sheet.createRow(0);
-        fuzzerCell = fuzzerRow.createCell(0);
+        HSSFCell fuzzerCell = fuzzerRow.createCell(0);
 
-        // Pre-populate a 20x20 grid with mixed data so that referential
-        // formulas (SUM, MATCH, VLOOKUP, etc.) exercise real evaluation paths.
+        // Pre-populate a 20x20 grid with data for referential formulas (SUM, MATCH, etc.)
         for (int r = 1; r <= 20; r++) {
             HSSFRow row = sheet.createRow(r);
             for (int c = 0; c < 20; c++) {
@@ -84,39 +68,45 @@ public class WorkbookEvaluatorFuzzer {
                 }
             }
         }
+        
+        HSSFEvaluationWorkbook evalWorkbook = HSSFEvaluationWorkbook.create(workbook);
+        WorkbookEvaluator evaluator = new WorkbookEvaluator(evalWorkbook, null, null);
+        EvaluationCell fuzzerEvalCell = evalWorkbook.getSheet(0).getCell(0, 0); // Pointer to A1 wrapper
 
-        evalWorkbook = HSSFEvaluationWorkbook.create(workbook);
-        evaluator = new WorkbookEvaluator(evalWorkbook, null, null);
-        fuzzerEvalCell = evalWorkbook.getSheet(0).getCell(0, 0);
-    }
-
-    public static void fuzzerTestOneInput(FuzzedDataProvider data) {
         try {
             StringBuilder sb = new StringBuilder();
-            if (data.consumeBoolean()) {
+            if (data.consumeBoolean()) { 
                 sb.append(data.pickValue(EXCEL_FUNCTIONS));
             }
             sb.append(data.consumeRemainingAsString());
-
-            String formula = sb.toString();
-            if (formula.isEmpty()) {
-                return;
+            if (data.consumeBoolean()) {
+                sb.append(")");
             }
+            
+            String formula = sb.toString();
+            if (formula.isEmpty()) return;
 
-            // 1. Compile: swallow parser exceptions per POI convention
+            // 1. Compile. Swallow Parser RuntimeExceptions per POI security policy.
             try {
                 fuzzerCell.setCellFormula(formula);
             } catch (Exception e) {
+                return; 
+            }
+            
+            // 2. Target the evaluation engine directly
+            evaluator.evaluate(fuzzerEvalCell);
+            
+        } catch (Exception e) {
+            // Filter expected engine/logic limitations
+            if (e instanceof IllegalArgumentException || 
+                e instanceof IllegalStateException ||
+                e instanceof FormulaParseException ||
+                e instanceof NotImplementedException ||
+                e instanceof RecordFormatException) {
                 return;
             }
-
-            // 2. Evaluate through the core engine
-            evaluator.evaluate(fuzzerEvalCell);
-
-        } catch (IllegalArgumentException | IllegalStateException |
-                 FormulaParseException | NotImplementedException |
-                 RecordFormatException e) {
-            // Expected engine/logic limitations on malformed formulas
+            // FATAL: Evaluation engine crashed internally (NPE, OOB, etc.)
+            throw new RuntimeException("Found a viable flaw in the EVALUATOR engine!", e);
         }
     }
 }
