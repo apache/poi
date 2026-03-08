@@ -132,9 +132,21 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @param fileName The name of the file to read.
      * @throws IOException if there is a problem while parsing the document.
      */
-    @SuppressWarnings("resource")
     public HSLFSlideShowImpl(String fileName) throws IOException {
         this(new POIFSFileSystem(new File(fileName)));
+    }
+
+    /**
+     * Constructs a Powerpoint document from fileName. Parses the document
+     * and places all the important stuff into data structures.
+     *
+     * @param fileName The name of the file to read.
+     * @param password in char array format (can be null)
+     * @throws IOException if there is a problem while parsing the document.
+     * @since 6.0.0
+     */
+    public HSLFSlideShowImpl(String fileName, char[] password) throws IOException {
+        this(new POIFSFileSystem(new File(fileName)), password);
     }
 
     /**
@@ -144,10 +156,23 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @param inputStream the source of the data
      * @throws IOException if there is a problem while parsing the document.
      */
-    @SuppressWarnings("resource")
     public HSLFSlideShowImpl(InputStream inputStream) throws IOException {
         //do Ole stuff
         this(new POIFSFileSystem(inputStream));
+    }
+
+    /**
+     * Constructs a Powerpoint document from an input stream. Parses the
+     * document and places all the important stuff into data structures.
+     *
+     * @param inputStream the source of the data
+     * @param password in char array format (can be null)
+     * @throws IOException if there is a problem while parsing the document.
+     * @since 6.0.0
+     */
+    public HSLFSlideShowImpl(InputStream inputStream, char[] password) throws IOException {
+        //do Ole stuff
+        this(new POIFSFileSystem(inputStream), password);
     }
 
     /**
@@ -162,6 +187,19 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     }
 
     /**
+     * Constructs a Powerpoint document from a POIFS Filesystem. Parses the
+     * document and places all the important stuff into data structures.
+     *
+     * @param filesystem the POIFS FileSystem to read from
+     * @param password in char array format (can be null)
+     * @throws IOException if there is a problem while parsing the document.
+     * @since 6.0.0
+     */
+    public HSLFSlideShowImpl(POIFSFileSystem filesystem, char[] password) throws IOException {
+        this(filesystem.getRoot(), password);
+    }
+
+    /**
      * Constructs a Powerpoint document from a specific point in a
      * POIFS Filesystem. Parses the document and places all the
      * important stuff into data structures.
@@ -170,6 +208,20 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @throws IOException if there is a problem while parsing the document.
      */
     public HSLFSlideShowImpl(DirectoryNode dir) throws IOException {
+        this(dir, null);
+    }
+
+    /**
+     * Constructs a Powerpoint document from a specific point in a
+     * POIFS Filesystem. Parses the document and places all the
+     * important stuff into data structures.
+     *
+     * @param dir the POIFS directory to read from
+     * @param password in char array format (can be null)
+     * @throws IOException if there is a problem while parsing the document.
+     * @since 6.0.0
+     */
+    public HSLFSlideShowImpl(DirectoryNode dir, char[] password) throws IOException {
         super(handleDualStorage(dir));
 
         try {
@@ -182,7 +234,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             readPowerPointStream();
 
             // Now, build records based on the PowerPoint stream
-            buildRecords();
+            buildRecords(password);
 
             // Look for any other streams
             readOtherStreams();
@@ -248,7 +300,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * Builds the list of records, based on the contents
      * of the PowerPoint stream
      */
-    private void buildRecords() throws IOException {
+    private void buildRecords(char[] password) throws IOException {
         // The format of records in a powerpoint file are:
         //   <little endian 2 byte "info">
         //   <little endian 2 byte "type">
@@ -282,16 +334,16 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         //  its length to know where the next record will start)
         //
 
-        _records = read(_docstream, (int) currentUser.getCurrentEditOffset());
+        _records = read(_docstream, (int) currentUser.getCurrentEditOffset(), password);
     }
 
-    private Record[] read(byte[] docstream, int usrOffset) throws IOException {
+    private Record[] read(byte[] docstream, int usrOffset, char[] password) throws IOException {
         //sort found records by offset.
         //(it is not necessary but SlideShow.findMostRecentCoreRecords() expects them sorted)
         NavigableMap<Integer, Record> records = new TreeMap<>(); // offset -> record
         Map<Integer, Integer> persistIds = new HashMap<>(); // offset -> persistId
         initRecordOffsets(docstream, usrOffset, records, persistIds);
-        HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(docstream, records);
+        HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(docstream, records, password);
 
         for (Map.Entry<Integer, Record> entry : records.entrySet()) {
             Integer offset = entry.getKey();
@@ -999,7 +1051,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         Document documentRecord = null;
         for (Record record : _records) {
             if (record == null) {
-                throw new CorruptPowerPointFileException("Did not have a valid record: " + record);
+                throw new CorruptPowerPointFileException("Did not have a valid record: null");
             }
             if (record.getRecordType() == RecordTypes.Document.typeID) {
                 if (!(record instanceof Document)) {

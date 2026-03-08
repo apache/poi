@@ -308,7 +308,7 @@
           <td>poi-ooxml</td>
           <td><a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi">poi</a>,
               <a href="https://search.maven.org/#search|gav|1|g:org.apache.poi AND a:poi-ooxml-lite">poi-ooxml-lite</a>,
-              <a href="https://search.maven.org/#artifactdetails|org.apache.commons|commons-compress|1.23.0|jar">commons-compress</a>,
+              <a href="https://search.maven.org/#artifactdetails|org.apache.commons|commons-compress|1.28.0|jar">commons-compress</a>,
               <a href="https://search.maven.org/#artifactdetails|com.zaxxer|SparseBitSet|1.2|jar">SparseBitSet</a><br/>
               For SVG support:
               <a href="https://search.maven.org/#search|gav|1|g:org.apache.xmlgraphics AND a:batik-all">batik-all</a>,

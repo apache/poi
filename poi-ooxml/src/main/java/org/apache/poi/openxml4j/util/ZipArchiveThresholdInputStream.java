@@ -27,6 +27,8 @@ import java.util.zip.ZipException;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.utils.InputStreamStatistics;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -35,6 +37,8 @@ import static org.apache.poi.openxml4j.util.ZipSecureFile.*;
 
 @Internal
 public class ZipArchiveThresholdInputStream extends FilterInputStream {
+
+    private static final Logger LOG = PoiLogManager.getLogger(ZipArchiveThresholdInputStream.class);
 
     private static final String MAX_ENTRY_SIZE_MSG =
         "Zip bomb detected! The file would exceed the max size of the expanded data in the zip-file.\n" +
@@ -112,11 +116,14 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
         long rawSize;
         try {
             rawSize = stats.getCompressedCount();
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             // this can happen with a very specially crafted file
             // see https://issues.apache.org/jira/browse/COMPRESS-598 for a related bug-report
             // therefore we try to handle this gracefully for now
             // this try/catch can be removed when COMPRESS-598 is fixed
+            // March 2026: there is an unreleased change for COMPRESS-598 which changes the NPE
+            // to a ZipException. To future proof the code, I will catch any exception here.
+            LOG.warn("Unable to get the compress count for this compressed stream meaning the zip bomb check can't be done");
             rawSize = 0;
         }
 
