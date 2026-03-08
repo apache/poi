@@ -266,7 +266,7 @@ final class TestFormulaParser {
         String value = "  hi  ";
         Ptg[] ptgs = parseFormula("\"" + value + "\"");
         confirmTokenClasses(ptgs, StringPtg.class);
-        assertEquals(((StringPtg) ptgs[0]).getValue(), value, "ptg0 contains exact value");
+        assertEquals(value, ((StringPtg) ptgs[0]).getValue(), "ptg0 contains exact value");
     }
 
     @Test
@@ -1572,5 +1572,11 @@ final class TestFormulaParser {
         assertEquals(255, dec2Hex.getFunctionIndex());
 
         wb.close();
+    }
+
+    @Test
+    void testNPE() {
+        assertThrows(FormulaParseException.class,
+                () -> parseFormula("[\f]!E鈩"));
     }
 }

@@ -27,6 +27,7 @@ import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
+import org.apache.poi.ss.formula.NameIdentifier;
 import org.apache.poi.ss.formula.SheetIdentifier;
 import org.apache.poi.ss.formula.SheetRangeIdentifier;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
@@ -277,7 +278,11 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
             extIx = -1;
         } else {
             String workbookName = sheetIden.getBookName();
-            String firstSheetName = sheetIden.getSheetIdentifier().getName();
+            NameIdentifier sheetIdentifier = sheetIden.getSheetIdentifier();
+            if (sheetIdentifier == null) {
+                throw new IllegalStateException("Did not have a sheet identifier for formula evaluation of book " + sheetIden.getBookName());
+            }
+            String firstSheetName = sheetIdentifier.getName();
             String lastSheetName = firstSheetName;
 
             if (sheetIden instanceof SheetRangeIdentifier) {

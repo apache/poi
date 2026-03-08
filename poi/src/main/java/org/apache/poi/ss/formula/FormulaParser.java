@@ -488,6 +488,10 @@ public final class FormulaParser {
                         throw new FormulaParseException("Cell reference or Named Range "
                                 + "expected after sheet name at index " + _pointer + ".");
                     }
+                    if (_book == null) {
+                        throw new FormulaParseException("Cannot access name '" + name +
+                                "' for sheet " + sheetIden.asFormulaString() + " without workbook");
+                    }
                     Ptg nameXPtg = _book.getNameXPtg(name, sheetIden);
                     if (nameXPtg == null) {
                         throw new FormulaParseException("Specified name '" + name +
