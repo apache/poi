@@ -275,7 +275,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
     @Override
     public String resolveNameXText(NameXPtg n) {
         int idx = n.getNameIndex();
-        String name = null;
+        String name;
 
         // First, try to find it as a User Defined Function
         IndexedUDFFinder udfFinder = (IndexedUDFFinder)getUDFFinder();
@@ -369,7 +369,10 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
 
         for (Sheet sheet : _uBook) {
             for (XSSFTable tbl : ((XSSFSheet)sheet).getTables()) {
-                _tableCache.put(tbl.getName(), tbl);
+                String name = tbl.getName();
+                if (name != null) {
+                    _tableCache.put(name, tbl);
+                }
             }
         }
         return _tableCache;
