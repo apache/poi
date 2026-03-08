@@ -138,7 +138,9 @@ public class StressMap {
                             info.setExMessage(exMessage);
                         }
                         final boolean ignore =
-                                SCRATCH_IGNORE && SCRATCH_HANDLER.matcher(info.getHandler()).find();
+                                SCRATCH_IGNORE &&
+                                        info.getHandler() != null &&
+                                        SCRATCH_HANDLER.matcher(info.getHandler()).find();
                         if (!ignore) {
                             exMap.put(file, info);
                         }
