@@ -33,14 +33,6 @@ import java.util.NoSuchElementException;
  * Used by Google's OSS-Fuzz for continuous security testing.
  */
 public class FormulaParserFuzzer {
-    private static HSSFWorkbook workbook;
-    private static HSSFEvaluationWorkbook evalWorkbook;
-
-    public static void fuzzerInitialize() {
-        workbook = new HSSFWorkbook();
-        evalWorkbook = HSSFEvaluationWorkbook.create(workbook);
-    }
-
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
         try {
             FormulaType formulaType = data.pickValue(FormulaType.values());
@@ -51,8 +43,9 @@ public class FormulaParserFuzzer {
                 return;
             }
 
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFEvaluationWorkbook evalWorkbook = HSSFEvaluationWorkbook.create(workbook);
             FormulaParser.parse(formula, evalWorkbook, formulaType, sheetIndex);
-
         } catch (FormulaParseException | IllegalArgumentException | IllegalStateException |
                  IndexOutOfBoundsException | ArithmeticException | NegativeArraySizeException |
                  RecordFormatException | BufferUnderflowException |
