@@ -1,29 +1,41 @@
 name: CIFuzz
 on:
   pull_request:
-    branches: [ trunk, 5.5.x ]
+    paths:
+      - 'poi/src/main/java/**'
+      - 'poi-ooxml/src/main/java/**'
+      - 'poi-scratchpad/src/main/java/**'
+      - 'poi-fuzz/src/main/java/**'
+  workflow_dispatch:
+
 permissions: {}
+
 jobs:
   Fuzzing:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
     - name: Build Fuzzers
       id: build
       uses: google/oss-fuzz/infra/cifuzz/actions/build_fuzzers@master
       with:
         oss-fuzz-project-name: 'apache-poi'
-        dry-run: false
     - name: Run Fuzzers
       uses: google/oss-fuzz/infra/cifuzz/actions/run_fuzzers@master
       with:
         oss-fuzz-project-name: 'apache-poi'
         fuzz-seconds: 600
-        dry-run: false
+        output-sarif: true
     - name: Upload Crash
       uses: actions/upload-artifact@v4
       if: failure() && steps.build.outcome == 'success'
       with:
         name: artifacts
         path: ./out/artifacts
+    - name: Upload Sarif
+      if: always() && steps.build.outcome == 'success'
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: cifuzz-sarif/results.sarif
+        checkout_path: cifuzz-sarif
