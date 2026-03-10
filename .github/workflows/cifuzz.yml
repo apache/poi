@@ -1,12 +1,6 @@
 name: CIFuzz
 on:
-  pull_request:
-    paths:
-      - 'poi/src/main/java/**'
-      - 'poi-ooxml/src/main/java/**'
-      - 'poi-scratchpad/src/main/java/**'
-      - 'poi-fuzz/src/main/java/**'
-  workflow_dispatch:
+  workflow_dispatch: 
 
 permissions: {}
 
