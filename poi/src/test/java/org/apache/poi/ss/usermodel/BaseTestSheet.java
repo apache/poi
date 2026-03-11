@@ -701,8 +701,8 @@ public abstract class BaseTestSheet {
             Cell cell = r0.createCell(0);
             CellStyle style2 = cell.getCellStyle();
             assertNotNull(style2);
-            //current implementations mean that cells inherit column style but not row style
-            assertNotEquals(style.getIndex(), style2.getIndex(), "style should not match");
+            //cells should now inherit row style (just like column style)
+            assertEquals(style.getIndex(), style2.getIndex(), "style should match");
 
             try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb)) {
                 Sheet wb2Sheet = wb2.getSheetAt(0);

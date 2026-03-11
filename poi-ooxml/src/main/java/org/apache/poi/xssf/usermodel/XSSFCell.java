@@ -572,6 +572,12 @@ public final class XSSFCell extends CellBase {
         if (style == null) {
             style = getDefaultCellStyleFromColumn();
         }
+        if (style == null) {
+            style = getDefaultCellStyleFromRow();
+        }
+        if (style == null && _stylesSource.getNumCellStyles() > 0) {
+            style = _stylesSource.getStyleAt(0);
+        }
         return style;
     }
 
@@ -587,24 +593,27 @@ public final class XSSFCell extends CellBase {
     }
 
     private XSSFCellStyle getDefaultCellStyleFromColumn() {
-        XSSFCellStyle style = null;
         XSSFSheet sheet = getSheet();
         if (sheet != null) {
-            style = (XSSFCellStyle) sheet.getColumnStyle(getColumnIndex());
+            int idx = sheet.getColumnHelper().getColDefaultStyle(getColumnIndex());
+            if (idx >= 0) {
+                return _stylesSource.getStyleAt(idx);
+            }
         }
-        return style;
+        return null;
+    }
+
+    private XSSFCellStyle getDefaultCellStyleFromRow() {
+        XSSFRow row = getRow();
+        if (row != null && row.isFormatted()) {
+            return row.getRowStyle();
+        }
+        return null;
     }
 
     protected void applyDefaultCellStyleIfNecessary() {
-        XSSFCellStyle style = getExplicitCellStyle();
-        if (style == null) {
-            XSSFSheet sheet = getSheet();
-            if (sheet != null) {
-                XSSFCellStyle defaultStyle = getDefaultCellStyleFromColumn();
-                if (defaultStyle != null) {
-                    setCellStyle(defaultStyle);
-                }
-            }
+        if (getExplicitCellStyle() == null) {
+            setCellStyle(getCellStyle());
         }
     }
 
