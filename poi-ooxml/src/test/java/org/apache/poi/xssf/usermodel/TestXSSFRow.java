@@ -485,6 +485,86 @@ public final class TestXSSFRow extends BaseTestXRow {
         }
     }
 
+    @Test
+    void testSetRowStylePropagatedToCells() throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            final XSSFSheet sheet = workbook.createSheet("test");
+
+            // create a bold style
+            XSSFCellStyle boldStyle = workbook.createCellStyle();
+            XSSFFont boldFont = workbook.createFont();
+            boldFont.setBold(true);
+            boldStyle.setFont(boldFont);
+
+            // apply style to row, then create cells
+            final XSSFRow row = sheet.createRow(0);
+            row.setRowStyle(boldStyle);
+
+            XSSFCell cell0 = row.createCell(0);
+            cell0.setCellValue("Header A");
+            XSSFCell cell1 = row.createCell(1);
+            cell1.setCellValue("Header B");
+
+            // cells without explicit style should inherit the row style via getCellStyle()
+            XSSFCellStyle cellStyle0 = cell0.getCellStyle();
+            assertNotNull(cellStyle0);
+            assertTrue(workbook.getFontAt(cellStyle0.getFontIndex()).getBold(),
+                    "cell should inherit bold font from row style");
+
+            XSSFCellStyle cellStyle1 = cell1.getCellStyle();
+            assertNotNull(cellStyle1);
+            assertTrue(workbook.getFontAt(cellStyle1.getFontIndex()).getBold(),
+                    "cell should inherit bold font from row style");
+
+            // a cell with an explicit style should NOT be overridden by row style
+            XSSFCellStyle plainStyle = workbook.createCellStyle();
+            XSSFCell cell2 = row.createCell(2);
+            cell2.setCellStyle(plainStyle);
+            cell2.setCellValue("Plain");
+
+            XSSFCellStyle cellStyle2 = cell2.getCellStyle();
+            assertFalse(workbook.getFontAt(cellStyle2.getFontIndex()).getBold(),
+                    "cell with explicit non-bold style should remain non-bold");
+        }
+    }
+
+    @Test
+    void testSetRowStylePropagatedAfterWrite() throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            final XSSFSheet sheet = workbook.createSheet("test");
+
+            // create a bold style
+            XSSFCellStyle boldStyle = workbook.createCellStyle();
+            XSSFFont boldFont = workbook.createFont();
+            boldFont.setBold(true);
+            boldStyle.setFont(boldFont);
+
+            // apply style to row, then create cells
+            final XSSFRow row = sheet.createRow(0);
+            row.setRowStyle(boldStyle);
+            row.createCell(0, CellType.STRING).setCellValue("Column A");
+            row.createCell(1, CellType.STRING).setCellValue("Column B");
+            row.createCell(2, CellType.STRING).setCellValue("Column C");
+
+            // write and read back — exercises onDocumentWrite() ->
+            // applyDefaultCellStyleIfNecessary()
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(workbook)) {
+                XSSFSheet sheet2 = wb2.getSheet("test");
+                XSSFRow row2 = sheet2.getRow(0);
+                assertNotNull(row2);
+
+                for (int i = 0; i < 3; i++) {
+                    XSSFCell cell = row2.getCell(i);
+                    assertNotNull(cell, "cell " + i + " should exist after read-back");
+                    XSSFCellStyle style = cell.getCellStyle();
+                    assertNotNull(style, "cell " + i + " should have a style after read-back");
+                    assertTrue(wb2.getFontAt(style.getFontIndex()).getBold(),
+                            "cell " + i + " should be bold after write/read-back");
+                }
+            }
+        }
+    }
+
     private void fillData(int startAtRow, Sheet sheet) {
         Row header = sheet.createRow(0);
         for (int rownum = startAtRow; rownum < 2; rownum++) {
@@ -499,87 +579,5 @@ public final class TestXSSFRow extends BaseTestXRow {
         try (OutputStream fileOut = UnsynchronizedByteArrayOutputStream.builder().get()) {
             wb.write(fileOut);
         }
-    }
-
-    @Test
-    void testSetRowStylePropagatedToCells() throws IOException {
-        final XSSFWorkbook workbook = new XSSFWorkbook();
-        final XSSFSheet sheet = workbook.createSheet("test");
-
-        // create a bold style
-        XSSFCellStyle boldStyle = workbook.createCellStyle();
-        XSSFFont boldFont = workbook.createFont();
-        boldFont.setBold(true);
-        boldStyle.setFont(boldFont);
-
-        // apply style to row, then create cells
-        final XSSFRow row = sheet.createRow(0);
-        row.setRowStyle(boldStyle);
-
-        XSSFCell cell0 = row.createCell(0);
-        cell0.setCellValue("Header A");
-        XSSFCell cell1 = row.createCell(1);
-        cell1.setCellValue("Header B");
-
-        // cells without explicit style should inherit the row style via getCellStyle()
-        XSSFCellStyle cellStyle0 = cell0.getCellStyle();
-        assertNotNull(cellStyle0);
-        assertTrue(workbook.getFontAt(cellStyle0.getFontIndex()).getBold(),
-                "cell should inherit bold font from row style");
-
-        XSSFCellStyle cellStyle1 = cell1.getCellStyle();
-        assertNotNull(cellStyle1);
-        assertTrue(workbook.getFontAt(cellStyle1.getFontIndex()).getBold(),
-                "cell should inherit bold font from row style");
-
-        // a cell with an explicit style should NOT be overridden by row style
-        XSSFCellStyle plainStyle = workbook.createCellStyle();
-        XSSFCell cell2 = row.createCell(2);
-        cell2.setCellStyle(plainStyle);
-        cell2.setCellValue("Plain");
-
-        XSSFCellStyle cellStyle2 = cell2.getCellStyle();
-        assertFalse(workbook.getFontAt(cellStyle2.getFontIndex()).getBold(),
-                "cell with explicit non-bold style should remain non-bold");
-
-        workbook.close();
-    }
-
-    @Test
-    void testSetRowStylePropagatedAfterWrite() throws IOException {
-        final XSSFWorkbook workbook = new XSSFWorkbook();
-        final XSSFSheet sheet = workbook.createSheet("test");
-
-        // create a bold style
-        XSSFCellStyle boldStyle = workbook.createCellStyle();
-        XSSFFont boldFont = workbook.createFont();
-        boldFont.setBold(true);
-        boldStyle.setFont(boldFont);
-
-        // apply style to row, then create cells
-        final XSSFRow row = sheet.createRow(0);
-        row.setRowStyle(boldStyle);
-        row.createCell(0, CellType.STRING).setCellValue("Column A");
-        row.createCell(1, CellType.STRING).setCellValue("Column B");
-        row.createCell(2, CellType.STRING).setCellValue("Column C");
-
-        // write and read back — exercises onDocumentWrite() -> applyDefaultCellStyleIfNecessary()
-        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-        workbook.close();
-
-        XSSFSheet sheet2 = wb2.getSheet("test");
-        XSSFRow row2 = sheet2.getRow(0);
-        assertNotNull(row2);
-
-        for (int i = 0; i < 3; i++) {
-            XSSFCell cell = row2.getCell(i);
-            assertNotNull(cell, "cell " + i + " should exist after read-back");
-            XSSFCellStyle style = cell.getCellStyle();
-            assertNotNull(style, "cell " + i + " should have a style after read-back");
-            assertTrue(wb2.getFontAt(style.getFontIndex()).getBold(),
-                    "cell " + i + " should be bold after write/read-back");
-        }
-
-        wb2.close();
     }
 }
