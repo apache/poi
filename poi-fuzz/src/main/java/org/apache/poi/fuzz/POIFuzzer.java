@@ -64,6 +64,8 @@ public class POIFuzzer {
 
 		fuzzAny(input);
 
+		POIPPTX2PNGFuzzer.fuzzerTestOneInput(input);
+
 		POIHDGFFuzzer.fuzzerTestOneInput(input);
 
 		POIHMEFFuzzer.fuzzerTestOneInput(input);
