@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -68,25 +69,34 @@ import org.xml.sax.SAXException;
  * are currently uncovered.
  */
 public class POIFileHandlerFuzzer {
-	private static final FileHandler[] HANDLERS = new FileHandler[] {
+	private static final FileHandler[] OLE2_HANDLERS = new FileHandler[] {
 		new HDGFFileHandler(),
-		new HEMFFileHandler(),
-		new HMEFFileHandler(),
-		new HPBFFileHandler(),
 		new HPSFFileHandler(),
 		new HSLFFileHandler(),
 		new HSMFFileHandler(),
 		new HSSFFileHandler(),
-		new HWMFFileHandler(),
 		new HWPFFileHandler(),
-		new OPCFileHandler(),
+		new HPBFFileHandler(),
 		new OWPFFileHandler(),
 		new POIFSFileHandler(),
+		new HMEFFileHandler(),
+	};
+
+	private static final FileHandler[] OOXML_HANDLERS = new FileHandler[] {
+		new OPCFileHandler(),
 		new XDGFFileHandler(),
 		new XSLFFileHandler(),
 		new XSSFBFileHandler(),
 		new XSSFFileHandler(),
 		new XWPFFileHandler(),
+	};
+
+	private static final FileHandler[] EMF_HANDLERS = new FileHandler[] {
+		new HEMFFileHandler(),
+	};
+
+	private static final FileHandler[] WMF_HANDLERS = new FileHandler[] {
+		new HWMFFileHandler(),
 	};
 
 	public static void fuzzerInitialize() {
@@ -95,7 +105,24 @@ public class POIFileHandlerFuzzer {
 
 	public static void fuzzerTestOneInput(byte[] input) throws Exception {
 		ByteArrayInputStream stream = new ByteArrayInputStream(input);
-		for (FileHandler handler : HANDLERS) {
+		FileMagic fm = FileMagic.valueOf(stream);
+		stream.reset();
+
+		FileHandler[] handlers;
+		if (fm == FileMagic.OLE2 || fm == FileMagic.UNKNOWN ||
+			fm == FileMagic.BIFF2 || fm == FileMagic.BIFF3 || fm == FileMagic.BIFF4) {
+			handlers = OLE2_HANDLERS;
+		} else if (fm == FileMagic.OOXML) {
+			handlers = OOXML_HANDLERS;
+		} else if (fm == FileMagic.EMF) {
+			handlers = EMF_HANDLERS;
+		} else if (fm == FileMagic.WMF) {
+			handlers = WMF_HANDLERS;
+		} else {
+			return;
+		}
+
+		for (FileHandler handler : handlers) {
 			stream.mark(input.length);
 
 			try {

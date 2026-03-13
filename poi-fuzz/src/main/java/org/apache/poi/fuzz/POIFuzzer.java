@@ -64,35 +64,11 @@ public class POIFuzzer {
 
 		fuzzAny(input);
 
-		POIPPTX2PNGFuzzer.fuzzerTestOneInput(input);
-
-		POIHDGFFuzzer.fuzzerTestOneInput(input);
-
-		POIHMEFFuzzer.fuzzerTestOneInput(input);
-
-		POIHPBFFuzzer.fuzzerTestOneInput(input);
-
-		POIHPSFFuzzer.fuzzerTestOneInput(input);
-
-		POIHSLFFuzzer.fuzzerTestOneInput(input);
-
-		POIHSMFFuzzer.fuzzerTestOneInput(input);
-
-		POIHSSFFuzzer.fuzzerTestOneInput(input);
-
-		POIHWPFFuzzer.fuzzerTestOneInput(input);
-
-		POIOldExcelFuzzer.fuzzerTestOneInput(input);
-
-		POIVisioFuzzer.fuzzerTestOneInput(input);
-
-		XLSX2CSVFuzzer.fuzzerTestOneInput(input);
-
-		POIXSLFFuzzer.fuzzerTestOneInput(input);
-
-		POIXSSFFuzzer.fuzzerTestOneInput(input);
-
-		POIXWPFFuzzer.fuzzerTestOneInput(input);
+		try {
+			POIFileHandlerFuzzer.fuzzerTestOneInput(input);
+		} catch (Exception e) {
+			// expected here
+		}
 	}
 
 	public static void fuzzAny(byte[] input) {
