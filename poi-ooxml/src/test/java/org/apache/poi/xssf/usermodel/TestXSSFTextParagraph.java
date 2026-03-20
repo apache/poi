@@ -232,7 +232,7 @@ class TestXSSFTextParagraph {
     }
 
     @Test
-    public void testBulletAutoNumberSchemeOutOfBounds() {
+    public void testBulletAutoNumberSchemeOutOfBounds() throws IOException{
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -259,8 +259,6 @@ class TestXSSFTextParagraph {
 
             assertNotNull(result, "Result should not be null");
             assertEquals(ListAutoNumber.ARABIC_PLAIN, result, "Should fallback to ARABIC_PLAIN for unknown index");
-        } catch (Exception e) {
-            fail("Should not throw " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
 }
