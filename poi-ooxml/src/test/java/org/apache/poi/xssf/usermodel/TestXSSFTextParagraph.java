@@ -18,6 +18,12 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAutonumberScheme;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextAutonumberBullet;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAutonumberScheme;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
@@ -222,6 +228,39 @@ class TestXSSFTextParagraph {
             assertEquals(run.getText(), run2.getText());
             assertEquals(run.getFontFamily(), run2.getFontFamily());
             assertArrayEquals(run.getFontColorAsBytes(), run2.getFontColorAsBytes());
+        }
+    }
+
+    @Test
+    public void testBulletAutoNumberSchemeOutOfBounds() {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 0, 0, 1, 1));
+
+            // Ensure the paragraph is created correctly
+            XSSFTextParagraph para = shape.addNewTextParagraph();
+
+            // 1. Obtain or create the underlying XML structure
+            CTTextParagraph ctPara = para.getXmlObject();
+            CTTextParagraphProperties pr = ctPara.isSetPPr() ? ctPara.getPPr() : ctPara.addNewPPr();
+
+            // 2. Force a level to avoid ParagraphPropertyFetcher errors
+            pr.setLvl(0);
+
+            // 3. Set an out-of-range autonumber type (e.g. 24)
+            CTTextAutonumberBullet bullet = pr.isSetBuAutoNum() ? pr.getBuAutoNum() : pr.addNewBuAutoNum();
+            bullet.setType(STTextAutonumberScheme.Enum.forInt(24));
+
+            // 4. Execute the test
+            // If you haven't applied the fix, this line will throw AIOOBE
+            // If the fix is applied, this should return ARABIC_PLAIN
+            ListAutoNumber result = para.getBulletAutoNumberScheme();
+
+            assertNotNull(result, "Result should not be null");
+            assertEquals(ListAutoNumber.ARABIC_PLAIN, result, "Should fallback to ARABIC_PLAIN for unknown index");
+        } catch (Exception e) {
+            fail("Should not throw " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
 }
