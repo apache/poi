@@ -58,8 +58,6 @@ public class CreateTable {
             style.setShowRowStripes(true);
             style.setFirstColumn(false);
             style.setLastColumn(false);
-            style.setShowRowStripes(true);
-            style.setShowColumnStripes(true);
 
             // Set the values for the table
             XSSFRow row;
