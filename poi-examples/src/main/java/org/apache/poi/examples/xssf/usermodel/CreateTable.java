@@ -44,12 +44,12 @@ public class CreateTable {
 
             // Create
             XSSFTable table = sheet.createTable(reference);
-            table.setName("Test");
-            table.setDisplayName("Test_Table");
+            table.setName("Test"); //no spaces
+            table.setDisplayName("Test_Table"); //must be different than setName
 
             // For now, create the initial style in a low-level way
             table.getCTTable().addNewTableStyleInfo();
-            table.getCTTable().getTableStyleInfo().setName("TableStyleMedium2");
+            table.getCTTable().getTableStyleInfo().setName("TableStyleMedium2"); //no spaces
 
             // Style the table
             XSSFTableStyleInfo style = (XSSFTableStyleInfo) table.getStyle();
@@ -58,8 +58,6 @@ public class CreateTable {
             style.setShowRowStripes(true);
             style.setFirstColumn(false);
             style.setLastColumn(false);
-            style.setShowRowStripes(true);
-            style.setShowColumnStripes(true);
 
             // Set the values for the table
             XSSFRow row;
