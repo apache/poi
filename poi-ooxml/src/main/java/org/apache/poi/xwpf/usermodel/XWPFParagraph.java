@@ -184,22 +184,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         }
     }
 
-    private void processSdtRuns() {
-        try (XmlCursor cursor = getCTP().newCursor()) {
-            cursor.selectPath("child::*");
-
-            while (cursor.toNextSelection()) {
-                XmlObject xmlObject = cursor.getObject();
-                if (xmlObject instanceof CTSdtRun) {
-                    CTSdtContentRun content = ((CTSdtRun)xmlObject).getSdtContent();
-                    if (content != null) {
-                        processCTRs(content.getRList());
-                    }
-                }
-            }
-        }
-    }
-
     @Internal
     public CTP getCTP() {
         return paragraph;

@@ -790,42 +790,29 @@ class TestXWPFTable {
         }
     }
 
+    /**
+     * Bug 66263 — Test SDT row support using sample document.
+     * Verifies that SDT rows from sample document are correctly processed.
+     */
     @Test
-    void testTableRowAccess() throws IOException {
-        try (XWPFDocument doc = new XWPFDocument()) {
-            CTTbl table = CTTbl.Factory.newInstance();
+    void testSdtRowFromSampleDocument() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug66263-table.docx")) {
+            XWPFTable table = doc.getTables().get(0);
 
-            // Normal row
-            CTRow normalRow = table.addNewTr();
-            CTTc cell1 = normalRow.addNewTc();
-            CTP p1 = cell1.addNewP();
-            CTR r1 = p1.addNewR();
-            r1.addNewT().setStringValue("Normal");
+            // Verify SDT row text extraction
+            String tableText = table.getText();
+            assertTrue(tableText.contains("SDT Cell 1"), "Table should contain SDT cell 1");
+            assertTrue(tableText.contains("SDT Cell 2"), "Table should contain SDT cell 2");
 
-            // SDT row
-            CTSdtRow sdtRow = table.addNewSdt();
-            CTSdtContentRow sdtContent = sdtRow.addNewSdtContent();
-            CTRow sdtInnerRow = sdtContent.addNewTr();
-            CTTc cell2 = sdtInnerRow.addNewTc();
-            CTP p2 = cell2.addNewP();
-            CTR r2 = p2.addNewR();
-            r2.addNewT().setStringValue("SDT");
+            // Verify SDT row is accessible via getRows()
+            List<XWPFTableRow> rows = table.getRows();
+            assertEquals(1, rows.size(), "Table should have 1 SDT row");
 
-            XWPFTable xtab = new XWPFTable(table, doc);
-
-            // Note: getRow(int) uses ctTbl.sizeOfTrArray() for bounds check, which only counts top-level tr
-            // So we use getRows() directly to access all rows including SDT rows
-            List<XWPFTableRow> rows = xtab.getRows();
-
-            // Row 0: normal row
-            assertEquals("Normal", rows.get(0).getCell(0).getText().trim(), "Row 0 should be normal row");
-
-            // Row 1: SDT row
-            assertEquals("SDT", rows.get(1).getCell(0).getText().trim(), "Row 1 should be SDT row");
-
-            XWPFTableRow row0 = xtab.getRow(0);
-            assertNotNull(row0, "getRow(0) should work for top-level row");
-            assertNull(xtab.getRow(1), "getRow(1) returns null due to bounds check limitation");
+            // Verify paragraph processing in table cells
+            XWPFParagraph cellPara = rows.get(0).getCell(0).getParagraphs().get(0);
+            assertNotNull(cellPara, "Cell paragraph should not be null");
+            String paraText = cellPara.getText();
+            assertTrue(paraText.contains("SDT Cell 1"), "Cell paragraph should contain SDT cell text");
         }
     }
 }
