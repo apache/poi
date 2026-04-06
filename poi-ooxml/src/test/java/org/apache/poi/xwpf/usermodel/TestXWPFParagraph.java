@@ -44,11 +44,16 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPBdr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentBlock;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTextAlignment;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
 
 /**
@@ -985,6 +990,70 @@ public final class TestXWPFParagraph {
                     "A square shape with text inside\n" +
                     "An ellipse with text inside\n" +
                     "A group of shapes\nWhere some contain text", p.getPictureText());
+    }
+
+    @Test
+    void testParagraphWithSdtRunAndContent() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFParagraph p = doc.createParagraph();
+
+            CTP ctp = p.getCTP();
+
+            CTR normalRun = ctp.addNewR();
+            normalRun.addNewT().setStringValue("Before ");
+
+            CTSdtRun sdtRun = ctp.addNewSdt();
+            CTSdtContentRun content = sdtRun.addNewSdtContent();
+
+            CTR innerRun = content.addNewR();
+            innerRun.addNewRPr().addNewB().setVal(STOnOff1.ON);
+            innerRun.addNewT().setStringValue("SDT Run Content");
+
+            CTR innerRun2 = content.addNewR();
+            innerRun2.addNewRPr().addNewI().setVal(STOnOff1.ON);
+            innerRun2.addNewT().setStringValue(" More");
+
+            CTR afterRun = ctp.addNewR();
+            afterRun.addNewT().setStringValue(" After");
+
+            XWPFParagraph newParagraph = new XWPFParagraph(ctp, doc);
+
+            String text = newParagraph.getText();
+            assertTrue(text.contains("Before"), "Text should contain 'Before'");
+            assertTrue(text.contains("SDT Run Content"), "Text should contain 'SDT Run Content'");
+            assertTrue(text.contains(" More"), "Text should contain ' More'");
+            assertTrue(text.contains("After"), "Text should contain 'After'");
+        }
+    }
+
+    @Test
+    void testParagraphWithMultipleSdtRuns() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFParagraph p = doc.createParagraph();
+
+            CTP ctp = p.getCTP();
+
+            CTSdtRun sdtRun1 = ctp.addNewSdt();
+            CTSdtContentRun content1 = sdtRun1.addNewSdtContent();
+            CTR innerRun1 = content1.addNewR();
+            innerRun1.addNewRPr().addNewB().setVal(STOnOff1.ON);
+            innerRun1.addNewT().setStringValue("First");
+
+            CTR normalRun = ctp.addNewR();
+            normalRun.addNewT().setStringValue(" Middle ");
+
+            CTSdtRun sdtRun2 = ctp.addNewSdt();
+            CTSdtContentRun content2 = sdtRun2.addNewSdtContent();
+            CTR innerRun2 = content2.addNewR();
+            innerRun2.addNewRPr().addNewI().setVal(STOnOff1.ON);
+            innerRun2.addNewT().setStringValue("Second");
+
+            XWPFParagraph newParagraph = new XWPFParagraph(ctp, doc);
+
+            String text = newParagraph.getText();
+            assertTrue(text.contains("First"), "Text should contain 'First'");
+            assertTrue(text.contains("Middle"), "Text should contain 'Middle'");
+            assertTrue(text.contains("Second"), "Text should contain 'Second'");
         }
     }
 }

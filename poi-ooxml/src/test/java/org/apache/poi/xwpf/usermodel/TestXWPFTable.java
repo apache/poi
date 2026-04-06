@@ -28,6 +28,8 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblCellMar;
@@ -660,6 +662,72 @@ class TestXWPFTable {
             XWPFTable table1 = doc.getTableArray(0);
             assertEquals(-1,table1.getWidth());
             assertEquals(TableWidthType.AUTO, table1.getWidthType());
+        }
+    }
+
+    @Test
+    void testTableWithSdtRow() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+
+            CTRow normalRow = table.addNewTr();
+            CTTc cell1 = normalRow.addNewTc();
+            CTP p1 = cell1.addNewP();
+            CTR r1 = p1.addNewR();
+            r1.addNewT().setStringValue("Normal Row Cell 1");
+
+            CTTc cell2 = normalRow.addNewTc();
+            CTP p2 = cell2.addNewP();
+            CTR r2 = p2.addNewR();
+            r2.addNewT().setStringValue("Normal Row Cell 2");
+
+            CTSdtRow sdtRow = table.addNewSdt();
+            CTSdtContentRow sdtContent = sdtRow.addNewSdtContent();
+            CTRow innerRow = sdtContent.addNewTr();
+
+            CTTc sdtCell1 = innerRow.addNewTc();
+            CTP sdtP1 = sdtCell1.addNewP();
+            CTR sdtR1 = sdtP1.addNewR();
+            sdtR1.addNewT().setStringValue("SDT Row Cell 1");
+
+            CTTc sdtCell2 = innerRow.addNewTc();
+            CTP sdtP2 = sdtCell2.addNewP();
+            CTR sdtR2 = sdtP2.addNewR();
+            sdtR2.addNewT().setStringValue("SDT Row Cell 2");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+
+            assertEquals(1, xtab.getNumberOfRows(), "Table should have 1 row at top level (SDT rows are not counted)");
+
+            String text = xtab.getText();
+            assertTrue(text.contains("Normal Row Cell 1"), "Text should contain normal row cell 1");
+            assertTrue(text.contains("Normal Row Cell 2"), "Text should contain normal row cell 2");
+            assertTrue(text.contains("SDT Row Cell 1"), "Text should contain SDT row cell 1");
+            assertTrue(text.contains("SDT Row Cell 2"), "Text should contain SDT row cell 2");
+        }
+    }
+
+    @Test
+    void testTableWithNestedSdtRows() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+
+            CTSdtRow outerSdtRow = table.addNewSdt();
+            CTSdtContentRow outerContent = outerSdtRow.addNewSdtContent();
+
+            CTSdtRow innerSdtRow = outerContent.addNewSdt();
+            CTSdtContentRow innerContent = innerSdtRow.addNewSdtContent();
+            CTRow row1 = innerContent.addNewTr();
+
+            CTTc cell1 = row1.addNewTc();
+            CTP p1 = cell1.addNewP();
+            CTR r1 = p1.addNewR();
+            r1.addNewT().setStringValue("Nested SDT Row");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+
+            String text = xtab.getText();
+            assertTrue(text.contains("Nested SDT Row"), "Text should contain nested SDT row content");
         }
     }
 }
