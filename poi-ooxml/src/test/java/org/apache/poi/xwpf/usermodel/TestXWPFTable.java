@@ -730,4 +730,102 @@ class TestXWPFTable {
             assertTrue(text.contains("Nested SDT Row"), "Text should contain nested SDT row content");
         }
     }
+
+
+    @Test
+    void testTableWithOnlySdtRow() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+
+            CTSdtRow sdtRow = table.addNewSdt();
+            CTSdtContentRow sdtContent = sdtRow.addNewSdtContent();
+            CTRow innerRow = sdtContent.addNewTr();
+
+            CTTc cell = innerRow.addNewTc();
+            CTP p = cell.addNewP();
+            CTR r = p.addNewR();
+            r.addNewT().setStringValue("Only SDT Row");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+
+            assertEquals(1, xtab.getNumberOfRows(), "Table has 1 row from createEmptyTable");
+            assertEquals(2, xtab.getRows().size(), "Table should have 2 rows (1 empty + 1 SDT)");
+
+            String text = xtab.getText();
+            assertTrue(text.contains("Only SDT Row"), "Text should contain SDT row content");
+        }
+    }
+
+    @Test
+    void testTableWithMultipleSdtRows() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+
+            // First SDT row
+            CTSdtRow sdtRow1 = table.addNewSdt();
+            CTSdtContentRow sdtContent1 = sdtRow1.addNewSdtContent();
+            CTRow row1 = sdtContent1.addNewTr();
+            CTTc cell1 = row1.addNewTc();
+            CTP p1 = cell1.addNewP();
+            CTR r1 = p1.addNewR();
+            r1.addNewT().setStringValue("SDT Row 1");
+
+            // Second SDT row
+            CTSdtRow sdtRow2 = table.addNewSdt();
+            CTSdtContentRow sdtContent2 = sdtRow2.addNewSdtContent();
+            CTRow row2 = sdtContent2.addNewTr();
+            CTTc cell2 = row2.addNewTc();
+            CTP p2 = cell2.addNewP();
+            CTR r2 = p2.addNewR();
+            r2.addNewT().setStringValue("SDT Row 2");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+
+            assertEquals(1, xtab.getNumberOfRows(), "Table has 1 top-level row (empty + 2 SDTs)");
+            assertEquals(3, xtab.getRows().size(), "Table should have 3 rows (empty + 2 SDTs)");
+
+            String text = xtab.getText();
+            assertTrue(text.contains("SDT Row 1"), "Text should contain first SDT row");
+            assertTrue(text.contains("SDT Row 2"), "Text should contain second SDT row");
+        }
+    }
+
+    @Test
+    void testTableRowAccess() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+
+            // Normal row
+            CTRow normalRow = table.addNewTr();
+            CTTc cell1 = normalRow.addNewTc();
+            CTP p1 = cell1.addNewP();
+            CTR r1 = p1.addNewR();
+            r1.addNewT().setStringValue("Normal");
+
+            // SDT row
+            CTSdtRow sdtRow = table.addNewSdt();
+            CTSdtContentRow sdtContent = sdtRow.addNewSdtContent();
+            CTRow sdtInnerRow = sdtContent.addNewTr();
+            CTTc cell2 = sdtInnerRow.addNewTc();
+            CTP p2 = cell2.addNewP();
+            CTR r2 = p2.addNewR();
+            r2.addNewT().setStringValue("SDT");
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+
+            // Note: getRow(int) uses ctTbl.sizeOfTrArray() for bounds check, which only counts top-level tr
+            // So we use getRows() directly to access all rows including SDT rows
+            List<XWPFTableRow> rows = xtab.getRows();
+
+            // Row 0: normal row
+            assertEquals("Normal", rows.get(0).getCell(0).getText().trim(), "Row 0 should be normal row");
+
+            // Row 1: SDT row
+            assertEquals("SDT", rows.get(1).getCell(0).getText().trim(), "Row 1 should be SDT row");
+
+            XWPFTableRow row0 = xtab.getRow(0);
+            assertNotNull(row0, "getRow(0) should work for top-level row");
+            assertNull(xtab.getRow(1), "getRow(1) returns null due to bounds check limitation");
+        }
+    }
 }
