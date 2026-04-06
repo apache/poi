@@ -136,7 +136,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 if (o instanceof CTSdtBlock block) {
                     XWPFSDT cc = new XWPFSDT(block, part);
                     iruns.add(cc);
-                    CTSdtContentBlock content = ((CTSdtBlock)o).getSdtContent();
+                    CTSdtContentBlock content = block.getSdtContent();
                     if (content != null) {
                         for (CTP ctp : content.getPList()) {
                             processCTRs(ctp.getRList());
@@ -151,7 +151,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     if (sdtContent != null) {
                         processCTRs(sdtContent.getRList());
                     }
-                    processSdtRuns();
                 }
                 if (o instanceof CTRunTrackChange parentRecord) {
                     for (CTR r : parentRecord.getRArray()) {
