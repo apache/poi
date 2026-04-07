@@ -31,8 +31,10 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.model.SharedStrings;
+import org.apache.poi.xssf.usermodel.XSSFComment;
 
 /**
  * @since 3.16-beta3
@@ -590,7 +592,23 @@ public class XSSFBSheetHandler extends XSSFBParser {
         /**
          * A cell, with the given formatted value (may be null),
          * a url (may be null), a toolTip (may be null)
-         *  and possibly a comment (may be null), was encountered */
+         * and possibly a comment (may be null), was encountered.
+         *
+         * @deprecated use {@link #hyperlinkCell(String, String, String, String, Comment)}
+         */
+        @Deprecated
+        @Removal(version = "7.0.0")
+        default void hyperlinkCell(String cellReference, String formattedValue, String url, String toolTip, XSSFComment comment) {
+            hyperlinkCell(cellReference, formattedValue, url, toolTip, (Comment) comment);
+        }
+
+        /**
+         * A cell, with the given formatted value (may be null),
+         * a url (may be null), a toolTip (may be null)
+         * and possibly a comment (may be null), was encountered.
+         *
+         * @since 6.0.0
+         */
         void hyperlinkCell(String cellReference, String formattedValue, String url, String toolTip, Comment comment);
     }
 }
