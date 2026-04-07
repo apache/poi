@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.model.*;
@@ -566,7 +567,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
          * <code>poi-examples/src/main/java/org/apache/poi/xssf/eventusermodel/XLSX2CSV.java</code>
          * for an example of how to handle this scenario.
          */
-        void cell(String cellReference, String formattedValue, XSSFComment comment);
+        void cell(String cellReference, String formattedValue, Comment comment);
 
         /**
          * A header or footer has been encountered

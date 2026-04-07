@@ -32,7 +32,7 @@ import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.eventusermodel.XSSFBReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
-import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.ss.usermodel.Comment;
 import org.junit.jupiter.api.Test;
 
 class TestXSSFBSheetParser {
@@ -127,7 +127,7 @@ class TestXSSFBSheetParser {
         }
 
         @Override
-        public void cell(String cellReference, String formattedValue, XSSFComment comment) {
+        public void cell(String cellReference, String formattedValue, Comment comment) {
             if (cellReference == null)
                 cellReference = new CellAddress(currentRow, currentCol+1).formatAsString();
 
