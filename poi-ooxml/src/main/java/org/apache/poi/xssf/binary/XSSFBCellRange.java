@@ -23,7 +23,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
 /**
- * @since 3.16-beta3
+ * @since 6.0.0
  */
 @Internal
 public class XSSFBCellRange {
@@ -57,10 +57,10 @@ public class XSSFBCellRange {
         if (cellRange == null) {
             cellRange = new XSSFBCellRange();
         }
-        cellRange.firstRow = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
-        cellRange.lastRow = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
-        cellRange.firstCol = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
-        cellRange.lastCol = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset));
+        cellRange.firstRow = Math.toIntExact(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
+        cellRange.lastRow = Math.toIntExact(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
+        cellRange.firstCol = Math.toIntExact(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
+        cellRange.lastCol = Math.toIntExact(LittleEndian.getUInt(data, offset));
         return cellRange;
     }
 

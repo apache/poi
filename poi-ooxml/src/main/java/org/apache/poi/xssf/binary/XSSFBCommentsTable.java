@@ -61,7 +61,7 @@ public class XSSFBCommentsTable extends XSSFBParser {
         switch (recordType) {
             case BrtBeginComment:
                 int offset = 0;
-                authorId = XSSFBUtils.castToInt(LittleEndian.getUInt(data)); offset += LittleEndianConsts.INT_SIZE;
+                authorId = Math.toIntExact(LittleEndian.getUInt(data)); offset += LittleEndianConsts.INT_SIZE;
                 cellRange = XSSFBCellRange.parse(data, offset, cellRange);
                 //for strict parsing; confirm that firstRow==lastRow and firstCol==colLats (2.4.28)
                 cellAddress = new CellAddress(cellRange.getFirstRow(), cellRange.getFirstCol());

@@ -40,7 +40,7 @@ class XSSFBCellHeader {
      * @param cell cell buffer to update
      */
     public static void parse(byte[] data, int offset,  int currentRow, XSSFBCellHeader cell) {
-        int colNum = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
+        int colNum = Math.toIntExact(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
         int styleIdx = XSSFBUtils.get24BitInt(data, offset); offset += 3;
         //TODO: range checking
         boolean showPhonetic = false;//TODO: fill this out
