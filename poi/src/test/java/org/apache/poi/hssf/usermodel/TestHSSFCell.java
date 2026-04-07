@@ -441,4 +441,65 @@ final class TestHSSFCell extends BaseTestCell {
             }
         }
     }
+
+    @Test
+    void testGetCellStyleFallbackToColumnStyle() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+
+            HSSFCellStyle colStyle = wb.createCellStyle();
+            colStyle.setFillBackgroundColor((short) 10);
+            sheet.setDefaultColumnStyle(0, colStyle);
+
+            assertEquals(colStyle, cell.getCellStyle(), "Should fallback to column style");
+        }
+    }
+
+    @Test
+    void testGetCellStyleFallbackToRowStyle() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+
+            HSSFCellStyle rowStyle = wb.createCellStyle();
+            rowStyle.setFillBackgroundColor((short) 10);
+            row.setRowStyle(rowStyle);
+
+            assertEquals(rowStyle, cell.getCellStyle(), "Should fallback to row style");
+        }
+    }
+
+    @Test
+    void testGetCellStyleNoFallbackWhenExplicitStyleAssigned() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+
+            HSSFCellStyle rowStyle = wb.createCellStyle();
+            rowStyle.setFillBackgroundColor((short) 10);
+            row.setRowStyle(rowStyle);
+
+            HSSFCellStyle explicitStyle = wb.createCellStyle();
+            explicitStyle.setFillBackgroundColor((short) 20);
+            cell.setCellStyle(explicitStyle);
+
+            assertEquals(explicitStyle, cell.getCellStyle(), "Should use explicit cell style, not row style");
+        }
+    }
+
+    @Test
+    void testGetCellStyleNoRowOrColumnStyle() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+
+            HSSFCellStyle defaultStyle = cell.getCellStyle();
+            assertEquals(0x0f, defaultStyle.getIndex(), "Should return default style when no fallback exists");
+        }
+    }
 }

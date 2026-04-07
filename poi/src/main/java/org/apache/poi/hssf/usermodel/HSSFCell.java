@@ -978,7 +978,8 @@ public class HSSFCell extends CellBase {
 
     /**
      * get the style for the cell.  This is a reference to a cell style contained in the workbook
-     * object.
+     * object. If the cell does not have an explicit style assigned, this method will fall back
+     * to returning the column or row style (if any).
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(int)
      */
     @Override
@@ -986,6 +987,21 @@ public class HSSFCell extends CellBase {
     {
       short styleIndex=_record.getXFIndex();
       ExtendedFormatRecord xf = _book.getWorkbook().getExFormatAt(styleIndex);
+      
+      if (styleIndex == 0x0f) {
+        // Fallback to column style
+        HSSFCellStyle colStyle = _sheet.getColumnStyle(getColumnIndex());
+        if (colStyle != null) {
+            return colStyle;
+        }
+
+        // Fallback to row style
+        HSSFCellStyle rowStyle = getRow().getRowStyle();
+        if (rowStyle != null) {
+            return rowStyle;
+        }
+      }
+
       return new HSSFCellStyle(styleIndex, xf, _book);
     }
 
