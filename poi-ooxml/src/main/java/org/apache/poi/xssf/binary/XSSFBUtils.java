@@ -38,7 +38,7 @@ public class XSSFBUtils {
      * @return number of bytes read
      * @throws XSSFBParseException if there was an exception during reading
      */
-    static int readXLNullableWideString(byte[] data, int offset, StringBuilder sb) throws XSSFBParseException {
+    public static int readXLNullableWideString(byte[] data, int offset, StringBuilder sb) throws XSSFBParseException {
         long numChars = LittleEndian.getUInt(data, offset);
         if (numChars < 0) {
             throw new XSSFBParseException("too few chars to read");
@@ -85,14 +85,14 @@ public class XSSFBUtils {
         return numBytes;
     }
 
-    static int castToInt(long val) {
+    public static int castToInt(long val) {
         if (val < Integer.MAX_VALUE && val > Integer.MIN_VALUE) {
             return (int)val;
         }
         throw new POIXMLException("val ("+val+") can't be cast to int");
     }
 
-    static short castToShort(int val) {
+    public static short castToShort(int val) {
         if (val < Short.MAX_VALUE && val > Short.MIN_VALUE) {
             return (short)val;
         }
@@ -101,7 +101,7 @@ public class XSSFBUtils {
     }
 
     //TODO: move to LittleEndian?
-    static int get24BitInt( byte[] data, int offset) {
+    public static int get24BitInt(byte[] data, int offset) {
         int i = offset;
         int b0 = data[i++] & 0xFF;
         int b1 = data[i++] & 0xFF;

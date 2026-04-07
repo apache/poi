@@ -23,7 +23,7 @@ import org.apache.poi.util.Internal;
  * @since 3.16-beta3
  */
 @Internal
-class XSSFBRichStr {
+public class XSSFBRichStr {
 
     public static XSSFBRichStr build(byte[] bytes, int offset) throws XSSFBParseException {
         byte first = bytes[offset];
