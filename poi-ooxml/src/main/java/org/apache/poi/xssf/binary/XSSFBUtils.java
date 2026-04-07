@@ -37,7 +37,7 @@ public class XSSFBUtils {
      * @return number of bytes read
      * @throws XSSFBParseException if there was an exception during reading
      */
-    public static int readXLNullableWideString(byte[] data, int offset, StringBuilder sb) throws XSSFBParseException {
+    static int readXLNullableWideString(byte[] data, int offset, StringBuilder sb) throws XSSFBParseException {
         long numChars = LittleEndian.getUInt(data, offset);
         if (numChars < 0) {
             throw new XSSFBParseException("too few chars to read");
@@ -86,7 +86,7 @@ public class XSSFBUtils {
 
 
     //TODO: move to LittleEndian?
-    public static int get24BitInt(byte[] data, int offset) {
+    static int get24BitInt(byte[] data, int offset) {
         int i = offset;
         int b0 = data[i++] & 0xFF;
         int b1 = data[i++] & 0xFF;
