@@ -54,14 +54,6 @@ public class ByteArrayBackedDataSource extends DataSource {
 
       int toRead = (int)Math.min(length, size - position);
       
-      // If we can't read the full block, pad with zeros
-      if(toRead < length) {
-         ByteBuffer buffer = ByteBuffer.allocate(length);
-         buffer.put(this.buffer, (int)position, toRead);
-         // Remaining bytes are already zero
-         return buffer;
-      }
-      
       return ByteBuffer.wrap(buffer, (int)position, toRead);
    }
 

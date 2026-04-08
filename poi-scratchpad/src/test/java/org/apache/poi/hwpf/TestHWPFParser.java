@@ -17,10 +17,13 @@
 
 package org.apache.poi.hwpf;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -49,6 +52,29 @@ public class TestHWPFParser {
     void testDocRead() throws Exception {
         try (
             InputStream stream = HWPFTestDataSamples.openSampleFileStream("issue_1041.doc");
+            HWPFDocument doc = HWPFParser.parse(stream)
+        ) {
+            WordExtractor extractor = new WordExtractor(doc);
+            String text = extractor.getText();
+            assertNotNull(doc);
+            assertNotNull(text);
+        }
+    }
+
+    @Test
+    void testWpsDocByFs()throws Exception{
+        POIDataSamples instance = POIDataSamples.getDocumentInstance();
+        File file = instance.getFile("issue_1041.doc");
+        POIFSFileSystem fs = new POIFSFileSystem(file);
+        WordExtractor extractor = new WordExtractor(fs);
+        String text = extractor.getText();
+        assertNotNull(text);
+    }
+
+    @Test
+    void testOffice97_2003DocRead() throws Exception {
+        try (
+            InputStream stream = HWPFTestDataSamples.openSampleFileStream("issue_1041_2.doc");
             HWPFDocument doc = HWPFParser.parse(stream)
         ) {
             WordExtractor extractor = new WordExtractor(doc);
