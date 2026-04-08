@@ -17,9 +17,11 @@
 
 package org.apache.poi.hwpf;
 
+import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,6 +40,24 @@ public class TestHWPFParser {
             assertEquals(40, doc.getParagraphTable().getParagraphs().size());
         }
     }
+
+    /**
+     * Test reading a real-world .doc file.
+     * This test now handles non-standard formatting that WPS/Word can open.
+     */
+    @Test
+    void testDocRead() throws Exception {
+        try (
+            InputStream stream = HWPFTestDataSamples.openSampleFileStream("issue_1041.doc");
+            HWPFDocument doc = HWPFParser.parse(stream)
+        ) {
+            WordExtractor extractor = new WordExtractor(doc);
+            String text = extractor.getText();
+            assertNotNull(doc);
+            assertNotNull(text);
+        }
+    }
+
 
     @Test
     void testFailOnDocx() throws Exception {
