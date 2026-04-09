@@ -45,10 +45,17 @@ public class ByteArrayBackedDataSource extends DataSource {
    @Override
    public ByteBuffer read(int length, long position) {
       // Handle non-standard files that have references to blocks beyond EOF
-      // WPS/Word are more tolerant of such format issues, so we should be too
       if(position >= size) {
-         // Return a zero-filled buffer instead of throwing exception
-         // This allows processing of documents with corrupted block chains
+         // Check system property dynamically to allow runtime configuration
+         boolean allowCorruptBlocks = Boolean.getBoolean("org.apache.poi.poifs.allowCorruptBlocks");
+         if (!allowCorruptBlocks) {
+            throw new IndexOutOfBoundsException(
+               "Position " + position + " is beyond EOF (" + size + "). " +
+               "Set system property 'org.apache.poi.poifs.allowCorruptBlocks' to true " +
+               "to allow reading corrupt files with missing blocks.");
+         }
+         // Return a zero-filled buffer in tolerant mode
+         // This allows processing of documents with corrupted block chains (e.g., some WPS files)
          return ByteBuffer.allocate(length);
       }
 

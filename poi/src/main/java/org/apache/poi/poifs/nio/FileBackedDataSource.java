@@ -95,7 +95,16 @@ public class FileBackedDataSource extends DataSource implements Closeable {
     @Override
     public ByteBuffer read(int length, long position) throws IOException {
         if (position >= size()) {
-           return ByteBuffer.allocate(length);
+            // Check system property dynamically to allow runtime configuration
+            boolean allowCorruptBlocks = Boolean.getBoolean("org.apache.poi.poifs.allowCorruptBlocks");
+            if (!allowCorruptBlocks) {
+                throw new IndexOutOfBoundsException(
+                    "Position " + position + " is beyond EOF (" + size() + "). " +
+                    "Set system property 'org.apache.poi.poifs.allowCorruptBlocks' to true " +
+                    "to allow reading corrupt files with missing blocks.");
+            }
+            // Return a zero-filled buffer in tolerant mode
+            return ByteBuffer.allocate(length);
         }
 
         // TODO Could we do the read-only case with MapMode.PRIVATE instead?
