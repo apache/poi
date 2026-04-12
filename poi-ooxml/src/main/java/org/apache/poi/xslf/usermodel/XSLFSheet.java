@@ -197,7 +197,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
     /**
      * Returns an array containing all of the shapes in this sheet
      *
-     * @return an array of all shapes in this sheet
+     * @return a list of all shapes in this sheet
      */
     @Override
     public List<XSLFShape> getShapes(){
@@ -578,7 +578,16 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
                             _placeholderByIdMap.put(ph.getIdx(), sShape);
                         }
                         if(ph.isSetType()){
-                            _placeholderByTypeMap.put(ph.getType().intValue(), sShape);
+                            int typeInt = ph.getType().intValue();
+                            // Prefer the canonical (unindexed or idx=0) placeholder as the
+                            // representative for its type. A placeholder with an explicit non-zero
+                            // idx is a secondary variant (e.g. a second title box in a layout) and
+                            // must not displace the canonical entry, otherwise type-based lookups
+                            // will resolve to the wrong shape and inherit incorrect styles.
+                            boolean isCanonical = !ph.isSetIdx() || ph.getIdx() == 0;
+                            if (isCanonical || !_placeholderByTypeMap.containsKey(typeInt)) {
+                                _placeholderByTypeMap.put(typeInt, sShape);
+                            }
                         }
                     }
                 }
@@ -676,7 +685,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
         PackagePart part = pkg.createPart(srcPPName, srcPart.getContentType());
         try(
                 OutputStream out = part.getOutputStream();
-                InputStream is = srcPart.getInputStream();
+                InputStream is = srcPart.getInputStream()
         ) {
             IOUtils.copy(is, out);
         } catch (IOException e){
