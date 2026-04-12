@@ -28,6 +28,10 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.poi.util.RecordFormatException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -316,5 +320,28 @@ class TestVBAMacroReader {
         Map<String, Module> macros = r.readMacroModules();
         assertEquals(20, macros.size());
         r.close();
+    }
+
+    @Test
+    void maxStringLengthDefaultIsLarge() {
+        // Default should be large enough to handle real-world VBA projects
+        assertTrue(VBAMacroReader.getMaxStringLength() >= 20_000,
+                "Default MAX_STRING_LENGTH should be at least 20_000");
+    }
+
+    @Test
+    void setMaxStringLengthIsRespectedByModuleRead() throws IOException {
+        int prevLimit = VBAMacroReader.getMaxStringLength();
+        try {
+            // Set an absurdly small limit so the module stream read is rejected
+            VBAMacroReader.setMaxStringLength(1);
+            File f = POIDataSamples.getSpreadSheetInstance().getFile("SimpleMacro.xls");
+            try (VBAMacroReader r = new VBAMacroReader(f)) {
+                assertThrows(RecordFormatException.class, r::readMacros,
+                        "Expected RecordFormatException when MAX_STRING_LENGTH is exceeded during module read");
+            }
+        } finally {
+            VBAMacroReader.setMaxStringLength(prevLimit);
+        }
     }
 }

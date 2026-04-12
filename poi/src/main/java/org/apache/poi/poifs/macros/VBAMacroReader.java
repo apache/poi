@@ -74,10 +74,22 @@ public class VBAMacroReader implements Closeable {
     private static final int DEFAULT_MAX_STRING_LENGTH = 20000;
     private static int MAX_STRING_LENGTH = DEFAULT_MAX_STRING_LENGTH;
 
+    /**
+     * Set the maximum number of bytes to be allocated for a single VBA entry or decompressed
+     * stream. Use this to adjust the default limit if you need to process very large VBA projects,
+     * or to tighten the limit on memory-constrained systems.
+     *
+     * @param maxStringLength the maximum number of bytes that may be allocated; must be &gt; 0
+     * @since 5.4.1
+     */
     public static void setMaxStringLength(int maxStringLength) {
         MAX_STRING_LENGTH = maxStringLength;
     }
 
+    /**
+     * @return the maximum number of bytes that may be allocated per VBA entry or decompressed stream
+     * @since 5.4.1
+     */
     public static int getMaxStringLength() {
         return MAX_STRING_LENGTH;
     }
