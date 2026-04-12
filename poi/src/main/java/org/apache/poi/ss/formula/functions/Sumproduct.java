@@ -53,12 +53,13 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  *  )
  *
  * <p>
- *     The current implementation does not support the more advanced use cases of SUMPRODUCT, including
+ *     The current implementation supports array-mode expressions within SUMPRODUCT arguments,
+ *     including boolean coercion patterns like
  *     <code>SUMPRODUCT((B2:B9=B12)*(C2:C9=C12)*D2:D9)</code> (see example 3 in
  *     https://support.microsoft.com/en-us/office/sumproduct-function-16753e75-9f68-4874-94ac-4d2145a2fd2e).
  * </p>
  */
-public final class Sumproduct implements Function {
+public final class Sumproduct implements Function, ArrayMode {
 
 
     @Override
@@ -87,8 +88,7 @@ public final class Sumproduct implements Function {
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
-        throw new IllegalStateException("Invalid arg type for SUMPRODUCT: ("
-                + firstArg.getClass().getName() + ")");
+        return ErrorEval.VALUE_INVALID;
     }
 
     private static ValueEval evaluateSingleProduct(ValueEval[] evalArgs) throws EvaluationException {
