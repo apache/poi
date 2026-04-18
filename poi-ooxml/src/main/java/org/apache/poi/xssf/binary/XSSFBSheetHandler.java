@@ -130,7 +130,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
 
         switch(type) {
             case BrtRowHdr:
-                int rw = XSSFBUtils.castToInt(LittleEndian.getUInt(data, 0));
+                int rw = Math.toIntExact(LittleEndian.getUInt(data, 0));
                 if (rw > 0x00100000) {//could make sure this is larger than currentRow, according to spec?
                     throw new XSSFBParseException("Row number beyond allowable range: "+rw);
                 }
@@ -298,7 +298,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
 
     private void handleBrtCellIsst(byte[] data) {
         beforeCellValue(data);
-        int idx = XSSFBUtils.castToInt(LittleEndian.getUInt(data, XSSFBCellHeader.length));
+        int idx = Math.toIntExact(LittleEndian.getUInt(data, XSSFBCellHeader.length));
         RichTextString rtss = stringsTable.getItemAt(idx);
         handleStringCellValue(rtss.getString());
     }

@@ -149,7 +149,7 @@ public class XSSFBHyperlinksTable {
             xlWideStringBuffer.setLength(0);
             /*offset +=*/ XSSFBUtils.readXLWideString(data, offset, xlWideStringBuffer);
             String display = xlWideStringBuffer.toString();
-            CellRangeAddress cellRangeAddress = new CellRangeAddress(hyperlinkCellRange.firstRow, hyperlinkCellRange.lastRow, hyperlinkCellRange.firstCol, hyperlinkCellRange.lastCol);
+            CellRangeAddress cellRangeAddress = new CellRangeAddress(hyperlinkCellRange.getFirstRow(), hyperlinkCellRange.getLastRow(), hyperlinkCellRange.getFirstCol(), hyperlinkCellRange.getLastCol());
 
             String url = relIdToHyperlink.get(relId);
             if (location.isEmpty()) {

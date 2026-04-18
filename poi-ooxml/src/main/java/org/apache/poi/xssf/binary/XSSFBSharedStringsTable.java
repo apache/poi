@@ -132,8 +132,8 @@ public class XSSFBSharedStringsTable implements SharedStrings {
                     strings.add(rstr.getString());
                     break;
                 case BrtBeginSst:
-                    count = XSSFBUtils.castToInt(LittleEndian.getUInt(data,0));
-                    uniqueCount = XSSFBUtils.castToInt(LittleEndian.getUInt(data, 4));
+                    count = Math.toIntExact(LittleEndian.getUInt(data,0));
+                    uniqueCount = Math.toIntExact(LittleEndian.getUInt(data, 4));
                     break;
             }
 
