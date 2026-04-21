@@ -50,7 +50,7 @@ plugins {
 
 repositories {
     mavenCentral()
-    // maven { url 'https://repository.apache.org/content/repositories/staging' }
+    maven { url 'https://repository.apache.org/content/repositories/staging' }
 }
 
 // Only add the plugin for Sonar if enabled
@@ -123,7 +123,7 @@ subprojects {
         log4jVersion = '2.25.4'
         mockitoVersion = '5.23.0'
         hamcrestVersion = '3.0'
-        xmlbeansVersion = '5.3.0'
+        xmlbeansVersion = '5.4.0-RC1'
         batikVersion = '1.19'
         graphics2dVersion = '3.0.5'
         pdfboxVersion = '3.0.6'
@@ -174,7 +174,7 @@ subprojects {
 
     repositories {
         mavenCentral()
-        // maven { url 'https://repository.apache.org/content/repositories/staging' }
+        maven { url 'https://repository.apache.org/content/repositories/staging' }
     }
 
     dependencies {
