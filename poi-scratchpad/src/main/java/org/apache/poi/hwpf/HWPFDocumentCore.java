@@ -313,13 +313,19 @@ public abstract class HWPFDocumentCore extends POIDocument {
 
     /**
      * Set the password to be used to password protect the document when writing out.
+     * If {@code null} is passed any password previously set via this method is cleared;
+     * in that case the thread-level password from {@link Biff8EncryptionKey#getCurrentUserPassword()}
+     * is used (if set), otherwise the output will be unencrypted.
+     * <p>
+     * The password supplied to the constructor for reading an encrypted file is
+     * <em>not</em> automatically used as the output password.
+     * </p>
      *
-     * @param password as a char array (null is supported and means use {@link Biff8EncryptionKey}
-     *                 and no password if none set there)
+     * @param password as a char array, or {@code null} to clear
      * @since 6.0.0
      */
     public void setOutputPassword(final char[] password) {
-        this._outputPasswordChars = password;
+        this._outputPasswordChars = (password != null) ? password.clone() : null;
     }
 
     @Override
@@ -369,16 +375,13 @@ public abstract class HWPFDocumentCore extends POIDocument {
     protected void updateEncryptionInfo() {
         // make sure, that we've read all the streams ...
         readProperties();
-        // now check for the password
-        // Use output password if set, otherwise fall back to read password, then Biff8EncryptionKey
-        String password;
-        if (_outputPasswordChars != null) {
-            password = new String(_outputPasswordChars);
-        } else if (_password != null) {
-            password = new String(_password);
-        } else {
-            password = Biff8EncryptionKey.getCurrentUserPassword();
-        }
+        // Resolve the output password: explicit setOutputPassword() takes priority,
+        // otherwise fall back to the thread-level Biff8EncryptionKey (if any).
+        // The password supplied to the constructor (_password) is intentionally NOT
+        // used as an output password.
+        String password = _outputPasswordChars != null
+                ? new String(_outputPasswordChars)
+                : Biff8EncryptionKey.getCurrentUserPassword();
         FibBase fBase = _fib.getFibBase();
         if (password == null) {
             fBase.setLKey(0);

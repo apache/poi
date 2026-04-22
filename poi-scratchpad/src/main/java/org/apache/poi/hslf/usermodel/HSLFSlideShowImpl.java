@@ -131,13 +131,19 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     /**
      * Set the password to be used to password protect the slideshow when writing out.
+     * If {@code null} is passed any password previously set via this method is cleared;
+     * in that case the thread-level password from {@link Biff8EncryptionKey#getCurrentUserPassword()}
+     * is used (if set), otherwise the output will be unencrypted.
+     * <p>
+     * The password supplied to the constructor for reading an encrypted file is
+     * <em>not</em> automatically used as the output password.
+     * </p>
      *
-     * @param password as a char array (null is supported and means use {@link Biff8EncryptionKey}
-     *                 and no password if none set there)
+     * @param password as a char array, or {@code null} to clear
      * @since 6.0.0
      */
     public void setOutputPassword(final char[] password) {
-        this._outputPassword = password;
+        this._outputPassword = (password != null) ? password.clone() : null;
     }
 
     /**
@@ -881,16 +887,16 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         // The list of entries we've written out
         final List<String> writtenEntries = new ArrayList<>(1);
 
-        // If an output password was set via setOutputPassword(), temporarily override the
-        // thread-local Biff8EncryptionKey so that updateEncryptionRecord() picks it up.
-        final String oldPW = Biff8EncryptionKey.getCurrentUserPassword();
-        if (_outputPassword != null) {
-            Biff8EncryptionKey.setCurrentUserPassword(new String(_outputPassword));
-        }
-        try {
+        // Resolve the output password: explicit setOutputPassword() takes priority,
+        // otherwise fall back to the thread-level Biff8EncryptionKey (if any).
+        // The password used to open/read this file is intentionally NOT used here.
+        final String outputPassword = _outputPassword != null
+                ? new String(_outputPassword)
+                : Biff8EncryptionKey.getCurrentUserPassword();
+
         // set new encryption settings
         try (HSLFSlideShowEncrypted encryptedSS = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom())) {
-            _records = encryptedSS.updateEncryptionRecord(_records);
+            _records = encryptedSS.updateEncryptionRecord(_records, outputPassword);
 
             // Write out the Property Streams
             writeProperties(outFS, writtenEntries);
@@ -926,11 +932,6 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 } catch (IllegalStateException e) {
                     throw (IOException)e.getCause();
                 }
-            }
-        }
-        } finally {
-            if (_outputPassword != null) {
-                Biff8EncryptionKey.setCurrentUserPassword(oldPW);
             }
         }
 
