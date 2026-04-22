@@ -63,18 +63,35 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apache.poi.ss.extractor.ExcelExtractor {
     private final POIFSFileSystem poifs;
     private final DirectoryNode _dir;
+    private final char[] _password;
     private boolean doCloseFilesystem = true;
     boolean _includeSheetNames = true;
     boolean _formulasNotResults;
 
     public EventBasedExcelExtractor(DirectoryNode dir) {
+        this(dir, null);
+    }
+
+    /**
+     * @since 6.0.0
+     */
+    public EventBasedExcelExtractor(DirectoryNode dir, char[] password) {
         poifs = null;
         _dir = dir;
+        _password = password;
     }
 
     public EventBasedExcelExtractor(POIFSFileSystem fs) {
+        this(fs, null);
+    }
+
+    /**
+     * @since 6.0.0
+     */
+    public EventBasedExcelExtractor(POIFSFileSystem fs, char[] password) {
         poifs = fs;
         _dir = fs.getRoot();
+        _password = password;
     }
 
     /**
@@ -94,7 +111,6 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
     public SummaryInformation getSummaryInformation() {
         throw new IllegalStateException("Metadata extraction not supported in streaming mode, please use ExcelExtractor");
     }
-
 
     /**
      * Would control the inclusion of cell comments from the document,
@@ -158,7 +174,7 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
         HSSFRequest request = new HSSFRequest();
         request.addListenerForAllRecords(ft);
 
-        factory.processWorkbookEvents(request, _dir);
+        factory.processWorkbookEvents(request, _dir, _password);
 
         return tl;
     }
