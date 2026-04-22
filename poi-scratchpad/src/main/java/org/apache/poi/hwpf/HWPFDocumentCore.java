@@ -126,6 +126,8 @@ public abstract class HWPFDocumentCore extends POIDocument {
 
     private char[] _password;
 
+    private char[] _outputPasswordChars;
+
     private EncryptionInfo _encryptionInfo;
 
     protected HWPFDocumentCore() {
@@ -309,6 +311,17 @@ public abstract class HWPFDocumentCore extends POIDocument {
         return _mainStream;
     }
 
+    /**
+     * Set the password to be used to password protect the document when writing out.
+     *
+     * @param password as a char array (null is supported and means use {@link Biff8EncryptionKey}
+     *                 and no password if none set there)
+     * @since 6.0.0
+     */
+    public void setOutputPassword(final char[] password) {
+        this._outputPasswordChars = password;
+    }
+
     @Override
     public EncryptionInfo getEncryptionInfo() throws IOException {
         if (_encryptionInfo != null) {
@@ -357,8 +370,15 @@ public abstract class HWPFDocumentCore extends POIDocument {
         // make sure, that we've read all the streams ...
         readProperties();
         // now check for the password
-        String password = _password == null
-                ? Biff8EncryptionKey.getCurrentUserPassword() : new String(_password);
+        // Use output password if set, otherwise fall back to read password, then Biff8EncryptionKey
+        String password;
+        if (_outputPasswordChars != null) {
+            password = new String(_outputPasswordChars);
+        } else if (_password != null) {
+            password = new String(_password);
+        } else {
+            password = Biff8EncryptionKey.getCurrentUserPassword();
+        }
         FibBase fBase = _fib.getFibBase();
         if (password == null) {
             fBase.setLKey(0);

@@ -1246,6 +1246,17 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         getSlideShowImpl().write(newFile);
     }
 
+    /**
+     * Set the password to be used to password protect the slideshow when writing out.
+     *
+     * @param password as a char array (null is supported and means use {@link org.apache.poi.hssf.record.crypto.Biff8EncryptionKey}
+     *                 and no password if none set there)
+     * @since 6.0.0
+     */
+    public void setOutputPassword(final char[] password) {
+        getSlideShowImpl().setOutputPassword(password);
+    }
+
     @Override
     public DocumentSummaryInformation getDocumentSummaryInformation() {
         return getSlideShowImpl().getDocumentSummaryInformation();

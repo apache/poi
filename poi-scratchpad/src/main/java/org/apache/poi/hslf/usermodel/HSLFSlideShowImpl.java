@@ -68,6 +68,7 @@ import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.UserEditAtom;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
@@ -111,6 +112,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     // Embedded objects stored in storage records in the document stream, lazily populated.
     private HSLFObjectData[] _objects;
 
+    // The password to use when writing out the slideshow (null = use Biff8EncryptionKey or no encryption)
+    private char[] _outputPassword;
+
     /**
      * @param length the max record length allowed for HSLFSlideShowImpl
      */
@@ -123,6 +127,17 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;
+    }
+
+    /**
+     * Set the password to be used to password protect the slideshow when writing out.
+     *
+     * @param password as a char array (null is supported and means use {@link Biff8EncryptionKey}
+     *                 and no password if none set there)
+     * @since 6.0.0
+     */
+    public void setOutputPassword(final char[] password) {
+        this._outputPassword = password;
     }
 
     /**
@@ -866,6 +881,13 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         // The list of entries we've written out
         final List<String> writtenEntries = new ArrayList<>(1);
 
+        // If an output password was set via setOutputPassword(), temporarily override the
+        // thread-local Biff8EncryptionKey so that updateEncryptionRecord() picks it up.
+        final String oldPW = Biff8EncryptionKey.getCurrentUserPassword();
+        if (_outputPassword != null) {
+            Biff8EncryptionKey.setCurrentUserPassword(new String(_outputPassword));
+        }
+        try {
         // set new encryption settings
         try (HSLFSlideShowEncrypted encryptedSS = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom())) {
             _records = encryptedSS.updateEncryptionRecord(_records);
@@ -904,6 +926,11 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 } catch (IllegalStateException e) {
                     throw (IOException)e.getCause();
                 }
+            }
+        }
+        } finally {
+            if (_outputPassword != null) {
+                Biff8EncryptionKey.setCurrentUserPassword(oldPW);
             }
         }
 
