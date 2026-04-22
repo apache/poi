@@ -16,13 +16,17 @@
 ==================================================================== */
 package org.apache.poi.hslf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.sl.usermodel.BaseTestSlideShow;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +42,26 @@ public class TestHSLFSlideShow extends BaseTestSlideShow<HSLFShape, HSLFTextPara
         assertNotNull(createSlideShow());
     }
 
+    @Test
+    void setPassword() throws IOException {
+        final byte[] data = slTests.readFile("clock.jpg");
+        final String password = "123xyz";
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (HSLFSlideShow show = createSlideShow()) {
+            assertEquals(0, show.getPictureData().size());
+            PictureData picture = show.addPicture(data, PictureData.PictureType.JPEG);
+            assertEquals(1, show.getPictureData().size());
+            assertSame(picture, show.getPictureData().get(0));
+            show.setOutputPassword(password.toCharArray());
+            show.write(baos);
+        }
+        try (HSLFSlideShow show = new HSLFSlideShow(baos.toInputStream(), password.toCharArray())) {
+            assertEquals(1, show.getPictureData().size());
+            assertArrayEquals(data, show.getPictureData().get(0).getData());
+        }
+        baos.close();
+    }
+
     @Override
     public HSLFSlideShow reopen(SlideShow<HSLFShape, HSLFTextParagraph> show) throws IOException {
         try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
@@ -47,4 +71,5 @@ public class TestHSLFSlideShow extends BaseTestSlideShow<HSLFShape, HSLFTextPara
             }
         }
     }
+
 }
