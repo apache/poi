@@ -31,8 +31,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link MainExtractorFactory} password support introduced in
- * commit eacd5f9bb6169ac90a5b899e41062048d6b9bb03.
+ * Tests for {@link MainExtractorFactory} password support.
  */
 class TestMainExtractorFactory {
 

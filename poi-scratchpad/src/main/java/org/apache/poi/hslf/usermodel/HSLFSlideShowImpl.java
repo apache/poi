@@ -887,16 +887,13 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         // The list of entries we've written out
         final List<String> writtenEntries = new ArrayList<>(1);
 
-        // Resolve the output password: explicit setOutputPassword() takes priority,
-        // otherwise fall back to the thread-level Biff8EncryptionKey (if any).
-        // The password used to open/read this file is intentionally NOT used here.
-        final String outputPassword = _outputPassword != null
-                ? new String(_outputPassword)
-                : Biff8EncryptionKey.getCurrentUserPassword();
-
         // set new encryption settings
         try (HSLFSlideShowEncrypted encryptedSS = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom())) {
-            _records = encryptedSS.updateEncryptionRecord(_records, outputPassword);
+            if (_outputPassword != null) {
+                _records = encryptedSS.updateEncryptionRecord(_records, _outputPassword);
+            } else {
+                _records = encryptedSS.updateEncryptionRecord(_records);
+            }
 
             // Write out the Property Streams
             writeProperties(outFS, writtenEntries);

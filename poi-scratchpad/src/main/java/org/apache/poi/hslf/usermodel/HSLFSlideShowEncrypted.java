@@ -394,7 +394,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
      * @since 6.0.0
      */
     protected org.apache.poi.hslf.record.Record[] updateEncryptionRecord(
-            org.apache.poi.hslf.record.Record[] records, String password) {
+            org.apache.poi.hslf.record.Record[] records, char[] password) {
         if (password == null) {
             if (dea == null) {
                 // no password given, no encryption record exits -> done
@@ -431,13 +431,42 @@ public class HSLFSlideShowEncrypted implements Closeable {
      *
      * @param records the current record array
      * @return the updated record array
-     * @deprecated use {@link #updateEncryptionRecord(org.apache.poi.hslf.record.Record[], String)}
-     *             and pass the password explicitly
      */
-    @Deprecated
     protected org.apache.poi.hslf.record.Record[] updateEncryptionRecord(
             org.apache.poi.hslf.record.Record[] records) {
         return updateEncryptionRecord(records, Biff8EncryptionKey.getCurrentUserPassword());
+    }
+
+    private org.apache.poi.hslf.record.Record[] updateEncryptionRecord(
+            org.apache.poi.hslf.record.Record[] records, String password) {
+        if (password == null) {
+            if (dea == null) {
+                // no password given, no encryption record exits -> done
+                return records;
+            } else {
+                // need to remove password data
+                dea = null;
+                return removeEncryptionRecord(records);
+            }
+        } else {
+            // create password record
+            if (dea == null) {
+                dea = new DocumentEncryptionAtom();
+            }
+            EncryptionInfo ei = dea.getEncryptionInfo();
+            byte[] salt = ei.getVerifier().getSalt();
+            Encryptor enc = getEncryptionInfo().getEncryptor();
+            if (salt == null) {
+                enc.confirmPassword(password);
+            } else {
+                byte[] verifier = ei.getDecryptor().getVerifier();
+                enc.confirmPassword(password, null, null, verifier, salt, null);
+            }
+
+            // move EncryptionRecord to last slide position
+            records = normalizeRecords(records);
+            return addEncryptionRecord(records, dea);
+        }
     }
 
     /**
