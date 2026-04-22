@@ -395,34 +395,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
      */
     protected org.apache.poi.hslf.record.Record[] updateEncryptionRecord(
             org.apache.poi.hslf.record.Record[] records, char[] password) {
-        if (password == null) {
-            if (dea == null) {
-                // no password given, no encryption record exits -> done
-                return records;
-            } else {
-                // need to remove password data
-                dea = null;
-                return removeEncryptionRecord(records);
-            }
-        } else {
-            // create password record
-            if (dea == null) {
-                dea = new DocumentEncryptionAtom();
-            }
-            EncryptionInfo ei = dea.getEncryptionInfo();
-            byte[] salt = ei.getVerifier().getSalt();
-            Encryptor enc = getEncryptionInfo().getEncryptor();
-            if (salt == null) {
-                enc.confirmPassword(password);
-            } else {
-                byte[] verifier = ei.getDecryptor().getVerifier();
-                enc.confirmPassword(password, null, null, verifier, salt, null);
-            }
-
-            // move EncryptionRecord to last slide position
-            records = normalizeRecords(records);
-            return addEncryptionRecord(records, dea);
-        }
+        return updateEncryptionRecord(records, new String(password));
     }
 
     /**
