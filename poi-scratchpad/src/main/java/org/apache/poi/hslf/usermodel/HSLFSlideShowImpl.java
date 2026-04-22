@@ -143,7 +143,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @since 6.0.0
      */
     public void setOutputPassword(final char[] password) {
-        this._outputPassword = (password != null) ? password.clone() : null;
+        this._outputPassword = password == null ? null : password.clone();
     }
 
     /**

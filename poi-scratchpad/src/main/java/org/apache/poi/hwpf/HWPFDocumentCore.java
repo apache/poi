@@ -229,7 +229,7 @@ public abstract class HWPFDocumentCore extends POIDocument {
     public HWPFDocumentCore(DirectoryNode directory, final char[] password) throws IOException {
         // Sort out the hpsf properties
         super(directory);
-        _password = password;
+        _password = password == null ? null : password.clone();
 
         // read in the main stream.
         _mainStream = getDocumentEntryBytes(STREAM_WORD_DOCUMENT, FIB_BASE_LEN, Integer.MAX_VALUE);
@@ -325,7 +325,7 @@ public abstract class HWPFDocumentCore extends POIDocument {
      * @since 6.0.0
      */
     public void setOutputPassword(final char[] password) {
-        this._outputPasswordChars = (password != null) ? password.clone() : null;
+        this._outputPasswordChars = password == null ? null : password.clone();
     }
 
     @Override
