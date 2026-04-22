@@ -26,7 +26,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.util.Removal;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.model.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -565,8 +567,27 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
          * sparse calls to <code>cell</code>. See the code in
          * <code>poi-examples/src/main/java/org/apache/poi/xssf/eventusermodel/XLSX2CSV.java</code>
          * for an example of how to handle this scenario.
+         *
+         * @deprecated use {@link #cell(String, String, Comment)}
          */
-        void cell(String cellReference, String formattedValue, XSSFComment comment);
+        @Deprecated
+        @Removal(version = "7.0.0")
+        default void cell(String cellReference, String formattedValue, XSSFComment comment) {
+            cell(cellReference, formattedValue, (Comment) comment);
+        }
+
+        /**
+         * A cell, with the given formatted value (may be null),
+         * and possibly a comment (may be null), was encountered.
+         * <p>
+         * Sheets that have missing or empty cells may result in
+         * sparse calls to <code>cell</code>. See the code in
+         * <code>poi-examples/src/main/java/org/apache/poi/xssf/eventusermodel/XLSX2CSV.java</code>
+         * for an example of how to handle this scenario.
+         *
+         * @since 6.0.0
+         */
+        void cell(String cellReference, String formattedValue, Comment comment);
 
         /**
          * A header or footer has been encountered

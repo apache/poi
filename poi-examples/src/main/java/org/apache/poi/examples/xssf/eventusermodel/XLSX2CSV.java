@@ -39,7 +39,7 @@ import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.model.Styles;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.ss.usermodel.Comment;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -110,7 +110,7 @@ public class XLSX2CSV {
 
         @Override
         public void cell(String cellReference, String formattedValue,
-                XSSFComment comment) {
+                Comment comment) {
             if (firstCellOfRow) {
                 firstCellOfRow = false;
             } else {

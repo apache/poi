@@ -19,16 +19,16 @@ package org.apache.poi.xssf.binary;
 
 
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
-import org.apache.poi.xssf.usermodel.XSSFComment;
 
 /**
  * @since 3.16-beta3
  */
 @Internal
-class XSSFBComment extends XSSFComment {
+public class XSSFBComment implements Comment {
 
     private final CellAddress cellAddress;
     private final String author;
@@ -36,7 +36,6 @@ class XSSFBComment extends XSSFComment {
     private boolean visible = true;
 
     XSSFBComment(CellAddress cellAddress, String author, String comment) {
-        super(null, null, null);
         this.cellAddress = cellAddress;
         this.author = author;
         this.comment = new XSSFBRichTextString(comment);

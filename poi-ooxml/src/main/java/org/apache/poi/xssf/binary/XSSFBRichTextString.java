@@ -18,9 +18,9 @@
 package org.apache.poi.xssf.binary;
 
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
  * Wrapper class around String so that we can use it in Comment.
@@ -29,7 +29,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  * @since 3.16-beta3
  */
 @Internal
-class XSSFBRichTextString extends XSSFRichTextString {
+public class XSSFBRichTextString implements RichTextString {
 
     private final String string;
 
@@ -63,6 +63,11 @@ class XSSFBRichTextString extends XSSFRichTextString {
 
     @Override
     public String getString() {
+        return string;
+    }
+
+    @Override
+    public String toString() {
         return string;
     }
 
