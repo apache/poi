@@ -28,6 +28,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
@@ -139,4 +140,45 @@ public final class TestHWPFWrite extends HWPFTestCase {
             assertThrows(IllegalStateException.class, doc::write);
         }
     }
+
+    @Test
+    void testPassword() throws IOException {
+        final String password = "password123";
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("SampleDoc.doc")) {
+            Range r = doc.getRange();
+            assertEquals("I am a test document\r", r.getParagraph(0).text());
+            doc.setOutputPassword(password.toCharArray());
+            doc.write(baos);
+        }
+
+        try (HWPFDocument doc = new HWPFDocument(baos.toInputStream(), password.toCharArray())) {
+            Range r = doc.getRange();
+            assertEquals("I am a test document\r", r.getParagraph(0).text());
+        }
+    }
+
+    @Test
+    void testPasswordBiff8() throws IOException {
+        final String password = "password123";
+        // this tests the legacy way to use a password when writing or reading a file
+        // prefer the 6.0.0+ supported approach in `testPassword` test above
+        try(UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+            try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("SampleDoc.doc")) {
+                Range r = doc.getRange();
+                assertEquals("I am a test document\r", r.getParagraph(0).text());
+                Biff8EncryptionKey.setCurrentUserPassword(password);
+                doc.write(baos);
+            }
+
+            Biff8EncryptionKey.setCurrentUserPassword(password);
+            try (HWPFDocument doc = new HWPFDocument(baos.toInputStream())) {
+                Range r = doc.getRange();
+                assertEquals("I am a test document\r", r.getParagraph(0).text());
+            }
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+        }
+    }
+
 }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.sl.usermodel.BaseTestSlideShow;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.SlideShow;
@@ -46,20 +47,44 @@ public class TestHSLFSlideShow extends BaseTestSlideShow<HSLFShape, HSLFTextPara
     void setPassword() throws IOException {
         final byte[] data = slTests.readFile("clock.jpg");
         final String password = "123xyz";
-        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
-        try (HSLFSlideShow show = createSlideShow()) {
-            assertEquals(0, show.getPictureData().size());
-            PictureData picture = show.addPicture(data, PictureData.PictureType.JPEG);
-            assertEquals(1, show.getPictureData().size());
-            assertSame(picture, show.getPictureData().get(0));
-            show.setOutputPassword(password.toCharArray());
-            show.write(baos);
+        try(UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+            try (HSLFSlideShow show = createSlideShow()) {
+                assertEquals(0, show.getPictureData().size());
+                PictureData picture = show.addPicture(data, PictureData.PictureType.JPEG);
+                assertEquals(1, show.getPictureData().size());
+                assertSame(picture, show.getPictureData().get(0));
+                show.setOutputPassword(password.toCharArray());
+                show.write(baos);
+            }
+            try (HSLFSlideShow show = new HSLFSlideShow(baos.toInputStream(), password.toCharArray())) {
+                assertEquals(1, show.getPictureData().size());
+                assertArrayEquals(data, show.getPictureData().get(0).getData());
+            }
         }
-        try (HSLFSlideShow show = new HSLFSlideShow(baos.toInputStream(), password.toCharArray())) {
-            assertEquals(1, show.getPictureData().size());
-            assertArrayEquals(data, show.getPictureData().get(0).getData());
+    }
+
+    @Test
+    void setPasswordBiff8() throws IOException {
+        final byte[] data = slTests.readFile("clock.jpg");
+        final String password = "123xyz";
+        // kept for legacy testing, prefer to set the password like the `setPassword` test does
+        try(UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+            try (HSLFSlideShow show = createSlideShow()) {
+                assertEquals(0, show.getPictureData().size());
+                PictureData picture = show.addPicture(data, PictureData.PictureType.JPEG);
+                assertEquals(1, show.getPictureData().size());
+                assertSame(picture, show.getPictureData().get(0));
+                Biff8EncryptionKey.setCurrentUserPassword(password);
+                show.write(baos);
+            }
+            Biff8EncryptionKey.setCurrentUserPassword(password);
+            try (HSLFSlideShow show = new HSLFSlideShow(baos.toInputStream())) {
+                assertEquals(1, show.getPictureData().size());
+                assertArrayEquals(data, show.getPictureData().get(0).getData());
+            }
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
         }
-        baos.close();
     }
 
     @Override
