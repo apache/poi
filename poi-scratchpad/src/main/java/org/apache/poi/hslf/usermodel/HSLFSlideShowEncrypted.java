@@ -384,8 +384,34 @@ public class HSLFSlideShowEncrypted implements Closeable {
         }
     }
 
-    protected org.apache.poi.hslf.record.Record[] updateEncryptionRecord(org.apache.poi.hslf.record.Record[] records) {
-        String password = Biff8EncryptionKey.getCurrentUserPassword();
+    /**
+     * Updates the encryption record for the given records using the supplied password.
+     * If {@code password} is {@code null} any existing encryption record is removed (decrypted output).
+     *
+     * @param records  the current record array
+     * @param password the output password, or {@code null} to remove encryption
+     * @return the updated record array
+     * @since 6.0.0
+     */
+    protected org.apache.poi.hslf.record.Record[] updateEncryptionRecord(
+            org.apache.poi.hslf.record.Record[] records, char[] password) {
+        return updateEncryptionRecord(records, new String(password));
+    }
+
+    /**
+     * Updates the encryption record for the given records, reading the password from
+     * {@link Biff8EncryptionKey#getCurrentUserPassword()}.
+     *
+     * @param records the current record array
+     * @return the updated record array
+     */
+    protected org.apache.poi.hslf.record.Record[] updateEncryptionRecord(
+            org.apache.poi.hslf.record.Record[] records) {
+        return updateEncryptionRecord(records, Biff8EncryptionKey.getCurrentUserPassword());
+    }
+
+    private org.apache.poi.hslf.record.Record[] updateEncryptionRecord(
+            org.apache.poi.hslf.record.Record[] records, String password) {
         if (password == null) {
             if (dea == null) {
                 // no password given, no encryption record exits -> done

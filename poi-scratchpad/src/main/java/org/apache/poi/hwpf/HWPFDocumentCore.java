@@ -126,6 +126,8 @@ public abstract class HWPFDocumentCore extends POIDocument {
 
     private char[] _password;
 
+    private char[] _outputPasswordChars;
+
     private EncryptionInfo _encryptionInfo;
 
     protected HWPFDocumentCore() {
@@ -227,7 +229,7 @@ public abstract class HWPFDocumentCore extends POIDocument {
     public HWPFDocumentCore(DirectoryNode directory, final char[] password) throws IOException {
         // Sort out the hpsf properties
         super(directory);
-        _password = password;
+        _password = password == null ? null : password.clone();
 
         // read in the main stream.
         _mainStream = getDocumentEntryBytes(STREAM_WORD_DOCUMENT, FIB_BASE_LEN, Integer.MAX_VALUE);
@@ -309,6 +311,23 @@ public abstract class HWPFDocumentCore extends POIDocument {
         return _mainStream;
     }
 
+    /**
+     * Set the password to be used to password protect the document when writing out.
+     * If {@code null} is passed any password previously set via this method is cleared;
+     * in that case the thread-level password from {@link Biff8EncryptionKey#getCurrentUserPassword()}
+     * is used (if set), otherwise the output will be unencrypted.
+     * <p>
+     * The password supplied to the constructor for reading an encrypted file is
+     * <em>not</em> automatically used as the output password.
+     * </p>
+     *
+     * @param password as a char array, or {@code null} to clear
+     * @since 6.0.0
+     */
+    public void setOutputPassword(final char[] password) {
+        this._outputPasswordChars = password == null ? null : password.clone();
+    }
+
     @Override
     public EncryptionInfo getEncryptionInfo() throws IOException {
         if (_encryptionInfo != null) {
@@ -356,9 +375,13 @@ public abstract class HWPFDocumentCore extends POIDocument {
     protected void updateEncryptionInfo() {
         // make sure, that we've read all the streams ...
         readProperties();
-        // now check for the password
-        String password = _password == null
-                ? Biff8EncryptionKey.getCurrentUserPassword() : new String(_password);
+        // Resolve the output password: explicit setOutputPassword() takes priority,
+        // otherwise fall back to the thread-level Biff8EncryptionKey (if any).
+        // The password supplied to the constructor (_password) is intentionally NOT
+        // used as an output password.
+        String password = _outputPasswordChars != null
+                ? new String(_outputPasswordChars)
+                : Biff8EncryptionKey.getCurrentUserPassword();
         FibBase fBase = _fib.getFibBase();
         if (password == null) {
             fBase.setLKey(0);

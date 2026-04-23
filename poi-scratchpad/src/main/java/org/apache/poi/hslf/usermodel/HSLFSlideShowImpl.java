@@ -68,6 +68,7 @@ import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.UserEditAtom;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
@@ -111,6 +112,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     // Embedded objects stored in storage records in the document stream, lazily populated.
     private HSLFObjectData[] _objects;
 
+    // The password to use when writing out the slideshow (null = use Biff8EncryptionKey or no encryption)
+    private char[] _outputPassword;
+
     /**
      * @param length the max record length allowed for HSLFSlideShowImpl
      */
@@ -123,6 +127,23 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;
+    }
+
+    /**
+     * Set the password to be used to password protect the slideshow when writing out.
+     * If {@code null} is passed any password previously set via this method is cleared;
+     * in that case the thread-level password from {@link Biff8EncryptionKey#getCurrentUserPassword()}
+     * is used (if set), otherwise the output will be unencrypted.
+     * <p>
+     * The password supplied to the constructor for reading an encrypted file is
+     * <em>not</em> automatically used as the output password.
+     * </p>
+     *
+     * @param password as a char array, or {@code null} to clear
+     * @since 6.0.0
+     */
+    public void setOutputPassword(final char[] password) {
+        this._outputPassword = password == null ? null : password.clone();
     }
 
     /**
@@ -868,7 +889,11 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         // set new encryption settings
         try (HSLFSlideShowEncrypted encryptedSS = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom())) {
-            _records = encryptedSS.updateEncryptionRecord(_records);
+            if (_outputPassword != null) {
+                _records = encryptedSS.updateEncryptionRecord(_records, _outputPassword);
+            } else {
+                _records = encryptedSS.updateEncryptionRecord(_records);
+            }
 
             // Write out the Property Streams
             writeProperties(outFS, writtenEntries);

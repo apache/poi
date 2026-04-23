@@ -1577,7 +1577,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * @since 6.0.0
      */
     public void setOutputPassword(final char[] password) {
-        this.outputPasswordChars = password;
+        this.outputPasswordChars = password == null ? null : password.clone();
     }
 
     /**
