@@ -60,7 +60,8 @@ public abstract class Bitmap extends HSLFPictureData {
     @Override
     protected byte[] formatImageForSlideshow(byte[] data) {
         byte[] checksum = getChecksum(data);
-        byte[] rawData = new byte[checksum.length * getUIDInstanceCount() + 1 + data.length];
+        long size = Math.addExact(Math.addExact((long)checksum.length * getUIDInstanceCount(), 1), data.length);
+        byte[] rawData = IOUtils.safelyAllocate(size, org.apache.poi.hslf.record.RecordAtom.getMaxRecordLength());
         int offset = 0;
 
         System.arraycopy(checksum, 0, rawData, offset, checksum.length);

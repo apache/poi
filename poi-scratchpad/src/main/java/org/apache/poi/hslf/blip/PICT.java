@@ -127,7 +127,8 @@ public final class PICT extends Metafile {
         header.setDimension(new Dimension(Units.toEMU(nDim.getWidth()), Units.toEMU(nDim.getHeight())));
 
         byte[] checksum = getChecksum(data);
-        byte[] rawData = new byte[checksum.length * getUIDInstanceCount() + header.getSize() + compressed.length];
+        long size = Math.addExact(Math.addExact((long)checksum.length * getUIDInstanceCount(), header.getSize()), compressed.length);
+        byte[] rawData = IOUtils.safelyAllocate(size, org.apache.poi.hslf.record.RecordAtom.getMaxRecordLength());
         int offset = 0;
 
         System.arraycopy(checksum, 0, rawData, offset, checksum.length);

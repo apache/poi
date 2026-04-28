@@ -85,7 +85,8 @@ public final class EMF extends Metafile {
         header.setZipSize(compressed.length);
 
         byte[] checksum = getChecksum(data);
-        byte[] rawData = new byte[checksum.length * getUIDInstanceCount() + header.getSize() + compressed.length];
+        long size = Math.addExact(Math.addExact((long)checksum.length * getUIDInstanceCount(), header.getSize()), compressed.length);
+        byte[] rawData = IOUtils.safelyAllocate(size, org.apache.poi.hslf.record.RecordAtom.getMaxRecordLength());
         int offset = 0;
 
         System.arraycopy(checksum, 0, rawData, offset, checksum.length);
