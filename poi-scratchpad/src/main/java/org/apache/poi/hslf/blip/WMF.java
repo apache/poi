@@ -27,6 +27,7 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.record.RecordAtom;
 import org.apache.poi.sl.image.ImageHeaderWMF;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -90,7 +91,8 @@ public final class WMF extends Metafile {
         header.setZipSize(compressed.length);
 
         byte[] checksum = getChecksum(data);
-        byte[] rawData = new byte[checksum.length * getUIDInstanceCount() + header.getSize() + compressed.length];
+        long rawDataSize = calcRawDataSize(getUIDInstanceCount(), checksum.length, header.getSize(), compressed.length);
+        byte[] rawData = IOUtils.safelyAllocate(rawDataSize, RecordAtom.getMaxRecordLength());
         int offset = 0;
 
         System.arraycopy(checksum, 0, rawData, offset, checksum.length);
