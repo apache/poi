@@ -86,9 +86,11 @@ public abstract class Bitmap extends HSLFPictureData {
      * @param checksumLength   length of the MD5 checksum array
      * @param dataLength       length of the image data array
      * @return required buffer size as a {@code long} to avoid integer overflow
+     * @throws ArithmeticException if there is an overflow
      */
     static long calcRawDataSize(int uidInstanceCount, int checksumLength, int dataLength) {
-        return (long) checksumLength * uidInstanceCount + 1L + dataLength;
+        final long multiplicand = (long) checksumLength * uidInstanceCount;
+        return Math.addExact(multiplicand, 1L + dataLength);
     }
 
     @Override
