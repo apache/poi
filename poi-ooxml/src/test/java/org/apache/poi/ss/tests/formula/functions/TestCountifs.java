@@ -35,6 +35,7 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 
 /**
  * Test the COUNTIFS() function
@@ -117,5 +118,43 @@ class TestCountifs {
         assertNotNull(cell, "Test workbook missing cell D1");
         CellValue evaluate = evaluator.evaluate(cell);
         assertEquals(2.0d, evaluate.getNumberValue(), 0.00000000000001);
+    }
+
+    /**
+     * Bug 70005 - SUM(COUNTIFS) with multiple values in criteria gives wrong result,
+     * and uses wrong area check causing ERROR when formula cell is not in the data range rows.
+     * Expected: A3=3.0, A4=4.0, D3=3.0, D4=4.0 (verified in Excel and LibreOffice Calc).
+     */
+    @Test
+    void testBug70005() {
+        workbook = XSSFTestDataSamples.openSampleWorkbook("70005-countifs.xlsx");
+        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+        Sheet sheet = workbook.getSheetAt(0);
+
+        // A3 and A4: formula cell is within the data area rows - wrong numeric result in buggy code
+        Cell a3 = SheetUtil.getCell(sheet, 2, 0);
+        assertNotNull(a3, "Test workbook missing cell A3");
+        CellValue a3Value = evaluator.evaluate(a3);
+        assertEquals(CellType.NUMERIC, a3Value.getCellType(), "A3 should be numeric, not an error");
+        assertEquals(3.0, a3Value.getNumberValue(), 0.00000000000001, "A3: SUM(COUNTIFS) with multiple criteria should equal 3");
+
+        Cell a4 = SheetUtil.getCell(sheet, 3, 0);
+        assertNotNull(a4, "Test workbook missing cell A4");
+        CellValue a4Value = evaluator.evaluate(a4);
+        assertEquals(CellType.NUMERIC, a4Value.getCellType(), "A4 should be numeric, not an error");
+        assertEquals(4.0, a4Value.getNumberValue(), 0.00000000000001, "A4: SUM(COUNTIFS) with multiple criteria should equal 4");
+
+        // D3 and D4: formula cell is outside the data area rows - buggy code returns ERROR here
+        Cell d3 = SheetUtil.getCell(sheet, 2, 3);
+        assertNotNull(d3, "Test workbook missing cell D3");
+        CellValue d3Value = evaluator.evaluate(d3);
+        assertEquals(CellType.NUMERIC, d3Value.getCellType(), "D3 should be numeric, not an error");
+        assertEquals(3.0, d3Value.getNumberValue(), 0.00000000000001, "D3: SUM(COUNTIFS) with formula cell outside data rows should equal 3");
+
+        Cell d4 = SheetUtil.getCell(sheet, 3, 3);
+        assertNotNull(d4, "Test workbook missing cell D4");
+        CellValue d4Value = evaluator.evaluate(d4);
+        assertEquals(CellType.NUMERIC, d4Value.getCellType(), "D4 should be numeric, not an error");
+        assertEquals(4.0, d4Value.getNumberValue(), 0.00000000000001, "D4: SUM(COUNTIFS) with formula cell outside data rows should equal 4");
     }
 }
