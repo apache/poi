@@ -23,6 +23,7 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
@@ -64,18 +65,55 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
                 sumRange = convertRangeArg(args[0]);
             }
 
-            // collect pairs of ranges and criteria
-            AreaEval[] ae = new AreaEval[(args.length - firstCriteria)/2];
-            I_MatchPredicate[] mp = new I_MatchPredicate[ae.length];
-            for(int i = firstCriteria, k=0; i < (args.length - 1); i += 2, k++){
+            int numPairs = (args.length - firstCriteria) / 2;
+            AreaEval[] ae = new AreaEval[numPairs];
+            ValueEval[] criteriaArgs = new ValueEval[numPairs];
+            for (int i = firstCriteria, k = 0; i < (args.length - 1); i += 2, k++) {
                 ae[k] = convertRangeArg(args[i]);
-
-                mp[k] = Countif.createCriteriaPredicate(args[i+1], ec.getRowIndex(), ec.getColumnIndex());
+                criteriaArgs[k] = args[i + 1];
             }
 
             validateCriteriaRanges(sumRange, ae);
-            validateCriteria(mp);
 
+            // If any criteria argument is a multi-element array (e.g. {1,2,3} or a
+            // multi-cell range), expand it: evaluate once per element and sum the
+            // results. This supports SUM(COUNTIFS(range, {v1,v2,...})) patterns where
+            // the implicit-intersection approach used by getSingleValue would either
+            // yield the wrong single value or produce an ERROR when the formula cell
+            // lies outside the array's row/column bounds (Bug 70005).
+            for (int k = 0; k < numPairs; k++) {
+                if (criteriaArgs[k] instanceof AreaEval) {
+                    AreaEval arrayCrit = (AreaEval) criteriaArgs[k];
+                    if (arrayCrit.getHeight() * arrayCrit.getWidth() > 1) {
+                        double total = 0.0;
+                        for (int r = 0; r < arrayCrit.getHeight(); r++) {
+                            for (int c = 0; c < arrayCrit.getWidth(); c++) {
+                                ValueEval element = arrayCrit.getRelativeValue(r, c);
+                                I_MatchPredicate[] mp = new I_MatchPredicate[numPairs];
+                                for (int j = 0; j < numPairs; j++) {
+                                    mp[j] = Countif.createCriteriaPredicate(
+                                            j == k ? element : criteriaArgs[j],
+                                            ec.getRowIndex(), ec.getColumnIndex());
+                                }
+                                validateCriteria(mp);
+                                ValueEval partial = aggregateMatchingCells(createAggregator(), sumRange, ae, mp);
+                                if (partial instanceof ErrorEval) return partial;
+                                if (partial instanceof NumberEval) {
+                                    total += ((NumberEval) partial).getNumberValue();
+                                }
+                            }
+                        }
+                        return new NumberEval(total);
+                    }
+                }
+            }
+
+            // All criteria are scalar — normal single-pass evaluation
+            I_MatchPredicate[] mp = new I_MatchPredicate[numPairs];
+            for (int k = 0; k < numPairs; k++) {
+                mp[k] = Countif.createCriteriaPredicate(criteriaArgs[k], ec.getRowIndex(), ec.getColumnIndex());
+            }
+            validateCriteria(mp);
             return aggregateMatchingCells(createAggregator(), sumRange, ae, mp);
         } catch (EvaluationException e) {
             return e.getErrorEval();
