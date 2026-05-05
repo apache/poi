@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.crypt.temp.EncryptedTempData;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -69,19 +70,35 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
         super(entry.getName());
 
         final long entrySize = entry.getSize();
+        final int maxEntrySize = getMaxEntrySize();
 
         final int threshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
         if (threshold >= 0 && (entrySize >= threshold || entrySize == -1)) {
+            if (entrySize >= 0) {
+                checkEntrySize(entrySize, maxEntrySize, entry.getName());
+            }
             if (ZipInputStreamZipEntrySource.shouldEncryptTempFiles()) {
                 encryptedTempData = new EncryptedTempData();
                 try (OutputStream os = encryptedTempData.getOutputStream()) {
-                    IOUtils.copy(inp, os);
+                    copyWithMaxEntrySize(inp, os, maxEntrySize, entry.getName());
+                } catch (IOException | RuntimeException e) {
+                    encryptedTempData.dispose();
+                    encryptedTempData = null;
+                    throw e;
                 }
             } else {
                 tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
                 LOG.atInfo().log("Creating temp file {} for zip entry {} of size {} bytes",
                         tempFile.getAbsolutePath(), entry.getName(), entrySize);
-                IOUtils.copy(inp, tempFile);
+                try (OutputStream os = Files.newOutputStream(tempFile.toPath())) {
+                    copyWithMaxEntrySize(inp, os, maxEntrySize, entry.getName());
+                } catch (IOException | RuntimeException e) {
+                    if (tempFile.exists() && !tempFile.delete()) {
+                        LOG.atDebug().log("temp file was already deleted (probably due to previous call to close this resource)");
+                    }
+                    tempFile = null;
+                    throw e;
+                }
             }
         } else {
             if (entrySize < -1 || entrySize >= Integer.MAX_VALUE) {
@@ -91,6 +108,25 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
             // Grab the de-compressed contents for later
             data = (entrySize == -1) ? IOUtils.toByteArrayWithMaxLength(inp, getMaxEntrySize()) :
                     IOUtils.toByteArray(inp, entrySize, getMaxEntrySize());
+        }
+    }
+
+    private static void checkEntrySize(long entrySize, int maxEntrySize, String entryName) {
+        if (entrySize > maxEntrySize) {
+            throw new RecordFormatException("Zip entry " + entryName + " exceeds the max entry size of " + maxEntrySize + " bytes");
+        }
+    }
+
+    private static void copyWithMaxEntrySize(InputStream inp, OutputStream out, int maxEntrySize, String entryName) throws IOException {
+        byte[] buffer = new byte[4096];
+        int read;
+        long totalPayloadSize = 0;
+        while ((read = inp.read(buffer)) != -1) {
+            totalPayloadSize += read;
+            if (totalPayloadSize > maxEntrySize) {
+                throw new RecordFormatException("Zip entry " + entryName + " exceeds the max entry size of " + maxEntrySize + " bytes");
+            }
+            out.write(buffer, 0, read);
         }
     }
 
