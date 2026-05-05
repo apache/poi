@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.crypt.temp.EncryptedTempData;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -111,25 +110,6 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
         }
     }
 
-    private static void checkEntrySize(long entrySize, int maxEntrySize, String entryName) {
-        if (entrySize > maxEntrySize) {
-            throw new RecordFormatException("Zip entry " + entryName + " exceeds the max entry size of " + maxEntrySize + " bytes");
-        }
-    }
-
-    private static void copyWithMaxEntrySize(InputStream inp, OutputStream out, int maxEntrySize, String entryName) throws IOException {
-        byte[] buffer = new byte[4096];
-        int read;
-        long totalPayloadSize = 0;
-        while ((read = inp.read(buffer)) != -1) {
-            totalPayloadSize += read;
-            if (totalPayloadSize > maxEntrySize) {
-                throw new RecordFormatException("Zip entry " + entryName + " exceeds the max entry size of " + maxEntrySize + " bytes");
-            }
-            out.write(buffer, 0, read);
-        }
-    }
-
     /**
      * Returns zip entry.
      * @return input stream
@@ -172,6 +152,25 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
             if (!tempFile.delete()) {
                 LOG.atDebug().log("temp file was already deleted (probably due to previous call to close this resource)");
             }
+        }
+    }
+
+    private static void checkEntrySize(long entrySize, int maxEntrySize, String entryName) throws IOException {
+        if (entrySize > maxEntrySize) {
+            throw new IOException("Zip entry " + entryName +
+                    " exceeds the max entry size of " + maxEntrySize + " bytes");
+        }
+    }
+
+    private static void copyWithMaxEntrySize(InputStream inp, OutputStream out,
+                                             int maxEntrySize, String entryName) throws IOException {
+        byte[] buffer = new byte[4096];
+        int read;
+        long totalPayloadSize = 0;
+        while ((read = inp.read(buffer)) != -1) {
+            totalPayloadSize += read;
+            checkEntrySize(totalPayloadSize, maxEntrySize, entryName);
+            out.write(buffer, 0, read);
         }
     }
 }
