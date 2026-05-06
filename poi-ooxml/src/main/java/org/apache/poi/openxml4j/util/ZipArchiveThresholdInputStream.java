@@ -148,7 +148,7 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
         throw new IOException(String.format(Locale.ROOT, MIN_INFLATE_RATIO_MSG, payloadSize, rawSize, ratio, MIN_INFLATE_RATIO, entryName));
     }
 
-    ZipArchiveEntry getNextEntry() throws IOException {
+    public ZipArchiveEntry getNextEntry() throws IOException {
         if (!(in instanceof ZipArchiveInputStream)) {
             throw new IllegalStateException("getNextEntry() is only allowed for stream based zip processing.");
         }

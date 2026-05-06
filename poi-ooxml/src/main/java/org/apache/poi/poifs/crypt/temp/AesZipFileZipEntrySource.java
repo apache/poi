@@ -39,6 +39,7 @@ import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
+import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
@@ -130,7 +131,8 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
         SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, CipherAlgorithm.aes128.jceId);
         Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
 
-        try (ZipArchiveInputStream zis = new ZipArchiveInputStream(is);
+        try (ZipArchiveInputStream zipStream = new ZipArchiveInputStream(is);
+             ZipArchiveThresholdInputStream zis = new ZipArchiveThresholdInputStream(zipStream);
              OutputStream fos = Files.newOutputStream(tmpFile.toPath());
              ZipArchiveOutputStream zos = new ZipArchiveOutputStream(fos)) {
 
