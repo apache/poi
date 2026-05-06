@@ -35,7 +35,6 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
 
 /**
  * Test the COUNTIFS() function
@@ -156,5 +155,241 @@ class TestCountifs {
         CellValue d4Value = evaluator.evaluate(d4);
         assertEquals(CellType.NUMERIC, d4Value.getCellType(), "D4 should be numeric, not an error");
         assertEquals(4.0, d4Value.getNumberValue(), 0.00000000000001, "D4: SUM(COUNTIFS) with formula cell outside data rows should equal 4");
+    }
+
+    /** Minimum valid case: a single criteria range/criteria pair. */
+    @Test
+    void testSingleCriteriaPair() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row = sheet.createRow(0);
+        Cell formulaCell = row.createCell(0, CellType.FORMULA);
+        row.createCell(1).setCellValue(1.0);
+        row.createCell(2).setCellValue(2.0);
+        row.createCell(3).setCellValue(1.0);
+
+        formulaCell.setCellFormula("COUNTIFS(B1:D1,1)");
+        CellValue result = workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell);
+        assertEquals(2.0d, result.getNumberValue(), 0.000000000000001);
+    }
+
+    /** When no cell matches the criteria, COUNTIFS must return 0. */
+    @Test
+    void testReturnsZeroWhenNothingMatches() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row = sheet.createRow(0);
+        Cell formulaCell = row.createCell(0, CellType.FORMULA);
+        row.createCell(1).setCellValue(5.0);
+        row.createCell(2).setCellValue(6.0);
+
+        formulaCell.setCellFormula("COUNTIFS(B1:C1,99)");
+        CellValue result = workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell);
+        assertEquals(0.0d, result.getNumberValue(), 0.000000000000001);
+    }
+
+    /** When every cell in the range matches, COUNTIFS returns the range size. */
+    @Test
+    void testAllCellsMatchCriteria() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row = sheet.createRow(0);
+        Cell formulaCell = row.createCell(0, CellType.FORMULA);
+        row.createCell(1).setCellValue(3.0);
+        row.createCell(2).setCellValue(3.0);
+        row.createCell(3).setCellValue(3.0);
+
+        formulaCell.setCellFormula("COUNTIFS(B1:D1,3)");
+        CellValue result = workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell);
+        assertEquals(3.0d, result.getNumberValue(), 0.000000000000001);
+    }
+
+    /** String criteria must match cell values exactly (but case-insensitively). */
+    @Test
+    void testStringCriteriaMatching() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row = sheet.createRow(0);
+        Cell formulaCell = row.createCell(0, CellType.FORMULA);
+        row.createCell(1).setCellValue("apple");
+        row.createCell(2).setCellValue("banana");
+        row.createCell(3).setCellValue("apple");
+
+        formulaCell.setCellFormula("COUNTIFS(B1:D1,\"apple\")");
+        CellValue result = workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell);
+        assertEquals(2.0d, result.getNumberValue(), 0.000000000000001);
+    }
+
+    /** String matching in COUNTIFS is case-insensitive, matching Excel behaviour. */
+    @Test
+    void testCaseInsensitiveStringCriteria() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row = sheet.createRow(0);
+        Cell formulaCell = row.createCell(0, CellType.FORMULA);
+        row.createCell(1).setCellValue("Apple");
+        row.createCell(2).setCellValue("APPLE");
+        row.createCell(3).setCellValue("banana");
+
+        formulaCell.setCellFormula("COUNTIFS(B1:D1,\"apple\")");
+        CellValue result = workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell);
+        assertEquals(2.0d, result.getNumberValue(), 0.000000000000001);
+    }
+
+    /** Comparison-operator string criteria: >, >=, <, <=, <> */
+    @Test
+    void testComparisonOperatorCriteria() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row = sheet.createRow(0);
+        Cell formulaCell = row.createCell(0, CellType.FORMULA);
+        row.createCell(1).setCellValue(1.0);
+        row.createCell(2).setCellValue(3.0);
+        row.createCell(3).setCellValue(5.0);
+        row.createCell(4).setCellValue(7.0);
+
+        formulaCell.setCellFormula("COUNTIFS(B1:E1,\">3\")");
+        assertEquals(2.0d, workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell).getNumberValue(), 0.000000000000001);
+
+        formulaCell.setCellFormula("COUNTIFS(B1:E1,\">=3\")");
+        assertEquals(3.0d, workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell).getNumberValue(), 0.000000000000001);
+
+        formulaCell.setCellFormula("COUNTIFS(B1:E1,\"<5\")");
+        assertEquals(2.0d, workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell).getNumberValue(), 0.000000000000001);
+
+        formulaCell.setCellFormula("COUNTIFS(B1:E1,\"<>3\")");
+        assertEquals(3.0d, workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell).getNumberValue(), 0.000000000000001);
+    }
+
+    /** Wildcard characters * (zero-or-more) and ? (exactly one) in string criteria. */
+    @Test
+    void testWildcardCriteria() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row = sheet.createRow(0);
+        Cell formulaCell = row.createCell(0, CellType.FORMULA);
+        row.createCell(1).setCellValue("apple");
+        row.createCell(2).setCellValue("application");
+        row.createCell(3).setCellValue("banana");
+        row.createCell(4).setCellValue("apt");
+
+        // "app*" matches "apple" and "application"
+        formulaCell.setCellFormula("COUNTIFS(B1:E1,\"app*\")");
+        assertEquals(2.0d, workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell).getNumberValue(), 0.000000000000001);
+
+        // "ap?" matches exactly 3-character strings starting with "ap": only "apt"
+        formulaCell.setCellFormula("COUNTIFS(B1:E1,\"ap?\")");
+        assertEquals(1.0d, workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell).getNumberValue(), 0.000000000000001);
+    }
+
+    /**
+     * Multi-row ranges: AND logic must hold for every row position across all criteria ranges.
+     * Only rows where every criterion is satisfied contribute to the count.
+     */
+    @Test
+    void testMultiRowRangeWithAndLogic() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row0 = sheet.createRow(0);
+        Row row1 = sheet.createRow(1);
+        Row row2 = sheet.createRow(2);
+
+        Cell formulaCell = row0.createCell(0, CellType.FORMULA);
+        // row 0: B=1, C=10  both criteria match  → counted
+        // row 1: B=1, C=20  second doesn't match → not counted
+        // row 2: B=2, C=10  first doesn't match  → not counted
+        row0.createCell(1).setCellValue(1.0);  row0.createCell(2).setCellValue(10.0);
+        row1.createCell(1).setCellValue(1.0);  row1.createCell(2).setCellValue(20.0);
+        row2.createCell(1).setCellValue(2.0);  row2.createCell(2).setCellValue(10.0);
+
+        formulaCell.setCellFormula("COUNTIFS(B1:B3,1,C1:C3,10)");
+        CellValue result = workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell);
+        assertEquals(1.0d, result.getNumberValue(), 0.000000000000001);
+    }
+
+    /** Three criteria pairs — AND logic across all three must hold. */
+    @Test
+    void testThreeCriteriaPairs() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row0 = sheet.createRow(0);
+        Row row1 = sheet.createRow(1);
+        Row row2 = sheet.createRow(2);
+
+        Cell formulaCell = row0.createCell(0, CellType.FORMULA);
+        // row 0: B=1, C=2, D=3  all three match  → counted
+        // row 1: B=1, C=2, D=9  third doesn't match → not counted
+        // row 2: B=1, C=9, D=3  second doesn't match → not counted
+        row0.createCell(1).setCellValue(1.0); row0.createCell(2).setCellValue(2.0); row0.createCell(3).setCellValue(3.0);
+        row1.createCell(1).setCellValue(1.0); row1.createCell(2).setCellValue(2.0); row1.createCell(3).setCellValue(9.0);
+        row2.createCell(1).setCellValue(1.0); row2.createCell(2).setCellValue(9.0); row2.createCell(3).setCellValue(3.0);
+
+        formulaCell.setCellFormula("COUNTIFS(B1:B3,1,C1:C3,2,D1:D3,3)");
+        CellValue result = workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell);
+        assertEquals(1.0d, result.getNumberValue(), 0.000000000000001);
+    }
+
+    /**
+     * Criteria ranges with incompatible shapes (different row/column counts) must return
+     * VALUE_INVALID (error code 15).
+     */
+    @Test
+    void testMismatchedCriteriaRangeSizesReturnsError() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row0 = sheet.createRow(0);
+        Row row1 = sheet.createRow(1);
+        Cell formulaCell = row0.createCell(0, CellType.FORMULA);
+        row0.createCell(1).setCellValue(1.0); row0.createCell(2).setCellValue(1.0);
+        row1.createCell(1).setCellValue(2.0);
+
+        // B1:C1 is 1×2, B1:B2 is 2×1 — incompatible shapes
+        formulaCell.setCellFormula("COUNTIFS(B1:C1,1,B1:B2,1)");
+        CellValue result = workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell);
+        assertEquals(15, result.getErrorValue());
+    }
+
+    /**
+     * Empty-string criteria ("") must match blank cells, exercising the BlankEval branch in
+     * StringOperandMatcher.
+     */
+    @Test
+    void testBlankCellsMatchedByEmptyCriteria() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row = sheet.createRow(0);
+        Cell formulaCell = row.createCell(0, CellType.FORMULA);
+        row.createCell(1).setCellValue(1.0);   // B1 non-blank
+        row.createCell(2, CellType.BLANK);     // C1 blank
+        row.createCell(3).setCellValue(2.0);   // D1 non-blank
+        row.createCell(4, CellType.BLANK);     // E1 blank
+
+        formulaCell.setCellFormula("COUNTIFS(B1:E1,\"\")");
+        CellValue result = workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell);
+        assertEquals(2.0d, result.getNumberValue(), 0.000000000000001);
+    }
+
+    /**
+     * A single-cell range reference (RefEval) must be accepted as a criteria range by
+     * convertRangeArg, which converts it to a 1×1 AreaEval.
+     */
+    @Test
+    void testSingleCellRange() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row = sheet.createRow(0);
+        Cell formulaCell = row.createCell(0, CellType.FORMULA);
+        row.createCell(1).setCellValue(5.0);  // B1 = 5
+
+        formulaCell.setCellFormula("COUNTIFS(B1,5)");
+        CellValue result = workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell);
+        assertEquals(1.0d, result.getNumberValue(), 0.000000000000001);
+    }
+
+    /**
+     * Criteria supplied as a cell reference (RefEval) is dereferenced before matching,
+     * exercising the evaluateCriteriaArg path in Countif.createCriteriaPredicate.
+     */
+    @Test
+    void testCriteriaFromCellReference() {
+        Sheet sheet = workbook.createSheet("test");
+        Row row = sheet.createRow(0);
+        Cell formulaCell = row.createCell(0, CellType.FORMULA); // A1
+        row.createCell(1).setCellValue(1.0);  // B1
+        row.createCell(2).setCellValue(2.0);  // C1
+        row.createCell(3).setCellValue(1.0);  // D1
+        row.createCell(4).setCellValue(1.0);  // E1 — used as criteria value
+
+        formulaCell.setCellFormula("COUNTIFS(B1:D1,E1)");
+        CellValue result = workbook.getCreationHelper().createFormulaEvaluator().evaluate(formulaCell);
+        assertEquals(2.0d, result.getNumberValue(), 0.000000000000001);
     }
 }
