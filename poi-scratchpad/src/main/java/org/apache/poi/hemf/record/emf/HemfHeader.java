@@ -32,9 +32,11 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * Extracts the full header from EMF files.
@@ -155,8 +157,8 @@ public class HemfHeader implements HemfRecord {
         //reserved
         leis.skipFully(LittleEndianConsts.SHORT_SIZE);
 
-        int nDescription = (int)leis.readUInt();
-        int offDescription = (int)leis.readUInt();
+        long nDescription = leis.readUInt();
+        long offDescription = leis.readUInt();
         nPalEntries = leis.readUInt();
 
         size += 8*LittleEndianConsts.INT_SIZE;
@@ -165,10 +167,17 @@ public class HemfHeader implements HemfRecord {
         size += readDimensionInt(leis, milliDimension);
 
         if (nDescription > 0 && offDescription > 0) {
-            int skip = (int)(offDescription - (size + HEADER_SIZE));
-            leis.mark(skip+nDescription*2);
-            leis.skipFully(skip);
-            byte[] buf = new byte[(nDescription-1)*2];
+            long skip = offDescription - (size + HEADER_SIZE);
+            long descriptionBytes = (nDescription - 1) * LittleEndianConsts.SHORT_SIZE;
+            long descriptionEnd = offDescription + nDescription * LittleEndianConsts.SHORT_SIZE;
+            if (skip < 0 || descriptionEnd > recordSize + HEADER_SIZE || skip + descriptionBytes > Integer.MAX_VALUE) {
+                throw new RecordFormatException("Invalid EMF header description bounds");
+            }
+            int maxDescriptionLength = (int)Math.min(recordSize, Integer.MAX_VALUE);
+            IOUtils.safelyAllocateCheck(descriptionBytes, maxDescriptionLength);
+            leis.mark((int)(skip + descriptionBytes));
+            leis.skipFully((int)skip);
+            byte[] buf = IOUtils.safelyAllocate(descriptionBytes, maxDescriptionLength);
             leis.readFully(buf);
             description = new String(buf, StandardCharsets.UTF_16LE).replace((char)0, ' ').trim();
             leis.reset();
