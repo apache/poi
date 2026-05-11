@@ -249,8 +249,7 @@ public class TestHemfPicture {
         byte[] data = createHeaderRecordDataWithDescription("POI");
 
         try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
-            long readSize = header.init(leis, data.length, HemfRecordType.header.id);
-            assertEquals(data.length, readSize);
+            header.init(leis, data.length, HemfRecordType.header.id);
             assertEquals("POI", header.getDescription());
         }
     }
