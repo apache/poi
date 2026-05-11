@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.geom.Point2D;
+import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -49,6 +50,8 @@ import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
 import org.apache.poi.hwmf.usermodel.HwmfEmbeddedType;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.LittleEndianOutputStream;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 
@@ -230,6 +233,28 @@ public class TestHemfPicture {
     }
 
     @Test
+    void testHeaderDescriptionBoundsAreValidated() throws Exception {
+        HemfHeader header = new HemfHeader();
+        byte[] data = createHeaderRecordData(0x40000001L, 88);
+
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
+            assertThrows(RecordFormatException.class,
+                    () -> header.init(leis, data.length, HemfRecordType.header.id));
+        }
+    }
+
+    @Test
+    void testHeaderDescriptionParsesValidUtf16lePayload() throws Exception {
+        HemfHeader header = new HemfHeader();
+        byte[] data = createHeaderRecordDataWithDescription("POI");
+
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
+            header.init(leis, data.length, HemfRecordType.header.id);
+            assertEquals("POI", header.getDescription());
+        }
+    }
+
+    @Test
     void nestedWmfEmf() throws Exception {
         try (InputStream is = sl_samples.openResourceAsStream("nested_wmf.emf")) {
             HemfPicture emf1 = new HemfPicture(is);
@@ -253,4 +278,56 @@ public class TestHemfPicture {
 
 
     /* govdocs1 064213.doc-0.emf contains an example of extextouta */
+
+    private static byte[] createHeaderRecordData(long nDescription, long offDescription) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
+
+        for (int i = 0; i < 8; i++) {
+            leos.writeInt(0);
+        }
+        leos.writeInt(0x464D4520);
+        leos.writeInt(0x00010000);
+        leos.writeUInt(0);
+        leos.writeUInt(1);
+        leos.writeShort(1);
+        leos.writeShort(0);
+        leos.writeUInt(nDescription);
+        leos.writeUInt(offDescription);
+        leos.writeUInt(0);
+        for (int i = 0; i < 4; i++) {
+            leos.writeInt(0);
+        }
+
+        return bos.toByteArray();
+    }
+
+    private static byte[] createHeaderRecordDataWithDescription(String description) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
+
+        byte[] descriptionBytes = description.getBytes(StandardCharsets.UTF_16LE);
+        long nDescription = description.length() + 1L;
+        long offDescription = 88L;
+
+        for (int i = 0; i < 8; i++) {
+            leos.writeInt(0);
+        }
+        leos.writeInt(0x464D4520);
+        leos.writeInt(0x00010000);
+        leos.writeUInt(0);
+        leos.writeUInt(1);
+        leos.writeShort(1);
+        leos.writeShort(0);
+        leos.writeUInt(nDescription);
+        leos.writeUInt(offDescription);
+        leos.writeUInt(0);
+        for (int i = 0; i < 4; i++) {
+            leos.writeInt(0);
+        }
+
+        leos.write(descriptionBytes);
+        leos.writeShort(0);
+        return bos.toByteArray();
+    }
 }
