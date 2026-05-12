@@ -100,7 +100,7 @@ spreadsheet/sample.strict.xlsx,extract,OPC,,org.apache.poi.ooxml.POIXMLException
 spreadsheet/57914.xlsx,"handle,extract",XSSF,,org.apache.poi.ooxml.POIXMLException,"Strict OOXML isn't currently supported, please see bug #57699",
 spreadsheet/57914.xlsx,extract,OPC,,org.apache.poi.ooxml.POIXMLException,"Strict OOXML isn't currently supported, please see bug #57699",
 spreadsheet/poi-fuzz.xls,additional,HSSF,,org.apache.poi.util.RecordFormatException,Not enough data (0) to read requested (4) bytes,
-spreadsheet/poi-fuzz.xls,additional,HPSF,,java.lang.ArithmeticException,long overflow,
+spreadsheet/poi-fuzz.xls,additional,HPSF,,org.apache.poi.util.RecordFormatException,"Tried to allocate an array of length 1,468,570,764, but the maximum length for this record type is 100,000",
 spreadsheet/poi-fuzz.xls,handle,HPSF,,org.opentest4j.AssertionFailedError,expected: <true> but was: <false>,
 openxml4j/ContentTypeHasEntities.ooxml,"handle,extract",OPC,,org.apache.poi.openxml4j.exceptions.InvalidFormatException,Can't read content types part !,
 ddf/Container.dat,handle,HMEF,,java.lang.IllegalArgumentException,"TNEF signature not detected in file, expected 574529400 but got -268435441",
