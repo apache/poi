@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -92,7 +95,27 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
         createPOIFilesDirectoryIfNecessary();
 
         // Generate a unique new filename
-        File newFile = Files.createTempFile(dir.toPath(), prefix, suffix).toFile();
+        File newFile;
+        try {
+            // Try POSIX permissions first (owner read/write only)
+            Path p = Files.createTempFile(dir.toPath(), prefix, suffix,
+                    PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------")));
+            newFile = p.toFile();
+        } catch (UnsupportedOperationException | IOException e) {
+            // POSIX not supported (e.g., Windows) or failed: fall back to creating normally
+            newFile = Files.createTempFile(dir.toPath(), prefix, suffix).toFile();
+            try {
+                // Clear all perms for everyone, then set owner-only perms where supported
+                newFile.setReadable(false, false);
+                newFile.setWritable(false, false);
+                newFile.setExecutable(false, false);
+                newFile.setReadable(true, true);
+                newFile.setWritable(true, true);
+                newFile.setExecutable(false, true);
+            } catch (Exception ignore) {
+                // best-effort only
+            }
+        }
 
         // Set the delete on exit flag if sys prop is set
         if (System.getProperty(DELETE_FILES_ON_EXIT) != null) {
@@ -110,7 +133,24 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
         createPOIFilesDirectoryIfNecessary();
 
         // Generate a unique new filename
-        File newDirectory = Files.createTempDirectory(dir.toPath(), prefix).toFile();
+        File newDirectory;
+        try {
+            Path p = Files.createTempDirectory(dir.toPath(), prefix,
+                    PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")));
+            newDirectory = p.toFile();
+        } catch (UnsupportedOperationException | IOException e) {
+            newDirectory = Files.createTempDirectory(dir.toPath(), prefix).toFile();
+            try {
+                newDirectory.setReadable(false, false);
+                newDirectory.setWritable(false, false);
+                newDirectory.setExecutable(false, false);
+                newDirectory.setReadable(true, true);
+                newDirectory.setWritable(true, true);
+                newDirectory.setExecutable(true, true);
+            } catch (Exception ignore) {
+                // best-effort only
+            }
+        }
 
         //this method appears to be only used in tests, so it is probably ok to use deleteOnExit
         newDirectory.deleteOnExit();
@@ -155,6 +195,23 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
                         dir = fileDir;
                     } else {
                         dir = Files.createDirectories(dirPath).toFile();
+                        try {
+                            // attempt to restrict directory perms to owner only
+                            try {
+                                Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwx------");
+                                Files.setPosixFilePermissions(dir.toPath(), perms);
+                            } catch (UnsupportedOperationException | IOException e) {
+                                // fallback: use File API to set owner-only flags where supported
+                                dir.setReadable(false, false);
+                                dir.setWritable(false, false);
+                                dir.setExecutable(false, false);
+                                dir.setReadable(true, true);
+                                dir.setWritable(true, true);
+                                dir.setExecutable(true, true);
+                            }
+                        } catch (Exception ignored) {
+                            // best-effort only
+                        }
                     }
                 }
             } finally {
