@@ -17,6 +17,9 @@
 
 package org.apache.poi.util;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
+
 import static org.apache.poi.util.TempFile.JAVA_IO_TMPDIR;
 
 import java.io.File;
@@ -51,6 +54,9 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     /** To use files.deleteOnExit after clean JVM exit, set the <code>-Dpoi.delete.tmp.files.on.exit</code> JVM property */
     public static final String DELETE_FILES_ON_EXIT = "poi.delete.tmp.files.on.exit";
 
+    private static final Logger logger =
+            PoiLogManager.getLogger(DefaultTempFileCreationStrategy.class);
+
     /** The directory where the temporary files will be created (<code>null</code> to use the default directory). */
     private volatile File dir;
 
@@ -59,6 +65,10 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
 
     /** The lock to make dir initialized only once. */
     private final Lock dirLock = new ReentrantLock();
+
+    // File permissions that are applied as best effort
+    private final Set<PosixFilePermission> posixRWFilePermissions = createPosixRWFilePermissions();
+    private final Set<PosixFilePermission> posixRWXFilePermissions = createPosixRWXFilePermissions();
 
     /**
      * Creates the strategy so that it creates the temporary files in the default directory.
@@ -96,24 +106,16 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
 
         // Generate a unique new filename
         File newFile;
-        try {
-            // Try POSIX permissions first (owner read/write only)
-            Path p = Files.createTempFile(dir.toPath(), prefix, suffix,
-                    PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------")));
-            newFile = p.toFile();
-        } catch (UnsupportedOperationException | IOException e) {
-            // POSIX not supported (e.g., Windows) or failed: fall back to creating normally
-            newFile = Files.createTempFile(dir.toPath(), prefix, suffix).toFile();
+        if (posixRWFilePermissions == null) {
+            newFile = createTempFileFallback(prefix, suffix);
+        } else {
             try {
-                // Clear all perms for everyone, then set owner-only perms where supported
-                newFile.setReadable(false, false);
-                newFile.setWritable(false, false);
-                newFile.setExecutable(false, false);
-                newFile.setReadable(true, true);
-                newFile.setWritable(true, true);
-                newFile.setExecutable(false, true);
-            } catch (Exception ignore) {
-                // best-effort only
+                // Try POSIX permissions first (owner read/write only)
+                Path p = Files.createTempFile(dir.toPath(), prefix, suffix,
+                        PosixFilePermissions.asFileAttribute(posixRWFilePermissions));
+                newFile = p.toFile();
+            } catch (UnsupportedOperationException | IOException e) {
+                newFile = createTempFileFallback(prefix, suffix);
             }
         }
 
@@ -126,6 +128,13 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
         return newFile;
     }
 
+    // POSIX not supported (e.g., Windows) or failed: fall back to creating normally
+    private File createTempFileFallback(String prefix, String suffix) throws IOException {
+        File newFile = Files.createTempFile(dir.toPath(), prefix, suffix).toFile();
+        setOwnerOnlyFilePermissions(newFile, false);
+        return newFile;
+    }
+
     /* (non-JavaDoc) Created directory path is <JAVA_IO_TMPDIR>/poifiles/prefix0123456789 */
     @Override
     public File createTempDirectory(String prefix) throws IOException {
@@ -134,21 +143,15 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
 
         // Generate a unique new filename
         File newDirectory;
-        try {
-            Path p = Files.createTempDirectory(dir.toPath(), prefix,
-                    PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")));
-            newDirectory = p.toFile();
-        } catch (UnsupportedOperationException | IOException e) {
-            newDirectory = Files.createTempDirectory(dir.toPath(), prefix).toFile();
+        if (posixRWXFilePermissions == null) {
+            newDirectory = createTempDirFallback(prefix);
+        } else {
             try {
-                newDirectory.setReadable(false, false);
-                newDirectory.setWritable(false, false);
-                newDirectory.setExecutable(false, false);
-                newDirectory.setReadable(true, true);
-                newDirectory.setWritable(true, true);
-                newDirectory.setExecutable(true, true);
-            } catch (Exception ignore) {
-                // best-effort only
+                Path p = Files.createTempDirectory(dir.toPath(), prefix,
+                        PosixFilePermissions.asFileAttribute(posixRWXFilePermissions));
+                newDirectory = p.toFile();
+            } catch (UnsupportedOperationException | IOException e) {
+                newDirectory = createTempDirFallback(prefix);
             }
         }
 
@@ -156,6 +159,13 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
         newDirectory.deleteOnExit();
 
         // All done
+        return newDirectory;
+    }
+
+    // POSIX not supported (e.g., Windows) or failed: fall back to creating normally
+    private File createTempDirFallback(String prefix) throws IOException {
+        File newDirectory = Files.createTempDirectory(dir.toPath(), prefix).toFile();
+        setOwnerOnlyFilePermissions(newDirectory, true);
         return newDirectory;
     }
 
@@ -217,6 +227,35 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
             } finally {
                 dirLock.unlock();
             }
+        }
+    }
+
+    private static void setOwnerOnlyFilePermissions(final File file, final boolean executable) {
+        try {
+            file.setReadable(true, true);
+            file.setWritable(true, true);
+            file.setExecutable(executable, true);
+        } catch (Exception ignore) {
+            // best-effort only
+        }
+
+    }
+
+    private static Set<PosixFilePermission> createPosixRWFilePermissions() {
+        try {
+            return PosixFilePermissions.fromString("rw-------");
+        } catch (Exception e) {
+            logger.warn("Failed to init the PosixFilePermissions, continuing with weaker permissions", e);
+            return null;
+        }
+    }
+
+    private static Set<PosixFilePermission> createPosixRWXFilePermissions() {
+        try {
+            return PosixFilePermissions.fromString("rwx------");
+        } catch (Exception e) {
+            logger.warn("Failed to init the PosixFilePermissions, continuing with weaker permissions", e);
+            return null;
         }
     }
 
