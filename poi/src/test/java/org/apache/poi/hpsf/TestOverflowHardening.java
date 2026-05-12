@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -42,7 +43,7 @@ class TestOverflowHardening {
         LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(data, 0);
 
         UnicodeString us = new UnicodeString();
-        assertThrows(ArithmeticException.class, () -> us.read(lei));
+        assertThrows(RecordFormatException.class, () -> us.read(lei));
     }
 
     /**
@@ -60,15 +61,19 @@ class TestOverflowHardening {
         // 3 dimensions of size 0x80000000 each -> product overflows 2^63 (long max)
         byte[] data = new byte[4 + 4 + 3 * (4 + 4)];
         int off = 0;
-        LittleEndian.putInt(data, off, Variant.VT_I4);        off += 4;
-        LittleEndian.putInt(data, off, 3);                    off += 4;
+        LittleEndian.putInt(data, off, Variant.VT_I4);
+        off += 4;
+        LittleEndian.putInt(data, off, 3);
+        off += 4;
         for (int i = 0; i < 3; i++) {
-            LittleEndian.putUInt(data, off, 0x80000000L);     off += 4;
-            LittleEndian.putInt(data, off, 0);                off += 4;
+            LittleEndian.putUInt(data, off, 0x80000000L);
+            off += 4;
+            LittleEndian.putInt(data, off, 0);
+            off += 4;
         }
         LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(data, 0);
 
         Array a = new Array();
-        assertThrows(ArithmeticException.class, () -> a.read(lei));
+        assertThrows(RecordFormatException.class, () -> a.read(lei));
     }
 }

@@ -19,6 +19,7 @@ package org.apache.poi.hpsf;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.apache.poi.util.RecordFormatException;
 
 @Internal
 public class Array {
@@ -71,9 +72,14 @@ public class Array {
         long getNumberOfScalarValues() {
             long result = 1;
             for ( ArrayDimension dimension : _dimensions ) {
-                // Math.multiplyExact rejects compounding dimensions that would silently
-                // overflow long math and bypass the > Integer.MAX_VALUE guard in Array.read.
-                result = Math.multiplyExact(result, dimension._size);
+                try {
+                    // Math.multiplyExact rejects compounding dimensions that would silently
+                    // overflow long math and bypass the > Integer.MAX_VALUE guard in Array.read.
+                    result = Math.multiplyExact(result, dimension._size);
+                } catch (ArithmeticException e) {
+                    throw new RecordFormatException(
+                            "Overflow when calculating the number of scalar values", e);
+                }
             }
             return result;
         }
