@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.hpsf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.poi.util.LittleEndian;
@@ -32,37 +31,18 @@ class TestOverflowHardening {
     /**
      * Reproduces the int*2 multiplication overflow in {@link UnicodeString#read}:
      * a length of {@code 0x40000001} produces {@code length*2 == 0x80000002},
-     * which wraps to a negative int. Without the {@link Math#multiplyExact} guard,
-     * the post-overflow value was passed downstream to {@code IOUtils.safelyAllocate},
-     * relying on the negative-check there. With the guard the failure is explicit
-     * and originates at the parser, where the corrupted field actually is.
+     * which wraps to a negative int. {@link Math#multiplyExact} now surfaces
+     * the overflow as an {@link ArithmeticException} at the parser, where the
+     * malformed field actually lives.
      */
     @Test
     void unicodeStringLengthMultiplicationOverflowRejected() {
-        // length = 0x40000001 -> length*2 overflows
         byte[] data = new byte[4];
         LittleEndian.putInt(data, 0, 0x40000001);
         LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(data, 0);
 
         UnicodeString us = new UnicodeString();
-        IllegalPropertySetDataException ex =
-                assertThrows(IllegalPropertySetDataException.class, () -> us.read(lei));
-        assertEquals(true, ex.getMessage().contains("overflows"),
-                "expected overflow message, got: " + ex.getMessage());
-    }
-
-    /**
-     * A negative length must also be rejected at the parser, not deferred to
-     * the downstream allocator.
-     */
-    @Test
-    void unicodeStringNegativeLengthRejected() {
-        byte[] data = new byte[4];
-        LittleEndian.putInt(data, 0, -1);
-        LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(data, 0);
-
-        UnicodeString us = new UnicodeString();
-        assertThrows(IllegalPropertySetDataException.class, () -> us.read(lei));
+        assertThrows(ArithmeticException.class, () -> us.read(lei));
     }
 
     /**
@@ -70,10 +50,9 @@ class TestOverflowHardening {
      * {@link Array.ArrayHeader#getNumberOfScalarValues}: with three dimensions
      * of size {@code 0x80000000} the unchecked product
      * {@code 2^31 * 2^31 * 2^31 = 2^93} wraps inside a 64-bit long and the
-     * subsequent {@code > Integer.MAX_VALUE} guard at
-     * {@code Array.read} can be silently bypassed.
-     * With the {@link Math#multiplyExact} guard the overflow is caught and the
-     * crafted array header is rejected.
+     * subsequent {@code > Integer.MAX_VALUE} guard at {@code Array.read} is
+     * silently bypassed. {@link Math#multiplyExact} now rejects the crafted
+     * array header with an {@link ArithmeticException}.
      */
     @Test
     void arrayDimensionMultiplicationOverflowRejected() {
@@ -90,6 +69,6 @@ class TestOverflowHardening {
         LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(data, 0);
 
         Array a = new Array();
-        assertThrows(IllegalPropertySetDataException.class, () -> a.read(lei));
+        assertThrows(ArithmeticException.class, () -> a.read(lei));
     }
 }

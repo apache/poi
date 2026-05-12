@@ -38,15 +38,9 @@ public class UnicodeString {
 
     public void read(LittleEndianByteArrayInputStream lei) {
         final int length = lei.readInt();
-        if (length < 0) {
-            throw new IllegalPropertySetDataException("UnicodeString length must be non-negative, but was " + length);
-        }
-        final int unicodeBytes;
-        try {
-            unicodeBytes = Math.multiplyExact(length, 2);
-        } catch (ArithmeticException e) {
-            throw new IllegalPropertySetDataException("UnicodeString length " + length + " overflows when multiplied by 2", e);
-        }
+        // Math.multiplyExact rejects crafted lengths that would silently wrap signed-int math
+        // (e.g. length == 0x40000001 -> length*2 == 0x80000002 wraps to negative).
+        final int unicodeBytes = Math.multiplyExact(length, 2);
         _value = IOUtils.safelyAllocate(unicodeBytes, CodePageString.getMaxRecordLength());
         
         // If Length is zero, this field MUST be zero bytes in length. If Length is

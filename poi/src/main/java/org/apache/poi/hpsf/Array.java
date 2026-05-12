@@ -71,12 +71,9 @@ public class Array {
         long getNumberOfScalarValues() {
             long result = 1;
             for ( ArrayDimension dimension : _dimensions ) {
-                try {
-                    result = Math.multiplyExact(result, dimension._size);
-                } catch (ArithmeticException e) {
-                    throw new IllegalPropertySetDataException(
-                            "Array dimensions overflow when computing scalar count", e);
-                }
+                // Math.multiplyExact rejects compounding dimensions that would silently
+                // overflow long math and bypass the > Integer.MAX_VALUE guard in Array.read.
+                result = Math.multiplyExact(result, dimension._size);
             }
             return result;
         }
