@@ -71,7 +71,12 @@ public class Array {
         long getNumberOfScalarValues() {
             long result = 1;
             for ( ArrayDimension dimension : _dimensions ) {
-                result *= dimension._size;
+                try {
+                    result = Math.multiplyExact(result, dimension._size);
+                } catch (ArithmeticException e) {
+                    throw new IllegalPropertySetDataException(
+                            "Array dimensions overflow when computing scalar count", e);
+                }
             }
             return result;
         }
