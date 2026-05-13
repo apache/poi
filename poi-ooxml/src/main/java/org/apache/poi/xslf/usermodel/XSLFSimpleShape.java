@@ -676,7 +676,12 @@ public abstract class XSLFSimpleShape extends XSLFShape
             CTShapeStyle style = getSpStyle();
             if (style != null && style.getEffectRef() != null) {
                 // 1-based index of a shadow style within the style matrix
-                int idx = Math.toIntExact(style.getEffectRef().getIdx());
+                int idx;
+                try {
+                    idx = Math.toIntExact(style.getEffectRef().getIdx());
+                } catch (ArithmeticException e) {
+                    throw new IllegalStateException("Int overflow with effect ref id " + style.getEffectRef().getIdx());
+                }
                 if(idx != 0) {
                     CTStyleMatrix styleMatrix = getSheet().getTheme().getXmlObject().getThemeElements().getFmtScheme();
                     CTEffectStyleItem ef = styleMatrix.getEffectStyleLst().getEffectStyleArray(idx - 1);

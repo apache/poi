@@ -45,7 +45,11 @@ public class XSLFDrawing {
             // ignore them for now
             if (o instanceof CTNonVisualDrawingProps) {
                 CTNonVisualDrawingProps p = (CTNonVisualDrawingProps)o;
-                sheet.registerShapeId(Math.toIntExact(p.getId()));
+                try {
+                    sheet.registerShapeId(Math.toIntExact(p.getId()));
+                } catch (ArithmeticException e) {
+                    throw new IllegalStateException("Int overflow with drawing id " + p.getId());
+                }
             }
         }
     }
