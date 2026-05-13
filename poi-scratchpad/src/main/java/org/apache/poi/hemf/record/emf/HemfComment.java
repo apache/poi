@@ -123,7 +123,7 @@ public class HemfComment {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             long startIdx = leis.getReadIndex();
-            data = new EmfCommentDataIterator(leis, (int)recordSize, true).next();
+            data = new EmfCommentDataIterator(leis, Math.toIntExact(recordSize), true).next();
             return leis.getReadIndex()-startIdx;
         }
 
@@ -152,9 +152,9 @@ public class HemfComment {
         }
 
         static void validateCommentType(final LittleEndianInputStream leis, HemfCommentRecordType commentType) {
-            int commentIdentifier = (int)leis.readUInt();
+            int commentIdentifier = Math.toIntExact(leis.readUInt());
             if (commentIdentifier == HemfCommentRecordType.emfPublic.id) {
-                commentIdentifier = (int)leis.readUInt();
+                commentIdentifier = Math.toIntExact(leis.readUInt());
             }
             assert(commentIdentifier == commentType.id);
         }
@@ -233,9 +233,9 @@ public class HemfComment {
                 // Valid comment identifier values are listed in the following table.
                 //
                 // If this field contains any other value, the comment record MUST be an EMR_COMMENT record
-                final int commentIdentifier = (int)leis.readUInt();
+                final int commentIdentifier = Math.toIntExact(leis.readUInt());
                 // A 32-bit unsigned integer that identifies the type of public comment record.
-                final int publicCommentIdentifier = (int)leis.readUInt();
+                final int publicCommentIdentifier = Math.toIntExact(leis.readUInt());
 
                 final boolean isEmfPublic = (commentIdentifier == HemfCommentRecordType.emfPublic.id);
                 leis.reset();
@@ -246,7 +246,7 @@ public class HemfComment {
                 final EmfCommentData record = commentType.constructor.get();
 
                 long readBytes = record.init(leis, dataSize);
-                final int skipBytes = (int)(recordSize-4-readBytes);
+                final int skipBytes = Math.toIntExact(recordSize-4-readBytes);
                 assert (skipBytes >= 0);
                 leis.skipFully(skipBytes);
 
@@ -331,7 +331,7 @@ public class HemfComment {
         throws IOException {
             final long startIdx = leis.getReadIndex();
             EmfComment.validateCommentType(leis, HemfCommentRecordType.emfPlus);
-            new HemfPlusRecordIterator(leis, (int)dataSize-LittleEndianConsts.INT_SIZE).forEachRemaining(records::add);
+            new HemfPlusRecordIterator(leis, Math.toIntExact(dataSize)-LittleEndianConsts.INT_SIZE).forEachRemaining(records::add);
             return leis.getReadIndex()-startIdx;
         }
 
@@ -385,7 +385,7 @@ public class HemfComment {
             HemfDraw.readRectL(leis, bounds);
 
             // The number of Unicode characters in the optional description string that follows.
-            int nDescription = (int)leis.readUInt();
+            int nDescription = Math.toIntExact(leis.readUInt());
 
             byte[] buf = IOUtils.safelyAllocate(nDescription * 2L, HwmfPicture.getMaxRecordLength());
             leis.readFully(buf);
@@ -448,7 +448,7 @@ public class HemfComment {
             HemfDraw.readRectL(leis, bounds);
 
             // A 32-bit unsigned integer that specifies the number of graphics formats contained in this record.
-            int countFormats = (int)leis.readUInt();
+            int countFormats = Math.toIntExact(leis.readUInt());
             for (int i=0; i<countFormats; i++) {
                 EmfCommentDataFormat fmt = new EmfCommentDataFormat();
                 long readBytes = fmt.init(leis, dataSize, startIdx);
@@ -602,7 +602,7 @@ public class HemfComment {
 
             // A 32-bit unsigned integer that specifies the size, in bytes, of the
             // WMF metafile in the WinMetafile field.
-            int winMetafileSize = (int)leis.readUInt();
+            int winMetafileSize = Math.toIntExact(leis.readUInt());
 
             wmfData = IOUtils.safelyAllocate(winMetafileSize, HwmfPicture.getMaxRecordLength());
             // some emf comments are truncated, so we don't use readFully here

@@ -172,7 +172,7 @@ public final class XSSFOptimiser {
             for (int i = 0; i < ctXfs.sizeOfXfArray(); i++) {
                 CTXf xf = ctXfs.getXfArray(i);
                 if (xf.isSetFontId()) {
-                    int oldFontId = (int) xf.getFontId();
+                    int oldFontId = Math.toIntExact(xf.getFontId());
                     int canonicalFontId = oldToCanonical.getOrDefault(oldFontId, oldFontId);
                     if (canonicalFontId != oldFontId) {
                         xf.setFontId(canonicalFontId);

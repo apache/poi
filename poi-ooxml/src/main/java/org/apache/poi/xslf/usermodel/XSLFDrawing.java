@@ -45,7 +45,7 @@ public class XSLFDrawing {
             // ignore them for now
             if (o instanceof CTNonVisualDrawingProps) {
                 CTNonVisualDrawingProps p = (CTNonVisualDrawingProps)o;
-                sheet.registerShapeId((int)p.getId());
+                sheet.registerShapeId(Math.toIntExact(p.getId()));
             }
         }
     }

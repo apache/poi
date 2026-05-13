@@ -177,20 +177,20 @@ public class CryptoAPIDecryptor extends Decryptor {
                 CryptoAPIDocumentInputStream sbis = new CryptoAPIDocumentInputStream(this, IOUtils.toByteArray(dis));
                 LittleEndianInputStream leis = new LittleEndianInputStream(sbis)
         ) {
-            int streamDescriptorArrayOffset = (int) leis.readUInt();
+            int streamDescriptorArrayOffset = Math.toIntExact(leis.readUInt());
             /* int streamDescriptorArraySize = (int) */ leis.readUInt();
             long skipN = streamDescriptorArrayOffset - 8L;
             if (sbis.skip(skipN) < skipN) {
                 throw new EOFException("buffer underrun");
             }
             sbis.setBlock(0);
-            int encryptedStreamDescriptorCount = (int) leis.readUInt();
+            int encryptedStreamDescriptorCount = Math.toIntExact(leis.readUInt());
             StreamDescriptorEntry[] entries = new StreamDescriptorEntry[encryptedStreamDescriptorCount];
             for (int i = 0; i < encryptedStreamDescriptorCount; i++) {
                 StreamDescriptorEntry entry = new StreamDescriptorEntry();
                 entries[i] = entry;
-                entry.streamOffset = (int) leis.readUInt();
-                entry.streamSize = (int) leis.readUInt();
+                entry.streamOffset = Math.toIntExact(leis.readUInt());
+                entry.streamSize = Math.toIntExact(leis.readUInt());
                 entry.block = leis.readUShort();
                 int nameSize = leis.readUByte();
                 entry.flags = leis.readUByte();

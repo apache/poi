@@ -51,8 +51,8 @@ public class ByteArrayBackedDataSource extends DataSource {
          );
       }
 
-      int toRead = (int)Math.min(length, size - position);
-      return ByteBuffer.wrap(buffer, (int)position, toRead);
+      int toRead = Math.toIntExact(Math.min(length, size - position));
+      return ByteBuffer.wrap(buffer, Math.toIntExact(position), toRead);
    }
 
    @Override
@@ -64,7 +64,7 @@ public class ByteArrayBackedDataSource extends DataSource {
       }
 
       // Now copy
-      src.get(buffer, (int)position, src.capacity());
+      src.get(buffer, Math.toIntExact(position), src.capacity());
 
       // Update size if needed
       if(endPosition > size) {
@@ -84,13 +84,13 @@ public class ByteArrayBackedDataSource extends DataSource {
 
       long totalLen = difference+buffer.length;
       byte[] nb = IOUtils.safelyAllocate(totalLen, MAX_RECORD_LENGTH);
-      System.arraycopy(buffer, 0, nb, 0, (int)size);
+      System.arraycopy(buffer, 0, nb, 0, Math.toIntExact(size));
       buffer = nb;
    }
 
    @Override
    public void copyTo(OutputStream stream) throws IOException {
-      stream.write(buffer, 0, (int)size);
+      stream.write(buffer, 0, Math.toIntExact(size));
    }
 
    @Override
