@@ -434,7 +434,14 @@ public final class IOUtils {
         long totalCount = 0;
         int readBytes = -1;
         do {
-            int todoBytes = (int)((limit < 0) ? DEFAULT_BUFFER_SIZE : Math.min(limit-totalCount, DEFAULT_BUFFER_SIZE));
+            final int todoBytes;
+            try {
+                todoBytes = limit < 0 ?
+                        DEFAULT_BUFFER_SIZE :
+                        Math.toIntExact(Math.min(limit - totalCount, DEFAULT_BUFFER_SIZE));
+            } catch (ArithmeticException e) {
+                throw new IOException("Int Overflow calculating todoBytes", e);
+            }
             if (todoBytes > 0) {
                 readBytes = inp.read(buff, 0, todoBytes);
                 if (readBytes > 0) {
@@ -556,7 +563,8 @@ public final class IOUtils {
         long remain = toSkip;
         while (remain > 0) {
             // See https://issues.apache.org/jira/browse/IO-203 for why we use read() rather than delegating to skip()
-            final long n = input.read(skipBuffer, 0, (int) Math.min(remain, SKIP_BUFFER_SIZE));
+            final long n = input.read(
+                    skipBuffer, 0, Math.toIntExact(Math.min(remain, SKIP_BUFFER_SIZE)));
             if (n < 0) { // EOF
                 break;
             }
@@ -573,7 +581,11 @@ public final class IOUtils {
 
         checkByteSizeLimit(length);
 
-        return new byte[(int)length];
+        try {
+            return new byte[Math.toIntExact(length)];
+        } catch (ArithmeticException e) {
+            throw new RecordFormatException("Int Overflow with length", e);
+        }
     }
 
     public static void safelyAllocateCheck(long length, int maxLength) {
@@ -641,10 +653,10 @@ public final class IOUtils {
 
     private static void throwRFE(long length, int maxLength) {
         throw new RecordFormatException(String.format(Locale.ROOT, "Tried to allocate an array of length %,d" +
-                        ", but the maximum length for this record type is %,d.%n" +
-                        "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
-                        "increasing the maximum allowable size for this record type.%n" +
-                        "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", length, maxLength));
+                ", but the maximum length for this record type is %,d.%n" +
+                "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
+                "increasing the maximum allowable size for this record type.%n" +
+                "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", length, maxLength));
     }
 
     private static void throwRecordTruncationException(final int maxLength) {
