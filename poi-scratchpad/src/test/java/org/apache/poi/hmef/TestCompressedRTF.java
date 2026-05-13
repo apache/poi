@@ -20,9 +20,11 @@ package org.apache.poi.hmef;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -33,9 +35,12 @@ import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated // changes static CompressedRTF.MAX_RECORD_LENGTH
 public final class TestCompressedRTF {
     private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
 
@@ -196,5 +201,44 @@ public final class TestCompressedRTF {
         String expString = new String(expected, StandardCharsets.US_ASCII);
         String decompStr = rtfAttr.getDataString();
         assertEquals(expString, decompStr);
+    }
+
+    @Test
+    void testRejectsDeclaredDecompressedSizeOverLimit() throws Exception {
+        int oldLimit = CompressedRTF.getMaxRecordLength();
+        try {
+            CompressedRTF.setMaxRecordLength(4);
+
+            byte[] data = createRtfData(0, 5, CompressedRTF.UNCOMPRESSED_SIGNATURE_INT, new byte[0]);
+            CompressedRTF comp = new CompressedRTF();
+
+            assertThrows(RecordFormatException.class, () -> comp.decompress(new ByteArrayInputStream(data)));
+        } finally {
+            CompressedRTF.setMaxRecordLength(oldLimit);
+        }
+    }
+
+    @Test
+    void testRejectsCompressedRtfExpansionBeyondDeclaredPadding() throws Exception {
+        ByteArrayOutputStream payload = new ByteArrayOutputStream();
+        payload.write(0xff);
+        for (int i = 0; i < 8; i++) {
+            payload.write(0);
+            payload.write(0);
+        }
+
+        byte[] data = createRtfData(payload.size(), 1, CompressedRTF.COMPRESSED_SIGNATURE_INT, payload.toByteArray());
+        CompressedRTF comp = new CompressedRTF();
+
+        assertThrows(RecordFormatException.class, () -> comp.decompress(new ByteArrayInputStream(data)));
+    }
+
+    private static byte[] createRtfData(int payloadLength, int decompressedLength, int signature, byte[] payload) {
+        byte[] data = new byte[16 + payload.length];
+        LittleEndian.putInt(data, 0, payloadLength + 12);
+        LittleEndian.putInt(data, 4, decompressedLength);
+        LittleEndian.putInt(data, 8, signature);
+        System.arraycopy(payload, 0, data, 16, payload.length);
+        return data;
     }
 }
