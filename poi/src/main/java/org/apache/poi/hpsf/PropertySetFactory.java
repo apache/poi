@@ -83,12 +83,14 @@ public class PropertySetFactory {
         byte[] clsIdBuf = new byte[ClassID.LENGTH];
         leis.readFully(clsIdBuf);
         final long sectionCountLong = leis.readUInt();
-        if (sectionCountLong > Integer.MAX_VALUE) {
+        int sectionCount;
+        try {
+            sectionCount = Math.toIntExact(sectionCountLong);
+        } catch (ArithmeticException e) {
             throw new NoPropertySetStreamException("ByteOrder: " + byteOrder +
                     ", format: " + format +
                     ", sectionCount: " + sectionCountLong);
         }
-        int sectionCount = (int) sectionCountLong;
 
         if (byteOrder != PropertySet.BYTE_ORDER_ASSERTION ||
             format != PropertySet.FORMAT_ASSERTION ||
