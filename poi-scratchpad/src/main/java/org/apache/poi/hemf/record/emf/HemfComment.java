@@ -152,9 +152,10 @@ public class HemfComment {
         }
 
         static void validateCommentType(final LittleEndianInputStream leis, HemfCommentRecordType commentType) {
-            int commentIdentifier = Math.toIntExact(leis.readUInt());
+            // comment identifiers are uint32 values used as bit-pattern identifiers, not numeric values
+            int commentIdentifier = (int) leis.readUInt();
             if (commentIdentifier == HemfCommentRecordType.emfPublic.id) {
-                commentIdentifier = Math.toIntExact(leis.readUInt());
+                commentIdentifier = (int) leis.readUInt();
             }
             assert(commentIdentifier == commentType.id);
         }
@@ -232,10 +233,10 @@ public class HemfComment {
                 // See the preceding table for descriptions of these record types.
                 // Valid comment identifier values are listed in the following table.
                 //
-                // If this field contains any other value, the comment record MUST be an EMR_COMMENT record
-                final int commentIdentifier = Math.toIntExact(leis.readUInt());
+                // comment identifiers are uint32 values used as bit-pattern identifiers, not numeric values
+                final int commentIdentifier = (int) leis.readUInt();
                 // A 32-bit unsigned integer that identifies the type of public comment record.
-                final int publicCommentIdentifier = Math.toIntExact(leis.readUInt());
+                final int publicCommentIdentifier = (int) leis.readUInt();
 
                 final boolean isEmfPublic = (commentIdentifier == HemfCommentRecordType.emfPublic.id);
                 leis.reset();

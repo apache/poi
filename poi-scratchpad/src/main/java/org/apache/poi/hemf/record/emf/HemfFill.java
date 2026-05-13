@@ -339,7 +339,8 @@ public final class HemfFill {
             // A 32-bit unsigned integer that specifies the size of region data, in bytes.
             long rgnDataSize = leis.readUInt();
             // A 32-bit unsigned integer that specifies the brush EMF Object Table index.
-            brushIndex = Math.toIntExact(leis.readUInt());
+            // Stock object references can have the high bit set, so use (int) cast.
+            brushIndex = (int) leis.readUInt();
             // A 32-bit signed integer that specifies the width of the vertical brush stroke, in logical units.
             int width = leis.readInt();
             // A 32-bit signed integer that specifies the height of the horizontal brush stroke, in logical units.
@@ -452,7 +453,8 @@ public final class HemfFill {
             long size = readRectL(leis, bounds);
             // A 32-bit unsigned integer that specifies the size of region data, in bytes.
             long rgnDataSize = leis.readUInt();
-            brushIndex = Math.toIntExact(leis.readUInt());
+            // Stock object references can have the high bit set, so use (int) cast.
+            brushIndex = (int) leis.readUInt();
             size += 2*LittleEndianConsts.INT_SIZE;
             size += readRgnData(leis, rgnRects);
             return size;

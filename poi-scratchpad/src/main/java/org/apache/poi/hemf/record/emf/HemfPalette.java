@@ -41,9 +41,10 @@ public class HemfPalette {
             /*
              * A 32-bit unsigned integer that specifies either the index of a LogPalette object
              * in the EMF Object Table or the value DEFAULT_PALETTE, which is the index
-             * of a stock object palette from the StockObject enumeration
+             * of a stock object palette from the StockObject enumeration.
+             * Stock object references can have the high bit set, so use (int) cast.
              */
-            paletteIndex = Math.toIntExact(leis.readUInt());
+            paletteIndex = (int) leis.readUInt();
             return LittleEndianConsts.INT_SIZE;
         }
 
@@ -68,9 +69,9 @@ public class HemfPalette {
             start = 0x0300;
             /* A 32-bit unsigned integer that specifies the index of the logical palette object
              * in the EMF Object Table. This index MUST be saved so that this object can be
-             * reused or modified.
+             * reused or modified. Stock object references can have the high bit set, so use (int) cast.
              */
-            paletteIndex = Math.toIntExact(leis.readUInt());
+            paletteIndex = (int) leis.readUInt();
             /* A 16-bit unsigned integer that specifies the version number of the system. This MUST be 0x0300. */
             int version = leis.readUShort();
             assert(version == 0x0300);
@@ -117,7 +118,8 @@ public class HemfPalette {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             // A 32-bit unsigned integer that specifies the palette EMF Object Table index.
-            paletteIndex = Math.toIntExact(leis.readUInt());
+            // Stock object references can have the high bit set, so use (int) cast.
+            paletteIndex = (int) leis.readUInt();
             // A 32-bit unsigned integer that specifies the index of the first entry to set.
             start = Math.toIntExact(leis.readUInt());
             // A 32-bit unsigned integer that specifies the number of entries.
@@ -163,8 +165,9 @@ public class HemfPalette {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            // A 32-bit unsigned integer that specifies the index of the palette object in the EMF Object Table
-            paletteIndex = Math.toIntExact(leis.readUInt());
+            // A 32-bit unsigned integer that specifies the index of the palette object in the EMF Object Table.
+            // Stock object references can have the high bit set, so use (int) cast.
+            paletteIndex = (int) leis.readUInt();
 
             // A 32-bit unsigned integer that specifies the number of entries in the palette after resizing.
             // The value MUST be less than or equal to 0x00000400 and greater than 0x00000000.
