@@ -789,9 +789,10 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         if(tableColumns == null) {
             return 0;
         }
-        // Casting to int should be safe here - tables larger than the
+        // Reject oversized workbook-controlled table metadata instead of
+        // silently truncating during long-to-int conversion.
         // sheet (which holds the actual data of the table) can't exists.
-        return (int) tableColumns.getCount();
+        return Math.toIntExact(tableColumns.getCount());
     }
 
     /**
@@ -912,7 +913,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      */
     @Override
     public int getTotalsRowCount() {
-        return (int) ctTable.getTotalsRowCount();
+        return Math.toIntExact(ctTable.getTotalsRowCount());
     }
 
     /**
@@ -922,7 +923,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      */
     @Override
     public int getHeaderRowCount() {
-        return (int) ctTable.getHeaderRowCount();
+        return Math.toIntExact(ctTable.getHeaderRowCount());
     }
 
     /**
