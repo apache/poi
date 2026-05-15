@@ -188,6 +188,29 @@ class TestSecureTempZip {
         fis.close();
     }
 
+    @Test
+    void rejectsZipBombInput() throws IOException {
+        byte[] zipBytes = buildHighlyCompressedZip("xl/workbook.xml", 256 * 1024);
+
+        double defaultRatio = ZipSecureFile.getMinInflateRatio();
+        long defaultGrace = ZipSecureFile.getGraceEntrySize();
+        ZipSecureFile.setGraceEntrySize(0);
+        ZipSecureFile.setMinInflateRatio(0.50d);
+        try {
+            IOException exception = assertThrows(IOException.class, () -> {
+                try (InputStream is = new ByteArrayInputStream(zipBytes);
+                     AesZipFileZipEntrySource source = AesZipFileZipEntrySource.createZipEntrySource(is)) {
+                    // no-op
+                }
+            });
+            assertTrue(exception.getMessage().contains("ZipSecureFile.setMinInflateRatio()"),
+                    "unexpected exception message: " + exception.getMessage());
+        } finally {
+            ZipSecureFile.setMinInflateRatio(defaultRatio);
+            ZipSecureFile.setGraceEntrySize(defaultGrace);
+        }
+    }
+
     private static InputStream zipInputStream(ZipPayload... payloads) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(bos)) {
@@ -200,6 +223,18 @@ class TestSecureTempZip {
         return new ByteArrayInputStream(bos.toByteArray());
     }
 
+    private static byte[] buildHighlyCompressedZip(String entryName, int payloadSize) throws IOException {
+        byte[] payload = new byte[payloadSize];
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(bos)) {
+            ZipArchiveEntry entry = new ZipArchiveEntry(entryName);
+            zos.putArchiveEntry(entry);
+            zos.write(payload);
+            zos.closeArchiveEntry();
+        }
+        return bos.toByteArray();
+    }
+
     private static final class ZipPayload {
         private final String name;
         private final byte[] bytes;
@@ -208,6 +243,5 @@ class TestSecureTempZip {
             this.name = name;
             this.bytes = bytes;
         }
-    }
 
 }

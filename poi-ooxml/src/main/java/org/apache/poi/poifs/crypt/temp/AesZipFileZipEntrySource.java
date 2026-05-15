@@ -42,6 +42,7 @@ import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.openxml4j.util.ZipEntryProcessor;
 import org.apache.poi.openxml4j.util.ZipStreamUtil;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
+import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
@@ -135,15 +136,15 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
         SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, CipherAlgorithm.aes128.jceId);
         Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
 
-        try (ZipArchiveInputStream zis = new ZipArchiveInputStream(is);
-             ZipArchiveThresholdInputStream zisThreshold = new ZipArchiveThresholdInputStream(zis);
+        try (ZipArchiveInputStream zipStream = new ZipArchiveInputStream(is);
+             ZipArchiveThresholdInputStream zis = new ZipArchiveThresholdInputStream(zipStream);
              OutputStream fos = Files.newOutputStream(tmpFile.toPath());
              ZipArchiveOutputStream zos = new ZipArchiveOutputStream(fos)) {
 
             // Stream entries directly via a minimal internal helper so we preserve
             // streaming semantics (no materialization) while still using
             // ZipArchiveThresholdInputStream's package-local checks.
-            ZipStreamUtil.streamEntries(zisThreshold, (ze, entryIn) -> {
+            ZipStreamUtil.streamEntries(zis, (ze, entryIn) -> {
                 // the cipher output stream pads the data, therefore we can't reuse the ZipEntry with set sizes
                 // as those will be validated upon close()
                 ZipArchiveEntry zeNew = new ZipArchiveEntry(ze.getName());

@@ -28,6 +28,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 
 @Internal
@@ -36,9 +37,20 @@ public class UnicodeString {
 
     private byte[] _value;
 
+    /**
+     * @param lei a LittleEndianByteArrayInputStream
+     * @throws RecordFormatException if there is a problem with calculated length
+     */
     public void read(LittleEndianByteArrayInputStream lei) {
         final int length = lei.readInt();
-        final int unicodeBytes = length*2;
+        // Math.multiplyExact rejects crafted lengths that would silently wrap signed-int math
+        // (e.g. length == 0x40000001 -> length*2 == 0x80000002 wraps to negative).
+        final int unicodeBytes;
+        try {
+            unicodeBytes = Math.multiplyExact(length, 2);
+        } catch (ArithmeticException e) {
+            throw new RecordFormatException("Invalid unicode length", e);
+        }
         _value = IOUtils.safelyAllocate(unicodeBytes, CodePageString.getMaxRecordLength());
         
         // If Length is zero, this field MUST be zero bytes in length. If Length is
