@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -139,11 +140,13 @@ public final class TestPointerFactory {
      * A v6+ Pointer reads its Offset and Length fields as 32-bit unsigned
      * integers, then narrows them to int and hands the pair to
      * {@code Stream.createStream} -&gt; {@code StreamStore} /
-     * {@code CompressedStreamStore}. A crafted file with Length &gt;
-     * Integer.MAX_VALUE used to be silently narrowed via a plain
-     * {@code (int)} cast, letting a wrapped value flow into the downstream
-     * {@code IOUtils.safelyClone} bounds check rather than being rejected
-     * up-front. Match the ChunkHeader v6+ Length fix and reject the input.
+     * {@code CompressedStreamStore} -&gt; {@code IOUtils.safelyClone}. A
+     * crafted file with Length &gt; Integer.MAX_VALUE used to be silently
+     * narrowed via a plain {@code (int)} cast, letting a wrapped value flow
+     * into the downstream bounds check. Validate the uint32 values up-front
+     * via {@code IOUtils.safelyAllocateCheck} (length) and an explicit
+     * {@code RecordFormatException} (offset) so the failure carries the
+     * actual offending value, not a bare "integer overflow".
      */
     @Test
     void testCreateV6RejectsOversizedLength() {
@@ -156,7 +159,7 @@ public final class TestPointerFactory {
         LittleEndian.putUInt (ptr, 12, 0x80000001L);       // length: would wrap to negative int
         LittleEndian.putShort(ptr, 16, (short)0x46);       // format
 
-        assertThrows(ArithmeticException.class, () -> pf.createPointer(ptr, 0));
+        assertThrows(RecordFormatException.class, () -> pf.createPointer(ptr, 0));
     }
 
     @Test
@@ -170,7 +173,7 @@ public final class TestPointerFactory {
         LittleEndian.putUInt (ptr, 12, 0x54L);
         LittleEndian.putShort(ptr, 16, (short)0x46);
 
-        assertThrows(ArithmeticException.class, () -> pf.createPointer(ptr, 0));
+        assertThrows(RecordFormatException.class, () -> pf.createPointer(ptr, 0));
     }
 
     @Test
@@ -184,7 +187,7 @@ public final class TestPointerFactory {
         LittleEndian.putUInt (ptr, 8,  0x1dd4L);
         LittleEndian.putUInt (ptr, 12, 0x80000001L);       // length: would wrap to negative
 
-        assertThrows(ArithmeticException.class, () -> pf.createPointer(ptr, 0));
+        assertThrows(RecordFormatException.class, () -> pf.createPointer(ptr, 0));
     }
 
     @Test
@@ -198,7 +201,7 @@ public final class TestPointerFactory {
         LittleEndian.putUInt (ptr, 8,  0xFFFFFFFFL);       // offset: would wrap to -1
         LittleEndian.putUInt (ptr, 12, 0x14dL);
 
-        assertThrows(ArithmeticException.class, () -> pf.createPointer(ptr, 0));
+        assertThrows(RecordFormatException.class, () -> pf.createPointer(ptr, 0));
     }
 
     /**
