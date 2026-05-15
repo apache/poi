@@ -92,7 +92,7 @@ public class XSSFFontFormatting implements FontFormatting {
 
         int idx = 0;
         CTColor color = _font.getColorArray(0);
-        if(color.isSetIndexed()) idx = (int)color.getIndexed();
+        if(color.isSetIndexed()) idx = Math.toIntExact(color.getIndexed());
         return (short)idx;
     }
 

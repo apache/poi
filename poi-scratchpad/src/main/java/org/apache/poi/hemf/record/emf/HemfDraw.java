@@ -143,7 +143,7 @@ public final class HemfDraw {
              *
              * Any extra points MUST be ignored.
              */
-            final int count = (int)leis.readUInt();
+            final int count = Math.toIntExact(leis.readUInt());
             final int points = Math.min(count, 16384);
             size += LittleEndianConsts.INT_SIZE;
 
@@ -275,7 +275,7 @@ public final class HemfDraw {
             long size = readRectL(leis, bounds);
 
             // see PolyBezier about limits
-            final int count = (int)leis.readUInt();
+            final int count = Math.toIntExact(leis.readUInt());
             final int points = Math.min(count, 16384);
             size += LittleEndianConsts.INT_SIZE;
 
@@ -506,7 +506,7 @@ public final class HemfDraw {
 
             // An array of 32-bit unsigned integers that specifies the point count for each polygon.
             IOUtils.safelyAllocateCheck(numberOfPolygons, MAX_NUMBER_OF_POLYGONS);
-            long[] polygonPointCount = new long[(int)numberOfPolygons];
+            long[] polygonPointCount = new long[Math.toIntExact(numberOfPolygons)];
 
             size += numberOfPolygons * LittleEndianConsts.INT_SIZE;
 
@@ -518,7 +518,7 @@ public final class HemfDraw {
             for (long nPoints : polygonPointCount) {
                 // An array of WMF PointL objects that specifies the points for all polygons in logical units.
                 // The number of points is specified by the Count field value.
-                Path2D poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, (int)nPoints);
+                Path2D poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, Math.toIntExact(nPoints));
                 for (int i=0; i<nPoints; i++) {
                     size += readPoint(leis, pnt);
                     if (i == 0) {
@@ -827,8 +827,8 @@ public final class HemfDraw {
             long size = readRectL(leis, bounds);
 
             // A 32-bit unsigned integer that defines the x-coordinate of the point.
-            int width = (int)leis.readUInt();
-            int height = (int)leis.readUInt();
+            int width = Math.toIntExact(leis.readUInt());
+            int height = Math.toIntExact(leis.readUInt());
             corners.setSize(width, height);
 
             return size + 2*LittleEndianConsts.INT_SIZE;
@@ -945,7 +945,7 @@ public final class HemfDraw {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             long size = readRectL(leis, bounds);
-            int count = (int)leis.readUInt();
+            int count = Math.toIntExact(leis.readUInt());
             size += LittleEndianConsts.INT_SIZE;
             Point2D[] points = new Point2D[count];
             for (int i=0; i<count; i++) {

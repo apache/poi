@@ -940,4 +940,22 @@ class TestXWPFRun {
         XWPFRun run3 = p.createRun();
         assertEquals(0, run3.getEmbeddedCharts().size());
     }
+
+    @Test
+    void testSampleDoc() throws IOException {
+        try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("saut_page.docx")) {
+            for (XWPFParagraph paragraph : sampleDoc.getParagraphs()) {
+                for (XWPFRun run : paragraph.getRuns()) {
+                    final CTBr[] brArray = run.getCTR().getBrArray();
+                    if (brArray == null) {
+                        System.out.println("Having no br-array");
+                    } else {
+                        for (CTBr ctBr : brArray) {
+                            System.out.println("Having ctBr: " + ctBr.getType());
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

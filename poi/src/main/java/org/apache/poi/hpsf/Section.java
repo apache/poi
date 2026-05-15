@@ -129,7 +129,7 @@ public class Section {
          * Read the offset from the stream's start and positions to
          * the section header.
          */
-        int offFix = (int)LittleEndian.getUInt(src, offset + ClassID.LENGTH);
+        int offFix = Math.toIntExact(LittleEndian.getUInt(src, offset + ClassID.LENGTH));
 
         // some input files have an invalid (padded?) offset, which need to be fixed
         // search for beginning of size field
@@ -146,12 +146,12 @@ public class Section {
         /*
          * Read the section length.
          */
-        int size = (int)Math.min(leis.readUInt(), src.length-_offset);
+        int size = Math.toIntExact(Math.min(leis.readUInt(), src.length-_offset));
 
         /*
          * Read the number of properties.
          */
-        final int propertyCount = (int)leis.readUInt();
+        final int propertyCount = Math.toIntExact(leis.readUInt());
 
         /*
          * Read the properties. The offset is positioned at the first

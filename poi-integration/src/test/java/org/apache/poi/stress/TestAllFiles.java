@@ -103,6 +103,9 @@ public class TestAllFiles {
         // invalid files
         "spreadsheet/bug69769.xlsx",
 
+        // fuzz files
+        "slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-4630915954114560.ppt",
+
         // NOTE: Expected failures should usually be added in file "poi-integration-exceptions.csv" instead
         // of being listed here in order to also verify the expected exception details!
     };

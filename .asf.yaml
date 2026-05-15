@@ -4,16 +4,22 @@ github:
   description: "Mirror of Apache POI gitbox. The Java API for Microsoft Documents."
   homepage: https://poi.apache.org/
   labels:
-    - poi
-    - ooxml
-    - java
+    - apache
     - content
-    - library
+    - docx
     - excel
-    - word
+    - java
+    - library
+    - office
+    - ole2
+    - ooxml
+    - poi
     - powerpoint
+    - pptx
     - visio
-  
+    - word
+    - xls
+    - xlsx
   dependabot_alerts:  true
   dependabot_updates: false
 
@@ -29,6 +35,7 @@ github:
 
   enabled_merge_buttons:
     squash:  true
+    squash_commit_message: PR_TITLE_AND_COMMIT_DETAILS
     merge:   false
     rebase:  true
 
@@ -36,6 +43,10 @@ github:
     trunk: {}
     5.5.x: {}
     asf-site: {}
+
+  pull_requests:
+    del_branch_on_merge: true
+    allow_update_branch: true
 
 notifications:
   commits:              commits@poi.apache.org

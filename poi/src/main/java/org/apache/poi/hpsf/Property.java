@@ -140,7 +140,7 @@ public class Property {
             throw new UnsupportedEncodingException("Dictionary not allowed here");
         }
 
-        int o = (int) offset;
+        int o = Math.toIntExact(offset);
         type = LittleEndian.getUInt(src, o);
         o += LittleEndianConsts.INT_SIZE;
 

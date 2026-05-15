@@ -72,7 +72,7 @@ public final class HemfFill {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             // A 32-bit unsigned integer that specifies the polygon fill mode and
             // MUST be in the PolygonFillMode enumeration.
-            polyFillMode = HwmfPolyfillMode.valueOf((int)leis.readUInt());
+            polyFillMode = HwmfPolyfillMode.valueOf(Math.toIntExact(leis.readUInt()));
             return LittleEndianConsts.INT_SIZE;
         }
 
@@ -95,7 +95,7 @@ public final class HemfFill {
             size += colorRef.init(leis);
             // A 32-bit unsigned integer that specifies how to use the Color value to determine the area for
             // the flood fill operation. The value MUST be in the FloodFill enumeration
-            mode = HwmfFloodFillMode.values()[(int)leis.readUInt()];
+            mode = HwmfFloodFillMode.values()[Math.toIntExact(leis.readUInt())];
             return size + LittleEndianConsts.INT_SIZE;
         }
 
@@ -135,7 +135,7 @@ public final class HemfFill {
             // A 32-bit unsigned integer that specifies the raster operation code. This code defines how the
             // color data of the source rectangle is to be combined with the color data of the destination
             // rectangle and optionally a brush pattern, to achieve the final color.
-            int rasterOpIndex = (int)leis.readUInt();
+            int rasterOpIndex = Math.toIntExact(leis.readUInt());
 
             rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex >>> 16);
 
@@ -148,14 +148,14 @@ public final class HemfFill {
 
             size += bkColorSrc.init(leis);
 
-            colorUsage = ColorUsage.valueOf((int)leis.readUInt());
+            colorUsage = ColorUsage.valueOf(Math.toIntExact(leis.readUInt()));
 
             // A 32-bit unsigned integer that specifies the offset, in bytes, from the
             // start of this record to the source bitmap header in the BitmapBuffer field.
-            final int offBmiSrc = (int)leis.readUInt();
+            final int offBmiSrc = Math.toIntExact(leis.readUInt());
 
             // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap header.
-            final int cbBmiSrc = (int)leis.readUInt();
+            final int cbBmiSrc = Math.toIntExact(leis.readUInt());
             size += 3*LittleEndianConsts.INT_SIZE;
             if (size >= recordSize) {
                 return size;
@@ -163,10 +163,10 @@ public final class HemfFill {
 
             // A 32-bit unsigned integer that specifies the offset, in bytes, from the
             // start of this record to the source bitmap bits in the BitmapBuffer field.
-            final int offBitsSrc = (int)leis.readUInt();
+            final int offBitsSrc = Math.toIntExact(leis.readUInt());
 
             // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap bits.
-            final int cbBitsSrc = (int)leis.readUInt();
+            final int cbBitsSrc = Math.toIntExact(leis.readUInt());
             size += 2*LittleEndianConsts.INT_SIZE;
 
             if (size >= recordSize) {
@@ -255,17 +255,17 @@ public final class HemfFill {
 
             // A 32-bit unsigned integer that specifies the offset, in bytes from the start
             // of this record to the source bitmap header.
-            int offBmiSrc = (int)leis.readUInt();
+            int offBmiSrc = Math.toIntExact(leis.readUInt());
 
             // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap header.
-            int cbBmiSrc = (int)leis.readUInt();
+            int cbBmiSrc = Math.toIntExact(leis.readUInt());
 
             // A 32-bit unsigned integer that specifies the offset, in bytes, from the
             // start of this record to the source bitmap bits.
-            int offBitsSrc = (int)leis.readUInt();
+            int offBitsSrc = Math.toIntExact(leis.readUInt());
 
             // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap bits.
-            int cbBitsSrc = (int)leis.readUInt();
+            int cbBitsSrc = Math.toIntExact(leis.readUInt());
 
             // A 32-bit unsigned integer that specifies how to interpret values in the color table
             // in the source bitmap header. This value MUST be in the DIBColors enumeration
@@ -275,7 +275,7 @@ public final class HemfFill {
             // These codes define how the color data of the source rectangle is to be combined with the color data
             // of the destination rectangle and optionally a brush pattern, to achieve the final color.
             // The value MUST be in the WMF Ternary Raster Operation enumeration
-            int rasterOpIndex = (int)leis.readUInt();
+            int rasterOpIndex = Math.toIntExact(leis.readUInt());
             rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex >>> 16);
 
             // A 32-bit signed integer that specifies the logical width of the destination rectangle.
@@ -339,7 +339,8 @@ public final class HemfFill {
             // A 32-bit unsigned integer that specifies the size of region data, in bytes.
             long rgnDataSize = leis.readUInt();
             // A 32-bit unsigned integer that specifies the brush EMF Object Table index.
-            brushIndex = (int)leis.readUInt();
+            // Stock object references can have the high bit set, so use (int) cast.
+            brushIndex = (int) leis.readUInt();
             // A 32-bit signed integer that specifies the width of the vertical brush stroke, in logical units.
             int width = leis.readInt();
             // A 32-bit signed integer that specifies the height of the horizontal brush stroke, in logical units.
@@ -452,7 +453,8 @@ public final class HemfFill {
             long size = readRectL(leis, bounds);
             // A 32-bit unsigned integer that specifies the size of region data, in bytes.
             long rgnDataSize = leis.readUInt();
-            brushIndex = (int)leis.readUInt();
+            // Stock object references can have the high bit set, so use (int) cast.
+            brushIndex = (int) leis.readUInt();
             size += 2*LittleEndianConsts.INT_SIZE;
             size += readRgnData(leis, rgnRects);
             return size;
@@ -500,7 +502,7 @@ public final class HemfFill {
             // A 32-bit unsigned integer that specifies the size of region data in bytes
             long rgnDataSize = leis.readUInt();
             // A 32-bit unsigned integer that specifies the way to use the region.
-            regionMode = HwmfRegionMode.valueOf((int)leis.readUInt());
+            regionMode = HwmfRegionMode.valueOf(Math.toIntExact(leis.readUInt()));
             long size = 2L * LittleEndianConsts.INT_SIZE;
 
             // If RegionMode is RGN_COPY, this data can be omitted and the clip region
@@ -625,20 +627,20 @@ public final class HemfFill {
             size += readXForm(leis, xFormSrc);
             size += bkColorSrc.init(leis);
 
-            usageSrc = ColorUsage.valueOf((int)leis.readUInt());
+            usageSrc = ColorUsage.valueOf(Math.toIntExact(leis.readUInt()));
 
 
             // A 32-bit unsigned integer that specifies the offset, in bytes, from the
             // start of this record to the source bitmap header in the BitmapBuffer field.
-            final int offBmiSrc = (int)leis.readUInt();
+            final int offBmiSrc = Math.toIntExact(leis.readUInt());
 
             // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap header.
-            final int cbBmiSrc = (int)leis.readUInt();
+            final int cbBmiSrc = Math.toIntExact(leis.readUInt());
             // A 32-bit unsigned integer that specifies the offset, in bytes, from the
             // start of this record to the source bitmap bits in the BitmapBuffer field.
-            final int offBitsSrc = (int)leis.readUInt();
+            final int offBitsSrc = Math.toIntExact(leis.readUInt());
             // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap bits.
-            final int cbBitsSrc = (int)leis.readUInt();
+            final int cbBitsSrc = Math.toIntExact(leis.readUInt());
 
             // A 32-bit signed integer that specifies the logical width of the source rectangle.
             // This value MUST be greater than zero.
@@ -703,21 +705,21 @@ public final class HemfFill {
             size += readBounds2(leis, src);
             // A 32-bit unsigned integer that specifies the offset, in bytes, from the
             // start of this record to the source bitmap header in the BitmapBuffer field.
-            final int offBmiSrc = (int)leis.readUInt();
+            final int offBmiSrc = Math.toIntExact(leis.readUInt());
             // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap header.
-            final int cbBmiSrc = (int)leis.readUInt();
+            final int cbBmiSrc = Math.toIntExact(leis.readUInt());
             // A 32-bit unsigned integer that specifies the offset, in bytes, from the
             // start of this record to the source bitmap bits in the BitmapBuffer field.
-            final int offBitsSrc = (int)leis.readUInt();
+            final int offBitsSrc = Math.toIntExact(leis.readUInt());
             // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap bits.
-            final int cbBitsSrc = (int)leis.readUInt();
+            final int cbBitsSrc = Math.toIntExact(leis.readUInt());
             // A 32-bit unsigned integer that specifies how to interpret values in the color table
             // in the source bitmap header. This value MUST be in the DIBColors enumeration
-            usageSrc = ColorUsage.valueOf((int)leis.readUInt());
+            usageSrc = ColorUsage.valueOf(Math.toIntExact(leis.readUInt()));
             // A 32-bit unsigned integer that specifies the first scan line in the array.
-            final int iStartScan = (int)leis.readUInt();
+            final int iStartScan = Math.toIntExact(leis.readUInt());
             // A 32-bit unsigned integer that specifies the number of scan lines.
-            final int cScans = (int)leis.readUInt();
+            final int cScans = Math.toIntExact(leis.readUInt());
             size += 7*LittleEndianConsts.INT_SIZE;
 
             size += readBitmap(leis, bitmap, startIdx, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
