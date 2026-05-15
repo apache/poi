@@ -45,8 +45,13 @@ public final class PointerFactory {
             p = new PointerV6();
             p.setType(LittleEndian.getInt(data, offset));
             p.setAddress((int)LittleEndian.getUInt(data, offset+4));
-            p.setOffset((int)LittleEndian.getUInt(data, offset+8));
-            p.setLength((int)LittleEndian.getUInt(data, offset+12));
+            // Offset and Length flow into Stream.createStream as the (offset, length)
+            // pair handed to StreamStore / CompressedStreamStore. Match the recent
+            // ChunkHeader v6+ Length fix (PR #1075) and reject uint32 values that
+            // would silently wrap to a negative int rather than letting the wrapped
+            // value reach the downstream IOUtils.safelyClone bounds check.
+            p.setOffset(Math.toIntExact(LittleEndian.getUInt(data, offset+8)));
+            p.setLength(Math.toIntExact(LittleEndian.getUInt(data, offset+12)));
             p.setFormat(LittleEndian.getShort(data, offset+16));
 
             return p;
@@ -55,8 +60,8 @@ public final class PointerFactory {
             p.setType(LittleEndian.getShort(data, offset));
             p.setFormat(LittleEndian.getShort(data, offset+2));
             p.setAddress((int)LittleEndian.getUInt(data, offset+4));
-            p.setOffset((int)LittleEndian.getUInt(data, offset+8));
-            p.setLength((int)LittleEndian.getUInt(data, offset+12));
+            p.setOffset(Math.toIntExact(LittleEndian.getUInt(data, offset+8)));
+            p.setLength(Math.toIntExact(LittleEndian.getUInt(data, offset+12)));
 
             return p;
         } else {

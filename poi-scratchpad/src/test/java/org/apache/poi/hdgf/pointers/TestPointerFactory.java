@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.apache.poi.util.LittleEndian;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -132,6 +133,94 @@ public final class TestPointerFactory {
         assertFalse(d.destinationHasStrings());
         assertFalse(d.destinationHasChunks());
         assertFalse(d.destinationHasPointers());
+    }
+
+    /**
+     * A v6+ Pointer reads its Offset and Length fields as 32-bit unsigned
+     * integers, then narrows them to int and hands the pair to
+     * {@code Stream.createStream} -&gt; {@code StreamStore} /
+     * {@code CompressedStreamStore}. A crafted file with Length &gt;
+     * Integer.MAX_VALUE used to be silently narrowed via a plain
+     * {@code (int)} cast, letting a wrapped value flow into the downstream
+     * {@code IOUtils.safelyClone} bounds check rather than being rejected
+     * up-front. Match the ChunkHeader v6+ Length fix and reject the input.
+     */
+    @Test
+    void testCreateV6RejectsOversizedLength() {
+        PointerFactory pf = new PointerFactory(11);
+
+        byte[] ptr = new byte[18];
+        LittleEndian.putInt  (ptr, 0,  0x16);              // type
+        LittleEndian.putUInt (ptr, 4,  0x0143aff4L);       // address
+        LittleEndian.putUInt (ptr, 8,  0x80L);             // offset (valid)
+        LittleEndian.putUInt (ptr, 12, 0x80000001L);       // length: would wrap to negative int
+        LittleEndian.putShort(ptr, 16, (short)0x46);       // format
+
+        assertThrows(ArithmeticException.class, () -> pf.createPointer(ptr, 0));
+    }
+
+    @Test
+    void testCreateV6RejectsOversizedOffset() {
+        PointerFactory pf = new PointerFactory(11);
+
+        byte[] ptr = new byte[18];
+        LittleEndian.putInt  (ptr, 0,  0x16);
+        LittleEndian.putUInt (ptr, 4,  0x0143aff4L);
+        LittleEndian.putUInt (ptr, 8,  0xFFFFFFFFL);       // offset: would wrap to -1
+        LittleEndian.putUInt (ptr, 12, 0x54L);
+        LittleEndian.putShort(ptr, 16, (short)0x46);
+
+        assertThrows(ArithmeticException.class, () -> pf.createPointer(ptr, 0));
+    }
+
+    @Test
+    void testCreateV5RejectsOversizedLength() {
+        PointerFactory pf = new PointerFactory(5);
+
+        byte[] ptr = new byte[16];
+        LittleEndian.putShort(ptr, 0,  (short)0x14);
+        LittleEndian.putShort(ptr, 2,  (short)0x52);
+        LittleEndian.putUInt (ptr, 4,  0x011eb2acL);
+        LittleEndian.putUInt (ptr, 8,  0x1dd4L);
+        LittleEndian.putUInt (ptr, 12, 0x80000001L);       // length: would wrap to negative
+
+        assertThrows(ArithmeticException.class, () -> pf.createPointer(ptr, 0));
+    }
+
+    @Test
+    void testCreateV5RejectsOversizedOffset() {
+        PointerFactory pf = new PointerFactory(5);
+
+        byte[] ptr = new byte[16];
+        LittleEndian.putShort(ptr, 0,  (short)0x14);
+        LittleEndian.putShort(ptr, 2,  (short)0x52);
+        LittleEndian.putUInt (ptr, 4,  0x011eb2acL);
+        LittleEndian.putUInt (ptr, 8,  0xFFFFFFFFL);       // offset: would wrap to -1
+        LittleEndian.putUInt (ptr, 12, 0x14dL);
+
+        assertThrows(ArithmeticException.class, () -> pf.createPointer(ptr, 0));
+    }
+
+    /**
+     * Values up to {@code Integer.MAX_VALUE} (still nonsensically large but
+     * representable) must continue to parse — the hardening is only meant to
+     * catch the silent-narrowing case, not to introduce a new lower ceiling.
+     * Downstream {@code IOUtils.safelyClone} handles real bounding.
+     */
+    @Test
+    void testCreateV6AcceptsMaxIntOffsetAndLength() {
+        PointerFactory pf = new PointerFactory(11);
+
+        byte[] ptr = new byte[18];
+        LittleEndian.putInt  (ptr, 0,  0x16);
+        LittleEndian.putUInt (ptr, 4,  0x0143aff4L);
+        LittleEndian.putUInt (ptr, 8,  Integer.MAX_VALUE & 0xFFFFFFFFL);
+        LittleEndian.putUInt (ptr, 12, Integer.MAX_VALUE & 0xFFFFFFFFL);
+        LittleEndian.putShort(ptr, 16, (short)0x46);
+
+        Pointer p = pf.createPointer(ptr, 0);
+        assertEquals(Integer.MAX_VALUE, p.getOffset());
+        assertEquals(Integer.MAX_VALUE, p.getLength());
     }
 
     @Test
