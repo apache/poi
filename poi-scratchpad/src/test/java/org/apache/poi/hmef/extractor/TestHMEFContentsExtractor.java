@@ -19,16 +19,24 @@ package org.apache.poi.hmef.extractor;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hmef.HMEFMessage;
+import org.apache.poi.hmef.attribute.TNEFProperty;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.StringUtil;
 import org.junit.jupiter.api.Test;
 
 public class TestHMEFContentsExtractor {
@@ -80,5 +88,44 @@ public class TestHMEFContentsExtractor {
         assertTrue(rtf.delete());
         extractor.extractMessageBody(rtf);
         assertTrue(rtf.length() > 0, "RTF message body is empty");
+    }
+
+    @Test
+    void testExtractAttachmentsRejectsPathTraversal() throws IOException {
+        File outputDirectory = TempFile.createTempDirectory("hmef-attachments");
+        File escapedFile = new File(
+                outputDirectory.getParentFile(), outputDirectory.getName() + "-escaped.txt");
+        if (escapedFile.exists()) {
+            assertTrue(escapedFile.delete());
+        }
+        assertFalse(escapedFile.exists());
+
+        HMEFContentsExtractor extractor = new HMEFContentsExtractor(
+                new HMEFMessage(new ByteArrayInputStream(createTnefWithAttachment(
+                        ".." + File.separator + escapedFile.getName(), "contents"))));
+
+        assertThrows(IOException.class, () -> extractor.extractAttachments(outputDirectory));
+        assertFalse(escapedFile.exists());
+        assertTrue(outputDirectory.delete());
+    }
+
+    private static byte[] createTnefWithAttachment(String filename, String contents) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        LittleEndian.putInt(HMEFMessage.HEADER_SIGNATURE, out);
+        LittleEndian.putUShort(0, out);
+        writeAttribute(out, TNEFProperty.ID_ATTACHRENDERDATA.id, TNEFProperty.TYPE_BYTE, new byte[0]);
+        writeAttribute(out, TNEFProperty.ID_ATTACHTITLE.id, TNEFProperty.TYPE_STRING,
+                (filename + "\0").getBytes(StringUtil.UTF8));
+        writeAttribute(out, TNEFProperty.ID_ATTACHDATA.id, TNEFProperty.TYPE_BYTE, contents.getBytes(StringUtil.UTF8));
+        return out.toByteArray();
+    }
+
+    private static void writeAttribute(ByteArrayOutputStream out, int id, int type, byte[] data) throws IOException {
+        out.write(TNEFProperty.LEVEL_ATTACHMENT);
+        LittleEndian.putUShort(id, out);
+        LittleEndian.putUShort(type, out);
+        LittleEndian.putInt(data.length, out);
+        out.write(data, 0, data.length);
+        LittleEndian.putUShort(0, out);
     }
 }
