@@ -29,6 +29,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * Read Quill Contents (/Quill/QuillSub/CONTENTS) from an HPBF (Publisher .pub) document
@@ -64,8 +65,22 @@ public final class QuillContents extends HPBFPart {
                 int optB = LittleEndian.getUShort(data, offset+8);
                 int optC = LittleEndian.getUShort(data, offset+10);
                 String bitType = new String(data, offset+12, 4, LocaleUtil.CHARSET_1252);
-                int from = (int)LittleEndian.getUInt(data, offset+16);
-                int len = (int)LittleEndian.getUInt(data, offset+20);
+                // 'from' and 'len' are stored as uint32; a crafted .pub with a value
+                // > Integer.MAX_VALUE used to be silently narrowed via a plain (int)
+                // cast, letting a wrapped negative value reach IOUtils.safelyClone's
+                // generic "Invalid offset\length specified" check (which then lost
+                // the original uint32 in its message). Validate up-front so the
+                // failure carries the offending value, matching the PointerFactory
+                // fix in PR #1076 / EMF fix in PR #1060.
+                final long fromU = LittleEndian.getUInt(data, offset+16);
+                final long lenU  = LittleEndian.getUInt(data, offset+20);
+                if (fromU > Integer.MAX_VALUE) {
+                    throw new RecordFormatException(
+                            "QuillContents bit offset " + fromU + " exceeds Integer.MAX_VALUE");
+                }
+                IOUtils.safelyAllocateCheck(lenU, EscherPart.getMaxRecordLength());
+                int from = (int)fromU;
+                int len  = (int)lenU;
 
                 byte[] bitData = IOUtils.safelyClone(data, from, len, EscherPart.getMaxRecordLength());
 
