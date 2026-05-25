@@ -27,11 +27,13 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
  */
 public class AgileEncryptionVerifier extends EncryptionVerifier {
 
+    private static final int DEFAULT_MAX_SPIN_COUNT = 1_000_000;
+
     /**
      * Maximum allowed spinCount to prevent CPU-exhaustion DoS via crafted documents.
      * Values beyond this are rejected during parsing.
      */
-    private static final int MAX_SPIN_COUNT = 1_000_000;
+    private static int MAX_SPIN_COUNT = DEFAULT_MAX_SPIN_COUNT;
 
     private int keyBits = -1;
     private int blockSize = -1;
@@ -39,9 +41,19 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
     /**
      * Maximum allowed spinCount to prevent CPU-exhaustion DoS via crafted documents.
      * Values beyond this are rejected during parsing.
+     * @since 6.0.0
      */
     public static int getMaxSpinCount() {
         return MAX_SPIN_COUNT;
+    }
+
+    /**
+     * Maximum allowed spinCount to prevent CPU-exhaustion DoS via crafted documents.
+     * Values beyond this are rejected during parsing.
+     * @since 6.0.0
+     */
+    public static void setMaxSpinCount(final int maxSpinCount) {
+        MAX_SPIN_COUNT = maxSpinCount;
     }
 
     @SuppressWarnings("unused")
