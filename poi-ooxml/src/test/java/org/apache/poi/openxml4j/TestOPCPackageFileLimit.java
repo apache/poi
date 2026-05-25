@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Isolated // changes static values, so other tests should not run at the same time
@@ -41,8 +42,7 @@ class TestOPCPackageFileLimit {
             OPCPackage opcPackage = OPCPackage.open(is);
             fail("expected IOException");
         } catch (IOException e) {
-            assertTrue(e.getMessage().contains("ZipSecureFile.setMaxFileCount()"),
-                    "unexpected exception message: " + e.getMessage());
+            assertContains(e.getMessage(), "ZipSecureFile.setMaxFileCount()");
         } finally {
             ZipSecureFile.setMaxFileCount(defaultLimit);
         }
@@ -57,8 +57,7 @@ class TestOPCPackageFileLimit {
             OPCPackage opcPackage = OPCPackage.open(file);
             fail("expected InvalidFormatException");
         } catch (InvalidFormatException e) {
-            assertTrue(e.getMessage().contains("ZipSecureFile.setMaxFileCount()"),
-                    "unexpected exception message: " + e.getMessage());
+            assertContains(e.getMessage(), "ZipSecureFile.setMaxFileCount()");
         } finally {
             ZipSecureFile.setMaxFileCount(defaultLimit);
         }

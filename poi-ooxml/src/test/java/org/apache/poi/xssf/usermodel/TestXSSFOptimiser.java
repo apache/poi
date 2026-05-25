@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.apache.poi.util.TestAssertions.assertContains;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -171,8 +172,7 @@ class TestXSSFOptimiser {
             assertTrue(font2.getItalic(), "Cell 2 should still be italic");
 
             String numFormat = cell3.getCellStyle().getDataFormatString();
-            assertTrue(numFormat.contains("#,##0"),
-                "Cell 3 should still have number format, got: " + numFormat);
+            assertContains(numFormat, "#,##0");
         }
     }
 

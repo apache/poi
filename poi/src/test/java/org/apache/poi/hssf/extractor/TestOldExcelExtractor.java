@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.extractor;
 
-import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -333,7 +333,7 @@ final class TestOldExcelExtractor {
             System.setOut(str);
             OldExcelExtractor.main(new String[] {file.getAbsolutePath()});
             String string = out.toString(StandardCharsets.UTF_8);
-            assertTrue(string.contains("Table C-13--Lemons"), "Had: " + string);
+            assertContains(string, "Table C-13--Lemons");
         } finally {
             System.setOut(save);
         }

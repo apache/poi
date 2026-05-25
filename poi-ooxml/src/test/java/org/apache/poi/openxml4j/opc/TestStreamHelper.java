@@ -37,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_WORDPROCESSINGML;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.apache.poi.util.TestAssertions.assertContains;
 
 class TestStreamHelper {
     @Test
@@ -57,8 +58,8 @@ class TestStreamHelper {
         try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             StreamHelper.saveXmlInStream(doc, bos);
             String xml = bos.toString(StandardCharsets.UTF_8);
-            assertTrue(xml.contains("standalone=\"yes\""), "xml contains standalone=yes?");
-            assertTrue(xml.contains("encoding=\"UTF-8\""), "xml contains encoding=UTF-8?");
+            assertContains(xml, "standalone=\"yes\"");
+            assertContains(xml, "encoding=\"UTF-8\"");
         }
     }
 
@@ -84,7 +85,7 @@ class TestStreamHelper {
                             IOUtils.toByteArray(zis, entrySize, maxSize);
                     final String str = new String(data, StandardCharsets.UTF_8);
                     if (str.contains("standalone")) {
-                        assertTrue(str.contains("standalone=\"yes\""), "unexpected XML standalone flag in " + entry.getName());
+                        assertContains(str, "standalone=\"yes\"");
                     }
                 }
             }
@@ -113,7 +114,7 @@ class TestStreamHelper {
                             IOUtils.toByteArray(zis, entrySize, maxSize);
                     final String str = new String(data, StandardCharsets.UTF_8);
                     if (str.contains("standalone")) {
-                        assertTrue(str.contains("standalone=\"yes\""), "unexpected XML standalone flag in " + entry.getName());
+                        assertContains(str, "standalone=\"yes\"");
                     }
                 }
             }

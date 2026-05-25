@@ -18,6 +18,7 @@ package org.apache.poi.hwpf.converter;
 
 import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -67,7 +68,7 @@ public class TestWordToTextConverter {
         try (HWPFDocument doc = openSampleFile( "Bug47731.doc" )) {
             String foundText = WordToTextConverter.getText(doc);
 
-            assertTrue(foundText.contains("Soak the rice in water for three to four hours"));
+            assertContains(foundText, "Soak the rice in water for three to four hours");
         }
     }
 
@@ -76,14 +77,14 @@ public class TestWordToTextConverter {
         try (HWPFDocument doc = openSampleFile( "Bug52311.doc" )) {
             String result = WordToTextConverter.getText(doc);
 
-            assertTrue(result.contains("2.1\tHeader 2.1"));
-            assertTrue(result.contains("2.2\tHeader 2.2"));
-            assertTrue(result.contains("2.3\tHeader 2.3"));
-            assertTrue(result.contains("2.3.1\tHeader 2.3.1"));
-            assertTrue(result.contains("2.99\tHeader 2.99"));
-            assertTrue(result.contains("2.99.1\tHeader 2.99.1"));
-            assertTrue(result.contains("2.100\tHeader 2.100"));
-            assertTrue(result.contains("2.101\tHeader 2.101"));
+            assertContains(result, "2.1\tHeader 2.1");
+            assertContains(result, "2.2\tHeader 2.2");
+            assertContains(result, "2.3\tHeader 2.3");
+            assertContains(result, "2.3.1\tHeader 2.3.1");
+            assertContains(result, "2.99\tHeader 2.99");
+            assertContains(result, "2.99.1\tHeader 2.99.1");
+            assertContains(result, "2.100\tHeader 2.100");
+            assertContains(result, "2.101\tHeader 2.101");
         }
     }
 

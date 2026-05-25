@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.apache.poi.util.TestAssertions.assertContains;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -65,7 +66,7 @@ class TestXSSFTextRun {
             run.setFontSize(-1.0);
             assertEquals(11.0, run.getFontSize(), 0.01);
             IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> run.setFontSize(0.9));
-            assertTrue(e.getMessage().contains("0.9"));
+            assertContains(e.getMessage(), "0.9");
             assertEquals(11.0, run.getFontSize(), 0.01);
 
             assertEquals(0.0, run.getCharacterSpacing(), 0.01);

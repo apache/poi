@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.filesystem;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -45,7 +46,7 @@ class TestOfficeXMLException {
     void testOOXMLException() throws IOException {
         try (InputStream in = openSampleStream("sample.xlsx")) {
             OfficeXmlFileException ex = assertThrows(OfficeXmlFileException.class, () -> new POIFSFileSystem(in));
-            assertTrue(ex.getMessage().contains("You are calling the part of POI that deals with OLE2 Office Documents"));
+            assertContains(ex.getMessage(), "You are calling the part of POI that deals with OLE2 Office Documents");
         }
     }
 
@@ -53,7 +54,7 @@ class TestOfficeXMLException {
     void test2003XMLException() throws IOException {
         try (InputStream in = openSampleStream("SampleSS.xml")) {
             NotOLE2FileException ex = assertThrows(NotOLE2FileException.class, () -> new POIFSFileSystem(in));
-            assertTrue(ex.getMessage().contains("The supplied data appears to be a raw XML file"));
+            assertContains(ex.getMessage(), "The supplied data appears to be a raw XML file");
         }
     }
 

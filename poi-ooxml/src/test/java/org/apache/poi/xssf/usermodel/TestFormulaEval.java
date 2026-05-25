@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -87,12 +88,9 @@ class TestFormulaEval {
                 formulaEvaluator.evaluateAll();
                 fail("Should catch exception here");
             } catch (IllegalStateException e) {
-                assertTrue(e.getMessage().contains("test-sheet"),
-                        "Had: " + e.getMessage());
-                assertTrue(e.getMessage().contains("Sheet123"),
-                        "Had: " + e.getMessage());
-                assertTrue(e.getMessage().contains("R6C13"),
-                        "Had: " + e.getMessage());
+                assertContains(e.getMessage(), "test-sheet");
+                assertContains(e.getMessage(), "Sheet123");
+                assertContains(e.getMessage(), "R6C13");
             }
         }
     }
@@ -112,14 +110,10 @@ class TestFormulaEval {
                 formulaEvaluator.evaluateAll();
                 fail("Should catch exception here");
             } catch (IllegalStateException e) {
-                assertTrue(e.getMessage().contains("test-sheet"),
-                        "Had: " + e.getMessage());
-                assertTrue(e.getMessage().contains("Sheet123"),
-                        "Had: " + e.getMessage());
-                assertTrue(e.getMessage().contains("R6C13"),
-                        "Had: " + e.getMessage());
-                assertTrue(e.getMessage().contains("SUM"),
-                        "Had: " + e.getMessage());
+                assertContains(e.getMessage(), "test-sheet");
+                assertContains(e.getMessage(), "Sheet123");
+                assertContains(e.getMessage(), "R6C13");
+                assertContains(e.getMessage(), "SUM");
             }
         }
     }

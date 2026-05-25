@@ -27,6 +27,7 @@ import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.BufferedReader;
@@ -2503,7 +2504,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 if (cell.getCellType() == CellType.FORMULA) {
                     String formula = cell.getCellFormula();
                     assertNotNull(formula);
-                    assertTrue(formula.contains("WORKDAY"));
+                    assertContains(formula, "WORKDAY");
                 } else {
                     assertNotNull(cell.toString());
                 }

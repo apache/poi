@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -446,8 +447,8 @@ final class TestFormulaShifter {
                 SpreadsheetVersion.EXCEL2007);
         assertNotNull(shifter);
         assertNotNull(shifter.toString());
-        assertTrue(shifter.toString().contains("123"));
-        assertTrue(shifter.toString().contains("456"));
-        assertTrue(shifter.toString().contains("789"));
+        assertContains(shifter.toString(), "123");
+        assertContains(shifter.toString(), "456");
+        assertContains(shifter.toString(), "789");
     }
 }

@@ -18,6 +18,7 @@
 package org.apache.poi.ss.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -322,7 +323,7 @@ final class TestCellReference {
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
             () -> CellReference.convertColStringToIndex("A$"));
-        assertTrue(e.getMessage().contains("A$"));
+        assertContains(e.getMessage(), "A$");
     }
 
     @Test

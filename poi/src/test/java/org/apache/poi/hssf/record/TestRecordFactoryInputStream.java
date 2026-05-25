@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -74,7 +75,7 @@ final class TestRecordFactoryInputStream {
             EncryptedDocumentException.class,
             () -> createRFIS(dataWrongDefault)
         );
-        assertTrue(ex.getMessage().contains("Default password is invalid for salt/verifier/verifierHash"));
+        assertContains(ex.getMessage(), "Default password is invalid for salt/verifier/verifierHash");
     }
 
     @Test

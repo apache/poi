@@ -18,6 +18,7 @@
 package org.apache.poi.util;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -164,11 +165,11 @@ class TestHexDump {
         byte[] testArray = testArray();
         String dump = HexDump.dump(testArray, 0, 0);
         //System.out.println("Hex: \n" + dump);
-        assertTrue(dump.contains("0123456789:;<=>?"), "Had: \n" + dump);
+        assertContains(dump, "0123456789:;<=>?");
 
         dump = HexDump.dump(testArray, 2, 1);
         //System.out.println("Hex: \n" + dump);
-        assertTrue(dump.contains("123456789:;<=>?@"), "Had: \n" + dump);
+        assertContains(dump, "123456789:;<=>?@");
     }
 
     @ParameterizedTest

@@ -17,9 +17,9 @@
 
 package org.apache.poi.hsmf;
 
-import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -247,7 +247,7 @@ public final class TestBasics {
       assertThrows(ChunkNotFoundException.class, chinese::getHeaders, "File doesn't have headers!");
 
       String html = chinese.getHtmlBody();
-      assertTrue(html.contains("text/html; charset=big5"), "Charset not found:\n" + html);
+      assertContains(html, "text/html; charset=big5");
 
       // Defaults to CP1251
       assertEquals("CP1252", chinese.getRecipientDetailsChunks()[0].getRecipientDisplayNameChunk().get7BitEncoding());

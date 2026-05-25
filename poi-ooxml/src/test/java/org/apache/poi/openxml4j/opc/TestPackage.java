@@ -24,6 +24,7 @@ import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream
 import static org.apache.poi.openxml4j.opc.PackagingURIHelper.createPartName;
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_WORDPROCESSINGML;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -717,7 +718,7 @@ public final class TestPackage {
         }
 
         IOException ex = assertThrows(IOException.class, () -> WorkbookFactory.create(bos.toInputStream()));
-        assertTrue(ex.getMessage().contains("Zip bomb detected!"));
+        assertContains(ex.getMessage(), "Zip bomb detected!");
     }
 
     @Test
@@ -726,7 +727,7 @@ public final class TestPackage {
             IllegalStateException.class,
             () -> openXmlBombFile("poc-shared-strings.xlsx")
         );
-        assertTrue(ex.getMessage().contains("The text would exceed the max allowed overall size of extracted text."));
+        assertContains(ex.getMessage(), "The text would exceed the max allowed overall size of extracted text.");
     }
 
     @Test
@@ -738,7 +739,7 @@ public final class TestPackage {
                 IllegalStateException.class,
                 () -> openXmlBombFile("poc-shared-strings.xlsx")
             );
-            assertTrue(ex.getMessage().contains("The text would exceed the max allowed overall size of extracted text."));
+            assertContains(ex.getMessage(), "The text would exceed the max allowed overall size of extracted text.");
         } finally {
             ExtractorFactory.setThreadPrefersEventExtractors(before);
         }
@@ -754,7 +755,7 @@ public final class TestPackage {
                     IOException.class,
                     () -> openXmlBombFile("poc-xmlbomb.xlsx")
             );
-            assertTrue(ex.getMessage().contains("unable to parse shared strings table"));
+            assertContains(ex.getMessage(), "unable to parse shared strings table");
             assertTrue(matchSAXEx(ex));
         } finally {
             POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(originalFlag);
@@ -770,7 +771,7 @@ public final class TestPackage {
                 IOException.class,
                 () -> openXmlBombFile("poc-xmlbomb-empty.xlsx")
             );
-            assertTrue(ex.getMessage().contains("unable to parse shared strings table"));
+            assertContains(ex.getMessage(), "unable to parse shared strings table");
             assertTrue(matchSAXEx(ex));
         } finally {
             POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(originalFlag);
@@ -818,7 +819,7 @@ public final class TestPackage {
                 ZipSecureFile.setMinInflateRatio(min_ratio+0.002);
             })
         );
-        assertTrue(ex.getMessage().contains("You can adjust this limit via ZipSecureFile.setMinInflateRatio()"));
+        assertContains(ex.getMessage(), "You can adjust this limit via ZipSecureFile.setMinInflateRatio()");
     }
 
     @Test
@@ -831,7 +832,7 @@ public final class TestPackage {
                 ZipSecureFile.setMaxEntrySize(max_size-200);
             })
         );
-        assertTrue(ex.getMessage().contains("You can adjust this limit via ZipSecureFile.setMaxEntrySize()"));
+        assertContains(ex.getMessage(), "You can adjust this limit via ZipSecureFile.setMaxEntrySize()");
     }
 
     private void getZipStatsAndConsume(BiConsumer<Long,Double> ratioCon) throws IOException {

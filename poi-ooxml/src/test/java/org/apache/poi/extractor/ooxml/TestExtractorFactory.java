@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.extractor.ooxml;
 
-import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -221,8 +221,7 @@ class TestExtractorFactory {
         // Not really an Extractor test, but we'll leave it to test POIFS reaction anyway ...
         //noinspection resource
         IOException ex = assertThrows(IOException.class, () -> new POIFSFileSystem(txt));
-        assertTrue(ex.getMessage().contains("Invalid header signature; read 0x3D20726F68747541, expected 0xE11AB1A1E011CFD0"),
-                "Had: " + ex);
+        assertContains(ex.getMessage(), "Invalid header signature; read 0x3D20726F68747541, expected 0xE11AB1A1E011CFD0");
     }
 
     @Test

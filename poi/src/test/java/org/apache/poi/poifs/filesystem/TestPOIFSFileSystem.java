@@ -19,6 +19,7 @@ package org.apache.poi.poifs.filesystem;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.apache.poi.util.TestAssertions.assertContains;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -163,7 +164,7 @@ final class TestPOIFSFileSystem {
                 () -> new POIFSFileSystem(stream),
                 "File is corrupt and shouldn't have been opened"
             );
-            assertTrue(ex.getMessage().contains("Block 1148 not found"));
+            assertContains(ex.getMessage(), "Block 1148 not found");
         }
     }
 

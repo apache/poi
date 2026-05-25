@@ -98,6 +98,7 @@ import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOut;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -1241,7 +1242,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             expectFormattedContent(A4, " עִבְרִית and اَلْعَرَبِيَّةُ");
 
             Comment a3Comment = sheet.getCellComment(new CellAddress("A3"));
-            assertTrue(a3Comment.getString().getString().contains("تعليق الاختبا"));
+            assertContains(a3Comment.getString().getString(), "تعليق الاختبا");
         }
     }
 

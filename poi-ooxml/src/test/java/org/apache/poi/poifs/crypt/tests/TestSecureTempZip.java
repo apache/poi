@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.crypt.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -147,8 +148,7 @@ class TestSecureTempZip {
                     // no-op
                 }
             });
-            assertTrue(exception.getMessage().contains("ZipSecureFile.setMinInflateRatio()"),
-                    "unexpected exception message: " + exception.getMessage());
+            assertContains(exception.getMessage(), "ZipSecureFile.setMinInflateRatio()");
         } finally {
             ZipSecureFile.setMinInflateRatio(defaultRatio);
             ZipSecureFile.setGraceEntrySize(defaultGrace);

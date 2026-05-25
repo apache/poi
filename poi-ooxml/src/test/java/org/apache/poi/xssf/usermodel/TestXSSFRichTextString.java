@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -142,13 +143,13 @@ public final class TestXSSFRichTextString {
         rt.applyFont(0, 0, (short)1);
         IllegalArgumentException e;
         e = assertThrows(IllegalArgumentException.class, () -> rt.applyFont(11, 10, (short)1));
-        assertTrue(e.getMessage().contains("11"));
+        assertContains(e.getMessage(), "11");
 
         e = assertThrows(IllegalArgumentException.class, () -> rt.applyFont(-1, 10, (short)1));
-        assertTrue(e.getMessage().contains("-1"));
+        assertContains(e.getMessage(), "-1");
 
         e = assertThrows(IllegalArgumentException.class, () -> rt.applyFont(0, 555, (short)1));
-        assertTrue(e.getMessage().contains("555"));
+        assertContains(e.getMessage(), "555");
     }
 
     @Test
