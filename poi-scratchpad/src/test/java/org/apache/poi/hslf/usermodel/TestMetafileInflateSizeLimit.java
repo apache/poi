@@ -76,9 +76,8 @@ public class TestMetafileInflateSizeLimit {
             HSLFPictureData pd = ppt.addPicture(wmfBytes, PictureType.WMF);
             // Set limit far below the actual decompressed size
             RecordAtom.setMaxRecordLength(10);
-            RecordFormatException ex = assertThrows(RecordFormatException.class, pd::getData,
+            assertThrows(RecordFormatException.class, pd::getData,
                     "WMF getData() should throw RecordFormatException when limit is exceeded");
-            // The exception message might be wrapped in HSLFException - check either
         }
     }
 
@@ -103,7 +102,7 @@ public class TestMetafileInflateSizeLimit {
             HSLFPictureData pd = ppt.addPicture(emfBytes, PictureType.EMF);
             // Set limit far below the actual decompressed size
             RecordAtom.setMaxRecordLength(10);
-            RecordFormatException ex = assertThrows(RecordFormatException.class, pd::getData,
+            assertThrows(RecordFormatException.class, pd::getData,
                     "EMF getData() should throw RecordFormatException when limit is exceeded");
         }
     }
