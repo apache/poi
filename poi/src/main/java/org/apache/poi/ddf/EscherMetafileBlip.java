@@ -36,6 +36,7 @@ import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.usermodel.HSSFPictureData;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.RecordFormatException;
 
 public final class EscherMetafileBlip extends EscherBlipRecord {
     private static final Logger LOGGER = PoiLogManager.getLogger(EscherMetafileBlip.class);
@@ -180,7 +181,10 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
     private static byte[] inflatePictureData(byte[] data) {
         try (InflaterInputStream in = new InflaterInputStream(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get());
              UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
-            IOUtils.copy(in, out);
+            long copied = IOUtils.copy(in, out, (long) MAX_RECORD_LENGTH + 1);
+            if (copied > MAX_RECORD_LENGTH) {
+                throw new RecordFormatException("Inflated picture data exceeds MAX_RECORD_LENGTH (" + MAX_RECORD_LENGTH + ")");
+            }
             return out.toByteArray();
         } catch (IOException e) {
             LOGGER.atWarn().withThrowable(e).log("Possibly corrupt compression or non-compressed data");
