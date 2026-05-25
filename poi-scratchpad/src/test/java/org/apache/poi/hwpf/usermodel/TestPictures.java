@@ -55,7 +55,7 @@ public final class TestPictures {
 
     @BeforeEach
     void saveMaxRecordLength() {
-        savedMaxRecordLength = HWPFDocument.getMaxRecordLength();
+        savedMaxRecordLength = Picture.getMaxRecordLength();
     }
 
     @AfterEach

@@ -51,9 +51,15 @@ public final class EMF extends Metafile {
         super(recordContainer, bse);
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws RecordFormatException if there is a problem with the size of the decompressed data.
+     * {@link RecordAtom#setMaxRecordLength(int)} can be used to change the limit applied.
+     * @throws HSLFException for parsing exceptions
+     */
     @Override
-    public byte[] getData(){
-        byte[] rawdata = getRawData();
+    public byte[] getData() {
+        final byte[] rawdata = getRawData();
         Header header = new Header();
         header.read(rawdata, CHECKSUM_SIZE);
 
@@ -65,7 +71,7 @@ public final class EMF extends Metafile {
             long len = IOUtils.skipFully(is,header.getSize() + (long)CHECKSUM_SIZE);
             assert(len == header.getSize() + CHECKSUM_SIZE);
 
-            int maxLength = RecordAtom.getMaxRecordLength();
+            final int maxLength = RecordAtom.getMaxRecordLength();
             long copied = IOUtils.copy(inflater, out, (long) maxLength + 1);
             if (copied > maxLength) {
                 throw new RecordFormatException(

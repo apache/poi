@@ -58,13 +58,19 @@ public final class PICT extends Metafile {
         super(recordContainer, bse);
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws RecordFormatException if there is a problem with the size of the decompressed data.
+     * {@link RecordAtom#setMaxRecordLength(int)} can be used to change the limit applied.
+     * @throws HSLFException for parsing exceptions
+     */
     @Override
-    public byte[] getData(){
+    public byte[] getData() {
         byte[] rawdata = getRawData();
         try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
             byte[] macheader = new byte[512];
             out.write(macheader);
-            int pos = CHECKSUM_SIZE*getUIDInstanceCount();
+            int pos = Math.multiplyExact(CHECKSUM_SIZE, getUIDInstanceCount());
             byte[] pict = read(rawdata, pos);
             out.write(pict);
             return out.toByteArray();
@@ -84,7 +90,7 @@ public final class PICT extends Metafile {
             }
             byte[] chunk = new byte[4096];
             try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(header.getWmfSize()).get()) {
-                int maxLength = RecordAtom.getMaxRecordLength();
+                final int maxLength = RecordAtom.getMaxRecordLength();
                 long totalInflated = 0;
                 try (InflaterInputStream inflater = new InflaterInputStream(bis)) {
                     int count;

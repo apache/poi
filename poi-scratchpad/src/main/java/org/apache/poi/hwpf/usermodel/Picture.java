@@ -36,7 +36,6 @@ import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.PICF;
 import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
 import org.apache.poi.logging.PoiLogManager;
@@ -90,6 +89,23 @@ public final class Picture {
         return matched;
     }
 
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * @param length the max record length allowed for HWPF Picture
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HWPF Picture
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
+
     private PICF _picf;
     private PICFAndOfficeArtData _picfAndOfficeArtData;
     private final List<? extends EscherRecord> _blipRecords;
@@ -111,8 +127,9 @@ public final class Picture {
     }
 
     /**
-     * Builds a Picture object for a Picture stored in the
-     *  DataStream
+     * Builds a Picture object for a Picture stored in the DataStream
+     * @throws RecordFormatException if there is a problem with the size of the decompressed data.
+     * {@link #setMaxRecordLength(int)} can be used to change the limit applied.
      */
     public Picture( int dataBlockStartOfsset, byte[] _dataStream, boolean fillBytes ) { // NOSONAR
         _picfAndOfficeArtData = new PICFAndOfficeArtData( _dataStream, dataBlockStartOfsset );
@@ -147,7 +164,7 @@ public final class Picture {
                  InflaterInputStream in = new InflaterInputStream(bis);
                  UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
 
-                int maxSize = HWPFDocument.getMaxRecordLength();
+                final int maxSize = getMaxRecordLength();
                 long copied = IOUtils.copy(in, out, (long) maxSize + 1);
                 if (copied > maxSize) {
                     throw new RecordFormatException(

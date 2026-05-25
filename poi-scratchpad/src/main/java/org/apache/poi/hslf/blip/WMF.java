@@ -28,6 +28,7 @@ import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.RecordAtom;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.sl.image.ImageHeaderWMF;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -51,11 +52,16 @@ public final class WMF extends Metafile {
         super(recordContainer, bse);
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws RecordFormatException if there is a problem with the size of the decompressed data.
+     * {@link RecordAtom#setMaxRecordLength(int)} can be used to change the limit applied.
+     * @throws HSLFException for parsing exceptions
+     */
     @Override
-    public byte[] getData(){
-        byte[] rawdata = getRawData();
+    public byte[] getData() {
+        final byte[] rawdata = getRawData();
         try (InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(rawdata).get()) {
-
 
             Header header = new Header();
             header.read(rawdata, CHECKSUM_SIZE*getUIDInstanceCount());
@@ -68,7 +74,7 @@ public final class WMF extends Metafile {
             aldus.write(out);
 
             try (InflaterInputStream inflater = new InflaterInputStream( is )) {
-                int maxLength = RecordAtom.getMaxRecordLength();
+                final int maxLength = RecordAtom.getMaxRecordLength();
                 long copied = IOUtils.copy(inflater, out, (long) maxLength + 1);
                 if (copied > maxLength) {
                     throw new RecordFormatException(
