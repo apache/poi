@@ -47,8 +47,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class TestAgileDecryptor {
-    // One above the private MAX_SPIN_COUNT limit in AgileEncryptionVerifier
-    private static final int EXCESSIVE_SPIN_COUNT = 1_000_001;
     @SuppressWarnings("PrimitiveArrayArgumentToVarargsMethod")
     public static Stream<Arguments> data() {
         List<Arguments> data = new ArrayList<>();
@@ -134,7 +132,7 @@ class TestAgileDecryptor {
         // The first 8 bytes are version/flags; the remainder is the XML descriptor
         String xml = new String(encInfoBytes, 8, encInfoBytes.length - 8, StandardCharsets.UTF_8);
         String modifiedXml = xml.replaceAll("spinCount=\"\\d+\"",
-                "spinCount=\"" + EXCESSIVE_SPIN_COUNT + "\"");
+                "spinCount=\"" + (AgileEncryptionVerifier.getMaxSpinCount() + 1) + "\"");
 
         byte[] xmlBytes = modifiedXml.getBytes(StandardCharsets.UTF_8);
         byte[] modifiedEncInfoBytes = new byte[8 + xmlBytes.length];

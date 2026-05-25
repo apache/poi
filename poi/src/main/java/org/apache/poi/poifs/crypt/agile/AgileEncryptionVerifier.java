@@ -36,6 +36,14 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
     private int keyBits = -1;
     private int blockSize = -1;
 
+    /**
+     * Maximum allowed spinCount to prevent CPU-exhaustion DoS via crafted documents.
+     * Values beyond this are rejected during parsing.
+     */
+    public static int getMaxSpinCount() {
+        return MAX_SPIN_COUNT;
+    }
+
     @SuppressWarnings("unused")
     public AgileEncryptionVerifier(String descriptor) {
         this(AgileEncryptionInfoBuilder.parseDescriptor(descriptor));
