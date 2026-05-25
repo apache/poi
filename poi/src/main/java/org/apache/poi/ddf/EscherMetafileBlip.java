@@ -180,7 +180,12 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
     private static byte[] inflatePictureData(byte[] data) {
         try (InflaterInputStream in = new InflaterInputStream(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get());
              UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
-            IOUtils.copy(in, out);
+            long copied = IOUtils.copy(in, out, (long) MAX_RECORD_LENGTH + 1);
+            if (copied > MAX_RECORD_LENGTH) {
+                LOGGER.atWarn().log("Inflated picture data exceeds MAX_RECORD_LENGTH ({}), " +
+                        "returning compressed data", MAX_RECORD_LENGTH);
+                return data;
+            }
             return out.toByteArray();
         } catch (IOException e) {
             LOGGER.atWarn().withThrowable(e).log("Possibly corrupt compression or non-compressed data");
