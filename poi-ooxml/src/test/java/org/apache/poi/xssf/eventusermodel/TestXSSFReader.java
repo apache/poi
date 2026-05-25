@@ -18,7 +18,7 @@
 package org.apache.poi.xssf.eventusermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
@@ -322,7 +322,7 @@ public final class TestXSSFReader {
             while (iter.hasNext()) {
                 InputStream stream = iter.next();
                 String sheetName = iter.getSheetName();
-                assertNotContained(seen, sheetName);
+                assertNotContains(seen, sheetName);
                 seen.add(sheetName);
                 stream.close();
             }

@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

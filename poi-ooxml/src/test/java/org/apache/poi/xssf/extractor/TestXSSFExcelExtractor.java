@@ -19,7 +19,7 @@ package org.apache.poi.xssf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertEndsWith;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.POITestCase;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
@@ -185,8 +186,8 @@ class TestXSSFExcelExtractor {
         String text = extractor.getText();
 
         // No comments there yet
-        assertNotContained(text, "testdoc");
-        assertNotContained(text, "test phrase");
+        POITestCase.assertNotContains(text, "testdoc");
+        POITestCase.assertNotContains(text, "test phrase");
 
         // Turn on comment extraction, will then be
         extractor.setIncludeCellComments(true);
@@ -243,7 +244,7 @@ class TestXSSFExcelExtractor {
             assertContains(text, "\u8C4A\u7530");
             //this shows up only as a phonetic run and should not appear
             //in the extracted text
-            assertNotContained(text, "\u30CB\u30DB\u30F3");
+            POITestCase.assertNotContains(text, "\u30CB\u30DB\u30F3");
         }
     }
 
