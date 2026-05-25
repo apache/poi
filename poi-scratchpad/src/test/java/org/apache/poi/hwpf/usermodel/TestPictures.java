@@ -60,7 +60,7 @@ public final class TestPictures {
 
     @AfterEach
     void restoreMaxRecordLength() {
-        HWPFDocument.setMaxRecordLength(savedMaxRecordLength);
+        Picture.setMaxRecordLength(savedMaxRecordLength);
     }
 
     /**
@@ -433,7 +433,7 @@ public final class TestPictures {
         Picture picture = new Picture(blip);
 
         // Limit is well above 100 bytes; getContent() must succeed
-        HWPFDocument.setMaxRecordLength(10_000);
+        Picture.setMaxRecordLength(10_000);
         byte[] content = picture.getContent();
         assertNotNull(content);
     }
@@ -449,7 +449,7 @@ public final class TestPictures {
         Picture picture = new Picture(blip);
 
         // Set the limit below the actual decompressed size
-        HWPFDocument.setMaxRecordLength(500);
+        Picture.setMaxRecordLength(500);
         assertThrows(RecordFormatException.class, picture::getContent,
                 "getContent() must throw RecordFormatException when inflated data exceeds the limit");
     }
