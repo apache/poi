@@ -130,7 +130,7 @@ public class HemfPlusPath {
             if (isRLE) {
                 for (int i=0, rleCount; i<pointCount; i+=rleCount, size+=2) {
                     rleCount = POINT_RLE_COUNT.getValue(leis.readByte());
-                    Arrays.fill(pointTypes, pointCount, pointCount+rleCount, leis.readByte());
+                    Arrays.fill(pointTypes, i, Math.min(i+rleCount, pointCount), leis.readByte());
                 }
             } else {
                 leis.readFully(pointTypes);
