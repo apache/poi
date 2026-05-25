@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -91,22 +92,22 @@ final class TestFixed {
     void testOptionalParams() {
         Fixed fixed = new Fixed();
         ValueEval evaluate = fixed.evaluate(0, 0, new NumberEval(1234.56789));
-        assertTrue(evaluate instanceof StringEval);
+        assertInstanceOf(StringEval.class, evaluate);
         assertEquals("1,234.57", ((StringEval)evaluate).getStringValue());
 
         evaluate = fixed.evaluate(0, 0, new NumberEval(1234.56789), new NumberEval(1));
-        assertTrue(evaluate instanceof StringEval);
+        assertInstanceOf(StringEval.class, evaluate);
         assertEquals("1,234.6", ((StringEval)evaluate).getStringValue());
 
         evaluate = fixed.evaluate(0, 0, new NumberEval(1234.56789), new NumberEval(1), BoolEval.TRUE);
-        assertTrue(evaluate instanceof StringEval);
+        assertInstanceOf(StringEval.class, evaluate);
         assertEquals("1234.6", ((StringEval)evaluate).getStringValue());
 
         evaluate = fixed.evaluate(new ValueEval[] {}, 1, 1);
-        assertTrue(evaluate instanceof ErrorEval);
+        assertInstanceOf(ErrorEval.class, evaluate);
 
         evaluate = fixed.evaluate(new ValueEval[] { new NumberEval(1), new NumberEval(1), new NumberEval(1), new NumberEval(1) }, 1, 1);
-        assertTrue(evaluate instanceof ErrorEval);
+        assertInstanceOf(ErrorEval.class, evaluate);
     }
 
     private void confirm(String formulaText, String expectedResult) {

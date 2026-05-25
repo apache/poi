@@ -22,7 +22,6 @@ import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.apache.poi.POITestCase.assertNotContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -291,8 +290,8 @@ class TestXWPFWordExtractor {
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
             assertTrue(text.length() > 0);
-            assertFalse(text.contains("AUTHOR"));
-            assertFalse(text.contains("CREATEDATE"));
+            assertNotContains(text, "AUTHOR");
+            assertNotContains(text, "CREATEDATE");
         }
     }
 

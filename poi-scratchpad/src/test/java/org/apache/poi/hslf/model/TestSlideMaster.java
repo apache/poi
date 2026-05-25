@@ -26,6 +26,7 @@ import static org.apache.poi.sl.usermodel.TextShape.TextPlaceholder.TITLE;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -146,7 +147,7 @@ public final class TestSlideMaster {
         try (HSLFSlideShow ppt = getSlideShow("slide_master.ppt")) {
             HSLFSlide slide = ppt.getSlides().get(2);
             HSLFMasterSheet masterSheet = slide.getMasterSheet();
-            assertTrue(masterSheet instanceof HSLFTitleMaster);
+            assertInstanceOf(HSLFTitleMaster.class, masterSheet);
 
             for (List<HSLFTextParagraph> txt : slide.getTextParagraphs()) {
                 HSLFTextRun rt = txt.get(0).getTextRuns().get(0);

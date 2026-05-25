@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -210,10 +211,10 @@ final class TestLinkTable {
         //    [EOFRecord]
 
         assertEquals(5, wrl.getRecords().size());
-        assertTrue(wrl.get(2) instanceof SupBookRecord);
+        assertInstanceOf(SupBookRecord.class, wrl.get(2));
         SupBookRecord sup1 = (SupBookRecord)wrl.get(2);
         assertEquals(numberOfSheets, sup1.getNumberOfSheets());
-        assertTrue(wrl.get(3) instanceof ExternSheetRecord);
+        assertInstanceOf(ExternSheetRecord.class, wrl.get(3));
         ExternSheetRecord extSheet = (ExternSheetRecord)wrl.get(3);
         assertEquals(0, extSheet.getNumOfRefs());
 
@@ -244,13 +245,13 @@ final class TestLinkTable {
         //    [EOFRecord]
 
         assertEquals(7, wrl.getRecords().size());
-        assertTrue(wrl.get(3) instanceof SupBookRecord);
+        assertInstanceOf(SupBookRecord.class, wrl.get(3));
         SupBookRecord sup2 = (SupBookRecord)wrl.get(3);
         assertTrue(sup2.isAddInFunctions());
-        assertTrue(wrl.get(4) instanceof ExternalNameRecord);
+        assertInstanceOf(ExternalNameRecord.class, wrl.get(4));
         ExternalNameRecord ext1 = (ExternalNameRecord)wrl.get(4);
         assertEquals("ISODD", ext1.getText());
-        assertTrue(wrl.get(5) instanceof ExternSheetRecord);
+        assertInstanceOf(ExternSheetRecord.class, wrl.get(5));
         assertEquals(1, extSheet.getNumOfRefs());
 
         //check that
@@ -274,13 +275,13 @@ final class TestLinkTable {
         //    [EXTERNALNAME .name    = ISEVEN]
         //    [EXTERNSHEET]
         //    [EOFRecord]
-        assertTrue(wrl.get(3) instanceof SupBookRecord);
-        assertTrue(wrl.get(4) instanceof ExternalNameRecord);
-        assertTrue(wrl.get(5) instanceof ExternalNameRecord);
+        assertInstanceOf(SupBookRecord.class, wrl.get(3));
+        assertInstanceOf(ExternalNameRecord.class, wrl.get(4));
+        assertInstanceOf(ExternalNameRecord.class, wrl.get(5));
         assertEquals("ISODD", ((ExternalNameRecord)wrl.get(4)).getText());
         assertEquals("ISEVEN", ((ExternalNameRecord)wrl.get(5)).getText());
-        assertTrue(wrl.get(6) instanceof ExternSheetRecord);
-        assertTrue(wrl.get(7) instanceof EOFRecord);
+        assertInstanceOf(ExternSheetRecord.class, wrl.get(6));
+        assertInstanceOf(EOFRecord.class, wrl.get(7));
 
         assertEquals(0, tbl.resolveNameXIx(namex2.getSheetRefIndex(), namex2.getNameIndex()));
         assertEquals("ISEVEN", tbl.resolveNameXText(namex2.getSheetRefIndex(), namex2.getNameIndex(), null));

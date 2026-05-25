@@ -75,14 +75,14 @@ public final class TestXSSFReader {
 
             SharedStrings sst1 = r.getSharedStringsTable();
             assertNotNull(sst1);
-            assertTrue(sst1 instanceof SharedStringsTable, "instanceof SharedStringsTable");
+            assertInstanceOf(SharedStringsTable.class, sst1, "instanceof SharedStringsTable");
 
             assertFalse(r.useReadOnlySharedStringsTable(), "useReadOnlySharedStringsTable defaults to false");
             r.setUseReadOnlySharedStringsTable(true);
             assertTrue(r.useReadOnlySharedStringsTable(), "useReadOnlySharedStringsTable changed to true");
             SharedStrings sst2 = r.getSharedStringsTable();
             assertNotNull(sst2);
-            assertTrue(sst2 instanceof ReadOnlySharedStringsTable, "instanceof ReadOnlySharedStringsTable");
+            assertInstanceOf(ReadOnlySharedStringsTable.class, sst2, "instanceof ReadOnlySharedStringsTable");
         }
     }
 

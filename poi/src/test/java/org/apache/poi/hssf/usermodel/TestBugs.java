@@ -631,7 +631,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
 
             Ptg[] nd = r.getNameDefinition();
             assertEquals(1, nd.length);
-            assertTrue(nd[0] instanceof DeletedArea3DPtg);
+            assertInstanceOf(DeletedArea3DPtg.class, nd[0]);
         }
     }
 

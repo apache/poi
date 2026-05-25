@@ -51,8 +51,8 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -93,6 +93,7 @@ import java.util.Locale;
 import java.util.zip.CRC32;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
 import static org.apache.poi.xssf.XSSFTestDataSamples.getSampleFile;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
@@ -101,6 +102,7 @@ import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -489,7 +491,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             assertEquals("Numbers", wb1.getSheetName(0));
             //the second sheet is of type 'chartsheet'
             assertEquals("Chart", wb1.getSheetName(1));
-            assertTrue(wb1.getSheetAt(1) instanceof XSSFChartSheet);
+            assertInstanceOf(XSSFChartSheet.class, wb1.getSheetAt(1));
             assertEquals("SomeJunk", wb1.getSheetName(2));
 
             wb1.removeSheetAt(2);
@@ -771,9 +773,9 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
                 assertSheetOrder(read, "Sheet1-Renamed", "Sheet2", "Sheet3");
                 XSSFSheet sheet = (XSSFSheet) read.getSheet("Sheet1-Renamed");
                 XDDFChartData.Series series = sheet.getDrawingPatriarch().getCharts().get(0).getChartSeries().get(0).getSeries(0);
-                assertTrue(series instanceof XDDFBarChartData.Series, "should be a bar chart data series");
+                assertInstanceOf(XDDFBarChartData.Series.class, series, "should be a bar chart data series");
                 String formula = series.getCategoryData().getFormula();
-                assertTrue(formula.startsWith("'Sheet1-Renamed'!"), "should contain new sheet name");
+                assertStartsWith("should contain new sheet name", formula, "'Sheet1-Renamed'!");
             }
         }
     }

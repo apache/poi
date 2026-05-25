@@ -17,6 +17,7 @@
 package org.apache.poi.ss.excelant.util;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -215,7 +216,7 @@ class TestExcelAntWorkbookUtil {
         assertContains(result.toString(), "evaluationCompletedWithError=false");
         assertContains(result.toString(), "returnValue=790.79");
         assertContains(result.toString(), "cellName='MortgageCalculator'!B4");
-        assertFalse(result.toString().contains("#N/A"));
+        assertNotContains(result.toString(), "#N/A");
 
         assertFalse(result.evaluationCompleteWithError());
         assertTrue(result.didTestPass());

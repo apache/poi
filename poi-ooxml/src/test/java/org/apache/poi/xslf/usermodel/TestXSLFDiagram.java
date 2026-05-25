@@ -114,7 +114,7 @@ public class TestXSLFDiagram {
 
             // Shape 2 - Gradient Blue & Purple - "def" left aligned
             XSLFAutoShape gradientCircle = (XSLFAutoShape) shapes.get(2);
-            assertTrue(gradientCircle.getFillPaint() instanceof PaintStyle.GradientPaint);
+            assertInstanceOf(PaintStyle.GradientPaint.class, gradientCircle.getFillPaint());
             assertTrue(gradientCircle.getText().isEmpty());
 
             XSLFTextBox gradientCircleText = (XSLFTextBox) shapes.get(3);

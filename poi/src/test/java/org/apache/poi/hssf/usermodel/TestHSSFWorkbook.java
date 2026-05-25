@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -391,7 +392,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             sheetRecords.add(new BadlyBehavedRecord());
             // There is also much logic inside Sheet that (if buggy) might also cause the discrepancy
             IllegalStateException e = assertThrows(IllegalStateException.class, wb::getBytes, "Identified bug 45066 a");
-            assertTrue(e.getMessage().startsWith("Actual serialized sheet size"));
+            assertStartsWith(e.getMessage(), "Actual serialized sheet size");
         }
     }
 

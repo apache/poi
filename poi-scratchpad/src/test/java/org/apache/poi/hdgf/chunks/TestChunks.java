@@ -18,6 +18,7 @@
 package org.apache.poi.hdgf.chunks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -50,7 +51,7 @@ public final class TestChunks {
     void testChunkHeaderA() {
         ChunkHeader h = ChunkHeader.createChunkHeader(11, data_a, 0);
 
-        assertTrue(h instanceof ChunkHeaderV11);
+        assertInstanceOf(ChunkHeaderV11.class, h);
         ChunkHeaderV11 header = (ChunkHeaderV11)h;
 
         assertEquals(70, header.getType());
@@ -112,7 +113,7 @@ public final class TestChunks {
     void testChunkHeaderB() {
         ChunkHeader h = ChunkHeader.createChunkHeader(11, data_b, 0);
 
-        assertTrue(h instanceof ChunkHeaderV11);
+        assertInstanceOf(ChunkHeaderV11.class, h);
         ChunkHeaderV11 header = (ChunkHeaderV11)h;
 
         assertEquals(70, header.getType());

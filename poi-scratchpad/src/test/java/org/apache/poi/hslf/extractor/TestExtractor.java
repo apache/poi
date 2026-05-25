@@ -350,7 +350,7 @@ public final class TestExtractor {
         try (final SlideShowExtractor<?,?> ppe = openExtractor("master_text.ppt")) {
             // Initially not there
             String text = ppe.getText();
-            assertFalse(text.contains("Text that I added to the master slide"));
+            assertNotContains(text, "Text that I added to the master slide");
 
             // Enable, shows up
             ppe.setMasterByDefault(true);

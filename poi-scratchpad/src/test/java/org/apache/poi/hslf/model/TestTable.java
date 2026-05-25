@@ -20,10 +20,10 @@ package org.apache.poi.hslf.model;
 import static org.apache.poi.hslf.HSLFTestDataSamples.getSlideShow;
 import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -64,14 +64,14 @@ public final class TestTable {
             assertEquals(TextPlaceholder.OTHER.nativeId, cell.getTextParagraphs().get(0).getRunType());
 
             HSLFShape tblSh = slide.getShapes().get(0);
-            assertTrue(tblSh instanceof HSLFTable);
+            assertInstanceOf(HSLFTable.class, tblSh);
             HSLFTable tbl2 = (HSLFTable) tblSh;
             assertEquals(noColumns, tbl2.getNumberOfColumns());
             assertEquals(noRows, tbl2.getNumberOfRows());
 
             try (HSLFSlideShow ppt2 = writeOutAndReadBack(ppt)) {
                 HSLFSlide slide2 = ppt2.getSlides().get(0);
-                assertTrue(slide2.getShapes().get(0) instanceof HSLFTable);
+                assertInstanceOf(HSLFTable.class, slide2.getShapes().get(0));
                 HSLFTable tbl3 = (HSLFTable) slide2.getShapes().get(0);
                 assertEquals(noColumns, tbl3.getNumberOfColumns());
                 assertEquals(noRows, tbl3.getNumberOfRows());

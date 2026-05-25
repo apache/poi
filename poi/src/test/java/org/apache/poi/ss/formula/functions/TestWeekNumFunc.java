@@ -18,7 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -95,7 +95,7 @@ class TestWeekNumFunc {
         String formula = "WEEKNUM(" + dateValue + ")";
         ValueEval[] args = new ValueEval[] { new NumberEval(dateValue) };
         ValueEval result = WeekNum.instance.evaluate(args, DEFAULT_CONTEXT);
-        assertTrue(result instanceof NumberEval);
+        assertInstanceOf(NumberEval.class, result);
         assertEquals(expected, ((NumberEval)result).getNumberValue(), TOLERANCE, formula);
     }
 
@@ -103,7 +103,7 @@ class TestWeekNumFunc {
         String formula = "WEEKNUM(" + dateValue + ", " + return_type + ")";
         ValueEval[] args = new ValueEval[] { new NumberEval(dateValue), new NumberEval(return_type) };
         ValueEval result = WeekNum.instance.evaluate(args, DEFAULT_CONTEXT);
-        assertTrue(result instanceof NumberEval);
+        assertInstanceOf(NumberEval.class, result);
         assertEquals(expected, ((NumberEval)result).getNumberValue(), TOLERANCE, formula);
     }
 }
