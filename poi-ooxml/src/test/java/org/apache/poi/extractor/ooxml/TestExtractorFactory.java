@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.extractor.ooxml;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

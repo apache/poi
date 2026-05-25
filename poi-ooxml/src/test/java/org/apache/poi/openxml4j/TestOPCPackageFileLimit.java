@@ -28,8 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.apache.poi.util.TestAssertions.assertContains;
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Isolated // changes static values, so other tests should not run at the same time

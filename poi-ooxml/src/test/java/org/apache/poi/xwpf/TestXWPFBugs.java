@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xwpf;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;

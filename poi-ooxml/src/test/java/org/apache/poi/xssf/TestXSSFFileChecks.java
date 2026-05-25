@@ -27,9 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.apache.poi.util.TestAssertions.assertContains;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class TestXSSFFileChecks {

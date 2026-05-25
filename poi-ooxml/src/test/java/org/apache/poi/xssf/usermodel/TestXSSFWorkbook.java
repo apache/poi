@@ -92,13 +92,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.zip.CRC32;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
 import static org.apache.poi.xssf.XSSFTestDataSamples.getSampleFile;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOut;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

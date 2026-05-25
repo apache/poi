@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.usermodel.XSSFVMLDrawing.QNAME_VMLDRAWING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;

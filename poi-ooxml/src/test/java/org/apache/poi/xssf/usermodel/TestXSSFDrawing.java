@@ -16,15 +16,9 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_DRAWINGML;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.apache.poi.util.TestAssertions.assertContains;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -159,10 +153,10 @@ class TestXSSFDrawing {
 
         shapes = dr1.getShapes();
         assertEquals(4, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSSFConnector);
-        assertTrue(shapes.get(1) instanceof XSSFShapeGroup);
-        assertTrue(shapes.get(2) instanceof XSSFSimpleShape);
-        assertTrue(shapes.get(3) instanceof XSSFSimpleShape); //
+        assertInstanceOf(XSSFConnector.class, shapes.get(0));
+        assertInstanceOf(XSSFShapeGroup.class, shapes.get(1));
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(2));
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(3)); //
 
         // Ensure it got the right namespaces
         String xml = ctDrawing.toString();

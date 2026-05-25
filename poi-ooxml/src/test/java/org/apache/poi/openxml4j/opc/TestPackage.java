@@ -17,6 +17,7 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getOutputFile;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFile;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFileName;
@@ -24,7 +25,6 @@ import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream
 import static org.apache.poi.openxml4j.opc.PackagingURIHelper.createPartName;
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_WORDPROCESSINGML;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.apache.poi.util.TestAssertions.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

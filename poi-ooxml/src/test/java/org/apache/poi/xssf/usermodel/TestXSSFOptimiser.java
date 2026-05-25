@@ -17,8 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.apache.poi.util.TestAssertions.assertContains;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

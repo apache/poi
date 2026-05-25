@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.apache.poi.util.TestAssertions.assertContains;
 
 import java.awt.Color;
 import java.io.IOException;

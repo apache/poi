@@ -35,9 +35,8 @@ import org.w3c.dom.Element;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_WORDPROCESSINGML;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.apache.poi.util.TestAssertions.assertContains;
 
 class TestStreamHelper {
     @Test

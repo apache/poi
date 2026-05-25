@@ -16,10 +16,9 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.apache.poi.util.TestAssertions.assertContains;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;

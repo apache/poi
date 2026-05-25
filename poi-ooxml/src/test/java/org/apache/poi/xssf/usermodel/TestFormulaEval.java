@@ -27,9 +27,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.apache.poi.util.TestAssertions.assertContains;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class TestFormulaEval {
