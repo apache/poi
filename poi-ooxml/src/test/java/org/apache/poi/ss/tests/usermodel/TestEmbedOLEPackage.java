@@ -20,6 +20,7 @@ package org.apache.poi.ss.tests.usermodel;
 import static org.apache.poi.sl.tests.SLCommonUtils.xslfOnly;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
@@ -180,7 +181,7 @@ class TestEmbedOLEPackage {
         for (Sheet sheet : wb) {
             Drawing<? extends Shape> pat = sheet.getDrawingPatriarch();
             for (Shape shape : pat) {
-                assertTrue(shape instanceof ObjectData);
+                assertInstanceOf(ObjectData.class, shape);
                 ObjectData od = (ObjectData)shape;
                 EmbeddedData ed = ee.extractOne((DirectoryNode)od.getDirectory());
                 assertArrayEquals(data, ed.getEmbeddedData());

@@ -17,6 +17,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -54,7 +55,7 @@ class TestXSLFShape {
 
             XSLFSlide slide2 = slides.get(1);
             List<XSLFShape> shapes2 = slide2.getShapes();
-            assertTrue(shapes2.get(0) instanceof XSLFAutoShape);
+            assertInstanceOf(XSLFAutoShape.class, shapes2.get(0));
             assertEquals("PPTX Title", ((XSLFAutoShape) shapes2.get(0)).getText());
             XSLFAutoShape sh1 = (XSLFAutoShape) shapes2.get(0);
             List<XSLFTextParagraph> paragraphs1 = sh1.getTextParagraphs();
@@ -69,7 +70,7 @@ class TestXSLFShape {
             assertEquals(STTextUnderlineType.SNG, r2.get(1).getRPr(false).getU());
 
 
-            assertTrue(shapes2.get(1) instanceof XSLFAutoShape);
+            assertInstanceOf(XSLFAutoShape.class, shapes2.get(1));
             assertEquals("Subtitle\nAnd second line", ((XSLFAutoShape) shapes2.get(1)).getText());
             XSLFAutoShape sh2 = (XSLFAutoShape) shapes2.get(1);
             List<XSLFTextParagraph> paragraphs2 = sh2.getTextParagraphs();

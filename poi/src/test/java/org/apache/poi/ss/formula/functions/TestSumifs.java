@@ -21,6 +21,7 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.apache.poi.ss.util.Utils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -51,7 +52,7 @@ final class TestSumifs {
     }
 
     private static void confirmDouble(double expected, ValueEval actualEval) {
-        assertTrue(actualEval instanceof NumericValueEval, "Expected numeric result");
+        assertInstanceOf(NumericValueEval.class, actualEval, "Expected numeric result");
         NumericValueEval nve = (NumericValueEval)actualEval;
         assertEquals(expected, nve.getNumberValue(), 0);
     }

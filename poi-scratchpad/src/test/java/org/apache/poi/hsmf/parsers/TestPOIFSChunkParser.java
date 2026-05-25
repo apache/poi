@@ -19,10 +19,10 @@ package org.apache.poi.hsmf.parsers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -36,8 +36,8 @@ import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
-import org.apache.poi.hsmf.datatypes.RecipientChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks.RecipientChunksSorter;
+import org.apache.poi.hsmf.datatypes.RecipientChunks;
 import org.apache.poi.hsmf.datatypes.StringChunk;
 import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
@@ -86,9 +86,9 @@ public final class TestPOIFSChunkParser {
 
             ChunkGroup[] groups = POIFSChunkParser.parse(simple.getRoot());
             assertEquals(3, groups.length);
-            assertTrue(groups[0] instanceof Chunks);
-            assertTrue(groups[1] instanceof RecipientChunks);
-            assertTrue(groups[2] instanceof NameIdChunks);
+            assertInstanceOf(Chunks.class, groups[0]);
+            assertInstanceOf(RecipientChunks.class, groups[1]);
+            assertInstanceOf(NameIdChunks.class, groups[2]);
 
             RecipientChunks recips = (RecipientChunks) groups[1];
             assertEquals("kevin.roast@alfresco.org", recips.getRecipientSMTPChunk().getValue());
@@ -145,15 +145,15 @@ public final class TestPOIFSChunkParser {
 
             ChunkGroup[] groups = POIFSChunkParser.parse(multiple.getRoot());
             assertEquals(9, groups.length);
-            assertTrue(groups[0] instanceof Chunks);
-            assertTrue(groups[1] instanceof RecipientChunks);
-            assertTrue(groups[2] instanceof RecipientChunks);
-            assertTrue(groups[3] instanceof RecipientChunks);
-            assertTrue(groups[4] instanceof RecipientChunks);
-            assertTrue(groups[5] instanceof AttachmentChunks);
-            assertTrue(groups[6] instanceof RecipientChunks);
-            assertTrue(groups[7] instanceof RecipientChunks);
-            assertTrue(groups[8] instanceof NameIdChunks);
+            assertInstanceOf(Chunks.class, groups[0]);
+            assertInstanceOf(RecipientChunks.class, groups[1]);
+            assertInstanceOf(RecipientChunks.class, groups[2]);
+            assertInstanceOf(RecipientChunks.class, groups[3]);
+            assertInstanceOf(RecipientChunks.class, groups[4]);
+            assertInstanceOf(AttachmentChunks.class, groups[5]);
+            assertInstanceOf(RecipientChunks.class, groups[6]);
+            assertInstanceOf(RecipientChunks.class, groups[7]);
+            assertInstanceOf(NameIdChunks.class, groups[8]);
 
             // In FS order initially
             RecipientChunks[] chunks = new RecipientChunks[] {
@@ -232,9 +232,9 @@ public final class TestPOIFSChunkParser {
 
             ChunkGroup[] groups = POIFSChunkParser.parse(simple.getRoot());
             assertEquals(3, groups.length);
-            assertTrue(groups[0] instanceof Chunks);
-            assertTrue(groups[1] instanceof RecipientChunks);
-            assertTrue(groups[2] instanceof NameIdChunks);
+            assertInstanceOf(Chunks.class, groups[0]);
+            assertInstanceOf(RecipientChunks.class, groups[1]);
+            assertInstanceOf(NameIdChunks.class, groups[2]);
 
             NameIdChunks nameId = (NameIdChunks) groups[2];
             assertEquals(10, nameId.getAll().length);
@@ -261,11 +261,11 @@ public final class TestPOIFSChunkParser {
 
             ChunkGroup[] groups = POIFSChunkParser.parse(with.getRoot());
             assertEquals(5, groups.length);
-            assertTrue(groups[0] instanceof Chunks);
-            assertTrue(groups[1] instanceof RecipientChunks);
-            assertTrue(groups[2] instanceof AttachmentChunks);
-            assertTrue(groups[3] instanceof AttachmentChunks);
-            assertTrue(groups[4] instanceof NameIdChunks);
+            assertInstanceOf(Chunks.class, groups[0]);
+            assertInstanceOf(RecipientChunks.class, groups[1]);
+            assertInstanceOf(AttachmentChunks.class, groups[2]);
+            assertInstanceOf(AttachmentChunks.class, groups[3]);
+            assertInstanceOf(NameIdChunks.class, groups[4]);
 
             attachment = (AttachmentChunks) groups[2];
             assertEquals("TEST-U~1.DOC", attachment.getAttachFileName().toString());

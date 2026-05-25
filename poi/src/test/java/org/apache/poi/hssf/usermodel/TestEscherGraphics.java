@@ -19,8 +19,8 @@ package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -130,8 +130,8 @@ final class TestEscherGraphics {
 
         // Check the two groups too
         assertEquals(2, patriarch.countOfAllChildren());
-        assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
-        assertTrue(patriarch.getChildren().get(1) instanceof HSSFShapeGroup);
+        assertInstanceOf(HSSFShapeGroup.class, patriarch.getChildren().get(0));
+        assertInstanceOf(HSSFShapeGroup.class, patriarch.getChildren().get(1));
 
         s1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
         s2 = (HSSFShapeGroup)patriarch.getChildren().get(1);
@@ -168,8 +168,8 @@ final class TestEscherGraphics {
 
         // Check the two groups too
         assertEquals(2, patriarch.countOfAllChildren());
-        assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
-        assertTrue(patriarch.getChildren().get(1) instanceof HSSFShapeGroup);
+        assertInstanceOf(HSSFShapeGroup.class, patriarch.getChildren().get(0));
+        assertInstanceOf(HSSFShapeGroup.class, patriarch.getChildren().get(1));
 
         s1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
         s2 = (HSSFShapeGroup)patriarch.getChildren().get(1);
@@ -209,8 +209,8 @@ final class TestEscherGraphics {
         // Check the two groups too
         assertEquals(2, patriarch.countOfAllChildren());
         assertEquals(2, patriarch.getChildren().size());
-        assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
-        assertTrue(patriarch.getChildren().get(1) instanceof HSSFShapeGroup);
+        assertInstanceOf(HSSFShapeGroup.class, patriarch.getChildren().get(0));
+        assertInstanceOf(HSSFShapeGroup.class, patriarch.getChildren().get(1));
 
         s1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
         s2 = (HSSFShapeGroup)patriarch.getChildren().get(1);
@@ -263,9 +263,9 @@ final class TestEscherGraphics {
         assertEquals(3, patriarch.getChildren().size());
 
         // Should be two groups and a text
-        assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
-        assertTrue(patriarch.getChildren().get(1) instanceof HSSFShapeGroup);
-        assertTrue(patriarch.getChildren().get(2) instanceof HSSFTextbox);
+        assertInstanceOf(HSSFShapeGroup.class, patriarch.getChildren().get(0));
+        assertInstanceOf(HSSFShapeGroup.class, patriarch.getChildren().get(1));
+        assertInstanceOf(HSSFTextbox.class, patriarch.getChildren().get(2));
 
         s1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
         tbox1 = (HSSFTextbox)patriarch.getChildren().get(2);

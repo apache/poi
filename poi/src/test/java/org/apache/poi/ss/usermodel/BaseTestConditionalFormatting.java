@@ -19,6 +19,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -64,10 +65,10 @@ public abstract class BaseTestConditionalFormatting {
 
             assertEquals(0, sheetCF.getNumConditionalFormattings());
             IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> sheetCF.getConditionalFormattingAt(0));
-            assertTrue(e.getMessage().startsWith("Specified CF index 0 is outside the allowable range"));
+            assertStartsWith(e.getMessage(), "Specified CF index 0 is outside the allowable range");
 
             e = assertThrows(IllegalArgumentException.class, () -> sheetCF.removeConditionalFormatting(0));
-            assertTrue(e.getMessage().startsWith("Specified CF index 0 is outside the allowable range"));
+            assertStartsWith(e.getMessage(), "Specified CF index 0 is outside the allowable range");
 
             ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule("1");
             ConditionalFormattingRule rule2 = sheetCF.createConditionalFormattingRule("2");
@@ -75,15 +76,15 @@ public abstract class BaseTestConditionalFormatting {
             ConditionalFormattingRule rule4 = sheetCF.createConditionalFormattingRule("4");
 
             e = assertThrows(IllegalArgumentException.class, () -> sheetCF.addConditionalFormatting(null, rule1));
-            assertTrue(e.getMessage().startsWith("regions must not be null"));
+            assertStartsWith(e.getMessage(), "regions must not be null");
 
             e = assertThrows(IllegalArgumentException.class, () -> sheetCF.addConditionalFormatting(
                 new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A3")}, (ConditionalFormattingRule) null));
-            assertTrue(e.getMessage().startsWith("cfRules must not be null"));
+            assertStartsWith(e.getMessage(), "cfRules must not be null");
 
             e = assertThrows(IllegalArgumentException.class, () -> sheetCF.addConditionalFormatting(
                 new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A3")}, new ConditionalFormattingRule[0]));
-            assertTrue(e.getMessage().startsWith("cfRules must not be empty"));
+            assertStartsWith(e.getMessage(), "cfRules must not be empty");
 
             Executable exec = () ->
                 sheetCF.addConditionalFormatting(
@@ -92,7 +93,7 @@ public abstract class BaseTestConditionalFormatting {
 
             if (applyLimitOf3()) {
                 e = assertThrows(IllegalArgumentException.class, exec);
-                assertTrue(e.getMessage().startsWith("Number of rules must not exceed 3"));
+                assertStartsWith(e.getMessage(), "Number of rules must not exceed 3");
             } else {
                 exec.execute();
             }
@@ -262,7 +263,7 @@ public abstract class BaseTestConditionalFormatting {
 
             IllegalArgumentException e;
             e = assertThrows(IllegalArgumentException.class, () -> sheetCF.getConditionalFormattingAt(0));
-            assertTrue(e.getMessage().startsWith("Specified CF index 0 is outside the allowable range"));
+            assertStartsWith(e.getMessage(), "Specified CF index 0 is outside the allowable range");
 
             formatIndex = sheetCF.addConditionalFormatting(
                 new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A5")}, rule1);
@@ -272,7 +273,7 @@ public abstract class BaseTestConditionalFormatting {
             assertEquals(0, sheetCF.getNumConditionalFormattings());
 
             e = assertThrows(IllegalArgumentException.class, () -> sheetCF.getConditionalFormattingAt(0));
-            assertTrue(e.getMessage().startsWith("Specified CF index 0 is outside the allowable range"));
+            assertStartsWith(e.getMessage(), "Specified CF index 0 is outside the allowable range");
         }
     }
 

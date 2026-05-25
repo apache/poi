@@ -20,6 +20,7 @@ package org.apache.poi.hslf.usermodel;
 import static org.apache.poi.hslf.HSLFTestDataSamples.getSlideShow;
 import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -140,12 +141,12 @@ public final class TestTextShape {
                 slide = ppt2.getSlides().get(0);
                 List<HSLFShape> shape = slide.getShapes();
 
-                assertTrue(shape.get(0) instanceof HSLFTextShape);
+                assertInstanceOf(HSLFTextShape.class, shape.get(0));
                 shape1 = (HSLFTextShape) shape.get(0);
                 assertEquals(ShapeType.TEXT_BOX, shape1.getShapeType());
                 assertEquals("Hello, World!", shape1.getText());
 
-                assertTrue(shape.get(1) instanceof HSLFTextShape);
+                assertInstanceOf(HSLFTextShape.class, shape.get(1));
                 shape1 = (HSLFTextShape) shape.get(1);
                 assertEquals(ShapeType.RIGHT_ARROW, shape1.getShapeType());
                 assertEquals("Testing TextShape", shape1.getText());

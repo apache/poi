@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.formula.ptg.AddPtg;
@@ -211,11 +212,11 @@ final class TestFormulaParserIf {
         Ptg[] ptgs = parseFormula("IF(A1=B1,AVERAGE(A1:B1),AVERAGE(A2:B2))");
         assertEquals(11, ptgs.length);
 
-        assertTrue((ptgs[3] instanceof AttrPtg), "IF Attr set correctly");
+        assertInstanceOf(AttrPtg.class, (ptgs[3]), "IF Attr set correctly");
         AttrPtg ifFunc = (AttrPtg)ptgs[3];
         assertTrue(ifFunc.isOptimizedIf(), "It is not an if");
 
-        assertTrue((ptgs[5] instanceof FuncVarPtg), "Average Function set correctly");
+        assertInstanceOf(FuncVarPtg.class, (ptgs[5]), "Average Function set correctly");
     }
 
     @Test
@@ -223,15 +224,15 @@ final class TestFormulaParserIf {
         Ptg[] ptgs = parseFormula("IF(1=1,10)");
         assertEquals(7, ptgs.length);
 
-        assertTrue((ptgs[3] instanceof AttrPtg), "IF Attr set correctly");
+        assertInstanceOf(AttrPtg.class, (ptgs[3]), "IF Attr set correctly");
         AttrPtg ifFunc = (AttrPtg)ptgs[3];
         assertTrue(ifFunc.isOptimizedIf(), "It is not an if");
 
-        assertTrue((ptgs[4] instanceof IntPtg), "Single Value is not an IntPtg");
+        assertInstanceOf(IntPtg.class, (ptgs[4]), "Single Value is not an IntPtg");
         IntPtg intPtg = (IntPtg)ptgs[4];
         assertEquals((short)10, intPtg.getValue(), "Result");
 
-        assertTrue((ptgs[6] instanceof FuncVarPtg), "Ptg is not a Variable Function");
+        assertInstanceOf(FuncVarPtg.class, (ptgs[6]), "Ptg is not a Variable Function");
         FuncVarPtg funcPtg = (FuncVarPtg)ptgs[6];
         assertEquals(2, funcPtg.getNumberOfOperands(), "Arguments");
     }
