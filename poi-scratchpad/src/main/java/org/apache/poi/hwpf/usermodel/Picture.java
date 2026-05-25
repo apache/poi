@@ -36,11 +36,13 @@ import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.PICF;
 import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.sl.image.ImageHeaderPNG;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 
@@ -145,7 +147,12 @@ public final class Picture {
                  InflaterInputStream in = new InflaterInputStream(bis);
                  UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
 
-                IOUtils.copy(in, out);
+                int maxSize = HWPFDocument.getMaxRecordLength();
+                long copied = IOUtils.copy(in, out, (long) maxSize + 1);
+                if (copied > maxSize) {
+                    throw new RecordFormatException(
+                            "Inflated picture data exceeds maximum allowed size (" + maxSize + ")");
+                }
                 content = out.toByteArray();
             } catch (IOException e) {
                 /*

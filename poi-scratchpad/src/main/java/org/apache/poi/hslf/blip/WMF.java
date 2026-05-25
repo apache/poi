@@ -31,6 +31,7 @@ import org.apache.poi.hslf.record.RecordAtom;
 import org.apache.poi.sl.image.ImageHeaderWMF;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Units;
 
 /**
@@ -67,7 +68,12 @@ public final class WMF extends Metafile {
             aldus.write(out);
 
             try (InflaterInputStream inflater = new InflaterInputStream( is )) {
-                IOUtils.copy(inflater, out);
+                int maxLength = RecordAtom.getMaxRecordLength();
+                long copied = IOUtils.copy(inflater, out, (long) maxLength + 1);
+                if (copied > maxLength) {
+                    throw new RecordFormatException(
+                            "Inflated WMF data exceeds maximum allowed size (" + maxLength + ")");
+                }
             }
             return out.toByteArray();
         } catch (IOException e){

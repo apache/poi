@@ -31,6 +31,7 @@ import org.apache.poi.hslf.record.RecordAtom;
 import org.apache.poi.sl.image.ImageHeaderEMF;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Units;
 
 /**
@@ -64,7 +65,12 @@ public final class EMF extends Metafile {
             long len = IOUtils.skipFully(is,header.getSize() + (long)CHECKSUM_SIZE);
             assert(len == header.getSize() + CHECKSUM_SIZE);
 
-            IOUtils.copy(inflater, out);
+            int maxLength = RecordAtom.getMaxRecordLength();
+            long copied = IOUtils.copy(inflater, out, (long) maxLength + 1);
+            if (copied > maxLength) {
+                throw new RecordFormatException(
+                        "Inflated EMF data exceeds maximum allowed size (" + maxLength + ")");
+            }
 
             return out.toByteArray();
         } catch (IOException e){

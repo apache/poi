@@ -37,6 +37,7 @@ import org.apache.poi.hslf.record.RecordAtom;
 import org.apache.poi.sl.image.ImageHeaderPICT;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Units;
 
 /**
@@ -83,14 +84,23 @@ public final class PICT extends Metafile {
             }
             byte[] chunk = new byte[4096];
             try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(header.getWmfSize()).get()) {
+                int maxLength = RecordAtom.getMaxRecordLength();
+                long totalInflated = 0;
                 try (InflaterInputStream inflater = new InflaterInputStream(bis)) {
                     int count;
                     while ((count = inflater.read(chunk)) >= 0) {
+                        totalInflated += count;
+                        if (totalInflated > maxLength) {
+                            throw new RecordFormatException(
+                                    "Inflated PICT data exceeds maximum allowed size (" + maxLength + ")");
+                        }
                         out.write(chunk, 0, count);
                         // PICT zip-stream can be erroneous, so we clear the array to determine
                         // the maximum of read bytes, after the inflater crashed
                         Arrays.fill(chunk, (byte) 0);
                     }
+                } catch (RecordFormatException e) {
+                    throw e;
                 } catch (Exception e) {
                     int lastLen = chunk.length - 1;
                     while (lastLen >= 0 && chunk[lastLen] == 0) {
