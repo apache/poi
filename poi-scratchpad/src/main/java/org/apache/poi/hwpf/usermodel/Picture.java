@@ -94,6 +94,7 @@ public final class Picture {
 
     /**
      * @param length the max record length allowed for HWPF Picture
+     * @since 6.0.0
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
@@ -101,6 +102,7 @@ public final class Picture {
 
     /**
      * @return the max record length allowed for HWPF Picture
+     * @since 6.0.0
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;
