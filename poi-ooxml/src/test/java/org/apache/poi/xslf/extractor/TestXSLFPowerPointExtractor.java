@@ -17,7 +17,7 @@
 package org.apache.poi.xslf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -282,18 +283,18 @@ class TestXSLFPowerPointExtractor {
         //noinspection rawtypes
         try (SlideShowExtractor extr = (SlideShowExtractor)ExtractorFactory.createExtractor(footerFile)) {
             String text = extr.getText();
-            assertNotContained(text, "testdoc");
+            POITestCase.assertNotContains(text, "testdoc");
 
             extr.setSlidesByDefault(false);
             extr.setNotesByDefault(true);
             text = extr.getText();
-            assertNotContained(text, "testdoc");
+            POITestCase.assertNotContains(text, "testdoc");
 
             extr.setSlidesByDefault(false);
             extr.setNotesByDefault(false);
             extr.setMasterByDefault(true);
             text = extr.getText();
-            assertNotContained(text, "testdoc");
+            POITestCase.assertNotContains(text, "testdoc");
         }
     }
 

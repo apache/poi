@@ -63,7 +63,7 @@ final class TestPOITestCase {
 
     @Test
     void assertNotContained() {
-        POITestCase.assertNotContained("There is a needle in this haystack", "gold");
+        POITestCase.assertNotContains("There is a needle in this haystack", "gold");
     }
 
     @Test

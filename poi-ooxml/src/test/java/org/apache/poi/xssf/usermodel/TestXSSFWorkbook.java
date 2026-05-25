@@ -92,6 +92,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.zip.CRC32;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
 import static org.apache.poi.xssf.XSSFTestDataSamples.getSampleFile;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
@@ -1241,7 +1242,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             expectFormattedContent(A4, " עִבְרִית and اَلْعَرَبِيَّةُ");
 
             Comment a3Comment = sheet.getCellComment(new CellAddress("A3"));
-            assertTrue(a3Comment.getString().getString().contains("تعليق الاختبا"));
+            assertContains(a3Comment.getString().getString(), "تعليق الاختبا");
         }
     }
 

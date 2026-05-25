@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.excelant.util;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -63,7 +64,7 @@ class TestExcelAntWorkbookUtil {
     @Test
     void testLoadNotExistingFile() {
         BuildException e = assertThrows(BuildException.class, () -> new ExcelAntWorkbookUtilTestHelper("notexistingFile"));
-        assertTrue(e.getMessage().contains("notexistingFile"));
+        assertContains(e.getMessage(), "notexistingFile");
     }
 
     @Test
@@ -211,9 +212,9 @@ class TestExcelAntWorkbookUtil {
                                                                 precision);
 
         //System.out.println(result);
-        assertTrue( result.toString().contains("evaluationCompletedWithError=false"), "Had:" + result );
-        assertTrue( result.toString().contains("returnValue=790.79"), "Had:" + result );
-        assertTrue( result.toString().contains("cellName='MortgageCalculator'!B4"), "Had:" + result );
+        assertContains(result.toString(), "evaluationCompletedWithError=false");
+        assertContains(result.toString(), "returnValue=790.79");
+        assertContains(result.toString(), "cellName='MortgageCalculator'!B4");
         assertFalse(result.toString().contains("#N/A"));
 
         assertFalse(result.evaluationCompleteWithError());
@@ -234,9 +235,9 @@ class TestExcelAntWorkbookUtil {
                                                                 precision);
 
         //System.out.println(result);
-        assertTrue( result.toString().contains("evaluationCompletedWithError=false"), "Had:" + result );
-        assertTrue( result.toString().contains("returnValue=790.79"), "Had:" + result );
-        assertTrue( result.toString().contains("cellName='MortgageCalculator'!B4"), "Had:" + result );
+        assertContains(result.toString(), "evaluationCompletedWithError=false");
+        assertContains(result.toString(), "returnValue=790.79");
+        assertContains(result.toString(), "cellName='MortgageCalculator'!B4");
         assertFalse( result.toString().contains("#"), "Should not see an error, but had:" + result );
 
         assertFalse(result.evaluationCompleteWithError());
@@ -257,10 +258,10 @@ class TestExcelAntWorkbookUtil {
                                                                 precision);
 
         System.out.println(result);
-        assertTrue( result.toString().contains("evaluationCompletedWithError=true"), "Had:" + result );
-        assertTrue( result.toString().contains("returnValue=0.0"), "Had:" + result );
-        assertTrue( result.toString().contains("cellName='ErrorCell'!A1"), "Had:" + result );
-        assertTrue( result.toString().contains("#N/A"), "Had:" + result );
+        assertContains(result.toString(), "evaluationCompletedWithError=true");
+        assertContains(result.toString(), "returnValue=0.0");
+        assertContains(result.toString(), "cellName='ErrorCell'!A1");
+        assertContains(result.toString(), "#N/A");
 
         assertTrue(result.evaluationCompleteWithError());
         assertFalse(result.didTestPass());
@@ -299,7 +300,7 @@ class TestExcelAntWorkbookUtil {
 
         fixture = new ExcelAntWorkbookUtilTestHelper(mortgageCalculatorFileName);
         BuildException e = assertThrows(BuildException.class, () -> fixture.setStringValue(cell, "some"));
-        assertTrue(e.getMessage().contains("NotexistingSheet"));
+        assertContains(e.getMessage(), "NotexistingSheet");
     }
 
     @Test

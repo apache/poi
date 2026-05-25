@@ -17,11 +17,11 @@
 
 package org.apache.poi.util;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -92,7 +92,7 @@ final class TestLittleEndianStreams {
 
         // only one byte left, so this should fail
         RuntimeException ex = assertThrows(RuntimeException.class, () -> lei.readFully(new byte[4]));
-        assertTrue(ex.getMessage().contains("Buffer overrun"));
+        assertContains(ex.getMessage(), "Buffer overrun");
     }
 
     @Test
@@ -102,7 +102,7 @@ final class TestLittleEndianStreams {
 
         // only one byte left, so this should fail
         RuntimeException ex = assertThrows(RuntimeException.class, () -> lei.readFully(new byte[4]));
-        assertTrue(ex.getMessage().contains("Buffer overrun"));
+        assertContains(ex.getMessage(), "Buffer overrun");
     }
 
     @Test
@@ -112,6 +112,6 @@ final class TestLittleEndianStreams {
 
         // only one byte left, so this should fail
         RuntimeException ex = assertThrows(RuntimeException.class, () -> lei.readFully(new byte[4]));
-        assertTrue(ex.getMessage().contains("Buffer overrun"));
+        assertContains(ex.getMessage(), "Buffer overrun");
     }
 }

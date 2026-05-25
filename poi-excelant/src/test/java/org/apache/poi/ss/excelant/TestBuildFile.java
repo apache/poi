@@ -19,7 +19,7 @@
 package org.apache.poi.ss.excelant;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
@@ -99,7 +100,7 @@ public class TestBuildFile {
      * Assert that the given substring is not in the log messages.
      */
     void assertLogNotContaining(String substring) {
-        assertNotContained(getLog(), substring);
+        POITestCase.assertNotContains(getLog(), substring);
     }
 
     /**
