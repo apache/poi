@@ -27,8 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class TestXSSFFileChecks {
@@ -40,8 +40,7 @@ class TestXSSFFileChecks {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
             fail("expected IOException");
         } catch (IOException e) {
-            assertTrue(e.getMessage().contains("ZipSecureFile.setMaxFileCount()"),
-                    "unexpected exception message: " + e.getMessage());
+            assertContains(e.getMessage(), "ZipSecureFile.setMaxFileCount()");
         } finally {
             ZipSecureFile.setMaxFileCount(defaultLimit);
         }
@@ -56,8 +55,7 @@ class TestXSSFFileChecks {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(file);
             fail("expected InvalidFormatException");
         } catch (InvalidFormatException e) {
-            assertTrue(e.getMessage().contains("ZipSecureFile.setMaxFileCount()"),
-                    "unexpected exception message: " + e.getMessage());
+            assertContains(e.getMessage(), "ZipSecureFile.setMaxFileCount()");
         } finally {
             ZipSecureFile.setMaxFileCount(defaultLimit);
         }
@@ -89,8 +87,7 @@ class TestXSSFFileChecks {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
             fail("expected IOException");
         } catch (IOException e) {
-            assertTrue(e.getMessage().contains("ZipSecureFile.setMinInflateRatio()"),
-                    "unexpected exception message: " + e.getMessage());
+            assertContains(e.getMessage(), "ZipSecureFile.setMinInflateRatio()");
         } finally {
             ZipSecureFile.setMinInflateRatio(defaultInflateRatio);
             ZipSecureFile.setGraceEntrySize(defaultGraceSize);

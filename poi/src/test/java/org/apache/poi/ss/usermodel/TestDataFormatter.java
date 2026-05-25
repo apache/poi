@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -760,7 +761,7 @@ class TestDataFormatter {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () ->
             formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\" m\"\"m\"\"\"\"", false),
             "Catches exception because of invalid format, i.e. trailing quoting");
-        assertTrue(e.getMessage().contains("Cannot format given Object as a Number"));
+        assertContains(e.getMessage(), "Cannot format given Object as a Number");
     }
 
     @Test

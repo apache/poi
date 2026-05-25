@@ -378,7 +378,7 @@ public class HemfFont extends HwmfFont {
             // A 32-bit unsigned integer that specifies the point size at which font
             //hinting is performed. If set to zero, font hinting is performed at the point size corresponding
             //to the Height field in the LogFont object in the LogFont field.
-            logPan.styleSize = (int)leis.readUInt();
+            logPan.styleSize = Math.toIntExact(leis.readUInt());
 
             int match = leis.readInt();
 

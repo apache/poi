@@ -18,8 +18,8 @@
 package org.apache.poi.hssf.eventusermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -121,7 +121,7 @@ final class TestEventWorkbookBuilder {
         //  all the ptgs give back the right things
         Ptg[] ptgs = fRecs.get(0).getParsedExpression();
         assertEquals(1, ptgs.length);
-        assertTrue(ptgs[0] instanceof Ref3DPtg);
+        assertInstanceOf(Ref3DPtg.class, ptgs[0]);
 
         Ref3DPtg ptg = (Ref3DPtg)ptgs[0];
         HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(stubHSSF);

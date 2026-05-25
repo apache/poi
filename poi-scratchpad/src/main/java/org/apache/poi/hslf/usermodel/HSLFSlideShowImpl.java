@@ -68,6 +68,7 @@ import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.UserEditAtom;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
@@ -111,6 +112,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     // Embedded objects stored in storage records in the document stream, lazily populated.
     private HSLFObjectData[] _objects;
 
+    // The password to use when writing out the slideshow (null = use Biff8EncryptionKey or no encryption)
+    private char[] _outputPassword;
+
     /**
      * @param length the max record length allowed for HSLFSlideShowImpl
      */
@@ -126,15 +130,44 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     }
 
     /**
+     * Set the password to be used to password protect the slideshow when writing out.
+     * If {@code null} is passed any password previously set via this method is cleared;
+     * in that case the thread-level password from {@link Biff8EncryptionKey#getCurrentUserPassword()}
+     * is used (if set), otherwise the output will be unencrypted.
+     * <p>
+     * The password supplied to the constructor for reading an encrypted file is
+     * <em>not</em> automatically used as the output password.
+     * </p>
+     *
+     * @param password as a char array, or {@code null} to clear
+     * @since 6.0.0
+     */
+    public void setOutputPassword(final char[] password) {
+        this._outputPassword = password == null ? null : password.clone();
+    }
+
+    /**
      * Constructs a Powerpoint document from fileName. Parses the document
      * and places all the important stuff into data structures.
      *
      * @param fileName The name of the file to read.
      * @throws IOException if there is a problem while parsing the document.
      */
-    @SuppressWarnings("resource")
     public HSLFSlideShowImpl(String fileName) throws IOException {
         this(new POIFSFileSystem(new File(fileName)));
+    }
+
+    /**
+     * Constructs a Powerpoint document from fileName. Parses the document
+     * and places all the important stuff into data structures.
+     *
+     * @param fileName The name of the file to read.
+     * @param password in char array format (can be null)
+     * @throws IOException if there is a problem while parsing the document.
+     * @since 6.0.0
+     */
+    public HSLFSlideShowImpl(String fileName, char[] password) throws IOException {
+        this(new POIFSFileSystem(new File(fileName)), password);
     }
 
     /**
@@ -144,10 +177,23 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @param inputStream the source of the data
      * @throws IOException if there is a problem while parsing the document.
      */
-    @SuppressWarnings("resource")
     public HSLFSlideShowImpl(InputStream inputStream) throws IOException {
         //do Ole stuff
         this(new POIFSFileSystem(inputStream));
+    }
+
+    /**
+     * Constructs a Powerpoint document from an input stream. Parses the
+     * document and places all the important stuff into data structures.
+     *
+     * @param inputStream the source of the data
+     * @param password in char array format (can be null)
+     * @throws IOException if there is a problem while parsing the document.
+     * @since 6.0.0
+     */
+    public HSLFSlideShowImpl(InputStream inputStream, char[] password) throws IOException {
+        //do Ole stuff
+        this(new POIFSFileSystem(inputStream), password);
     }
 
     /**
@@ -162,6 +208,19 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     }
 
     /**
+     * Constructs a Powerpoint document from a POIFS Filesystem. Parses the
+     * document and places all the important stuff into data structures.
+     *
+     * @param filesystem the POIFS FileSystem to read from
+     * @param password in char array format (can be null)
+     * @throws IOException if there is a problem while parsing the document.
+     * @since 6.0.0
+     */
+    public HSLFSlideShowImpl(POIFSFileSystem filesystem, char[] password) throws IOException {
+        this(filesystem.getRoot(), password);
+    }
+
+    /**
      * Constructs a Powerpoint document from a specific point in a
      * POIFS Filesystem. Parses the document and places all the
      * important stuff into data structures.
@@ -170,6 +229,20 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @throws IOException if there is a problem while parsing the document.
      */
     public HSLFSlideShowImpl(DirectoryNode dir) throws IOException {
+        this(dir, null);
+    }
+
+    /**
+     * Constructs a Powerpoint document from a specific point in a
+     * POIFS Filesystem. Parses the document and places all the
+     * important stuff into data structures.
+     *
+     * @param dir the POIFS directory to read from
+     * @param password in char array format (can be null)
+     * @throws IOException if there is a problem while parsing the document.
+     * @since 6.0.0
+     */
+    public HSLFSlideShowImpl(DirectoryNode dir, char[] password) throws IOException {
         super(handleDualStorage(dir));
 
         try {
@@ -182,7 +255,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             readPowerPointStream();
 
             // Now, build records based on the PowerPoint stream
-            buildRecords();
+            buildRecords(password);
 
             // Look for any other streams
             readOtherStreams();
@@ -248,7 +321,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * Builds the list of records, based on the contents
      * of the PowerPoint stream
      */
-    private void buildRecords() throws IOException {
+    private void buildRecords(char[] password) throws IOException {
         // The format of records in a powerpoint file are:
         //   <little endian 2 byte "info">
         //   <little endian 2 byte "type">
@@ -282,16 +355,16 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         //  its length to know where the next record will start)
         //
 
-        _records = read(_docstream, (int) currentUser.getCurrentEditOffset());
+        _records = read(_docstream, (int) currentUser.getCurrentEditOffset(), password);
     }
 
-    private Record[] read(byte[] docstream, int usrOffset) throws IOException {
+    private Record[] read(byte[] docstream, int usrOffset, char[] password) throws IOException {
         //sort found records by offset.
         //(it is not necessary but SlideShow.findMostRecentCoreRecords() expects them sorted)
         NavigableMap<Integer, Record> records = new TreeMap<>(); // offset -> record
         Map<Integer, Integer> persistIds = new HashMap<>(); // offset -> persistId
         initRecordOffsets(docstream, usrOffset, records, persistIds);
-        HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(docstream, records);
+        HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(docstream, records, password);
 
         for (Map.Entry<Integer, Record> entry : records.entrySet()) {
             Integer offset = entry.getKey();
@@ -816,7 +889,11 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         // set new encryption settings
         try (HSLFSlideShowEncrypted encryptedSS = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom())) {
-            _records = encryptedSS.updateEncryptionRecord(_records);
+            if (_outputPassword != null) {
+                _records = encryptedSS.updateEncryptionRecord(_records, _outputPassword);
+            } else {
+                _records = encryptedSS.updateEncryptionRecord(_records);
+            }
 
             // Write out the Property Streams
             writeProperties(outFS, writtenEntries);
@@ -999,7 +1076,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         Document documentRecord = null;
         for (Record record : _records) {
             if (record == null) {
-                throw new CorruptPowerPointFileException("Did not have a valid record: " + record);
+                throw new CorruptPowerPointFileException("Did not have a valid record: null");
             }
             if (record.getRecordType() == RecordTypes.Document.typeID) {
                 if (!(record instanceof Document)) {

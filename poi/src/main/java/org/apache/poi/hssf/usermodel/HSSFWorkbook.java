@@ -205,6 +205,12 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      */
     private final UDFFinder _udfFinder = new IndexedUDFFinder(AggregatingUDFFinder.DEFAULT);
 
+    /**
+     * The password used to decrypt this workbook when writing out.
+     * @since 6.0.0
+     */
+    private char[] outputPasswordChars;
+
     public static HSSFWorkbook create(InternalWorkbook book) {
         return new HSSFWorkbook(book);
     }
@@ -287,6 +293,27 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         this(fs.getRoot(), fs, preserveNodes);
     }
 
+    /**
+     * Given a POI POIFSFileSystem object, read in its Workbook and populate
+     * the high and low level models.  If you're reading in a workbook... start here!
+     *
+     * @param fs            the POI filesystem that contains the Workbook stream.
+     * @param preserveNodes whether to preserve other nodes, such as
+     *                      macros.  This takes more memory, so only say yes if you
+     *                      need to. If set, will store all of the POIFSFileSystem
+     *                      in memory
+     * @param password      in char array format (can be null)
+     * @throws IOException if the stream cannot be read
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @since 6.0.0
+     * @see POIFSFileSystem
+     */
+    public HSSFWorkbook(POIFSFileSystem fs, boolean preserveNodes, char[] password)
+            throws IOException {
+        this(fs.getRoot(), preserveNodes, password);
+    }
+
     public static String getWorkbookDirEntryName(DirectoryNode directory) {
         if (directory.hasEntryCaseInsensitive(WORKBOOK)) {
             return WORKBOOK;
@@ -325,7 +352,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * low level models.  If you're reading in a workbook...start here.
      *
      * @param directory     the POI filesystem directory to process from
-     * @param fs            the POI filesystem that contains the Workbook stream.
+     * @param fs            the POI filesystem that contains the Workbook stream (ignored).
      * @param preserveNodes whether to preserve other nodes, such as
      *                      macros.  This takes more memory, so only say yes if you
      *                      need to. If set, will store all of the POIFSFileSystem
@@ -333,8 +360,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * @throws IOException if the stream cannot be read
      * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
+     * @deprecated use the constructor that omits the ignored <code>fs</code> param instead
      * @see POIFSFileSystem
      */
+    @Removal(version = "7.0.0")
     public HSSFWorkbook(DirectoryNode directory, POIFSFileSystem fs, boolean preserveNodes)
             throws IOException {
         this(directory, preserveNodes);
@@ -357,6 +386,28 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      */
     public HSSFWorkbook(DirectoryNode directory, boolean preserveNodes)
             throws IOException {
+        this(directory, preserveNodes, null);
+    }
+
+    /**
+     * given a POI POIFSFileSystem object, and a specific directory
+     * within it, read in its Workbook and populate the high and
+     * low level models.  If you're reading in a workbook...start here.
+     *
+     * @param directory     the POI filesystem directory to process from
+     * @param preserveNodes whether to preserve other nodes, such as
+     *                      macros.  This takes more memory, so only say yes if you
+     *                      need to. If set, will store all of the POIFSFileSystem
+     *                      in memory
+     * @param password      in char array format (can be null)
+     * @throws IOException if the stream cannot be read
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @see POIFSFileSystem
+     * @since 6.0.0
+     */
+    public HSSFWorkbook(DirectoryNode directory, boolean preserveNodes, char[] password)
+            throws IOException {
         super(directory);
         String workbookName = getWorkbookDirEntryName(directory);
 
@@ -375,7 +426,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         //  it happens to be spelled.
         InputStream stream = directory.createDocumentInputStream(workbookName);
 
-        List<org.apache.poi.hssf.record.Record> records = RecordFactory.createRecords(stream);
+        List<org.apache.poi.hssf.record.Record> records = RecordFactory.createRecords(stream, password);
 
         workbook = InternalWorkbook.createWorkbook(records);
         setPropertiesFromWorkbook(workbook);
@@ -420,6 +471,24 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
     /**
      * Companion to HSSFWorkbook(POIFSFileSystem), this constructs the
+     * POI filesystem around your {@link InputStream}, including all nodes.
+     * <p>This calls {@link #HSSFWorkbook(InputStream, boolean)} with
+     * preserve nodes set to true.
+     *
+     * @throws IOException if the stream cannot be read
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @see #HSSFWorkbook(InputStream, boolean)
+     * @see #HSSFWorkbook(POIFSFileSystem)
+     * @see POIFSFileSystem
+     * @since 6.0.0
+     */
+    public HSSFWorkbook(InputStream s, char[] password) throws IOException {
+        this(s, true, password);
+    }
+
+    /**
+     * Companion to HSSFWorkbook(POIFSFileSystem), this constructs the
      * POI filesystem around your {@link InputStream}.
      *
      * @param s             the POI filesystem that contains the Workbook stream.
@@ -439,9 +508,30 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
+     * Companion to HSSFWorkbook(POIFSFileSystem), this constructs the
+     * POI filesystem around your {@link InputStream}.
+     *
+     * @param s             the POI filesystem that contains the Workbook stream.
+     * @param preserveNodes whether to preserve other nodes, such as
+     *                      macros.  This takes more memory, so only say yes if you
+     *                      need to.
+     * @param password      in char array format (can be null)
+     * @throws IOException if the stream cannot be read
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @see POIFSFileSystem
+     * @see #HSSFWorkbook(POIFSFileSystem)
+     * @since 6.0.0
+     */
+    @SuppressWarnings("resource")   // POIFSFileSystem always closes the stream
+    public HSSFWorkbook(InputStream s, boolean preserveNodes, char[] password)
+            throws IOException {
+        this(new POIFSFileSystem(s).getRoot(), preserveNodes, password);
+    }
+
+    /**
      * used internally to set the workbook properties.
      */
-
     private void setPropertiesFromWorkbook(InternalWorkbook book) {
         this.workbook = book;
 
@@ -1480,6 +1570,15 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         }
     }
 
+    /**
+     * Set the password to be used to password protect the spreadsheet when we output the data.
+     * @param password as a char array (null is supported and means use @{link Biff8EncryptionKey}
+     *                 and no password if none set there)
+     * @since 6.0.0
+     */
+    public void setOutputPassword(final char[] password) {
+        this.outputPasswordChars = password == null ? null : password.clone();
+    }
 
     /**
      * Method getBytes - get the bytes of just the HSSF portions of the XLS file.
@@ -1494,7 +1593,14 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         HSSFSheet[] sheets = getSheets();
         int nSheets = sheets.length;
 
-        updateEncryptionInfo();
+        String pwdString;
+        if (outputPasswordChars != null) {
+            pwdString = new String(outputPasswordChars);
+        } else {
+            // from POI 6.0.0, using Biff8EncryptionKey is discouraged
+            pwdString = Biff8EncryptionKey.getCurrentUserPassword();
+        }
+        updateEncryptionInfo(pwdString);
 
         // before getting the workbook size we must tell the sheets that
         // serialization is about to occur.
@@ -2327,12 +2433,11 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
 
-    private void updateEncryptionInfo() {
+    private void updateEncryptionInfo(String password) {
         // make sure, that we've read all the streams ...
         readProperties();
         FilePassRecord fpr = (FilePassRecord) workbook.findFirstRecordBySid(FilePassRecord.sid);
 
-        String password = Biff8EncryptionKey.getCurrentUserPassword();
         WorkbookRecordList wrl = workbook.getWorkbookRecordList();
         if (password == null) {
             if (fpr != null) {

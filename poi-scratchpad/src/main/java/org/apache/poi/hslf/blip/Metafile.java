@@ -226,4 +226,19 @@ public abstract class Metafile extends HSLFPictureData {
             (int)Math.round(Units.toPoints((long)header.size.getHeight()))
         );
     }
+
+    /**
+     * Calculates the size in bytes of the raw data array produced by {@code formatImageForSlideshow}
+     * implementations in EMF, WMF and PICT.
+     * Exposed for testing overflow safety.
+     *
+     * @param uidInstanceCount  UID instance count (1 or 2)
+     * @param checksumLength    length of the MD5 checksum array
+     * @param headerSize        size of the {@link Header} block in bytes
+     * @param compressedLength  length of the deflate-compressed image data
+     * @return required buffer size as a {@code long} to avoid integer overflow
+     */
+    static long calcRawDataSize(int uidInstanceCount, int checksumLength, int headerSize, int compressedLength) {
+        return (long) checksumLength * uidInstanceCount + headerSize + compressedLength;
+    }
 }

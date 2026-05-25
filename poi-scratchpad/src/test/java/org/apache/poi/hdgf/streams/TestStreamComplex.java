@@ -19,6 +19,7 @@ package org.apache.poi.hdgf.streams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -72,7 +73,7 @@ public final class TestStreamComplex extends StreamTest {
         assertEquals(trailerDataAt, trailerPtr.getOffset());
 
         Stream stream = Stream.createStream(trailerPtr, contents, chunkFactory, ptrFactory);
-        assertTrue(stream instanceof TrailerStream);
+        assertInstanceOf(TrailerStream.class, stream);
         TrailerStream ts = (TrailerStream)stream;
 
         assertNotNull(ts.getChildPointers());
@@ -99,7 +100,7 @@ public final class TestStreamComplex extends StreamTest {
 
         Stream stream = Stream.createStream(chunkPtr, contents, chunkFactory, ptrFactory);
         assertNotNull(stream);
-        assertTrue(stream instanceof ChunkStream);
+        assertInstanceOf(ChunkStream.class, stream);
 
         // Now find the chunks within it
         ChunkStream cs = (ChunkStream)stream;
@@ -120,7 +121,7 @@ public final class TestStreamComplex extends StreamTest {
 
         Stream stream = Stream.createStream(stringPtr, contents, chunkFactory, ptrFactory);
         assertNotNull(stream);
-        assertTrue(stream instanceof StringsStream);
+        assertInstanceOf(StringsStream.class, stream);
     }
 
     @Test
@@ -164,8 +165,8 @@ public final class TestStreamComplex extends StreamTest {
         // Should have two, both strings
         assertNotNull(s4312.getPointedToStreams());
         assertEquals(2, s4312.getPointedToStreams().length);
-        assertTrue(s4312.getPointedToStreams()[0] instanceof StringsStream);
-        assertTrue(s4312.getPointedToStreams()[1] instanceof StringsStream);
+        assertInstanceOf(StringsStream.class, s4312.getPointedToStreams()[0]);
+        assertInstanceOf(StringsStream.class, s4312.getPointedToStreams()[1]);
     }
 
     @Test
@@ -188,36 +189,36 @@ public final class TestStreamComplex extends StreamTest {
         // Step down:
         // 8 -> 4 -> 5 -> 1 -> 0 == String
         assertNotNull(ts.getPointedToStreams()[8]);
-        assertTrue(ts.getPointedToStreams()[8] instanceof PointerContainingStream);
+        assertInstanceOf(PointerContainingStream.class, ts.getPointedToStreams()[8]);
 
         PointerContainingStream s8 =
             (PointerContainingStream)ts.getPointedToStreams()[8];
         assertNotNull(s8.getPointedToStreams());
 
         assertNotNull(s8.getPointedToStreams()[4]);
-        assertTrue(s8.getPointedToStreams()[4] instanceof PointerContainingStream);
+        assertInstanceOf(PointerContainingStream.class, s8.getPointedToStreams()[4]);
 
         PointerContainingStream s84 =
             (PointerContainingStream)s8.getPointedToStreams()[4];
         assertNotNull(s84.getPointedToStreams());
 
         assertNotNull(s84.getPointedToStreams()[5]);
-        assertTrue(s84.getPointedToStreams()[5] instanceof PointerContainingStream);
+        assertInstanceOf(PointerContainingStream.class, s84.getPointedToStreams()[5]);
 
         PointerContainingStream s845 =
             (PointerContainingStream)s84.getPointedToStreams()[5];
         assertNotNull(s845.getPointedToStreams());
 
         assertNotNull(s845.getPointedToStreams()[1]);
-        assertTrue(s845.getPointedToStreams()[1] instanceof PointerContainingStream);
+        assertInstanceOf(PointerContainingStream.class, s845.getPointedToStreams()[1]);
 
         PointerContainingStream s8451 =
             (PointerContainingStream)s845.getPointedToStreams()[1];
         assertNotNull(s8451.getPointedToStreams());
 
         assertNotNull(s8451.getPointedToStreams()[0]);
-        assertTrue(s8451.getPointedToStreams()[0] instanceof StringsStream);
-        assertTrue(s8451.getPointedToStreams()[1] instanceof StringsStream);
+        assertInstanceOf(StringsStream.class, s8451.getPointedToStreams()[0]);
+        assertInstanceOf(StringsStream.class, s8451.getPointedToStreams()[1]);
     }
 
     @Test

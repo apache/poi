@@ -19,8 +19,8 @@ package org.apache.poi.hmef;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -55,7 +55,7 @@ public final class TestCompressedRTF {
 
         MAPIAttribute rtfAttr = msg.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
         assertNotNull(rtfAttr);
-        assertTrue(rtfAttr instanceof MAPIRtfAttribute);
+        assertInstanceOf(MAPIRtfAttribute.class, rtfAttr);
 
         // Check the start of the compressed version
         byte[] data = ((MAPIRtfAttribute) rtfAttr).getRawData();

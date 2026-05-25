@@ -80,7 +80,7 @@ public class PlfLfo {
 
         IOUtils.safelyAllocateCheck(lfoMacLong, MAX_NUMBER_OF_LFO);
 
-        this._lfoMac = (int) lfoMacLong;
+        this._lfoMac = Math.toIntExact(lfoMacLong);
         _rgLfo = new LFO[_lfoMac];
         _rgLfoData = new LFOData[_lfoMac];
 

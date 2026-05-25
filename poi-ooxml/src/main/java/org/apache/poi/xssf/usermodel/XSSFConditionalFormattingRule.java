@@ -114,7 +114,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         StylesTable styles = _sh.getWorkbook().getStylesSource();
         CTDxf dxf = null;
         if(styles._getDXfsSize() > 0 && _cfRule.isSetDxfId()){
-            int dxfId = (int)_cfRule.getDxfId();
+            int dxfId = Math.toIntExact(_cfRule.getDxfId());
             dxf = styles.getDxfAt(dxfId);
         }
         if(create && dxf == null) {
@@ -349,7 +349,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         if(dxf == null || !dxf.isSetNumFmt()) return null;
 
         CTNumFmt numFmt = dxf.getNumFmt();
-        return new ExcelNumberFormat((int) numFmt.getNumFmtId(), numFmt.getFormatCode());
+        return new ExcelNumberFormat(Math.toIntExact(numFmt.getNumFmtId()), numFmt.getFormatCode());
     }
 
     /**

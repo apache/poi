@@ -18,7 +18,7 @@
 package org.apache.poi.xssf.eventusermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
@@ -38,6 +38,7 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
@@ -47,7 +48,6 @@ import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.junit.jupiter.api.Disabled;
@@ -75,14 +75,14 @@ public final class TestXSSFReader {
 
             SharedStrings sst1 = r.getSharedStringsTable();
             assertNotNull(sst1);
-            assertTrue(sst1 instanceof SharedStringsTable, "instanceof SharedStringsTable");
+            assertInstanceOf(SharedStringsTable.class, sst1, "instanceof SharedStringsTable");
 
             assertFalse(r.useReadOnlySharedStringsTable(), "useReadOnlySharedStringsTable defaults to false");
             r.setUseReadOnlySharedStringsTable(true);
             assertTrue(r.useReadOnlySharedStringsTable(), "useReadOnlySharedStringsTable changed to true");
             SharedStrings sst2 = r.getSharedStringsTable();
             assertNotNull(sst2);
-            assertTrue(sst2 instanceof ReadOnlySharedStringsTable, "instanceof ReadOnlySharedStringsTable");
+            assertInstanceOf(ReadOnlySharedStringsTable.class, sst2, "instanceof ReadOnlySharedStringsTable");
         }
     }
 
@@ -322,7 +322,7 @@ public final class TestXSSFReader {
             while (iter.hasNext()) {
                 InputStream stream = iter.next();
                 String sheetName = iter.getSheetName();
-                assertNotContained(seen, sheetName);
+                assertNotContains(seen, sheetName);
                 seen.add(sheetName);
                 stream.close();
             }
@@ -392,7 +392,7 @@ public final class TestXSSFReader {
                 @Override public void startRow(int rowNum) {}
                 @Override public void endRow(int rowNum) {}
                 @Override public void cell(String cellReference,
-                                           String formattedValue, XSSFComment comment) {
+                                           String formattedValue, Comment comment) {
                     if (cellReference.equals("A1")) {
                         assertEquals("1.2", formattedValue);
                     } else if (cellReference.equals("B1")) {

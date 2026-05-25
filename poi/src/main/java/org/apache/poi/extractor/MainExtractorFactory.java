@@ -31,6 +31,7 @@ import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.ExceptionUtil;
 
 /**
  * ExtractorFactory for HSSF and Old Excel format
@@ -44,34 +45,62 @@ public class MainExtractorFactory implements ExtractorProvider {
     @SuppressWarnings({"java:S2095"})
     @Override
     public POITextExtractor create(File file, String password) throws IOException {
-        return create(new POIFSFileSystem(file, true).getRoot(), password);
+        POIFSFileSystem fs = new POIFSFileSystem(file, true);
+        POITextExtractor extractor = null;
+        try {
+            extractor = create(fs.getRoot(), password);
+        } catch (Throwable t) {
+            if (!ExceptionUtil.isFatal(t)) {
+                fs.close();
+                throw t;
+            }
+        }
+        if (extractor == null) {
+            fs.close();
+        }
+        return extractor;
     }
 
     @Override
     public POITextExtractor create(InputStream inputStream, String password) throws IOException {
-        return create(new POIFSFileSystem(inputStream).getRoot(), password);
+        POIFSFileSystem fs = new POIFSFileSystem(inputStream);
+        POITextExtractor extractor = null;
+        try {
+            extractor = create(fs.getRoot(), password);
+        } catch (Throwable t) {
+            if (!ExceptionUtil.isFatal(t)) {
+                fs.close();
+                throw t;
+            }
+        }
+        if (extractor == null) {
+            fs.close();
+        }
+        return extractor;
     }
 
     @SuppressWarnings("java:S2093")
     @Override
     public POITextExtractor create(DirectoryNode poifsDir, String password) throws IOException {
         final String oldPW = Biff8EncryptionKey.getCurrentUserPassword();
-        try {
+
+        if (poifsDir.hasEntry(InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME)) {
             Biff8EncryptionKey.setCurrentUserPassword(password);
-
-            if (poifsDir.hasEntry(InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME)) {
+            try {
                 return new OldExcelExtractor(poifsDir);
+            } finally {
+                Biff8EncryptionKey.setCurrentUserPassword(oldPW);
             }
+        }
 
-            // Look for certain entries in the stream, to figure it out from
-            for (String workbookName : WORKBOOK_DIR_ENTRY_NAMES_CASE_INSENSITIVE) {
-                if (poifsDir.hasEntryCaseInsensitive(workbookName)) {
-                    return ExtractorFactory.getPreferEventExtractor() ? new EventBasedExcelExtractor(poifsDir) : new ExcelExtractor(poifsDir);
-                }
+        // Look for certain entries in the stream, to figure it out from
+        for (String workbookName : WORKBOOK_DIR_ENTRY_NAMES_CASE_INSENSITIVE) {
+            if (poifsDir.hasEntryCaseInsensitive(workbookName)) {
+                final char[] passArray = password == null ? null : password.toCharArray();
+                return ExtractorFactory.getPreferEventExtractor() ?
+                        new EventBasedExcelExtractor(poifsDir, passArray) :
+                        new ExcelExtractor(poifsDir, passArray);
             }
-
-        } finally {
-            Biff8EncryptionKey.setCurrentUserPassword(oldPW);
         }
 
         return null;

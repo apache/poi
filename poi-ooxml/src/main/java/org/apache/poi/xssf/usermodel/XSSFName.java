@@ -240,7 +240,7 @@ public final class XSSFName implements Name {
      */
     @Override
     public int getSheetIndex() {
-        return _ctName.isSetLocalSheetId() ? (int) _ctName.getLocalSheetId() : -1;
+        return _ctName.isSetLocalSheetId() ? Math.toIntExact(_ctName.getLocalSheetId()) : -1;
     }
 
     /**
@@ -283,7 +283,7 @@ public final class XSSFName implements Name {
      * @return the function group index that defines the general category for the function
      */
     public int getFunctionGroupId() {
-        return (int) _ctName.getFunctionGroupId();
+        return Math.toIntExact(_ctName.getFunctionGroupId());
     }
 
     /**
@@ -296,7 +296,7 @@ public final class XSSFName implements Name {
     public String getSheetName() {
         if (_ctName.isSetLocalSheetId()) {
             // Given as explicit sheet id
-            int sheetId = (int)_ctName.getLocalSheetId();
+            int sheetId = Math.toIntExact(_ctName.getLocalSheetId());
             return _workbook.getSheetName(sheetId);
         }
         String ref = getRefersToFormula();

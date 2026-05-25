@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.usermodel.XSSFVMLDrawing.QNAME_VMLDRAWING;
@@ -221,7 +222,7 @@ class TestXSSFVMLDrawing {
             assertNotNull(workbook);
         } catch (POIXMLException e) {
             // XML parser of IBM JDK is a bit more picky on XML in this file, so we expect it to fail there with this error
-            assertTrue(e.getMessage().contains("Attribute name \"sheetId\" associated with an element type \"sheet\" must be followed by the ' = ' character."));
+            assertContains(e.getMessage(), "Attribute name \"sheetId\" associated with an element type \"sheet\" must be followed by the ' = ' character.");
         }
     }
 }

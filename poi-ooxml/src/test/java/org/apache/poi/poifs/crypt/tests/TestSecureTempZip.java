@@ -17,10 +17,14 @@
 
 package org.apache.poi.poifs.crypt.tests;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,9 +33,12 @@ import java.security.GeneralSecurityException;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.temp.AesZipFileZipEntrySource;
@@ -124,6 +131,40 @@ class TestSecureTempZip {
         opc.close();
         poifs.close();
         fis.close();
+    }
+
+    @Test
+    void rejectsZipBombInput() throws IOException {
+        byte[] zipBytes = buildHighlyCompressedZip("xl/workbook.xml", 256 * 1024);
+
+        double defaultRatio = ZipSecureFile.getMinInflateRatio();
+        long defaultGrace = ZipSecureFile.getGraceEntrySize();
+        ZipSecureFile.setGraceEntrySize(0);
+        ZipSecureFile.setMinInflateRatio(0.50d);
+        try {
+            IOException exception = assertThrows(IOException.class, () -> {
+                try (InputStream is = new ByteArrayInputStream(zipBytes);
+                     AesZipFileZipEntrySource source = AesZipFileZipEntrySource.createZipEntrySource(is)) {
+                    // no-op
+                }
+            });
+            assertContains(exception.getMessage(), "ZipSecureFile.setMinInflateRatio()");
+        } finally {
+            ZipSecureFile.setMinInflateRatio(defaultRatio);
+            ZipSecureFile.setGraceEntrySize(defaultGrace);
+        }
+    }
+
+    private static byte[] buildHighlyCompressedZip(String entryName, int payloadSize) throws IOException {
+        byte[] payload = new byte[payloadSize];
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(bos)) {
+            ZipArchiveEntry entry = new ZipArchiveEntry(entryName);
+            zos.putArchiveEntry(entry);
+            zos.write(payload);
+            zos.closeArchiveEntry();
+        }
+        return bos.toByteArray();
     }
 
 }

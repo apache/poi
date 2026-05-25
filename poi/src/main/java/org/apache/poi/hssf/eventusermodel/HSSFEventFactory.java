@@ -47,7 +47,7 @@ public class HSSFEventFactory {
     /**
      * Processes a file into essentially record events.
      *
-     * @param req an Instance of HSSFRequest which has your registered listeners
+     * @param req an instance of HSSFRequest which has your registered listeners
      * @param fs  a POIFS filesystem containing your workbook
      * 
      * @throws IOException if the workbook contained errors 
@@ -56,15 +56,45 @@ public class HSSFEventFactory {
        processWorkbookEvents(req, fs.getRoot());
     }
 
+    /**
+     * Processes a file into essentially record events.
+     *
+     * @param req an instance of HSSFRequest which has your registered listeners
+     * @param fs  a POIFS filesystem containing your workbook
+     * @param password in char array format (can be null)
+     *
+     * @throws IOException if the workbook contained errors
+     * @since 6.0.0
+     */
+    public void processWorkbookEvents(HSSFRequest req, POIFSFileSystem fs,
+                                      final char[] password) throws IOException {
+        processWorkbookEvents(req, fs.getRoot(), password);
+    }
+
    /**
     * Processes a file into essentially record events.
     *
-    * @param req an Instance of HSSFRequest which has your registered listeners
+    * @param req an instance of HSSFRequest which has your registered listeners
     * @param dir  a DirectoryNode containing your workbook
     * 
     * @throws IOException if the workbook contained errors 
     */
     public void processWorkbookEvents(HSSFRequest req, DirectoryNode dir) throws IOException {
+        processWorkbookEvents(req, dir, null);
+    }
+
+    /**
+     * Processes a file into essentially record events.
+     *
+     * @param req an instance of HSSFRequest which has your registered listeners
+     * @param dir  a DirectoryNode containing your workbook
+     * @param password in char array format (can be null)
+     *
+     * @throws IOException if the workbook contained errors
+     * @since 6.0.0
+     */
+    public void processWorkbookEvents(HSSFRequest req, DirectoryNode dir,
+                                      final char[] password) throws IOException {
         // some old documents have "WORKBOOK" or "BOOK"
         String name = null;
         if (dir.hasEntry(WORKBOOK)) {
@@ -79,29 +109,45 @@ public class HSSFEventFactory {
         }
 
         try (InputStream in = dir.createDocumentInputStream(name)) {
-            processEvents(req, in);
+            processEvents(req, in, password);
         }
     }
-
-   /**
-    * Processes a file into essentially record events.
-    *
-    * @param req an Instance of HSSFRequest which has your registered listeners
-    * @param fs  a POIFS filesystem containing your workbook
-    * @return    numeric user-specified result code.
-    * 
-    * @throws HSSFUserException if the processing should be aborted
-    * @throws IOException if the workbook contained errors 
-    */
-   public short abortableProcessWorkbookEvents(HSSFRequest req, POIFSFileSystem fs)
-      throws IOException, HSSFUserException {
-      return abortableProcessWorkbookEvents(req, fs.getRoot());
-   }
 
     /**
      * Processes a file into essentially record events.
      *
-     * @param req an Instance of HSSFRequest which has your registered listeners
+     * @param req an instance of HSSFRequest which has your registered listeners
+     * @param fs  a POIFS filesystem containing your workbook
+     * @return numeric user-specified result code.
+     * @throws HSSFUserException if the processing should be aborted
+     * @throws IOException       if the workbook contained errors
+     */
+    public short abortableProcessWorkbookEvents(HSSFRequest req, POIFSFileSystem fs)
+            throws IOException, HSSFUserException {
+        return abortableProcessWorkbookEvents(req, fs.getRoot());
+    }
+
+    /**
+     * Processes a file into essentially record events.
+     *
+     * @param req an instance of HSSFRequest which has your registered listeners
+     * @param fs  a POIFS filesystem containing your workbook
+     * @param password in char array format (can be null)
+     * @return numeric user-specified result code.
+     * @throws HSSFUserException if the processing should be aborted
+     * @throws IOException       if the workbook contained errors
+     * @since 6.0.0
+     */
+    public short abortableProcessWorkbookEvents(HSSFRequest req, POIFSFileSystem fs,
+                                                final char[] password)
+            throws IOException, HSSFUserException {
+        return abortableProcessWorkbookEvents(req, fs.getRoot(), password);
+    }
+
+    /**
+     * Processes a file into essentially record events.
+     *
+     * @param req an instance of HSSFRequest which has your registered listeners
      * @param dir  a DirectoryNode containing your workbook
      * @return    numeric user-specified result code.
      * 
@@ -116,6 +162,26 @@ public class HSSFEventFactory {
     }
 
     /**
+     * Processes a file into essentially record events.
+     *
+     * @param req an instance of HSSFRequest which has your registered listeners
+     * @param dir  a DirectoryNode containing your workbook
+     * @param password in char array format (can be null)
+     * @return    numeric user-specified result code.
+     *
+     * @throws HSSFUserException if the processing should be aborted
+     * @throws IOException if the workbook contained errors
+     * @since 6.0.0
+     */
+    public short abortableProcessWorkbookEvents(HSSFRequest req, DirectoryNode dir,
+                                                final char[] password)
+            throws IOException, HSSFUserException {
+        try (InputStream in = dir.createDocumentInputStream("Workbook")) {
+            return abortableProcessEvents(req, in, password);
+        }
+    }
+
+    /**
      * Processes a DocumentInputStream into essentially Record events.
      *
      * If an <code>AbortableHSSFListener</code> causes a halt to processing during this call
@@ -123,23 +189,43 @@ public class HSSFEventFactory {
      * user code or <code>HSSFUserException</code> will be passed back.
      *
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
-     * @param req an Instance of HSSFRequest which has your registered listeners
+     * @param req an instance of HSSFRequest which has your registered listeners
      * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
      */
     public void processEvents(HSSFRequest req, InputStream in) {
         try {
-            genericProcessEvents(req, in);
+            genericProcessEvents(req, in, null);
         } catch (HSSFUserException hue) {
             /*If an HSSFUserException user exception is thrown, ignore it.*/
         }
     }
 
+    /**
+     * Processes a DocumentInputStream into essentially Record events.
+     *
+     * If an <code>AbortableHSSFListener</code> causes a halt to processing during this call
+     * the method will return just as with <code>abortableProcessEvents</code>, but no
+     * user code or <code>HSSFUserException</code> will be passed back.
+     *
+     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
+     * @param req an instance of HSSFRequest which has your registered listeners
+     * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
+     * @param password in char array format (can be null)
+     * @since 6.0.0
+     */
+    public void processEvents(HSSFRequest req, InputStream in, final char[] password) {
+        try {
+            genericProcessEvents(req, in, password);
+        } catch (HSSFUserException hue) {
+            /*If an HSSFUserException user exception is thrown, ignore it.*/
+        }
+    }
 
     /**
      * Processes a DocumentInputStream into essentially Record events.
      *
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
-     * @param req an Instance of HSSFRequest which has your registered listeners
+     * @param req an instance of HSSFRequest which has your registered listeners
      * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
      * @return    numeric user-specified result code.
      * 
@@ -147,23 +233,41 @@ public class HSSFEventFactory {
      */
     public short abortableProcessEvents(HSSFRequest req, InputStream in)
         throws HSSFUserException {
-        return genericProcessEvents(req, in);
+        return genericProcessEvents(req, in, null);
     }
 
     /**
      * Processes a DocumentInputStream into essentially Record events.
      *
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
-     * @param req an Instance of HSSFRequest which has your registered listeners
+     * @param req an instance of HSSFRequest which has your registered listeners
+     * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
+     * @param password in char array format (can be null)
+     * @return    numeric user-specified result code.
+     *
+     * @throws HSSFUserException if the processing should be aborted
+     * @since 6.0.0
+     */
+    public short abortableProcessEvents(HSSFRequest req, InputStream in, final char[] password)
+            throws HSSFUserException {
+        return genericProcessEvents(req, in, password);
+    }
+
+    /**
+     * Processes a DocumentInputStream into essentially Record events.
+     *
+     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
+     * @param req an instance of HSSFRequest which has your registered listeners
      * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
      * @return    numeric user-specified result code.
      */
-    private short genericProcessEvents(HSSFRequest req, InputStream in)
+    private short genericProcessEvents(HSSFRequest req, InputStream in, final char[] password)
         throws HSSFUserException {
         short userCode = 0;
 
         // Create a new RecordStream and use that
-        RecordFactoryInputStream recordStream = new RecordFactoryInputStream(in, false);
+        RecordFactoryInputStream recordStream = new RecordFactoryInputStream(
+                in, false, password);
 
         // Process each record as they come in
         while(true) {

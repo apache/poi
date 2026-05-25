@@ -46,6 +46,13 @@ final class TestExcelExtractor {
         return new ExcelExtractor(fs);
     }
 
+    private static ExcelExtractor createExtractor(String sampleFileName, String password) throws IOException {
+        File file = HSSFTestDataSamples.getSampleFile(sampleFileName);
+        POIFSFileSystem fs = new POIFSFileSystem(file);
+        final char[] passwordChars = password == null ? null : password.toCharArray();
+        return new ExcelExtractor(fs, passwordChars);
+    }
+
     @Test
     void testSimple() throws IOException {
         try (ExcelExtractor extractor = createExtractor("Simple.xls")) {
@@ -335,6 +342,14 @@ final class TestExcelExtractor {
 
     @Test
     void testPassword() throws IOException {
+        try (ExcelExtractor extractor = createExtractor("password.xls", "password")) {
+            String text = extractor.getText();
+            assertContains(text, "ZIP");
+        }
+    }
+
+    @Test
+    void testPasswordWithBiff8EncryptionKey() throws IOException {
         Biff8EncryptionKey.setCurrentUserPassword("password");
         try (ExcelExtractor extractor = createExtractor("password.xls")) {
             String text = extractor.getText();

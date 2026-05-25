@@ -74,7 +74,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 @Beta
 public abstract class XSLFSheet extends POIXMLDocumentPart
-implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
+        implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     private static final Logger LOG = PoiLogManager.getLogger(XSLFSheet.class);
 
     private XSLFDrawing _drawing;
@@ -83,7 +83,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     private XSLFTheme _theme;
 
     private List<XSLFTextShape>_placeholders;
-    private Map<Integer, XSLFSimpleShape> _placeholderByIdMap;
+    private Map<Long, XSLFSimpleShape> _placeholderByIdMap;
     private Map<Integer, XSLFSimpleShape> _placeholderByTypeMap;
 
     private final SparseBitSet shapeIds = new SparseBitSet();
@@ -340,8 +340,8 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     @Override
     public void addShape(XSLFShape shape) {
         throw new UnsupportedOperationException(
-            "Adding a shape from a different container is not supported -"
-            + " create it from scratch with the XSLFSheet.create* methods");
+                "Adding a shape from a different container is not supported -"
+                        + " create it from scratch with the XSLFSheet.create* methods");
     }
 
     /**
@@ -496,7 +496,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         return this;
     }
 
-   /**
+    /**
      * @return theme (shared styles) associated with this theme.
      *  By default returns {@code null} which means that this sheet is theme-less.
      *  Sheets that support the notion of themes (slides, masters, layouts, etc.) should override this
@@ -508,9 +508,9 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         }
 
         getRelations().stream()
-            .filter(p -> p instanceof XSLFTheme)
-            .findAny()
-            .ifPresent(p -> _theme = (XSLFTheme)p);
+                .filter(p -> p instanceof XSLFTheme)
+                .findAny()
+                .ifPresent(p -> _theme = (XSLFTheme)p);
 
         return _theme;
     }
@@ -535,7 +535,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     protected XSLFTextShape getTextShapeByType(Placeholder type){
         for(XSLFShape shape : this.getShapes()){
             if(shape instanceof XSLFTextShape) {
-               XSLFTextShape txt = (XSLFTextShape)shape;
+                XSLFTextShape txt = (XSLFTextShape)shape;
                 if(txt.getTextType() == type) {
                     return txt;
                 }
@@ -553,7 +553,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     public XSLFSimpleShape getPlaceholder(CTPlaceholder ph) {
         XSLFSimpleShape shape = null;
         if(ph.isSetIdx()) {
-            shape = getPlaceholderById((int)ph.getIdx());
+            shape = getPlaceholderById(ph.getIdx());
         }
 
         if (shape == null && ph.isSetType()) {
@@ -575,8 +575,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
                     if(ph != null) {
                         _placeholders.add(sShape);
                         if(ph.isSetIdx()) {
-                            int idx = (int)ph.getIdx();
-                            _placeholderByIdMap.put(idx, sShape);
+                            _placeholderByIdMap.put(ph.getIdx(), sShape);
                         }
                         if(ph.isSetType()){
                             _placeholderByTypeMap.put(ph.getType().intValue(), sShape);
@@ -587,7 +586,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         }
     }
 
-    private XSLFSimpleShape getPlaceholderById(int id) {
+    private XSLFSimpleShape getPlaceholderById(long id) {
         initPlaceholders();
         return _placeholderByIdMap.get(id);
     }
@@ -740,13 +739,13 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     }
 
     protected String mapSchemeColor(CTColorMappingOverride cmapOver, String schemeColor) {
-            String slideColor = mapSchemeColor((cmapOver == null) ? null : cmapOver.getOverrideClrMapping(), schemeColor);
-            if (slideColor != null) {
-                return slideColor;
-            }
-            XSLFSheet master = (XSLFSheet)getMasterSheet();
-            String masterColor = (master == null) ? null : master.mapSchemeColor(schemeColor);
-            return (masterColor == null) ? schemeColor : masterColor;
+        String slideColor = mapSchemeColor((cmapOver == null) ? null : cmapOver.getOverrideClrMapping(), schemeColor);
+        if (slideColor != null) {
+            return slideColor;
+        }
+        XSLFSheet master = (XSLFSheet)getMasterSheet();
+        String masterColor = (master == null) ? null : master.mapSchemeColor(schemeColor);
+        return (masterColor == null) ? schemeColor : masterColor;
     }
 
     protected String mapSchemeColor(CTColorMapping cmap, String schemeColor) {

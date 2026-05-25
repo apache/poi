@@ -249,7 +249,7 @@
         <p>The classes have been tested against the following libraries, which need to be included additionally to the
         <a href="site:components">default dependencies</a>:</p>
         <ul>
-            <li>BouncyCastle bcpkix, bcprov and bcutil (tested against 1.82)</li>
+            <li>BouncyCastle bcpkix, bcprov and bcutil (tested against 1.84)</li>
             <li>Apache Santuario "xmlsec" (tested against 3.0.5)</li>
             <li>and slf4j-api (tested against 2.0.x)</li>
         </ul>

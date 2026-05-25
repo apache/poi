@@ -67,7 +67,7 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public int getPointCount() {
-                    return (int) category.getPtCount().getVal();
+                    return Math.toIntExact(category.getPtCount().getVal());
                 }
 
                 @Override
@@ -98,7 +98,7 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public int getPointCount() {
-                    return (int) category.getPtCount().getVal();
+                    return Math.toIntExact(category.getPtCount().getVal());
                 }
 
                 @Override
@@ -141,7 +141,7 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public int getPointCount() {
-                    return (int) category.getPtCount().getVal();
+                    return Math.toIntExact(category.getPtCount().getVal());
                 }
 
                 @Override
@@ -178,7 +178,7 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public int getPointCount() {
-                    return (int) category.getPtCount().getVal();
+                    return Math.toIntExact(category.getPtCount().getVal());
                 }
 
                 @Override
@@ -230,7 +230,7 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public int getPointCount() {
-                    return (int) values.getPtCount().getVal();
+                    return Math.toIntExact(values.getPtCount().getVal());
                 }
 
                 @Override
@@ -285,7 +285,7 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public int getPointCount() {
-                    return (int) values.getPtCount().getVal();
+                    return Math.toIntExact(values.getPtCount().getVal());
                 }
 
                 @Override

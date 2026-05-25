@@ -19,9 +19,9 @@
 
 package org.apache.poi.ss.formula;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -120,7 +120,7 @@ class TestFunctionRegistry {
             IllegalArgumentException.class,
             () -> FunctionEval.registerFunction("SUMXXX", TestFunctionRegistry::na)
         );
-        assertTrue(ex.getMessage().contains("Unknown function: SUMXXX"));
+        assertContains(ex.getMessage(), "Unknown function: SUMXXX");
     }
 
     @Test

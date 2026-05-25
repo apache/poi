@@ -23,6 +23,7 @@ import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -59,8 +60,8 @@ import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.record.DocInfoListContainer;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.VBAInfoAtom;
 import org.apache.poi.hslf.record.VBAInfoContainer;
@@ -107,14 +108,14 @@ public final class TestBugs {
             HSLFFill f = as.getFill();
             assertEquals(HSLFFill.FILL_TEXTURE, f.getFillType());
             PaintStyle p = f.getFillStyle().getPaint();
-            assertTrue(p instanceof PaintStyle.TexturePaint);
+            assertInstanceOf(PaintStyle.TexturePaint.class, p);
         }
         try (HSLFSlideShow ppt = open("backgrounds.ppt")) {
             HSLFAutoShape as = (HSLFAutoShape) ppt.getSlides().get(1).getShapes().get(0);
             HSLFFill f = as.getFill();
             assertEquals(HSLFFill.FILL_BACKGROUND, f.getFillType());
             PaintStyle p = as.getFillStyle().getPaint();
-            assertTrue(p instanceof SolidPaint);
+            assertInstanceOf(SolidPaint.class, p);
             assertEquals(Color.WHITE, ((SolidPaint)p).getSolidColor().getColor());
         }
     }
@@ -376,7 +377,7 @@ public final class TestBugs {
             HSLFSlide slide = ppt.getSlides().get(0);
             List<HSLFShape> sh = slide.getShapes();
             assertEquals(1, sh.size());
-            assertTrue(sh.get(0) instanceof HSLFTextShape);
+            assertInstanceOf(HSLFTextShape.class, sh.get(0));
             HSLFTextShape tx = (HSLFTextShape) sh.get(0);
             assertEquals("Fundera, planera och involvera.", HSLFTextParagraph.getRawText(tx.getTextParagraphs()));
 
@@ -595,7 +596,7 @@ public final class TestBugs {
                 assertFalse(rt.isItalic());
                 assertTrue(rt.isBold());
                 PaintStyle ps = tp.getBulletStyle().getBulletFontColor();
-                assertTrue(ps instanceof SolidPaint);
+                assertInstanceOf(SolidPaint.class, ps);
                 Color actColor = DrawPaint.applyColorTransform(((SolidPaint) ps).getSolidColor());
                 assertEquals(Color.red, actColor);
                 assertEquals("A", tp.getBulletStyle().getBulletCharacter());
@@ -823,7 +824,7 @@ public final class TestBugs {
                 assertEquals(cExp.getAlpha(), cAct.getAlpha(), 1);
 
                 PaintStyle ps = fs.getFillStyle().getPaint();
-                assertTrue(ps instanceof SolidPaint);
+                assertInstanceOf(SolidPaint.class, ps);
                 ColorStyle cs = ((SolidPaint) ps).getSolidColor();
                 cAct = cs.getColor();
                 assertEquals(cExp.getRed(), cAct.getRed());

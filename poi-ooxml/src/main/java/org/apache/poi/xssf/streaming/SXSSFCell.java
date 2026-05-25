@@ -584,7 +584,10 @@ public class SXSSFCell extends CellBase {
     }
 
     /**
-     * Return the cell's style.
+     * Return the cell's style. Since POI v5.2.3, this returns the column style if the
+     * cell has no style of its own. If no column default style is set, the row default style is checked.
+     * This method has always fallen back to return the default style
+     * if there is no other style to return.
      *
      * @return the cell's style. Never null. Default cell style has zero index and can be obtained as
      * <code>workbook.getCellStyleAt(0)</code>
@@ -593,24 +596,37 @@ public class SXSSFCell extends CellBase {
     @Override
     public CellStyle getCellStyle()
     {
-        if (_style == null) {
-            CellStyle style = getDefaultCellStyleFromColumn();
-            if (style == null) {
-                SXSSFWorkbook wb = getSheet().getWorkbook();
-                style = wb.getCellStyleAt(0);
-            }
-            _style = style;
+        if (_style != null) {
+            return _style;
         }
-        return _style;
+        CellStyle style = getDefaultCellStyleFromColumn();
+        if (style == null) {
+            style = getDefaultCellStyleFromRow();
+        }
+        if (style == null) {
+            SXSSFWorkbook wb = getSheet().getWorkbook();
+            style = wb.getCellStyleAt(0);
+        }
+        return style;
     }
 
     private CellStyle getDefaultCellStyleFromColumn() {
-        CellStyle style = null;
         SXSSFSheet sheet = getSheet();
         if (sheet != null) {
-            style = sheet.getColumnStyle(getColumnIndex());
+            int idx = sheet._sh.getColumnHelper().getColDefaultStyle(getColumnIndex());
+            if (idx >= 0) {
+                return getSheet().getWorkbook().getCellStyleAt(idx);
+            }
         }
-        return style;
+        return null;
+    }
+
+    private CellStyle getDefaultCellStyleFromRow() {
+        SXSSFRow row = (SXSSFRow) getRow();
+        if (row != null && row.isFormatted()) {
+            return row.getRowStyle();
+        }
+        return null;
     }
 
     /**

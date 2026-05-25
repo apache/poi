@@ -17,12 +17,6 @@
 
 package org.apache.poi.hssf.eventusermodel;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -43,14 +37,15 @@ import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Testing for {@link HSSFEventFactory}
  */
 final class TestHSSFEventFactory {
-    private final List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 
-    private void openSample(String sampleFileName) throws IOException {
-        records.clear();
+    private List<org.apache.poi.hssf.record.Record> openSample(String sampleFileName) throws IOException {
+        final List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
         HSSFRequest req = new HSSFRequest();
         req.addListenerForAllRecords(records::add);
         try (InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
@@ -58,12 +53,26 @@ final class TestHSSFEventFactory {
             HSSFEventFactory factory = new HSSFEventFactory();
             factory.processWorkbookEvents(req, fs);
         }
+        return records;
+    }
+
+    private List<org.apache.poi.hssf.record.Record> openSample(
+            String sampleFileName, String password) throws IOException {
+        final List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
+        HSSFRequest req = new HSSFRequest();
+        req.addListenerForAllRecords(records::add);
+        try (InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+             POIFSFileSystem fs = new POIFSFileSystem(is)) {
+            HSSFEventFactory factory = new HSSFEventFactory();
+            factory.processWorkbookEvents(req, fs, password.toCharArray());
+        }
+        return records;
     }
 
     @Test
     void testWithMissingRecords() throws Exception {
 
-        openSample("SimpleWithSkip.xls");
+        final List<org.apache.poi.hssf.record.Record> records = openSample("SimpleWithSkip.xls");
 
         int numRec = records.size();
 
@@ -82,7 +91,8 @@ final class TestHSSFEventFactory {
         // Some files have crazy ordering of their continue records
         // Check that we don't break on them (bug #42844)
 
-        openSample("ContinueRecordProblem.xls");
+        final List<org.apache.poi.hssf.record.Record> records =
+                openSample("ContinueRecordProblem.xls");
 
         int numRec = records.size();
         // Check we got the records
@@ -106,14 +116,14 @@ final class TestHSSFEventFactory {
     @Test
     @SuppressWarnings("java:S2699")
     void testUnknownContinueRecords() throws Exception {
-        openSample("42844.xls");
+        assertNotNull(openSample("42844.xls"));
     }
 
     @Test
     @SuppressWarnings("java:S2699")
     void testWithDifferentWorkbookName() throws Exception {
-        openSample("BOOK_in_capitals.xls");
-        openSample("WORKBOOK_in_capitals.xls");
+        assertNotNull(openSample("BOOK_in_capitals.xls"));
+        assertNotNull(openSample("WORKBOOK_in_capitals.xls"));
     }
 
     @Test
@@ -125,10 +135,50 @@ final class TestHSSFEventFactory {
 
     @Test
     void testWithPasswordProtectedWorkbooks() throws Exception {
+        final List<org.apache.poi.hssf.record.Record> records =
+                openSample("xor-encryption-abc.xls", "abc");
+
+        // Check we got the sheet and the contents
+        assertTrue(records.size() > 50);
+
+        // Has one sheet, with values 1,2,3 in column A rows 1-3
+        boolean hasSheet = false, hasA1 = false, hasA2 = false, hasA3 = false;
+        for (org.apache.poi.hssf.record.Record r : records) {
+            if (r instanceof BoundSheetRecord) {
+                BoundSheetRecord bsr = (BoundSheetRecord) r;
+                assertEquals("Sheet1", bsr.getSheetname());
+                hasSheet = true;
+            }
+            if (r instanceof NumberRecord) {
+                NumberRecord nr = (NumberRecord) r;
+                if (nr.getColumn() == 0 && nr.getRow() == 0) {
+                    assertEquals(1, (int) nr.getValue());
+                    hasA1 = true;
+                }
+                if (nr.getColumn() == 0 && nr.getRow() == 1) {
+                    assertEquals(2, (int) nr.getValue());
+                    hasA2 = true;
+                }
+                if (nr.getColumn() == 0 && nr.getRow() == 2) {
+                    assertEquals(3, (int) nr.getValue());
+                    hasA3 = true;
+                }
+            }
+        }
+
+        assertTrue(hasSheet, "Sheet record not found");
+        assertTrue(hasA1, "Numeric record for A1 not found");
+        assertTrue(hasA2, "Numeric record for A2 not found");
+        assertTrue(hasA3, "Numeric record for A3 not found");
+    }
+
+    @Test
+    void testWithPasswordProtectedWorkbooksBiff8EncryptionKey() throws Exception {
         // With the password, is properly processed
         Biff8EncryptionKey.setCurrentUserPassword("abc");
         try {
-            openSample("xor-encryption-abc.xls");
+            final List<org.apache.poi.hssf.record.Record> records =
+                    openSample("xor-encryption-abc.xls");
 
             // Check we got the sheet and the contents
             assertTrue(records.size() > 50);

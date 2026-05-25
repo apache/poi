@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -54,8 +54,8 @@ final class TestDrawingRecord {
 
         List<org.apache.poi.hssf.record.Record> rec = RecordFactory.createRecords(out.toInputStream());
         assertEquals(2, rec.size());
-        assertTrue(rec.get(0) instanceof DrawingRecord);
-        assertTrue(rec.get(1) instanceof ContinueRecord);
+        assertInstanceOf(DrawingRecord.class, rec.get(0));
+        assertInstanceOf(ContinueRecord.class, rec.get(1));
 
         assertArrayEquals(data1, ((DrawingRecord)rec.get(0)).getRecordData());
         assertArrayEquals(data2, ((ContinueRecord)rec.get(1)).getData());

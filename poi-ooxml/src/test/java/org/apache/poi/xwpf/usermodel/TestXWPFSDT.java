@@ -19,6 +19,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -99,21 +100,21 @@ public final class TestXWPFSDT {
     void testGetSDTContentBodyElements() throws Exception {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx")) {
             IBodyElement sdtBodyElement = doc.getBodyElements().get(2);
-            assertTrue(sdtBodyElement instanceof XWPFSDT, "sdtBodyElement instance of XWPFSDT");
+            assertInstanceOf(XWPFSDT.class, sdtBodyElement, "sdtBodyElement instance of XWPFSDT");
             XWPFSDTContent content = (XWPFSDTContent) ((XWPFSDT) sdtBodyElement).getContent();
             assertEquals(3, content.getBodyElements().size(), "elements inside SDT");
 
             ISDTContents c1 = content.getBodyElements().get(0);
-            assertTrue(c1 instanceof XWPFParagraph, "c1 instance of XWPFParagraph");
+            assertInstanceOf(XWPFParagraph.class, c1, "c1 instance of XWPFParagraph");
             assertEquals("Rich_text_pre_table", ((XWPFParagraph) c1).getText());
 
             ISDTContents c2 = content.getBodyElements().get(1);
-            assertTrue(c2 instanceof XWPFTable, "c2 instance of XWPFTable");
+            assertInstanceOf(XWPFTable.class, c2, "c2 instance of XWPFTable");
             assertEquals(3, ((XWPFTable) c2).getNumberOfRows(), "rows in table inside SDT");
             assertEquals("Rich_text_cell1", ((XWPFTable) c2).getRow(0).getCell(0).getText());
 
             ISDTContents c3 = content.getBodyElements().get(2);
-            assertTrue(c3 instanceof XWPFParagraph, "c3 instance of XWPFParagraph");
+            assertInstanceOf(XWPFParagraph.class, c3, "c3 instance of XWPFParagraph");
             assertEquals("Rich_text_post_table", ((XWPFParagraph) c3).getText());
         }
     }

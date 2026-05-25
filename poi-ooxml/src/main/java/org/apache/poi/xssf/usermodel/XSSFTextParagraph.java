@@ -865,7 +865,14 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         ParagraphPropertyFetcher<ListAutoNumber> fetcher = new ParagraphPropertyFetcher<ListAutoNumber>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetBuAutoNum() && props.getBuAutoNum().getType() != null) {
-                    setValue(ListAutoNumber.values()[props.getBuAutoNum().getType().intValue() - 1]);
+                    int typeIdx = props.getBuAutoNum().getType().intValue() - 1;
+                    ListAutoNumber[] values = ListAutoNumber.values();
+                    if (typeIdx >= 0 && typeIdx < values.length) {
+                        setValue(values[typeIdx]);
+                    } else {
+                        // Fallback handling: use the default format when the value is out of range
+                        setValue(ListAutoNumber.ARABIC_PLAIN);
+                    }
                     return true;
                 }
                 return false;

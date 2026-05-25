@@ -33,6 +33,7 @@ public class TestSlideShowRecordDumper extends BaseTestPPTIterating {
     static {
         LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
         LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6028723156746240.ppt");
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-4983252485210112.ppt");
     }
 
     @Test

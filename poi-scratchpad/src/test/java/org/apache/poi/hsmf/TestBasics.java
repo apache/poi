@@ -247,7 +247,7 @@ public final class TestBasics {
       assertThrows(ChunkNotFoundException.class, chinese::getHeaders, "File doesn't have headers!");
 
       String html = chinese.getHtmlBody();
-      assertTrue(html.contains("text/html; charset=big5"), "Charset not found:\n" + html);
+      assertContains(html, "text/html; charset=big5");
 
       // Defaults to CP1251
       assertEquals("CP1252", chinese.getRecipientDetailsChunks()[0].getRecipientDisplayNameChunk().get7BitEncoding());

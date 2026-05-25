@@ -979,7 +979,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         outerloop:
         while(true) {
             for(XSSFSheet sh : sheets) {
-                sheetNumber = (int)Math.max(sh.sheet.getSheetId() + 1, sheetNumber);
+                sheetNumber = Math.toIntExact(Math.max(sh.sheet.getSheetId() + 1, sheetNumber));
             }
 
             // Bug 57165: We also need to check that the resulting file name is not already taken
@@ -1046,7 +1046,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public int getActiveSheetIndex() {
         //activeTab (Active Sheet Index) Specifies an unsignedInt
         //that contains the index to the active sheet in this book view.
-        return (int)workbook.getBookViews().getWorkbookViewArray(0).getActiveTab();
+        return Math.toIntExact(workbook.getBookViews().getWorkbookViewArray(0).getActiveTab());
     }
 
     /**
@@ -2062,7 +2062,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     protected void onDeleteFormula(XSSFCell cell){
         if(calcChain != null) {
-            int sheetId = (int)cell.getSheet().sheet.getSheetId();
+            int sheetId = Math.toIntExact(cell.getSheet().sheet.getSheetId());
             calcChain.removeItem(sheetId, cell.getReference());
         }
     }

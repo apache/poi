@@ -148,8 +148,12 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         shapeCt.setSpPr(msShapeCt.getSpPr());
 
         CTShapeNonVisual nonVisualCt = shapeCt.addNewNvSpPr();
-        nonVisualCt.setCNvPr(msShapeCt.getNvSpPr().getCNvPr());
-        nonVisualCt.setCNvSpPr(msShapeCt.getNvSpPr().getCNvSpPr());
+        com.microsoft.schemas.office.drawing.x2008.diagram.CTShapeNonVisual nvSpPr = msShapeCt.getNvSpPr();
+        if (nvSpPr == null) {
+            nvSpPr = msShapeCt.addNewNvSpPr();
+        }
+        nonVisualCt.setCNvPr(nvSpPr.getCNvPr());
+        nonVisualCt.setCNvSpPr(nvSpPr.getCNvSpPr());
         nonVisualCt.setNvPr(CTApplicationNonVisualDrawingProps.Factory.newInstance());
         shapeCt.setNvSpPr(nonVisualCt);
 

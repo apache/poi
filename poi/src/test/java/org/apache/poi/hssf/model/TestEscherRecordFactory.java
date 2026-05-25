@@ -19,8 +19,8 @@ package org.apache.poi.hssf.model;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -59,7 +59,7 @@ class TestEscherRecordFactory {
         sh.getDrawingPatriarch();
         EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
         assertNotNull(agg);
-        assertTrue(agg.getEscherRecords().get(0) instanceof EscherContainerRecord);
+        assertInstanceOf(EscherContainerRecord.class, agg.getEscherRecords().get(0));
         assertEquals(EscherContainerRecord.DG_CONTAINER, agg.getEscherRecords().get(0).getRecordId());
         assertEquals((short) 0x0, agg.getEscherRecords().get(0).getOptions());
         agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);

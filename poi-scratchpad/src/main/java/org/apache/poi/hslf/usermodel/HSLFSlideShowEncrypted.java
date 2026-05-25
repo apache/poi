@@ -79,7 +79,23 @@ public class HSLFSlideShowEncrypted implements Closeable {
         this.dea = dea;
     }
 
-    protected HSLFSlideShowEncrypted(byte[] docstream, NavigableMap<Integer,Record> recordMap) {
+    protected HSLFSlideShowEncrypted(byte[] docstream, NavigableMap<Integer, Record> recordMap) {
+        this(docstream, recordMap, (String) null);
+    }
+
+    /**
+     * @param docstream
+     * @param recordMap
+     * @param password in char array format (can be null)
+     * @since 6.0.0
+     */
+    protected HSLFSlideShowEncrypted(byte[] docstream, NavigableMap<Integer, Record> recordMap,
+                                     char[] password) {
+        this(docstream, recordMap, password == null ? null : new String(password));
+    }
+
+    private HSLFSlideShowEncrypted(byte[] docstream, NavigableMap<Integer, Record> recordMap,
+                                   String password) {
         // check for DocumentEncryptionAtom, which would be at the last offset
         // need to ignore already set UserEdit and PersistAtoms
         UserEditAtom userEditAtomWithEncryption = null;
@@ -125,7 +141,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
         }
         this.dea = (DocumentEncryptionAtom)r;
 
-        String pass = Biff8EncryptionKey.getCurrentUserPassword();
+        final String pass = password == null ? Biff8EncryptionKey.getCurrentUserPassword() : password;
         EncryptionInfo ei = getEncryptionInfo();
         try {
             if (ei == null || ei.getDecryptor() == null) {
@@ -137,7 +153,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
         } catch (GeneralSecurityException e) {
             throw new EncryptedPowerPointFileException(e);
         }
-     }
+    }
 
     public DocumentEncryptionAtom getDocumentEncryptionAtom() {
         return dea;
@@ -368,8 +384,34 @@ public class HSLFSlideShowEncrypted implements Closeable {
         }
     }
 
-    protected org.apache.poi.hslf.record.Record[] updateEncryptionRecord(org.apache.poi.hslf.record.Record[] records) {
-        String password = Biff8EncryptionKey.getCurrentUserPassword();
+    /**
+     * Updates the encryption record for the given records using the supplied password.
+     * If {@code password} is {@code null} any existing encryption record is removed (decrypted output).
+     *
+     * @param records  the current record array
+     * @param password the output password, or {@code null} to remove encryption
+     * @return the updated record array
+     * @since 6.0.0
+     */
+    protected org.apache.poi.hslf.record.Record[] updateEncryptionRecord(
+            org.apache.poi.hslf.record.Record[] records, char[] password) {
+        return updateEncryptionRecord(records, new String(password));
+    }
+
+    /**
+     * Updates the encryption record for the given records, reading the password from
+     * {@link Biff8EncryptionKey#getCurrentUserPassword()}.
+     *
+     * @param records the current record array
+     * @return the updated record array
+     */
+    protected org.apache.poi.hslf.record.Record[] updateEncryptionRecord(
+            org.apache.poi.hslf.record.Record[] records) {
+        return updateEncryptionRecord(records, Biff8EncryptionKey.getCurrentUserPassword());
+    }
+
+    private org.apache.poi.hslf.record.Record[] updateEncryptionRecord(
+            org.apache.poi.hslf.record.Record[] records, String password) {
         if (password == null) {
             if (dea == null) {
                 // no password given, no encryption record exits -> done

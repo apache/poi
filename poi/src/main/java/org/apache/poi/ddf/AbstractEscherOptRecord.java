@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -30,6 +31,9 @@ import org.apache.poi.util.LittleEndian;
  * {@link EscherTertiaryOptRecord}
  */
 public abstract class AbstractEscherOptRecord extends EscherRecord {
+    // arbitrary limit, can be adjusted if it turns out to be too low
+    private static final int MAX_PROPERTY_SIZE = 1_000_000;
+
     private final List<EscherProperty> properties = new ArrayList<>();
 
     protected AbstractEscherOptRecord() {}
@@ -39,21 +43,17 @@ public abstract class AbstractEscherOptRecord extends EscherRecord {
         properties.addAll(other.properties);
     }
 
-
     /**
      * Add a property to this record.
      *
      * @param prop the escher property to add
      */
-    public void addEscherProperty( EscherProperty prop )
-    {
+    public void addEscherProperty( EscherProperty prop ) {
         properties.add( prop );
     }
 
     @Override
-    public int fillFields( byte[] data, int offset,
-            EscherRecordFactory recordFactory )
-    {
+    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory ) {
         int bytesRemaining = readHeader( data, offset );
         if (bytesRemaining < 0) {
             throw new IllegalStateException("Invalid value for bytesRemaining: " + bytesRemaining);
@@ -72,8 +72,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord {
      *
      * @return the list of properties
      */
-    public List<EscherProperty> getEscherProperties()
-    {
+    public List<EscherProperty> getEscherProperties() {
         return properties;
     }
 
@@ -83,26 +82,23 @@ public abstract class AbstractEscherOptRecord extends EscherRecord {
      * @param index the ordinal index of the property
      * @return the escher property
      */
-    public EscherProperty getEscherProperty( int index )
-    {
+    public EscherProperty getEscherProperty( int index ) {
         return properties.get( index );
     }
 
-
-    private int getPropertiesSize()
-    {
+    private int getPropertiesSize() {
         int totalSize = 0;
-        for ( EscherProperty property : properties )
-        {
-            totalSize += property.getPropertySize();
+        for ( EscherProperty property : properties ) {
+            int propertySize = property.getPropertySize();
+            IOUtils.safelyAllocateCheck(propertySize, MAX_PROPERTY_SIZE);
+            totalSize += propertySize;
         }
 
         return totalSize;
     }
 
     @Override
-    public int getRecordSize()
-    {
+    public int getRecordSize() {
         return 8 + getPropertiesSize();
     }
 
@@ -116,9 +112,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord {
     }
 
     @Override
-    public int serialize( int offset, byte[] data,
-            EscherSerializationListener listener )
-    {
+    public int serialize( int offset, byte[] data, EscherSerializationListener listener ) {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
 
         LittleEndian.putShort( data, offset, getOptions() );

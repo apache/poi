@@ -90,11 +90,11 @@ public class XSSFTableStyle implements TableStyle {
             TableStyleType type = TableStyleType.valueOf(element.getType().toString());
             DifferentialStyleProvider dstyle = null;
             if (element.isSetDxfId()) {
-                int idx = (int) element.getDxfId();
+                int idx = Math.toIntExact(element.getDxfId());
                 CTDxf dxf;
                 dxf = dxfList.get(idx);
                 int stripeSize = 0;
-                if (element.isSetSize()) stripeSize = (int) element.getSize();
+                if (element.isSetSize()) stripeSize = Math.toIntExact(element.getSize());
                 if (dxf != null) dstyle = new XSSFDxfStyleProvider(dxf, stripeSize, colorMap);
             }
             elementMap.put(type, dstyle);

@@ -462,7 +462,7 @@ public class PropertySet {
         o += LittleEndianConsts.SHORT_SIZE;
         format = LittleEndian.getUShort(src, o);
         o += LittleEndianConsts.SHORT_SIZE;
-        osVersion = (int) LittleEndian.getUInt(src, o);
+        osVersion = Math.toIntExact(LittleEndian.getUInt(src, o));
         o += LittleEndianConsts.INT_SIZE;
         classID = new ClassID(src, o);
         o += ClassID.LENGTH;
@@ -862,20 +862,20 @@ public class PropertySet {
     }
 
     void set1stProperty(long id, String value) {
-        getFirstSection().setProperty((int)id, value);
+        getFirstSection().setProperty(Math.toIntExact(id), value);
     }
 
     void set1stProperty(long id, int value) {
-        getFirstSection().setProperty((int)id, value);
+        getFirstSection().setProperty(Math.toIntExact(id), value);
     }
 
     void set1stProperty(long id, boolean value) {
-        getFirstSection().setProperty((int)id, value);
+        getFirstSection().setProperty(Math.toIntExact(id), value);
     }
 
     @SuppressWarnings("SameParameterValue")
     void set1stProperty(long id, byte[] value) {
-        getFirstSection().setProperty((int)id, value);
+        getFirstSection().setProperty(Math.toIntExact(id), value);
     }
 
     private static void putClassId(final UnsynchronizedByteArrayOutputStream out, final ClassID n) {

@@ -23,7 +23,7 @@ import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.SuppressForbidden;
 
 /**
- * This class is used to get a log4j logger for the XmlBeans project.
+ * This class is used to get a log4j logger for the Apache POI project.
  * <p>Internal use only.</p>
  * <p>Fails over to a No-Op logger if there are problems creating log4j logger.</p>
  *

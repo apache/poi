@@ -18,7 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -45,7 +45,7 @@ class TestMultiOperandNumericFunction {
     void missingArgEvalsAreCountedAsZeroIfPolicyIsCoerce() {
         MultiOperandNumericFunction instance = new Stub(true, true, MultiOperandNumericFunction.Policy.COERCE);
         ValueEval result = instance.evaluate(new ValueEval[]{MissingArgEval.instance}, 0, 0);
-        assertTrue(result instanceof NumberEval);
+        assertInstanceOf(NumberEval.class, result);
         assertEquals(0.0, ((NumberEval)result).getNumberValue(), 0);
     }
 
@@ -53,7 +53,7 @@ class TestMultiOperandNumericFunction {
     void missingArgEvalsAreSkippedIfZeroIfPolicyIsSkipped() {
         MultiOperandNumericFunction instance = new Stub(true, true, MultiOperandNumericFunction.Policy.SKIP);
         ValueEval result = instance.evaluate(new ValueEval[]{new NumberEval(1), MissingArgEval.instance}, 0, 0);
-        assertTrue(result instanceof NumberEval);
+        assertInstanceOf(NumberEval.class, result);
         assertEquals(1.0, ((NumberEval)result).getNumberValue(), 0);
     }
 

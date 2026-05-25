@@ -19,6 +19,7 @@ package org.apache.poi.hpsf;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.apache.poi.util.RecordFormatException;
 
 @Internal
 public class Array {
@@ -58,7 +59,7 @@ public class Array {
                 throw new IllegalPropertySetDataException(msg);
             }
 
-            int numDimensions = (int) numDimensionsUnsigned;
+            int numDimensions = Math.toIntExact(numDimensionsUnsigned);
 
             _dimensions = new ArrayDimension[numDimensions];
             for ( int i = 0; i < numDimensions; i++ ) {
@@ -71,7 +72,14 @@ public class Array {
         long getNumberOfScalarValues() {
             long result = 1;
             for ( ArrayDimension dimension : _dimensions ) {
-                result *= dimension._size;
+                try {
+                    // Math.multiplyExact rejects compounding dimensions that would silently
+                    // overflow long math and bypass the > Integer.MAX_VALUE guard in Array.read.
+                    result = Math.multiplyExact(result, dimension._size);
+                } catch (ArithmeticException e) {
+                    throw new RecordFormatException(
+                            "Overflow when calculating the number of scalar values", e);
+                }
             }
             return result;
         }
@@ -94,7 +102,7 @@ public class Array {
                 numberOfScalarsLong + " in memory";
             throw new UnsupportedOperationException(msg);
         }
-        int numberOfScalars = (int) numberOfScalarsLong;
+        int numberOfScalars = Math.toIntExact(numberOfScalarsLong);
 
         IOUtils.safelyAllocateCheck(numberOfScalars, getMaxNumberOfArrayScalars());
 

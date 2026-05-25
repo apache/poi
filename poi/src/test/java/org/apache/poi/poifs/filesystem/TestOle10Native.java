@@ -17,11 +17,11 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -103,7 +103,7 @@ class TestOle10Native {
                 RecordFormatException.class,
                 () -> Ole10Native.createFromEmbeddedOleObject(fs)
             );
-            assertTrue(ex.getMessage().contains("Tried to allocate"));
+            assertContains(ex.getMessage(), "Tried to allocate");
         }
     }
 

@@ -74,6 +74,18 @@ class TestXorEncryption {
     @Test
     void testUserFile() throws IOException {
         File f = getSampleFile("xor-encryption-abc.xls");
+        try (POIFSFileSystem fs = new POIFSFileSystem(f, true);
+             HSSFWorkbook hwb = new HSSFWorkbook(fs.getRoot(), true, "abc".toCharArray())) {
+            HSSFSheet sh = hwb.getSheetAt(0);
+            assertEquals(1.0, sh.getRow(0).getCell(0).getNumericCellValue(), 0.0);
+            assertEquals(2.0, sh.getRow(1).getCell(0).getNumericCellValue(), 0.0);
+            assertEquals(3.0, sh.getRow(2).getCell(0).getNumericCellValue(), 0.0);
+        }
+    }
+
+    @Test
+    void testUserFileBiff8EncryptionKey() throws IOException {
+        File f = getSampleFile("xor-encryption-abc.xls");
         Biff8EncryptionKey.setCurrentUserPassword("abc");
         try (POIFSFileSystem fs = new POIFSFileSystem(f, true);
              HSSFWorkbook hwb = new HSSFWorkbook(fs.getRoot(), true)) {

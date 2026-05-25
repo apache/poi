@@ -18,6 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,7 +40,7 @@ class TestXSLFTableCell
         XSLFSlide slide = ppt.getSlides().get(0);
         List<XSLFShape> shapes = slide.getShapes();
         assertEquals(1, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSLFTable);
+        assertInstanceOf(XSLFTable.class, shapes.get(0));
         XSLFTable tbl = (XSLFTable)shapes.get(0);
         assertEquals(1, tbl.getNumberOfColumns());
         assertEquals(2, tbl.getNumberOfRows());
@@ -64,7 +65,7 @@ class TestXSLFTableCell
         assertFalse(run00.isBold());
         assertFalse(run00.isItalic());
         assertNotNull(run00.getFontColor());
-        assertTrue(run00.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run00.getFontColor());
         assertEquals(Color.black, ((PaintStyle.SolidPaint)run00.getFontColor()).getSolidColor().getColor());
 
         // Second row has 1 col and 3 runs
@@ -84,7 +85,7 @@ class TestXSLFTableCell
         assertTrue(run10.isBold());
         assertFalse(run10.isItalic());
         assertNotNull(run10.getFontColor());
-        assertTrue(run10.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run10.getFontColor());
         assertEquals(Color.black, ((PaintStyle.SolidPaint)run10.getFontColor()).getSolidColor().getColor());
 
         XSLFTextRun run11 = runs1.get(1);
@@ -92,7 +93,7 @@ class TestXSLFTableCell
         assertFalse(run11.isBold());
         assertFalse(run11.isItalic());
         assertNotNull(run11.getFontColor());
-        assertTrue(run11.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run11.getFontColor());
         assertEquals(Color.black, ((PaintStyle.SolidPaint)run11.getFontColor()).getSolidColor().getColor());
 
         XSLFTextRun run12 = runs1.get(2);
@@ -100,7 +101,7 @@ class TestXSLFTableCell
         assertFalse(run12.isBold());
         assertTrue(run12.isItalic());
         assertNotNull(run12.getFontColor());
-        assertTrue(run12.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run12.getFontColor());
         assertEquals(Color.black, ((PaintStyle.SolidPaint)run12.getFontColor()).getSolidColor().getColor());
 
         ppt.close();
@@ -113,7 +114,7 @@ class TestXSLFTableCell
         XSLFSlide slide = ppt.getSlides().get(0);
         List<XSLFShape> shapes = slide.getShapes();
         assertEquals(1, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSLFTable);
+        assertInstanceOf(XSLFTable.class, shapes.get(0));
         XSLFTable tbl = (XSLFTable)shapes.get(0);
         assertEquals(1, tbl.getNumberOfColumns());
         assertEquals(2, tbl.getNumberOfRows());
@@ -138,7 +139,7 @@ class TestXSLFTableCell
         assertTrue(run00.isBold());
         assertFalse(run00.isItalic());
         assertNotNull(run00.getFontColor());
-        assertTrue(run00.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run00.getFontColor());
         assertEquals(Color.white, ((PaintStyle.SolidPaint)run00.getFontColor()).getSolidColor().getColor());
 
         XSLFTextRun run01 = runs0.get(1);
@@ -146,7 +147,7 @@ class TestXSLFTableCell
         assertTrue(run01.isBold());
         assertFalse(run01.isItalic());
         assertNotNull(run01.getFontColor());
-        assertTrue(run01.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run01.getFontColor());
         assertEquals(Color.white, ((PaintStyle.SolidPaint)run01.getFontColor()).getSolidColor().getColor());
 
         XSLFTextRun run02 = runs0.get(2);
@@ -154,7 +155,7 @@ class TestXSLFTableCell
         assertFalse(run02.isBold());
         assertFalse(run02.isItalic());
         assertNotNull(run02.getFontColor());
-        assertTrue(run02.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run02.getFontColor());
         assertEquals(Color.red, ((PaintStyle.SolidPaint)run02.getFontColor()).getSolidColor().getColor());
 
         // Second row has 1 col and 7 runs
@@ -174,7 +175,7 @@ class TestXSLFTableCell
         assertTrue(run10.isBold());
         assertFalse(run10.isItalic());
         assertNotNull(run10.getFontColor());
-        assertTrue(run10.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run10.getFontColor());
         assertEquals(Color.black, ((PaintStyle.SolidPaint)run10.getFontColor()).getSolidColor().getColor());
 
         XSLFTextRun run11 = runs1.get(1);
@@ -182,7 +183,7 @@ class TestXSLFTableCell
         assertFalse(run11.isBold());
         assertFalse(run11.isItalic());
         assertNotNull(run11.getFontColor());
-        assertTrue(run11.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run11.getFontColor());
         assertEquals(Color.black, ((PaintStyle.SolidPaint)run11.getFontColor()).getSolidColor().getColor());
 
         XSLFTextRun run12 = runs1.get(2);
@@ -190,7 +191,7 @@ class TestXSLFTableCell
         assertFalse(run12.isBold());
         assertTrue(run12.isItalic());
         assertNotNull(run12.getFontColor());
-        assertTrue(run12.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run12.getFontColor());
         assertEquals(Color.black, ((PaintStyle.SolidPaint)run12.getFontColor()).getSolidColor().getColor());
 
         XSLFTextRun run13 = runs1.get(3);
@@ -198,7 +199,7 @@ class TestXSLFTableCell
         assertFalse(run13.isBold());
         assertFalse(run13.isItalic());
         assertNotNull(run13.getFontColor());
-        assertTrue(run13.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run13.getFontColor());
         assertEquals(Color.black, ((PaintStyle.SolidPaint)run13.getFontColor()).getSolidColor().getColor());
 
         XSLFTextRun run14 = runs1.get(4);
@@ -206,7 +207,7 @@ class TestXSLFTableCell
         assertFalse(run14.isBold());
         assertFalse(run14.isItalic());
         assertNotNull(run14.getFontColor());
-        assertTrue(run14.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run14.getFontColor());
         assertEquals(Color.yellow, ((PaintStyle.SolidPaint)run14.getFontColor()).getSolidColor().getColor());
 
         XSLFTextRun run15 = runs1.get(5);
@@ -214,7 +215,7 @@ class TestXSLFTableCell
         assertFalse(run15.isBold());
         assertFalse(run15.isItalic());
         assertNotNull(run15.getFontColor());
-        assertTrue(run15.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run15.getFontColor());
         assertEquals(Color.black, ((PaintStyle.SolidPaint)run15.getFontColor()).getSolidColor().getColor());
 
         XSLFTextRun run16 = runs1.get(6);
@@ -222,7 +223,7 @@ class TestXSLFTableCell
         assertFalse(run16.isBold());
         assertFalse(run16.isItalic());
         assertNotNull(run16.getFontColor());
-        assertTrue(run16.getFontColor() instanceof PaintStyle.SolidPaint);
+        assertInstanceOf(PaintStyle.SolidPaint.class, run16.getFontColor());
         assertEquals(Color.black, ((PaintStyle.SolidPaint)run16.getFontColor()).getSolidColor().getColor());
 
         ppt.close();
@@ -238,7 +239,7 @@ class TestXSLFTableCell
             List<XSLFTextRun> cellTextRuns = cellParagraphs.get(0).getTextRuns();
             PaintStyle fontColor = cellTextRuns.get(0).getFontColor();
             assertNotNull(fontColor);
-            assertTrue(fontColor instanceof PaintStyle.SolidPaint);
+            assertInstanceOf(PaintStyle.SolidPaint.class, fontColor);
             assertEquals(Color.black, ((PaintStyle.SolidPaint) fontColor).getSolidColor().getColor());
         }
     }

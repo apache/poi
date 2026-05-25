@@ -20,7 +20,6 @@ package org.apache.poi.xssf.binary;
 
 import java.nio.charset.StandardCharsets;
 
-import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -85,23 +84,9 @@ public class XSSFBUtils {
         return numBytes;
     }
 
-    static int castToInt(long val) {
-        if (val < Integer.MAX_VALUE && val > Integer.MIN_VALUE) {
-            return (int)val;
-        }
-        throw new POIXMLException("val ("+val+") can't be cast to int");
-    }
-
-    static short castToShort(int val) {
-        if (val < Short.MAX_VALUE && val > Short.MIN_VALUE) {
-            return (short)val;
-        }
-        throw new POIXMLException("val ("+val+") can't be cast to short");
-
-    }
 
     //TODO: move to LittleEndian?
-    static int get24BitInt( byte[] data, int offset) {
+    static int get24BitInt(byte[] data, int offset) {
         int i = offset;
         int b0 = data[i++] & 0xFF;
         int b1 = data[i++] & 0xFF;

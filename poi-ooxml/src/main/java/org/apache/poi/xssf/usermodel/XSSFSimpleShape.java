@@ -995,7 +995,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
                 CTSRgbColor clr = fill.isSetSrgbClr() ? fill.getSrgbClr() : fill.addNewSrgbClr();
                 clr.setVal(xlsColor.getRgb());
             } else if (xlsColor.isSetIndexed()) {
-                HSSFColor indexed = HSSFColor.getIndexHash().get((int) xlsColor.getIndexed());
+                HSSFColor indexed = HSSFColor.getIndexHash().get(Math.toIntExact(xlsColor.getIndexed()));
                 if (indexed != null) {
                     byte[] rgb = new byte[3];
                     rgb[0] = (byte) indexed.getTriplet()[0];
@@ -1015,7 +1015,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
 
     @Override
     public int getShapeId() {
-        return (int) ctShape.getNvSpPr().getCNvPr().getId();
+        return Math.toIntExact(ctShape.getNvSpPr().getCNvPr().getId());
     }
 
     @Override

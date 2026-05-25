@@ -20,6 +20,7 @@ package org.apache.poi.ss.usermodel;
 import static org.apache.poi.util.Units.EMU_PER_PIXEL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -375,11 +376,11 @@ public abstract class BaseTestCellComment {
 
             if (wb instanceof HSSFWorkbook) {
                 // HSSFWorkbooks fail when writing out workbook
-                assertTrue(e instanceof IllegalStateException);
+                assertInstanceOf(IllegalStateException.class, e);
                 assertEquals("found multiple cell comments for cell $A$1", e.getMessage());
             } else {
                 // XSSFWorkbooks fail when creating and setting the cell address of the comment
-                assertTrue(e instanceof IllegalArgumentException);
+                assertInstanceOf(IllegalArgumentException.class, e);
                 assertEquals("Multiple cell comments in one cell are not allowed, cell: A1", e.getMessage());
             }
         }

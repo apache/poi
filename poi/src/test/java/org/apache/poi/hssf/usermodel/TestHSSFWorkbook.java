@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -391,7 +392,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             sheetRecords.add(new BadlyBehavedRecord());
             // There is also much logic inside Sheet that (if buggy) might also cause the discrepancy
             IllegalStateException e = assertThrows(IllegalStateException.class, wb::getBytes, "Identified bug 45066 a");
-            assertTrue(e.getMessage().startsWith("Actual serialized sheet size"));
+            assertStartsWith(e.getMessage(), "Actual serialized sheet size");
         }
     }
 
@@ -843,7 +844,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         HSSFWorkbook wb=new HSSFWorkbook();
 
         IllegalStateException ex1 = assertThrows(IllegalStateException.class, () -> wb.getNameAt(0));
-        assertTrue(ex1.getMessage().contains("no defined names"));
+        assertContains(ex1.getMessage(), "no defined names");
 
         HSSFName name = wb.createName();
         assertNotNull(name);
@@ -857,10 +858,10 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals(0, wb.getNameIndex("myname"));
 
         IllegalArgumentException ex2 = assertThrows(IllegalArgumentException.class, () -> wb.getNameAt(5));
-        assertTrue(ex2.getMessage().contains("outside the allowable range"));
+        assertContains(ex2.getMessage(), "outside the allowable range");
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> wb.getNameAt(-3));
-        assertTrue(ex.getMessage().contains("outside the allowable range"));
+        assertContains(ex.getMessage(), "outside the allowable range");
 
         wb.close();
     }
@@ -1247,6 +1248,44 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             }
             assertTrue(stream.isClosed(), "stream should be closed by HSSFWorkbook");
         }
+    }
+
+    @Test
+    void testPassword() throws Exception {
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(
+                "xor-encryption-abc.xls", "abc".toCharArray())) {
+            validateXorEncryptionDoc(wb);
+            try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                // testing that when we write that no password is applied
+                wb.write(baos);
+                try (HSSFWorkbook wbOut = new HSSFWorkbook(baos.toInputStream())) {
+                    validateXorEncryptionDoc(wbOut);
+                }
+            }
+        }
+    }
+
+    @Test
+    void testChangePassword() throws Exception {
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(
+                "xor-encryption-abc.xls", "abc".toCharArray())) {
+            validateXorEncryptionDoc(wb);
+            String newPassword = "newPassword";
+            try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                // testing that when we write that the newPassword is applied
+                wb.setOutputPassword(newPassword.toCharArray());
+                wb.write(baos);
+                try (HSSFWorkbook wbOut = new HSSFWorkbook(baos.toInputStream(), newPassword.toCharArray())) {
+                    validateXorEncryptionDoc(wbOut);
+                }
+            }
+        }
+    }
+
+    private void validateXorEncryptionDoc(HSSFWorkbook wb) {
+        HSSFSheet sheet = wb.getSheetAt(0);
+        double value = sheet.getRow(0).getCell(0).getNumericCellValue();
+        assertEquals(1.0, value);
     }
 
     private static class WrappedStream extends FilterInputStream {

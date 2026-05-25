@@ -175,9 +175,21 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
      * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
-    @SuppressWarnings("resource")
     public HSLFSlideShow(InputStream inputStream) throws IOException {
         this(new HSLFSlideShowImpl(inputStream));
+    }
+
+    /**
+     * Constructs a Powerpoint document from an input stream.
+     * @param inputStream stream containing ppt data
+     * @param password in char array format (can be null)
+     * @throws IOException If reading data from the stream fails
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @since 6.0.0
+     */
+    public HSLFSlideShow(InputStream inputStream, char[] password) throws IOException {
+        this(new HSLFSlideShowImpl(inputStream, password));
     }
 
     /**
@@ -186,9 +198,21 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
      * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
-    @SuppressWarnings("resource")
     public HSLFSlideShow(POIFSFileSystem poifs) throws IOException {
         this(new HSLFSlideShowImpl(poifs));
+    }
+
+    /**
+     * Constructs a Powerpoint document from an POIFSFileSystem.
+     * @param poifs POIFSFileSystem containing ppt data
+     * @param password in char array format (can be null)
+     * @throws IOException If reading data from the file-system fails
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @since 6.0.0
+     */
+    public HSLFSlideShow(POIFSFileSystem poifs, char[] password) throws IOException {
+        this(new HSLFSlideShowImpl(poifs, password));
     }
 
     /**
@@ -197,9 +221,21 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
      * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
-    @SuppressWarnings("resource")
     public HSLFSlideShow(DirectoryNode root) throws IOException {
         this(new HSLFSlideShowImpl(root));
+    }
+
+    /**
+     * Constructs a Powerpoint document from an DirectoryNode.
+     * @param root DirectoryNode containing ppt data
+     * @param password in char array format (can be null)
+     * @throws IOException If reading data from the DirectoryNode fails
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @since 6.0.0
+     */
+    public HSLFSlideShow(DirectoryNode root, char[] password) throws IOException {
+        this(new HSLFSlideShowImpl(root, password));
     }
 
     /**
@@ -1208,6 +1244,23 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
     @Override
     public void write(File newFile) throws IOException {
         getSlideShowImpl().write(newFile);
+    }
+
+    /**
+     * Set the password to be used to password protect the slideshow when writing out.
+     * If {@code null} is passed any password previously set via this method is cleared;
+     * in that case the thread-level password from {@link org.apache.poi.hssf.record.crypto.Biff8EncryptionKey#getCurrentUserPassword()}
+     * is used (if set), otherwise the output will be unencrypted.
+     * <p>
+     * The password supplied to the constructor for reading an encrypted file is
+     * <em>not</em> automatically used as the output password.
+     * </p>
+     *
+     * @param password as a char array, or {@code null} to clear
+     * @since 6.0.0
+     */
+    public void setOutputPassword(final char[] password) {
+        getSlideShowImpl().setOutputPassword(password);
     }
 
     @Override

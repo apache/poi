@@ -19,7 +19,7 @@ package org.apache.poi.hslf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertContainsIgnoreCase;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,6 +35,7 @@ import java.util.List;
 import com.zaxxer.sparsebits.SparseBitSet;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -322,7 +323,7 @@ public final class TestExtractor {
 
             String text = ppe.getText();
             assertContains(text, masterRandomText);
-            assertNotContained(text, masterTitleText);
+            POITestCase.assertNotContains(text, masterTitleText);
 
             //make sure that the footer only appears once
             int masterFooters = 0;
@@ -340,7 +341,7 @@ public final class TestExtractor {
         try (final SlideShowExtractor<?,?> ppe = openExtractor("bug62591.ppt")) {
             ppe.setMasterByDefault(true);
             String text = ppe.getText();
-            assertNotContained(text, "Titelmasterformat");
+            POITestCase.assertNotContains(text, "Titelmasterformat");
         }
     }
 
@@ -349,7 +350,7 @@ public final class TestExtractor {
         try (final SlideShowExtractor<?,?> ppe = openExtractor("master_text.ppt")) {
             // Initially not there
             String text = ppe.getText();
-            assertFalse(text.contains("Text that I added to the master slide"));
+            assertNotContains(text, "Text that I added to the master slide");
 
             // Enable, shows up
             ppe.setMasterByDefault(true);
@@ -357,7 +358,7 @@ public final class TestExtractor {
             assertContains(text, "Text that I added to the master slide");
 
             // Make sure placeholder text does not come out
-            assertNotContained(text, "Click to edit Master");
+            POITestCase.assertNotContains(text, "Click to edit Master");
         }
 
         // Now with another file only containing master text

@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -116,7 +117,7 @@ final class TestColumnInfoRecordsAggregate {
     }
 
     private static void confirmCIR(List<org.apache.poi.hssf.record.Record> cirs, int ix, int startColIx, int endColIx, int level, boolean isHidden, boolean isCollapsed) {
-        assertTrue(cirs.get(ix) instanceof ColumnInfoRecord);
+        assertInstanceOf(ColumnInfoRecord.class, cirs.get(ix));
         ColumnInfoRecord cir = (ColumnInfoRecord)cirs.get(ix);
         assertEquals(startColIx, cir.getFirstColumn(), "startColIx");
         assertEquals(endColIx, cir.getLastColumn(), "endColIx");

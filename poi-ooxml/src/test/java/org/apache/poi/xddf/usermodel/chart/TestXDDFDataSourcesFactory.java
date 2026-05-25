@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -27,6 +28,10 @@ import org.apache.poi.ss.util.SheetBuilder;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
 
 /**
  * Tests for {@link XDDFDataSourcesFactory}.
@@ -134,6 +139,51 @@ class TestXDDFDataSourcesFactory {
             exception = e;
         }
         assertNotNull(exception);
+    }
+
+    @Test
+    void oversizedCategoryPointCountIsRejected() {
+        // A crafted chart cache with an unsignedInt ptCount > Integer.MAX_VALUE
+        // must not silently truncate to a negative int during conversion.
+        long oversized = (long) Integer.MAX_VALUE + 1;
+
+        CTAxDataSource numRefDS = CTAxDataSource.Factory.newInstance();
+        CTNumData numCache = numRefDS.addNewNumRef().addNewNumCache();
+        numCache.addNewPtCount().setVal(oversized);
+        XDDFCategoryDataSource numRefSource = XDDFDataSourcesFactory.fromDataSource(numRefDS);
+        assertThrows(ArithmeticException.class, numRefSource::getPointCount);
+
+        CTAxDataSource strRefDS = CTAxDataSource.Factory.newInstance();
+        CTStrData strCache = strRefDS.addNewStrRef().addNewStrCache();
+        strCache.addNewPtCount().setVal(oversized);
+        XDDFCategoryDataSource strRefSource = XDDFDataSourcesFactory.fromDataSource(strRefDS);
+        assertThrows(ArithmeticException.class, strRefSource::getPointCount);
+
+        CTAxDataSource numLitDS = CTAxDataSource.Factory.newInstance();
+        numLitDS.addNewNumLit().addNewPtCount().setVal(oversized);
+        XDDFCategoryDataSource numLitSource = XDDFDataSourcesFactory.fromDataSource(numLitDS);
+        assertThrows(ArithmeticException.class, numLitSource::getPointCount);
+
+        CTAxDataSource strLitDS = CTAxDataSource.Factory.newInstance();
+        strLitDS.addNewStrLit().addNewPtCount().setVal(oversized);
+        XDDFCategoryDataSource strLitSource = XDDFDataSourcesFactory.fromDataSource(strLitDS);
+        assertThrows(ArithmeticException.class, strLitSource::getPointCount);
+    }
+
+    @Test
+    void oversizedValuesPointCountIsRejected() {
+        long oversized = (long) Integer.MAX_VALUE + 1;
+
+        CTNumDataSource numRefDS = CTNumDataSource.Factory.newInstance();
+        CTNumData numCache = numRefDS.addNewNumRef().addNewNumCache();
+        numCache.addNewPtCount().setVal(oversized);
+        XDDFNumericalDataSource<Double> numRefSource = XDDFDataSourcesFactory.fromDataSource(numRefDS);
+        assertThrows(ArithmeticException.class, numRefSource::getPointCount);
+
+        CTNumDataSource numLitDS = CTNumDataSource.Factory.newInstance();
+        numLitDS.addNewNumLit().addNewPtCount().setVal(oversized);
+        XDDFNumericalDataSource<Double> numLitSource = XDDFDataSourcesFactory.fromDataSource(numLitDS);
+        assertThrows(ArithmeticException.class, numLitSource::getPointCount);
     }
 
     private <T> void assertDataSourceIsEqualToArray(XDDFDataSource<T> ds, T[] array) {

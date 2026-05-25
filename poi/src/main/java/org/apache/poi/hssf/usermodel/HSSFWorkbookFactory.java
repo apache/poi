@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -70,18 +69,8 @@ public class HSSFWorkbookFactory implements WorkbookProvider {
     @SuppressWarnings("java:S2093")
     @Override
     public HSSFWorkbook create(final DirectoryNode root, String password) throws IOException {
-        boolean passwordSet = false;
-        if (password != null) {
-            Biff8EncryptionKey.setCurrentUserPassword(password);
-            passwordSet = true;
-        }
-        try {
-            return new HSSFWorkbook(root, true);
-        } finally {
-            if (passwordSet) {
-                Biff8EncryptionKey.setCurrentUserPassword(null);
-            }
-        }
+        final char[] passwordChars = password == null ? null : password.toCharArray();
+        return new HSSFWorkbook(root, true, passwordChars);
     }
 
     @Override
@@ -98,24 +87,14 @@ public class HSSFWorkbookFactory implements WorkbookProvider {
     @Override
     @SuppressWarnings({"java:S2095","java:S2093"})
     public Workbook create(File file, String password, boolean readOnly) throws IOException {
-        boolean passwordSet = false;
-        if (password != null) {
-            Biff8EncryptionKey.setCurrentUserPassword(password);
-            passwordSet = true;
-        }
+        POIFSFileSystem fs = new POIFSFileSystem(file, readOnly);
         try {
-            POIFSFileSystem fs = new POIFSFileSystem(file, readOnly);
-            try {
-                return new HSSFWorkbook(fs, true);
-            } catch (RuntimeException e) {
-                // we need to close the filesystem if we encounter an exception to not leak file handles
-                fs.close();
-                throw e;
-            }
-        } finally {
-            if (passwordSet) {
-                Biff8EncryptionKey.setCurrentUserPassword(null);
-            }
+            final char[] passwordChars = password == null ? null : password.toCharArray();
+            return new HSSFWorkbook(fs, true, passwordChars);
+        } catch (RuntimeException e) {
+            // we need to close the filesystem if we encounter an exception to not leak file handles
+            fs.close();
+            throw e;
         }
     }
 }

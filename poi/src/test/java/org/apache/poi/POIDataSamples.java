@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.util.Objects;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -246,6 +247,8 @@ public final class POIDataSamples {
         }
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
+            Objects.requireNonNull(b, "b == null");
+            Objects.checkFromIndexSize(off, len, b.length);
             return _is.read(b, off, len);
         }
         @Override

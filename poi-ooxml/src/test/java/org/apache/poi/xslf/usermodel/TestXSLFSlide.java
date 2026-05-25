@@ -20,6 +20,7 @@ import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,60 +43,60 @@ class TestXSLFSlide {
         List<XSLFShape> shapes1 = slide1.getShapes();
         assertEquals(7, shapes1.size());
         assertEquals("TextBox 3", shapes1.get(0).getShapeName());
-        assertTrue(shapes1.get(0) instanceof XSLFTextBox);
+        assertInstanceOf(XSLFTextBox.class, shapes1.get(0));
         XSLFAutoShape sh0 = (XSLFAutoShape)shapes1.get(0);
         assertEquals("Learning PPTX", sh0.getText());
 
 
         assertEquals("Straight Connector 5", shapes1.get(1).getShapeName());
-        assertTrue(shapes1.get(1) instanceof XSLFConnectorShape);
+        assertInstanceOf(XSLFConnectorShape.class, shapes1.get(1));
 
         assertEquals("Freeform 6", shapes1.get(2).getShapeName());
-        assertTrue(shapes1.get(2) instanceof XSLFFreeformShape);
+        assertInstanceOf(XSLFFreeformShape.class, shapes1.get(2));
         XSLFAutoShape sh2 = (XSLFAutoShape)shapes1.get(2);
         assertEquals("Cloud", sh2.getText());
 
         assertEquals("Picture 1", shapes1.get(3).getShapeName());
-        assertTrue(shapes1.get(3) instanceof XSLFPictureShape);
+        assertInstanceOf(XSLFPictureShape.class, shapes1.get(3));
 
         assertEquals("Table 2", shapes1.get(4).getShapeName());
-        assertTrue(shapes1.get(4) instanceof XSLFGraphicFrame);
+        assertInstanceOf(XSLFGraphicFrame.class, shapes1.get(4));
 
         assertEquals("Straight Arrow Connector 7", shapes1.get(5).getShapeName());
-        assertTrue(shapes1.get(5) instanceof XSLFConnectorShape);
+        assertInstanceOf(XSLFConnectorShape.class, shapes1.get(5));
 
         assertEquals("Elbow Connector 9", shapes1.get(6).getShapeName());
-        assertTrue(shapes1.get(6) instanceof XSLFConnectorShape);
+        assertInstanceOf(XSLFConnectorShape.class, shapes1.get(6));
 
         // titles on slide2
         XSLFSlide slide2 = slides.get(1);
         List<XSLFShape> shapes2 = slide2.getShapes();
         assertEquals(2, shapes2.size());
-        assertTrue(shapes2.get(0) instanceof XSLFAutoShape);
+        assertInstanceOf(XSLFAutoShape.class, shapes2.get(0));
         assertEquals("PPTX Title", ((XSLFAutoShape)shapes2.get(0)).getText());
-        assertTrue(shapes2.get(1) instanceof XSLFAutoShape);
+        assertInstanceOf(XSLFAutoShape.class, shapes2.get(1));
         assertEquals("Subtitle\nAnd second line", ((XSLFAutoShape)shapes2.get(1)).getText());
 
         //  group shape on slide3
         XSLFSlide slide3 = slides.get(2);
         List<XSLFShape> shapes3 = slide3.getShapes();
         assertEquals(1, shapes3.size());
-        assertTrue(shapes3.get(0) instanceof XSLFGroupShape);
+        assertInstanceOf(XSLFGroupShape.class, shapes3.get(0));
         List<XSLFShape> groupShapes = ((XSLFGroupShape)shapes3.get(0)).getShapes();
         assertEquals(3, groupShapes.size());
-        assertTrue(groupShapes.get(0) instanceof XSLFAutoShape);
+        assertInstanceOf(XSLFAutoShape.class, groupShapes.get(0));
         assertEquals("Rectangle 1", groupShapes.get(0).getShapeName());
 
-        assertTrue(groupShapes.get(1) instanceof XSLFAutoShape);
+        assertInstanceOf(XSLFAutoShape.class, groupShapes.get(1));
         assertEquals("Oval 2", groupShapes.get(1).getShapeName());
 
-        assertTrue(groupShapes.get(2) instanceof XSLFAutoShape);
+        assertInstanceOf(XSLFAutoShape.class, groupShapes.get(2));
         assertEquals("Right Arrow 3", groupShapes.get(2).getShapeName());
 
         XSLFSlide slide4 = slides.get(3);
         List<XSLFShape> shapes4 = slide4.getShapes();
         assertEquals(1, shapes4.size());
-        assertTrue(shapes4.get(0) instanceof XSLFTable);
+        assertInstanceOf(XSLFTable.class, shapes4.get(0));
         XSLFTable tbl = (XSLFTable)shapes4.get(0);
         assertEquals(3, tbl.getNumberOfColumns());
         assertEquals(6, tbl.getNumberOfRows());
