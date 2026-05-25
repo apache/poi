@@ -254,8 +254,11 @@ document.write("Last Published: " + document.lastModified);
 <li>
 <strong>OutOfMemoryErrors</strong>
 <br>
-                Memory usage can be high, potentially causing OutOfMemoryErrors. Malicious actors can create files designed to exploit parsers and generate large arrays.
+                Malicious actors can create files designed to exploit parsers and generate large arrays.
                 Legacy formats (xls, doc, ppt, etc.) are particularly vulnerable, though all formats have potential issues.
+                <br>
+                When you parse files with Apache POI, you can get OutOfMemoryErrors or other exceptions or errors
+                related to the index being out of bounds or issues like int overflows.
                 <br>
                 Apache POI includes checks to detect suspicious values that may indicate malicious content, but these checks should not be considered comprehensive.
                 <br>
