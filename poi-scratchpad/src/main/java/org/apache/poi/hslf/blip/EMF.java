@@ -27,10 +27,10 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.RecordAtom;
 import org.apache.poi.sl.image.ImageHeaderEMF;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Units;
 
 /**
@@ -50,9 +50,15 @@ public final class EMF extends Metafile {
         super(recordContainer, bse);
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws RecordFormatException if there is a problem with the size of the decompressed data.
+     * {@link Metafile#setMaxRecordLength(int)} can be used to change the limit applied.
+     * @throws HSLFException for parsing exceptions
+     */
     @Override
-    public byte[] getData(){
-        byte[] rawdata = getRawData();
+    public byte[] getData() {
+        final byte[] rawdata = getRawData();
         Header header = new Header();
         header.read(rawdata, CHECKSUM_SIZE);
 
@@ -64,7 +70,12 @@ public final class EMF extends Metafile {
             long len = IOUtils.skipFully(is,header.getSize() + (long)CHECKSUM_SIZE);
             assert(len == header.getSize() + CHECKSUM_SIZE);
 
-            IOUtils.copy(inflater, out);
+            final int maxLength = getMaxRecordLength();
+            long copied = IOUtils.copy(inflater, out, (long) maxLength + 1);
+            if (copied > maxLength) {
+                throw new RecordFormatException(
+                        "Inflated EMF data exceeds maximum allowed size (" + maxLength + ")");
+            }
 
             return out.toByteArray();
         } catch (IOException e){
@@ -87,7 +98,7 @@ public final class EMF extends Metafile {
 
         byte[] checksum = getChecksum(data);
         long rawDataSize = calcRawDataSize(getUIDInstanceCount(), checksum.length, header.getSize(), compressed.length);
-        byte[] rawData = IOUtils.safelyAllocate(rawDataSize, RecordAtom.getMaxRecordLength());
+        byte[] rawData = IOUtils.safelyAllocate(rawDataSize, getMaxRecordLength());
         int offset = 0;
 
         System.arraycopy(checksum, 0, rawData, offset, checksum.length);

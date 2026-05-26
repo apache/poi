@@ -41,6 +41,7 @@ import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.sl.image.ImageHeaderPNG;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 
@@ -88,6 +89,26 @@ public final class Picture {
         return matched;
     }
 
+    // try to keep in synch with EscherMetafileBlip DEFAULT_MAX_RECORD_LENGTH
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * @param length the max record length allowed for HWPF Picture
+     * @since 6.0.0
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HWPF Picture
+     * @since 6.0.0
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
+
     private PICF _picf;
     private PICFAndOfficeArtData _picfAndOfficeArtData;
     private final List<? extends EscherRecord> _blipRecords;
@@ -109,8 +130,9 @@ public final class Picture {
     }
 
     /**
-     * Builds a Picture object for a Picture stored in the
-     *  DataStream
+     * Builds a Picture object for a Picture stored in the DataStream
+     * @throws RecordFormatException if there is a problem with the size of the decompressed data.
+     * {@link #setMaxRecordLength(int)} can be used to change the limit applied.
      */
     public Picture( int dataBlockStartOfsset, byte[] _dataStream, boolean fillBytes ) { // NOSONAR
         _picfAndOfficeArtData = new PICFAndOfficeArtData( _dataStream, dataBlockStartOfsset );
@@ -145,7 +167,12 @@ public final class Picture {
                  InflaterInputStream in = new InflaterInputStream(bis);
                  UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
 
-                IOUtils.copy(in, out);
+                final int maxSize = getMaxRecordLength();
+                long copied = IOUtils.copy(in, out, (long) maxSize + 1);
+                if (copied > maxSize) {
+                    throw new RecordFormatException(
+                            "Inflated picture data exceeds maximum allowed size (" + maxSize + ")");
+                }
                 content = out.toByteArray();
             } catch (IOException e) {
                 /*

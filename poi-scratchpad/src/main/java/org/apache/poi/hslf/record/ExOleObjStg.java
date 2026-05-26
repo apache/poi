@@ -33,6 +33,7 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * Storage for embedded OLE objects.
@@ -40,7 +41,22 @@ import org.apache.poi.util.LittleEndian;
 public class ExOleObjStg extends PositionDependentRecordAtom implements PersistRecord {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000_000;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * @param length the max record length allowed for ExOleObjStg
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for ExOleObjStg
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     private int _persistId; // Found from PersistPtrHolder
 
@@ -103,11 +119,16 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
      * Opens an input stream which will decompress the data on the fly.
      *
      * @return the data input stream.
+     * @throws RecordFormatException if the claimed uncompressed size exceeds the maximum allowed.
      * @throws UncheckedIOException if the data size exceeds the expected size.
      */
     public InputStream getData() {
         if (isCompressed()) {
             int size = LittleEndian.getInt(_data);
+            if (size < 0 || size > MAX_RECORD_LENGTH) {
+                throw new RecordFormatException(
+                        "Claimed uncompressed data size (" + size + ") exceeds maximum allowed (" + MAX_RECORD_LENGTH + ")");
+            }
 
             InputStream compressedStream = new ByteArrayInputStream(_data, 4, _data.length);
             try {

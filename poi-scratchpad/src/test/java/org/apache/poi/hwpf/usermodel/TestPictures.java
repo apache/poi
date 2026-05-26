@@ -22,17 +22,25 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.List;
+import java.util.zip.DeflaterOutputStream;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.PicturesTable;
+import org.apache.poi.util.RecordFormatException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,6 +50,18 @@ import org.junit.jupiter.params.provider.ValueSource;
  * Test the picture handling
  */
 public final class TestPictures {
+
+    private int savedMaxRecordLength;
+
+    @BeforeEach
+    void saveMaxRecordLength() {
+        savedMaxRecordLength = Picture.getMaxRecordLength();
+    }
+
+    @AfterEach
+    void restoreMaxRecordLength() {
+        Picture.setMaxRecordLength(savedMaxRecordLength);
+    }
 
     /**
      * two jpegs
@@ -373,5 +393,64 @@ public final class TestPictures {
         PicturesTable picA = docA.getPicturesTable();
         List<Picture> picturesA = picA.getAllPictures();
         assertEquals(expectedCount, picturesA.size());
+    }
+
+    // -----------------------------------------------------------------------
+    // Inflate size-limit tests for compressed pictures
+    // -----------------------------------------------------------------------
+
+    /**
+     * Builds raw picture content in the HWPF compressed-picture format:
+     *  - 32 bytes of padding
+     *  - byte 32 = 0xFE  (COMPRESSED2[0])
+     *  - bytes 33+: zlib/deflate stream starting with 0x78 0x9C
+     *
+     * This matches the COMPRESSED2 signature checked in {@link Picture#fillImageContent()}.
+     */
+    private static byte[] buildCompressedPictureRaw(byte[] plainData) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (DeflaterOutputStream dos = new DeflaterOutputStream(bos)) {
+            dos.write(plainData);
+        }
+        byte[] deflated = bos.toByteArray();
+        // deflated[0] == 0x78, deflated[1] == 0x9C for default compression level
+
+        byte[] raw = new byte[32 + 1 + deflated.length];
+        // bytes 0..31: padding (zeros)
+        raw[32] = (byte) 0xFE;
+        System.arraycopy(deflated, 0, raw, 33, deflated.length);
+        return raw;
+    }
+
+    @Test
+    void testCompressedPictureGetContentWithinLimit() throws IOException {
+        byte[] plain = new byte[100];
+        Arrays.fill(plain, (byte) 'X');
+        byte[] raw = buildCompressedPictureRaw(plain);
+
+        EscherBlipRecord blip = new EscherBlipRecord();
+        blip.setPictureData(raw);
+        Picture picture = new Picture(blip);
+
+        // Limit is well above 100 bytes; getContent() must succeed
+        Picture.setMaxRecordLength(10_000);
+        byte[] content = picture.getContent();
+        assertNotNull(content);
+    }
+
+    @Test
+    void testCompressedPictureGetContentExceedsLimitThrows() throws IOException {
+        byte[] plain = new byte[1000];
+        Arrays.fill(plain, (byte) 'A');
+        byte[] raw = buildCompressedPictureRaw(plain);
+
+        EscherBlipRecord blip = new EscherBlipRecord();
+        blip.setPictureData(raw);
+        Picture picture = new Picture(blip);
+
+        // Set the limit below the actual decompressed size
+        Picture.setMaxRecordLength(500);
+        assertThrows(RecordFormatException.class, picture::getContent,
+                "getContent() must throw RecordFormatException when inflated data exceeds the limit");
     }
 }
