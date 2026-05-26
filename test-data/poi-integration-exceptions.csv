@@ -359,8 +359,6 @@ diagram/clusterfuzz-testcase-minimized-POIHDGFFuzzer-6478389109981184.vsd,handle
 spreadsheet/deep-data.xlsx,additional,XSSF,,org.apache.poi.openxml4j.exceptions.InvalidFormatException,Cannot create sheet-iterator with missing package part for workbook,
 spreadsheet/deep-data.xlsx,extract,"XSSF,OPC",,java.io.IOException,"Your InputStream was neither an OLE2 stream, nor an OOXML stream",
 spreadsheet/deep-data.xlsx,handle,XSSF,,java.lang.IllegalArgumentException,Core-Part cannot be empty,
-slideshow/missing_core_records.ppt,handle,HSLF,,org.apache.poi.util.RecordFormatException,Inflated WMF data exceeds maximum allowed size (1000000),
-slideshow/60003.ppt,handle,HSLF,,org.apache.poi.util.RecordFormatException,Inflated EMF data exceeds maximum allowed size (1000000),
 slideshow/60f557c0a46bcb0068b1c3e15589dac383307bc8.ppt,handle,HSLF,,java.lang.IllegalStateException,Cannot read color scheme from sheet,
 slideshow/6afff8111a22b118d1ed4eba5007c153de0b0ad7.ppt,handle,HSLF,,java.lang.IndexOutOfBoundsException,Index 0 out of bounds for length 0,
 slideshow/2100a8d44da546f97ab7795c500a58bed6cb655d.ppt,handle,HSLF,,java.lang.IllegalStateException,Cannot read color scheme from sheet,
