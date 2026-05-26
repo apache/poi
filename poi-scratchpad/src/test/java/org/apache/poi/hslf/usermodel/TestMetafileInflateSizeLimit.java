@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
@@ -25,9 +26,9 @@ import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.blip.EMF;
+import org.apache.poi.hslf.blip.Metafile;
 import org.apache.poi.hslf.blip.PICT;
 import org.apache.poi.hslf.blip.WMF;
-import org.apache.poi.hslf.record.RecordAtom;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.AfterEach;
@@ -36,7 +37,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests that WMF, EMF, and PICT inflate operations respect the
- * {@link RecordAtom#getMaxRecordLength()} size limit to prevent zip-bomb
+ * {@link Metafile#getMaxRecordLength()} size limit to prevent zip-bomb
  * style decompression attacks.
  */
 public class TestMetafileInflateSizeLimit {
@@ -47,12 +48,12 @@ public class TestMetafileInflateSizeLimit {
 
     @BeforeEach
     void saveLimit() {
-        savedMaxRecordLength = RecordAtom.getMaxRecordLength();
+        savedMaxRecordLength = Metafile.getMaxRecordLength();
     }
 
     @AfterEach
     void restoreLimit() {
-        RecordAtom.setMaxRecordLength(savedMaxRecordLength);
+        Metafile.setMaxRecordLength(savedMaxRecordLength);
     }
 
     // -----------------------------------------------------------------------
@@ -75,7 +76,7 @@ public class TestMetafileInflateSizeLimit {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFPictureData pd = ppt.addPicture(wmfBytes, PictureType.WMF);
             // Set limit far below the actual decompressed size
-            RecordAtom.setMaxRecordLength(10);
+            Metafile.setMaxRecordLength(10);
             assertThrows(RecordFormatException.class, pd::getData,
                     "WMF getData() should throw RecordFormatException when limit is exceeded");
         }
@@ -101,7 +102,7 @@ public class TestMetafileInflateSizeLimit {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFPictureData pd = ppt.addPicture(emfBytes, PictureType.EMF);
             // Set limit far below the actual decompressed size
-            RecordAtom.setMaxRecordLength(10);
+            Metafile.setMaxRecordLength(10);
             assertThrows(RecordFormatException.class, pd::getData,
                     "EMF getData() should throw RecordFormatException when limit is exceeded");
         }
@@ -127,7 +128,7 @@ public class TestMetafileInflateSizeLimit {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFPictureData pd = ppt.addPicture(pictBytes, PictureType.PICT);
             // Set limit far below the actual decompressed size
-            RecordAtom.setMaxRecordLength(10);
+            Metafile.setMaxRecordLength(10);
             assertThrows(RecordFormatException.class, pd::getData,
                     "PICT getData() should throw RecordFormatException when limit is exceeded");
         }
@@ -148,9 +149,9 @@ public class TestMetafileInflateSizeLimit {
             HSLFPictureData pictPd = ppt.addPicture(pictBytes, PictureType.PICT);
 
             List<HSLFPictureData> allPics = ppt.getPictureData();
-            org.junit.jupiter.api.Assertions.assertTrue(allPics.get(0) instanceof WMF);
-            org.junit.jupiter.api.Assertions.assertTrue(allPics.get(1) instanceof EMF);
-            org.junit.jupiter.api.Assertions.assertTrue(allPics.get(2) instanceof PICT);
+            assertInstanceOf(WMF.class, allPics.get(0));
+            assertInstanceOf(EMF.class, allPics.get(1));
+            assertInstanceOf(PICT.class, allPics.get(2));
         }
     }
 }
