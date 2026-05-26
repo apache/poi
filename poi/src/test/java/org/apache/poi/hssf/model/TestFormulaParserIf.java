@@ -50,7 +50,7 @@ final class TestFormulaParserIf {
 
     private static void confirmAttrData(Ptg[] ptgs, int i, int expectedData) {
         Ptg ptg = ptgs[i];
-        assertTrue(ptg instanceof AttrPtg, "Token[" + i + "] was not AttrPtg as expected");
+        assertInstanceOf(AttrPtg.class, ptg, "Token[" + i + "] was not AttrPtg as expected");
         AttrPtg attrPtg = (AttrPtg) ptg;
         assertEquals(expectedData, attrPtg.getData());
     }

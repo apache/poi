@@ -82,20 +82,20 @@ public final class TestXSSFFormulaParser {
 
         ptgs = parse(fpb, "ABC10");
         assertEquals(1, ptgs.length);
-        assertTrue(ptgs[0] instanceof RefPtg, "Had " + Arrays.toString(ptgs));
+        assertInstanceOf(RefPtg.class, ptgs[0], "Had " + Arrays.toString(ptgs));
 
         ptgs = parse(fpb, "A500000");
         assertEquals(1, ptgs.length);
-        assertTrue(ptgs[0] instanceof RefPtg, "Had " + Arrays.toString(ptgs));
+        assertInstanceOf(RefPtg.class, ptgs[0], "Had " + Arrays.toString(ptgs));
 
         ptgs = parse(fpb, "ABC500000");
         assertEquals(1, ptgs.length);
-        assertTrue(ptgs[0] instanceof RefPtg, "Had " + Arrays.toString(ptgs));
+        assertInstanceOf(RefPtg.class, ptgs[0], "Had " + Arrays.toString(ptgs));
 
         //highest allowed rows and column (XFD and 0x100000)
         ptgs = parse(fpb, "XFD1048576");
         assertEquals(1, ptgs.length);
-        assertTrue(ptgs[0] instanceof RefPtg, "Had " + Arrays.toString(ptgs));
+        assertInstanceOf(RefPtg.class, ptgs[0], "Had " + Arrays.toString(ptgs));
 
 
         //column greater than XFD
@@ -110,34 +110,33 @@ public final class TestXSSFFormulaParser {
         // Formula referencing one cell
         ptgs = parse(fpb, "ISEVEN(A1)");
         assertEquals(3, ptgs.length);
-        assertEquals(NameXPxg.class,   ptgs[0].getClass());
-        assertEquals(RefPtg.class,     ptgs[1].getClass());
-        assertEquals(FuncVarPtg.class, ptgs[2].getClass());
+        assertInstanceOf(NameXPxg.class, ptgs[0]);
+        assertInstanceOf(RefPtg.class, ptgs[1]);
+        assertInstanceOf(FuncVarPtg.class, ptgs[2]);
         assertEquals("ISEVEN", ptgs[0].toFormulaString());
         assertEquals("A1",     ptgs[1].toFormulaString());
         assertEquals("#external#", ptgs[2].toFormulaString());
 
         // Formula referencing an area
         ptgs = parse(fpb, "SUM(A1:B3)");
-        assertEquals(2, ptgs.length);
-        assertEquals(AreaPtg.class, ptgs[0].getClass());
-        assertEquals(AttrPtg.class, ptgs[1].getClass());
+        assertInstanceOf(AreaPtg.class, ptgs[0]);
+        assertInstanceOf(AttrPtg.class, ptgs[1]);
         assertEquals("A1:B3", ptgs[0].toFormulaString());
         assertEquals("SUM",   ptgs[1].toFormulaString());
 
         // Formula referencing one cell in a different sheet
         ptgs = parse(fpb, "SUM(Sheet1!A1)");
         assertEquals(2, ptgs.length);
-        assertEquals(Ref3DPxg.class, ptgs[0].getClass());
-        assertEquals(AttrPtg.class,  ptgs[1].getClass());
+        assertInstanceOf(Ref3DPxg.class, ptgs[0]);
+        assertInstanceOf(AttrPtg.class, ptgs[1]);
         assertEquals("Sheet1!A1", ptgs[0].toFormulaString());
         assertEquals("SUM",       ptgs[1].toFormulaString());
 
         // Formula referencing an area in a different sheet
         ptgs = parse(fpb, "SUM(Sheet1!A1:B3)");
         assertEquals(2, ptgs.length);
-        assertEquals(Area3DPxg.class,ptgs[0].getClass());
-        assertEquals(AttrPtg.class,  ptgs[1].getClass());
+        assertInstanceOf(Area3DPxg.class, ptgs[0]);
+        assertInstanceOf(AttrPtg.class, ptgs[1]);
         assertEquals("Sheet1!A1:B3", ptgs[0].toFormulaString());
         assertEquals("SUM",          ptgs[1].toFormulaString());
 
@@ -174,7 +173,7 @@ public final class TestXSSFFormulaParser {
         // were defined in a different workbook
         ptgs = parse(fpb, "[0]!NR_Global_B2");
         assertEquals(1, ptgs.length);
-        assertEquals(NameXPxg.class, ptgs[0].getClass());
+        assertInstanceOf(NameXPxg.class, ptgs[0]);
         assertEquals(0,    ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
         assertNull(((NameXPxg) ptgs[0]).getSheetName());
         assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
@@ -193,7 +192,7 @@ public final class TestXSSFFormulaParser {
         // Reference to a single cell in a different sheet
         ptgs = parse(fpb, "Uses!A1");
         assertEquals(1, ptgs.length);
-        assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+        assertInstanceOf(Ref3DPxg.class, ptgs[0]);
         assertEquals(-1,   ((Ref3DPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals("A1", ((Ref3DPxg)ptgs[0]).format2DRefAsString());
         assertEquals("Uses!A1", ptgs[0].toFormulaString());
@@ -201,7 +200,7 @@ public final class TestXSSFFormulaParser {
         // Reference to a single cell in a different sheet, which needs quoting
         ptgs = parse(fpb, "'Testing 47100'!A1");
         assertEquals(1, ptgs.length);
-        assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+        assertInstanceOf(Ref3DPxg.class, ptgs[0]);
         assertEquals(-1,   ((Ref3DPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals("Testing 47100", ((Ref3DPxg)ptgs[0]).getSheetName());
         assertEquals("A1", ((Ref3DPxg)ptgs[0]).format2DRefAsString());
@@ -210,7 +209,7 @@ public final class TestXSSFFormulaParser {
         // Reference to a sheet scoped named range from another sheet
         ptgs = parse(fpb, "Defines!NR_To_A1");
         assertEquals(1, ptgs.length);
-        assertEquals(NameXPxg.class, ptgs[0].getClass());
+        assertInstanceOf(NameXPxg.class, ptgs[0]);
         assertEquals(-1,        ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals("Defines", ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_To_A1",((NameXPxg)ptgs[0]).getNameName());
@@ -219,7 +218,7 @@ public final class TestXSSFFormulaParser {
         // Reference to a workbook scoped named range
         ptgs = parse(fpb, "NR_Global_B2");
         assertEquals(1, ptgs.length);
-        assertEquals(NamePtg.class, ptgs[0].getClass());
+        assertInstanceOf(NamePtg.class, ptgs[0]);
         assertEquals("NR_Global_B2",((NamePtg)ptgs[0]).toFormulaString(fpb));
 
         wb.close();
@@ -235,7 +234,7 @@ public final class TestXSSFFormulaParser {
         // Reference to a single cell in a different workbook
         ptgs = parse(fpb, "[1]Uses!$A$1");
         assertEquals(1, ptgs.length);
-        assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+        assertInstanceOf(Ref3DPxg.class, ptgs[0]);
         assertEquals(1,     ((Ref3DPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals("Uses",((Ref3DPxg)ptgs[0]).getSheetName());
         assertEquals("$A$1",((Ref3DPxg)ptgs[0]).format2DRefAsString());
@@ -244,7 +243,7 @@ public final class TestXSSFFormulaParser {
         // Reference to a sheet-scoped named range in a different workbook
         ptgs = parse(fpb, "[1]Defines!NR_To_A1");
         assertEquals(1, ptgs.length);
-        assertEquals(NameXPxg.class, ptgs[0].getClass());
+        assertInstanceOf(NameXPxg.class, ptgs[0]);
         assertEquals(1,         ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals("Defines", ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_To_A1",((NameXPxg)ptgs[0]).getNameName());
@@ -253,7 +252,7 @@ public final class TestXSSFFormulaParser {
         // Reference to a global named range in a different workbook
         ptgs = parse(fpb, "[1]!NR_Global_B2");
         assertEquals(1, ptgs.length);
-        assertEquals(NameXPxg.class, ptgs[0].getClass());
+        assertInstanceOf(NameXPxg.class, ptgs[0]);
         assertEquals(1,    ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
         assertNull(((NameXPxg) ptgs[0]).getSheetName());
         assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
@@ -330,60 +329,60 @@ public final class TestXSSFFormulaParser {
             ptgs = parse(fpb, "SUM(Sheet1:Sheet3!A1)");
             assertEquals(2, ptgs.length);
             if (wb instanceof HSSFWorkbook) {
-                assertEquals(Ref3DPtg.class, ptgs[0].getClass());
+                assertInstanceOf(Ref3DPtg.class, ptgs[0]);
             } else {
-                assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+                assertInstanceOf(Ref3DPxg.class, ptgs[0]);
             }
             assertEquals("Sheet1:Sheet3!A1", toFormulaString(ptgs[0], fpb));
-            assertEquals(AttrPtg.class, ptgs[1].getClass());
-            assertEquals("SUM",         toFormulaString(ptgs[1], fpb));
+            assertInstanceOf(AttrPtg.class, ptgs[1]);
+            assertEquals("SUM", toFormulaString(ptgs[1], fpb));
 
             // MAX to one cell over 3 workbooks, absolute row reference
             ptgs = parse(fpb, "MAX(Sheet1:Sheet3!A$1)");
             assertEquals(2, ptgs.length);
             if (wb instanceof HSSFWorkbook) {
-                assertEquals(Ref3DPtg.class, ptgs[0].getClass());
+                assertInstanceOf(Ref3DPtg.class, ptgs[0]);
             } else {
-                assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+                assertInstanceOf(Ref3DPxg.class, ptgs[0]);
             }
             assertEquals("Sheet1:Sheet3!A$1", toFormulaString(ptgs[0], fpb));
-            assertEquals(FuncVarPtg.class, ptgs[1].getClass());
-            assertEquals("MAX",            toFormulaString(ptgs[1], fpb));
+            assertInstanceOf(FuncVarPtg.class, ptgs[1]);
+            assertEquals("MAX", toFormulaString(ptgs[1], fpb));
 
             // MIN to one cell over 3 workbooks, absolute reference
             ptgs = parse(fpb, "MIN(Sheet1:Sheet3!$A$1)");
             assertEquals(2, ptgs.length);
             if (wb instanceof HSSFWorkbook) {
-                assertEquals(Ref3DPtg.class, ptgs[0].getClass());
+                assertInstanceOf(Ref3DPtg.class, ptgs[0]);
             } else {
-                assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+                assertInstanceOf(Ref3DPxg.class, ptgs[0]);
             }
             assertEquals("Sheet1:Sheet3!$A$1", toFormulaString(ptgs[0], fpb));
-            assertEquals(FuncVarPtg.class, ptgs[1].getClass());
+            assertInstanceOf(FuncVarPtg.class, ptgs[1]);
             assertEquals("MIN",            toFormulaString(ptgs[1], fpb));
 
             // SUM to a range of cells over 3 workbooks
             ptgs = parse(fpb, "SUM(Sheet1:Sheet3!A1:B2)");
             assertEquals(2, ptgs.length);
             if (wb instanceof HSSFWorkbook) {
-                assertEquals(Area3DPtg.class, ptgs[0].getClass());
+                assertInstanceOf(Area3DPtg.class, ptgs[0]);
             } else {
-                assertEquals(Area3DPxg.class, ptgs[0].getClass());
+                assertInstanceOf(Area3DPxg.class, ptgs[0]);
             }
             assertEquals("Sheet1:Sheet3!A1:B2", toFormulaString(ptgs[0], fpb));
-            assertEquals(AttrPtg.class, ptgs[1].getClass());
+            assertInstanceOf(AttrPtg.class, ptgs[1]);
             assertEquals("SUM",         toFormulaString(ptgs[1], fpb));
 
             // MIN to a range of cells over 3 workbooks, absolute reference
             ptgs = parse(fpb, "MIN(Sheet1:Sheet3!$A$1:$B$2)");
             assertEquals(2, ptgs.length);
             if (wb instanceof HSSFWorkbook) {
-                assertEquals(Area3DPtg.class, ptgs[0].getClass());
+                assertInstanceOf(Area3DPtg.class, ptgs[0]);
             } else {
-                assertEquals(Area3DPxg.class, ptgs[0].getClass());
+                assertInstanceOf(Area3DPxg.class, ptgs[0]);
             }
             assertEquals("Sheet1:Sheet3!$A$1:$B$2", toFormulaString(ptgs[0], fpb));
-            assertEquals(FuncVarPtg.class, ptgs[1].getClass());
+            assertInstanceOf(FuncVarPtg.class, ptgs[1]);
             assertEquals("MIN",            toFormulaString(ptgs[1], fpb));
 
             // Check we can round-trip - try to set a new one to a new single cell
@@ -479,8 +478,8 @@ public final class TestXSSFFormulaParser {
 
             ptgs = parse(fpb, "(ABC10 )");
             assertEquals(2, ptgs.length, "Had: " + Arrays.toString(ptgs));
-            assertTrue(ptgs[0] instanceof RefPtg, "Had " + Arrays.toString(ptgs));
-            assertTrue(ptgs[1] instanceof ParenthesisPtg, "Had " + Arrays.toString(ptgs));
+            assertInstanceOf(RefPtg.class, ptgs[0], "Had " + Arrays.toString(ptgs));
+            assertInstanceOf(ParenthesisPtg.class, ptgs[1], "Had " + Arrays.toString(ptgs));
         }
     }
 

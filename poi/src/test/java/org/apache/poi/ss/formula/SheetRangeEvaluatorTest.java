@@ -17,11 +17,6 @@
 
 package org.apache.poi.ss.formula;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -29,6 +24,8 @@ import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class SheetRangeEvaluatorTest {
     @Test
@@ -96,8 +93,7 @@ class SheetRangeEvaluatorTest {
     public void testGetEval() {
         SheetRangeEvaluator eval = createWithTwoSheets();
         ValueEval valueEval = eval.getEvalForCell(1, 0, 0);
-        assertTrue(valueEval instanceof BlankEval,
-                "Had: " + valueEval);
+        assertInstanceOf(BlankEval.class, valueEval, "Had: " + valueEval);
     }
 
     @Test
