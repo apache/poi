@@ -27,8 +27,6 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.RecordAtom;
-import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.sl.image.ImageHeaderWMF;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -55,7 +53,7 @@ public final class WMF extends Metafile {
     /**
      * {@inheritDoc}
      * @throws RecordFormatException if there is a problem with the size of the decompressed data.
-     * {@link RecordAtom#setMaxRecordLength(int)} can be used to change the limit applied.
+     * {@link Metafile#setMaxRecordLength(int)} can be used to change the limit applied.
      * @throws HSLFException for parsing exceptions
      */
     @Override
@@ -64,7 +62,7 @@ public final class WMF extends Metafile {
         try (InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(rawdata).get()) {
 
             Header header = new Header();
-            header.read(rawdata, CHECKSUM_SIZE*getUIDInstanceCount());
+            header.read(rawdata, Math.multiplyExact(CHECKSUM_SIZE, getUIDInstanceCount()));
             long skipLen = header.getSize() + (long)CHECKSUM_SIZE*getUIDInstanceCount();
             long skipped = IOUtils.skipFully(is, skipLen);
             assert(skipped == skipLen);
@@ -74,7 +72,7 @@ public final class WMF extends Metafile {
             aldus.write(out);
 
             try (InflaterInputStream inflater = new InflaterInputStream( is )) {
-                final int maxLength = RecordAtom.getMaxRecordLength();
+                final int maxLength = getMaxRecordLength();
                 long copied = IOUtils.copy(inflater, out, (long) maxLength + 1);
                 if (copied > maxLength) {
                     throw new RecordFormatException(
@@ -104,7 +102,7 @@ public final class WMF extends Metafile {
 
         byte[] checksum = getChecksum(data);
         long rawDataSize = calcRawDataSize(getUIDInstanceCount(), checksum.length, header.getSize(), compressed.length);
-        byte[] rawData = IOUtils.safelyAllocate(rawDataSize, RecordAtom.getMaxRecordLength());
+        byte[] rawData = IOUtils.safelyAllocate(rawDataSize, getMaxRecordLength());
         int offset = 0;
 
         System.arraycopy(checksum, 0, rawData, offset, checksum.length);

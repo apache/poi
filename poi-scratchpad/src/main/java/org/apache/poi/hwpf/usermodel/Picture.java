@@ -89,7 +89,8 @@ public final class Picture {
         return matched;
     }
 
-    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    // try to keep in synch with EscherMetafileBlip DEFAULT_MAX_RECORD_LENGTH
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /**

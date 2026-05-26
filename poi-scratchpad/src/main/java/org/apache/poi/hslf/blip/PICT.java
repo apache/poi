@@ -33,7 +33,6 @@ import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.RecordAtom;
 import org.apache.poi.sl.image.ImageHeaderPICT;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -61,7 +60,7 @@ public final class PICT extends Metafile {
     /**
      * {@inheritDoc}
      * @throws RecordFormatException if there is a problem with the size of the decompressed data.
-     * {@link RecordAtom#setMaxRecordLength(int)} can be used to change the limit applied.
+     * {@link Metafile#setMaxRecordLength(int)} can be used to change the limit applied.
      * @throws HSLFException for parsing exceptions
      */
     @Override
@@ -90,7 +89,7 @@ public final class PICT extends Metafile {
             }
             byte[] chunk = new byte[4096];
             try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(header.getWmfSize()).get()) {
-                final int maxLength = RecordAtom.getMaxRecordLength();
+                final int maxLength = getMaxRecordLength();
                 long totalInflated = 0;
                 try (InflaterInputStream inflater = new InflaterInputStream(bis)) {
                     int count;
@@ -145,7 +144,7 @@ public final class PICT extends Metafile {
 
         byte[] checksum = getChecksum(data);
         long rawDataSize = calcRawDataSize(getUIDInstanceCount(), checksum.length, header.getSize(), compressed.length);
-        byte[] rawData = IOUtils.safelyAllocate(rawDataSize, RecordAtom.getMaxRecordLength());
+        byte[] rawData = IOUtils.safelyAllocate(rawDataSize, getMaxRecordLength());
         int offset = 0;
 
         System.arraycopy(checksum, 0, rawData, offset, checksum.length);
