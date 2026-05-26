@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,6 +28,7 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.commons.io.input.BoundedInputStream;
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
@@ -130,8 +130,12 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
                         "Claimed uncompressed data size (" + size + ") exceeds maximum allowed (" + MAX_RECORD_LENGTH + ")");
             }
 
-            InputStream compressedStream = new ByteArrayInputStream(_data, 4, _data.length);
             try {
+                InputStream compressedStream = UnsynchronizedByteArrayInputStream
+                        .builder()
+                        .setByteArray(_data)
+                        .setOffset(4)
+                        .get();
                 return BoundedInputStream.builder()
                     .setInputStream(new InflaterInputStream(compressedStream))
                     .setMaxCount(size)
@@ -140,7 +144,14 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
                 throw new UncheckedIOException(e);
             }
         } else {
-            return new ByteArrayInputStream(_data, 0, _data.length);
+            try {
+                return UnsynchronizedByteArrayInputStream
+                        .builder()
+                        .setByteArray(_data)
+                        .get();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
         }
     }
 
