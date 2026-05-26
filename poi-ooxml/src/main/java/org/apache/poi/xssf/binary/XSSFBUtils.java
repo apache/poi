@@ -53,7 +53,7 @@ public class XSSFBUtils {
             throw new XSSFBParseException("trying to read beyond data length: " +
              "offset="+offset+", numBytes="+numBytes+", data.length="+data.length);
         }
-        sb.append(new String(data, offset, (int)numBytes, StandardCharsets.UTF_16LE));
+        sb.append(new String(data, offset, Math.toIntExact(numBytes), StandardCharsets.UTF_16LE));
         return Math.toIntExact(numBytes+4);
     }
 
@@ -78,7 +78,7 @@ public class XSSFBUtils {
         if (offset+numBytes > data.length) {
             throw new XSSFBParseException("trying to read beyond data length");
         }
-        sb.append(new String(data, offset, (int)numBytes, StandardCharsets.UTF_16LE));
+        sb.append(new String(data, offset, Math.toIntExact(numBytes), StandardCharsets.UTF_16LE));
         return Math.toIntExact(numBytes+4);
     }
 
