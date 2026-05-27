@@ -104,7 +104,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
                     throw new EncryptedDocumentException(e.getMessage(), e);
                 }
             }
-            int count = (int)(chunk.length - (pos & chunkMask));
+            int count = Math.toIntExact(chunk.length - (pos & chunkMask));
             int avail = remainingBytes();
             if (avail == 0) {
                 return total;
@@ -185,7 +185,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
             lastIndex = index + 1;
         }
 
-        final int todo = (int)Math.min(size, chunk.length);
+        final int todo = Math.toIntExact(Math.min(size, chunk.length));
         int readBytes, totalBytes = 0;
         do {
             readBytes = super.read(plain, totalBytes, todo-totalBytes);

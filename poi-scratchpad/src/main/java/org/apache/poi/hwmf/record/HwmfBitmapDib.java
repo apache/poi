@@ -260,7 +260,8 @@ public class HwmfBitmapDib implements GenericRecord {
             headerCompression == Compression.BI_RGB ||
             headerCompression == Compression.BI_BITFIELDS ||
             headerCompression == Compression.BI_CMYK) {
-            int fileSize = (int)Math.min((long)introSize + bodySize, (long)recordSize);
+            int fileSize = Math.toIntExact(
+                    Math.min(introSize + bodySize, recordSize));
             imageData = IOUtils.safelyAllocate(fileSize, HwmfPicture.getMaxRecordLength());
             leis.readFully(imageData, 0, introSize);
             leis.skipFully(recordSize-fileSize);

@@ -2725,7 +2725,7 @@ final class TestPOIFSStream {
         @Override
         public int read(byte[] b, int offset, int len) {
             if (size >= maxSize) return -1;
-            int sz = (int) Math.min(len, maxSize - size);
+            int sz = Math.toIntExact(Math.min(len, maxSize - size));
             for (int i = 0; i < sz; i++) {
                 b[i + offset] = (byte) ((size + i) % 128);
             }
