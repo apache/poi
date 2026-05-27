@@ -464,7 +464,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public String getPictureText() {
         StringBuilder out = new StringBuilder(64);
         for (XWPFRun run : runs) {
-            out.append(run.getPictureText());
+            String pictureText = run.getPictureText();
+            if (out.length() > 0 && pictureText.length() > 0) {
+                out.append("\n");
+            }
+            out.append(pictureText);
         }
         return out.toString();
     }
