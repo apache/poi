@@ -40,6 +40,7 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -297,6 +298,6 @@ public final class ImageUtils {
             }
         }
 
-        return (int)Math.rint(targetSize);
+        return MathUtil.safeDoubleToInt(Math.rint(targetSize));
     }
 }

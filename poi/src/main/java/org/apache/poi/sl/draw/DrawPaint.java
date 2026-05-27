@@ -94,7 +94,7 @@ public class DrawPaint {
                         return new Color(color.getRed(), color.getGreen(), color.getBlue());
                     }
                     @Override
-                    public int getAlpha() { return (int)Math.round(color.getAlpha()*100000./255.); }
+                    public int getAlpha() { return Math.toIntExact(Math.round(color.getAlpha()*100000./255.)); }
                     @Override
                     public int getHueOff() { return -1; }
                     @Override
