@@ -34,12 +34,14 @@ import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Tests that WMF, EMF, and PICT inflate operations respect the
  * {@link Metafile#getMaxRecordLength()} size limit to prevent zip-bomb
  * style decompression attacks.
  */
+@Isolated   // this test changes global static MAX_RECORD_LENGTH
 public class TestMetafileInflateSizeLimit {
 
     private static final POIDataSamples SLIDE_TESTS = POIDataSamples.getSlideShowInstance();

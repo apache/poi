@@ -35,10 +35,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Tests that {@link ExOleObjStg} works properly
  */
+@Isolated   // this test changes global static MAX_RECORD_LENGTH
 public final class TestExOleObjStg {
 
     // From a real file (embedded SWF control)
