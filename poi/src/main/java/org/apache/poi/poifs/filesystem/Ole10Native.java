@@ -289,8 +289,10 @@ public class Ole10Native {
     }
 
     private static String readUtf16(LittleEndianByteArrayInputStream leis) throws IOException {
-        int size = leis.readInt();
-        byte[] buf = IOUtils.toByteArray(leis, Math.multiplyExact(size, 2), MAX_STRING_LENGTH);
+        final int size = leis.readInt();
+        final long arraySize = 2L * size;
+        IOUtils.safelyAllocateCheck(arraySize, MAX_STRING_LENGTH);
+        final byte[] buf = IOUtils.toByteArray(leis, arraySize, MAX_STRING_LENGTH);
         return StringUtil.getFromUnicodeLE(buf, 0, size);
     }
 
