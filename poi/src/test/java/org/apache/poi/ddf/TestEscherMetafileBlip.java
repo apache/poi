@@ -32,11 +32,13 @@ import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Tests for {@link EscherMetafileBlip}, including the inflation size guard
  * against zip-bomb style payloads.
  */
+@Isolated   // this test changes global static MAX_RECORD_LENGTH
 class TestEscherMetafileBlip {
 
     private int savedMaxRecordLength;
