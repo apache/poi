@@ -47,6 +47,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.MathUtil;
 
 /**
  * For now this class renders only images supported by the javax.imageio.ImageIO framework.
@@ -264,7 +265,10 @@ public class BitmapImageRenderer implements ImageRenderer {
         if (w_old == w_new && h_old == h_new) {
             return img;
         }
-        BufferedImage scaled = new BufferedImage((int)w_new, (int)h_new, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage scaled = new BufferedImage(
+                MathUtil.safeDoubleToInt(w_new),
+                MathUtil.safeDoubleToInt(h_new),
+                BufferedImage.TYPE_INT_ARGB);
         AffineTransform at = new AffineTransform();
         at.scale(w_new/w_old, h_new/h_old);
         AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);

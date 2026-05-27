@@ -126,12 +126,12 @@ public final class ImageUtils {
         Element node = (Element)r.getImageMetadata(0).getAsTree("javax_imageio_1.0");
         lst = node.getElementsByTagName("HorizontalPixelSize");
         if(lst != null && lst.getLength() == 1) {
-            hdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
+            hdpi = MathUtil.safeDoubleToInt(mm2inch/Double.parseDouble(((Element)lst.item(0)).getAttribute("value")));
         }
 
         lst = node.getElementsByTagName("VerticalPixelSize");
         if(lst != null && lst.getLength() == 1) {
-            vdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
+            vdpi = MathUtil.safeDoubleToInt(mm2inch/Double.parseDouble(((Element)lst.item(0)).getAttribute("value")));
         }
 
         return new int[]{hdpi, vdpi};

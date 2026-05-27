@@ -45,6 +45,6 @@ public enum ReadingOrder {
         if (code < 0 || code >= values().length) {
             throw new IllegalArgumentException("Invalid ReadingOrder code: " + code);
         }
-        return values()[(int)code];
+        return values()[Math.toIntExact(code)];
     }
 }
