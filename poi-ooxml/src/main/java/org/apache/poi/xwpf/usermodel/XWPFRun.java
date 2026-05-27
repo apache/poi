@@ -37,6 +37,7 @@ import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.util.*;
 import org.apache.poi.wp.usermodel.CharacterRun;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -110,6 +111,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         List<XmlObject> pictTextObjs = new ArrayList<>();
         pictTextObjs.addAll(Arrays.asList(r.getPictArray()));
         pictTextObjs.addAll(Arrays.asList(r.getDrawingArray()));
+        pictTextObjs.addAll(Arrays.asList(r.selectPath(
+                "declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' " +
+                "declare namespace mc='" + PackageNamespaces.MARKUP_COMPATIBILITY + "' " +
+                "./mc:AlternateContent/mc:Choice/w:drawing")));
         for (XmlObject o : pictTextObjs) {
             XmlObject[] ts = o.selectPath("declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' .//w:t");
             for (XmlObject t : ts) {

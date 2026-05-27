@@ -975,4 +975,16 @@ public final class TestXWPFParagraph {
         assertEquals(beginChar, result.getBeginChar(), "beginChar");
         assertEquals(endChar, result.getEndChar(), "endChar");
     }
+
+    @Test
+    void testGetPictureText() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("shapes-with-text.docx")) {
+            XWPFParagraph p = doc.getParagraphArray(0);
+
+            assertEquals("Floating text box\n" +
+                    "A square shape with text inside\n" +
+                    "An ellipse with text inside\n" +
+                    "A group of shapes\nWhere some contain text", p.getPictureText());
+        }
+    }
 }
