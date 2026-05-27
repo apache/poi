@@ -144,7 +144,9 @@ public class ImageHeaderWMF {
     public Dimension getSize() {
         //coefficient to translate from WMF dpi to 72dpi
         double coeff = ((double)Units.POINT_DPI)/inch;
-        return new Dimension(MathUtil.safeDoubleToInt(Math.round((right-left)*coeff)), MathUtil.safeDoubleToInt(Math.round((bottom-top)*coeff)));
+        int width = MathUtil.safeDoubleToInt(Math.round((right-left)*coeff));
+        int height = MathUtil.safeDoubleToInt(Math.round((bottom-top)*coeff));
+        return new Dimension(width, height);
     }
 
     public Rectangle getBounds() {
