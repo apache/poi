@@ -825,10 +825,10 @@ public class HwmfGraphics implements HwmfCharsetAware {
     private static Insets getSubImageInsets(Rectangle2D srcBounds, Rectangle2D nativeBounds) {
         // Todo: check if we need to normalize srcBounds x/y, in case of flipped images
         // for now we assume the width/height is positive
-        int left = (int)Math.round((srcBounds.getX()-nativeBounds.getX())/nativeBounds.getWidth()*100_000.);
-        int top = (int)Math.round((srcBounds.getY()-nativeBounds.getY())/nativeBounds.getHeight()*100_000.);
-        int right = (int)Math.round((nativeBounds.getMaxX()-srcBounds.getMaxX())/nativeBounds.getWidth()*100_000.);
-        int bottom = (int)Math.round((nativeBounds.getMaxY()-srcBounds.getMaxY())/nativeBounds.getHeight()*100_000.);
+        int left = Math.toIntExact(Math.round((srcBounds.getX()-nativeBounds.getX())/nativeBounds.getWidth()*100_000.));
+        int top = Math.toIntExact(Math.round((srcBounds.getY()-nativeBounds.getY())/nativeBounds.getHeight()*100_000.));
+        int right = Math.toIntExact(Math.round((nativeBounds.getMaxX()-srcBounds.getMaxX())/nativeBounds.getWidth()*100_000.));
+        int bottom = Math.toIntExact(Math.round((nativeBounds.getMaxY()-srcBounds.getMaxY())/nativeBounds.getHeight()*100_000.));
 
         return new Insets(top, left, bottom, right);
     }

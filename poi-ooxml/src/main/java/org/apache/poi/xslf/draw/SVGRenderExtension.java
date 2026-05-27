@@ -71,6 +71,7 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.SimpleShape;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -212,7 +213,7 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
             Element stop = genCtx.getDOMFactory().createElementNS(SVG_NAMESPACE_URI, SVG_STOP_TAG);
             SVGPaintDescriptor pd = SVGColor.toSVG(colors[i], genCtx);
 
-            stop.setAttribute(SVG_OFFSET_ATTRIBUTE, (int) (fracs[i] * 100.0f) + "%");
+            stop.setAttribute(SVG_OFFSET_ATTRIBUTE, MathUtil.safeFloatToInt(fracs[i] * 100.0f) + "%");
             stop.setAttribute(SVG_STOP_COLOR_ATTRIBUTE, pd.getPaintValue());
 
             if (colors[i].getAlpha() != 255) {

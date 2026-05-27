@@ -39,6 +39,7 @@ import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xddf.usermodel.text.TextContainer;
 import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
@@ -372,7 +373,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     public void setTextRotation(Double rotation) {
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            bodyPr.setRot((int) (rotation * 60000.));
+            bodyPr.setRot(MathUtil.safeDoubleToInt(rotation * 60000.));
         }
     }
 

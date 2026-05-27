@@ -242,8 +242,8 @@ public abstract class Metafile extends HSLFPictureData {
         Header header = new Header();
         header.read(getRawData(), prefixLen);
         return new Dimension(
-            (int)Math.round(Units.toPoints((long)header.size.getWidth())),
-            (int)Math.round(Units.toPoints((long)header.size.getHeight()))
+            Math.toIntExact(Math.round(Units.toPoints((long)header.size.getWidth()))),
+            Math.toIntExact(Math.round(Units.toPoints((long)header.size.getHeight())))
         );
     }
 

@@ -36,6 +36,7 @@ import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher.CharPropFetcher;
@@ -258,7 +259,7 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
                 throw new IllegalArgumentException("Minimum font size is 1pt but was " + fontSize);
             }
 
-            rPr.setSz((int)(100*fontSize));
+            rPr.setSz(MathUtil.safeDoubleToInt(100*fontSize));
         }
     }
 
@@ -315,7 +316,7 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
                 rPr.unsetSpc();
             }
         } else {
-            rPr.setSpc((int)(100*spc));
+            rPr.setSpc(MathUtil.safeDoubleToInt(100*spc));
         }
     }
 
@@ -401,7 +402,7 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
      */
     @SuppressWarnings("WeakerAccess")
     public void setBaselineOffset(double baselineOffset){
-       getRPr(true).setBaseline((int) baselineOffset * 1000);
+       getRPr(true).setBaseline(MathUtil.safeDoubleToInt(baselineOffset * 1000));
     }
 
     /**

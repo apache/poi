@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
+import org.apache.poi.util.MathUtil;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -158,7 +159,7 @@ public final class EscherGraphics2d extends Graphics2D {
                 width = (int) ((BasicStroke)_stroke).getLineWidth() * 12700;
             }
 
-            drawLine((int)shape2d.getX1(), (int)shape2d.getY1(), (int)shape2d.getX2(), (int)shape2d.getY2(), width);
+            drawLine(MathUtil.safeDoubleToInt(shape2d.getX1()), MathUtil.safeDoubleToInt(shape2d.getY1()), MathUtil.safeDoubleToInt(shape2d.getX2()), MathUtil.safeDoubleToInt(shape2d.getY2()), width);
         }
         else
         {

@@ -21,6 +21,7 @@ import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.LazyRefEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.MathUtil;
 
 import java.time.DateTimeException;
 import java.util.regex.Pattern;
@@ -236,7 +237,7 @@ public final class OperandResolver {
         double d = coerceValueToDouble(ev);
         // Note - the standard java type conversion from double to int truncates toward zero.
         // but Math.floor() truncates toward negative infinity
-        return (int)Math.floor(d);
+        return MathUtil.safeDoubleToInt(Math.floor(d));
     }
 
     /**

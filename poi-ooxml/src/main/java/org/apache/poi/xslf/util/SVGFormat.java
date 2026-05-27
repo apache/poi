@@ -31,6 +31,7 @@ import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.xslf.draw.SVGPOIGraphics2D;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -53,7 +54,7 @@ public class SVGFormat implements OutputFormat {
         // Create an instance of org.w3c.dom.Document.
         Document document = domImpl.createDocument(svgNS, "svg", null);
         svgGenerator = new SVGPOIGraphics2D(document, textAsShapes);
-        svgGenerator.setSVGCanvasSize(new Dimension((int)width, (int)height));
+        svgGenerator.setSVGCanvasSize(new Dimension(MathUtil.safeDoubleToInt(width), MathUtil.safeDoubleToInt(height)));
         svgGenerator.setRenderingHint(Drawable.CACHE_IMAGE_SOURCE, true);
         return svgGenerator;
     }

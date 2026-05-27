@@ -33,6 +33,7 @@ import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.usermodel.GroupShape;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
@@ -343,7 +344,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public void setRotation(double theta){
-        getSafeXfrm().setRot((int) (theta * 60000));
+        getSafeXfrm().setRot(MathUtil.safeDoubleToInt(theta * 60000));
     }
 
     @Override

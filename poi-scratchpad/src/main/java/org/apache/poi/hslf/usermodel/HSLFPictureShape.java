@@ -35,6 +35,7 @@ import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 
@@ -209,7 +210,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
         // if all crop values are zero (the default) then no crop rectangle is set, return null
         return (top==0 && bottom==0 && left==0 && right==0)
             ? null
-            : new Insets((int)(top*100000), (int)(left*100000), (int)(bottom*100000), (int)(right*100000));
+            : new Insets(MathUtil.safeDoubleToInt(top*100000), MathUtil.safeDoubleToInt(left*100000), MathUtil.safeDoubleToInt(bottom*100000), MathUtil.safeDoubleToInt(right*100000));
     }
 
     @Override
