@@ -150,8 +150,8 @@ public class PathGradientPaint implements Paint {
             Rectangle2D.intersect(childRect, deviceBounds, destRect);
             int dx = MathUtil.safeDoubleToInt(destRect.getX()-deviceBounds.getX());
             int dy = MathUtil.safeDoubleToInt(destRect.getY()-deviceBounds.getY());
-            int dw = MathUtil.safeDoubleToInt(destRect.getWidth();
-            int dh = MathUtil.safeDoubleToInt(destRect.getHeight();
+            int dw = MathUtil.safeDoubleToInt(destRect.getWidth());
+            int dh = MathUtil.safeDoubleToInt(destRect.getHeight());
             Object data = raster.getDataElements(dx, dy, dw, dh, null);
             dx = MathUtil.safeDoubleToInt(destRect.getX()-childRect.getX());
             dy = MathUtil.safeDoubleToInt(destRect.getY()-childRect.getY());
