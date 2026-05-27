@@ -26,6 +26,12 @@ public class MathUtil {
     private MathUtil() {}
 
     public static int safeFloatToInt(float f) {
+        if (Float.isNaN(f)) {
+            throw new IllegalArgumentException("Cannot convert NaN to int");
+        }
+        if (Float.isInfinite(f)) {
+            throw new IllegalArgumentException("Cannot convert infinity to int");
+        }
         if (f > Integer.MAX_VALUE || f < Integer.MIN_VALUE) {
             throw new IllegalArgumentException("Value out of range: " + f);
         }

@@ -681,7 +681,7 @@ public class HemfPlusBrush {
             double[] end = DrawPaint.RGB2SCRGB(endColor);
 
             // compute the interpolated color in linear space
-            int a = (int)Math.round(startColor.getAlpha() + factor * (endColor.getAlpha() - startColor.getAlpha()));
+            int a = Math.toIntExact(Math.round(startColor.getAlpha() + factor * (endColor.getAlpha() - startColor.getAlpha())));
             double r = start[0] + factor * (end[0] - start[0]);
             double g = start[1] + factor * (end[1] - start[1]);
             double b = start[2] + factor * (end[2] - start[2]);

@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 
@@ -111,7 +112,7 @@ public class XDDFBarChartData extends XDDFChartData {
     }
 
     public Integer getGapWidth() {
-        return (chart.isSetGapWidth()) ? (int)(POIXMLUnits.parsePercent(chart.getGapWidth().xgetVal()) / 1000.) : null;
+        return (chart.isSetGapWidth()) ? MathUtil.safeDoubleToInt(POIXMLUnits.parsePercent(chart.getGapWidth().xgetVal()) / 1000.) : null;
     }
 
     public void setGapWidth(Integer width) {

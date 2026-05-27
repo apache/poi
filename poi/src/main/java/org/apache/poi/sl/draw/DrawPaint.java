@@ -59,6 +59,7 @@ import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.util.Dimension2DDouble;
+import org.apache.poi.util.MathUtil;
 
 
 /**
@@ -385,7 +386,7 @@ public class DrawPaint {
     private static void scaleShades(int[] samples, double ratio) {
         if (ratio != 1) {
             for (int x=0; x<samples.length; x++) {
-                samples[x] = (int)Math.rint(samples[x] * ratio);
+                samples[x] = MathUtil.safeDoubleToInt(Math.rint(samples[x] * ratio));
             }
         }
     }

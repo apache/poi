@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.usermodel.XSSFAnchor;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
@@ -164,7 +165,7 @@ public final class SXSSFPicture implements Picture {
         assert (w > scaledWidth);
         double cw = getColumnWidthInPixels(col2);
         double deltaW = w - scaledWidth;
-        int dx2 = (int)(Units.EMU_PER_PIXEL * (cw - deltaW));
+        int dx2 = MathUtil.safeDoubleToInt(Units.EMU_PER_PIXEL * (cw - deltaW));
 
         anchor.setCol2(col2);
         anchor.setDx2(dx2);
@@ -179,7 +180,7 @@ public final class SXSSFPicture implements Picture {
         assert (h > scaledHeight);
         double ch = getRowHeightInPixels(row2);
         double deltaH = h - scaledHeight;
-        int dy2 = (int)(Units.EMU_PER_PIXEL * (ch - deltaH));
+        int dy2 = MathUtil.safeDoubleToInt(Units.EMU_PER_PIXEL * (ch - deltaH));
         anchor.setRow2(row2);
         anchor.setDy2(dy2);
 

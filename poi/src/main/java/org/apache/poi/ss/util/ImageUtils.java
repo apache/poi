@@ -180,8 +180,8 @@ public final class ImageUtils {
                   isHSSF ? HEIGHT_UNITS : 0, (row) -> getRowHeightInPixels(sheet, row));
 
         return new Dimension(
-            (int)Math.round(scaledWidth*EMU_PER_PIXEL),
-            (int)Math.round(scaledHeight*EMU_PER_PIXEL)
+            MathUtil.safeDoubleToInt(Math.round(scaledWidth*EMU_PER_PIXEL)),
+            MathUtil.safeDoubleToInt(Math.round(scaledHeight*EMU_PER_PIXEL))
         );
     }
 
@@ -287,7 +287,7 @@ public final class ImageUtils {
         }
 
         endCell.accept(cellIdx);
-        endD.accept((int)Math.rint(endDval));
+        endD.accept(MathUtil.safeDoubleToInt(Math.rint(endDval)));
     }
 
     private static int getDimFromCell(double imgSize, int startCell, int startD, int endCell, int endD, int hssfUnits,

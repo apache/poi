@@ -53,6 +53,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.draw.ImageRenderer;
+import org.apache.poi.util.MathUtil;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalse;
@@ -331,7 +332,7 @@ public abstract class SignatureLine {
 
         Dimension2D dim = rnd.getDimension();
         int defaultWidth = 300;
-        int defaultHeight = (int)(defaultWidth * dim.getHeight() / dim.getWidth());
+        int defaultHeight = MathUtil.safeDoubleToInt(defaultWidth * dim.getHeight() / dim.getWidth());
         BufferedImage bi = new BufferedImage(defaultWidth, defaultHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D gfx = bi.createGraphics();
         gfx.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);

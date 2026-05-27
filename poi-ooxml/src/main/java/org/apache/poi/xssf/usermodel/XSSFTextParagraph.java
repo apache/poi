@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.poi.ooxml.util.NumberHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.ParagraphPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
@@ -352,13 +353,13 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         if(bulletSize >= 0) {
             // percentage
             CTTextBulletSizePercent pt = pr.isSetBuSzPct() ? pr.getBuSzPct() : pr.addNewBuSzPct();
-            pt.setVal(Integer.toString((int)(bulletSize*1000)));
+            pt.setVal(Integer.toString(MathUtil.safeDoubleToInt(bulletSize*1000)));
             // unset points if percentage is now set
             if(pr.isSetBuSzPts()) pr.unsetBuSzPts();
         } else {
             // points
             CTTextBulletSizePoint pt = pr.isSetBuSzPts() ? pr.getBuSzPts() : pr.addNewBuSzPts();
-            pt.setVal((int)(-bulletSize*100));
+            pt.setVal(MathUtil.safeDoubleToInt(-bulletSize*100));
             // unset percentage if points is now set
             if(pr.isSetBuSzPct()) pr.unsetBuSzPct();
         }
@@ -546,8 +547,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     public void setLineSpacing(double linespacing){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTTextSpacing spc = CTTextSpacing.Factory.newInstance();
-        if(linespacing >= 0) spc.addNewSpcPct().setVal((int)(linespacing*1000));
-        else spc.addNewSpcPts().setVal((int)(-linespacing*100));
+        if(linespacing >= 0) spc.addNewSpcPct().setVal(MathUtil.safeDoubleToInt(linespacing*1000));
+        else spc.addNewSpcPts().setVal(MathUtil.safeDoubleToInt(-linespacing*100));
         pr.setLnSpc(spc);
     }
 
@@ -611,8 +612,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     public void setSpaceBefore(double spaceBefore){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTTextSpacing spc = CTTextSpacing.Factory.newInstance();
-        if(spaceBefore >= 0) spc.addNewSpcPct().setVal((int)(spaceBefore*1000));
-        else spc.addNewSpcPts().setVal((int)(-spaceBefore*100));
+        if(spaceBefore >= 0) spc.addNewSpcPct().setVal(MathUtil.safeDoubleToInt(spaceBefore*1000));
+        else spc.addNewSpcPts().setVal(MathUtil.safeDoubleToInt(-spaceBefore*100));
         pr.setSpcBef(spc);
     }
 
@@ -666,8 +667,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     public void setSpaceAfter(double spaceAfter){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTTextSpacing spc = CTTextSpacing.Factory.newInstance();
-        if(spaceAfter >= 0) spc.addNewSpcPct().setVal((int)(spaceAfter*1000));
-        else spc.addNewSpcPts().setVal((int)(-spaceAfter*100));
+        if(spaceAfter >= 0) spc.addNewSpcPct().setVal(MathUtil.safeDoubleToInt(spaceAfter*1000));
+        else spc.addNewSpcPts().setVal(MathUtil.safeDoubleToInt(-spaceAfter*100));
         pr.setSpcAft(spc);
     }
 

@@ -835,7 +835,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (pr == null || pr.sizeOfSpacingArray() == 0) {
             return 0;
         }
-        return (int)Units.toDXA(POIXMLUnits.parseLength(pr.getSpacingArray(0).xgetVal()));
+        return MathUtil.safeDoubleToInt(Units.toDXA(POIXMLUnits.parseLength(pr.getSpacingArray(0).xgetVal())));
     }
 
     @Override
@@ -1101,7 +1101,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public int getTextPosition() {
         CTRPr pr = getRunProperties(false);
-        return (pr != null && pr.sizeOfPositionArray() > 0) ? (int)(Units.toPoints(POIXMLUnits.parseLength(pr.getPositionArray(0).xgetVal())) / 2.)
+        return (pr != null && pr.sizeOfPositionArray() > 0) ? MathUtil.safeDoubleToInt(Units.toPoints(POIXMLUnits.parseLength(pr.getPositionArray(0).xgetVal())) / 2.)
                 : -1;
     }
 

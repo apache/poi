@@ -40,6 +40,7 @@ import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.util.MathUtil;
 import org.w3c.dom.svg.SVGDocument;
 
 public class SVGImageRenderer implements ImageRenderer {
@@ -88,7 +89,7 @@ public class SVGImageRenderer implements ImageRenderer {
 
     @Override
     public BufferedImage getImage(Dimension2D dim) {
-        BufferedImage bi = new BufferedImage((int)dim.getWidth(), (int)dim.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bi = new BufferedImage(MathUtil.safeDoubleToInt(dim.getWidth()), MathUtil.safeDoubleToInt(dim.getHeight()), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = (Graphics2D) bi.getGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
