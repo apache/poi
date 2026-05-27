@@ -216,6 +216,26 @@ public final class ImageUtils {
         return new Dimension(w, h);
     }
 
+    /**
+     * Calculates the dimensions in EMUs for the given anchor in the context of the given sheet.
+     *
+     * @param anchor the anchor of which we want to calculate the dimensions.
+     * @param sheet the sheet where the anchor is inserted; it's required to obtain the cell width/height necessary to
+     *              calculate the dimensions of the anchor.
+     * @return the dimensions in EMUs
+     * @since 6.0.0
+     */
+    public static Dimension getDimensionFromAnchor(ClientAnchor anchor, Sheet sheet) {
+        boolean isHSSF = (anchor instanceof HSSFClientAnchor);
+
+        int w = getDimFromCell(0, anchor.getCol1(), anchor.getDx1(), anchor.getCol2(), anchor.getDx2(),
+                isHSSF ? WIDTH_UNITS : 0, sheet::getColumnWidthInPixels);
+
+        int h = getDimFromCell(0, anchor.getRow1(), anchor.getDy1(), anchor.getRow2(), anchor.getDy2(),
+                isHSSF ? HEIGHT_UNITS : 0, (row) -> getRowHeightInPixels(sheet, row));
+
+        return new Dimension(w, h);
+    }
 
     public static double getRowHeightInPixels(Sheet sheet, int rowNum) {
         Row r = sheet.getRow(rowNum);
