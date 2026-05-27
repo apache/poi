@@ -63,15 +63,15 @@ final class PlainCellCache {
         }
 
         public int getColumnIndex() {
-            return (int)(_bookSheetColumn & 0x000FFFF);
+            return Math.toIntExact(_bookSheetColumn & 0x000FFFF);
         }
 
         public int getSheetIndex() {
-            return (int)((_bookSheetColumn >> 32) & 0xFFFF);
+            return Math.toIntExact((_bookSheetColumn >> 32) & 0xFFFF);
         }
 
         public int getBookIndex() {
-            return (int)((_bookSheetColumn >> 48) & 0xFFFF);
+            return Math.toIntExact((_bookSheetColumn >> 48) & 0xFFFF);
         }
     }
 

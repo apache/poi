@@ -86,23 +86,9 @@ public final class TestReadOnlySharedStringsTable {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("MalformedSSTCount.xlsx"))) {
             List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
             assertEquals(1, parts.size());
-
-            try (SharedStringsTable stbl = new SharedStringsTable(parts.get(0))) {
-                ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0));
-                ReadOnlySharedStringsTable rtbl2;
-                try (InputStream stream = parts.get(0).getInputStream()) {
-                    rtbl2 = new ReadOnlySharedStringsTable(stream);
-                }
-
-                assertEquals(stbl.getCount(), rtbl.getCount());
-                assertEquals(stbl.getUniqueCount(), rtbl.getUniqueCount());
-                assertEquals(stbl.getUniqueCount(), rtbl2.getUniqueCount());
-                for (int i = 0; i < stbl.getUniqueCount(); i++) {
-                    RichTextString i1 = stbl.getItemAt(i);
-                    assertEquals(i1.getString(), rtbl.getItemAt(i).getString());
-                    assertEquals(i1.getString(), rtbl2.getItemAt(i).getString());
-                }
-            }
+            // the sharedStrings.xml contains a count value that is too large (8876876876876)
+            // we expect int values
+            assertThrows(ArithmeticException.class, () -> new ReadOnlySharedStringsTable(parts.get(0)));
         }
     }
 
@@ -187,16 +173,11 @@ public final class TestReadOnlySharedStringsTable {
     }
 
     @Test
-    void testHugeUniqueCount() throws IOException, SAXException {
-        ReadOnlySharedStringsTable tbl = new ReadOnlySharedStringsTable(
+    void testHugeUniqueCount() {
+        // the 99999999999999999 below is too large, we expect an int value
+        assertThrows(ArithmeticException.class,
+                () -> new ReadOnlySharedStringsTable(
                 new ByteArrayInputStream(MINIMAL_XML.replace("49", "99999999999999999").
-                        getBytes(StandardCharsets.UTF_8)));
-        assertNotNull(tbl);
-        assertEquals(1569325055, tbl.getUniqueCount());
-        assertEquals(55, tbl.getCount());
-        assertTrue(tbl.includePhoneticRuns);
-        assertEquals("bla", tbl.getItemAt(0).getString());
-        assertThrows(IllegalStateException.class,
-                () -> tbl.getItemAt(1).getString());
+                        getBytes(StandardCharsets.UTF_8))));
     }
 }

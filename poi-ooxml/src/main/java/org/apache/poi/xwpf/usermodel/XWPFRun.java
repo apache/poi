@@ -1129,7 +1129,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *            values will lower it.
      */
     public void setTextPosition(int val) {
-        BigInteger bint = new BigInteger(Integer.toString(val));
+        BigInteger bint = BigInteger.valueOf(val);
         CTRPr pr = getRunProperties(true);
         CTSignedHpsMeasure position = pr.sizeOfPositionArray() > 0 ? pr.getPositionArray(0) : pr.addNewPosition();
         position.setVal(bint);
