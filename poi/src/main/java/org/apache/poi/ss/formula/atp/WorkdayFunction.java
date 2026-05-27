@@ -24,6 +24,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.MathUtil;
 
 /**
  * Implementation of Excel 'Analysis ToolPak' function WORKDAY()<br>
@@ -64,7 +65,8 @@ final class WorkdayFunction implements FreeRefFunction {
         double[] holidays;
         try {
             start = this.evaluator.evaluateDateArg(args[0], srcCellRow, srcCellCol);
-            days = (int) Math.floor(this.evaluator.evaluateNumberArg(args[1], srcCellRow, srcCellCol));
+            days = MathUtil.safeDoubleToInt(
+                    Math.floor(this.evaluator.evaluateNumberArg(args[1], srcCellRow, srcCellCol)));
             ValueEval holidaysCell = args.length == 3 ? args[2] : null;
             holidays = this.evaluator.evaluateDatesArg(holidaysCell, srcCellRow, srcCellCol);
             return new NumberEval(DateUtil.getExcelDate(WorkdayCalculator.instance.calculateWorkdays(start, days, holidays)));

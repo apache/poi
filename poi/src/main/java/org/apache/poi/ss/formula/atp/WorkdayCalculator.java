@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 
 /**
  * A calculator for workdays, considering dates as excel representations.
@@ -100,7 +101,8 @@ public class WorkdayCalculator {
         int weekendDay1Past = weekendDays.length == 0 ? 0 : this.pastDaysOfWeek(start, end, weekendDays[0]);
         int weekendDay2Past = weekendDays.length <= 1 ? 0 : this.pastDaysOfWeek(start, end, weekendDays[1]);
         int nonWeekendHolidays = this.calculateNonWeekendHolidays(start, end, holidays);
-        return (int) (end - start + 1) - weekendDay1Past - weekendDay2Past - nonWeekendHolidays;
+        return MathUtil.safeDoubleToInt(
+                (end - start + 1) - weekendDay1Past - weekendDay2Past - nonWeekendHolidays);
     }
 
     /**
@@ -152,8 +154,8 @@ public class WorkdayCalculator {
      */
     protected int pastDaysOfWeek(double start, double end, int dayOfWeek) {
         int pastDaysOfWeek = 0;
-        int startDay = (int) Math.floor(Math.min(start, end));
-        int endDay = (int) Math.floor(Math.max(end, start));
+        int startDay = MathUtil.safeDoubleToInt(Math.floor(Math.min(start, end)));
+        int endDay = MathUtil.safeDoubleToInt(Math.floor(Math.max(end, start)));
         for (; startDay <= endDay; startDay++) {
             Calendar today = LocaleUtil.getLocaleCalendar();
             today.setTime(DateUtil.getJavaDate(startDay));
