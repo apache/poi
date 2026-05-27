@@ -232,8 +232,10 @@ public final class IOUtils {
      * @since 5.4.1
      */
     public static byte[] toByteArray(InputStream stream, final long length, final int maxLength) throws IOException {
-        return toByteArray(stream,
-                length > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) length,
+        if (length > Integer.MAX_VALUE) {
+            throwRFE(length, maxLength);
+        }
+        return toByteArray(stream, Math.toIntExact(length),
                 maxLength, true, length != Integer.MAX_VALUE);
     }
 

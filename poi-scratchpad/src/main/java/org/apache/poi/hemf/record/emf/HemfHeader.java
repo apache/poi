@@ -173,7 +173,7 @@ public class HemfHeader implements HemfRecord {
             if (skip < 0 || descriptionEnd > recordSize + HEADER_SIZE || skip + descriptionBytes > Integer.MAX_VALUE) {
                 throw new RecordFormatException("Invalid EMF header description bounds");
             }
-            int maxDescriptionLength = (int)Math.min(recordSize, Integer.MAX_VALUE);
+            int maxDescriptionLength = Math.toIntExact(Math.min(recordSize, Integer.MAX_VALUE));
             IOUtils.safelyAllocateCheck(descriptionBytes, maxDescriptionLength);
             leis.mark((int)(skip + descriptionBytes));
             leis.skipFully((int)skip);
