@@ -131,7 +131,7 @@ public class RLEDecompressingInputStream extends InputStream {
                     return -1;
                 }
             }
-            int c = (int) Math.min(n, len - (long)pos);
+            int c = Math.toIntExact(Math.min(n, len - pos));
             pos += c;
             length -= c;
         }

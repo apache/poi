@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -286,11 +287,10 @@ class TestXWPFBugs {
             fail("Should catch exception");
         } catch (POIXMLException e) {
             // JDK 25+ does more checks, so more than one exception are possible
-            assertTrue(e.getMessage().contains("The element \"w:t\" has a depth"),
-                    "Had: " + e);
+            assertContains(e.getMessage(), "The element \"w:t\" has a depth");
         } catch (IOException e) {
             assertInstanceOf(POIException.class, e.getCause());
-            assertTrue(e.getMessage().contains("Node depth exceeds maximum supported depth"));
+            assertContains(e.getMessage(), "Node depth exceeds maximum supported depth");
         }
     }
 }

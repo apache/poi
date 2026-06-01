@@ -17,12 +17,6 @@
 
 package org.apache.poi.hpsf.basic;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -39,6 +33,8 @@ import org.apache.poi.util.RandomSingleton;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Basing on: src/examples/src/org/apache/poi/hpsf/examples/ModifyDocumentSummaryInformation.java
@@ -506,15 +502,15 @@ final class TestMetaDataIPI {
         assertEquals("a String", s, "string");
 
 
-        assertTrue(customProperties.get("string") instanceof String);
-        assertTrue(customProperties.get("boolean") instanceof Boolean);
-        assertTrue(customProperties.get("int") instanceof Integer);
-        assertTrue(customProperties.get("negint") instanceof Integer);
-        assertTrue(customProperties.get("long") instanceof Long);
-        assertTrue(customProperties.get("neglong") instanceof Long);
-        assertTrue(customProperties.get("double") instanceof Double);
-        assertTrue(customProperties.get("negdouble") instanceof Double);
-        assertTrue(customProperties.get("date") instanceof Date);
+        assertInstanceOf(String.class, customProperties.get("string"));
+        assertInstanceOf(Boolean.class, customProperties.get("boolean"));
+        assertInstanceOf(Integer.class, customProperties.get("int"));
+        assertInstanceOf(Integer.class, customProperties.get("negint"));
+        assertInstanceOf(Long.class, customProperties.get("long"));
+        assertInstanceOf(Long.class, customProperties.get("neglong"));
+        assertInstanceOf(Double.class, customProperties.get("double"));
+        assertInstanceOf(Double.class, customProperties.get("negdouble"));
+        assertInstanceOf(Date.class, customProperties.get("date"));
     }
 
 

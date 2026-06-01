@@ -28,6 +28,7 @@ import java.util.function.Function;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
@@ -285,7 +286,9 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     public int getWidth() {
         CTTblPr tblPr = getTblPr(false);
-        return tblPr != null && tblPr.isSetTblW() ? (int)Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblW().xgetW())) : -1;
+        return tblPr != null && tblPr.isSetTblW() ?
+                MathUtil.safeDoubleToInt(
+                        Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblW().xgetW()))) : -1;
     }
 
     /**
@@ -327,7 +330,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             }
             switch (typeValue.intValue()) {
                 case STTblWidth.INT_DXA:
-                    return (int) Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblInd().xgetW()));
+                    return MathUtil.safeDoubleToInt(
+                            Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblInd().xgetW())));
                 case STTblWidth.INT_NIL:
                     // "§17.18.90: [nil] Specifies that the current width is zero, regardless of
                     // any width value specified on the parent element"
@@ -1066,7 +1070,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             if (tcm != null) {
                 CTTblWidth tw = margin.apply(tcm);
                 if (tw != null) {
-                    return (int) Units.toDXA(POIXMLUnits.parseLength(tw.xgetW()));
+                    return MathUtil.safeDoubleToInt(
+                            Units.toDXA(POIXMLUnits.parseLength(tw.xgetW())));
                 }
             }
         }

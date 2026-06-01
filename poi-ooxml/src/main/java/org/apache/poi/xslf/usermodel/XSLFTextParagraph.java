@@ -35,6 +35,7 @@ import org.apache.poi.sl.usermodel.TabStop.TabStopType;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.ParagraphPropertyFetcher;
 import org.apache.poi.xslf.model.ParagraphPropertyFetcher.ParaPropFetcher;
@@ -362,13 +363,13 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
         if(bulletSize >= 0) {
             CTTextBulletSizePercent pt = pr.isSetBuSzPct() ? pr.getBuSzPct() : pr.addNewBuSzPct();
-            pt.setVal(Integer.toString((int)(bulletSize*1000)));
+            pt.setVal(Integer.toString(MathUtil.safeDoubleToInt(bulletSize*1000)));
             if(pr.isSetBuSzPts()) {
                 pr.unsetBuSzPts();
             }
         } else {
             CTTextBulletSizePoint pt = pr.isSetBuSzPts() ? pr.getBuSzPts() : pr.addNewBuSzPts();
-            pt.setVal((int)(-bulletSize*100));
+            pt.setVal(MathUtil.safeDoubleToInt(-bulletSize*100));
             if(pr.isSetBuSzPct()) {
                 pr.unsetBuSzPct();
             }
@@ -588,13 +589,13 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                 spc.unsetSpcPts();
             }
             final CTTextSpacingPercent pct = spc.isSetSpcPct() ? spc.getSpcPct() : spc.addNewSpcPct();
-            pct.setVal((int)(space*1000));
+            pct.setVal(MathUtil.safeDoubleToInt(space*1000));
         } else {
             if (spc.isSetSpcPct()) {
                 spc.unsetSpcPct();
             }
             final CTTextSpacingPoint pts = spc.isSetSpcPts() ? spc.getSpcPts() : spc.addNewSpcPts();
-            pts.setVal((int)(-space*100));
+            pts.setVal(MathUtil.safeDoubleToInt(-space*100));
         }
     }
 

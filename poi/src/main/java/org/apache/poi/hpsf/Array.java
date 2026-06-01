@@ -59,7 +59,7 @@ public class Array {
                 throw new IllegalPropertySetDataException(msg);
             }
 
-            int numDimensions = (int) numDimensionsUnsigned;
+            int numDimensions = Math.toIntExact(numDimensionsUnsigned);
 
             _dimensions = new ArrayDimension[numDimensions];
             for ( int i = 0; i < numDimensions; i++ ) {
@@ -102,7 +102,7 @@ public class Array {
                 numberOfScalarsLong + " in memory";
             throw new UnsupportedOperationException(msg);
         }
-        int numberOfScalars = (int) numberOfScalarsLong;
+        int numberOfScalars = Math.toIntExact(numberOfScalarsLong);
 
         IOUtils.safelyAllocateCheck(numberOfScalars, getMaxNumberOfArrayScalars());
 

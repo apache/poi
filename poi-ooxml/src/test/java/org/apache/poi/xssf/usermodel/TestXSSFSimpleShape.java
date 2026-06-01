@@ -18,6 +18,7 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -186,16 +187,16 @@ class TestXSSFSimpleShape {
             assertTrue(shape.getWordWrap());
 
             assertEquals(TextAutofit.NORMAL, shape.getTextAutofit());
-            assertTrue(props.getAutoFit() instanceof XDDFNormalAutoFit);
+            assertInstanceOf(XDDFNormalAutoFit.class, props.getAutoFit());
             shape.setTextAutofit(TextAutofit.NORMAL);
             assertEquals(TextAutofit.NORMAL, shape.getTextAutofit());
-            assertTrue(props.getAutoFit() instanceof XDDFNormalAutoFit);
+            assertInstanceOf(XDDFNormalAutoFit.class, props.getAutoFit());
             shape.setTextAutofit(TextAutofit.SHAPE);
             assertEquals(TextAutofit.SHAPE, shape.getTextAutofit());
-            assertTrue(props.getAutoFit() instanceof XDDFShapeAutoFit);
+            assertInstanceOf(XDDFShapeAutoFit.class, props.getAutoFit());
             shape.setTextAutofit(TextAutofit.NONE);
             assertEquals(TextAutofit.NONE, shape.getTextAutofit());
-            assertTrue(props.getAutoFit() instanceof XDDFNoAutoFit);
+            assertInstanceOf(XDDFNoAutoFit.class, props.getAutoFit());
 
             assertEquals(5, shape.getShapeType());
             shape.setShapeType(23);

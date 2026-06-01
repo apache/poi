@@ -48,7 +48,7 @@ public final class XSSFChildAnchor extends XSSFAnchor {
     }
 
     public int getDx1() {
-        return (int)t2d.getOff().getX();
+        return Math.toIntExact((Long)t2d.getOff().getX());
     }
 
     public void setDx1(int dx1) {
@@ -56,7 +56,7 @@ public final class XSSFChildAnchor extends XSSFAnchor {
     }
 
     public int getDy1() {
-        return (int)t2d.getOff().getY();
+        return Math.toIntExact((Long)t2d.getOff().getY());
     }
 
     public void setDy1(int dy1) {
@@ -64,7 +64,7 @@ public final class XSSFChildAnchor extends XSSFAnchor {
     }
 
     public int getDy2() {
-        return (int)(getDy1() + t2d.getExt().getCy());
+        return Math.toIntExact(getDy1() + t2d.getExt().getCy());
     }
 
     public void setDy2(int dy2) {
@@ -72,7 +72,7 @@ public final class XSSFChildAnchor extends XSSFAnchor {
     }
 
     public int getDx2() {
-        return (int)(getDx1() + t2d.getExt().getCx());
+        return Math.toIntExact(getDx1() + t2d.getExt().getCx());
     }
 
     public void setDx2(int dx2) {

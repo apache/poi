@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -186,7 +187,7 @@ public class CellDateFormatter extends CellFormatter {
             } else {
                 Calendar c = (Calendar)EXCEL_EPOCH_CAL.clone();
                 // If milliseconds were not requested in the format string, round the seconds.
-                int seconds = (int) (sFmt == null ? Math.round(v / 1000) : v / 1000);
+                int seconds = MathUtil.safeDoubleToInt(sFmt == null ? Math.round(v / 1000) : v / 1000);
                 c.add(Calendar.SECOND, seconds);
                 c.add(Calendar.MILLISECOND, (int)(v % 1000));
                 value = c.getTime();

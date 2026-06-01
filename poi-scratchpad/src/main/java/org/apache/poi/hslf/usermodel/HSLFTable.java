@@ -36,6 +36,7 @@ import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 
 /**
@@ -238,16 +239,16 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
             ly2 = r.getMaxY();
         }
         int leftFit(double x1, double x2, double y1, double y2) {
-            return (int)(Math.abs(x1-lx1)+Math.abs(y1-ly1)+Math.abs(x1-lx2)+Math.abs(y2-ly2));
+            return MathUtil.safeDoubleToInt(Math.abs(x1-lx1)+Math.abs(y1-ly1)+Math.abs(x1-lx2)+Math.abs(y2-ly2));
         }
         int topFit(double x1, double x2, double y1, double y2) {
-            return (int)(Math.abs(x1-lx1)+Math.abs(y1-ly1)+Math.abs(x2-lx2)+Math.abs(y1-ly2));
+            return MathUtil.safeDoubleToInt(Math.abs(x1-lx1)+Math.abs(y1-ly1)+Math.abs(x2-lx2)+Math.abs(y1-ly2));
         }
         int rightFit(double x1, double x2, double y1, double y2) {
-            return (int)(Math.abs(x2-lx1)+Math.abs(y1-ly1)+Math.abs(x2-lx2)+Math.abs(y2-ly2));
+            return MathUtil.safeDoubleToInt(Math.abs(x2-lx1)+Math.abs(y1-ly1)+Math.abs(x2-lx2)+Math.abs(y2-ly2));
         }
         int bottomFit(double x1, double x2, double y1, double y2) {
-            return (int)(Math.abs(x1-lx1)+Math.abs(y2-ly1)+Math.abs(x2-lx2)+Math.abs(y2-ly2));
+            return MathUtil.safeDoubleToInt(Math.abs(x1-lx1)+Math.abs(y2-ly1)+Math.abs(x2-lx2)+Math.abs(y2-ly2));
         }
     }
 

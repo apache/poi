@@ -20,8 +20,8 @@ package org.apache.poi.hssf.record;
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -67,8 +67,8 @@ final class TestObjRecord {
 
         List<SubRecord> subrecords = record.getSubRecords();
         assertEquals(2, subrecords.size() );
-        assertTrue(subrecords.get(0) instanceof CommonObjectDataSubRecord);
-        assertTrue(subrecords.get(1) instanceof EndSubRecord );
+        assertInstanceOf(CommonObjectDataSubRecord.class, subrecords.get(0));
+        assertInstanceOf(EndSubRecord.class, subrecords.get(1));
 
     }
 
@@ -104,8 +104,8 @@ final class TestObjRecord {
         record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, bytes));
         List<SubRecord> subrecords = record.getSubRecords();
         assertEquals( 2, subrecords.size() );
-        assertTrue( subrecords.get(0) instanceof CommonObjectDataSubRecord);
-        assertTrue( subrecords.get(1) instanceof EndSubRecord );
+        assertInstanceOf(CommonObjectDataSubRecord.class, subrecords.get(0));
+        assertInstanceOf(EndSubRecord.class, subrecords.get(1));
     }
 
     @Test

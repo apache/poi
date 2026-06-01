@@ -244,9 +244,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
 
         if ("sst".equals(localName)) {
             String count = attributes.getValue("count");
-            if(count != null) this.count = (int) Long.parseLong(count);
+            if(count != null) this.count = Math.toIntExact(Long.parseLong(count));
             String uniqueCount = attributes.getValue("uniqueCount");
-            if(uniqueCount != null) this.uniqueCount = (int) Long.parseLong(uniqueCount);
+            if(uniqueCount != null) this.uniqueCount = Math.toIntExact(Long.parseLong(uniqueCount));
 
             this.strings = new ArrayList<>(
                     // corrupted files may have a very large number here, so only use it

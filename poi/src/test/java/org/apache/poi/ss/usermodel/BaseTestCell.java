@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.ss.usermodel.FormulaError.forInt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -198,7 +199,7 @@ public abstract class BaseTestCell {
 
             } catch (IllegalStateException e){
                 // expected during successful test
-                assertTrue(e.getMessage().startsWith("Cannot get a"));
+                assertStartsWith(e.getMessage(), "Cannot get a");
             }
         }
     }

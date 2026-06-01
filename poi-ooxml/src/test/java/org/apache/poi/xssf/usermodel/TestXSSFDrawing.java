@@ -16,22 +16,17 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_DRAWINGML;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.FontUnderline;
@@ -67,7 +62,7 @@ class TestXSSFDrawing {
         List<RelationPart> rels = sheet.getRelationParts();
         assertEquals(1, rels.size());
         RelationPart rp = rels.get(0);
-        assertTrue(rp.getDocumentPart() instanceof XSSFDrawing);
+        assertInstanceOf(XSSFDrawing.class, rp.getDocumentPart());
 
         XSSFDrawing drawing = rp.getDocumentPart();
         //sheet.createDrawingPatriarch() should return the same instance of XSSFDrawing
@@ -81,12 +76,12 @@ class TestXSSFDrawing {
         List<XSSFShape> shapes = drawing.getShapes();
         assertEquals(6, shapes.size());
 
-        assertTrue(shapes.get(0) instanceof XSSFPicture);
-        assertTrue(shapes.get(1) instanceof XSSFPicture);
-        assertTrue(shapes.get(2) instanceof XSSFPicture);
-        assertTrue(shapes.get(3) instanceof XSSFPicture);
-        assertTrue(shapes.get(4) instanceof XSSFSimpleShape);
-        assertTrue(shapes.get(5) instanceof XSSFPicture);
+        assertInstanceOf(XSSFPicture.class, shapes.get(0));
+        assertInstanceOf(XSSFPicture.class, shapes.get(1));
+        assertInstanceOf(XSSFPicture.class, shapes.get(2));
+        assertInstanceOf(XSSFPicture.class, shapes.get(3));
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(4));
+        assertInstanceOf(XSSFPicture.class, shapes.get(5));
 
         for(XSSFShape sh : shapes) assertNotNull(sh.getAnchor());
 
@@ -106,7 +101,7 @@ class TestXSSFDrawing {
         List<RelationPart> rels = sheet.getRelationParts();
         assertEquals(1, rels.size());
         RelationPart rp = rels.get(0);
-        assertTrue(rp.getDocumentPart() instanceof XSSFDrawing);
+        assertInstanceOf(XSSFDrawing.class, rp.getDocumentPart());
 
         XSSFDrawing drawing = rp.getDocumentPart();
         String drawingId = rp.getRelationship().getId();
@@ -137,10 +132,10 @@ class TestXSSFDrawing {
 
         List<XSSFShape> shapes = drawing.getShapes();
         assertEquals(4, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSSFConnector);
-        assertTrue(shapes.get(1) instanceof XSSFShapeGroup);
-        assertTrue(shapes.get(2) instanceof XSSFSimpleShape);
-        assertTrue(shapes.get(3) instanceof XSSFSimpleShape); //
+        assertInstanceOf(XSSFConnector.class, shapes.get(0));
+        assertInstanceOf(XSSFShapeGroup.class, shapes.get(1));
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(2));
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(3)); //
 
         // Save and re-load it
         XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
@@ -158,14 +153,14 @@ class TestXSSFDrawing {
 
         shapes = dr1.getShapes();
         assertEquals(4, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSSFConnector);
-        assertTrue(shapes.get(1) instanceof XSSFShapeGroup);
-        assertTrue(shapes.get(2) instanceof XSSFSimpleShape);
-        assertTrue(shapes.get(3) instanceof XSSFSimpleShape); //
+        assertInstanceOf(XSSFConnector.class, shapes.get(0));
+        assertInstanceOf(XSSFShapeGroup.class, shapes.get(1));
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(2));
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(3)); //
 
         // Ensure it got the right namespaces
         String xml = ctDrawing.toString();
-        assertTrue(xml.contains("xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\""));
+        assertContains(xml, "xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\"");
         assertTrue(xml.contains("xmlns:a=\"" + NS_DRAWINGML + '\"'));
 
         checkRewrite(wb2);
@@ -197,11 +192,11 @@ class TestXSSFDrawing {
         //the source sheet has one relationship and it is XSSFDrawing
         List<POIXMLDocumentPart> rels1 = sheet1.getRelations();
         assertEquals(1, rels1.size());
-        assertTrue(rels1.get(0) instanceof XSSFDrawing);
+        assertInstanceOf(XSSFDrawing.class, rels1.get(0));
 
         List<POIXMLDocumentPart> rels2 = sheet2.getRelations();
         assertEquals(1, rels2.size());
-        assertTrue(rels2.get(0) instanceof XSSFDrawing);
+        assertInstanceOf(XSSFDrawing.class, rels2.get(0));
 
         XSSFDrawing drawing1 = (XSSFDrawing)rels1.get(0);
         XSSFDrawing drawing2 = (XSSFDrawing)rels2.get(0);
@@ -425,7 +420,7 @@ class TestXSSFDrawing {
 
         List<XSSFShape> shapes = drawing.getShapes();
         assertEquals(1, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(0));
 
         XSSFSimpleShape sshape = (XSSFSimpleShape) shapes.get(0);
 
@@ -531,7 +526,7 @@ class TestXSSFDrawing {
         List<RelationPart> rels = sheet.getRelationParts();
         assertEquals(1, rels.size());
         RelationPart rp = rels.get(0);
-        assertTrue(rp.getDocumentPart() instanceof XSSFDrawing);
+        assertInstanceOf(XSSFDrawing.class, rp.getDocumentPart());
 
         XSSFDrawing drawing = rp.getDocumentPart();
         //sheet.createDrawingPatriarch() should return the same instance of XSSFDrawing
@@ -545,7 +540,7 @@ class TestXSSFDrawing {
         List<XSSFShape> shapes = drawing.getShapes();
         assertEquals(6, shapes.size());
 
-        assertTrue(shapes.get(4) instanceof XSSFSimpleShape);
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(4));
 
         XSSFSimpleShape textbox = (XSSFSimpleShape) shapes.get(4);
         assertEquals("Sheet with various pictures\n(jpeg, png, wmf, emf and pict)", textbox.getText());
@@ -567,7 +562,7 @@ class TestXSSFDrawing {
         assertEquals(1, rels.size());
         RelationPart rp = rels.get(0);
 
-        assertTrue(rp.getDocumentPart() instanceof XSSFDrawing);
+        assertInstanceOf(XSSFDrawing.class, rp.getDocumentPart());
 
         XSSFDrawing drawing = rp.getDocumentPart();
 
@@ -582,7 +577,7 @@ class TestXSSFDrawing {
         List<XSSFShape> shapes = drawing.getShapes();
         assertEquals(1, shapes.size());
 
-        assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(0));
 
         XSSFSimpleShape textbox = (XSSFSimpleShape) shapes.get(0);
 
@@ -686,7 +681,7 @@ class TestXSSFDrawing {
 
         List<XSSFShape> shapes = drawing.getShapes();
         assertEquals(1, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(0));
 
         XSSFSimpleShape sshape = (XSSFSimpleShape) shapes.get(0);
 
@@ -787,7 +782,7 @@ class TestXSSFDrawing {
         List<RelationPart> rels = sheet.getRelationParts();
         assertEquals(1, rels.size());
         RelationPart rp = rels.get(0);
-        assertTrue(rp.getDocumentPart() instanceof XSSFDrawing);
+        assertInstanceOf(XSSFDrawing.class, rp.getDocumentPart());
 
         assertEquals(0, rp.getDocumentPart().getRelations().size());
 
@@ -814,8 +809,8 @@ class TestXSSFDrawing {
 
         List<XSSFShape> shapes = drawing.getShapes();
         assertEquals(3, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSSFPicture);
-        assertTrue(shapes.get(1) instanceof XSSFPicture);
+        assertInstanceOf(XSSFPicture.class, shapes.get(0));
+        assertInstanceOf(XSSFPicture.class, shapes.get(1));
 
         // Save and re-load it
         XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
@@ -833,8 +828,8 @@ class TestXSSFDrawing {
 
         shapes = dr1.getShapes();
         assertEquals(3, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSSFPicture);
-        assertTrue(shapes.get(1) instanceof XSSFPicture);
+        assertInstanceOf(XSSFPicture.class, shapes.get(0));
+        assertInstanceOf(XSSFPicture.class, shapes.get(1));
 
         checkRewrite(wb2);
         wb2.close();
@@ -901,15 +896,15 @@ class TestXSSFDrawing {
         XSSFDrawing draw = wb2.getSheetAt(0).getDrawingPatriarch();
         List<XSSFShape> shapes = draw.getShapes();
         assertEquals(2, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
-        assertTrue(shapes.get(1) instanceof XSSFShapeGroup);
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(0));
+        assertInstanceOf(XSSFShapeGroup.class, shapes.get(1));
         shapes = draw.getShapes((XSSFShapeGroup)shapes.get(1));
         assertEquals(2, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
-        assertTrue(shapes.get(1) instanceof XSSFShapeGroup);
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(0));
+        assertInstanceOf(XSSFShapeGroup.class, shapes.get(1));
         shapes = draw.getShapes((XSSFShapeGroup)shapes.get(1));
         assertEquals(1, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
+        assertInstanceOf(XSSFSimpleShape.class, shapes.get(0));
 
         wb2.close();
     }
@@ -927,6 +922,23 @@ class TestXSSFDrawing {
 
             drawing.getCharts().forEach(drawing2::importChart);
             assertEquals(1, drawing2.getCharts().size());
+        }
+    }
+
+    @Test
+    void testAbsoluteAnchor() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("absolute-anchor-over-empty-sheet.xlsx")) {
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            XSSFDrawing drawing = sheet.getDrawingPatriarch();
+            List<XSSFShape> shapes = drawing.getShapes();
+            assertEquals(1, shapes.size());
+
+            assertTrue(shapes.get(0).getAnchor() instanceof ClientAnchor);
+            ClientAnchor anchor = (ClientAnchor) shapes.get(0).getAnchor();
+            assertEquals(3, anchor.getCol1());
+            assertEquals(38, anchor.getRow1());
+            assertEquals(19, anchor.getCol2());
+            assertEquals(80, anchor.getRow2());
         }
     }
 

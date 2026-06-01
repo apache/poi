@@ -29,6 +29,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 
 @Internal
 public class BitmapFormat implements OutputFormat {
@@ -52,7 +53,7 @@ public class BitmapFormat implements OutputFormat {
                 type = BufferedImage.TYPE_INT_RGB;
                 break;
         }
-        img = new BufferedImage((int)width, (int)height, type);
+        img = new BufferedImage(MathUtil.safeDoubleToInt(width), MathUtil.safeDoubleToInt(height), type);
         graphics = img.createGraphics();
         graphics.setRenderingHint(Drawable.BUFFERED_IMAGE, new WeakReference<>(img));
         return graphics;

@@ -21,6 +21,7 @@ import static org.apache.poi.hslf.HSLFTestDataSamples.getSlideShow;
 import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -182,7 +183,7 @@ public final class TestPictures {
 
             pict = (HSLFPictureShape) slides.get(0).getShapes().get(0); //the first slide contains JPEG
             pdata = pict.getPictureData();
-            assertTrue(pdata instanceof JPEG);
+            assertInstanceOf(JPEG.class, pdata);
             assertEquals(PictureType.JPEG, pdata.getType());
             src_bytes = pdata.getData();
             ppt_bytes = slTests.readFile("clock.jpg");
@@ -190,7 +191,7 @@ public final class TestPictures {
 
             pict = (HSLFPictureShape) slides.get(1).getShapes().get(0); //the second slide contains PNG
             pdata = pict.getPictureData();
-            assertTrue(pdata instanceof PNG);
+            assertInstanceOf(PNG.class, pdata);
             assertEquals(PictureType.PNG, pdata.getType());
             src_bytes = pdata.getData();
             ppt_bytes = slTests.readFile("tomcat.png");
@@ -198,7 +199,7 @@ public final class TestPictures {
 
             pict = (HSLFPictureShape) slides.get(2).getShapes().get(0); //the third slide contains WMF
             pdata = pict.getPictureData();
-            assertTrue(pdata instanceof WMF);
+            assertInstanceOf(WMF.class, pdata);
             assertEquals(PictureType.WMF, pdata.getType());
             src_bytes = pdata.getData();
             ppt_bytes = slTests.readFile("santa.wmf");
@@ -210,7 +211,7 @@ public final class TestPictures {
 
             pict = (HSLFPictureShape) slides.get(3).getShapes().get(0); //the forth slide contains PICT
             pdata = pict.getPictureData();
-            assertTrue(pdata instanceof PICT);
+            assertInstanceOf(PICT.class, pdata);
             assertEquals(PictureType.PICT, pdata.getType());
             src_bytes = pdata.getData();
             ppt_bytes = slTests.readFile("cow.pict");
@@ -222,7 +223,7 @@ public final class TestPictures {
 
             pict = (HSLFPictureShape) slides.get(4).getShapes().get(0); //the fifth slide contains EMF
             pdata = pict.getPictureData();
-            assertTrue(pdata instanceof EMF);
+            assertInstanceOf(EMF.class, pdata);
             assertEquals(PictureType.EMF, pdata.getType());
             src_bytes = pdata.getData();
             ppt_bytes = slTests.readFile("wrench.emf");
@@ -256,12 +257,12 @@ public final class TestPictures {
 
             pict = (HSLFPictureShape) slides.get(0).getShapes().get(1); // 2nd object on 1st slide
             pdata = pict.getPictureData();
-            assertTrue(pdata instanceof WMF);
+            assertInstanceOf(WMF.class, pdata);
             assertEquals(PictureType.WMF, pdata.getType());
 
             pict = (HSLFPictureShape) slides.get(0).getShapes().get(2); // 3rd object on 1st slide
             pdata = pict.getPictureData();
-            assertTrue(pdata instanceof WMF);
+            assertInstanceOf(WMF.class, pdata);
             assertEquals(PictureType.WMF, pdata.getType());
         }
     }
@@ -308,12 +309,12 @@ public final class TestPictures {
 
             pict = (HSLFPictureShape) slides.get(6).getShapes().get(13);
             pdata = pict.getPictureData();
-            assertTrue(pdata instanceof WMF);
+            assertInstanceOf(WMF.class, pdata);
             assertEquals(PictureType.WMF, pdata.getType());
 
             pict = (HSLFPictureShape) slides.get(7).getShapes().get(13);
             pdata = pict.getPictureData();
-            assertTrue(pdata instanceof WMF);
+            assertInstanceOf(WMF.class, pdata);
             assertEquals(PictureType.WMF, pdata.getType());
 
             //add a new picture, it should be correctly appended to the Pictures stream

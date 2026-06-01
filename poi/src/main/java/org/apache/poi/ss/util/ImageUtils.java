@@ -40,6 +40,7 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -125,12 +126,12 @@ public final class ImageUtils {
         Element node = (Element)r.getImageMetadata(0).getAsTree("javax_imageio_1.0");
         lst = node.getElementsByTagName("HorizontalPixelSize");
         if(lst != null && lst.getLength() == 1) {
-            hdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
+            hdpi = MathUtil.safeDoubleToInt(mm2inch/Double.parseDouble(((Element)lst.item(0)).getAttribute("value")));
         }
 
         lst = node.getElementsByTagName("VerticalPixelSize");
         if(lst != null && lst.getLength() == 1) {
-            vdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
+            vdpi = MathUtil.safeDoubleToInt(mm2inch/Double.parseDouble(((Element)lst.item(0)).getAttribute("value")));
         }
 
         return new int[]{hdpi, vdpi};
@@ -179,8 +180,8 @@ public final class ImageUtils {
                   isHSSF ? HEIGHT_UNITS : 0, (row) -> getRowHeightInPixels(sheet, row));
 
         return new Dimension(
-            (int)Math.round(scaledWidth*EMU_PER_PIXEL),
-            (int)Math.round(scaledHeight*EMU_PER_PIXEL)
+            MathUtil.safeDoubleToInt(Math.round(scaledWidth*EMU_PER_PIXEL)),
+            MathUtil.safeDoubleToInt(Math.round(scaledHeight*EMU_PER_PIXEL))
         );
     }
 
@@ -216,6 +217,26 @@ public final class ImageUtils {
         return new Dimension(w, h);
     }
 
+    /**
+     * Calculates the dimensions in EMUs for the given anchor in the context of the given sheet.
+     *
+     * @param anchor the anchor of which we want to calculate the dimensions.
+     * @param sheet the sheet where the anchor is inserted; it's required to obtain the cell width/height necessary to
+     *              calculate the dimensions of the anchor.
+     * @return the dimensions in EMUs
+     * @since 6.0.0
+     */
+    public static Dimension getDimensionFromAnchor(ClientAnchor anchor, Sheet sheet) {
+        boolean isHSSF = (anchor instanceof HSSFClientAnchor);
+
+        int w = getDimFromCell(0, anchor.getCol1(), anchor.getDx1(), anchor.getCol2(), anchor.getDx2(),
+                isHSSF ? WIDTH_UNITS : 0, sheet::getColumnWidthInPixels);
+
+        int h = getDimFromCell(0, anchor.getRow1(), anchor.getDy1(), anchor.getRow2(), anchor.getDy2(),
+                isHSSF ? HEIGHT_UNITS : 0, (row) -> getRowHeightInPixels(sheet, row));
+
+        return new Dimension(w, h);
+    }
 
     public static double getRowHeightInPixels(Sheet sheet, int rowNum) {
         Row r = sheet.getRow(rowNum);
@@ -266,7 +287,7 @@ public final class ImageUtils {
         }
 
         endCell.accept(cellIdx);
-        endD.accept((int)Math.rint(endDval));
+        endD.accept(MathUtil.safeDoubleToInt(Math.rint(endDval)));
     }
 
     private static int getDimFromCell(double imgSize, int startCell, int startD, int endCell, int endD, int hssfUnits,
@@ -297,6 +318,6 @@ public final class ImageUtils {
             }
         }
 
-        return (int)Math.rint(targetSize);
+        return MathUtil.safeDoubleToInt(Math.rint(targetSize));
     }
 }

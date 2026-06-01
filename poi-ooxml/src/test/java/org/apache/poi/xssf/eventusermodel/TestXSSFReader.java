@@ -18,7 +18,7 @@
 package org.apache.poi.xssf.eventusermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
@@ -75,14 +75,14 @@ public final class TestXSSFReader {
 
             SharedStrings sst1 = r.getSharedStringsTable();
             assertNotNull(sst1);
-            assertTrue(sst1 instanceof SharedStringsTable, "instanceof SharedStringsTable");
+            assertInstanceOf(SharedStringsTable.class, sst1, "instanceof SharedStringsTable");
 
             assertFalse(r.useReadOnlySharedStringsTable(), "useReadOnlySharedStringsTable defaults to false");
             r.setUseReadOnlySharedStringsTable(true);
             assertTrue(r.useReadOnlySharedStringsTable(), "useReadOnlySharedStringsTable changed to true");
             SharedStrings sst2 = r.getSharedStringsTable();
             assertNotNull(sst2);
-            assertTrue(sst2 instanceof ReadOnlySharedStringsTable, "instanceof ReadOnlySharedStringsTable");
+            assertInstanceOf(ReadOnlySharedStringsTable.class, sst2, "instanceof ReadOnlySharedStringsTable");
         }
     }
 
@@ -322,7 +322,7 @@ public final class TestXSSFReader {
             while (iter.hasNext()) {
                 InputStream stream = iter.next();
                 String sheetName = iter.getSheetName();
-                assertNotContained(seen, sheetName);
+                assertNotContains(seen, sheetName);
                 seen.add(sheetName);
                 stream.close();
             }

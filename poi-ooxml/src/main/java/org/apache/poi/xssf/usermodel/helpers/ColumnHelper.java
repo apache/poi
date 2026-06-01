@@ -311,7 +311,7 @@ public class ColumnHelper {
     public int getColDefaultStyle(long index) {
         final CTCol column = getColumn(index, false);
         if (column != null) {
-            return (int) column.getStyle();
+            return Math.toIntExact(column.getStyle());
         }
         return -1;
     }

@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.SimpleShape;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.xddf.usermodel.XDDFColor;
 import org.apache.poi.xddf.usermodel.XDDFColorRgbBinary;
 import org.apache.poi.xddf.usermodel.XDDFFillProperties;
@@ -984,7 +985,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
         }
 
         if (pr.sizeOfSzArray() > 0) {
-            int sz = (int) (pr.getSzArray(0).getVal() * 100);
+            int sz = MathUtil.safeDoubleToInt(pr.getSzArray(0).getVal() * 100);
             rPr.setSz(sz);
         }
 
@@ -995,7 +996,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
                 CTSRgbColor clr = fill.isSetSrgbClr() ? fill.getSrgbClr() : fill.addNewSrgbClr();
                 clr.setVal(xlsColor.getRgb());
             } else if (xlsColor.isSetIndexed()) {
-                HSSFColor indexed = HSSFColor.getIndexHash().get((int) xlsColor.getIndexed());
+                HSSFColor indexed = HSSFColor.getIndexHash().get(Math.toIntExact(xlsColor.getIndexed()));
                 if (indexed != null) {
                     byte[] rgb = new byte[3];
                     rgb[0] = (byte) indexed.getTriplet()[0];
@@ -1015,7 +1016,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
 
     @Override
     public int getShapeId() {
-        return (int) ctShape.getNvSpPr().getCNvPr().getId();
+        return Math.toIntExact(ctShape.getNvSpPr().getCNvPr().getId());
     }
 
     @Override

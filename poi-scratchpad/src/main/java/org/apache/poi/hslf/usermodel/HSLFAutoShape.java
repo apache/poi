@@ -49,6 +49,7 @@ import org.apache.poi.ss.usermodel.ShapeTypes;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.MathUtil;
 
 /**
  * Represents an AutoShape.<p>
@@ -271,8 +272,8 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
 
         final Rectangle2D bounds = getBounds(opt, path2D);
 
-        path.setW((int)Math.rint(bounds.getWidth()));
-        path.setH((int)Math.rint(bounds.getHeight()));
+        path.setW(MathUtil.safeDoubleToInt(Math.rint(bounds.getWidth())));
+        path.setH(MathUtil.safeDoubleToInt(Math.rint(bounds.getHeight())));
 
         return cusGeo;
     }
@@ -459,7 +460,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
     }
 
     private static String d2s(double d) {
-        return Integer.toString((int)Math.rint(d));
+        return Integer.toString(MathUtil.safeDoubleToInt(Math.rint(d)));
     }
 
     private static Point2D xy2p(int[] xyPoints) {

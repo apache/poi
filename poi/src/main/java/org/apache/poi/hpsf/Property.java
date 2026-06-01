@@ -140,12 +140,12 @@ public class Property {
             throw new UnsupportedEncodingException("Dictionary not allowed here");
         }
 
-        int o = (int) offset;
+        int o = Math.toIntExact(offset);
         type = LittleEndian.getUInt(src, o);
         o += LittleEndianConsts.INT_SIZE;
 
         try {
-            value = VariantSupport.read(src, o, length, (int) type, codepage);
+            value = VariantSupport.read(src, o, length, Math.toIntExact(type), codepage);
         } catch (UnsupportedVariantTypeException ex) {
             VariantSupport.writeUnsupportedTypeMessage(ex);
             value = ex.getValue();
@@ -179,7 +179,7 @@ public class Property {
         type = leis.readUInt();
 
         try {
-            value = VariantSupport.read(leis, length, (int) type, codepage);
+            value = VariantSupport.read(leis, length, Math.toIntExact(type), codepage);
         } catch (UnsupportedVariantTypeException ex) {
             VariantSupport.writeUnsupportedTypeMessage(ex);
             value = ex.getValue();

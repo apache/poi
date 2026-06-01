@@ -248,7 +248,7 @@ public class XSSFColor extends ExtendedColor {
      */
     @Override
     public int getTheme() {
-        return (int) ctColor.getTheme();
+        return Math.toIntExact(ctColor.getTheme());
     }
 
     /**

@@ -43,6 +43,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.draw.geom.XSLFCustomGeometry;
 import org.apache.poi.xslf.model.PropertyFetcher;
@@ -159,7 +160,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     public void setRotation(double theta) {
         CTTransform2D xfrm = getXfrm(true);
         if (xfrm != null) {
-            xfrm.setRot((int) (theta * 60000));
+            xfrm.setRot(MathUtil.safeDoubleToInt(theta * 60000));
         }
     }
 
@@ -676,7 +677,12 @@ public abstract class XSLFSimpleShape extends XSLFShape
             CTShapeStyle style = getSpStyle();
             if (style != null && style.getEffectRef() != null) {
                 // 1-based index of a shadow style within the style matrix
-                int idx = (int) style.getEffectRef().getIdx();
+                int idx;
+                try {
+                    idx = Math.toIntExact(style.getEffectRef().getIdx());
+                } catch (ArithmeticException e) {
+                    throw new IllegalStateException("Int overflow with effect ref id " + style.getEffectRef().getIdx());
+                }
                 if(idx != 0) {
                     CTStyleMatrix styleMatrix = getSheet().getTheme().getXmlObject().getThemeElements().getFmtScheme();
                     CTEffectStyleItem ef = styleMatrix.getEffectStyleLst().getEffectStyleArray(idx - 1);

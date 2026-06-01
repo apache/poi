@@ -163,6 +163,19 @@ public final class TestXSSFTable {
     }
 
     @Test
+    void oversizedTableCountsAreRejected() {
+        XSSFTable table = new XSSFTable();
+
+        table.getCTTable().setHeaderRowCount((long) Integer.MAX_VALUE + 1);
+        table.getCTTable().setTotalsRowCount((long) Integer.MAX_VALUE + 1);
+        table.getCTTable().addNewTableColumns().setCount((long) Integer.MAX_VALUE + 1);
+
+        assertThrows(ArithmeticException.class, table::getHeaderRowCount);
+        assertThrows(ArithmeticException.class, table::getTotalsRowCount);
+        assertThrows(ArithmeticException.class, table::getColumnCount);
+    }
+
+    @Test
     void getStartColIndex() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");

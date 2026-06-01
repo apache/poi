@@ -1295,9 +1295,9 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
     private int getFontId() {
         if (_cellXf.isSetFontId()) {
-            return (int) _cellXf.getFontId();
+            return Math.toIntExact(_cellXf.getFontId());
         }
-        return (int) _cellStyleXf.getFontId();
+        return Math.toIntExact(_cellStyleXf.getFontId());
     }
 
     /**

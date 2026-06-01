@@ -18,7 +18,7 @@ package org.apache.poi.hwpf.usermodel;
 
 import static org.apache.poi.POIDataSamples.getDocumentInstance;
 import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.poi.POITestCase;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -374,8 +375,8 @@ class TestBugs {
             assertContains(docText, "1-1");
             assertContains(docText, "1-12");
 
-            assertNotContained(docText, "1-13");
-            assertNotContained(docText, "1-15");
+            POITestCase.assertNotContains(docText, "1-13");
+            POITestCase.assertNotContains(docText, "1-15");
         }
     }
 

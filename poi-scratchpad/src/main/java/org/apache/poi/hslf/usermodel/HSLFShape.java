@@ -50,6 +50,7 @@ import org.apache.poi.sl.usermodel.PresetColor;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
@@ -392,7 +393,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         }
 
         double alpha = getAlpha(opacityProperty);
-        return new Color(col.getRed(), col.getGreen(), col.getBlue(), (int)(alpha*255.0));
+        return new Color(col.getRed(), col.getGreen(), col.getBlue(), MathUtil.safeDoubleToInt(alpha*255.0));
     }
 
     Color getColor(EscherColorRef ecr) {

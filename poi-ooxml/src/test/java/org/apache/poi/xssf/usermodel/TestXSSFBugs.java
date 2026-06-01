@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import static java.time.Duration.between;
 import static java.time.Instant.now;
 import static org.apache.logging.log4j.util.Unbox.box;
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
 import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
 import static org.apache.poi.ss.util.Utils.addRow;
@@ -2503,7 +2504,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 if (cell.getCellType() == CellType.FORMULA) {
                     String formula = cell.getCellFormula();
                     assertNotNull(formula);
-                    assertTrue(formula.contains("WORKDAY"));
+                    assertContains(formula, "WORKDAY");
                 } else {
                     assertNotNull(cell.toString());
                 }

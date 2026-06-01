@@ -59,6 +59,7 @@ import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.util.Dimension2DDouble;
+import org.apache.poi.util.MathUtil;
 
 
 /**
@@ -94,7 +95,7 @@ public class DrawPaint {
                         return new Color(color.getRed(), color.getGreen(), color.getBlue());
                     }
                     @Override
-                    public int getAlpha() { return (int)Math.round(color.getAlpha()*100000./255.); }
+                    public int getAlpha() { return Math.toIntExact(Math.round(color.getAlpha()*100000./255.)); }
                     @Override
                     public int getHueOff() { return -1; }
                     @Override
@@ -385,7 +386,7 @@ public class DrawPaint {
     private static void scaleShades(int[] samples, double ratio) {
         if (ratio != 1) {
             for (int x=0; x<samples.length; x++) {
-                samples[x] = (int)Math.rint(samples[x] * ratio);
+                samples[x] = MathUtil.safeDoubleToInt(Math.rint(samples[x] * ratio));
             }
         }
     }

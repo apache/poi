@@ -56,7 +56,7 @@ public class HwmfROP3Composite implements Composite {
         } else {
             mask_width = bitmap.getWidth();
             mask_height = bitmap.getHeight();
-            mask = new byte[mask_width * mask_height];
+            mask = new byte[Math.multiplyExact(mask_width, mask_height)];
             bitmap.getRaster().getDataElements(0, 0, mask_width, mask_height, mask);
         }
         this.background = background.getRGB();

@@ -16,6 +16,8 @@
 */
 package org.apache.poi.ss.format;
 
+import org.apache.poi.util.MathUtil;
+
 public class SimpleFraction {
 
 
@@ -32,7 +34,7 @@ public class SimpleFraction {
      * @return a SimpleFraction with the given values set.
      */
     public static SimpleFraction buildFractionExactDenominator(double val, int exactDenom){
-        int num =  (int)Math.round(val*exactDenom);
+        int num =  MathUtil.safeDoubleToInt(Math.round(val*exactDenom));
         return new SimpleFraction(num,exactDenom);
     }
 
@@ -131,9 +133,9 @@ public class SimpleFraction {
         }
 
         if (q2 < maxDenominator) {
-            return new SimpleFraction((int) p2, (int)q2);
+            return new SimpleFraction(Math.toIntExact(p2), Math.toIntExact(q2));
         } else {
-            return new SimpleFraction((int)p1, (int)q1);
+            return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
         }
 
     }

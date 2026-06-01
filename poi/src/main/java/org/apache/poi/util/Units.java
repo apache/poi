@@ -19,6 +19,8 @@ package org.apache.poi.util;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 
+import static org.apache.poi.util.MathUtil.safeDoubleToInt;
+
 public class Units {
     /**
      * In Escher absolute distances are specified in
@@ -76,7 +78,7 @@ public class Units {
      * @return EMUs
      */
     public static int toEMU(double points){
-        return (int)Math.rint(EMU_PER_POINT*points);
+        return safeDoubleToInt(Math.rint(EMU_PER_POINT*points));
     }
 
     /**
@@ -122,8 +124,8 @@ public class Units {
     public static int doubleToFixedPoint(double floatPoint) {
         double fractionalPart = floatPoint % 1d;
         double integralPart = floatPoint - fractionalPart;
-        int i = (int)Math.floor(integralPart);
-        int f = (int)Math.rint(fractionalPart*65536d);
+        int i = safeDoubleToInt(Math.floor(integralPart));
+        int f = safeDoubleToInt(Math.rint(fractionalPart*65536d));
         return (i << 16) | (f & 0xFFFF);
     }
 
@@ -137,13 +139,13 @@ public class Units {
     public static int pointsToMaster(double points) {
         points *= MASTER_DPI;
         points /= POINT_DPI;
-        return (int)Math.rint(points);
+        return safeDoubleToInt(Math.rint(points));
     }
 
     public static int pointsToPixel(double points) {
         points *= PIXEL_DPI;
         points /= POINT_DPI;
-        return (int)Math.rint(points);
+        return safeDoubleToInt(Math.rint(points));
     }
 
     public static double pixelToPoints(double pixel) {

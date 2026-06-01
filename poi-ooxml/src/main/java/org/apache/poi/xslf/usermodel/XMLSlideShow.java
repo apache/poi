@@ -55,6 +55,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Units;
 import org.apache.poi.util.XMLHelper;
@@ -281,7 +282,7 @@ public class XMLSlideShow extends POIXMLDocument
                 .mapToLong(CTSlideIdListEntry::getId).max();
 
         final XSLFRelation relationType = XSLFRelation.SLIDE;
-        final int slideNumber = (int)(Math.max(maxId.orElse(0),255)+1);
+        final int slideNumber = MathUtil.safeDoubleToInt(Math.max(maxId.orElse(0),255)+1);
         final int cnt = findNextAvailableFileNameIndex(relationType);
 
         RelationPart rp = createRelationship
@@ -551,7 +552,7 @@ public class XMLSlideShow extends POIXMLDocument
         CTSlideSize sz = _presentation.getSldSz();
         int cx = sz.getCx();
         int cy = sz.getCy();
-        return new Dimension((int) Units.toPoints(cx), (int) Units.toPoints(cy));
+        return new Dimension(MathUtil.safeDoubleToInt(Units.toPoints(cx)), MathUtil.safeDoubleToInt(Units.toPoints(cy)));
     }
 
     @Override

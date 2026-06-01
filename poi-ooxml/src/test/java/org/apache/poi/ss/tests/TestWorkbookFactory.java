@@ -19,6 +19,7 @@ package org.apache.poi.ss.tests;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,12 +36,12 @@ import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -109,14 +110,14 @@ public final class TestWorkbookFactory {
             new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream(xls))
         )) {
             assertNotNull(wb);
-            assertTrue(wb instanceof HSSFWorkbook);
+            assertInstanceOf(HSSFWorkbook.class, wb);
         }
 
         try (Workbook wb = WorkbookFactory.create(
             new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream(xls)).getRoot()
         )) {
             assertNotNull(wb);
-            assertTrue(wb instanceof HSSFWorkbook);
+            assertInstanceOf(HSSFWorkbook.class, wb);
         }
 
         // Package -> xssf
@@ -125,7 +126,7 @@ public final class TestWorkbookFactory {
         )) {
             assertNotNull(wb);
             //noinspection ConstantConditions
-            assertTrue(wb instanceof XSSFWorkbook);
+            assertInstanceOf(XSSFWorkbook.class, wb);
         }
     }
 
@@ -134,14 +135,14 @@ public final class TestWorkbookFactory {
         // POIFS -> hssf
         try (Workbook wb = WorkbookFactory.create(HSSFTestDataSamples.getSampleFile(xls), null, true)) {
             assertNotNull(wb);
-            assertTrue(wb instanceof HSSFWorkbook);
+            assertInstanceOf(HSSFWorkbook.class, wb);
             assertCloseDoesNotModifyFile(xls, wb);
         }
 
         // Package -> xssf
         try (Workbook wb = WorkbookFactory.create(HSSFTestDataSamples.getSampleFile(xlsx), null, true)) {
             assertNotNull(wb);
-            assertTrue(wb instanceof XSSFWorkbook);
+            assertInstanceOf(XSSFWorkbook.class, wb);
             assertCloseDoesNotModifyFile(xlsx, wb);
         }
     }
@@ -156,24 +157,24 @@ public final class TestWorkbookFactory {
         // InputStream -> either
         try (Workbook wb = WorkbookFactory.create(HSSFTestDataSamples.openSampleFileStream(xls))) {
             assertNotNull(wb);
-            assertTrue(wb instanceof HSSFWorkbook);
+            assertInstanceOf(HSSFWorkbook.class, wb);
         }
 
         try (Workbook wb = WorkbookFactory.create(HSSFTestDataSamples.openSampleFileStream(xlsx))) {
             assertNotNull(wb);
-            assertTrue(wb instanceof XSSFWorkbook);
+            assertInstanceOf(XSSFWorkbook.class, wb);
         }
 
         // File -> either
         try (Workbook wb = WorkbookFactory.create(HSSFTestDataSamples.getSampleFile(xls))) {
             assertNotNull(wb);
-            assertTrue(wb instanceof HSSFWorkbook);
+            assertInstanceOf(HSSFWorkbook.class, wb);
             assertCloseDoesNotModifyFile(xls, wb);
         }
 
         try (Workbook wb = WorkbookFactory.create(HSSFTestDataSamples.getSampleFile(xlsx))) {
             assertNotNull(wb);
-            assertTrue(wb instanceof XSSFWorkbook);
+            assertInstanceOf(XSSFWorkbook.class, wb);
             assertCloseDoesNotModifyFile(xlsx, wb);
         }
 
@@ -284,13 +285,13 @@ public final class TestWorkbookFactory {
 
         try (Workbook wb = WorkbookFactory.create(altXLS)) {
             assertNotNull(wb);
-            assertTrue(wb instanceof HSSFWorkbook);
+            assertInstanceOf(HSSFWorkbook.class, wb);
             closeOrRevert(wb);
         }
 
         try (Workbook wb = WorkbookFactory.create(altXLSX)) {
             assertNotNull(wb);
-            assertTrue(wb instanceof XSSFWorkbook);
+            assertInstanceOf(XSSFWorkbook.class, wb);
             closeOrRevert(wb);
         }
     }
@@ -307,11 +308,11 @@ public final class TestWorkbookFactory {
     @Test
     void testCreateEmpty() throws Exception {
         Workbook wb = WorkbookFactory.create(false);
-        assertTrue(wb instanceof HSSFWorkbook);
+        assertInstanceOf(HSSFWorkbook.class, wb);
         closeOrRevert(wb);
 
         wb = WorkbookFactory.create(true);
-        assertTrue(wb instanceof XSSFWorkbook);
+        assertInstanceOf(XSSFWorkbook.class, wb);
         closeOrRevert(wb);
     }
 
@@ -343,7 +344,7 @@ public final class TestWorkbookFactory {
             try (InputStream is = HSSFTestDataSamples.openSampleFileStream(xls)) {
                 Workbook wb = WorkbookFactory.create(new POIFSFileSystem(is));
                 assertNotNull(wb);
-                assertTrue(wb instanceof HSSFWorkbook);
+                assertInstanceOf(HSSFWorkbook.class, wb);
                 assertCloseDoesNotModifyFile(xls, wb);
             }
             return true;

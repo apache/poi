@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -275,8 +276,7 @@ public final class TestHSSFDataFormatter {
             assertNotEquals("555.47431", fmtval);
 
             // check we found the time properly
-            assertTrue(fmtval.contains("11:23"),
-                "Format came out incorrect - " + fmt + " - found " + fmtval + ", but expected to find '11:23'");
+            assertContains(fmtval, "11:23");
         }
 
         // test number formats

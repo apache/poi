@@ -17,11 +17,11 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +33,7 @@ import java.util.List;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 
@@ -103,8 +104,27 @@ class TestOle10Native {
                 RecordFormatException.class,
                 () -> Ole10Native.createFromEmbeddedOleObject(fs)
             );
-            assertTrue(ex.getMessage().contains("Tried to allocate"));
+            assertContains(ex.getMessage(), "Tried to allocate");
         }
+    }
+
+    @Test
+    void testOle10NativeUtf16SizeOverflow() {
+        // command2 declares 0x40000001 UTF-16 chars; the byte count (size * 2) overflows
+        // a signed int to a negative value that slips past the MAX_STRING_LENGTH cap.
+        byte[] data = new byte[34];
+        LittleEndian.putShort(data, 4, (short) 2);    // flags1 -> parsed encoding
+        data[6] = 'A';                                // label (AsciiZ)
+        data[8] = 'B';                                // fileName (AsciiZ)
+        // flags2, unknown1, ascii command length and data length stay zero
+        LittleEndian.putInt(data, 22, 0x40000001);    // command2 char count
+        LittleEndian.putInt(data, 0, data.length - 4); // totalSize
+
+        RecordFormatException ex = assertThrows(
+            RecordFormatException.class,
+            () -> new Ole10Native(data, 0)
+        );
+        assertContains(ex.getMessage(), "Tried to allocate");
     }
 
 }

@@ -169,7 +169,7 @@ public class VariantSupport extends Variant {
             final int length, final long type, final int codepage )
     throws ReadingNotSupportedException, UnsupportedEncodingException {
         final int offset = lei.getReadIndex();
-        TypedPropertyValue typedPropertyValue = new TypedPropertyValue( (int) type, null );
+        TypedPropertyValue typedPropertyValue = new TypedPropertyValue(Math.toIntExact(type), null);
         try {
             typedPropertyValue.readValue(lei);
         } catch ( UnsupportedOperationException exc ) {

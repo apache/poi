@@ -18,8 +18,8 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -186,15 +186,15 @@ class TestShapeGroup {
                 patriarch = sheet.getDrawingPatriarch();
                 assertEquals(1, patriarch.getChildren().size());
 
-                assertTrue(patriarch.getChildren().get(0) instanceof HSSFShapeGroup);
+                assertInstanceOf(HSSFShapeGroup.class, patriarch.getChildren().get(0));
                 group = (HSSFShapeGroup) patriarch.getChildren().get(0);
 
                 assertEquals(4, group.getChildren().size());
 
-                assertTrue(group.getChildren().get(0) instanceof HSSFPicture);
-                assertTrue(group.getChildren().get(1) instanceof HSSFPolygon);
-                assertTrue(group.getChildren().get(2) instanceof HSSFTextbox);
-                assertTrue(group.getChildren().get(3) instanceof HSSFSimpleShape);
+                assertInstanceOf(HSSFPicture.class, group.getChildren().get(0));
+                assertInstanceOf(HSSFPolygon.class, group.getChildren().get(1));
+                assertInstanceOf(HSSFTextbox.class, group.getChildren().get(2));
+                assertInstanceOf(HSSFSimpleShape.class, group.getChildren().get(3));
 
                 HSSFShapeGroup group2 = patriarch.createGroup(new HSSFClientAnchor());
 
@@ -215,11 +215,11 @@ class TestShapeGroup {
 
                     assertEquals(5, group.getChildren().size());
 
-                    assertTrue(group.getChildren().get(0) instanceof HSSFPicture);
-                    assertTrue(group.getChildren().get(1) instanceof HSSFPolygon);
-                    assertTrue(group.getChildren().get(2) instanceof HSSFTextbox);
-                    assertTrue(group.getChildren().get(3) instanceof HSSFSimpleShape);
-                    assertTrue(group.getChildren().get(4) instanceof HSSFSimpleShape);
+                    assertInstanceOf(HSSFPicture.class, group.getChildren().get(0));
+                    assertInstanceOf(HSSFPolygon.class, group.getChildren().get(1));
+                    assertInstanceOf(HSSFTextbox.class, group.getChildren().get(2));
+                    assertInstanceOf(HSSFSimpleShape.class, group.getChildren().get(3));
+                    assertInstanceOf(HSSFSimpleShape.class, group.getChildren().get(4));
 
                     group.getShapeId();
                 }

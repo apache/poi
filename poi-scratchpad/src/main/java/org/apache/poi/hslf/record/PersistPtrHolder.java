@@ -127,7 +127,14 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom {
             // Grab the offsets for each of the sheets
             for(int i=0; i<offset_count; i++) {
                 int sheet_no = offset_no + i;
-                int sheet_offset = (int)LittleEndian.getUInt(_ptrData,pos);
+                // Reject sheet offsets that would silently narrow when the
+                // uint32 read here is cast to signed int. _slideLocations
+                // values feed Record.buildRecordAtOffset(docstream, offset),
+                // where a wrapped negative offset can land on valid byte
+                // positions of the docstream and cause the parser to read
+                // a record from the wrong location instead of failing
+                // cleanly on the malformed input.
+                int sheet_offset = Math.toIntExact(LittleEndian.getUInt(_ptrData,pos));
                 _slideLocations.put(sheet_no, sheet_offset);
 
                 // Wind on by 4 bytes per sheet found

@@ -17,6 +17,7 @@
 
 package org.apache.poi.util;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -122,9 +123,7 @@ class TestXMLHelper {
                 assertTrue(reader.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
             } catch (SAXNotRecognizedException e) {
                 // can happen for older XML Parsers, e.g. we have a CI Job which runs with Xerces XML Parser
-                assertTrue(reader.getClass().getName().contains("org.apache.xerces"),
-                    "Had Exception about not-recognized SAX feature: " + e + " which is only expected" +
-                    " for Xerces XML Parser, but had parser: " + reader);
+                assertContains(reader.getClass().getName(), "org.apache.xerces");
             }
             readers.add(reader);
         }

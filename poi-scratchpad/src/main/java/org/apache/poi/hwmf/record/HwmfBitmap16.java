@@ -79,7 +79,7 @@ public class HwmfBitmap16 implements GenericRecord {
             size += 18+LittleEndianConsts.INT_SIZE;
         }
 
-        int length = (((width * bitsPixel + 15) >> 4) << 1) * height;
+        int length = Math.multiplyExact(((width * bitsPixel + 15) >> 4) << 1, height);
         bitmap = IOUtils.toByteArray(leis, length);
         
         // TODO: this is not implemented ... please provide a sample, if it
