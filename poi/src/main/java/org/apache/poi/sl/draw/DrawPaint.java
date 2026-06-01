@@ -312,7 +312,10 @@ public class DrawPaint {
                         break;
                 }
 
-                final BufferedImage img = new BufferedImage((int)(width*flipX), (int)(height*flipY), BufferedImage.TYPE_INT_ARGB);
+                final BufferedImage img = new BufferedImage(
+                        MathUtil.safeDoubleToInt(width*flipX),
+                        MathUtil.safeDoubleToInt(height*flipY),
+                        BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g = img.createGraphics();
                 g.drawImage(image, 0, 0, null);
 

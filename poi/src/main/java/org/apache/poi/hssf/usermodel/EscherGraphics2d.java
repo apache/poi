@@ -156,7 +156,7 @@ public final class EscherGraphics2d extends Graphics2D {
 
             int width = 0;
             if (_stroke != null && _stroke instanceof BasicStroke) {
-                width = (int) ((BasicStroke)_stroke).getLineWidth() * 12700;
+                width = MathUtil.safeDoubleToInt(((BasicStroke)_stroke).getLineWidth() * 12700);
             }
 
             drawLine(MathUtil.safeDoubleToInt(shape2d.getX1()), MathUtil.safeDoubleToInt(shape2d.getY1()), MathUtil.safeDoubleToInt(shape2d.getX2()), MathUtil.safeDoubleToInt(shape2d.getY2()), width);
@@ -249,7 +249,7 @@ public final class EscherGraphics2d extends Graphics2D {
     {
         int width = 0;
         if (_stroke != null && _stroke instanceof BasicStroke) {
-            width = (int) ((BasicStroke)_stroke).getLineWidth() * 12700;
+            width = MathUtil.safeDoubleToInt(((BasicStroke)_stroke).getLineWidth() * 12700);
         }
         getEscherGraphics().drawLine(x1,y1,x2,y2, width);
 //        draw(new GeneralPath(new java.awt.geom.Line2D.Float(x1, y1, x2, y2)));
@@ -312,7 +312,8 @@ public final class EscherGraphics2d extends Graphics2D {
     @Override
     public void drawString(String string, float x, float y)
     {
-        getEscherGraphics().drawString(string, (int)x, (int)y);
+        getEscherGraphics().drawString(
+                string, MathUtil.safeFloatToInt(x), MathUtil.safeFloatToInt(y));
     }
 
     @Override

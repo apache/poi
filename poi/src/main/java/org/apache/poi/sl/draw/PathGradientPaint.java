@@ -185,7 +185,9 @@ public class PathGradientPaint implements Paint {
             }
 
             ColorModel cm = getColorModel();
-            raster = cm.createCompatibleWritableRaster((int)deviceBounds.getWidth(), (int)deviceBounds.getHeight());
+            raster = cm.createCompatibleWritableRaster(
+                    MathUtil.safeDoubleToInt(deviceBounds.getWidth()),
+                    MathUtil.safeDoubleToInt(deviceBounds.getHeight()));
             BufferedImage img = new BufferedImage(cm, raster, false, null);
             Graphics2D graphics = img.createGraphics();
             graphics.setRenderingHints(hints);

@@ -534,7 +534,7 @@ public class DateUtil {
             return null;
         }
         int wholeDays = MathUtil.safeDoubleToInt(Math.floor(date));
-        int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
+        int millisecondsInDay = MathUtil.safeDoubleToInt((date - wholeDays) * DAY_MILLISECONDS + 0.5);
         Calendar calendar;
         if (timeZone != null) {
             calendar = LocaleUtil.getLocaleCalendar(timeZone);
