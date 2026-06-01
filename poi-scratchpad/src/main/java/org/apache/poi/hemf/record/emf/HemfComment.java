@@ -153,9 +153,9 @@ public class HemfComment {
 
         static void validateCommentType(final LittleEndianInputStream leis, HemfCommentRecordType commentType) {
             // comment identifiers are uint32 values used as bit-pattern identifiers, not numeric values
-            int commentIdentifier = Math.toIntExact(leis.readUInt());
+            int commentIdentifier = (int) leis.readUInt();
             if (commentIdentifier == HemfCommentRecordType.emfPublic.id) {
-                commentIdentifier = Math.toIntExact(leis.readUInt());
+                commentIdentifier = (int) leis.readUInt();
             }
             assert(commentIdentifier == commentType.id);
         }
