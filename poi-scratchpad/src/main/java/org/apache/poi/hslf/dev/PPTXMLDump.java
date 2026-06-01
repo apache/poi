@@ -121,10 +121,10 @@ public final class PPTXMLDump {
             pos += LittleEndianConsts.SHORT_SIZE;
             int type = LittleEndian.getUShort(data, pos);
             pos += LittleEndianConsts.SHORT_SIZE;
-            int size = (int)LittleEndian.getUInt(data, pos);
+            long size = LittleEndian.getUInt(data, pos);
             pos += LittleEndianConsts.INT_SIZE;
 
-            if (size < 0) {
+            if (size < 0 || size > Integer.MAX_VALUE) {
                 // stop processing of invalid header data
                 continue;
             }
@@ -143,15 +143,15 @@ public final class PPTXMLDump {
             boolean isContainer = (info & 0x000F) == 0x000F;
             if (isContainer) {
                 //continue to dump child records
-                dump(data, pos, size, padding);
+                dump(data, pos, Math.toIntExact(size), padding);
             } else {
                 //dump first 100 bytes of the atom data
-                dump(out, data, pos, Math.min(size, data.length-pos), padding, true);
+                dump(out, data, pos, Math.toIntExact(Math.min(size, data.length-pos)), padding, true);
             }
             padding--;
             write(out, "</"+recname + ">" + CR, padding);
 
-            pos += size;
+            pos += Math.toIntExact(size);
         }
     }
 

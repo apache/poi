@@ -45,6 +45,7 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.draw.SVGImageRenderer;
 import org.apache.xmlbeans.XmlCursor;
@@ -372,7 +373,9 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
         Dimension2D dim = renderer.getDimension();
         Rectangle2D anc = (anchor != null) ? anchor
-            : new Rectangle2D.Double(0,0, Units.pixelToPoints((int)dim.getWidth()), Units.pixelToPoints((int)dim.getHeight()));
+            : new Rectangle2D.Double(0,0,
+                Units.pixelToPoints(MathUtil.safeDoubleToInt(dim.getWidth())),
+                Units.pixelToPoints(MathUtil.safeDoubleToInt(dim.getHeight())));
 
         PictureType pt = (previewType != null) ? previewType : PictureType.PNG;
         if (pt != PictureType.JPEG && pt != PictureType.GIF && pt != PictureType.PNG) {

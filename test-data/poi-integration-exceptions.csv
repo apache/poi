@@ -375,7 +375,7 @@ spreadsheet/rde.imf.ru_sites_default_files_rde_documents_vodootvedenie_2020.xlsb
 spreadsheet/crash-e329fca9087fe21bca4a80c8bc472a661c98d860.xls,handle,HSSF,,org.apache.poi.util.RecordFormatException,33198 bytes written but getRecordSize() reports 33194,
 slideshow/61338.wmf,"handle,extract",HWMF,,org.apache.poi.util.RecordFormatException,Tried to skip 9699347 but skipped: 489,
 slideshow/file-45.wmf,handle,HWMF,,org.apache.poi.util.RecordFormatException,The width or height specified in the header exceed the current limit,
-spreadsheet/61294.emf,"handle,extract",HEMF,,org.apache.poi.util.RecordFormatException,java.lang.IllegalArgumentException: Skip count must be non-negative,
+spreadsheet/61294.emf,"handle,extract",HEMF,,org.apache.poi.util.RecordFormatException,java.lang.IllegalStateException: Unexpected end-of-file,
 publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-6325615354773504.pub,"handle,extract",HPBF,,java.lang.IllegalArgumentException,File invalid - failed to find document entry,
 slideshow/clusterfuzz-testcase-minimized-POIXSLFFuzzer-6071540680032256.pptx,extract,"XSLF,OPC",,java.lang.IllegalStateException,"Invalid content in diagram, cannot extract text",
 slideshow/clusterfuzz-testcase-minimized-POIXSLFFuzzer-6071540680032256.pptx,handle,XSLF,,java.lang.IllegalStateException,SlideMaster was not found for Name,

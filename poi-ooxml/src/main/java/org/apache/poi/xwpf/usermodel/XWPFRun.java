@@ -807,7 +807,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (pr == null || pr.sizeOfKernArray() == 0) {
             return 0;
         }
-        return (int)POIXMLUnits.parseLength(pr.getKernArray(0).xgetVal());
+        return Math.toIntExact(POIXMLUnits.parseLength(pr.getKernArray(0).xgetVal()));
     }
 
     @Override

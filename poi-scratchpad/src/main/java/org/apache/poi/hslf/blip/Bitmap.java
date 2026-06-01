@@ -31,6 +31,7 @@ import org.apache.poi.hslf.record.RecordAtom;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 
 /**
@@ -98,8 +99,8 @@ public abstract class Bitmap extends HSLFPictureData {
         try (InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(getData()).get()){
             BufferedImage bi = ImageIO.read(is);
             return new Dimension(
-                (int)Units.pixelToPoints(bi.getWidth()),
-                (int)Units.pixelToPoints(bi.getHeight())
+                    MathUtil.safeDoubleToInt(Units.pixelToPoints(bi.getWidth())),
+                    MathUtil.safeDoubleToInt(Units.pixelToPoints(bi.getHeight()))
             );
         } catch (IOException e) {
             return new Dimension(200,200);

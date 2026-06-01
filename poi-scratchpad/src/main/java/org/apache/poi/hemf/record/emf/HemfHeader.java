@@ -175,8 +175,8 @@ public class HemfHeader implements HemfRecord {
             }
             int maxDescriptionLength = Math.toIntExact(Math.min(recordSize, Integer.MAX_VALUE));
             IOUtils.safelyAllocateCheck(descriptionBytes, maxDescriptionLength);
-            leis.mark((int)(skip + descriptionBytes));
-            leis.skipFully((int)skip);
+            leis.mark(Math.toIntExact(skip + descriptionBytes));
+            leis.skipFully(skip);
             byte[] buf = IOUtils.safelyAllocate(descriptionBytes, maxDescriptionLength);
             leis.readFully(buf);
             description = new String(buf, StandardCharsets.UTF_16LE).replace((char)0, ' ').trim();

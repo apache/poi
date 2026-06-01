@@ -247,7 +247,7 @@ public class HemfComment {
                 final EmfCommentData record = commentType.constructor.get();
 
                 long readBytes = record.init(leis, dataSize);
-                final int skipBytes = Math.toIntExact(recordSize-4-readBytes);
+                final long skipBytes = recordSize-4-readBytes;
                 assert (skipBytes >= 0);
                 leis.skipFully(skipBytes);
 

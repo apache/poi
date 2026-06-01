@@ -235,7 +235,7 @@ public final class SlideShowRecordDumper {
             int len = getDiskLen(r);
 
             // Grab the type as hex
-            String hexType = makeHex((int) r.getRecordType(), 4);
+            String hexType = makeHex(Math.toIntExact(r.getRecordType()), 4);
             String rHexType = reverseHex(hexType);
 
             // Grab the hslf.record type

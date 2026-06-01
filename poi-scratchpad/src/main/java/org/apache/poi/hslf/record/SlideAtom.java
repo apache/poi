@@ -109,7 +109,7 @@ public final class SlideAtom extends RecordAtom {
     public SlideAtom(){
         _header = new byte[8];
         LittleEndian.putUShort(_header, 0, 2);
-        LittleEndian.putUShort(_header, 2, (int)_type);
+        LittleEndian.putUShort(_header, 2, Math.toIntExact(_type));
         LittleEndian.putInt(_header, 4, 24);
 
         byte[] ssdate = new byte[12];
