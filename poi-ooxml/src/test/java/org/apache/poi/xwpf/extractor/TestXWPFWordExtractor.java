@@ -19,10 +19,9 @@ package org.apache.poi.xwpf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertEndsWith;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,6 +32,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.POITestCase;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
@@ -290,8 +290,8 @@ class TestXWPFWordExtractor {
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
             assertTrue(text.length() > 0);
-            assertFalse(text.contains("AUTHOR"));
-            assertFalse(text.contains("CREATEDATE"));
+            assertNotContains(text, "AUTHOR");
+            assertNotContains(text, "CREATEDATE");
         }
     }
 
@@ -459,7 +459,7 @@ class TestXWPFWordExtractor {
             assertContains(txt, "Getting the perfect");
             //this content appears only in the glossary document
             //once we add processing for this, we can change this to contains
-            assertNotContained(txt, "table rows");
+            POITestCase.assertNotContains(txt, "table rows");
         }
     }
 

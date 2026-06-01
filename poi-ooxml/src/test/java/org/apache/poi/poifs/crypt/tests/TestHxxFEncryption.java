@@ -22,9 +22,9 @@ import static org.apache.poi.POIDataSamples.getSlideShowInstance;
 import static org.apache.poi.POIDataSamples.getSpreadSheetInstance;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -153,7 +153,7 @@ class TestHxxFEncryption {
                 }
                 EncryptionInfo ei = doc.getEncryptionInfo();
                 assertNotNull(ei);
-                assertTrue(ei.getHeader() instanceof CryptoAPIEncryptionHeader);
+                assertInstanceOf(CryptoAPIEncryptionHeader.class, ei.getHeader());
                 assertEquals(0x28, ei.getHeader().getKeySize());
                 ei.getHeader().setKeySize(0x78);
                 bos.reset();
@@ -164,7 +164,7 @@ class TestHxxFEncryption {
                  POIDocument doc = (POIDocument) te4.getDocument()) {
                 EncryptionInfo ei = doc.getEncryptionInfo();
                 assertNotNull(ei);
-                assertTrue(ei.getHeader() instanceof CryptoAPIEncryptionHeader);
+                assertInstanceOf(CryptoAPIEncryptionHeader.class, ei.getHeader());
                 assertEquals(0x78, ei.getHeader().getKeySize());
             }
         } finally {

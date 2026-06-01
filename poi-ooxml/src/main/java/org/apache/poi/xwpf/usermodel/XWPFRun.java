@@ -37,6 +37,7 @@ import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.util.*;
 import org.apache.poi.wp.usermodel.CharacterRun;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -110,6 +111,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         List<XmlObject> pictTextObjs = new ArrayList<>();
         pictTextObjs.addAll(Arrays.asList(r.getPictArray()));
         pictTextObjs.addAll(Arrays.asList(r.getDrawingArray()));
+        pictTextObjs.addAll(Arrays.asList(r.selectPath(
+                "declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' " +
+                "declare namespace mc='" + PackageNamespaces.MARKUP_COMPATIBILITY + "' " +
+                "./mc:AlternateContent/mc:Choice/w:drawing")));
         for (XmlObject o : pictTextObjs) {
             XmlObject[] ts = o.selectPath("declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' .//w:t");
             for (XmlObject t : ts) {
@@ -830,7 +835,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (pr == null || pr.sizeOfSpacingArray() == 0) {
             return 0;
         }
-        return (int)Units.toDXA(POIXMLUnits.parseLength(pr.getSpacingArray(0).xgetVal()));
+        return MathUtil.safeDoubleToInt(Units.toDXA(POIXMLUnits.parseLength(pr.getSpacingArray(0).xgetVal())));
     }
 
     @Override
@@ -1096,7 +1101,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public int getTextPosition() {
         CTRPr pr = getRunProperties(false);
-        return (pr != null && pr.sizeOfPositionArray() > 0) ? (int)(Units.toPoints(POIXMLUnits.parseLength(pr.getPositionArray(0).xgetVal())) / 2.)
+        return (pr != null && pr.sizeOfPositionArray() > 0) ? MathUtil.safeDoubleToInt(Units.toPoints(POIXMLUnits.parseLength(pr.getPositionArray(0).xgetVal())) / 2.)
                 : -1;
     }
 
@@ -1124,7 +1129,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *            values will lower it.
      */
     public void setTextPosition(int val) {
-        BigInteger bint = new BigInteger(Integer.toString(val));
+        BigInteger bint = BigInteger.valueOf(val);
         CTRPr pr = getRunProperties(true);
         CTSignedHpsMeasure position = pr.sizeOfPositionArray() > 0 ? pr.getPositionArray(0) : pr.addNewPosition();
         position.setVal(bint);

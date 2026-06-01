@@ -19,6 +19,7 @@
 package org.apache.poi.ss.tests.formula;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -176,7 +177,7 @@ class TestFormulaParser {
         Ptg[] ptgs = FormulaParser.parse("[1]Sheet1!A1", fpwb, FormulaType.CELL, -1);
         // org.apache.poi.ss.formula.ptg.Ref3DPxg [ [workbook=1] sheet=Sheet 1 ! A1]
         assertEquals(1, ptgs.length, "Ptgs length");
-        assertTrue(ptgs[0] instanceof Ref3DPxg, "Ptg class");
+        assertInstanceOf(Ref3DPxg.class, ptgs[0], "Ptg class");
         Ref3DPxg pxg = (Ref3DPxg) ptgs[0];
         assertEquals(1, pxg.getExternalWorkbookNumber(), "External workbook number");
         assertEquals("Sheet1", pxg.getSheetName(), "Sheet name");
@@ -193,7 +194,7 @@ class TestFormulaParser {
         Ptg[] ptgs = FormulaParser.parse("'[1]Sheet 1'!A1", fpwb, FormulaType.CELL, -1);
         // org.apache.poi.ss.formula.ptg.Ref3DPxg [ [workbook=1] sheet=Sheet 1 ! A1]
         assertEquals(1, ptgs.length, "Ptgs length");
-        assertTrue(ptgs[0] instanceof Ref3DPxg, "Ptg class");
+        assertInstanceOf(Ref3DPxg.class, ptgs[0], "Ptg class");
         Ref3DPxg pxg = (Ref3DPxg) ptgs[0];
         assertEquals(1, pxg.getExternalWorkbookNumber(), "External workbook number");
         assertEquals("Sheet 1", pxg.getSheetName(), "Sheet name");

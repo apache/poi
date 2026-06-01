@@ -47,6 +47,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.SuppressForbidden;
 
@@ -307,7 +308,11 @@ public class SLGraphics extends Graphics2D implements Cloneable {
           Java graphics sets string coordinates by the baseline of the first character
           so we need to shift down by the height of the textbox
         */
-        txt.setAnchor(new Rectangle((int)x, (int)y, (int)width, (int)height));
+        txt.setAnchor(new Rectangle(
+                MathUtil.safeFloatToInt(x),
+                MathUtil.safeFloatToInt(y),
+                MathUtil.safeFloatToInt(width),
+                MathUtil.safeFloatToInt(height)));
     }
 
     /**

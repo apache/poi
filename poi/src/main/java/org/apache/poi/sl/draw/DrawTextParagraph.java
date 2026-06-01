@@ -64,6 +64,7 @@ import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.TextShape.TextDirection;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 import org.w3c.dom.Text;
@@ -480,7 +481,7 @@ public class DrawTextParagraph implements Drawable {
             if (tabSz == null) {
                 tabSz = wspace*4;
             }
-            numSpaces = (int)Math.min(Math.ceil(tabSz / wspace), 20);
+            numSpaces = MathUtil.safeDoubleToInt(Math.min(Math.ceil(tabSz / wspace), 20));
         }
 
         char[] buf = new char[numSpaces];

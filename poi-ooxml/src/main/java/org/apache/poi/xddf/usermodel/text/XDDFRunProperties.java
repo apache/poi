@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.xddf.usermodel.XDDFColor;
 import org.apache.poi.xddf.usermodel.XDDFEffectContainer;
 import org.apache.poi.xddf.usermodel.XDDFEffectList;
@@ -94,7 +95,7 @@ public class XDDFRunProperties {
             throw new IllegalArgumentException("Minimum inclusive = 1. Maximum inclusive = 400.");
         }
 
-        update(props::isSetSz, props::unsetSz, props::setSz, size == null ? null : (int)(100 * size));
+        update(props::isSetSz, props::unsetSz, props::setSz, size == null ? null : MathUtil.safeDoubleToInt(100 * size));
     }
 
     public void setFillProperties(XDDFFillProperties properties) {
@@ -139,7 +140,7 @@ public class XDDFRunProperties {
             throw new IllegalArgumentException("Minimum inclusive = 0. Maximum inclusive = 4000.");
         }
 
-        update(props::isSetKern, props::unsetKern, props::setKern, kerning == null ? null : (int)(100 * kerning));
+        update(props::isSetKern, props::unsetKern, props::setKern, kerning == null ? null : MathUtil.safeDoubleToInt(100 * kerning));
     }
 
     public void setCharacterSpacing(Double spacing) {
@@ -147,7 +148,7 @@ public class XDDFRunProperties {
             throw new IllegalArgumentException("Minimum inclusive = -4000. Maximum inclusive = 4000.");
         }
 
-        update(props::isSetSpc, props::unsetSpc, props::setSpc, spacing == null ? null : (int)(100 * spacing));
+        update(props::isSetSpc, props::unsetSpc, props::setSpc, spacing == null ? null : MathUtil.safeDoubleToInt(100 * spacing));
     }
 
     public void setFonts(XDDFFont[] fonts) {

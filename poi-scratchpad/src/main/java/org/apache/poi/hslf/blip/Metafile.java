@@ -40,6 +40,26 @@ import org.apache.poi.util.Units;
  */
 public abstract class Metafile extends HSLFPictureData {
 
+    // try to keep in synch with EscherMetafileBlip DEFAULT_MAX_RECORD_LENGTH
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * @param length the max record length allowed for HWPF Picture
+     * @since 6.0.0
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HWPF Picture
+     * @since 6.0.0
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
+
     /**
      * Creates a new instance.
      *
@@ -222,8 +242,8 @@ public abstract class Metafile extends HSLFPictureData {
         Header header = new Header();
         header.read(getRawData(), prefixLen);
         return new Dimension(
-            (int)Math.round(Units.toPoints((long)header.size.getWidth())),
-            (int)Math.round(Units.toPoints((long)header.size.getHeight()))
+            Math.toIntExact(Math.round(Units.toPoints((long)header.size.getWidth()))),
+            Math.toIntExact(Math.round(Units.toPoints((long)header.size.getHeight())))
         );
     }
 

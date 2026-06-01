@@ -18,6 +18,7 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ooxml.util.NumberHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
@@ -120,7 +121,7 @@ public class XSSFTextRun {
                 throw new IllegalArgumentException("Minimum font size is 1pt but was " + fontSize);
             }
 
-            rPr.setSz((int)(100*fontSize));
+            rPr.setSz(MathUtil.safeDoubleToInt(100*fontSize));
         }
     }
 
@@ -170,7 +171,7 @@ public class XSSFTextRun {
         if(spc == 0.0) {
             if(rPr.isSetSpc()) rPr.unsetSpc();
         } else {
-            rPr.setSpc((int)(100*spc));
+            rPr.setSpc(MathUtil.safeDoubleToInt(100*spc));
         }
     }
 
@@ -267,7 +268,7 @@ public class XSSFTextRun {
      *     Positive values indicate superscript, negative values indicate subscript.
      */
     public void setBaselineOffset(double baselineOffset){
-        getRPr().setBaseline((int) baselineOffset * 1000);
+        getRPr().setBaseline(MathUtil.safeDoubleToInt(baselineOffset * 1000));
     }
 
     /**

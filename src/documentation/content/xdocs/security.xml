@@ -86,6 +86,19 @@
                 and writing xlsx files - so if you are working with large xlsx files, you should consider using the
                 streaming APIs.
             </li>
+            <li><strong>OutOfMemoryErrors</strong><br/>
+                Malicious actors can create files designed to exploit parsers and generate large arrays.
+                Legacy formats (xls, doc, ppt, etc.) are particularly vulnerable, though all formats have potential issues.
+                <br/>
+                When you parse files with Apache POI, you can get OutOfMemoryErrors or other exceptions or errors
+                related to the index being out of bounds or issues like int overflows.
+                <br/>
+                Apache POI includes checks to detect suspicious values that may indicate malicious content, but these checks should not be considered comprehensive.
+                <br/>
+                We strongly recommend never parsing files from untrusted or unknown sources.
+                <br/>
+                While we welcome suggestions for additional safeguards, we typically do not classify these as security vulnerabilities in the POI libraries.
+            </li>
             <li><strong>Use of Temp Files</strong><br/>
                 Apache POI makes significant use of temporary files. You need to ensure that the directory used
                 for temp files cannot be manipulated or even read by untrusted users.

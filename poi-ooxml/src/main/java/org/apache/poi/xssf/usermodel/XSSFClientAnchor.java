@@ -163,7 +163,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
         int cw = Units.columnWidthToEMU(sheet.getColumnWidth(c));
 
         // start with width - offset, then keep adding column widths until the next one puts us over w
-        long wPos = cw - POIXMLUnits.parseLength(cell.xgetColOff());
+        long wPos = cell.xgetColOff() == null ? cw : cw - POIXMLUnits.parseLength(cell.xgetColOff());
 
         while (wPos < w) {
             c++;
@@ -176,7 +176,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
 
         int rh = Units.toEMU(getRowHeight(sheet, r));
         // start with height - offset, then keep adding row heights until the next one puts us over h
-        long hPos = rh - POIXMLUnits.parseLength(cell.xgetRowOff());
+        long hPos = cell.xgetRowOff() == null ? rh : rh - POIXMLUnits.parseLength(cell.xgetRowOff());
 
         while (hPos < h) {
             r++;

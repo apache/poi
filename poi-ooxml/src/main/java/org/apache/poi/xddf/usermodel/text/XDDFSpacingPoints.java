@@ -19,6 +19,7 @@ package org.apache.poi.xddf.usermodel.text;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacingPoint;
 
@@ -51,6 +52,6 @@ public class XDDFSpacingPoints extends XDDFSpacing {
     }
 
     public void setPoints(double value) {
-        points.setVal((int)(100 * value));
+        points.setVal(MathUtil.safeDoubleToInt(100 * value));
     }
 }

@@ -30,6 +30,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.crypt.temp.AesZipFileZipEntrySource;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Regression test proving that encrypted-temp ZIP creation enforces
@@ -41,34 +42,42 @@ import org.junit.jupiter.api.Test;
  * throw an IOException. The test is deterministic and uses a small
  * in-memory ZIP payload.
  */
+@Isolated // changes global ZipSecureFile limits
 public class TestEncryptedTempZipThreshold {
 
     @Test
     void minInflateRatioEnforced() throws IOException {
-        // make threshold very strict so small compressed -> large expanded fails
-        ZipSecureFile.setMinInflateRatio(0.5d);
-        ZipSecureFile.setGraceEntrySize(0);
+        final double oldMinInflateRatio = ZipSecureFile.getMinInflateRatio();
+        final long oldGraceEntrySize = ZipSecureFile.getGraceEntrySize();
+        try {
+            // make threshold very strict so small compressed -> large expanded fails
+            ZipSecureFile.setMinInflateRatio(0.5d);
+            ZipSecureFile.setGraceEntrySize(0);
 
-        // create an in-memory zip with one entry that compresses extremely well
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(baos)) {
-            ZipArchiveEntry ze = new ZipArchiveEntry("large.txt");
-            zos.putArchiveEntry(ze);
+            // create an in-memory zip with one entry that compresses extremely well
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(baos)) {
+                ZipArchiveEntry ze = new ZipArchiveEntry("large.txt");
+                zos.putArchiveEntry(ze);
 
-            // write a highly compressible payload (repeated 'A')
-            byte[] payload = new byte[200_000];
-            for (int i = 0; i < payload.length; i++) payload[i] = 'A';
-            // use high compression level to make compressed size tiny
-            zos.setLevel(Deflater.BEST_COMPRESSION);
-            zos.write(payload);
-            zos.closeArchiveEntry();
-            zos.finish();
-        }
+                // write a highly compressible payload (repeated 'A')
+                byte[] payload = new byte[200_000];
+                for (int i = 0; i < payload.length; i++) payload[i] = 'A';
+                // use high compression level to make compressed size tiny
+                zos.setLevel(Deflater.BEST_COMPRESSION);
+                zos.write(payload);
+                zos.closeArchiveEntry();
+                zos.finish();
+            }
 
-        byte[] zipBytes = baos.toByteArray();
-        try (InputStream in = new ByteArrayInputStream(zipBytes)) {
-            // createZipEntrySource will attempt to materialize entries and should fail
-            assertThrows(IOException.class, () -> AesZipFileZipEntrySource.createZipEntrySource(in));
+            byte[] zipBytes = baos.toByteArray();
+            try (InputStream in = new ByteArrayInputStream(zipBytes)) {
+                // createZipEntrySource will attempt to materialize entries and should fail
+                assertThrows(IOException.class, () -> AesZipFileZipEntrySource.createZipEntrySource(in));
+            }
+        } finally {
+            ZipSecureFile.setMinInflateRatio(oldMinInflateRatio);
+            ZipSecureFile.setGraceEntrySize(oldGraceEntrySize);
         }
     }
 }

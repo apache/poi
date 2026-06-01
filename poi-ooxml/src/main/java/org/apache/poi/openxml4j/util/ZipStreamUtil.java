@@ -20,7 +20,6 @@ package org.apache.poi.openxml4j.util;
 import java.io.IOException;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.poi.util.Internal;
 
 /**
@@ -37,10 +36,6 @@ public final class ZipStreamUtil {
     }
 
     public static void streamEntries(ZipArchiveThresholdInputStream zisThreshold, ZipEntryProcessor processor) throws IOException {
-        if (!(zisThreshold instanceof ZipArchiveThresholdInputStream)) {
-            throw new IllegalArgumentException("Expected ZipArchiveThresholdInputStream");
-        }
-
         // Iterate entries using package-private getNextEntry() which preserves
         // ZipSecureFile enforcement (entry count, size and inflate ratio checks).
         ZipArchiveEntry ze;

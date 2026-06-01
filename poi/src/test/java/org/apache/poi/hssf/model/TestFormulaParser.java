@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.model;
 
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.hssf.model.HSSFFormulaParser.parse;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -865,7 +866,7 @@ final class TestFormulaParser {
                 DividePtg.instance,
         };
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> toFormulaString(ptgs));
-        assertTrue(e.getMessage().startsWith("Too few arguments supplied to operation"));
+        assertStartsWith(e.getMessage(), "Too few arguments supplied to operation");
     }
 
     /**
@@ -1112,7 +1113,7 @@ final class TestFormulaParser {
     private static void confirmSingle3DRef(Ptg[] ptgs, int expectedExternSheetIndex) {
         assertEquals(1, ptgs.length);
         Ptg ptg0 = ptgs[0];
-        assertTrue(ptg0 instanceof Ref3DPtg);
+        assertInstanceOf(Ref3DPtg.class, ptg0);
         assertEquals(expectedExternSheetIndex, ((Ref3DPtg)ptg0).getExternSheetIndex());
     }
 

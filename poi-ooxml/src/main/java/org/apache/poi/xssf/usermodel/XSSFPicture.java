@@ -29,6 +29,7 @@ import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualPictureProperties;
@@ -225,8 +226,8 @@ public final class XSSFPicture extends XSSFShape implements Picture {
     public XSSFClientAnchor getPreferredSize(double scaleX, double scaleY){
         Dimension dim = ImageUtils.setPreferredSize(this, scaleX, scaleY);
         CTPositiveSize2D size2d =  ctPicture.getSpPr().getXfrm().getExt();
-        size2d.setCx((int)dim.getWidth());
-        size2d.setCy((int)dim.getHeight());
+        size2d.setCx(MathUtil.safeDoubleToInt(dim.getWidth()));
+        size2d.setCy(MathUtil.safeDoubleToInt(dim.getHeight()));
         return getClientAnchor();
     }
 

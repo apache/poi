@@ -17,6 +17,7 @@
 
 package org.apache.poi.poifs.crypt.tests;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -50,7 +51,9 @@ import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated // changes global ZipSecureFile limits
 class TestSecureTempZip {
 
     @Test
@@ -203,8 +206,7 @@ class TestSecureTempZip {
                     // no-op
                 }
             });
-            assertTrue(exception.getMessage().contains("ZipSecureFile.setMinInflateRatio()"),
-                    "unexpected exception message: " + exception.getMessage());
+            assertContains(exception.getMessage(), "ZipSecureFile.setMinInflateRatio()");
         } finally {
             ZipSecureFile.setMinInflateRatio(defaultRatio);
             ZipSecureFile.setGraceEntrySize(defaultGrace);
@@ -243,5 +245,6 @@ class TestSecureTempZip {
             this.name = name;
             this.bytes = bytes;
         }
+    }
 
 }

@@ -18,7 +18,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.awt.Rectangle;
 import java.io.File;
@@ -112,7 +112,7 @@ class TestXSLFExamples {
 
             try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(pptx)) {
                 XSLFShape sh = ppt2.getSlides().get(0).getShapes().get(0);
-                assertTrue(sh instanceof XSLFPictureShape);
+                assertInstanceOf(XSLFPictureShape.class, sh);
             }
         }
     }

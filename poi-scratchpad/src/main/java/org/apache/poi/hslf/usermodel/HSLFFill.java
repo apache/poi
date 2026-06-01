@@ -48,6 +48,7 @@ import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 
 import static org.apache.logging.log4j.util.Unbox.box;
@@ -405,7 +406,7 @@ public final class HSLFFill {
 
             @Override
             public int getAlpha() {
-                return (int)(shape.getAlpha(EscherPropertyTypes.FILL__FILLOPACITY)*100000.0);
+                return MathUtil.safeDoubleToInt(shape.getAlpha(EscherPropertyTypes.FILL__FILLOPACITY)*100000.0);
             }
 
             @Override

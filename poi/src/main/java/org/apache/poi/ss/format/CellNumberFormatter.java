@@ -686,7 +686,7 @@ public class CellNumberFormatter extends CellFormatter {
             // the "fractional % 1" captures integer values in improper fractions
             if (fractional == 0 || (improperFraction && fractional % 1 == 0)) {
                 // 0 as a fraction is reported by excel as 0/1
-                n = (int) Math.round(fractional);
+                n = Math.toIntExact(Math.round(fractional));
                 d = 1;
             } else {
                 SimpleFraction frac = SimpleFraction.buildFractionMaxDenominator(fractional, maxDenominator);

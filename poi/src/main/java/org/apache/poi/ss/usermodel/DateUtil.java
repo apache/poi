@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.ThreadLocalUtil;
 
 /**
@@ -532,8 +533,8 @@ public class DateUtil {
         if (!isValidExcelDate(date)) {
             return null;
         }
-        int wholeDays = (int)Math.floor(date);
-        int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
+        int wholeDays = MathUtil.safeDoubleToInt(Math.floor(date));
+        int millisecondsInDay = MathUtil.safeDoubleToInt((date - wholeDays) * DAY_MILLISECONDS + 0.5);
         Calendar calendar;
         if (timeZone != null) {
             calendar = LocaleUtil.getLocaleCalendar(timeZone);

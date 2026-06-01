@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
@@ -56,7 +57,7 @@ final class TestReadWriteChart {
         InternalSheet newSheet = workbook.getSheetAt(0).getSheet();
         List<RecordBase> records  = newSheet.getRecords();
 
-        assertTrue(records.get(0) instanceof BOFRecord);
+        assertInstanceOf(BOFRecord.class, records.get(0));
         assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
 
         workbook.close();

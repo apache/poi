@@ -24,6 +24,7 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 
 
 /**
@@ -60,8 +61,8 @@ final class YearFracCalculator {
         // common logic for all bases
 
         // truncate day values
-        int startDateVal = (int) Math.floor(pStartDateVal);
-        int endDateVal = (int) Math.floor(pEndDateVal);
+        int startDateVal = MathUtil.safeDoubleToInt(Math.floor(pStartDateVal));
+        int endDateVal = MathUtil.safeDoubleToInt(Math.floor(pEndDateVal));
         if (startDateVal == endDateVal) {
             // when dates are equal, result is zero
             return 0;
@@ -250,7 +251,7 @@ final class YearFracCalculator {
         long msDiff = endDateMS - startDateMS;
 
         // some extra checks to make sure we don't hide some other bug with the rounding
-        int remainderHours = (int) ((msDiff % MS_PER_DAY) / MS_PER_HOUR);
+        int remainderHours = Math.toIntExact((msDiff % MS_PER_DAY) / MS_PER_HOUR);
         switch (remainderHours) {
             case 0:  // normal case
                 break;
@@ -261,7 +262,7 @@ final class YearFracCalculator {
                 throw new IllegalStateException("Unexpected date diff between " + startDateMS + " and " + endDateMS);
 
         }
-        return (int) (0.5 + ((double)msDiff / MS_PER_DAY));
+        return MathUtil.safeDoubleToInt((0.5 + ((double)msDiff / MS_PER_DAY)));
     }
 
     private static double averageYearLength(int startYear, int endYear) {

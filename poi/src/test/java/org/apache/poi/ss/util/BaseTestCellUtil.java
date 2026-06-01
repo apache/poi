@@ -26,6 +26,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -562,7 +563,7 @@ public abstract class BaseTestCellUtil {
 
             // font belongs to different workbook
             IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> CellUtil.setFont(A1, font2));
-            assertTrue(e.getMessage().startsWith("Font does not belong to this workbook"));
+            assertStartsWith(e.getMessage(), "Font does not belong to this workbook");
         }
     }
 

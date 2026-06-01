@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
  * Tests for the various XWPF decorators
@@ -73,7 +73,7 @@ class TestXWPFDecorators {
         // The proper way to do hyperlinks(!)
         assertFalse(ps.getRuns().get(0) instanceof XWPFHyperlinkRun);
         assertFalse(ph.getRuns().get(0) instanceof XWPFHyperlinkRun);
-        assertTrue(ph.getRuns().get(1) instanceof XWPFHyperlinkRun);
+        assertInstanceOf(XWPFHyperlinkRun.class, ph.getRuns().get(1));
         assertFalse(ph.getRuns().get(2) instanceof XWPFHyperlinkRun);
 
         XWPFHyperlinkRun link = (XWPFHyperlinkRun) ph.getRuns().get(1);

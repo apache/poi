@@ -801,7 +801,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         if (rotation == null) {
             opt.removeEscherProperty(EscherPropertyTypes.TEXT__FONTROTATION);
         } else {
-            int rot = (int)(Math.round(rotation / 90.) % 4L);
+            int rot = Math.toIntExact(Math.round(rotation / 90.) % 4L);
             setEscherProperty(EscherPropertyTypes.TEXT__FONTROTATION, rot);
         }
     }

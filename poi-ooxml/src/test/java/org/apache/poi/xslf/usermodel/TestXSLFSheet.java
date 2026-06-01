@@ -64,10 +64,10 @@ class TestXSLFSheet {
         List<XSLFShape> shapes = slide.getShapes();
         assertEquals(4, shapes.size());
 
-        assertTrue(shapes.get(0) instanceof XSLFAutoShape);
-        assertTrue(shapes.get(1) instanceof XSLFTextBox);
-        assertTrue(shapes.get(2) instanceof XSLFConnectorShape);
-        assertTrue(shapes.get(3) instanceof XSLFGroupShape);
+        assertInstanceOf(XSLFAutoShape.class, shapes.get(0));
+        assertInstanceOf(XSLFTextBox.class, shapes.get(1));
+        assertInstanceOf(XSLFConnectorShape.class, shapes.get(2));
+        assertInstanceOf(XSLFGroupShape.class, shapes.get(3));
 
         ppt.close();
         ppt2.close();

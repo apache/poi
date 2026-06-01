@@ -22,14 +22,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+import java.awt.Dimension;
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.openxml4j.opc.ZipPackage;
-import org.apache.poi.ss.usermodel.BaseTestPicture;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.Shape;
+import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -173,6 +174,22 @@ public final class TestXSSFPicture extends BaseTestPicture {
         } finally {
             ZipPackage.setUseTempFilePackageParts(originalTempFileSetting);
             ZipPackage.setEncryptTempFilePackageParts(originalEncryptSetting);
+        }
+    }
+
+    @Test
+    void testGetDimensionFromAnchor() throws IOException {
+        try (Workbook wb = _testDataProvider.openSampleWorkbook("picture-and-shape-same-size.xlsx")) {
+            Sheet sh = wb.getSheetAt(0);
+            Drawing<?> pat = sh.createDrawingPatriarch();
+
+            Shape shape = ((XSSFDrawing)pat).getShapes().get(0);
+            Dimension shapeDimension = ImageUtils.getDimensionFromAnchor((ClientAnchor) shape.getAnchor(), sh);
+            Picture picture = getPictureShape(pat, 1);
+            Dimension pictureDimension = ImageUtils.getDimensionFromAnchor(picture);
+
+            assertEquals(shapeDimension.getHeight(), pictureDimension.getHeight(), "the image height differs");
+            assertEquals(shapeDimension.getWidth(), pictureDimension.getWidth(), "the image width differs");
         }
     }
 }

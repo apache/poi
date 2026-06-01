@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -624,6 +625,7 @@ public class XWPFTableCell implements IBody, ICell {
     }
 
     public int getWidth() {
-        return (int) Units.toDXA(POIXMLUnits.parseLength(getTcWidth().xgetW()));
+        return MathUtil.safeDoubleToInt(
+                Units.toDXA(POIXMLUnits.parseLength(getTcWidth().xgetW())));
     }
 }

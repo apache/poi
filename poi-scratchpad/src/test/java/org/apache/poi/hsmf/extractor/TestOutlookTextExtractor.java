@@ -18,7 +18,7 @@
 package org.apache.poi.hsmf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
@@ -63,9 +64,9 @@ public final class TestOutlookTextExtractor {
 
             assertContains(text, "From: Kevin Roast\n");
             assertContains(text, "To: Kevin Roast <kevin.roast@alfresco.org>\n");
-            assertNotContained(text, "CC:");
-            assertNotContained(text, "BCC:");
-            assertNotContained(text, "Attachment:");
+            POITestCase.assertNotContains(text, "CC:");
+            POITestCase.assertNotContains(text, "BCC:");
+            POITestCase.assertNotContains(text, "Attachment:");
             assertContains(text, "Subject: Test the content transformer\n");
             Calendar cal = LocaleUtil.getLocaleCalendar(2007, 5, 14, 9, 42, 55);
             SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z", Locale.ROOT);
@@ -85,8 +86,8 @@ public final class TestOutlookTextExtractor {
 
             assertContains(text, "From: Travis Ferguson\n");
             assertContains(text, "To: travis@overwrittenstack.com\n");
-            assertNotContained(text, "CC:");
-            assertNotContained(text, "BCC:");
+            POITestCase.assertNotContains(text, "CC:");
+            POITestCase.assertNotContains(text, "BCC:");
             assertContains(text, "Subject: test message\n");
             assertContains(text, "Date: Fri, 6 Jul 2007 05:27:17 +0000\n");
             assertContains(text, "This is a test message.");
@@ -182,7 +183,7 @@ public final class TestOutlookTextExtractor {
                         "'Paul Holmes-Higgin' <paul.hh@alfresco.com>; 'Mike Farman' <mikef@alfresco.com>\n");
                 assertContains(text, "CC: nickb@alfresco.com; " +
                         "nick.burch@alfresco.com; 'Roy Wetherall' <roy.wetherall@alfresco.com>\n");
-                assertNotContained(text, "BCC:");
+                POITestCase.assertNotContains(text, "BCC:");
                 assertContains(text, "Subject: This is a test message please ignore\n");
                 assertContains(text, "Date: Mon, 11 Jan 2010 16:2"); // Exact times differ slightly
                 assertContains(text, "The quick brown fox jumps over the lazy dog");
@@ -205,8 +206,8 @@ public final class TestOutlookTextExtractor {
 
             assertContains(text, "From: Nicolas1");
             assertContains(text, "To: 'nicolas1.23456@free.fr'");
-            assertNotContained(text, "CC:");
-            assertNotContained(text, "BCC:");
+            POITestCase.assertNotContains(text, "CC:");
+            POITestCase.assertNotContains(text, "BCC:");
             assertContains(text, "Subject: test");
             assertContains(text, "Date: Wed, 22 Apr");
             assertContains(text, "Attachment: test-unicode.doc\n");
@@ -230,8 +231,8 @@ public final class TestOutlookTextExtractor {
             assertContains(text, "ante in lacinia euismod");
 
             // But not the attached message
-            assertNotContained(text, "Test mail attachment");
-            assertNotContained(text, "Lorem ipsum dolor sit");
+            POITestCase.assertNotContains(text, "Test mail attachment");
+            POITestCase.assertNotContains(text, "Lorem ipsum dolor sit");
         }
     }
 

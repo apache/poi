@@ -17,7 +17,7 @@
 package org.apache.poi.hwpf.converter;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertNotContains;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.StringWriter;
@@ -28,6 +28,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.util.XMLHelper;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -109,7 +110,7 @@ public class TestWordToHtmlConverter {
 
         for (String match : contains.split("\\|")) {
             if (match.startsWith("!")) {
-                assertNotContained(result, match.substring(1));
+                POITestCase.assertNotContains(result, match.substring(1));
             } else {
                 assertContains(result, match);
             }

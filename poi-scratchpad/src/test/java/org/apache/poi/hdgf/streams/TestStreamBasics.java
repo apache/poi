@@ -20,8 +20,8 @@ package org.apache.poi.hdgf.streams;
 import static org.apache.poi.poifs.storage.RawDataUtil.decompress;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -65,8 +65,8 @@ public final class TestStreamBasics extends StreamTest {
         // Check
         assertNotNull(stream.getPointer());
         assertNotNull(stream.getStore());
-        assertTrue(stream.getStore() instanceof CompressedStreamStore);
-        assertTrue(stream instanceof UnknownStream);
+        assertInstanceOf(CompressedStreamStore.class, stream.getStore());
+        assertInstanceOf(UnknownStream.class, stream);
 
         // Check the stream store
         CompressedStreamStore ss = (CompressedStreamStore)stream.getStore();
@@ -90,6 +90,6 @@ public final class TestStreamBasics extends StreamTest {
         assertNotNull(stream.getPointer());
         assertNotNull(stream.getStore());
         assertFalse(stream.getStore() instanceof CompressedStreamStore);
-        assertTrue(stream instanceof UnknownStream);
+        assertInstanceOf(UnknownStream.class, stream);
     }
 }

@@ -224,7 +224,7 @@ public final class SlideShowDumper {
                 }
             }
 
-            pos += (int) Math.min(len, Integer.MAX_VALUE);
+            pos += Math.toIntExact(Math.min(len, Integer.MAX_VALUE));
         }
     }
 

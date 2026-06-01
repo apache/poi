@@ -156,7 +156,8 @@ public class HemfText {
                             //
                             // If ETO_RTLREADING is specified, characters are laid right to left instead of left to right.
                             // No other options affect the interpretation of this field.
-                            final int maxSize = (int)Math.min((offDx < offString) ? (offString-HEADER_SIZE) : recordSize, recordSize);
+                            final int maxSize = Math.toIntExact(Math.min(
+                                    offDx < offString ? (offString-HEADER_SIZE) : recordSize, recordSize));
                             while (size <= maxSize-LittleEndianConsts.INT_SIZE) {
                                 dx.add((int) leis.readUInt());
                                 size += LittleEndianConsts.INT_SIZE;
