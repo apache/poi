@@ -27,6 +27,7 @@ import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 
 @Internal
@@ -46,8 +47,8 @@ public class ImageHeaderBitmap {
         size = (img == null)
             ? new Dimension(200,200)
             : new Dimension(
-                (int)Units.pixelToPoints(img.getWidth()),
-                (int)Units.pixelToPoints(img.getHeight())
+                MathUtil.safeDoubleToInt(Units.pixelToPoints(img.getWidth())),
+                MathUtil.safeDoubleToInt(Units.pixelToPoints(img.getHeight()))
             );
     }
 

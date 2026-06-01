@@ -86,7 +86,7 @@ public class SimpleFraction {
         // check for (almost) integer arguments, which should not go
         // to iterations.
         if (Math.abs(a0 - value) < epsilon) {
-            return new SimpleFraction((int)a0, 1);
+            return new SimpleFraction(Math.toIntExact(a0), 1);
         }
 
         long p0 = 1;
@@ -109,7 +109,7 @@ public class SimpleFraction {
             if (epsilon == 0.0f && maxDenominator > 0 && Math.abs(q2) > maxDenominator &&
                     Math.abs(q1) < maxDenominator){
 
-                return new SimpleFraction((int)p1, (int)q1);
+                return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
             }
             if ((p2 > overflow) || (q2 > overflow)) {
                 throw new IllegalStateException("Overflow trying to convert "+value+" to fraction ("+p2+"/"+q2+")");
