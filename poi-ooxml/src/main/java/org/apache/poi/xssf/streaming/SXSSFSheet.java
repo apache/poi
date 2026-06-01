@@ -30,6 +30,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.*;
@@ -1667,7 +1668,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
 
         // get the best-fit width of rows currently in the random access window
         final double w1 = SheetUtil.getColumnWidth(this, column, useMergedCells);
-        final int activeWidth = (int) ((256 * w1) + getArbitraryExtraWidth());
+        final int activeWidth = MathUtil.safeDoubleToInt((256 * w1) + getArbitraryExtraWidth());
 
         // the best-fit width for both flushed rows and random access window rows
         // flushedWidth or activeWidth may be negative if column contains only blank cells

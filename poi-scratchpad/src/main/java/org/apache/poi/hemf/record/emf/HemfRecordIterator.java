@@ -81,7 +81,7 @@ public class HemfRecordIterator implements Iterator<HemfRecord> {
             if (readBytes > remBytes) {
                 throw new RecordFormatException("Record limit exceeded - readBytes: "+readBytes+" / remBytes: "+remBytes);
             }
-            stream.skipFully((int) (remBytes - readBytes));
+            stream.skipFully(Math.toIntExact(remBytes - readBytes));
         } catch (RecordFormatException e) {
             throw e;
         } catch (IOException|RuntimeException e) {

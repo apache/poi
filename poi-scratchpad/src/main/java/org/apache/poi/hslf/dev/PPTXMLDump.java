@@ -121,7 +121,7 @@ public final class PPTXMLDump {
             pos += LittleEndianConsts.SHORT_SIZE;
             int type = LittleEndian.getUShort(data, pos);
             pos += LittleEndianConsts.SHORT_SIZE;
-            int size = (int)LittleEndian.getUInt(data, pos);
+            int size = Math.toIntExact(LittleEndian.getUInt(data, pos));
             pos += LittleEndianConsts.INT_SIZE;
 
             if (size < 0) {

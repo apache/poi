@@ -47,9 +47,9 @@ public abstract class ChunkHeader {
             } else {
                 ch = new ChunkHeaderV6();
             }
-            ch.setType((int) LittleEndian.getUInt(data, offset));
-            ch.setId((int) LittleEndian.getUInt(data, offset + 4));
-            ch.setUnknown1((int) LittleEndian.getUInt(data, offset + 8));
+            ch.setType(Math.toIntExact(LittleEndian.getUInt(data, offset)));
+            ch.setId(Math.toIntExact(LittleEndian.getUInt(data, offset + 4)));
+            ch.setUnknown1(Math.toIntExact(LittleEndian.getUInt(data, offset + 8)));
             // Match the v4/v5 branch below: reject lengths that would silently
             // truncate when narrowing the uint32 to a signed int, rather than
             // letting a wrapped value flow into the offset arithmetic in
