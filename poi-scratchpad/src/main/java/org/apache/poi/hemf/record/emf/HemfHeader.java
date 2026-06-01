@@ -167,7 +167,7 @@ public class HemfHeader implements HemfRecord {
         size += readDimensionInt(leis, milliDimension);
 
         if (nDescription > 0 && offDescription > 0) {
-            int skip = Math.toIntExact(offDescription - (size + HEADER_SIZE));
+            long skip = offDescription - (size + HEADER_SIZE);
             long descriptionBytes = (nDescription - 1) * LittleEndianConsts.SHORT_SIZE;
             long descriptionEnd = offDescription + nDescription * LittleEndianConsts.SHORT_SIZE;
             if (skip < 0 || descriptionEnd > recordSize + HEADER_SIZE || skip + descriptionBytes > Integer.MAX_VALUE) {
