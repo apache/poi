@@ -168,7 +168,7 @@ public final class CompressedRTF extends LZWDecompresser {
       long remaining = getCompressedSize();
       byte[] buffer = IOUtils.safelyAllocate(Math.min(8192L, remaining), MAX_RECORD_LENGTH);
       while (remaining > 0) {
-         int read = src.read(buffer, 0, (int)Math.min(buffer.length, remaining));
+         int read = src.read(buffer, 0, Math.toIntExact(Math.min(buffer.length, remaining)));
          if (read < 0) {
             throw new IOException("Not enough data to read " + getCompressedSize() + " bytes of uncompressed RTF");
          }
