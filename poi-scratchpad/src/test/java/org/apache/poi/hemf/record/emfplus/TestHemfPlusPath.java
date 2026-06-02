@@ -18,6 +18,7 @@
 package org.apache.poi.hemf.record.emfplus;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 
@@ -25,6 +26,7 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusPath.EmfPlusPath;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 
 class TestHemfPlusPath {
@@ -55,6 +57,40 @@ class TestHemfPlusPath {
         EmfPlusPath path = new EmfPlusPath();
         try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
             assertDoesNotThrow(() -> path.init(leis, data.length, EmfPlusObjectType.PATH, 0));
+        }
+    }
+
+    /**
+     * PointCount is an untrusted 32-bit field that is used directly as the length of the
+     * {@code pathPoints} and {@code pointTypes} arrays. Without validation a crafted path
+     * makes the parser run {@code new Point2D[pointCount]} / {@code new byte[pointCount]} on
+     * an arbitrary attacker value - a high-bit value yields a NegativeArraySizeException and a
+     * large positive value (e.g. 0x40000000 ~ 1 billion points in a 12-byte record) an
+     * OutOfMemoryError. Both must be rejected as a RecordFormatException before allocation,
+     * consistent with the sibling EmfPlusDrawDriverString record.
+     */
+    @Test
+    void pathPointCountIsValidatedBeforeAllocation() {
+        // high-bit count -> would be new Point2D[negative] -> NegativeArraySizeException (checked first,
+        // so unpatched code fails here without attempting any large allocation)
+        assertThrows(RecordFormatException.class, () -> initPath(0x80000000));
+        // ~1 billion points claimed in a 12-byte record -> would be a multi-GB allocation -> OutOfMemoryError
+        assertThrows(RecordFormatException.class, () -> initPath(0x40000000));
+    }
+
+    private static void initPath(int pointCount) throws Exception {
+        byte[] data = new byte[12];
+        int pos = 0;
+        // EmfPlusGraphicsVersion: metafile signature 0xDBC01, graphics version 1
+        LittleEndian.putInt(data, pos, 0xDBC01001); pos += 4;
+        LittleEndian.putInt(data, pos, pointCount); pos += 4;
+        // pointFlags + skipped reserved short (the allocation happens right after these)
+        LittleEndian.putShort(data, pos, (short) 0); pos += 2;
+        LittleEndian.putShort(data, pos, (short) 0);
+
+        EmfPlusPath path = new EmfPlusPath();
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
+            path.init(leis, data.length, EmfPlusObjectType.PATH, 0);
         }
     }
 }

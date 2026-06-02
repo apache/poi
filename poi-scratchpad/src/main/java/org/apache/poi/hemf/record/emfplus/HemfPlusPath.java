@@ -41,6 +41,7 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -60,6 +61,28 @@ public class HemfPlusPath {
 
     @SuppressWarnings("unused")
     public static class EmfPlusPath implements EmfPlusObjectData, EmfPlusCompressed, EmfPlusRelativePosition {
+        /**
+         * The maximum number of points (and associated point types) we allocate for a single path.
+         * PointCount is an untrusted 32-bit field, so cap it before it is used as an array length -
+         * consistent with e.g. {@code HemfPlusDraw.MAX_OBJECT_SIZE} and {@code HemfDraw.MAX_NUMBER_OF_POLYGONS}.
+         */
+        private static final int DEFAULT_MAX_POINTS = 1_000_000;
+        private static int MAX_POINTS = DEFAULT_MAX_POINTS;
+
+        /**
+         * @param maxPoints the maximum number of points allowed for a single path
+         */
+        public static void setMaxPoints(int maxPoints) {
+            MAX_POINTS = maxPoints;
+        }
+
+        /**
+         * @return the maximum number of points allowed for a single path
+         */
+        public static int getMaxPoints() {
+            return MAX_POINTS;
+        }
+
         /**
          * If set, the point types in the PathPointTypes array are specified by EmfPlusPathPointTypeRLE objects,
          * which use run-length encoding (RLE) compression, and/or EmfPlusPathPointType objects.
@@ -118,6 +141,11 @@ public class HemfPlusPath {
             } else {
                 readPoint = HemfPlusDraw::readPointF;
             }
+
+            // pointCount is an untrusted 32-bit field that is used as the length of both arrays below.
+            // Reject negative and oversized values before allocating, so a malformed path can't trigger
+            // a NegativeArraySizeException or an OutOfMemoryError instead of the usual RecordFormatException.
+            IOUtils.safelyAllocateCheck(pointCount, MAX_POINTS);
 
             pathPoints = new Point2D[pointCount];
             for (int i=0; i<pointCount; i++) {
