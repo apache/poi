@@ -316,48 +316,47 @@ final class TestFormulaParser {
     /** bug 49725, defined names with underscore */
     @Test
     void testNamesWithUnderscore() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook(); //or new XSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("NamesWithUnderscore");
+        try (HSSFWorkbook wb = new HSSFWorkbook()) { //or new XSSFWorkbook();
+            HSSFSheet sheet = wb.createSheet("NamesWithUnderscore");
 
-        HSSFName nm;
+            HSSFName nm;
 
-        nm = wb.createName();
-        nm.setNameName("DA6_LEO_WBS_Number");
-        nm.setRefersToFormula("33");
+            nm = wb.createName();
+            nm.setNameName("DA6_LEO_WBS_Number");
+            nm.setRefersToFormula("33");
 
-        nm = wb.createName();
-        nm.setNameName("DA6_LEO_WBS_Name");
-        nm.setRefersToFormula("33");
+            nm = wb.createName();
+            nm.setNameName("DA6_LEO_WBS_Name");
+            nm.setRefersToFormula("33");
 
-        nm = wb.createName();
-        nm.setNameName("A1_");
-        nm.setRefersToFormula("22");
+            nm = wb.createName();
+            nm.setNameName("A1_");
+            nm.setRefersToFormula("22");
 
-        nm = wb.createName();
-        nm.setNameName("_A1");
-        nm.setRefersToFormula("11");
+            nm = wb.createName();
+            nm.setNameName("_A1");
+            nm.setRefersToFormula("11");
 
-        nm = wb.createName();
-        nm.setNameName("A_1");
-        nm.setRefersToFormula("44");
+            nm = wb.createName();
+            nm.setNameName("A_1");
+            nm.setRefersToFormula("44");
 
-        nm = wb.createName();
-        nm.setNameName("A_1_");
-        nm.setRefersToFormula("44");
+            nm = wb.createName();
+            nm.setNameName("A_1_");
+            nm.setRefersToFormula("44");
 
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
 
-        cell.setCellFormula("DA6_LEO_WBS_Number*2");
-        assertEquals("DA6_LEO_WBS_Number*2", cell.getCellFormula());
+            cell.setCellFormula("DA6_LEO_WBS_Number*2");
+            assertEquals("DA6_LEO_WBS_Number*2", cell.getCellFormula());
 
-        cell.setCellFormula("(A1_*_A1+A_1)/A_1_");
-        assertEquals("(A1_*_A1+A_1)/A_1_", cell.getCellFormula());
+            cell.setCellFormula("(A1_*_A1+A_1)/A_1_");
+            assertEquals("(A1_*_A1+A_1)/A_1_", cell.getCellFormula());
 
-        cell.setCellFormula("INDEX(DA6_LEO_WBS_Name,MATCH($A3,DA6_LEO_WBS_Number,0))");
-        assertEquals("INDEX(DA6_LEO_WBS_Name,MATCH($A3,DA6_LEO_WBS_Number,0))", cell.getCellFormula());
-
-        wb.close();
+            cell.setCellFormula("INDEX(DA6_LEO_WBS_Name,MATCH($A3,DA6_LEO_WBS_Number,0))");
+            assertEquals("INDEX(DA6_LEO_WBS_Name,MATCH($A3,DA6_LEO_WBS_Number,0))", cell.getCellFormula());
+        }
     }
 
     // bug 38396 : Formula with exponential numbers not parsed correctly.
@@ -370,200 +369,192 @@ final class TestFormulaParser {
 
     @Test
     void testExponentialInSheet() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            wb.createSheet("Cash_Flow");
 
-        wb.createSheet("Cash_Flow");
+            HSSFSheet sheet = wb.createSheet("Test");
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            String formula;
 
-        HSSFSheet sheet = wb.createSheet("Test");
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
-        String formula;
+            cell.setCellFormula("1.3E21/3");
+            formula = cell.getCellFormula();
+            assertEquals("1.3E+21/3", formula);
 
-        cell.setCellFormula("1.3E21/3");
-        formula = cell.getCellFormula();
-        assertEquals("1.3E+21/3", formula);
+            cell.setCellFormula("-1.3E21/3");
+            formula = cell.getCellFormula();
+            assertEquals("-1.3E+21/3", formula);
 
-        cell.setCellFormula("-1.3E21/3");
-        formula = cell.getCellFormula();
-        assertEquals("-1.3E+21/3", formula);
+            cell.setCellFormula("1322E21/3");
+            formula = cell.getCellFormula();
+            assertEquals("1.322E+24/3", formula);
 
-        cell.setCellFormula("1322E21/3");
-        formula = cell.getCellFormula();
-        assertEquals("1.322E+24/3", formula);
+            cell.setCellFormula("-1322E21/3");
+            formula = cell.getCellFormula();
+            assertEquals("-1.322E+24/3", formula);
 
-        cell.setCellFormula("-1322E21/3");
-        formula = cell.getCellFormula();
-        assertEquals("-1.322E+24/3", formula);
+            cell.setCellFormula("1.3E1/3");
+            formula = cell.getCellFormula();
+            assertEquals("13/3", formula);
 
-        cell.setCellFormula("1.3E1/3");
-        formula = cell.getCellFormula();
-        assertEquals("13/3", formula);
+            cell.setCellFormula("-1.3E1/3");
+            formula = cell.getCellFormula();
+            assertEquals("-13/3", formula);
 
-        cell.setCellFormula("-1.3E1/3");
-        formula = cell.getCellFormula();
-        assertEquals("-13/3", formula);
+            cell.setCellFormula("1.3E-4/3");
+            formula = cell.getCellFormula();
+            assertEquals("0.00013/3", formula);
 
-        cell.setCellFormula("1.3E-4/3");
-        formula = cell.getCellFormula();
-        assertEquals("0.00013/3", formula);
+            cell.setCellFormula("-1.3E-4/3");
+            formula = cell.getCellFormula();
+            assertEquals("-0.00013/3", formula);
 
-        cell.setCellFormula("-1.3E-4/3");
-        formula = cell.getCellFormula();
-        assertEquals("-0.00013/3", formula);
+            cell.setCellFormula("13E-15/3");
+            formula = cell.getCellFormula();
+            assertEquals("0.000000000000013/3", formula);
 
-        cell.setCellFormula("13E-15/3");
-        formula = cell.getCellFormula();
-        assertEquals("0.000000000000013/3", formula);
+            cell.setCellFormula("-13E-15/3");
+            formula = cell.getCellFormula();
+            assertEquals("-0.000000000000013/3", formula);
 
-        cell.setCellFormula("-13E-15/3");
-        formula = cell.getCellFormula();
-        assertEquals("-0.000000000000013/3", formula);
+            cell.setCellFormula("1.3E3/3");
+            formula = cell.getCellFormula();
+            assertEquals("1300/3", formula);
 
-        cell.setCellFormula("1.3E3/3");
-        formula = cell.getCellFormula();
-        assertEquals("1300/3", formula);
+            cell.setCellFormula("-1.3E3/3");
+            formula = cell.getCellFormula();
+            assertEquals("-1300/3", formula);
 
-        cell.setCellFormula("-1.3E3/3");
-        formula = cell.getCellFormula();
-        assertEquals("-1300/3", formula);
+            cell.setCellFormula("1300000000000000/3");
+            formula = cell.getCellFormula();
+            assertEquals("1300000000000000/3", formula);
 
-        cell.setCellFormula("1300000000000000/3");
-        formula = cell.getCellFormula();
-        assertEquals("1300000000000000/3", formula);
+            cell.setCellFormula("-1300000000000000/3");
+            formula = cell.getCellFormula();
+            assertEquals("-1300000000000000/3", formula);
 
-        cell.setCellFormula("-1300000000000000/3");
-        formula = cell.getCellFormula();
-        assertEquals("-1300000000000000/3", formula);
-
-        cell.setCellFormula("-10E-1/3.1E2*4E3/3E4");
-        formula = cell.getCellFormula();
-        assertEquals("-1/310*4000/30000", formula);
-
-        wb.close();
+            cell.setCellFormula("-10E-1/3.1E2*4E3/3E4");
+            formula = cell.getCellFormula();
+            assertEquals("-1/310*4000/30000", formula);
+        }
     }
 
     @Test
     void testNumbers() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            wb.createSheet("Cash_Flow");
 
-        wb.createSheet("Cash_Flow");
+            HSSFSheet sheet = wb.createSheet("Test");
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            String formula;
 
-        HSSFSheet sheet = wb.createSheet("Test");
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
-        String formula;
+            // starts from decimal point
 
-        // starts from decimal point
+            cell.setCellFormula(".1");
+            formula = cell.getCellFormula();
+            assertEquals("0.1", formula);
 
-        cell.setCellFormula(".1");
-        formula = cell.getCellFormula();
-        assertEquals("0.1", formula);
+            cell.setCellFormula("+.1");
+            formula = cell.getCellFormula();
+            assertEquals("0.1", formula);
 
-        cell.setCellFormula("+.1");
-        formula = cell.getCellFormula();
-        assertEquals("0.1", formula);
+            cell.setCellFormula("-.1");
+            formula = cell.getCellFormula();
+            assertEquals("-0.1", formula);
 
-        cell.setCellFormula("-.1");
-        formula = cell.getCellFormula();
-        assertEquals("-0.1", formula);
+            // has exponent
 
-        // has exponent
+            cell.setCellFormula("10E1");
+            formula = cell.getCellFormula();
+            assertEquals("100", formula);
 
-        cell.setCellFormula("10E1");
-        formula = cell.getCellFormula();
-        assertEquals("100", formula);
+            cell.setCellFormula("10E+1");
+            formula = cell.getCellFormula();
+            assertEquals("100", formula);
 
-        cell.setCellFormula("10E+1");
-        formula = cell.getCellFormula();
-        assertEquals("100", formula);
-
-        cell.setCellFormula("10E-1");
-        formula = cell.getCellFormula();
-        assertEquals("1", formula);
-
-        wb.close();
+            cell.setCellFormula("10E-1");
+            formula = cell.getCellFormula();
+            assertEquals("1", formula);
+        }
     }
 
     @Test
     void testRanges() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            wb.createSheet("Cash_Flow");
 
-        wb.createSheet("Cash_Flow");
+            HSSFSheet sheet = wb.createSheet("Test");
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            String formula;
 
-        HSSFSheet sheet = wb.createSheet("Test");
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
-        String formula;
+            cell.setCellFormula("A1.A2");
+            formula = cell.getCellFormula();
+            assertEquals("A1:A2", formula);
 
-        cell.setCellFormula("A1.A2");
-        formula = cell.getCellFormula();
-        assertEquals("A1:A2", formula);
+            cell.setCellFormula("A1..A2");
+            formula = cell.getCellFormula();
+            assertEquals("A1:A2", formula);
 
-        cell.setCellFormula("A1..A2");
-        formula = cell.getCellFormula();
-        assertEquals("A1:A2", formula);
-
-        cell.setCellFormula("A1...A2");
-        formula = cell.getCellFormula();
-        assertEquals("A1:A2", formula);
-
-        wb.close();
+            cell.setCellFormula("A1...A2");
+            formula = cell.getCellFormula();
+            assertEquals("A1:A2", formula);
+        }
     }
 
     @Test
     void testMultiSheetReference() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            wb.createSheet("Cash_Flow");
+            wb.createSheet("Test Sheet");
+            wb.createSheet("Sheet 3>");
 
-        wb.createSheet("Cash_Flow");
-        wb.createSheet("Test Sheet");
-        wb.createSheet("Sheet 3>");
-
-        HSSFSheet sheet = wb.createSheet("Test");
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
-        String formula;
+            HSSFSheet sheet = wb.createSheet("Test");
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            String formula;
 
 
-        // References to a single cell:
+            // References to a single cell:
 
-        // One sheet
-        cell.setCellFormula("Cash_Flow!A1");
-        formula = cell.getCellFormula();
-        assertEquals("Cash_Flow!A1", formula);
+            // One sheet
+            cell.setCellFormula("Cash_Flow!A1");
+            formula = cell.getCellFormula();
+            assertEquals("Cash_Flow!A1", formula);
 
-        // Then the other
-        cell.setCellFormula("'Test Sheet'!A1");
-        formula = cell.getCellFormula();
-        assertEquals("'Test Sheet'!A1", formula);
+            // Then the other
+            cell.setCellFormula("'Test Sheet'!A1");
+            formula = cell.getCellFormula();
+            assertEquals("'Test Sheet'!A1", formula);
 
-        // Now both
-        cell.setCellFormula("'Cash_Flow:Test Sheet'!A1");
-        formula = cell.getCellFormula();
-        assertEquals("'Cash_Flow:Test Sheet'!A1", formula);
+            // Now both
+            cell.setCellFormula("'Cash_Flow:Test Sheet'!A1");
+            formula = cell.getCellFormula();
+            assertEquals("'Cash_Flow:Test Sheet'!A1", formula);
 
-        // special character
-        cell.setCellFormula("'Cash_Flow:Sheet 3>'!A1");
-        formula = cell.getCellFormula();
-        assertEquals("'Cash_Flow:Sheet 3>'!A1", formula);
+            // special character
+            cell.setCellFormula("'Cash_Flow:Sheet 3>'!A1");
+            formula = cell.getCellFormula();
+            assertEquals("'Cash_Flow:Sheet 3>'!A1", formula);
 
-        // References to a range (area) of cells:
+            // References to a range (area) of cells:
 
-        // One sheet
-        cell.setCellFormula("Cash_Flow!A1:B2");
-        formula = cell.getCellFormula();
-        assertEquals("Cash_Flow!A1:B2", formula);
+            // One sheet
+            cell.setCellFormula("Cash_Flow!A1:B2");
+            formula = cell.getCellFormula();
+            assertEquals("Cash_Flow!A1:B2", formula);
 
-        // Then the other
-        cell.setCellFormula("'Test Sheet'!A1:B2");
-        formula = cell.getCellFormula();
-        assertEquals("'Test Sheet'!A1:B2", formula);
+            // Then the other
+            cell.setCellFormula("'Test Sheet'!A1:B2");
+            formula = cell.getCellFormula();
+            assertEquals("'Test Sheet'!A1:B2", formula);
 
-        // Now both
-        cell.setCellFormula("'Cash_Flow:Test Sheet'!A1:B2");
-        formula = cell.getCellFormula();
-        assertEquals("'Cash_Flow:Test Sheet'!A1:B2", formula);
-
-        wb.close();
+            // Now both
+            cell.setCellFormula("'Cash_Flow:Test Sheet'!A1:B2");
+            formula = cell.getCellFormula();
+            assertEquals("'Cash_Flow:Test Sheet'!A1:B2", formula);
+        }
     }
 
     /**
@@ -572,14 +563,12 @@ final class TestFormulaParser {
      */
     @Test
     void testToFormulaStringZeroArgFunction() throws IOException {
-        HSSFWorkbook book = new HSSFWorkbook();
-
-        Ptg[] ptgs = {
-                FuncPtg.create(10),
-        };
-        assertEquals("NA()", HSSFFormulaParser.toFormulaString(book, ptgs));
-
-        book.close();
+        try (HSSFWorkbook book = new HSSFWorkbook()) {
+            Ptg[] ptgs = {
+                    FuncPtg.create(10),
+            };
+            assertEquals("NA()", HSSFFormulaParser.toFormulaString(book, ptgs));
+        }
     }
 
     @Test
@@ -814,18 +803,16 @@ final class TestFormulaParser {
 
     @Test
     void testSetFormulaWithRowBeyond32768_Bug44539() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            wb.setSheetName(0, "Sheet1");
 
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        wb.setSheetName(0, "Sheet1");
-
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
-        cell.setCellFormula("SUM(A32769:A32770)");
-        assertNotEquals("SUM(A-32767:A-32766)", cell.getCellFormula(), "Identified bug 44539");
-        assertEquals("SUM(A32769:A32770)", cell.getCellFormula());
-
-        wb.close();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            cell.setCellFormula("SUM(A32769:A32770)");
+            assertNotEquals("SUM(A-32767:A-32766)", cell.getCellFormula(), "Identified bug 44539");
+            assertEquals("SUM(A32769:A32770)", cell.getCellFormula());
+        }
     }
 
     @Test
@@ -965,24 +952,23 @@ final class TestFormulaParser {
         Ptg[] ptgs;
         AreaI aptg;
 
-        HSSFWorkbook book = new HSSFWorkbook();
-        book.createSheet("Sheet1");
+        try (HSSFWorkbook book = new HSSFWorkbook()) {
+            book.createSheet("Sheet1");
 
-        ptgs = parse("Sheet1!A10:A40000", book);
-        aptg = (AreaI) ptgs[0];
-        assertNotEquals(-25537, aptg.getLastRow(), "Identified bug 45358");
-        assertEquals(39999, aptg.getLastRow());
+            ptgs = parse("Sheet1!A10:A40000", book);
+            aptg = (AreaI) ptgs[0];
+            assertNotEquals(-25537, aptg.getLastRow(), "Identified bug 45358");
+            assertEquals(39999, aptg.getLastRow());
 
-        ptgs = parse("Sheet1!A10:A65536", book);
-        aptg = (AreaI) ptgs[0];
-        assertEquals(65535, aptg.getLastRow());
+            ptgs = parse("Sheet1!A10:A65536", book);
+            aptg = (AreaI) ptgs[0];
+            assertEquals(65535, aptg.getLastRow());
 
-        // plain area refs should be ok too
-        ptgs = parseFormula("A10:A65536");
-        aptg = (AreaI) ptgs[0];
-        assertEquals(65535, aptg.getLastRow());
-
-        book.close();
+            // plain area refs should be ok too
+            ptgs = parseFormula("A10:A65536");
+            aptg = (AreaI) ptgs[0];
+            assertEquals(65535, aptg.getLastRow());
+        }
     }
 
     @Test
@@ -1050,27 +1036,25 @@ final class TestFormulaParser {
 
     @Test
     void testRangeOperator() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFCell cell = sheet.createRow(0).createCell(0);
 
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        HSSFCell cell = sheet.createRow(0).createCell(0);
+            wb.setSheetName(0, "Sheet1");
+            cell.setCellFormula("Sheet1!B$4:Sheet1!$C1"); // explicit range ':' operator
+            assertEquals("Sheet1!B$4:Sheet1!$C1", cell.getCellFormula());
 
-        wb.setSheetName(0, "Sheet1");
-        cell.setCellFormula("Sheet1!B$4:Sheet1!$C1"); // explicit range ':' operator
-        assertEquals("Sheet1!B$4:Sheet1!$C1", cell.getCellFormula());
+            cell.setCellFormula("Sheet1!B$4:$C1"); // plain area ref
+            assertEquals("Sheet1!B1:$C$4", cell.getCellFormula()); // note - area ref is normalised
 
-        cell.setCellFormula("Sheet1!B$4:$C1"); // plain area ref
-        assertEquals("Sheet1!B1:$C$4", cell.getCellFormula()); // note - area ref is normalised
+            cell.setCellFormula("Sheet1!$C1...B$4"); // different syntax for plain area ref
+            assertEquals("Sheet1!B1:$C$4", cell.getCellFormula());
 
-        cell.setCellFormula("Sheet1!$C1...B$4"); // different syntax for plain area ref
-        assertEquals("Sheet1!B1:$C$4", cell.getCellFormula());
-
-        // with funny sheet name
-        wb.setSheetName(0, "A1...A2");
-        cell.setCellFormula("A1...A2!B1");
-        assertEquals("A1...A2!B1", cell.getCellFormula());
-
-        wb.close();
+            // with funny sheet name
+            wb.setSheetName(0, "A1...A2");
+            cell.setCellFormula("A1...A2!B1");
+            assertEquals("A1...A2!B1", cell.getCellFormula());
+        }
     }
 
     @Test
@@ -1218,26 +1202,26 @@ final class TestFormulaParser {
     }
 
     @Test
-    void testIntersectionNamesInFunctionArgs() {
-        HSSFWorkbook wb = new HSSFWorkbook();
+    void testIntersectionNamesInFunctionArgs() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFName name1 = wb.createName();
+            name1.setNameName("foo1");
+            name1.setRefersToFormula("A1:A3");
 
-        HSSFName name1 = wb.createName();
-        name1.setNameName("foo1");
-        name1.setRefersToFormula("A1:A3");
+            HSSFName name2 = wb.createName();
+            name2.setNameName("foo2");
+            name2.setRefersToFormula("A1:B3");
 
-        HSSFName name2 = wb.createName();
-        name2.setNameName("foo2");
-        name2.setRefersToFormula("A1:B3");
+            Ptg[] ptgs = FormulaParser.parse("SUM(foo1 foo2)", HSSFEvaluationWorkbook.create(wb), FormulaType.CELL, -1);
 
-        Ptg[] ptgs = FormulaParser.parse("SUM(foo1 foo2)", HSSFEvaluationWorkbook.create(wb), FormulaType.CELL, -1);
-
-        confirmTokenClasses(ptgs,
-                MemFuncPtg.class,
-                NamePtg.class,
-                NamePtg.class,
-                IntersectionPtg.class,
-                AttrPtg.class
-        );
+            confirmTokenClasses(ptgs,
+                    MemFuncPtg.class,
+                    NamePtg.class,
+                    NamePtg.class,
+                    IntersectionPtg.class,
+                    AttrPtg.class
+            );
+        }
     }
 
     @Test
