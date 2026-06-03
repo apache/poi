@@ -33,6 +33,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
+import org.apache.poi.util.MathUtil;
 
 /**
  * HWMFs Raster Operation for Ternary arguments (Source / Destination / Pattern)
@@ -81,8 +82,8 @@ public class HwmfROP3Composite implements Composite {
             int w = Math.min(src.getWidth(), dstIn.getWidth());
             int h = Math.min(src.getHeight(), dstIn.getHeight());
 
-            int startX = (int)startPnt.getX();
-            int startY = (int)startPnt.getY();
+            int startX = MathUtil.safeDoubleToInt(startPnt.getX());
+            int startY = MathUtil.safeDoubleToInt(startPnt.getY());
             int offsetY = dstIn.getSampleModelTranslateY();
             int offsetX = dstIn.getSampleModelTranslateX();
 

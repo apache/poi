@@ -364,13 +364,13 @@ public class HwmfBitmapDib implements GenericRecord {
             return 0;
         case BI_BITCOUNT_1:
             // 2 colors
-            return readRGBQuad(leis, (int)(headerColorUsed == 0 ? 2 : Math.min(headerColorUsed,2)));
+            return readRGBQuad(leis, headerColorUsed == 0 ? 2 : Math.toIntExact(Math.min(headerColorUsed,2)));
         case BI_BITCOUNT_2:
             // 16 colors
-            return readRGBQuad(leis, (int)(headerColorUsed == 0 ? 16 : Math.min(headerColorUsed,16)));
+            return readRGBQuad(leis, headerColorUsed == 0 ? 16 : Math.toIntExact(Math.min(headerColorUsed,16)));
         case BI_BITCOUNT_3:
             // 256 colors
-            return readRGBQuad(leis, (int)(headerColorUsed == 0 ? 256 : Math.min(headerColorUsed,256)));
+            return readRGBQuad(leis, headerColorUsed == 0 ? 256 : Math.toIntExact(Math.min(headerColorUsed,256)));
         case BI_BITCOUNT_4:
             switch (headerCompression) {
             case BI_RGB:
