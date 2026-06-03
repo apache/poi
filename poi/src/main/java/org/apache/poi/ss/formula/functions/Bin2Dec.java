@@ -22,6 +22,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -100,7 +101,7 @@ public class Bin2Dec extends Fixed1ArgFunction implements FreeRefFunction {
 
         for (int i = 0; i < numBits; i++) {
             int bit = Integer.parseInt(unsigned.substring(i, i + 1));
-            int term = (int) (bit * Math.pow(2, power));
+            int term = MathUtil.safeDoubleToInt(bit * Math.pow(2, power));
             sum += term;
             power--;
         }

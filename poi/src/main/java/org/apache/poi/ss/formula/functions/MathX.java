@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -56,7 +57,7 @@ final class MathX {
     }
 
     public static double round(double n, double p) {
-        return round(n, (int)p);
+        return round(n, MathUtil.safeDoubleToInt(p));
     }
 
 
@@ -81,7 +82,7 @@ final class MathX {
     }
 
     public static double roundUp(double n, double p) {
-        return roundUp(n, (int)p);
+        return roundUp(n, MathUtil.safeDoubleToInt(p));
     }
 
 
@@ -105,7 +106,7 @@ final class MathX {
     }
 
     public static double roundDown(double n, double p) {
-        return roundDown(n, (int)p);
+        return roundDown(n, MathUtil.safeDoubleToInt(p));
     }
 
     private static double round(double n, int p, java.math.RoundingMode rounding) {
@@ -316,7 +317,7 @@ final class MathX {
     }
 
     public static double factorial(double d) {
-        return factorial((int)d);
+        return factorial(MathUtil.safeDoubleToInt(d));
     }
 
 
