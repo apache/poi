@@ -179,7 +179,7 @@ public class SanityChecker {
     private void checkWorkbookRecords(InternalWorkbook workbook) {
         List<org.apache.poi.hssf.record.Record> records = workbook.getRecords();
         assertInstanceOf(BOFRecord.class, records.get(0));
-        assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
+        assertInstanceOf(EOFRecord.class, records.get(records.size() - 1));
 
         checkRecordOrder(records, workbookRecords);
     }
@@ -187,7 +187,7 @@ public class SanityChecker {
     private void checkSheetRecords(InternalSheet sheet) {
         List<RecordBase> records = sheet.getRecords();
         assertInstanceOf(BOFRecord.class, records.get(0));
-        assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
+        assertInstanceOf(EOFRecord.class, records.get(records.size() - 1));
 
         checkRecordOrder(records, sheetRecords);
     }
