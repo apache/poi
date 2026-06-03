@@ -458,7 +458,7 @@ public class HwmfBitmapDib implements GenericRecord {
         }
 
         // sometimes there are missing bytes after the imageData which will be 0-filled
-        int imageSize = (int)Math.max(imageData.length, introSize+headerImageSize);
+        int imageSize = Math.toIntExact(Math.max(imageData.length, introSize + headerImageSize));
 
         // create the image data and leave the parsing to the ImageIO api
         byte[] buf = IOUtils.safelyAllocate(BMP_HEADER_SIZE + (long)imageSize, HwmfPicture.getMaxRecordLength());
