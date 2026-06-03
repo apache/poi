@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import java.io.IOException;
 import java.util.stream.Stream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -139,92 +140,85 @@ final class TestSharedFormulaRecord {
      * Make sure that POI preserves {@link SharedFormulaRecord}s
      */
     @Test
-    void testPreserveOnReserialize() {
-        HSSFWorkbook wb;
-        HSSFSheet sheet;
-        HSSFCell cellB32769;
-        HSSFCell cellC32769;
-
+    void testPreserveOnReserialize() throws IOException {
         // Reading directly from XLS file
-        wb = HSSFTestDataSamples.openSampleWorkbook(SHARED_FORMULA_TEST_XLS);
-        sheet = wb.getSheetAt(0);
-        cellB32769 = sheet.getRow(32768).getCell(1);
-        cellC32769 = sheet.getRow(32768).getCell(2);
-        // check reading of formulas which are shared (two cells from a 1R x 8C range)
-        assertEquals("B32770*2", cellB32769.getCellFormula());
-        assertEquals("C32770*2", cellC32769.getCellFormula());
-        confirmCellEvaluation(wb, cellB32769, 4);
-        confirmCellEvaluation(wb, cellC32769, 6);
-        // Confirm this example really does have SharedFormulas.
-        // there are 3 others besides the one at A32769:H32769
-        assertEquals(4, countSharedFormulas(sheet));
+        try (HSSFWorkbook wbStart = HSSFTestDataSamples.openSampleWorkbook(SHARED_FORMULA_TEST_XLS)) {
+            HSSFSheet sheet = wbStart.getSheetAt(0);
+            HSSFCell cellB32769 = sheet.getRow(32768).getCell(1);
+            HSSFCell cellC32769 = sheet.getRow(32768).getCell(2);
+            // check reading of formulas which are shared (two cells from a 1R x 8C range)
+            assertEquals("B32770*2", cellB32769.getCellFormula());
+            assertEquals("C32770*2", cellC32769.getCellFormula());
+            confirmCellEvaluation(wbStart, cellB32769, 4);
+            confirmCellEvaluation(wbStart, cellC32769, 6);
+            // Confirm this example really does have SharedFormulas.
+            // there are 3 others besides the one at A32769:H32769
+            assertEquals(4, countSharedFormulas(sheet));
 
-
-        // Re-serialize and check again
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
-        cellB32769 = sheet.getRow(32768).getCell(1);
-        cellC32769 = sheet.getRow(32768).getCell(2);
-        assertEquals("B32770*2", cellB32769.getCellFormula());
-        assertEquals("C32770*2", cellC32769.getCellFormula());
-        confirmCellEvaluation(wb, cellB32769, 4);
-        assertEquals(4, countSharedFormulas(sheet));
+            // Re-serialize and check again
+            try (HSSFWorkbook wbReserialized = HSSFTestDataSamples.writeOutAndReadBack(wbStart)) {
+                HSSFSheet sheetReserialized = wbReserialized.getSheetAt(0);
+                HSSFCell cellB32769Reserialized = sheetReserialized.getRow(32768).getCell(1);
+                HSSFCell cellC32769Reserialized = sheetReserialized.getRow(32768).getCell(2);
+                assertEquals("B32770*2", cellB32769Reserialized.getCellFormula());
+                assertEquals("C32770*2", cellC32769Reserialized.getCellFormula());
+                confirmCellEvaluation(wbReserialized, cellB32769Reserialized, 4);
+                assertEquals(4, countSharedFormulas(sheetReserialized));
+            }
+        }
     }
 
     @Test
-    void testUnshareFormulaDueToChangeFormula() {
-        HSSFWorkbook wb;
-        HSSFSheet sheet;
-        HSSFCell cellB32769;
-        HSSFCell cellC32769;
+    void testUnshareFormulaDueToChangeFormula() throws IOException {
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(SHARED_FORMULA_TEST_XLS)) {
+            HSSFSheet sheet = wb.getSheetAt(0);
+            HSSFCell cellB32769 = sheet.getRow(32768).getCell(1);
+            HSSFCell cellC32769 = sheet.getRow(32768).getCell(2);
 
-        wb = HSSFTestDataSamples.openSampleWorkbook(SHARED_FORMULA_TEST_XLS);
-        sheet = wb.getSheetAt(0);
-        cellB32769 = sheet.getRow(32768).getCell(1);
-        cellC32769 = sheet.getRow(32768).getCell(2);
-
-        // Updating cell formula, causing it to become unshared
-        cellB32769.setCellFormula("1+1");
-        confirmCellEvaluation(wb, cellB32769, 2);
-        // currently (Oct 2008) POI handles this by exploding the whole shared formula group
-        assertEquals(3, countSharedFormulas(sheet)); // one less now
-        // check that nearby cell of the same group still has the same formula
-        assertEquals("C32770*2", cellC32769.getCellFormula());
-        confirmCellEvaluation(wb, cellC32769, 6);
+            // Updating cell formula, causing it to become unshared
+            cellB32769.setCellFormula("1+1");
+            confirmCellEvaluation(wb, cellB32769, 2);
+            // currently (Oct 2008) POI handles this by exploding the whole shared formula group
+            assertEquals(3, countSharedFormulas(sheet)); // one less now
+            // check that nearby cell of the same group still has the same formula
+            assertEquals("C32770*2", cellC32769.getCellFormula());
+            confirmCellEvaluation(wb, cellC32769, 6);
+        }
     }
 
     @Test
-    void testUnshareFormulaDueToDelete() {
-        HSSFWorkbook wb;
-        HSSFSheet sheet;
-        HSSFCell cell;
+    void testUnshareFormulaDueToDelete() throws IOException {
         final int ROW_IX = 2;
 
         // changing shared formula cell to blank
-        wb = HSSFTestDataSamples.openSampleWorkbook(SHARED_FORMULA_TEST_XLS);
-        sheet = wb.getSheetAt(0);
+        try (HSSFWorkbook wbStart1 = HSSFTestDataSamples.openSampleWorkbook(SHARED_FORMULA_TEST_XLS)) {
+            HSSFSheet sheet = wbStart1.getSheetAt(0);
 
-        assertEquals("A$1*2", sheet.getRow(ROW_IX).getCell(1).getCellFormula());
-        cell = sheet.getRow(ROW_IX).getCell(1);
-        cell.setBlank();
-        assertEquals(3, countSharedFormulas(sheet));
+            assertEquals("A$1*2", sheet.getRow(ROW_IX).getCell(1).getCellFormula());
+            HSSFCell cell = sheet.getRow(ROW_IX).getCell(1);
+            cell.setBlank();
+            assertEquals(3, countSharedFormulas(sheet));
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
-        assertEquals("A$1*2", sheet.getRow(ROW_IX+1).getCell(1).getCellFormula());
+            try (HSSFWorkbook wbReserialized1 = HSSFTestDataSamples.writeOutAndReadBack(wbStart1)) {
+                HSSFSheet sheetReserialized = wbReserialized1.getSheetAt(0);
+                assertEquals("A$1*2", sheetReserialized.getRow(ROW_IX+1).getCell(1).getCellFormula());
+            }
+        }
 
         // deleting shared formula cell
-        wb = HSSFTestDataSamples.openSampleWorkbook(SHARED_FORMULA_TEST_XLS);
-        sheet = wb.getSheetAt(0);
+        try (HSSFWorkbook wbStart2 = HSSFTestDataSamples.openSampleWorkbook(SHARED_FORMULA_TEST_XLS)) {
+            HSSFSheet sheet = wbStart2.getSheetAt(0);
 
-        assertEquals("A$1*2", sheet.getRow(ROW_IX).getCell(1).getCellFormula());
-        cell = sheet.getRow(ROW_IX).getCell(1);
-        sheet.getRow(ROW_IX).removeCell(cell);
-        assertEquals(3, countSharedFormulas(sheet));
+            assertEquals("A$1*2", sheet.getRow(ROW_IX).getCell(1).getCellFormula());
+            HSSFCell cell = sheet.getRow(ROW_IX).getCell(1);
+            sheet.getRow(ROW_IX).removeCell(cell);
+            assertEquals(3, countSharedFormulas(sheet));
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
-        assertEquals("A$1*2", sheet.getRow(ROW_IX+1).getCell(1).getCellFormula());
+            try (HSSFWorkbook wbReserialized2 = HSSFTestDataSamples.writeOutAndReadBack(wbStart2)) {
+                HSSFSheet sheetReserialized = wbReserialized2.getSheetAt(0);
+                assertEquals("A$1*2", sheetReserialized.getRow(ROW_IX+1).getCell(1).getCellFormula());
+            }
+        }
     }
 
     private static void confirmCellEvaluation(HSSFWorkbook wb, HSSFCell cell, double expectedValue) {
