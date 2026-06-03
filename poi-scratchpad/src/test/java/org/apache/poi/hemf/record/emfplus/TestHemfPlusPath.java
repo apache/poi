@@ -18,6 +18,7 @@
 package org.apache.poi.hemf.record.emfplus;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 
@@ -25,7 +26,10 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusPath.EmfPlusPath;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class TestHemfPlusPath {
 
@@ -55,6 +59,28 @@ class TestHemfPlusPath {
         EmfPlusPath path = new EmfPlusPath();
         try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
             assertDoesNotThrow(() -> path.init(leis, data.length, EmfPlusObjectType.PATH, 0));
+        }
+    }
+
+    /**
+     * EmfPlusPath reads a 32-bit point count straight from the EMF+ stream and
+     * allocates the point/type arrays before any point data is read. A crafted
+     * count (oversized or negative) must be rejected by the standard allocation
+     * check instead of triggering an OutOfMemoryError / NegativeArraySizeException.
+     */
+    @ParameterizedTest
+    @ValueSource(ints = { Integer.MAX_VALUE, 0xFFFFFFFF })
+    void rejectsInvalidPointCount(int pointCount) throws Exception {
+        byte[] data = new byte[12];
+        // EmfPlusGraphicsVersion: metafile signature 0xDBC01, graphics version 1
+        LittleEndian.putInt(data, 0, 0xDBC01001);
+        LittleEndian.putInt(data, 4, pointCount);
+        // remaining 4 bytes: pointFlags (2) + reserved (2)
+
+        EmfPlusPath path = new EmfPlusPath();
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
+            assertThrows(RecordFormatException.class,
+                    () -> path.init(leis, data.length, EmfPlusObjectType.PATH, 0));
         }
     }
 }
