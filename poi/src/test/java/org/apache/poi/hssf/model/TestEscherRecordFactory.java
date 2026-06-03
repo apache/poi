@@ -48,24 +48,25 @@ class TestEscherRecordFactory {
     }
 
     @Test
-    void testDgContainerMustBeRootOfHSSFSheetEscherRecords() {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("47251.xls");
-        HSSFSheet sh = wb.getSheetAt(0);
-        InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
-        List<RecordBase> records = ish.getRecords();
-        // records to be aggregated
-        List<RecordBase> dgRecords = records.subList(19, 23);
-        byte[] dgBytes = toByteArray(dgRecords);
-        sh.getDrawingPatriarch();
-        EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
-        assertNotNull(agg);
-        assertInstanceOf(EscherContainerRecord.class, agg.getEscherRecords().get(0));
-        assertEquals(EscherContainerRecord.DG_CONTAINER, agg.getEscherRecords().get(0).getRecordId());
-        assertEquals((short) 0x0, agg.getEscherRecords().get(0).getOptions());
-        agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
-        assertNotNull(agg);
-        byte[] dgBytesAfterSave = agg.serialize();
-        assertEquals(dgBytes.length, dgBytesAfterSave.length, "different size of drawing data before and after save");
-        assertArrayEquals(dgBytes, dgBytesAfterSave, "drawing data before and after save is different");
+    void testDgContainerMustBeRootOfHSSFSheetEscherRecords() throws IOException {
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("47251.xls")) {
+            HSSFSheet sh = wb.getSheetAt(0);
+            InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
+            List<RecordBase> records = ish.getRecords();
+            // records to be aggregated
+            List<RecordBase> dgRecords = records.subList(19, 23);
+            byte[] dgBytes = toByteArray(dgRecords);
+            sh.getDrawingPatriarch();
+            EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
+            assertNotNull(agg);
+            assertInstanceOf(EscherContainerRecord.class, agg.getEscherRecords().get(0));
+            assertEquals(EscherContainerRecord.DG_CONTAINER, agg.getEscherRecords().get(0).getRecordId());
+            assertEquals((short) 0x0, agg.getEscherRecords().get(0).getOptions());
+            agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
+            assertNotNull(agg);
+            byte[] dgBytesAfterSave = agg.serialize();
+            assertEquals(dgBytes.length, dgBytesAfterSave.length, "different size of drawing data before and after save");
+            assertArrayEquals(dgBytes, dgBytesAfterSave, "drawing data before and after save is different");
+        }
     }
 }

@@ -94,7 +94,7 @@ final class TestEventWorkbookBuilder {
     }
 
     @Test
-    void testFormulas() {
+    void testFormulas() throws IOException {
 
         // Check our formula records
         assertEquals(6, fRecs.size());
@@ -152,8 +152,9 @@ final class TestEventWorkbookBuilder {
 
 
         // Now, load via Usermodel and re-check
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("3dFormulas.xls");
-        assertEquals("Sheet1!A1", wb.getSheetAt(0).getRow(1).getCell(0).getCellFormula());
-        assertEquals("SUM(Sh3!A1:A4)", wb.getSheetAt(0).getRow(6).getCell(0).getCellFormula());
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("3dFormulas.xls")) {
+            assertEquals("Sheet1!A1", wb.getSheetAt(0).getRow(1).getCell(0).getCellFormula());
+            assertEquals("SUM(Sh3!A1:A4)", wb.getSheetAt(0).getRow(6).getCell(0).getCellFormula());
+        }
     }
 }
