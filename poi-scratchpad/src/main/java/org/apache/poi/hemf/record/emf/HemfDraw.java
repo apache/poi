@@ -37,6 +37,7 @@ import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfGraphics.FillDrawStyle;
 import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.hwmf.record.HwmfDraw.WmfSelectObject;
+import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
@@ -947,6 +948,7 @@ public final class HemfDraw {
             long size = readRectL(leis, bounds);
             int count = Math.toIntExact(leis.readUInt());
             size += LittleEndianConsts.INT_SIZE;
+            IOUtils.safelyAllocateCheck(count, HwmfPicture.getMaxRecordLength());
             Point2D[] points = new Point2D[count];
             for (int i=0; i<count; i++) {
                 points[i] = new Point2D.Double();
