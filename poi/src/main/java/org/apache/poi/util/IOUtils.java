@@ -611,6 +611,7 @@ public final class IOUtils {
      * @throws RecordFormatException if the length is negative or too long
      */
     public static void safelyAllocateCheck(long length, int maxLength) {
+        globalLengthChecks(length);
         checkLength(length, maxLength);
     }
 
@@ -626,6 +627,7 @@ public final class IOUtils {
      * @throws RecordFormatException if the length is negative or too long
      */
     public static void safelyAllocateCheck(long length, int maxLength, String limitMethod) {
+        globalLengthChecks(length);
         checkLength(length, maxLength, limitMethod);
     }
 
