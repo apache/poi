@@ -150,7 +150,8 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
 
     public byte[] getElement(int index) {
         int actualSize = getActualSizeOfElements(getSizeOfElements());
-        return IOUtils.safelyClone(getComplexData(), FIXED_SIZE + index * actualSize, actualSize, MAX_RECORD_LENGTH);
+        return IOUtils.safelyClone(getComplexData(), FIXED_SIZE + index * actualSize,
+                actualSize, MAX_RECORD_LENGTH, "EscherArrayProperty.setMaxRecordLength()");
     }
 
     public void setElement(int index, byte[] element) {

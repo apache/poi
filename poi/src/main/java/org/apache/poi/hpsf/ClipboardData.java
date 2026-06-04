@@ -64,7 +64,8 @@ public class ClipboardData {
         }
 
         _format = lei.readInt();
-        _value = IOUtils.safelyAllocate(size - LittleEndianConsts.INT_SIZE, MAX_RECORD_LENGTH);
+        _value = IOUtils.safelyAllocate(size - LittleEndianConsts.INT_SIZE, MAX_RECORD_LENGTH,
+                "ClipboardData.setMaxRecordLength()");
         lei.readFully(_value);
     }
 

@@ -104,7 +104,8 @@ public class Array {
         }
         int numberOfScalars = Math.toIntExact(numberOfScalarsLong);
 
-        IOUtils.safelyAllocateCheck(numberOfScalars, getMaxNumberOfArrayScalars());
+        IOUtils.safelyAllocateCheck(numberOfScalars, getMaxNumberOfArrayScalars(),
+                "Array.setMaxNumberOfArrayScalars()");
 
         _values = new TypedPropertyValue[numberOfScalars];
         int paddedType = (_header._type == Variant.VT_VARIANT) ? 0 : _header._type;

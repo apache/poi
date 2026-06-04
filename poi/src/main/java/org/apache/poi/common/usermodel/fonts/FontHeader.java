@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.poi.common.usermodel.GenericRecord;
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -191,7 +191,8 @@ public class FontHeader implements FontInfo, GenericRecord {
         // padding
         leis.readShort();
         int nameSize = leis.readUShort();
-        byte[] nameBuf = IOUtils.safelyAllocate(nameSize, 1000);
+        ArrayUtil.strictAllocateCheck(nameSize, 1000);
+        byte[] nameBuf = new byte[nameSize];
         leis.readFully(nameBuf);
         // may be 0-terminated, just trim it away
         return new String(nameBuf, 0, nameSize, StandardCharsets.UTF_16LE).trim();
