@@ -53,7 +53,6 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusPath.EmfPlusPath;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
-import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -736,7 +735,7 @@ public class HemfPlusBrush {
 
             // An array of SurroundingColorCount EmfPlusARGB objects that specify the colors for discrete points on the
             // boundary of the brush.
-            IOUtils.safelyAllocateCheck(colorCount, HwmfPicture.getMaxRecordLength());
+            IOUtils.safelyAllocateCheck(colorCount, HemfPicture.getMaxRecordLength());
             surroundingColor = new Color[colorCount];
             for (int i = 0; i < colorCount; i++) {
                 surroundingColor[i] = readARGB(leis.readInt());
@@ -759,7 +758,7 @@ public class HemfPlusBrush {
                 size += LittleEndianConsts.INT_SIZE;
 
                 // An array of BoundaryPointCount EmfPlusPointF objects that specify the boundary of the brush.
-                IOUtils.safelyAllocateCheck(pointCount, HwmfPicture.getMaxRecordLength());
+                IOUtils.safelyAllocateCheck(pointCount, HemfPicture.getMaxRecordLength());
                 boundaryPoints = new Point2D[pointCount];
                 for (int i=0; i<pointCount; i++) {
                     size += readPointF(leis, boundaryPoints[i] = new Point2D.Double());
@@ -915,7 +914,7 @@ public class HemfPlusBrush {
         final int count = leis.readInt();
         int size = LittleEndianConsts.INT_SIZE;
 
-        IOUtils.safelyAllocateCheck(count, HwmfPicture.getMaxRecordLength());
+        IOUtils.safelyAllocateCheck(count, HemfPicture.getMaxRecordLength());
         float[] positions = new float[count];
         for (int i=0; i<count; i++) {
             positions[i] = leis.readFloat();

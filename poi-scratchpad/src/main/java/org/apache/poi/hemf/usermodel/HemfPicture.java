@@ -64,10 +64,28 @@ import org.apache.poi.util.Units;
  */
 @Internal
 public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
+    /** Max. record length - processing longer records will throw an exception */
+    public static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    public static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
     private final LittleEndianInputStream stream;
     private final List<HemfRecord> records = new ArrayList<>();
     private boolean isParsed = false;
     private Charset defaultCharset = LocaleUtil.CHARSET_1252;
+
+    /**
+     * @param length the max record length allowed for HemfPicture
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HemfPicture
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     public HemfPicture(InputStream is) {
         this(new LittleEndianInputStream(is));
