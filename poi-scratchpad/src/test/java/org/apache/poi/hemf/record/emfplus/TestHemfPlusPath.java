@@ -65,11 +65,14 @@ class TestHemfPlusPath {
     /**
      * EmfPlusPath reads a 32-bit point count straight from the EMF+ stream and
      * allocates the point/type arrays before any point data is read. A crafted
-     * count (oversized or negative) must be rejected by the standard allocation
-     * check instead of triggering an OutOfMemoryError / NegativeArraySizeException.
+     * count must be rejected by the standard allocation check instead of triggering
+     * an OutOfMemoryError / NegativeArraySizeException. The values below cover both
+     * high-bit (negative) counts - e.g. 0x80000000 / 0xFFFFFFFF would yield
+     * {@code new Point2D[negative]} - and large positive counts - e.g. 0x40000000
+     * (~1 billion points in a 12-byte record) would attempt a multi-GB allocation.
      */
     @ParameterizedTest
-    @ValueSource(ints = { Integer.MAX_VALUE, 0xFFFFFFFF })
+    @ValueSource(ints = { Integer.MAX_VALUE, 0xFFFFFFFF, 0x80000000, 0x40000000 })
     void rejectsInvalidPointCount(int pointCount) throws Exception {
         byte[] data = new byte[12];
         // EmfPlusGraphicsVersion: metafile signature 0xDBC01, graphics version 1
