@@ -32,6 +32,7 @@ import java.util.function.Supplier;
 
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfBinaryRasterOp;
@@ -624,6 +625,7 @@ public class HemfMisc {
             // If the pen type in the PenStyle field is PS_GEOMETRIC, the lengths are specified in logical
             // units; otherwise, the lengths are specified in device units.
 
+            HemfPicture.safelyAllocateCheck(numStyleEntries);
             float[] dashPattern = new float[numStyleEntries];
 
             for (int i = 0; i < numStyleEntries; i++) {
