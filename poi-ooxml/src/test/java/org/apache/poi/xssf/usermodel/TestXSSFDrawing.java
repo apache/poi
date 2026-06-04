@@ -933,8 +933,7 @@ class TestXSSFDrawing {
             List<XSSFShape> shapes = drawing.getShapes();
             assertEquals(1, shapes.size());
 
-            assertTrue(shapes.get(0).getAnchor() instanceof ClientAnchor);
-            ClientAnchor anchor = (ClientAnchor) shapes.get(0).getAnchor();
+            ClientAnchor anchor = assertInstanceOf(ClientAnchor.class, shapes.get(0).getAnchor());
             assertEquals(3, anchor.getCol1());
             assertEquals(38, anchor.getRow1());
             assertEquals(19, anchor.getCol2());

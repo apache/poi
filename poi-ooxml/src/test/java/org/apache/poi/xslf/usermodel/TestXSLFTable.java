@@ -281,6 +281,25 @@ class TestXSLFTable {
     }
 
     @Test
+    void testBorderColorOverwrite() throws IOException {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+        XSLFTable tbl = slide.createTable();
+        XSLFTableRow row = tbl.addRow();
+        XSLFTableCell cell = row.addCell();
+
+        for (BorderEdge edge : BorderEdge.values()) {
+            cell.setBorderColor(edge, Color.yellow);
+            assertEquals(Color.yellow, cell.getBorderColor(edge));
+            // additional calls to setBorderColor do not add multiple solidFill elements
+            cell.setBorderColor(edge, Color.red);
+            assertEquals(Color.red, cell.getBorderColor(edge));
+        }
+
+        ppt.close();
+    }
+
+    @Test
     void removeTable() throws IOException {
         XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
         XSLFSlide sl = ss.getSlides().get(0);

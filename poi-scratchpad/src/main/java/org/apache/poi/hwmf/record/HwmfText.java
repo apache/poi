@@ -426,7 +426,7 @@ public class HwmfText {
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             // -6 bytes of record function and length header
-            final int remainingRecordSize = (int)(recordSize-6);
+            final int remainingRecordSize = Math.toIntExact(recordSize-6);
 
             int size = readPointS(leis, reference);
 

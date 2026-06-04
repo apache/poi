@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 
 import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.util.MathUtil;
 
 /**
  * <p>Implementation for Excel QUOTIENT () function.
@@ -62,7 +63,7 @@ public class Quotient extends Fixed2ArgFunction implements FreeRefFunction {
             return ErrorEval.DIV_ZERO;
         }
 
-        return new NumberEval((int)(enumerator / denominator));
+        return new NumberEval(MathUtil.safeDoubleToInt(enumerator / denominator));
     }
 
     @Override

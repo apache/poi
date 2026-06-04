@@ -77,8 +77,7 @@ public final class TestTextShape {
             List<String> lst1 = new ArrayList<>();
             HSLFSlide slide = ppt.getSlides().get(0);
             for (HSLFShape shape : slide.getShapes()) {
-                assertTrue(shape instanceof HSLFTextShape, "Expected TextShape but found " + shape.getClass().getName());
-                HSLFTextShape tx = (HSLFTextShape) shape;
+                HSLFTextShape tx = assertInstanceOf(HSLFTextShape.class, shape, () -> "Expected TextShape but found " + shape.getClass().getName());
                 List<HSLFTextParagraph> paras = tx.getTextParagraphs();
                 assertNotNull(paras);
                 int runType = paras.get(0).getRunType();

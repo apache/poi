@@ -40,6 +40,7 @@ import org.apache.poi.sl.draw.EmbeddedExtractor;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 
 /**
@@ -93,7 +94,10 @@ public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
             return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         }
 
-        BufferedImage bufImg = new BufferedImage((int)dim.getWidth(), (int)dim.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bufImg = new BufferedImage(
+                MathUtil.safeDoubleToInt(dim.getWidth()),
+                MathUtil.safeDoubleToInt(dim.getHeight()),
+                BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bufImg.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);

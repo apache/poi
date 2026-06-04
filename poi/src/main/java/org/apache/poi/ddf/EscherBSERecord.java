@@ -125,7 +125,10 @@ public final class EscherBSERecord extends EscherRecord {
 
         _remainingData = IOUtils.safelyClone(data, pos, bytesRemaining, MAX_RECORD_LENGTH);
 
-        return bytesRemaining + 8 + 36 + (field_12_blipRecord == null ? 0 : field_12_blipRecord.getRecordSize()) ;
+        // fillFields() must return bytes actually consumed from the stream.
+        // Using getRecordSize() can over-report consumption when malformed
+        // embedded blips reconstruct a size larger than the declared record.
+        return bytesRemaining + 8 + 36 + bytesRead;
 
     }
 

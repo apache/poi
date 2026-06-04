@@ -28,6 +28,8 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class TestHemfPlusPath {
 
@@ -61,36 +63,27 @@ class TestHemfPlusPath {
     }
 
     /**
-     * PointCount is an untrusted 32-bit field that is used directly as the length of the
-     * {@code pathPoints} and {@code pointTypes} arrays. Without validation a crafted path
-     * makes the parser run {@code new Point2D[pointCount]} / {@code new byte[pointCount]} on
-     * an arbitrary attacker value - a high-bit value yields a NegativeArraySizeException and a
-     * large positive value (e.g. 0x40000000 ~ 1 billion points in a 12-byte record) an
-     * OutOfMemoryError. Both must be rejected as a RecordFormatException before allocation,
-     * consistent with the sibling EmfPlusDrawDriverString record.
+     * EmfPlusPath reads a 32-bit point count straight from the EMF+ stream and
+     * allocates the point/type arrays before any point data is read. A crafted
+     * count must be rejected by the standard allocation check instead of triggering
+     * an OutOfMemoryError / NegativeArraySizeException. The values below cover both
+     * high-bit (negative) counts - e.g. 0x80000000 / 0xFFFFFFFF would yield
+     * {@code new Point2D[negative]} - and large positive counts - e.g. 0x40000000
+     * (~1 billion points in a 12-byte record) would attempt a multi-GB allocation.
      */
-    @Test
-    void pathPointCountIsValidatedBeforeAllocation() {
-        // high-bit count -> would be new Point2D[negative] -> NegativeArraySizeException (checked first,
-        // so unpatched code fails here without attempting any large allocation)
-        assertThrows(RecordFormatException.class, () -> initPath(0x80000000));
-        // ~1 billion points claimed in a 12-byte record -> would be a multi-GB allocation -> OutOfMemoryError
-        assertThrows(RecordFormatException.class, () -> initPath(0x40000000));
-    }
-
-    private static void initPath(int pointCount) throws Exception {
+    @ParameterizedTest
+    @ValueSource(ints = { Integer.MAX_VALUE, 0xFFFFFFFF, 0x80000000, 0x40000000 })
+    void rejectsInvalidPointCount(int pointCount) throws Exception {
         byte[] data = new byte[12];
-        int pos = 0;
         // EmfPlusGraphicsVersion: metafile signature 0xDBC01, graphics version 1
-        LittleEndian.putInt(data, pos, 0xDBC01001); pos += 4;
-        LittleEndian.putInt(data, pos, pointCount); pos += 4;
-        // pointFlags + skipped reserved short (the allocation happens right after these)
-        LittleEndian.putShort(data, pos, (short) 0); pos += 2;
-        LittleEndian.putShort(data, pos, (short) 0);
+        LittleEndian.putInt(data, 0, 0xDBC01001);
+        LittleEndian.putInt(data, 4, pointCount);
+        // remaining 4 bytes: pointFlags (2) + reserved (2)
 
         EmfPlusPath path = new EmfPlusPath();
         try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
-            path.init(leis, data.length, EmfPlusObjectType.PATH, 0);
+            assertThrows(RecordFormatException.class,
+                    () -> path.init(leis, data.length, EmfPlusObjectType.PATH, 0));
         }
     }
 }

@@ -30,6 +30,7 @@ import org.apache.poi.hwpf.usermodel.DateAndTime;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.MathUtil;
 
 @Internal
 public final class CharacterSprmUncompressor extends SprmUncompressor
@@ -522,7 +523,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         case 0x4d:
             // sprmCHpsMul -- 0x4A4D
             float percentage = sprm.getOperand() / 100.0f;
-            int add = (int) ( percentage * newCHP.getHps() );
+            int add = MathUtil.safeDoubleToInt(percentage * newCHP.getHps());
             newCHP.setHps( newCHP.getHps() + add );
             break;
         case 0x4e:

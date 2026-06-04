@@ -58,7 +58,7 @@ final class TestReadWriteChart {
         List<RecordBase> records  = newSheet.getRecords();
 
         assertInstanceOf(BOFRecord.class, records.get(0));
-        assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
+        assertInstanceOf(EOFRecord.class, records.get(records.size() - 1));
 
         workbook.close();
     }

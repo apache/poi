@@ -41,9 +41,11 @@ import org.apache.poi.hwmf.record.HwmfPlaceableHeader;
 import org.apache.poi.hwmf.record.HwmfRecord;
 import org.apache.poi.hwmf.record.HwmfRecordType;
 import org.apache.poi.hwmf.record.HwmfText;
+import org.apache.poi.hwmf.record.HwmfWindowing;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Disabled;
@@ -181,6 +183,17 @@ public class TestHwmfParsing {
             () -> new HwmfPicture(new ByteArrayInputStream(malicious))
         );
         assertContains(ex.getMessage(), "unitsPerInch");
+    }
+
+    @Test
+    void testWmfCreateRegionInvalidScanCount() throws Exception {
+        HwmfWindowing.WmfCreateRegion record = new HwmfWindowing.WmfCreateRegion();
+        byte[] data = new byte[34];
+        org.apache.poi.util.LittleEndian.putShort(data, 10, (short) -1);
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
+            assertThrows(RecordFormatException.class,
+                () -> record.init(leis, data.length, 0));
+        }
     }
 
     @Test
