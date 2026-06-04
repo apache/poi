@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.io.output.ThresholdingOutputStream;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LZWDecompresser;
 import org.apache.poi.util.LittleEndian;
@@ -106,7 +107,7 @@ public final class CompressedRTF extends LZWDecompresser {
       /* int dataCRC = */ LittleEndian.readInt(src);
 
       // TODO - Handle CRC checking on the output side
-      IOUtils.safelyAllocateCheck(decompressedSize, MAX_RECORD_LENGTH);
+      ArrayUtil.safelyAllocateCheck(decompressedSize, MAX_RECORD_LENGTH, "CompressedRTF.setMaxRecordLength()");
 
       // Do we need to do anything?
       if(compressionType == UNCOMPRESSED_SIGNATURE_INT) {
@@ -166,7 +167,8 @@ public final class CompressedRTF extends LZWDecompresser {
 
    private void copyCompressedPayload(InputStream src, OutputStream res) throws IOException {
       long remaining = getCompressedSize();
-      byte[] buffer = IOUtils.safelyAllocate(Math.min(8192L, remaining), MAX_RECORD_LENGTH);
+      byte[] buffer = IOUtils.safelyAllocate(Math.min(8192L, remaining),
+              MAX_RECORD_LENGTH, "CompressedRTF.setMaxRecordLength()");
       while (remaining > 0) {
          int read = src.read(buffer, 0, Math.toIntExact(Math.min(buffer.length, remaining)));
          if (read < 0) {

@@ -267,7 +267,8 @@ public abstract class PropertiesChunk extends Chunk {
                 }
 
                 // Grab the data block
-                byte[] data = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
+                byte[] data = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH,
+                        "PropertiesChunk.setMaxRecordLength()");
                 IOUtils.readFully(value, data);
 
                 // Skip over any padding

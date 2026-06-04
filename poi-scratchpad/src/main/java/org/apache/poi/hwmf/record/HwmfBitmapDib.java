@@ -262,14 +262,16 @@ public class HwmfBitmapDib implements GenericRecord {
             headerCompression == Compression.BI_CMYK) {
             int fileSize = Math.toIntExact(
                     Math.min(introSize + bodySize, recordSize));
-            imageData = IOUtils.safelyAllocate(fileSize, HwmfPicture.getMaxRecordLength());
+            imageData = IOUtils.safelyAllocate(fileSize, HwmfPicture.getMaxRecordLength(),
+                    "HwmfPicture.setMaxRecordLength()");
             leis.readFully(imageData, 0, introSize);
             leis.skipFully(recordSize-fileSize);
             // emfs are sometimes truncated, read as much as possible
             int readBytes = leis.read(imageData, introSize, fileSize-introSize);
             return introSize+(recordSize-fileSize)+readBytes;
         } else {
-            imageData = IOUtils.safelyAllocate(recordSize, HwmfPicture.getMaxRecordLength());
+            imageData = IOUtils.safelyAllocate(recordSize, HwmfPicture.getMaxRecordLength(),
+                    "HwmfPicture.setMaxRecordLength()");
             leis.readFully(imageData);
             return recordSize;
         }

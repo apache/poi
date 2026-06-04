@@ -29,6 +29,7 @@ import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -42,7 +43,7 @@ public class MAPIAttribute {
 
    //arbitrarily selected; may need to increase
    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
-   private static int MAX_RECORD_LENGTH = 1_000_000;
+   private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
    private static int MAX_RECORD_COUNT = 10_000;
 
    private final MAPIProperty property;
@@ -165,7 +166,7 @@ public class MAPIAttribute {
                } else {
                   // Custom name was stored
                   int mplen = LittleEndian.readInt(inp);
-                  byte[] mpdata = IOUtils.safelyAllocate(mplen, MAX_RECORD_LENGTH);
+                  byte[] mpdata = IOUtils.safelyAllocate(mplen, MAX_RECORD_LENGTH, "MAPIAttribute.setMaxRecordLength()");
                   if (IOUtils.readFully(inp, mpdata) < 0) {
                      throw new IOException("Not enough data to read " + mplen + " bytes for attribute name");
                   }
@@ -184,7 +185,7 @@ public class MAPIAttribute {
             int values = 1;
             if(isMV || isVL) {
                values = LittleEndian.readInt(inp);
-               IOUtils.safelyAllocateCheck(values, MAX_RECORD_COUNT);
+               ArrayUtil.strictAllocateCheck(values, MAX_RECORD_COUNT);
             }
 
             if (type == Types.NULL && values > 1) {
@@ -193,7 +194,7 @@ public class MAPIAttribute {
 
             for(int j=0; j<values; j++) {
                int len = getLength(type, inp);
-               byte[] data = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
+               byte[] data = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH, "MAPIAttribute.setMaxRecordLength()");
                if (IOUtils.readFully(inp, data) < 0) {
                   throw new IOException("Not enough data to read " + len + " bytes of attribute value");
                }

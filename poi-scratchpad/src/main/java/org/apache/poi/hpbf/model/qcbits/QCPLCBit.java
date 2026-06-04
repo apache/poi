@@ -17,7 +17,7 @@
 
 package org.apache.poi.hpbf.model.qcbits;
 
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
@@ -56,7 +56,7 @@ public abstract class QCPLCBit extends QCBit {
         typeOfPLCS = (int)LittleEndian.getUInt(data, 4);
 
         // Init the arrays that we can
-        IOUtils.safelyAllocateCheck(numberOfPLCs, MAX_NUMBER_OF_PLCS);
+        ArrayUtil.strictAllocateCheck(numberOfPLCs, MAX_NUMBER_OF_PLCS);
         plcValA = new long[numberOfPLCs];
         plcValB = new long[numberOfPLCs];
     }

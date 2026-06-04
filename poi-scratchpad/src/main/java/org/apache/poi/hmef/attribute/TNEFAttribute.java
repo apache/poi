@@ -66,7 +66,7 @@ public class TNEFAttribute {
       int length = LittleEndian.readInt(inp);
       
       property = TNEFProperty.getBest(id, type);
-      data = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
+      data = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH, "TNEFAttribute.setMaxRecordLength()");
       IOUtils.readFully(inp, data);
       
       checksum = LittleEndian.readUShort(inp);

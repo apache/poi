@@ -743,7 +743,8 @@ public class HwmfWindowing {
             bounds.setRect(left, top, right-left, bottom-top);
 
             int size = 9*LittleEndianConsts.SHORT_SIZE+LittleEndianConsts.INT_SIZE;
-            IOUtils.safelyAllocateCheck(scanCount, HwmfPicture.getMaxRecordLength());
+            IOUtils.safelyAllocateCheck(scanCount, HwmfPicture.getMaxRecordLength(),
+                    "HwmfPicture.setMaxRecordLength()");
             scanObjects = new WmfScanObject[scanCount];
             for (int i=0; i<scanCount; i++) {
                 size += (scanObjects[i] = new WmfScanObject()).init(leis);
