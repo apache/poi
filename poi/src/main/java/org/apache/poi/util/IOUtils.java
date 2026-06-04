@@ -127,14 +127,12 @@ public final class IOUtils {
     }
 
     private static void checkByteSizeLimit(int length) {
-        globalLengthChecks(length);
         if(BYTE_ARRAY_MAX_OVERRIDE != -1 && length > BYTE_ARRAY_MAX_OVERRIDE) {
             throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
         }
     }
 
     private static void checkByteSizeLimit(long length) {
-        globalLengthChecks(length);
         if(BYTE_ARRAY_MAX_OVERRIDE != -1 && length > BYTE_ARRAY_MAX_OVERRIDE) {
             throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
         }
@@ -301,7 +299,6 @@ public final class IOUtils {
     }
 
     private static void checkLength(long length, int maxLength) {
-        globalLengthChecks(length);
         if (BYTE_ARRAY_MAX_OVERRIDE > 0) {
             if (length > BYTE_ARRAY_MAX_OVERRIDE) {
                 throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
@@ -312,7 +309,6 @@ public final class IOUtils {
     }
 
     private static void checkLength(long length, int maxLength, String limitMethod) {
-        globalLengthChecks(length);
         if (BYTE_ARRAY_MAX_OVERRIDE > 0) {
             if (length > BYTE_ARRAY_MAX_OVERRIDE) {
                 throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
@@ -731,12 +727,12 @@ public final class IOUtils {
     static void globalLengthChecks(long length) {
         if (length < 0L) {
             throw new RecordFormatException(String.format(Locale.ROOT,
-                    "Can't allocate an array with negative length; %d was requested.",
+                    "Tried to allocate an array with negative length; %d was requested.",
                     length));
         }
         if (length > (long)Integer.MAX_VALUE) {
             throw new RecordFormatException(String.format(Locale.ROOT,
-                    "Can't allocate an array with length greater than max allowed int (%d); %d was requested.",
+                    "Tried to allocate an array with length greater than max allowed int (%d); %d was requested.",
                     Integer.MAX_VALUE, length));
         }
     }
