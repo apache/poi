@@ -127,12 +127,14 @@ public final class IOUtils {
     }
 
     private static void checkByteSizeLimit(int length) {
+        globalLengthChecks(length);
         if(BYTE_ARRAY_MAX_OVERRIDE != -1 && length > BYTE_ARRAY_MAX_OVERRIDE) {
             throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
         }
     }
 
     private static void checkByteSizeLimit(long length) {
+        globalLengthChecks(length);
         if(BYTE_ARRAY_MAX_OVERRIDE != -1 && length > BYTE_ARRAY_MAX_OVERRIDE) {
             throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
         }
@@ -232,9 +234,7 @@ public final class IOUtils {
      * @since 5.4.1
      */
     public static byte[] toByteArray(InputStream stream, final long length, final int maxLength) throws IOException {
-        if (length > Integer.MAX_VALUE) {
-            throwRFE(length, maxLength);
-        }
+        globalLengthChecks(length);
         return toByteArray(stream, Math.toIntExact(length),
                 maxLength, true, length != Integer.MAX_VALUE);
     }
@@ -301,6 +301,7 @@ public final class IOUtils {
     }
 
     private static void checkLength(long length, int maxLength) {
+        globalLengthChecks(length);
         if (BYTE_ARRAY_MAX_OVERRIDE > 0) {
             if (length > BYTE_ARRAY_MAX_OVERRIDE) {
                 throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
@@ -311,6 +312,7 @@ public final class IOUtils {
     }
 
     private static void checkLength(long length, int maxLength, String limitMethod) {
+        globalLengthChecks(length);
         if (BYTE_ARRAY_MAX_OVERRIDE > 0) {
             if (length > BYTE_ARRAY_MAX_OVERRIDE) {
                 throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
@@ -613,12 +615,6 @@ public final class IOUtils {
      * @throws RecordFormatException if the length is negative or too long
      */
     public static void safelyAllocateCheck(long length, int maxLength) {
-        if (length < 0L) {
-            throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
-        }
-        if (length > (long)Integer.MAX_VALUE) {
-            throw new RecordFormatException("Can't allocate an array > " + Integer.MAX_VALUE);
-        }
         checkLength(length, maxLength);
     }
 
@@ -634,12 +630,6 @@ public final class IOUtils {
      * @throws RecordFormatException if the length is negative or too long
      */
     public static void safelyAllocateCheck(long length, int maxLength, String limitMethod) {
-        if (length < 0L) {
-            throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
-        }
-        if (length > (long)Integer.MAX_VALUE) {
-            throw new RecordFormatException("Can't allocate an array > " + Integer.MAX_VALUE);
-        }
         checkLength(length, maxLength, limitMethod);
     }
 
@@ -736,5 +726,18 @@ public final class IOUtils {
                 "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
                 "increasing the maximum allowable size for this record type.%n" +
                 "You can set a higher override value with IOUtils.setByteArrayMaxOverride().", maxLength));
+    }
+
+    static void globalLengthChecks(long length) {
+        if (length < 0L) {
+            throw new RecordFormatException(String.format(Locale.ROOT,
+                    "Can't allocate an array with negative length; %d was requested.",
+                    length));
+        }
+        if (length > (long)Integer.MAX_VALUE) {
+            throw new RecordFormatException(String.format(Locale.ROOT,
+                    "Can't allocate an array with length greater than max allowed int (%d); %d was requested.",
+                    Integer.MAX_VALUE, length));
+        }
     }
 }
