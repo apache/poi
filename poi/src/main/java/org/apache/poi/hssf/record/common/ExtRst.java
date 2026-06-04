@@ -28,7 +28,6 @@ import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.StringUtil;
@@ -125,7 +124,7 @@ public class ExtRst implements Comparable<ExtRst>, GenericRecord {
             LOG.atWarn().log("ExtRst overran by {} bytes", box(-extraDataLength));
             extraDataLength = 0;
         }
-        extraData = IOUtils.safelyAllocate(extraDataLength, HSSFWorkbook.getMaxRecordLength());
+        extraData = HSSFWorkbook.safelyAllocate(extraDataLength);
         for(int i=0; i<extraData.length; i++) {
             extraData[i] = in.readByte();
         }

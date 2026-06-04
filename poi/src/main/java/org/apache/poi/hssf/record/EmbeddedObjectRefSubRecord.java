@@ -31,7 +31,6 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -201,7 +200,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
         if (size == 0) {
             return EMPTY_BYTE_ARRAY;
         }
-        byte[] result = IOUtils.safelyAllocate(size, HSSFWorkbook.getMaxRecordLength());
+        byte[] result = HSSFWorkbook.safelyAllocate(size);
         in.readFully(result);
         return result;
     }

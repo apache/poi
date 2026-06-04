@@ -644,17 +644,31 @@ public final class IOUtils {
     }
 
     public static byte[] safelyClone(byte[] src, int offset, int length, int maxLength) {
+        return safelyClone(src, offset, length, maxLength, null);
+    }
+
+    public static byte[] safelyClone(byte[] src, int offset, int length,
+                                     int maxLength, String limitMethod) {
         if (src == null) {
             return null;
         }
 
         if (offset < 0 || length < 0 || maxLength < 0) {
-            throw new RecordFormatException("Invalid offset/length specified: "
-                    + "offset: " + offset + ", length: " + length + ", maxLength: " + maxLength);
+            if (limitMethod == null) {
+                throw new RecordFormatException(String.format(Locale.ROOT, "Invalid offset/length specified: " +
+                        "offset: %d, length: %d, maxLength: %d", offset, length, maxLength));
+            }
+            throw new RecordFormatException(String.format(Locale.ROOT, "Invalid offset/length specified: " +
+                    "offset: %d, length: %d, maxLength: %d.%n" +
+                    "You can set a higher override value with %s.", offset, length, maxLength, limitMethod));
         }
 
         int realLength = Math.min(src.length - offset, length);
-        safelyAllocateCheck(realLength, maxLength);
+        if (limitMethod == null) {
+            safelyAllocateCheck(realLength, maxLength);
+        } else {
+            safelyAllocateCheck(realLength, maxLength, limitMethod);
+        }
         return Arrays.copyOfRange(src, offset, offset+realLength);
     }
 
@@ -705,7 +719,15 @@ public final class IOUtils {
                 ", but the maximum length for this record type is %,d.%n" +
                 "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
                 "increasing the maximum allowable size for this record type.%n" +
-                "You can set a higher override value with %s", length, maxLength, limitMethod));
+                "You can set a higher override value with %s.", length, maxLength, limitMethod));
+    }
+
+    // no override available for the limit
+    static void throwStrictLimitRFE(long length, int maxLength) {
+        throw new RecordFormatException(String.format(Locale.ROOT, "Tried to allocate an array of length %,d" +
+                ", but the maximum length for this record type is %,d.%n" +
+                "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
+                "increasing the maximum allowable size for this record type.%n", length, maxLength));
     }
 
     private static void throwRecordTruncationException(final int maxLength) {
@@ -713,6 +735,6 @@ public final class IOUtils {
                 "for this record type is %,d.%n" +
                 "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
                 "increasing the maximum allowable size for this record type.%n" +
-                "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", maxLength));
+                "You can set a higher override value with IOUtils.setByteArrayMaxOverride().", maxLength));
     }
 }

@@ -25,7 +25,6 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
@@ -437,7 +436,7 @@ public final class RecordInputStream implements LittleEndianInput {
         if (size ==0) {
             return EMPTY_BYTE_ARRAY;
         }
-        byte[] result = IOUtils.safelyAllocate(size, HSSFWorkbook.getMaxRecordLength());
+        byte[] result = HSSFWorkbook.safelyAllocate(size);
         readFully(result);
         return result;
     }
