@@ -56,7 +56,7 @@ import org.apache.poi.util.RecordFormatException;
 public class HemfComment {
     private static final Logger LOG = PoiLogManager.getLogger(HemfComment.class);
     /** Max. record length - processing longer records will throw an exception */
-    public static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    public static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
     public static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /**
