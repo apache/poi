@@ -316,7 +316,8 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         final int totalSize = epo.getTotalObjectSize() == 0
             ? ((EmfPlusImage)epo.getObjectData()).getImageData().length
             : epo.getTotalObjectSize();
-        IOUtils.safelyAllocateCheck(totalSize, MAX_RECORD_LENGTH);
+        IOUtils.safelyAllocateCheck(totalSize, MAX_RECORD_LENGTH,
+                "HemfEmbeddedIterator.setMaxRecordLength()");
 
         try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(totalSize).get()) {
             boolean hasNext = false;

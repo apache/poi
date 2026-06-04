@@ -52,7 +52,9 @@ import org.apache.poi.hemf.record.emf.HemfRecordIterator;
 import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
 import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
 import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.Dimension2DDouble;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
@@ -65,8 +67,8 @@ import org.apache.poi.util.Units;
 @Internal
 public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
     /** Max. record length - processing longer records will throw an exception */
-    public static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
-    public static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private final LittleEndianInputStream stream;
     private final List<HemfRecord> records = new ArrayList<>();
@@ -75,6 +77,7 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
 
     /**
      * @param length the max record length allowed for HemfPicture
+     * @since 2.0.0
      */
     public static void setMaxRecordLength(int length) {
         MAX_RECORD_LENGTH = length;
@@ -82,9 +85,14 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
 
     /**
      * @return the max record length allowed for HemfPicture
+     * @since 2.0.0
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;
+    }
+
+    public static void safelyAllocateCheck(long length) {
+        ArrayUtil.safelyAllocateCheck(length, getMaxRecordLength(), "HemfPicture.setMaxRecordLength()");
     }
 
     public HemfPicture(InputStream is) {

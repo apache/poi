@@ -38,6 +38,7 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusRelativePosition;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
+import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
@@ -120,7 +121,7 @@ public class HemfPlusPath {
                 readPoint = HemfPlusDraw::readPointF;
             }
 
-            IOUtils.safelyAllocateCheck(pointCount, HemfPicture.getMaxRecordLength());
+            HemfPicture.safelyAllocateCheck(pointCount);
             pathPoints = new Point2D[pointCount];
             for (int i=0; i<pointCount; i++) {
                 pathPoints[i] = new Point2D.Double();

@@ -34,9 +34,11 @@ import java.util.stream.IntStream;
 
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.hwmf.draw.HwmfGraphics.FillDrawStyle;
 import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.hwmf.record.HwmfDraw.WmfSelectObject;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
@@ -45,7 +47,22 @@ import org.apache.poi.util.LittleEndianInputStream;
 
 public final class HemfDraw {
     // arbitrary limit to avoid OOM on malformed files. This may need increasing if "normal" files have more than this
-    public static final int MAX_NUMBER_OF_POLYGONS = 100_000;
+    private static final int DEFAULT_MAX_NUMBER_OF_POLYGONS = 100_000;
+    private static int MAX_NUMBER_OF_POLYGONS = DEFAULT_MAX_NUMBER_OF_POLYGONS;
+
+    /**
+     * @since 2.0.0
+     */
+    public static void setMaxNumberOfPolygons(int length) {
+        MAX_NUMBER_OF_POLYGONS = length;
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    public static int getMaxNumberOfPolygons() {
+        return MAX_NUMBER_OF_POLYGONS;
+    }
 
     private HemfDraw() {}
 
@@ -505,7 +522,7 @@ public final class HemfDraw {
             size += 2 * LittleEndianConsts.INT_SIZE;
 
             // An array of 32-bit unsigned integers that specifies the point count for each polygon.
-            IOUtils.safelyAllocateCheck(numberOfPolygons, MAX_NUMBER_OF_POLYGONS);
+            ArrayUtil.safelyAllocateCheck(numberOfPolygons, getMaxNumberOfPolygons(), "HemfDraw.setMaxNumberOfPolygons()");
             long[] polygonPointCount = new long[Math.toIntExact(numberOfPolygons)];
 
             size += numberOfPolygons * LittleEndianConsts.INT_SIZE;
@@ -947,7 +964,7 @@ public final class HemfDraw {
             long size = readRectL(leis, bounds);
             int count = Math.toIntExact(leis.readUInt());
             size += LittleEndianConsts.INT_SIZE;
-            IOUtils.safelyAllocateCheck(count, HemfPicture.getMaxRecordLength());
+            HemfPicture.safelyAllocateCheck(count);
             Point2D[] points = new Point2D[count];
             for (int i=0; i<count; i++) {
                 points[i] = new Point2D.Double();
