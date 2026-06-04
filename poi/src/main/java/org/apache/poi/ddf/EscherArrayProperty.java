@@ -175,7 +175,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
         if (emptyComplexPart) {
             resizeComplexData(0);
         } else {
-            short numElements = LittleEndian.getShort(data, offset);
+            int numElements = LittleEndian.getUShort(data, offset);
             // LittleEndian.getShort(data, offset + 2); // numReserved
             short sizeOfElements = LittleEndian.getShort(data, offset + 4);
 
