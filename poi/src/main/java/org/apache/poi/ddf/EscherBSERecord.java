@@ -123,7 +123,8 @@ public final class EscherBSERecord extends EscherRecord {
         pos += 36 + bytesRead;
         bytesRemaining -= bytesRead;
 
-        _remainingData = IOUtils.safelyClone(data, pos, bytesRemaining, MAX_RECORD_LENGTH);
+        _remainingData = IOUtils.safelyClone(data, pos, bytesRemaining, MAX_RECORD_LENGTH,
+                "EscherBSERecord.setMaxRecordLength()");
 
         // fillFields() must return bytes actually consumed from the stream.
         // Using getRecordSize() can over-report consumption when malformed

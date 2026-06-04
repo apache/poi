@@ -828,7 +828,8 @@ public class Section {
             }
 
             try {
-                byte[] buf = IOUtils.safelyAllocate(nrBytes, CodePageString.getMaxRecordLength());
+                byte[] buf = IOUtils.safelyAllocate(nrBytes, CodePageString.getMaxRecordLength(),
+                        "CodePageString.setMaxRecordLength()");
                 leis.readFully(buf, 0, nrBytes);
                 final String str = CodePageUtil.getStringFromCodePage(buf, 0, nrBytes, cp);
 

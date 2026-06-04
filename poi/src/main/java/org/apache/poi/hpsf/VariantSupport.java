@@ -252,7 +252,8 @@ public class VariantSupport extends Variant {
             default:
                 final int unpadded = lei.getReadIndex()-offset;
                 lei.setReadIndex(offset);
-                final byte[] v = IOUtils.safelyAllocate(unpadded, CodePageString.getMaxRecordLength());
+                final byte[] v = IOUtils.safelyAllocate(unpadded, CodePageString.getMaxRecordLength(),
+                        "CodePageString.setMaxRecordLength()");
                 lei.readFully( v, 0, unpadded );
                 throw new ReadingNotSupportedException( type, v );
         }

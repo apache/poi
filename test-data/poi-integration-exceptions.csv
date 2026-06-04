@@ -404,5 +404,5 @@ slideshow/clusterfuzz-testcase-minimized-POIXSLFFuzzer-6435650376957952.pptx,han
 slideshow/clusterfuzz-testcase-minimized-POIXSLFFuzzer-6435650376957952.pptx,extract,"XSLF,OPC",,java.lang.IllegalStateException,org.apache.poi.ooxml.POIXMLException,
 slideshow/clusterfuzz-testcase-minimized-POIFileHandlerFuzzer-6466833057382400.emf,"handle,extract",HEMF,,org.apache.poi.util.RecordFormatException,java.lang.IllegalStateException: Unexpected end-of-file,
 slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-4983252485210112.ppt,"handle,additional",HPSF,,java.lang.IndexOutOfBoundsException,Block 21 not found,
-slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-4983252485210112.ppt,handle,HSLF,,org.apache.poi.util.RecordFormatException,Tried to allocate an array with negative length; -1579150891 was requested.,
+slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-4983252485210112.ppt,handle,HSLF,,org.apache.poi.util.RecordFormatException,Tried to allocate an array,
 slideshow/clusterfuzz-testcase-minimized-POIFileHandlerFuzzer-6060921738035200.wmf,handle,HWMF,,java.lang.IllegalStateException,invalid wmf file
