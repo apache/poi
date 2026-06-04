@@ -83,4 +83,16 @@ public final class ArrayUtil {
         // We're done - array will now have everything moved as required
     }
 
+    public static void safelyAllocateCheck(long length, int maxLength, String limitMethod) {
+        if (length < 0L) {
+            throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
+        }
+        if (length > (long)Integer.MAX_VALUE) {
+            throw new RecordFormatException("Can't allocate an array > " + Integer.MAX_VALUE);
+        }
+        if (length > maxLength) {
+            IOUtils.throwRFE(length, maxLength, limitMethod);
+        }
+    }
+
 }
