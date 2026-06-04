@@ -634,7 +634,7 @@ public class XMLSlideShow extends POIXMLDocument
      */
     @Override
     public XSLFPictureData addPicture(File pict, PictureType format) throws IOException {
-        byte[] data = IOUtils.safelyAllocate(pict.length(), MAX_RECORD_LENGTH
+        byte[] data = IOUtils.safelyAllocate(pict.length(), MAX_RECORD_LENGTH,
             "XMLSlideShow.setMaxRecordLength()");
         try (InputStream is = Files.newInputStream(pict.toPath())) {
             IOUtils.readFully(is, data);
