@@ -83,6 +83,18 @@ public final class ArrayUtil {
         // We're done - array will now have everything moved as required
     }
 
+    /**
+     * This method is targeted at doing length checks for generic array creations.
+     * {@link IOUtils#safelyAllocateCheck(long, int, String)} is aimed at byte array based
+     * checks (or equivalents streams of bytes). Arrays of object instances will take up
+     * a lot more memory than the same number of bytes. So the limits applied in ArrayUtil
+     * are intended to be a lot lower than the IOUtil ones.
+     *
+     * @param length
+     * @param maxLength
+     * @param limitMethod name of method that can be used to change the limit
+     * @throws RecordFormatException if the length is negative or too long
+     */
     public static void safelyAllocateCheck(long length, int maxLength, String limitMethod) {
         if (length < 0L) {
             throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
