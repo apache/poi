@@ -163,7 +163,7 @@ public final class StringUtil {
      * @return ISO_8859_1 encoded result
      */
     public static String readCompressedUnicode(LittleEndianInput in, int nChars) {
-        byte[] buf = IOUtils.safelyAllocate(nChars, MAX_RECORD_LENGTH);
+        byte[] buf = IOUtils.safelyAllocate(nChars, MAX_RECORD_LENGTH, "StringUtil.setMaxRecordLength()");
         in.readFully(buf);
         return new String(buf, ISO_8859_1);
     }
@@ -301,7 +301,8 @@ public final class StringUtil {
     }
 
     public static String readUnicodeLE(LittleEndianInput in, int nChars) {
-        byte[] bytes = IOUtils.safelyAllocate(nChars * 2L, MAX_RECORD_LENGTH);
+        byte[] bytes = IOUtils.safelyAllocate(nChars * 2L, MAX_RECORD_LENGTH,
+                "StringUtil.setMaxRecordLength()");
         in.readFully(bytes);
         return new String(bytes, UTF16LE);
     }

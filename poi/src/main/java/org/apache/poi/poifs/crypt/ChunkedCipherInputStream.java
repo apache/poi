@@ -54,8 +54,10 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
         this.pos = initialPos;
         this.chunkSize = chunkSize;
         int cs = chunkSize == -1 ? 4096 : chunkSize;
-        this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.MAX_RECORD_LENGTH);
-        this.plain = IOUtils.safelyAllocate(cs, CryptoFunctions.MAX_RECORD_LENGTH);
+        this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.getMaxRecordLength(),
+                "CryptoFunctions.setMaxRecordLength()");
+        this.plain = IOUtils.safelyAllocate(cs, CryptoFunctions.getMaxRecordLength(),
+                "CryptoFunctions.setMaxRecordLength()");
         this.chunkBits = Integer.bitCount(chunk.length-1);
         this.lastIndex = Math.toIntExact(pos >> chunkBits);
         this.cipher = initCipherForBlock(null, lastIndex);

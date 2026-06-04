@@ -78,6 +78,8 @@ public class AgileEncryptor extends Encryptor {
         pwHash = (other.pwHash == null) ? null : other.pwHash.clone();
     }
 
+    private static final String SETTER = "CryptoFunctions.setMaxRecordLength()";
+
     @Override
     public void confirmPassword(String password) {
         // see [MS-OFFCRYPTO] - 2.3.3 EncryptionVerifier
@@ -86,12 +88,12 @@ public class AgileEncryptor extends Encryptor {
         int keySize = header.getKeySize()/8;
         int hashSize = header.getHashAlgorithm().hashSize;
 
-        int maxLen = CryptoFunctions.getMaxRecordLength();
-        byte[] newVerifierSalt = IOUtils.safelyAllocate(blockSize, maxLen)
-             , newVerifier = IOUtils.safelyAllocate(blockSize, maxLen)
-             , newKeySalt = IOUtils.safelyAllocate(blockSize, maxLen)
-             , newKeySpec = IOUtils.safelyAllocate(keySize, maxLen)
-             , newIntegritySalt = IOUtils.safelyAllocate(hashSize, maxLen);
+        final int maxLen = CryptoFunctions.getMaxRecordLength();
+        byte[] newVerifierSalt = IOUtils.safelyAllocate(blockSize, maxLen, SETTER)
+             , newVerifier = IOUtils.safelyAllocate(blockSize, maxLen, SETTER)
+             , newKeySalt = IOUtils.safelyAllocate(blockSize, maxLen, SETTER)
+             , newKeySpec = IOUtils.safelyAllocate(keySize, maxLen, SETTER)
+             , newIntegritySalt = IOUtils.safelyAllocate(hashSize, maxLen, SETTER);
 
         // using a java.security.SecureRandom (and avoid allocating a new SecureRandom for each random number needed).
         SecureRandom r = RandomSingleton.getInstance();
