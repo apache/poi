@@ -73,7 +73,17 @@ public class VBAMacroReader implements Closeable {
     private static final Logger LOGGER = PoiLogManager.getLogger(VBAMacroReader.class);
 
     //arbitrary limit on size of strings to read, etc.
-    private static final int MAX_STRING_LENGTH = 20000;
+    private static final int DEFAULT_MAX_STRING_LENGTH = 20000;
+    private static int MAX_STRING_LENGTH = DEFAULT_MAX_STRING_LENGTH;
+
+    public static void setMaxStringLength(int maxStringLength) {
+        MAX_STRING_LENGTH = maxStringLength;
+    }
+
+    public static int getMaxStringLength() {
+        return MAX_STRING_LENGTH;
+    }
+
     protected static final String VBA_PROJECT_OOXML = "vbaProject.bin";
     protected static final String VBA_PROJECT_POIFS = "VBA";
 
@@ -714,7 +724,7 @@ public class VBAMacroReader implements Closeable {
      * @throws IOException If reading from the stream fails
      */
     private static String readString(InputStream stream, int length, Charset charset) throws IOException {
-        byte[] buffer = IOUtils.safelyAllocate(length, MAX_STRING_LENGTH);
+        byte[] buffer = IOUtils.safelyAllocate(length, MAX_STRING_LENGTH, "VBAMacroReader.setMaxStringLength");
         int bytesRead = IOUtils.readFully(stream, buffer);
         if (bytesRead != length) {
             throw new IOException("Tried to read: "+length +
@@ -779,7 +789,8 @@ public class VBAMacroReader implements Closeable {
     }
 
     private String readUnicodeString(RLEDecompressingInputStream in, int unicodeNameRecordLength) throws IOException {
-        byte[] buffer = IOUtils.safelyAllocate(unicodeNameRecordLength, MAX_STRING_LENGTH);
+        byte[] buffer = IOUtils.safelyAllocate(unicodeNameRecordLength, MAX_STRING_LENGTH,
+                "VBAMacroReader.getMaxRecordLength()");
         int bytesRead = IOUtils.readFully(in, buffer);
         if (bytesRead != unicodeNameRecordLength) {
             throw new EOFException();

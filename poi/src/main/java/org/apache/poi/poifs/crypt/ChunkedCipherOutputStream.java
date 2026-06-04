@@ -67,7 +67,8 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         super(null);
         this.chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
-        this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.MAX_RECORD_LENGTH);
+        this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.getMaxRecordLength(),
+                "CryptoFunctions.setMaxRecordLength()");
         this.plainByteFlags = new SparseBitSet(cs);
         this.chunkBits = Integer.bitCount(cs-1);
         this.fileOut = TempFile.createTempFile("encrypted_package", "crypt");
@@ -80,7 +81,8 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         super(stream);
         this.chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
-        this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.MAX_RECORD_LENGTH);
+        this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.getMaxRecordLength(),
+                "CryptoFunctions.setMaxRecordLength()");
         this.plainByteFlags = new SparseBitSet(cs);
         this.chunkBits = Integer.bitCount(cs-1);
         this.fileOut = null;

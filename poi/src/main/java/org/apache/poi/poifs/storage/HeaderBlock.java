@@ -111,7 +111,8 @@ public final class HeaderBlock implements HeaderBlockConstants {
         // Fetch the rest of the block if needed
         if(bigBlockSize.getBigBlockSize() != 512) {
            int rest = bigBlockSize.getBigBlockSize() - 512;
-           byte[] tmp = IOUtils.safelyAllocate(rest, POIFSFileSystem.getMaxRecordLength());
+           byte[] tmp = IOUtils.safelyAllocate(rest, POIFSFileSystem.getMaxRecordLength(),
+                   "POIFSFileSystem.setMaxRecordLength()");
            IOUtils.readFully(stream, tmp);
         }
     }

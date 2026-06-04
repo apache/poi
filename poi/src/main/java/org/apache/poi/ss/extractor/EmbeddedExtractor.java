@@ -259,7 +259,8 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             }
 
             int pictureBytesLen = idxEnd-idxStart+6;
-            byte[] pdfBytes = IOUtils.safelyClone(pictureBytes, idxStart, pictureBytesLen, MAX_RECORD_LENGTH);
+            byte[] pdfBytes = IOUtils.safelyClone(pictureBytes, idxStart, pictureBytesLen,
+                    MAX_RECORD_LENGTH, "EmbeddedExtractor.setMaxRecordLength()");
             String filename = source.getShapeName() == null ? "empty" : source.getShapeName().trim();
             if (!endsWithIgnoreCase(filename, ".pdf")) {
                 filename += ".pdf";
