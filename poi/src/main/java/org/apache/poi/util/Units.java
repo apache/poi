@@ -20,6 +20,7 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 
 import static org.apache.poi.util.MathUtil.safeDoubleToInt;
+import static org.apache.poi.util.MathUtil.safeFloatToInt;
 
 public class Units {
     /**
@@ -70,7 +71,7 @@ public class Units {
      * One character is defined as the widest value for the integers 0-9 in the
      * default font.
      */
-    public static final int EMU_PER_CHARACTER = (int) (EMU_PER_PIXEL * DEFAULT_CHARACTER_WIDTH);
+    public static final int EMU_PER_CHARACTER = safeFloatToInt(EMU_PER_PIXEL * DEFAULT_CHARACTER_WIDTH);
 
     /**
      * Converts points to EMUs
@@ -87,7 +88,7 @@ public class Units {
      * @return EMUs
      */
     public static int pixelToEMU(int pixels) {
-        return pixels*EMU_PER_PIXEL;
+        return Math.multiplyExact(pixels, EMU_PER_PIXEL);
     }
 
     /**
@@ -184,7 +185,7 @@ public class Units {
     }
 
     public static int charactersToEMU(double characters) {
-        return (int) characters * EMU_PER_CHARACTER;
+        return MathUtil.safeDoubleToInt(characters * EMU_PER_CHARACTER);
     }
 
     /**

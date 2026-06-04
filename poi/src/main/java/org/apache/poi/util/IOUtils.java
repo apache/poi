@@ -310,6 +310,15 @@ public final class IOUtils {
         }
     }
 
+    private static void checkLength(long length, int maxLength, String limitMethod) {
+        if (BYTE_ARRAY_MAX_OVERRIDE > 0) {
+            if (length > BYTE_ARRAY_MAX_OVERRIDE) {
+                throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
+            }
+        } else if (length > maxLength) {
+            throwRFE(length, maxLength, limitMethod);
+        }
+    }
 
     /**
      * Returns an array (that shouldn't be written to!) of the
@@ -580,9 +589,6 @@ public final class IOUtils {
 
     public static byte[] safelyAllocate(long length, int maxLength) {
         safelyAllocateCheck(length, maxLength);
-
-        checkByteSizeLimit(length);
-
         try {
             return new byte[Math.toIntExact(length)];
         } catch (ArithmeticException e) {
@@ -590,6 +596,22 @@ public final class IOUtils {
         }
     }
 
+    public static byte[] safelyAllocate(long length, int maxLength, String limitMethod) {
+        safelyAllocateCheck(length, maxLength);
+        try {
+            return new byte[Math.toIntExact(length)];
+        } catch (ArithmeticException e) {
+            throw new RecordFormatException("Int Overflow with length", e);
+        }
+    }
+
+    /**
+     * This method is targeted at byte array based checks (or equivalents streams of bytes).
+     * Arrays of object instances will take up a lot more memory than the same number of bytes.
+     * So we have {@link ArrayUtil#safelyAllocateCheck(long, int, String)} for generic array creations
+     * and the limits applied in ArrayUtil are intended to be a lot lower than the IOUtil ones.
+     * @throws RecordFormatException if the length is negative or too long
+     */
     public static void safelyAllocateCheck(long length, int maxLength) {
         if (length < 0L) {
             throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
@@ -600,6 +622,27 @@ public final class IOUtils {
         checkLength(length, maxLength);
     }
 
+    /**
+     * This method is targeted at byte array based checks (or equivalents streams of bytes).
+     * Arrays of object instances will take up a lot more memory than the same number of bytes.
+     * So we have {@link ArrayUtil#safelyAllocateCheck(long, int, String)} for generic array creations
+     * and the limits applied in ArrayUtil are intended to be a lot lower than the IOUtil ones.
+     *
+     * @param length
+     * @param maxLength
+     * @param limitMethod name of method that can be used to change the limit
+     * @throws RecordFormatException if the length is negative or too long
+     */
+    public static void safelyAllocateCheck(long length, int maxLength, String limitMethod) {
+        if (length < 0L) {
+            throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
+        }
+        if (length > (long)Integer.MAX_VALUE) {
+            throw new RecordFormatException("Can't allocate an array > " + Integer.MAX_VALUE);
+        }
+        checkLength(length, maxLength, limitMethod);
+    }
+
     public static byte[] safelyClone(byte[] src, int offset, int length, int maxLength) {
         if (src == null) {
             return null;
@@ -607,7 +650,7 @@ public final class IOUtils {
 
         if (offset < 0 || length < 0 || maxLength < 0) {
             throw new RecordFormatException("Invalid offset/length specified: "
-                    + "offset: " + offset + ", lenght: " + length + ", maxLength: " + maxLength);
+                    + "offset: " + offset + ", length: " + length + ", maxLength: " + maxLength);
         }
 
         int realLength = Math.min(src.length - offset, length);
@@ -654,11 +697,15 @@ public final class IOUtils {
     }
 
     private static void throwRFE(long length, int maxLength) {
+        throwRFE(length, maxLength, "IOUtils.setByteArrayMaxOverride()");
+    }
+
+    static void throwRFE(long length, int maxLength, String limitMethod) {
         throw new RecordFormatException(String.format(Locale.ROOT, "Tried to allocate an array of length %,d" +
                 ", but the maximum length for this record type is %,d.%n" +
                 "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
                 "increasing the maximum allowable size for this record type.%n" +
-                "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", length, maxLength));
+                "You can set a higher override value with %s", length, maxLength, limitMethod));
     }
 
     private static void throwRecordTruncationException(final int maxLength) {

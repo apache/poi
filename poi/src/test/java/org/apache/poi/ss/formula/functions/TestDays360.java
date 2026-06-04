@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
@@ -166,9 +167,7 @@ final class TestDays360 {
         } else {
             ve = invokeDays360(convert(firstArg), convert(secondArg));
         }
-        assertTrue(ve instanceof NumberEval, "wrong return type (" + ve.getClass().getName() + ")");
-
-        NumberEval numberEval = (NumberEval) ve;
+        NumberEval numberEval = assertInstanceOf(NumberEval.class, ve, () -> "wrong return type (" + ve.getClass().getName() + ")");
         String err = String.format(Locale.ROOT, "days360(%tF,%tF,%b) wrong result", firstArg, secondArg, method);
         assertEquals(expResult, numberEval.getNumberValue(), 0, err);
     }

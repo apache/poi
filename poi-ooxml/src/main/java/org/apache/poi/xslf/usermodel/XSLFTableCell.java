@@ -304,7 +304,10 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             throw new IllegalArgumentException("Colors need to be specified.");
         }
 
-        CTLineProperties ln = setBorderDefaults(edge);
+        final CTLineProperties ln = setBorderDefaults(edge);
+        if (ln.isSetSolidFill()) {
+            ln.unsetSolidFill();
+        }
         CTSolidColorFillProperties fill = ln.addNewSolidFill();
         XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr(), getSheet());
         c.setColor(color);

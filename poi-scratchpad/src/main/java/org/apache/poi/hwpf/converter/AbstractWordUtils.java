@@ -311,7 +311,7 @@ public class AbstractWordUtils {
     }
 
     public static String getOpacity( int argbValue ) {
-        int opacity = (int) ( ( argbValue & 0xFF000000L) >>> 24 );
+        int opacity = Math.toIntExact( ( argbValue & 0xFF000000L) >>> 24 );
         if ( opacity == 0 || opacity == 0xFF )
             return ".0";
 

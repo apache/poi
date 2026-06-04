@@ -181,7 +181,7 @@ public final class PropertyTable implements BATManaged {
     public int countBlocks() {
        long rawSize = _properties.size() * (long)POIFSConstants.PROPERTY_SIZE;
        int blkSize = _bigBigBlockSize.getBigBlockSize();
-       int numBlocks = (int)(rawSize / blkSize);
+       int numBlocks = Math.toIntExact(rawSize / blkSize);
        if ((rawSize % blkSize) != 0) {
            numBlocks++;
        }

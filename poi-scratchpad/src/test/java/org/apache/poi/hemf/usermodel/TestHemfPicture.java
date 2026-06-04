@@ -40,6 +40,7 @@ import org.apache.poi.hemf.record.emf.HemfComment;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfComment;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataFormat;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataMultiformats;
+import org.apache.poi.hemf.record.emf.HemfDraw;
 import org.apache.poi.hemf.record.emf.HemfHeader;
 import org.apache.poi.hemf.record.emf.HemfRecord;
 import org.apache.poi.hemf.record.emf.HemfRecordType;
@@ -251,6 +252,17 @@ public class TestHemfPicture {
         try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
             header.init(leis, data.length, HemfRecordType.header.id);
             assertEquals("POI", header.getDescription());
+        }
+    }
+
+    @Test
+    void testEmfPolyDrawInvalidCount() throws Exception {
+        HemfDraw.EmfPolyDraw record = new HemfDraw.EmfPolyDraw();
+        byte[] data = new byte[20];
+        org.apache.poi.util.LittleEndian.putInt(data, 16, Integer.MAX_VALUE);
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
+            assertThrows(RecordFormatException.class,
+                () -> record.init(leis, data.length, HemfRecordType.polyDraw.id));
         }
     }
 

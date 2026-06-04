@@ -29,6 +29,7 @@ import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 
 /**
  * Implementation for Excel EDATE () function.
@@ -42,7 +43,7 @@ public class EDate implements FreeRefFunction {
         }
         try {
             double startDateAsNumber = getValue(args[0]);
-            int offsetInMonthAsNumber = (int) getValue(args[1]);
+            int offsetInMonthAsNumber = MathUtil.safeDoubleToInt(getValue(args[1]));
 
             Date startDate = DateUtil.getJavaDate(startDateAsNumber);
             if (startDate == null) {

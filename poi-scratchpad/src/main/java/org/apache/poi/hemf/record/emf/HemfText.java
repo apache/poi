@@ -180,7 +180,8 @@ public class HemfText {
                             // read all available bytes and not just "stringLength * 1(ansi)/2(unicode)"
                             // in case we need to deal with surrogate pairs
                             final int maxSize = Math.toIntExact(Math.min(recordSize, strEnd)-size);
-                            rawTextBytes = IOUtils.safelyAllocate(maxSize, MAX_RECORD_LENGTH);
+                            rawTextBytes = IOUtils.safelyAllocate(maxSize, MAX_RECORD_LENGTH,
+                                    "HemfText.setMaxRecordLength()");
                             leis.readFully(rawTextBytes);
                             size += maxSize;
                             break;

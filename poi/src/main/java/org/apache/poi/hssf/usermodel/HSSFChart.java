@@ -1132,7 +1132,7 @@ public final class HSSFChart {
                 return;
             }
 
-            series.setNumValues((short)(int)count);
+            series.setNumValues(count.shortValue());
         }
 
         public void setCategoryLabelsCellRange(CellRangeAddressBase range) {
@@ -1142,7 +1142,7 @@ public final class HSSFChart {
                 return;
             }
 
-            series.setNumCategories((short)(int)count);
+            series.setNumCategories(count.shortValue());
         }
     }
 

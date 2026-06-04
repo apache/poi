@@ -339,7 +339,7 @@ public class POIFSFileSystem extends BlockStore
             // don't allow huge allocations with invalid header-values
             IOUtils.safelyAllocateCheck(maxSize, MAX_ALLOCATION_SIZE);
 
-            ByteBuffer data = ByteBuffer.allocate((int) maxSize);
+            ByteBuffer data = ByteBuffer.allocate(Math.toIntExact(maxSize));
 
             // Copy in the header
             headerBuffer.position(0);

@@ -103,7 +103,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                     } else if (recordSizeLong < 0L) {
                         throw new RecordFormatException("record size can't be < 0");
                     }
-                    recordSize = (int)recordSizeLong;
+                    recordSize = Math.toIntExact(recordSizeLong);
                     recordFunction = leis.readShort();
                 } catch (Exception e) {
                     LOG.atError().log("unexpected eof - wmf file was truncated");
@@ -126,7 +126,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                 records.add(wr);
 
                 consumedSize += wr.init(leis, recordSize, recordFunction);
-                int remainingSize = (int)(recordSize - consumedSize);
+                int remainingSize = Math.toIntExact(recordSize - consumedSize);
                 if (remainingSize < 0) {
                     throw new RecordFormatException("read too many bytes. record size: "+recordSize + "; comsumed size: "+consumedSize);
                 } else if(remainingSize > 0) {

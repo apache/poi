@@ -140,7 +140,7 @@ public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> 
             length = IOUtils.copy(bis, os);
 
             // Pad to the end of the block with -1s
-            int usedInBlock = (int) (length % _block_size);
+            int usedInBlock = Math.toIntExact(length % _block_size);
             if (usedInBlock != 0 && usedInBlock != _block_size) {
                 int toBlockEnd = _block_size - usedInBlock;
                 byte[] padding = IOUtils.safelyAllocate(toBlockEnd, POIFSFileSystem.getMaxRecordLength());

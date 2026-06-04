@@ -90,7 +90,7 @@ public abstract class BlockStore {
            }
 
           int blkSize = getBlockStoreBlockSize();
-          int numBlocks = (int)(rawSize / blkSize);
+          int numBlocks = Math.toIntExact(rawSize / blkSize);
           if ((rawSize % blkSize) != 0) {
               numBlocks++;
           }
