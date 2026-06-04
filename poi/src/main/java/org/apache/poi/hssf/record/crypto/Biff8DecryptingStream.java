@@ -25,7 +25,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -44,7 +43,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
 
     public Biff8DecryptingStream(InputStream in, int initialOffset, EncryptionInfo info) throws RecordFormatException {
         try {
-            byte[] initialBuf = IOUtils.safelyAllocate(initialOffset, HSSFWorkbook.getMaxRecordLength());
+            byte[] initialBuf = HSSFWorkbook.safelyAllocate(initialOffset);
             InputStream stream;
             if (initialOffset == 0) {
                 stream = in;

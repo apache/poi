@@ -20,8 +20,8 @@ package org.apache.poi.hssf.record;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
@@ -68,7 +68,8 @@ public final class NoteStructureSubRecord extends SubRecord {
             throw new RecordFormatException("Unexpected size (" + size + ")");
         }
         //just grab the raw data
-        byte[] buf = IOUtils.safelyAllocate(size, ENCODED_SIZE);
+        ArrayUtil.strictAllocateCheck(size, ENCODED_SIZE);
+        byte[] buf = new byte[size];
         in.readFully(buf);
         reserved = buf;
     }

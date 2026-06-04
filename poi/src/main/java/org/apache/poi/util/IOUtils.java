@@ -232,9 +232,7 @@ public final class IOUtils {
      * @since 5.4.1
      */
     public static byte[] toByteArray(InputStream stream, final long length, final int maxLength) throws IOException {
-        if (length > Integer.MAX_VALUE) {
-            throwRFE(length, maxLength);
-        }
+        globalLengthChecks(length);
         return toByteArray(stream, Math.toIntExact(length),
                 maxLength, true, length != Integer.MAX_VALUE);
     }
@@ -613,12 +611,7 @@ public final class IOUtils {
      * @throws RecordFormatException if the length is negative or too long
      */
     public static void safelyAllocateCheck(long length, int maxLength) {
-        if (length < 0L) {
-            throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
-        }
-        if (length > (long)Integer.MAX_VALUE) {
-            throw new RecordFormatException("Can't allocate an array > " + Integer.MAX_VALUE);
-        }
+        globalLengthChecks(length);
         checkLength(length, maxLength);
     }
 
@@ -634,27 +627,36 @@ public final class IOUtils {
      * @throws RecordFormatException if the length is negative or too long
      */
     public static void safelyAllocateCheck(long length, int maxLength, String limitMethod) {
-        if (length < 0L) {
-            throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
-        }
-        if (length > (long)Integer.MAX_VALUE) {
-            throw new RecordFormatException("Can't allocate an array > " + Integer.MAX_VALUE);
-        }
+        globalLengthChecks(length);
         checkLength(length, maxLength, limitMethod);
     }
 
     public static byte[] safelyClone(byte[] src, int offset, int length, int maxLength) {
+        return safelyClone(src, offset, length, maxLength, null);
+    }
+
+    public static byte[] safelyClone(byte[] src, int offset, int length,
+                                     int maxLength, String limitMethod) {
         if (src == null) {
             return null;
         }
 
         if (offset < 0 || length < 0 || maxLength < 0) {
-            throw new RecordFormatException("Invalid offset/length specified: "
-                    + "offset: " + offset + ", length: " + length + ", maxLength: " + maxLength);
+            if (limitMethod == null) {
+                throw new RecordFormatException(String.format(Locale.ROOT, "Invalid offset/length specified: " +
+                        "offset: %d, length: %d, maxLength: %d", offset, length, maxLength));
+            }
+            throw new RecordFormatException(String.format(Locale.ROOT, "Invalid offset/length specified: " +
+                    "offset: %d, length: %d, maxLength: %d.%n" +
+                    "You can set a higher override value with %s.", offset, length, maxLength, limitMethod));
         }
 
         int realLength = Math.min(src.length - offset, length);
-        safelyAllocateCheck(realLength, maxLength);
+        if (limitMethod == null) {
+            safelyAllocateCheck(realLength, maxLength);
+        } else {
+            safelyAllocateCheck(realLength, maxLength, limitMethod);
+        }
         return Arrays.copyOfRange(src, offset, offset+realLength);
     }
 
@@ -705,7 +707,15 @@ public final class IOUtils {
                 ", but the maximum length for this record type is %,d.%n" +
                 "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
                 "increasing the maximum allowable size for this record type.%n" +
-                "You can set a higher override value with %s", length, maxLength, limitMethod));
+                "You can set a higher override value with %s.", length, maxLength, limitMethod));
+    }
+
+    // no override available for the limit
+    static void throwStrictLimitRFE(long length, int maxLength) {
+        throw new RecordFormatException(String.format(Locale.ROOT, "Tried to allocate an array of length %,d" +
+                ", but the maximum length for this record type is %,d.%n" +
+                "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
+                "increasing the maximum allowable size for this record type.%n", length, maxLength));
     }
 
     private static void throwRecordTruncationException(final int maxLength) {
@@ -713,6 +723,19 @@ public final class IOUtils {
                 "for this record type is %,d.%n" +
                 "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
                 "increasing the maximum allowable size for this record type.%n" +
-                "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", maxLength));
+                "You can set a higher override value with IOUtils.setByteArrayMaxOverride().", maxLength));
+    }
+
+    static void globalLengthChecks(long length) {
+        if (length < 0L) {
+            throw new RecordFormatException(String.format(Locale.ROOT,
+                    "Tried to allocate an array with negative length; %d was requested.",
+                    length));
+        }
+        if (length > (long)Integer.MAX_VALUE) {
+            throw new RecordFormatException(String.format(Locale.ROOT,
+                    "Tried to allocate an array with length greater than max allowed int (%d); %d was requested.",
+                    Integer.MAX_VALUE, length));
+        }
     }
 }

@@ -17,7 +17,6 @@
 
 package org.apache.poi.util;
 
-
 import java.util.Arrays;
 
 /**
@@ -96,15 +95,18 @@ public final class ArrayUtil {
      * @throws RecordFormatException if the length is negative or too long
      */
     public static void safelyAllocateCheck(long length, int maxLength, String limitMethod) {
-        if (length < 0L) {
-            throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
-        }
-        if (length > (long)Integer.MAX_VALUE) {
-            throw new RecordFormatException("Can't allocate an array > " + Integer.MAX_VALUE);
-        }
+        IOUtils.globalLengthChecks(length);
         if (length > maxLength) {
             IOUtils.throwRFE(length, maxLength, limitMethod);
         }
     }
+
+    public static void strictAllocateCheck(long length, int maxLength) {
+        IOUtils.globalLengthChecks(length);
+        if (length > maxLength) {
+            IOUtils.throwStrictLimitRFE(length, maxLength);
+        }
+    }
+
 
 }

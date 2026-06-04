@@ -27,8 +27,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.IOUtils;
-
 
 /**
  * Biff2 - Biff 4 Label Record (0x0007 / 0x0207) - read only support for
@@ -57,7 +55,7 @@ public final class OldStringRecord implements GenericRecord {
         }
 
         // Can only decode properly later when you know the codepage
-        field_2_bytes = IOUtils.safelyAllocate(field_1_string_len, HSSFWorkbook.getMaxRecordLength());
+        field_2_bytes = HSSFWorkbook.safelyAllocate(field_1_string_len);
         in.read(field_2_bytes, 0, field_1_string_len);
     }
 
