@@ -116,7 +116,8 @@ public final class HeadersFootersAtom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Grab the record data
-        _recdata = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
+        _recdata = IOUtils.safelyClone(source, start+8, len-8, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
     }
 
     /**

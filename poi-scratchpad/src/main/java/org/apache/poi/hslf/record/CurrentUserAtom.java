@@ -134,7 +134,7 @@ public class CurrentUserAtom {
 
         // Grab the contents
         try (InputStream in = dir.createDocumentInputStream("Current User")) {
-            _contents = IOUtils.toByteArray(in, docProps.getSize(), getMaxRecordLength());
+            _contents = IOUtils.toByteArray(in, docProps.getSize(), RecordAtom.getMaxRecordLength());
         }
 
         // See how long it is. If it's under 28 bytes long, we can't
@@ -214,7 +214,8 @@ public class CurrentUserAtom {
         //  4 = revision
         //  3 * len = ascii + unicode
         int size = 8 + 20 + 4 + (3 * lastEditUser.length());
-        _contents = IOUtils.safelyAllocate(size, getMaxRecordLength());
+        _contents = IOUtils.safelyAllocate(size, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
 
         // First we have a 8 byte atom header
         System.arraycopy(atomHeader,0,_contents,0,4);
@@ -233,7 +234,8 @@ public class CurrentUserAtom {
 
         // The username gets stored twice, once as US
         //  ascii, and again as unicode laster on
-        byte[] asciiUN = IOUtils.safelyAllocate(lastEditUser.length(), getMaxRecordLength());
+        byte[] asciiUN = IOUtils.safelyAllocate(lastEditUser.length(), RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
         StringUtil.putCompressedUnicode(lastEditUser,asciiUN,0);
 
         // Now we're able to do the length of the last edited user
@@ -255,7 +257,8 @@ public class CurrentUserAtom {
         LittleEndian.putInt(_contents,28+asciiUN.length,(int)releaseVersion);
 
         // username in unicode
-        byte [] ucUN = IOUtils.safelyAllocate(lastEditUser.length() * 2L, getMaxRecordLength());
+        byte [] ucUN = IOUtils.safelyAllocate(lastEditUser.length() * 2L, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
         StringUtil.putUnicodeLE(lastEditUser,ucUN,0);
         System.arraycopy(ucUN,0,_contents,28+asciiUN.length+4,ucUN.length);
 
