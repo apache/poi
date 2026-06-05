@@ -46,7 +46,8 @@ public final class DocumentProperties extends DOPAbstractType {
         if ( length != supportedSize )
         {
             this._preserved = IOUtils.safelyClone( tableStream, offset + supportedSize,
-                    length - supportedSize, HWPFDocument.getMaxRecordLength());
+                    length - supportedSize, HWPFDocument.getMaxRecordLength(),
+                    "HWPFDocument.setMaxRecordLength()");
         }
         else
         {

@@ -251,7 +251,7 @@ public class AbstractWordUtils {
                 bulletBuffer.append( element );
             }
 
-            // ensure this buffer does not grow to much, this should avoid cases where
+            // ensure this buffer does not grow too much, this should avoid cases where
             // this can "explode", i.e. small input file consumes huge amounts of
             // main memory
             IOUtils.safelyAllocateCheck(bulletBuffer.length(), MAX_BULLET_BUFFER_SIZE);
