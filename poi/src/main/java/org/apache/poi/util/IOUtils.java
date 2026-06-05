@@ -197,7 +197,6 @@ public final class IOUtils {
         return toByteArray(stream, length, Integer.MAX_VALUE);
     }
 
-
     /**
      * Reads up to {@code length} bytes from the input stream, and returns the bytes read.
      *
@@ -213,7 +212,7 @@ public final class IOUtils {
      * @throws RecordFormatException If the requested length is invalid.
      */
     public static byte[] toByteArray(InputStream stream, final int length, final int maxLength) throws IOException {
-        return toByteArray(stream, length, maxLength, true, length != Integer.MAX_VALUE);
+        return toByteArray(stream, length, maxLength, true, length != Integer.MAX_VALUE, null);
     }
 
     /**
@@ -232,9 +231,54 @@ public final class IOUtils {
      * @since 5.4.1
      */
     public static byte[] toByteArray(InputStream stream, final long length, final int maxLength) throws IOException {
-        globalLengthChecks(length);
+        checkLengthIsAnInt(length);
         return toByteArray(stream, Math.toIntExact(length),
-                maxLength, true, length != Integer.MAX_VALUE);
+                maxLength, true, length != Integer.MAX_VALUE, null);
+    }
+
+    /**
+     * Reads up to {@code length} bytes from the input stream, and returns the bytes read.
+     *
+     * @param stream The byte stream of data to read.
+     * @param length The maximum length to read, use {@link Integer#MAX_VALUE} to read the stream
+     *               until EOF
+     * @param maxLength if the input is equal to/longer than {@code maxLength} bytes,
+     *                  then throw an {@link IOException} complaining about the length.
+     *                  use {@link Integer#MAX_VALUE} to disable the check - if {@link #setByteArrayMaxOverride(int)} is
+     *                  set then that max of that value and this maxLength is used
+     * @param limitMethod name of method that can be used to change the max length
+     * @return A byte array with the read bytes.
+     * @throws IOException If reading data fails or EOF is encountered too early for the given length.
+     * @throws RecordFormatException If the requested length is invalid.
+     * @since 6.0.0
+     */
+    public static byte[] toByteArray(final InputStream stream, final int length, final int maxLength,
+                                     final String limitMethod) throws IOException {
+        return toByteArray(stream, length,
+                maxLength, true, length != Integer.MAX_VALUE, limitMethod);
+    }
+
+    /**
+     * Reads up to {@code length} bytes from the input stream, and returns the bytes read.
+     *
+     * @param stream The byte stream of data to read.
+     * @param length The maximum length to read, use {@link Integer#MAX_VALUE} to read the stream
+     *               until EOF
+     * @param maxLength if the input is equal to/longer than {@code maxLength} bytes,
+     *                  then throw an {@link IOException} complaining about the length.
+     *                  use {@link Integer#MAX_VALUE} to disable the check - if {@link #setByteArrayMaxOverride(int)} is
+     *                  set then that max of that value and this maxLength is used
+     * @param limitMethod name of method that can be used to change the max length
+     * @return A byte array with the read bytes.
+     * @throws IOException If reading data fails or EOF is encountered too early for the given length.
+     * @throws RecordFormatException If the requested length is invalid.
+     * @since 6.0.0
+     */
+    public static byte[] toByteArray(final InputStream stream, final long length, final int maxLength,
+                                     final String limitMethod) throws IOException {
+        checkLengthIsAnInt(length);
+        return toByteArray(stream, Math.toIntExact(length),
+                maxLength, true, length != Integer.MAX_VALUE, limitMethod);
     }
 
     /**
@@ -251,14 +295,19 @@ public final class IOUtils {
      * @since 5.2.1
      */
     public static byte[] toByteArrayWithMaxLength(InputStream stream, final int maxLength) throws IOException {
-        return toByteArray(stream, maxLength, maxLength, false, false);
+        return toByteArray(stream, maxLength, maxLength, false, false, null);
     }
 
     private static byte[] toByteArray(InputStream stream, final int length, final int maxLength,
-                                      final boolean checkEOFException, final boolean isLengthKnown) throws IOException {
+                                      final boolean checkEOFException, final boolean isLengthKnown,
+                                      final String limitMethod) throws IOException {
         final int derivedMaxLength = Math.max(maxLength, BYTE_ARRAY_MAX_OVERRIDE);
         if ((length != Integer.MAX_VALUE) || (derivedMaxLength != Integer.MAX_VALUE)) {
-            checkLength(length, derivedMaxLength);
+            if (limitMethod != null) {
+                checkLength(length, derivedMaxLength, limitMethod);
+            } else {
+                checkLength(length, derivedMaxLength);
+            }
         }
 
         final int derivedLen = isLengthKnown && length >= 0 ? Math.min(length, derivedMaxLength) : derivedMaxLength;
@@ -732,6 +781,10 @@ public final class IOUtils {
                     "Tried to allocate an array with negative length; %d was requested.",
                     length));
         }
+        checkLengthIsAnInt(length);
+    }
+
+    static void checkLengthIsAnInt(long length) {
         if (length > (long)Integer.MAX_VALUE) {
             throw new RecordFormatException(String.format(Locale.ROOT,
                     "Tried to allocate an array with length greater than max allowed int (%d); %d was requested.",

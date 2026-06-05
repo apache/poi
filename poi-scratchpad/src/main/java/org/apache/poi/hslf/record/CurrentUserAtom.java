@@ -134,7 +134,8 @@ public class CurrentUserAtom {
 
         // Grab the contents
         try (InputStream in = dir.createDocumentInputStream("Current User")) {
-            _contents = IOUtils.toByteArray(in, docProps.getSize(), RecordAtom.getMaxRecordLength());
+            _contents = IOUtils.toByteArray(in, docProps.getSize(), RecordAtom.getMaxRecordLength(),
+                    "RecordAtom.setMaxRecordLength()");
         }
 
         // See how long it is. If it's under 28 bytes long, we can't
