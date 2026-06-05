@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -58,7 +59,7 @@ public final class PlexOfCps {
         // Figure out the number we hold
         _iMac = (cb - 4) / (4 + cbStruct);
 
-        IOUtils.safelyAllocateCheck(_iMac, MAX_NUMBER_OF_PROPERTIES);
+        ArrayUtil.strictAllocateCheck(_iMac, MAX_NUMBER_OF_PROPERTIES);
 
         _cbStruct = cbStruct;
         _props = new ArrayList<>(_iMac);

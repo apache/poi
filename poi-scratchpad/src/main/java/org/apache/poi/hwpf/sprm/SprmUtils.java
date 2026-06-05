@@ -111,7 +111,7 @@ public final class SprmUtils {
     public static byte[] getGrpprl(List<byte[]> sprmList, int size)
     {
         // spit out the final grpprl
-        byte[] grpprl = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+        byte[] grpprl = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH, "SprmUtils.setMaxRecordLength()");
         int listSize = sprmList.size() - 1;
         int index = 0;
         for (; listSize >= 0; listSize--)

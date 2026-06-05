@@ -441,7 +441,8 @@ public abstract class HWPFDocumentCore extends POIDocument {
         ChunkedCipherInputStream cis = (ChunkedCipherInputStream)dec.getDataStream(dis, streamSize, 0);
         byte[] plain = {};
         if (encryptionOffset > 0) {
-            plain = IOUtils.safelyAllocate(encryptionOffset, MAX_RECORD_LENGTH);
+            plain = IOUtils.safelyAllocate(encryptionOffset, MAX_RECORD_LENGTH,
+                    "HWPFDocumentCore.setMaxRecordLength()");
             cis.readPlain(plain, 0, encryptionOffset);
         }
         return new SequenceInputStream(new ByteArrayInputStream(plain), cis);
