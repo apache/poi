@@ -33,6 +33,11 @@ public final class Biff8EncryptionKey {
 
     /**
      * Sets the BIFF8 encryption/decryption password for the current thread.
+     * <p>
+     *     It is strongly recommended that you call `setCurrentUserPassword(null)` as
+     *     soon as you are finished with the calls that need the password. One option is
+     *     to use a try block with a finally clause that calls `setCurrentUserPassword(null)`.
+     * </p>
      *
      * @param password pass <code>null</code> to clear user password (and use default)
      */
