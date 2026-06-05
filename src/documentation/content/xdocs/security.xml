@@ -107,6 +107,14 @@
                 strategy implementation. It is possible to configure POI to avoid temp file usage in some parts of
                 the code.
             </li>
+            <li><strong>Heap Memory</strong><br/>
+                Apache POI can have sensitive sensitive data from parsed or generated documents in memory.
+                Classes like <em>Biff8EncryptionKey</em> use ThreadLocal to store sensitive data. Users should ensure
+                that they clear this data as soon as possible after use.
+                <br/>
+                It is strongly recommended that POI based code is not run in a JVM where untrusted users have access to
+                the heap memory, e.g. by using a shared hosting environment.
+            </li>
             <li><strong>Consider sandboxing document-parsing</strong><br/>
                 If you operate in a highly sensitive environment and would like to avoid any side effect from
                 parsing documents on your application, then consider extracting the parsing logic into a separate
