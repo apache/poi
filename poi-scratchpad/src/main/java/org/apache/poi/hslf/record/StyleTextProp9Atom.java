@@ -79,7 +79,8 @@ public final class StyleTextProp9Atom extends RecordAtom {
         this.length   = LittleEndian.getInt(header, 4);
 
         // Get the record data.
-        data = IOUtils.safelyClone(source,  start+8, len-8, MAX_RECORD_LENGTH);
+        data = IOUtils.safelyClone(source,  start+8, len-8, MAX_RECORD_LENGTH,
+                "StyleTextProp9Atom.setMaxRecordLength()");
         for (int i = 0; i < data.length; ) {
             final TextPFException9 item = new TextPFException9(data, i);
             schemes.add(item);

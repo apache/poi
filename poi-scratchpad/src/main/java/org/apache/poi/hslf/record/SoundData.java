@@ -85,7 +85,8 @@ public final class SoundData extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH,
+                "SoundData.setMaxRecordLength()");
     }
 
     /**

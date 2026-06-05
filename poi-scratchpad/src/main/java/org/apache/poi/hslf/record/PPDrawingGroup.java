@@ -41,8 +41,16 @@ import org.apache.poi.util.LittleEndian;
 public final class PPDrawingGroup extends RecordAtom {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 10_485_760;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 10_485_760;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     private final byte[] _header;
     private final EscherContainerRecord dggContainer;
@@ -54,7 +62,8 @@ public final class PPDrawingGroup extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the contents for now
-        byte[] contents = IOUtils.safelyClone(source, start, len, MAX_RECORD_LENGTH);
+        byte[] contents = IOUtils.safelyClone(source, start, len, MAX_RECORD_LENGTH,
+                "PPDrawingGroup.setMaxRecordLength()");
 
         DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();
         EscherRecord child = erf.createRecord(contents, 0);

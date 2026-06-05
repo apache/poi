@@ -95,7 +95,8 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH,
+                "ExOleObjStg.setMaxRecordLength()");
     }
 
     public boolean isCompressed() {

@@ -109,7 +109,8 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom {
         //   count * 32 bit offsets
         // Repeat as many times as you have data
         _slideLocations = new HashMap<>();
-        _ptrData = IOUtils.safelyClone(source, start+8, len-8, RecordAtom.getMaxRecordLength());
+        _ptrData = IOUtils.safelyClone(source, start+8, len-8, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
 
         int pos = 0;
         while(pos < _ptrData.length) {

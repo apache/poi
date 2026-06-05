@@ -178,7 +178,8 @@ public final class DocumentAtom extends RecordAtom {
         showComments = leis.readByte();
 
         // If there's any other bits of data, keep them about
-        reserved = IOUtils.safelyAllocate(maxLen-48L, getMaxRecordLength());
+        reserved = IOUtils.safelyAllocate(maxLen-48L, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
         leis.readFully(reserved);
     }
 

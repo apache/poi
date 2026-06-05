@@ -107,7 +107,16 @@ public class ExOleObjAtom extends RecordAtom {
     };
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 10_485_760;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 10_485_760;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    public static void setMaxRecordLength(int maxRecordLength) {
+        MAX_RECORD_LENGTH = maxRecordLength;
+    }
+
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     /**
      * The object) is displayed as an embedded object inside of a container,
@@ -191,7 +200,8 @@ public class ExOleObjAtom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH,
+                "ExOleObjAtom.setMaxRecordLength()");
 
         // Must be at least 24 bytes long
         if(_data.length < 24) {
