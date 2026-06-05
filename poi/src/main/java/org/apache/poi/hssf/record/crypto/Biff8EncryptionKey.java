@@ -36,7 +36,17 @@ public final class Biff8EncryptionKey {
      * <p>
      *     It is strongly recommended that you call `setCurrentUserPassword(null)` as
      *     soon as you are finished with the calls that need the password. One option is
-     *     to use a try block with a finally clause that calls `setCurrentUserPassword(null)`.
+     *     to use a try block with a `finally` clause that calls `setCurrentUserPassword(null)`.
+     * </p>
+     * <p>
+     *     The POI APIs for newer OOXML based file formats like xlsx, docx and pptx have never used
+     *     this Biff8EncryptionKey support. Passwords are passed using dedicated parameters in the
+     *     relevant APIs, and are not stored in thread-locals.
+     * </p>
+     * <p>
+     *     POI 6.0.0 introduces alternatives API methods for HSSF and other H**F classes that take an
+     *     explicit password parameter, and do not rely on this thread-local. It is recommended to use
+     *     those APIs instead of the ones that rely on this thread-local.
      * </p>
      *
      * @param password pass <code>null</code> to clear user password (and use default)
