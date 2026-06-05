@@ -302,7 +302,7 @@ final class TestSumifs {
         };
 
         ValueEval result = invokeSumifs(args);
-        assertTrue(result instanceof ErrorEval, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
+        assertInstanceOf(ErrorEval.class, result, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
 
         args = new ValueEval[]{
                 EvalFactory.createAreaEval("A2:A9", a2a9),
@@ -311,7 +311,7 @@ final class TestSumifs {
         };
 
         result = invokeSumifs(args);
-        assertTrue(result instanceof ErrorEval, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
+        assertInstanceOf(ErrorEval.class, result, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
     }
 
     @Test
@@ -335,7 +335,7 @@ final class TestSumifs {
         };
 
         ValueEval result = invokeSumifs(args);
-        assertTrue(result instanceof ErrorEval, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
+        assertInstanceOf(ErrorEval.class, result, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
         assertEquals(ErrorEval.VALUE_INVALID, result);
     }
 
@@ -360,7 +360,7 @@ final class TestSumifs {
         };
 
         ValueEval result = invokeSumifs(args);
-        assertTrue(result instanceof ErrorEval, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
+        assertInstanceOf(ErrorEval.class, result, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
         assertEquals(ErrorEval.NAME_INVALID, result);
     }
 

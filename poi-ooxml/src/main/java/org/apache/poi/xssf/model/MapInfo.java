@@ -75,7 +75,7 @@ public class MapInfo extends POIXMLDocumentPart {
 
             maps= new HashMap<>();
             for(CTMap map :mapInfo.getMapArray()){
-                maps.put((int)map.getID(), new XSSFMap(map,this));
+                maps.put(Math.toIntExact(map.getID()), new XSSFMap(map,this));
             }
 
         } catch (XmlException e) {
@@ -127,7 +127,7 @@ public class MapInfo extends POIXMLDocumentPart {
 
         XSSFMap matchedMap = null;
 
-        for(XSSFMap map :maps.values()){
+        for(XSSFMap map : maps.values()){
             if(map.getCtMap().getName()!=null && map.getCtMap().getName().equals(name)){
                 matchedMap = map;
             }

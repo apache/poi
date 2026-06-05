@@ -18,6 +18,7 @@ package org.apache.poi.hdgf.pointers;
 
 import org.apache.poi.hdgf.exceptions.OldVisioFormatException;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
@@ -54,7 +55,7 @@ public final class PointerFactory {
             final long v6Offset = LittleEndian.getUInt(data, offset+8);
             final long v6Length = LittleEndian.getUInt(data, offset+12);
             checkPointerOffset(v6Offset);
-            IOUtils.safelyAllocateCheck(v6Length, Integer.MAX_VALUE);
+            ArrayUtil.strictAllocateCheck(v6Length, Integer.MAX_VALUE);
             p.setOffset((int)v6Offset);
             p.setLength((int)v6Length);
             p.setFormat(LittleEndian.getShort(data, offset+16));
@@ -101,7 +102,7 @@ public final class PointerFactory {
             throw new IllegalArgumentException("Cannot create container pointers with negative count: " + numPointers);
         }
 
-        IOUtils.safelyAllocateCheck(numPointers, MAX_NUMBER_OF_POINTERS);
+        ArrayUtil.strictAllocateCheck(numPointers, MAX_NUMBER_OF_POINTERS);
 
         // Create
         int pos = numPointersOffset + skip;

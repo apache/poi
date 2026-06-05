@@ -43,6 +43,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.draw.geom.XSLFCustomGeometry;
 import org.apache.poi.xslf.model.PropertyFetcher;
@@ -159,7 +160,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     public void setRotation(double theta) {
         CTTransform2D xfrm = getXfrm(true);
         if (xfrm != null) {
-            xfrm.setRot((int) (theta * 60000));
+            xfrm.setRot(MathUtil.safeDoubleToInt(theta * 60000));
         }
     }
 

@@ -31,6 +31,7 @@ import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PresetColor;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
@@ -227,15 +228,15 @@ public class XSLFColor {
         } else {
             CTScRgbColor rgb = fill.addNewScrgbClr();
             double[] scRGB = DrawPaint.RGB2SCRGB(color);
-            rgb.setR((int)Math.rint(scRGB[0]*100_000d));
-            rgb.setG((int)Math.rint(scRGB[1]*100_000d));
-            rgb.setB((int)Math.rint(scRGB[2]*100_000d));
+            rgb.setR(MathUtil.safeDoubleToInt(Math.rint(scRGB[0]*100_000d)));
+            rgb.setG(MathUtil.safeDoubleToInt(Math.rint(scRGB[1]*100_000d)));
+            rgb.setB(MathUtil.safeDoubleToInt(Math.rint(scRGB[2]*100_000d)));
             alphaPct = (addAlpha) ? rgb.addNewAlpha() : null;
         }
 
         // alpha (%)
         if (alphaPct != null) {
-            alphaPct.setVal((int)Math.rint(rgbaf[3]*100_000));
+            alphaPct.setVal(MathUtil.safeDoubleToInt(Math.rint(rgbaf[3]*100_000)));
         }
     }
 

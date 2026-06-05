@@ -91,7 +91,8 @@ public final class PropertyTable implements BATManaged {
                 }
             }
             if (data == null) {
-                data = IOUtils.safelyAllocate(_bigBigBlockSize.getBigBlockSize(), POIFSFileSystem.getMaxRecordLength());
+                data = IOUtils.safelyAllocate(_bigBigBlockSize.getBigBlockSize(),
+                        POIFSFileSystem.getMaxRecordLength(), "POIFSFileSystem.getMaxRecordLength()");
 
                 int toRead = data.length;
                 if (bb.remaining() < _bigBigBlockSize.getBigBlockSize()) {
@@ -181,7 +182,7 @@ public final class PropertyTable implements BATManaged {
     public int countBlocks() {
        long rawSize = _properties.size() * (long)POIFSConstants.PROPERTY_SIZE;
        int blkSize = _bigBigBlockSize.getBigBlockSize();
-       int numBlocks = (int)(rawSize / blkSize);
+       int numBlocks = Math.toIntExact(rawSize / blkSize);
        if ((rawSize % blkSize) != 0) {
            numBlocks++;
        }

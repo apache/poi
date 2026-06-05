@@ -912,7 +912,8 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         if (format == null || format.nativeId == -1) { // fail early
             throw new IllegalArgumentException("Unsupported picture format: " + format);
         }
-        byte[] data = IOUtils.safelyAllocate(pict.length(), MAX_RECORD_LENGTH);
+        byte[] data = IOUtils.safelyAllocate(pict.length(), MAX_RECORD_LENGTH,
+                "HSLFSlideShow.setMaxRecordLength()");
         try (InputStream is = Files.newInputStream(pict.toPath())) {
             IOUtils.readFully(is, data);
         }

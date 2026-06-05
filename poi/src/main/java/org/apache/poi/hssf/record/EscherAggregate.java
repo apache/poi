@@ -364,7 +364,8 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         // Determine buffer size
         List<EscherRecord> records = getEscherRecords();
         int rawEscherSize = getEscherRecordSize(records);
-        byte[] buffer = IOUtils.safelyAllocate(rawEscherSize, MAX_RECORD_LENGTH);
+        byte[] buffer = IOUtils.safelyAllocate(rawEscherSize, MAX_RECORD_LENGTH,
+                "EscherAggregate.setMaxRecordLength()");
         final List<Integer> spEndingOffsets = new ArrayList<>();
         int pos = 0;
         for (EscherRecord e : records) {

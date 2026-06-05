@@ -244,6 +244,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         return ioMaxSize < 0 ? MAX_IMAGE_LENGTH : Math.min(MAX_IMAGE_LENGTH, ioMaxSize);
     }
 
+    public static byte[] safelyAllocate(long len) {
+        return IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH, "HSSFWorkbook.setMaxRecordLength()");
+    }
+
     /**
      * Creates new HSSFWorkbook from scratch (start here!)
      */
@@ -1670,7 +1674,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
                 if (sid == BoundSheetRecord.sid) {
                     // special case for the field_1_position_of_BOF (=lbPlyPos) field of
                     // the BoundSheet8 record which must be unencrypted
-                    byte[] bsrBuf = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
+                    byte[] bsrBuf = safelyAllocate(len);
                     plain.readFully(bsrBuf);
                     os.writePlain(bsrBuf, 0, 4);
                     os.write(bsrBuf, 4, len - 4);
@@ -2078,7 +2082,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             case PICTURE_TYPE_WMF:
                 // remove first 22 bytes if file starts with the WMF placeable header
                 if (FileMagic.valueOf(pictureData) == FileMagic.WMF) {
-                    pictureData = IOUtils.safelyClone(pictureData, 22, pictureData.length - 22, getMaxImageLength());
+                    pictureData = IOUtils.safelyClone(pictureData, 22, pictureData.length - 22,
+                            getMaxImageLength(), "HSSFWorkbook.setMaxImageLength()");
                 }
                 // fall through
             case PICTURE_TYPE_EMF:

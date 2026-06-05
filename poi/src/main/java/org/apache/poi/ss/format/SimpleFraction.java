@@ -16,6 +16,8 @@
 */
 package org.apache.poi.ss.format;
 
+import org.apache.poi.util.MathUtil;
+
 public class SimpleFraction {
 
 
@@ -32,7 +34,7 @@ public class SimpleFraction {
      * @return a SimpleFraction with the given values set.
      */
     public static SimpleFraction buildFractionExactDenominator(double val, int exactDenom){
-        int num =  (int)Math.round(val*exactDenom);
+        int num =  MathUtil.safeDoubleToInt(Math.round(val*exactDenom));
         return new SimpleFraction(num,exactDenom);
     }
 
@@ -84,7 +86,7 @@ public class SimpleFraction {
         // check for (almost) integer arguments, which should not go
         // to iterations.
         if (Math.abs(a0 - value) < epsilon) {
-            return new SimpleFraction((int)a0, 1);
+            return new SimpleFraction(Math.toIntExact(a0), 1);
         }
 
         long p0 = 1;
@@ -107,7 +109,7 @@ public class SimpleFraction {
             if (epsilon == 0.0f && maxDenominator > 0 && Math.abs(q2) > maxDenominator &&
                     Math.abs(q1) < maxDenominator){
 
-                return new SimpleFraction((int)p1, (int)q1);
+                return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
             }
             if ((p2 > overflow) || (q2 > overflow)) {
                 throw new IllegalStateException("Overflow trying to convert "+value+" to fraction ("+p2+"/"+q2+")");
@@ -131,9 +133,9 @@ public class SimpleFraction {
         }
 
         if (q2 < maxDenominator) {
-            return new SimpleFraction((int) p2, (int)q2);
+            return new SimpleFraction(Math.toIntExact(p2), Math.toIntExact(q2));
         } else {
-            return new SimpleFraction((int)p1, (int)q1);
+            return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
         }
 
     }

@@ -47,15 +47,14 @@ public class XSSFBUtils {
             throw new XSSFBParseException("too many chars to read");
         }
 
-        int numBytes = 2*(int)numChars;
+        long numBytes = 2L*numChars;
         offset += 4;
         if (offset+numBytes > data.length) {
             throw new XSSFBParseException("trying to read beyond data length: " +
              "offset="+offset+", numBytes="+numBytes+", data.length="+data.length);
         }
-        sb.append(new String(data, offset, numBytes, StandardCharsets.UTF_16LE));
-        numBytes+=4;
-        return numBytes;
+        sb.append(new String(data, offset, Math.toIntExact(numBytes), StandardCharsets.UTF_16LE));
+        return Math.toIntExact(numBytes+4);
     }
 
 
@@ -74,14 +73,13 @@ public class XSSFBUtils {
         } else if (numChars > 0xFFFFFFFFL) {
             throw new XSSFBParseException("too many chars to read");
         }
-        int numBytes = 2*(int)numChars;
+        long numBytes = 2L*numChars;
         offset += 4;
         if (offset+numBytes > data.length) {
             throw new XSSFBParseException("trying to read beyond data length");
         }
-        sb.append(new String(data, offset, numBytes, StandardCharsets.UTF_16LE));
-        numBytes+=4;
-        return numBytes;
+        sb.append(new String(data, offset, Math.toIntExact(numBytes), StandardCharsets.UTF_16LE));
+        return Math.toIntExact(numBytes+4);
     }
 
 

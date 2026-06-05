@@ -22,6 +22,7 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.util.MathUtil;
 
 /**
  * Implementation for Excel REPT () function.
@@ -57,7 +58,7 @@ public class Rept extends Fixed2ArgFunction  {
             return ErrorEval.VALUE_INVALID;
         }
 
-        int numberOfTimeInt = (int)numberOfTime;
+        int numberOfTimeInt = MathUtil.safeDoubleToInt(numberOfTime);
         StringBuilder strb = new StringBuilder(strText1.length() * numberOfTimeInt);
         for(int i = 0; i < numberOfTimeInt; i++) {
             strb.append(strText1);

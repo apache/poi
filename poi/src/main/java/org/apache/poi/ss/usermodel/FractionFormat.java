@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.format.SimpleFraction;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.util.MathUtil;
 
 /**
  * <p>Format class that handles Excel style fractions, such as "# #/#" and "#/###"</p>
@@ -91,7 +92,7 @@ public class FractionFormat extends Format {
             } else if (m.group(1) != null) {
                 int len = m.group(1).length();
                 len = Math.min(len, MAX_DENOM_POW);
-                tmpMax = (int)Math.pow(10, len);
+                tmpMax = MathUtil.safeDoubleToInt(Math.pow(10, len));
             } else {
                 tmpExact = 100;
             }

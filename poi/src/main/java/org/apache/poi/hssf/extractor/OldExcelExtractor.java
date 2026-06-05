@@ -305,7 +305,7 @@ public class OldExcelExtractor implements POITextExtractor {
                     break;
 
                 default:
-                    ris.readFully(IOUtils.safelyAllocate(ris.remaining(), HSSFWorkbook.getMaxRecordLength()));
+                    ris.readFully(HSSFWorkbook.safelyAllocate(ris.remaining()));
             }
         }
 

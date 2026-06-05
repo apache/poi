@@ -25,6 +25,7 @@ import java.awt.geom.AffineTransform;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.Sheet;
+import org.apache.poi.util.MathUtil;
 
 
 public class DrawSheet implements Drawable {
@@ -40,7 +41,9 @@ public class DrawSheet implements Drawable {
         Dimension dim = sheet.getSlideShow().getPageSize();
         Color whiteTrans = new Color(1f,1f,1f,0f);
         graphics.setColor(whiteTrans);
-        graphics.fillRect(0, 0, (int)dim.getWidth(), (int)dim.getHeight());
+        graphics.fillRect(0, 0,
+                MathUtil.safeDoubleToInt(dim.getWidth()),
+                MathUtil.safeDoubleToInt(dim.getHeight()));
         
         DrawFactory drawFact = DrawFactory.getInstance(graphics);
         MasterSheet<?,?> master = sheet.getMasterSheet();

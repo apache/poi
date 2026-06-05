@@ -90,7 +90,7 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
 
             // Grab the de-compressed contents for later
             data = (entrySize == -1) ? IOUtils.toByteArrayWithMaxLength(inp, getMaxEntrySize()) :
-                    IOUtils.toByteArray(inp, entrySize, getMaxEntrySize());
+                    IOUtils.toByteArray(inp, entrySize, getMaxEntrySize(), "ZipArchiveFakeEntry.setMaxEntrySize()");
         }
     }
 

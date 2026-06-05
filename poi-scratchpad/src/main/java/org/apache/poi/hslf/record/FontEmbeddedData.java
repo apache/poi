@@ -87,7 +87,8 @@ public class FontEmbeddedData extends RecordAtom implements FontFacet {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
+        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH,
+                "FontEmbeddedData.setMaxRecordLength()");
 
         // Must be at least 4 bytes long
         if(_data.length < 4) {

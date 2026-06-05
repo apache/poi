@@ -84,8 +84,8 @@ public final class TextRulerAtom extends RecordAtom {
      * @param len the length of the slice in the byte array.
      */
     TextRulerAtom(final byte[] source, final int start, final int len) {
-        final LittleEndianByteArrayInputStream leis = new LittleEndianByteArrayInputStream(source, start, Math.min(len, getMaxRecordLength()));
-
+        final LittleEndianByteArrayInputStream leis = new LittleEndianByteArrayInputStream(
+                source, start, Math.min(len, getMaxRecordLength()));
 
         try {
             // Get the header.

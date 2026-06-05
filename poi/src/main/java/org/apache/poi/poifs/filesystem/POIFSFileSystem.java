@@ -48,6 +48,7 @@ import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.storage.BATBlock;
 import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 import org.apache.poi.poifs.storage.HeaderBlock;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 
@@ -127,7 +128,9 @@ public class POIFSFileSystem extends BlockStore
         // Data needs to initially hold just the header block,
         //  a single bat block, and an empty properties section
         long blockSize = Math.multiplyExact(bigBlockSize.getBigBlockSize(), 3L);
-        _data = new ByteArrayBackedDataSource(IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH));
+        _data = new ByteArrayBackedDataSource(
+                IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH,
+                        "POIFSFileSystem.getMaxRecordLength()"));
     }
 
     /**
@@ -337,9 +340,9 @@ public class POIFSFileSystem extends BlockStore
             }
 
             // don't allow huge allocations with invalid header-values
-            IOUtils.safelyAllocateCheck(maxSize, MAX_ALLOCATION_SIZE);
+            ArrayUtil.strictAllocateCheck(maxSize, MAX_ALLOCATION_SIZE);
 
-            ByteBuffer data = ByteBuffer.allocate((int) maxSize);
+            ByteBuffer data = ByteBuffer.allocate(Math.toIntExact(maxSize));
 
             // Copy in the header
             headerBuffer.position(0);

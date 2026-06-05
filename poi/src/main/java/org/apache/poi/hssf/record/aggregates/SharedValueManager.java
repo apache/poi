@@ -31,7 +31,7 @@ import org.apache.poi.hssf.record.TableRecord;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.ArrayUtil;
 
 /**
  * Manages various auxiliary records while constructing a
@@ -43,7 +43,16 @@ import org.apache.poi.util.IOUtils;
  * </ul>
  */
 public final class SharedValueManager {
-    private static final int MAX_NUMBER_AGGS = 10_000;
+    private static final int DEFAULT_MAX_NUMBER_AGGS = 10_000;
+    private static int MAX_NUMBER_AGGS = DEFAULT_MAX_NUMBER_AGGS;
+
+    public static void setMaxNumberOfFormulaRecordAggregates(int maxNumberOfFormulaRecordAggregates) {
+        MAX_NUMBER_AGGS = maxNumberOfFormulaRecordAggregates;
+    }
+
+    public static int getMaxNumberOfFormulaRecordAggregates() {
+        return MAX_NUMBER_AGGS;
+    }
 
     private static final class SharedFormulaGroup {
         private final SharedFormulaRecord _sfr;
@@ -68,7 +77,8 @@ public final class SharedValueManager {
 
             // ensure we do not try to initialize a very large amount of formula-record-aggregates
             int allocateSize = width * height;
-            IOUtils.safelyAllocateCheck(allocateSize, MAX_NUMBER_AGGS);
+            ArrayUtil.safelyAllocateCheck(allocateSize, MAX_NUMBER_AGGS,
+                    "SharedValueManager.setMaxNumberOfFormulaRecordAggregates");
 
             _frAggs = new FormulaRecordAggregate[allocateSize];
             _numberOfFormulas = 0;

@@ -257,7 +257,7 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
         @Override
         public int getSheetIndex() {
             if (name.isSetSheetId()) {
-                return (int)name.getSheetId();
+                return Math.toIntExact(name.getSheetId());
             }
             return -1;
         }

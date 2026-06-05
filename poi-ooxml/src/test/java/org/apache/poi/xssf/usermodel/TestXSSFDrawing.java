@@ -925,6 +925,22 @@ class TestXSSFDrawing {
         }
     }
 
+    @Test
+    void testAbsoluteAnchor() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("absolute-anchor-over-empty-sheet.xlsx")) {
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            XSSFDrawing drawing = sheet.getDrawingPatriarch();
+            List<XSSFShape> shapes = drawing.getShapes();
+            assertEquals(1, shapes.size());
+
+            ClientAnchor anchor = assertInstanceOf(ClientAnchor.class, shapes.get(0).getAnchor());
+            assertEquals(3, anchor.getCol1());
+            assertEquals(38, anchor.getRow1());
+            assertEquals(19, anchor.getCol2());
+            assertEquals(80, anchor.getRow2());
+        }
+    }
+
     private static void checkRewrite(XSSFWorkbook wb) throws IOException {
         XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb);
         assertNotNull(wb2);

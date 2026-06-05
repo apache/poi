@@ -173,7 +173,8 @@ public class TextSpecInfoRun implements GenericRecord {
         if (smartTagFld.isSet(mask)) {
             // An unsigned integer specifies the count of items in rgSmartTagIndex.
             int count = source.readInt();
-            smartTagsBytes = IOUtils.safelyAllocate(4 + count * 4L, RecordAtom.getMaxRecordLength());
+            smartTagsBytes = IOUtils.safelyAllocate(4 + count * 4L, RecordAtom.getMaxRecordLength(),
+                    "RecordAtom.setMaxRecordLength()");
             LittleEndian.putInt(smartTagsBytes, 0, count);
             // An array of SmartTagIndex that specifies the indices.
             // The count of items in the array is specified by count.

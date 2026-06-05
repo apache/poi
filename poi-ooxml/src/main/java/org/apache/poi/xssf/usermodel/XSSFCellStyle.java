@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.ReadingOrder;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
@@ -369,7 +370,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return null;
 
-        int fillIndex = (int)_cellXf.getFillId();
+        int fillIndex = Math.toIntExact(_cellXf.getFillId());
         XSSFCellFill fg = _stylesSource.getFillAt(fillIndex);
 
         XSSFColor fillBackgroundColor = fg.getFillBackgroundColor();
@@ -408,7 +409,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return null;
 
-        int fillIndex = (int)_cellXf.getFillId();
+        int fillIndex = Math.toIntExact(_cellXf.getFillId());
         XSSFCellFill fg = _stylesSource.getFillAt(fillIndex);
 
         XSSFColor fillForegroundColor = fg.getFillForegroundColor();
@@ -423,7 +424,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return FillPatternType.NO_FILL;
 
-        int fillIndex = (int)_cellXf.getFillId();
+        int fillIndex = MathUtil.safeDoubleToInt(_cellXf.getFillId());
         XSSFCellFill fill = _stylesSource.getFillAt(fillIndex);
 
         STPatternType.Enum ptrn = fill.getPatternType();
@@ -935,7 +936,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         CTFill ct;
         // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(!_cellXf.isSetApplyFill() || _cellXf.getApplyFill()) {
-            int fillIndex = (int)_cellXf.getFillId();
+            int fillIndex = MathUtil.safeDoubleToInt(_cellXf.getFillId());
             XSSFCellFill cf = _stylesSource.getFillAt(fillIndex);
 
             ct = (CTFill)cf.getCTFill().copy();
@@ -1295,9 +1296,9 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
     private int getFontId() {
         if (_cellXf.isSetFontId()) {
-            return (int) _cellXf.getFontId();
+            return Math.toIntExact(_cellXf.getFontId());
         }
-        return (int) _cellStyleXf.getFontId();
+        return Math.toIntExact(_cellStyleXf.getFontId());
     }
 
     /**

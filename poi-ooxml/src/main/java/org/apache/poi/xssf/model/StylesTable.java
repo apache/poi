@@ -457,7 +457,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         }
         // 0 is the empty default
         if(xfs.get(idx).getXfId() > 0) {
-            styleXfId = (int) xfs.get(idx).getXfId();
+            styleXfId = Math.toIntExact(xfs.get(idx).getXfId());
         }
 
         return new XSSFCellStyle(idx, styleXfId, this, theme);

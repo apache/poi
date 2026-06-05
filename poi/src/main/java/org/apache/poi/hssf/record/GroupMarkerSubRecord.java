@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -52,7 +51,7 @@ public final class GroupMarkerSubRecord extends SubRecord {
     }
 
     GroupMarkerSubRecord(LittleEndianInput in, int size, int cmoOt) {
-        byte[] buf = IOUtils.safelyAllocate(size, HSSFWorkbook.getMaxRecordLength());
+        byte[] buf = HSSFWorkbook.safelyAllocate(size);
         in.readFully(buf);
         reserved = buf;
     }

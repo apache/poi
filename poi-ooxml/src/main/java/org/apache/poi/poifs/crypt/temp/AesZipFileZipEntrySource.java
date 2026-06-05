@@ -38,8 +38,9 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
-import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
+import org.apache.poi.openxml4j.util.ZipEntrySource;
+import org.apache.poi.openxml4j.util.ZipStreamUtil;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
@@ -60,13 +61,15 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
 
     private final File tmpFile;
     private final ZipFile zipFile;
-    private final Cipher ci;
+    private final SecretKeySpec skeySpec;
+    private final byte[] ivBytes;
     private boolean closed;
 
-    private AesZipFileZipEntrySource(File tmpFile, Cipher ci) throws IOException {
+    private AesZipFileZipEntrySource(File tmpFile, SecretKeySpec skeySpec, byte[] ivBytes) throws IOException {
         this.tmpFile = tmpFile;
         this.zipFile = ZipFile.builder().setFile(tmpFile).get();
-        this.ci = ci;
+        this.skeySpec = skeySpec;
+        this.ivBytes = ivBytes.clone();
         this.closed = false;
     }
 
@@ -87,7 +90,7 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
     @Override
     public InputStream getInputStream(ZipArchiveEntry entry) throws IOException {
         InputStream is = zipFile.getInputStream(entry);
-        return new CipherInputStream(is, ci);
+        return new CipherInputStream(is, getCipher(Cipher.DECRYPT_MODE));
     }
 
     @Override
@@ -129,15 +132,16 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
 
     private static void copyToFile(InputStream is, File tmpFile, byte[] keyBytes, byte[] ivBytes) throws IOException {
         SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, CipherAlgorithm.aes128.jceId);
-        Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
 
         try (ZipArchiveInputStream zipStream = new ZipArchiveInputStream(is);
              ZipArchiveThresholdInputStream zis = new ZipArchiveThresholdInputStream(zipStream);
              OutputStream fos = Files.newOutputStream(tmpFile.toPath());
              ZipArchiveOutputStream zos = new ZipArchiveOutputStream(fos)) {
 
-            ZipArchiveEntry ze;
-            while ((ze = zis.getNextEntry()) != null) {
+            // Stream entries directly via a minimal internal helper so we preserve
+            // streaming semantics (no materialization) while still using
+            // ZipArchiveThresholdInputStream's package-local checks.
+            ZipStreamUtil.streamEntries(zis, (ze, entryIn) -> {
                 // the cipher output stream pads the data, therefore we can't reuse the ZipEntry with set sizes
                 // as those will be validated upon close()
                 ZipArchiveEntry zeNew = new ZipArchiveEntry(ze.getName());
@@ -147,19 +151,25 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
                 // zeNew.setMethod(ze.getMethod());
                 zos.putArchiveEntry(zeNew);
 
+                // create an independent cipher per-entry to avoid sharing mutable Cipher instances
+                Cipher ciEncEntry = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
+
                 // don't close underlying ZipOutputStream
-                try (CipherOutputStream cos = new CipherOutputStream(CloseShieldOutputStream.wrap(zos), ciEnc)) {
-                    IOUtils.copy(zis, cos);
+                try (CipherOutputStream cos = new CipherOutputStream(CloseShieldOutputStream.wrap(zos), ciEncEntry)) {
+                    IOUtils.copy(entryIn, cos);
                 }
                 zos.closeArchiveEntry();
-            }
+            });
         }
     }
 
     private static AesZipFileZipEntrySource fileToSource(File tmpFile, byte[] keyBytes, byte[] ivBytes) throws IOException {
         SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, CipherAlgorithm.aes128.jceId);
-        Cipher ciDec = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, PADDING);
-        return new AesZipFileZipEntrySource(tmpFile, ciDec);
+        return new AesZipFileZipEntrySource(tmpFile, skeySpec, ivBytes);
+    }
+
+    private Cipher getCipher(int cipherMode) {
+        return CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, cipherMode, PADDING);
     }
 
 }

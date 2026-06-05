@@ -112,10 +112,11 @@ public class TextPieceTable implements CharIndexTranslator {
 
             // Figure out the length, in bytes and chars
             int textSizeChars = (nodeEndChars - nodeStartChars);
-            int textSizeBytes = textSizeChars * multiple;
+            int textSizeBytes = Math.multiplyExact(textSizeChars, multiple);
 
             // Grab the data that makes up the piece
-            byte[] buf = IOUtils.safelyClone(documentStream, start, textSizeBytes, MAX_RECORD_LENGTH);
+            byte[] buf = IOUtils.safelyClone(documentStream, start, textSizeBytes, MAX_RECORD_LENGTH,
+                    "TextPieceTable.setMaxRecordLength()");
 
             // And now build the piece
             final TextPiece newTextPiece = newTextPiece(nodeStartChars, nodeEndChars, buf,
@@ -428,7 +429,7 @@ public class TextPieceTable implements CharIndexTranslator {
             int mod = (offset % POIFSConstants.SMALLER_BIG_BLOCK_SIZE);
             if (mod != 0) {
                 mod = POIFSConstants.SMALLER_BIG_BLOCK_SIZE - mod;
-                byte[] buf = IOUtils.safelyAllocate(mod, MAX_RECORD_LENGTH);
+                byte[] buf = IOUtils.safelyAllocate(mod, MAX_RECORD_LENGTH, "TextPieceTable.setMaxRecordLength()");
                 docStream.write(buf);
             }
 

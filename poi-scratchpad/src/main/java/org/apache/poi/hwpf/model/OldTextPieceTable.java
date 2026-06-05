@@ -77,10 +77,11 @@ public class OldTextPieceTable extends TextPieceTable {
 
             // Figure out the length, in bytes and chars
             int textSizeChars = (nodeEndChars - nodeStartChars);
-            int textSizeBytes = textSizeChars * multiple;
+            int textSizeBytes = Math.multiplyExact(textSizeChars, multiple);
 
             // Grab the data that makes up the piece
-            byte[] buf = IOUtils.safelyClone(documentStream, start, textSizeBytes, getMaxRecordLength());
+            byte[] buf = IOUtils.safelyClone(documentStream, start, textSizeBytes,
+                    TextPieceTable.getMaxRecordLength(), "TextPieceTable.setMaxRecordLength");
 
             // And now build the piece
             final TextPiece newTextPiece = newTextPiece(nodeStartChars, nodeEndChars, buf, pieces[x]);

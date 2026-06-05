@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -114,7 +115,9 @@ public class XWPFTableRow {
      */
     public int getHeight() {
         CTTrPr properties = getTrPr();
-        return properties.sizeOfTrHeightArray() == 0 ? 0 : (int) Units.toDXA(POIXMLUnits.parseLength(properties.getTrHeightArray(0).xgetVal()));
+        return properties.sizeOfTrHeightArray() == 0 ? 0 :
+                MathUtil.safeDoubleToInt(Units.toDXA(
+                        POIXMLUnits.parseLength(properties.getTrHeightArray(0).xgetVal())));
     }
 
     /**
@@ -128,7 +131,7 @@ public class XWPFTableRow {
     public void setHeight(int height) {
         CTTrPr properties = getTrPr();
         CTHeight h = properties.sizeOfTrHeightArray() == 0 ? properties.addNewTrHeight() : properties.getTrHeightArray(0);
-        h.setVal(new BigInteger(Integer.toString(height)));
+        h.setVal(BigInteger.valueOf(height));
     }
 
     /**

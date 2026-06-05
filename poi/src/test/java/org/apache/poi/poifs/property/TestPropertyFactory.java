@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.property;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -149,13 +150,13 @@ final class TestPropertyFactory {
             } else {
                 assertNotNull(properties.get(j), "Checking property " + j);
                 if (isRoot[j]) {
-                    assertTrue(properties.get(j) instanceof RootProperty, "Checking property " + j);
+                    assertInstanceOf(RootProperty.class, properties.get(j), "Checking property " + j);
                 }
                 if (isDirectory[j]) {
-                    assertTrue(properties.get(j) instanceof DirectoryProperty, "Checking property " + j);
+                    assertInstanceOf(DirectoryProperty.class, properties.get(j), "Checking property " + j);
                 }
                 if (isDocument[j]) {
-                    assertTrue(properties.get(j) instanceof DocumentProperty, "Checking property " + j);
+                    assertInstanceOf(DocumentProperty.class, properties.get(j), "Checking property " + j);
                 }
                 assertEquals(names[j], properties.get(j).getName(), "Checking property " + j);
             }

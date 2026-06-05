@@ -156,7 +156,8 @@ public class HemfText {
                             //
                             // If ETO_RTLREADING is specified, characters are laid right to left instead of left to right.
                             // No other options affect the interpretation of this field.
-                            final int maxSize = (int)Math.min((offDx < offString) ? (offString-HEADER_SIZE) : recordSize, recordSize);
+                            final int maxSize = Math.toIntExact(Math.min(
+                                    offDx < offString ? (offString-HEADER_SIZE) : recordSize, recordSize));
                             while (size <= maxSize-LittleEndianConsts.INT_SIZE) {
                                 dx.add((int) leis.readUInt());
                                 size += LittleEndianConsts.INT_SIZE;
@@ -179,7 +180,8 @@ public class HemfText {
                             // read all available bytes and not just "stringLength * 1(ansi)/2(unicode)"
                             // in case we need to deal with surrogate pairs
                             final int maxSize = Math.toIntExact(Math.min(recordSize, strEnd)-size);
-                            rawTextBytes = IOUtils.safelyAllocate(maxSize, MAX_RECORD_LENGTH);
+                            rawTextBytes = IOUtils.safelyAllocate(maxSize, MAX_RECORD_LENGTH,
+                                    "HemfText.setMaxRecordLength()");
                             leis.readFully(rawTextBytes);
                             size += maxSize;
                             break;

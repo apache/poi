@@ -27,6 +27,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 
 /**
  * Implementation for the Excel EOMONTH() function.
@@ -53,7 +54,8 @@ public class EOMonth implements FreeRefFunction {
 
         try {
             double startDateAsNumber = NumericFunction.singleOperandEvaluate(args[0], ec.getRowIndex(), ec.getColumnIndex());
-            int months = (int) NumericFunction.singleOperandEvaluate(args[1], ec.getRowIndex(), ec.getColumnIndex());
+            int months = MathUtil.safeDoubleToInt(
+                    NumericFunction.singleOperandEvaluate(args[1], ec.getRowIndex(), ec.getColumnIndex()));
 
             // Excel treats date 0 as 1900-01-00; EOMONTH results in 1900-01-31
             if (startDateAsNumber >= 0.0 && startDateAsNumber < 1.0) {

@@ -123,7 +123,7 @@ public final class DStarRunner implements Function3Arg {
             filterColumn = OperandResolver.getSingleValue(filterColumn, srcRowIndex, srcColumnIndex);
             if (filterColumn instanceof NumericValueEval) {
                 //fc is zero based while Excel uses 1 based column numbering
-                fc = (int) Math.round(((NumericValueEval)filterColumn).getNumberValue()) - 1;
+                fc = Math.toIntExact(Math.round(((NumericValueEval)filterColumn).getNumberValue())) - 1;
             } else {
                 fc = getColumnForName(filterColumn, db);
             }

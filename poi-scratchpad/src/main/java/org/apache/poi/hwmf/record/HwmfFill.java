@@ -605,7 +605,7 @@ public class HwmfFill {
             size += readBounds2(leis, srcBounds);
             size += readBounds2(leis, dstBounds);
 
-            size += bitmap.init(leis, (int)(recordSize-6-size));
+            size += bitmap.init(leis, Math.toIntExact(recordSize-6-size));
 
             return size;
         }
@@ -758,7 +758,7 @@ public class HwmfFill {
             size += readBounds2(leis, dstBounds);
 
             dib = new HwmfBitmapDib();
-            size += dib.init(leis, (int)(recordSize-6-size));
+            size += dib.init(leis, Math.toIntExact(recordSize-6-size));
 
             srcBounds.setRect(srcPnt.getX(), srcPnt.getY(), dstBounds.getWidth(), dstBounds.getHeight());
 
@@ -843,7 +843,7 @@ public class HwmfFill {
             size += readBounds2(leis, dstBounds);
             if (hasBitmap) {
                 target = new HwmfBitmapDib();
-                size += target.init(leis, (int)(recordSize-6-size));
+                size += target.init(leis, Math.toIntExact(recordSize-6-size));
             }
 
             // the destination rectangle, having the same dimension as the source rectangle
@@ -905,7 +905,7 @@ public class HwmfFill {
             size += readBounds2(leis, dstBounds);
             if (hasBitmap) {
                 target = new HwmfBitmapDib();
-                size += target.init(leis, (int)(recordSize-6-size));
+                size += target.init(leis, Math.toIntExact(recordSize-6-size));
             }
 
             return size;

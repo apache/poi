@@ -43,7 +43,16 @@ public final class ListLevel
 {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 10_485_760;
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 10_485_760;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
 
     private static final Logger LOG = PoiLogManager.getLogger(ListLevel.class);
 
@@ -285,7 +294,7 @@ public final class ListLevel
 
     public byte[] toByteArray()
     {
-        byte[] buf = IOUtils.safelyAllocate(getSizeInBytes(), MAX_RECORD_LENGTH);
+        byte[] buf = IOUtils.safelyAllocate(getSizeInBytes(), MAX_RECORD_LENGTH, "ListLevel.setMaxRecordLength()");
         int offset = 0;
 
         _lvlf.setCbGrpprlChpx( (short) _grpprlChpx.length );

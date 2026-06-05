@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.model.types.LFOAbstractType;
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
@@ -78,7 +78,7 @@ public class PlfLfo {
                             + Integer.MAX_VALUE + " elements" );
         }
 
-        IOUtils.safelyAllocateCheck(lfoMacLong, MAX_NUMBER_OF_LFO);
+        ArrayUtil.strictAllocateCheck(lfoMacLong, MAX_NUMBER_OF_LFO);
 
         this._lfoMac = Math.toIntExact(lfoMacLong);
         _rgLfo = new LFO[_lfoMac];

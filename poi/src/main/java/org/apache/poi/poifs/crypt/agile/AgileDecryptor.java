@@ -49,6 +49,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.MathUtil;
 
 /**
  * Decryptor implementation for Agile Encryption
@@ -180,7 +181,7 @@ public class AgileDecryptor extends Decryptor {
     }
 
     protected static int getNextBlockSize(int inputLen, int blockSize) {
-        return (int)Math.ceil(inputLen / (double)blockSize) * blockSize;
+        return MathUtil.safeDoubleToInt(Math.ceil(inputLen / (double)blockSize) * blockSize);
     }
 
     /* package */ static byte[] hashInput(AgileEncryptionVerifier ver, byte[] pwHash, byte[] blockKey, byte[] inputKey, int cipherMode) {

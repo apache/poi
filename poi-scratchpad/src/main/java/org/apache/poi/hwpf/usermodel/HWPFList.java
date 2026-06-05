@@ -31,6 +31,7 @@ import org.apache.poi.hwpf.model.ListLevel;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
+import org.apache.poi.util.MathUtil;
 
 /**
  * This class is used to create a list in a Word document. It is used in
@@ -66,7 +67,7 @@ public final class HWPFList
     public HWPFList( boolean numbered, StyleSheet styleSheet )
     {
         _listData = new ListData(
-                (int) ( ThreadLocalRandom.current().nextDouble() * System.currentTimeMillis() ), numbered );
+                MathUtil.safeDoubleToInt( ThreadLocalRandom.current().nextDouble() * System.currentTimeMillis() ), numbered );
         _lfo = new LFO();
         _lfo.setLsid( _listData.getLsid() );
         _lfoData = new LFOData();

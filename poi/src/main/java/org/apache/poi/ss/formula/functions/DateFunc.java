@@ -25,6 +25,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 
 
 /**
@@ -43,7 +44,7 @@ public final class DateFunc extends Fixed3ArgFunction {
             double d0 = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
             double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
             double d2 = NumericFunction.singleOperandEvaluate(arg2, srcRowIndex, srcColumnIndex);
-            result = evaluate(getYear(d0), (int) (d1 - 1), (int) d2);
+            result = evaluate(getYear(d0), MathUtil.safeDoubleToInt(d1 - 1),  MathUtil.safeDoubleToInt(d2));
             NumericFunction.checkValue(result);
         } catch (EvaluationException e) {
             return e.getErrorEval();
@@ -101,7 +102,7 @@ public final class DateFunc extends Fixed3ArgFunction {
     }
 
     private static int getYear(double d) {
-        int year = (int)d;
+        int year = MathUtil.safeDoubleToInt(d);
 
         if (year < 0) {
             return -1;

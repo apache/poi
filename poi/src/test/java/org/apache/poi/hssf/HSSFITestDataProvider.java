@@ -28,6 +28,8 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+
 public final class HSSFITestDataProvider implements ITestDataProvider {
     public static final HSSFITestDataProvider instance = new HSSFITestDataProvider();
 
@@ -46,9 +48,7 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
 
     @Override
     public HSSFWorkbook writeOutAndReadBack(Workbook original) {
-        if(!(original instanceof HSSFWorkbook)) {
-            throw new IllegalArgumentException("Expected an instance of HSSFWorkbook");
-        }
+        assertInstanceOf(HSSFWorkbook.class, original, "Expected an instance of HSSFWorkbook");
         return HSSFTestDataSamples.writeOutAndReadBack((HSSFWorkbook)original);
     }
 

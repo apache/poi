@@ -23,10 +23,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
@@ -83,7 +83,8 @@ public final class WriteAccessRecord extends StandardRecord {
             if (in.isEncrypted()) {
                 // WPS Office seems to generate files with this record unencrypted (#66115)
                 // Libre Office/Excel can read those, but Excel will convert those back to encrypted
-                data = IOUtils.safelyAllocate(in.remaining(), STRING_SIZE);
+                ArrayUtil.strictAllocateCheck(in.remaining(), STRING_SIZE);
+                data = new byte[in.remaining()];
                 in.readPlain(data, 0, data.length);
                 int i = data.length;
                 // PAD_CHAR is filled for every byte even for UTF16 strings
@@ -97,7 +98,8 @@ public final class WriteAccessRecord extends StandardRecord {
                 // String header looks wrong (probably missing)
                 // OOO doc says this is optional anyway.
                 byteCnt = 3 + in.remaining();
-                data = IOUtils.safelyAllocate(byteCnt, DATA_SIZE);
+                ArrayUtil.strictAllocateCheck(byteCnt, DATA_SIZE);
+                data = new byte[byteCnt];
                 LittleEndian.putUShort(data, 0, nChars);
                 LittleEndian.putByte(data, 2, is16BitFlag);
                 in.readFully(data, 3, byteCnt-3);
@@ -105,7 +107,8 @@ public final class WriteAccessRecord extends StandardRecord {
             }
         } else {
             // the normal case ...
-            data = IOUtils.safelyAllocate(in.remaining(), STRING_SIZE);
+            ArrayUtil.strictAllocateCheck(in.remaining(), STRING_SIZE);
+            data = new byte[in.remaining()];
             in.readFully(data);
             if (UTF16FLAG.isSet(is16BitFlag)) {
                 // the spec only allows up to 109 bytes for the string in this record, but it seems some broken

@@ -224,7 +224,7 @@ public final class SlideShowDumper {
                 }
             }
 
-            pos += (int) Math.min(len, Integer.MAX_VALUE);
+            pos += Math.toIntExact(Math.min(len, Integer.MAX_VALUE));
         }
     }
 
@@ -238,7 +238,8 @@ public final class SlideShowDumper {
 
         final String ind = (indent == 0) ? "%1$s" : "%1$" + indent + "s";
 
-        byte[] contents = IOUtils.safelyClone(docstream, pos, len, MAX_RECORD_LENGTH);
+        byte[] contents = IOUtils.safelyClone(docstream, pos, len, MAX_RECORD_LENGTH,
+                "SlideShowDumper.setMaxRecordLength()");
         DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();
         EscherRecord record = erf.createRecord(contents, 0);
 

@@ -27,7 +27,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,6 +50,7 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusWrapMode;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusPath.EmfPlusPath;
+import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
 import org.apache.poi.sl.draw.DrawPaint;
@@ -356,7 +356,7 @@ public class HemfPlusBrush {
                 size += LittleEndianConsts.INT_SIZE;
             }
 
-            brushBytes = IOUtils.toByteArray(leis, Math.toIntExact(dataSize-size), MAX_OBJECT_SIZE);
+            brushBytes = IOUtils.toByteArray(leis, dataSize-size, MAX_OBJECT_SIZE);
 
             return dataSize;
         }
@@ -681,7 +681,7 @@ public class HemfPlusBrush {
             double[] end = DrawPaint.RGB2SCRGB(endColor);
 
             // compute the interpolated color in linear space
-            int a = (int)Math.round(startColor.getAlpha() + factor * (endColor.getAlpha() - startColor.getAlpha()));
+            int a = Math.toIntExact(Math.round(startColor.getAlpha() + factor * (endColor.getAlpha() - startColor.getAlpha())));
             double r = start[0] + factor * (end[0] - start[0]);
             double g = start[1] + factor * (end[1] - start[1]);
             double b = start[2] + factor * (end[2] - start[2]);
@@ -735,6 +735,7 @@ public class HemfPlusBrush {
 
             // An array of SurroundingColorCount EmfPlusARGB objects that specify the colors for discrete points on the
             // boundary of the brush.
+            HemfPicture.safelyAllocateCheck(colorCount);
             surroundingColor = new Color[colorCount];
             for (int i = 0; i < colorCount; i++) {
                 surroundingColor[i] = readARGB(leis.readInt());
@@ -757,6 +758,7 @@ public class HemfPlusBrush {
                 size += LittleEndianConsts.INT_SIZE;
 
                 // An array of BoundaryPointCount EmfPlusPointF objects that specify the boundary of the brush.
+                HemfPicture.safelyAllocateCheck(pointCount);
                 boundaryPoints = new Point2D[pointCount];
                 for (int i=0; i<pointCount; i++) {
                     size += readPointF(leis, boundaryPoints[i] = new Point2D.Double());
@@ -912,6 +914,7 @@ public class HemfPlusBrush {
         final int count = leis.readInt();
         int size = LittleEndianConsts.INT_SIZE;
 
+        HemfPicture.safelyAllocateCheck(count);
         float[] positions = new float[count];
         for (int i=0; i<count; i++) {
             positions[i] = leis.readFloat();

@@ -85,6 +85,7 @@ import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Configurator;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Removal;
 
 import static java.lang.System.currentTimeMillis;
@@ -2303,7 +2304,7 @@ public final class HSSFSheet implements Sheet {
             if (width > maxColumnWidth) {
                 width = maxColumnWidth;
             }
-            setColumnWidth(column, (int) (width));
+            setColumnWidth(column, MathUtil.safeDoubleToInt(width));
         }
     }
 

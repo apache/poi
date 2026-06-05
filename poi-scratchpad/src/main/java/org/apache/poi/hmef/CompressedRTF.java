@@ -22,9 +22,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.input.BoundedInputStream;
+import org.apache.commons.io.output.ThresholdingOutputStream;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LZWDecompresser;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.RecordFormatException;
 
 
 /**
@@ -52,6 +56,16 @@ public final class CompressedRTF extends LZWDecompresser {
       "\\fmodern \\fscript \\fdecor MS Sans SerifSymbolArialTimes New RomanCourier" +
       "{\\colortbl\\red0\\green0\\blue0\n\r\\par \\pard\\plain\\f0\\fs20\\b\\i\\u\\tab\\tx";
 
+   private static final int DEFAULT_MAX_RECORD_LENGTH = 50_000_000;
+   /**
+    * MS-OXRTFCP uses 8-item chunks per control byte. If the data ends mid-chunk,
+    * the remaining bits in the control byte are processed. If they are literal bits,
+    * they produce trailing literal bytes from the stream. A chunk can thus emit
+    * up to 7 bytes of padding beyond the declared uncompressed size.
+    */
+   private static final int MAX_PADDING_LENGTH = 7;
+   private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
    private int compressedSize;
    private int decompressedSize;
 
@@ -60,6 +74,20 @@ public final class CompressedRTF extends LZWDecompresser {
       // Length wise, we're 2 longer than we say, so the max len is 18
       // Endian wise, we're big endian, so 0x1234 is pos 0x123
       super(true, 2, true);
+   }
+
+   /**
+    * @param length the max decompressed record length allowed for CompressedRTF
+    */
+   public static void setMaxRecordLength(int length) {
+      MAX_RECORD_LENGTH = length;
+   }
+
+   /**
+    * @return the max decompressed record length allowed for CompressedRTF
+    */
+   public static int getMaxRecordLength() {
+      return MAX_RECORD_LENGTH;
    }
 
    /**
@@ -79,19 +107,28 @@ public final class CompressedRTF extends LZWDecompresser {
       /* int dataCRC = */ LittleEndian.readInt(src);
 
       // TODO - Handle CRC checking on the output side
+      ArrayUtil.safelyAllocateCheck(decompressedSize, MAX_RECORD_LENGTH, "CompressedRTF.setMaxRecordLength()");
 
       // Do we need to do anything?
       if(compressionType == UNCOMPRESSED_SIGNATURE_INT) {
          // Nope, nothing fancy to do
-         IOUtils.copy(src, res);
+         copyCompressedPayload(src, res);
       } else if(compressionType == COMPRESSED_SIGNATURE_INT) {
-         // We need to decompress it below
+         // We need to decompress it
+         int limit = decompressedSize + MAX_PADDING_LENGTH;
+         OutputStream limited = new ThresholdingOutputStream(limit,
+               stream -> { throw new RecordFormatException("Compressed RTF expands beyond declared size " + limit); },
+               stream -> res);
+         try (InputStream bounded = BoundedInputStream.builder()
+               .setInputStream(src)
+               .setMaxCount(getCompressedSize())
+               .setPropagateClose(false)
+               .get()) {
+            super.decompress(bounded, limited);
+         }
       } else {
          throw new IllegalArgumentException("Invalid compression signature " + compressionType);
       }
-
-      // Have it processed
-      super.decompress(src, res);
    }
 
    /**
@@ -127,4 +164,19 @@ public final class CompressedRTF extends LZWDecompresser {
      // Start adding new codes after the constants
      return preload.length;
    }
+
+   private void copyCompressedPayload(InputStream src, OutputStream res) throws IOException {
+      long remaining = getCompressedSize();
+      byte[] buffer = IOUtils.safelyAllocate(Math.min(8192L, remaining),
+              MAX_RECORD_LENGTH, "CompressedRTF.setMaxRecordLength()");
+      while (remaining > 0) {
+         int read = src.read(buffer, 0, Math.toIntExact(Math.min(buffer.length, remaining)));
+         if (read < 0) {
+            throw new IOException("Not enough data to read " + getCompressedSize() + " bytes of uncompressed RTF");
+         }
+         res.write(buffer, 0, read);
+         remaining -= read;
+      }
+   }
+
 }

@@ -35,7 +35,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.HexRead;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
@@ -389,7 +388,7 @@ public final class HyperlinkRecord extends StandardRecord {
 
                 int len = in.readInt();
 
-                byte[] path_bytes = IOUtils.safelyAllocate(len, HSSFWorkbook.getMaxRecordLength());
+                byte[] path_bytes = HSSFWorkbook.safelyAllocate(len);
                 in.readFully(path_bytes);
 
                 _address = new String(path_bytes, StringUtil.UTF8);

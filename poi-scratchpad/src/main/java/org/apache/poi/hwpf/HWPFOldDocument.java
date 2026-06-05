@@ -186,7 +186,8 @@ public class HWPFOldDocument extends HWPFDocumentCore {
         tpt = new OldTextPieceTable();
 
         byte[] textData = IOUtils.safelyClone(_mainStream, _fib.getFibBase().getFcMin(),
-              _fib.getFibBase().getFcMac()-_fib.getFibBase().getFcMin(), MAX_RECORD_LENGTH);
+              _fib.getFibBase().getFcMac()-_fib.getFibBase().getFcMin(),
+                MAX_RECORD_LENGTH, "HWPFOldDocument.setMaxRecordLength()");
 
         int numChars = textData.length;
         if (DoubleByteUtil.DOUBLE_BYTE_CHARSETS.contains(guessedCharset)) {

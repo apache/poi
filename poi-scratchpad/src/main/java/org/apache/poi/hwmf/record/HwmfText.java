@@ -216,7 +216,8 @@ public class HwmfText {
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             stringLength = leis.readShort();
-            rawTextBytes = IOUtils.safelyAllocate(stringLength+(long)(stringLength&1), MAX_RECORD_LENGTH);
+            rawTextBytes = IOUtils.safelyAllocate(stringLength+(long)(stringLength&1),
+                    MAX_RECORD_LENGTH, "HwmfText.setMaxRecordLength()");
             leis.readFully(rawTextBytes);
             // A 16-bit signed integer that defines the vertical (y-axis) coordinate, in logical
             // units, of the point where drawing is to start.
@@ -245,7 +246,8 @@ public class HwmfText {
          * This does not include the extra optional padding on the byte array.
          */
         private byte[] getTextBytes() {
-            return IOUtils.safelyClone(rawTextBytes, 0, stringLength, MAX_RECORD_LENGTH);
+            return IOUtils.safelyClone(rawTextBytes, 0, stringLength, MAX_RECORD_LENGTH,
+                    "HwmfText.setMaxRecordLength()");
         }
 
         @Override
@@ -426,7 +428,7 @@ public class HwmfText {
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             // -6 bytes of record function and length header
-            final int remainingRecordSize = (int)(recordSize-6);
+            final int remainingRecordSize = Math.toIntExact(recordSize-6);
 
             int size = readPointS(leis, reference);
 
@@ -440,7 +442,8 @@ public class HwmfText {
                 size += readRectS(leis, bounds);
             }
 
-            rawTextBytes = IOUtils.safelyAllocate(stringLength+(long)(stringLength&1), MAX_RECORD_LENGTH);
+            rawTextBytes = IOUtils.safelyAllocate(stringLength+(long)(stringLength&1), MAX_RECORD_LENGTH,
+                    "HwmfText.setMaxRecordLength()");
             leis.readFully(rawTextBytes);
             size += rawTextBytes.length;
 

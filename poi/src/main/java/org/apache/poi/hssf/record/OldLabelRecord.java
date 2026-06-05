@@ -24,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
 
 import static org.apache.logging.log4j.util.Unbox.box;
@@ -59,7 +58,7 @@ public final class OldLabelRecord extends OldCellRecord {
         }
 
         // Can only decode properly later when you know the codepage
-        field_5_bytes = IOUtils.safelyAllocate(field_4_string_len, HSSFWorkbook.getMaxRecordLength());
+        field_5_bytes = HSSFWorkbook.safelyAllocate(field_4_string_len);
         in.read(field_5_bytes, 0, field_4_string_len);
 
         if (in.remaining() > 0) {

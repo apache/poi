@@ -70,7 +70,8 @@ public final class Comment2000Atom extends RecordAtom {
         _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyClone(source, start+8, len-8, getMaxRecordLength());
+        _data = IOUtils.safelyClone(source, start+8, len-8, RecordAtom.getMaxRecordLength(),
+                "RecordAtom.setMaxRecordLength()");
     }
 
     /**

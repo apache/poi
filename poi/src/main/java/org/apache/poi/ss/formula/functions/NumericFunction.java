@@ -21,6 +21,7 @@ import static org.apache.poi.ss.formula.eval.ErrorEval.VALUE_INVALID;
 
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -91,7 +92,7 @@ public abstract class NumericFunction implements Function {
             double d1 = args.length == 1 ? 2.0 : singleOperandEvaluate(args[1], srcRowIndex, srcColumnIndex);
 
             // second arg converts to int by truncating toward zero
-            int nPlaces = (int)d1;
+            int nPlaces = MathUtil.safeDoubleToInt(d1);
 
             if (nPlaces > 127) {
                 return VALUE_INVALID;
@@ -146,7 +147,11 @@ public abstract class NumericFunction implements Function {
     public static final Function CEILING = twoDouble(MathX::ceiling);
 
     public static final Function COMBIN = twoDouble((d0, d1) ->
-        (d0 > Integer.MAX_VALUE || d1 > Integer.MAX_VALUE) ? ErrorEval.NUM_ERROR : MathX.nChooseK((int) d0, (int) d1));
+        (d0 > Integer.MAX_VALUE || d1 > Integer.MAX_VALUE) ?
+                ErrorEval.NUM_ERROR :
+                MathX.nChooseK(
+                        MathUtil.safeDoubleToInt(d0),
+                        MathUtil.safeDoubleToInt(d1)));
 
     public static final Function FLOOR = twoDouble((d0, d1) ->
         (d1 == ZERO) ? (d0 == ZERO ? ZERO : ErrorEval.DIV_ZERO) : MathX.floor(d0, d1));

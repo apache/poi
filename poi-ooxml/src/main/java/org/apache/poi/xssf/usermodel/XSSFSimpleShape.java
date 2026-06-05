@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.SimpleShape;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.xddf.usermodel.XDDFColor;
 import org.apache.poi.xddf.usermodel.XDDFColorRgbBinary;
 import org.apache.poi.xddf.usermodel.XDDFFillProperties;
@@ -984,7 +985,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
         }
 
         if (pr.sizeOfSzArray() > 0) {
-            int sz = (int) (pr.getSzArray(0).getVal() * 100);
+            int sz = MathUtil.safeDoubleToInt(pr.getSzArray(0).getVal() * 100);
             rPr.setSz(sz);
         }
 

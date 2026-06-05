@@ -45,6 +45,7 @@ import org.apache.poi.sl.draw.EmbeddedExtractor.EmbeddedPart;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.MathUtil;
 
 /**
  * An utility to convert slides of a .pptx slide show to a PNG image
@@ -296,8 +297,8 @@ public final class PPTX2PNG {
 
             final Dimension2D dim = new Dimension2DDouble();
             final double lenSide = getDimensions(proxy, dim);
-            final int width = Math.max((int)Math.rint(dim.getWidth()),1);
-            final int height = Math.max((int)Math.rint(dim.getHeight()),1);
+            final int width = Math.max(MathUtil.safeDoubleToInt(Math.rint(dim.getWidth())),1);
+            final int height = Math.max(MathUtil.safeDoubleToInt(Math.rint(dim.getHeight())),1);
 
             try (OutputFormat outputFormat = getOutput()) {
                 for (int slideNo : slidenum) {

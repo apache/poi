@@ -65,7 +65,8 @@ public class PICFAndOfficeArtData {
             short _cchPicName = LittleEndian.getUByte(dataStream, offset);
             offset += 1;
 
-            _stPicName = IOUtils.safelyClone(dataStream, offset, _cchPicName, HWPFDocument.getMaxRecordLength());
+            _stPicName = IOUtils.safelyClone(dataStream, offset, _cchPicName, HWPFDocument.getMaxRecordLength(),
+                    "HWPFDocument.setMaxRecordLength()");
             offset += _cchPicName;
         }
 

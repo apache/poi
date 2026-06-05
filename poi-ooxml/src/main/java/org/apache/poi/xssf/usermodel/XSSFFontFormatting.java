@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FontFormatting;
 import org.apache.poi.ss.usermodel.FontUnderline;
+import org.apache.poi.util.MathUtil;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -136,7 +137,7 @@ public class XSSFFontFormatting implements FontFormatting {
         if(_font.sizeOfSzArray() == 0) return -1;
 
         CTFontSize sz = _font.getSzArray(0);
-        return (int)(20*sz.getVal());
+        return MathUtil.safeDoubleToInt(20*sz.getVal());
     }
 
     /**

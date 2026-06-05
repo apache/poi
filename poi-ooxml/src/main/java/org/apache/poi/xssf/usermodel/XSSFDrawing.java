@@ -45,6 +45,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.Comments;
 import org.apache.xmlbeans.XmlCursor;
@@ -566,8 +567,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         for (int row = anchor.getRow1(); row < anchor.getRow2(); row++) {
             heightPx += ImageUtils.getRowHeightInPixels(sheet, row);
         }
-        long width = Units.pixelToEMU((int) widthPx);
-        long height = Units.pixelToEMU((int) heightPx);
+        long width = Units.pixelToEMU(MathUtil.safeDoubleToInt(widthPx));
+        long height = Units.pixelToEMU(MathUtil.safeDoubleToInt(heightPx));
         CTPositiveSize2D ext = xfrm.addNewExt();
         ext.setCx(width - anchor.getDx1() + anchor.getDx2());
         ext.setCy(height - anchor.getDy1() + anchor.getDy2());
