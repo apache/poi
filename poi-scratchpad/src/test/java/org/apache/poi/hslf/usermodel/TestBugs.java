@@ -226,7 +226,11 @@ public final class TestBugs {
             for (HSLFSlide slide : ppt.getSlides()) {
                 HSLFMasterSheet master = slide.getMasterSheet();
                 // the first slide follows TitleMaster
-                assertTrue(isFirst ? master instanceof HSLFTitleMaster : master instanceof HSLFSlideMaster);
+                if (isFirst) {
+                    assertInstanceOf(HSLFTitleMaster.class, master);
+                } else {
+                    assertInstanceOf(HSLFSlideMaster.class, master);
+                }
                 isFirst = false;
             }
         }

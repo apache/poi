@@ -38,11 +38,10 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusRelativePosition;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
-import org.apache.poi.hwmf.usermodel.HwmfPicture;
+import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -121,7 +120,10 @@ public class HemfPlusPath {
                 readPoint = HemfPlusDraw::readPointF;
             }
 
-            IOUtils.safelyAllocateCheck(pointCount, HwmfPicture.getMaxRecordLength());
+            // pointCount is an untrusted 32-bit field that is used as the length of both arrays below.
+            // Reject negative and oversized values before allocating, so a malformed path can't trigger
+            // a NegativeArraySizeException or an OutOfMemoryError instead of the usual RecordFormatException.
+            HemfPicture.safelyAllocateCheck(pointCount);
             pathPoints = new Point2D[pointCount];
             for (int i=0; i<pointCount; i++) {
                 pathPoints[i] = new Point2D.Double();

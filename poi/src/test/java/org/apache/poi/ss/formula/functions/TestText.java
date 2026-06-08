@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DateFormatSymbols;
@@ -297,15 +298,15 @@ final class TestText {
         ValueEval[] args = { valueArg, formatArg };
         ValueEval result = TextFunction.TEXT.evaluate(args, -1, -1);
 
-        assertTrue(result instanceof StringEval, "Expected StringEval got " + result.getClass().getSimpleName());
-        assertEquals(expectedResult, ((StringEval) result).getStringValue());
+        StringEval stringEval = assertInstanceOf(StringEval.class, result, () -> "Expected StringEval got " + result.getClass().getSimpleName());
+        assertEquals(expectedResult, stringEval.getStringValue());
     }
 
     private void testText(ValueEval valueArg, ValueEval formatArg, ErrorEval expectedResult) {
         ValueEval[] args = { valueArg, formatArg };
         ValueEval result = TextFunction.TEXT.evaluate(args, -1, -1);
 
-        assertTrue(result instanceof ErrorEval, "Expected ErrorEval got " + result.getClass().getSimpleName());
+        assertInstanceOf(ErrorEval.class, result, () -> "Expected ErrorEval got " + result.getClass().getSimpleName());
         assertEquals(expectedResult, result);
     }
 }

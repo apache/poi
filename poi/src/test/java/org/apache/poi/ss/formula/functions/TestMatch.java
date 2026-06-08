@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -53,8 +54,7 @@ final class TestMatch {
     }
 
     private static void confirmInt(int expected, ValueEval actualEval) {
-        assertTrue(actualEval instanceof NumericValueEval, "Expected numeric result but had " + actualEval);
-        NumericValueEval nve = (NumericValueEval)actualEval;
+        NumericValueEval nve = assertInstanceOf(NumericValueEval.class, actualEval, () -> "Expected numeric result but had " + actualEval);
         assertEquals(expected, nve.getNumberValue(), 0);
     }
 

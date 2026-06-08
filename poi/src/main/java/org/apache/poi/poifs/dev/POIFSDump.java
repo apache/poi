@@ -126,7 +126,9 @@ public final class POIFSDump {
         try (OutputStream out = Files.newOutputStream(file.toPath())) {
             POIFSStream stream = new POIFSStream(fs, startBlock);
 
-            byte[] b = IOUtils.safelyAllocate(fs.getBigBlockSize(), POIFSFileSystem.getMaxRecordLength());
+            byte[] b = IOUtils.safelyAllocate(fs.getBigBlockSize(),
+                    POIFSFileSystem.getMaxRecordLength(),
+                    "POIFSFileSystem.setMaxRecordLength()");
             for (ByteBuffer bb : stream) {
                 int len = bb.remaining();
                 bb.get(b);

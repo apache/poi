@@ -40,7 +40,7 @@ import org.apache.poi.hemf.record.emf.HemfRecord.RenderBounds;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecordIterator;
 import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
-import org.apache.poi.hwmf.usermodel.HwmfPicture;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
@@ -56,6 +56,27 @@ import org.apache.poi.util.RecordFormatException;
 @Internal
 public class HemfComment {
     private static final Logger LOG = PoiLogManager.getLogger(HemfComment.class);
+    /** Max. record length - processing longer records will throw an exception */
+    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+    /**
+     * @param length the max record length allowed for HemfComment
+     */
+    public static void setMaxRecordLength(int length) {
+        MAX_RECORD_LENGTH = length;
+    }
+
+    /**
+     * @return the max record length allowed for HemfComment
+     */
+    public static int getMaxRecordLength() {
+        return MAX_RECORD_LENGTH;
+    }
+
+    public static void safelyAllocateCheck(long length) {
+        ArrayUtil.safelyAllocateCheck(length, getMaxRecordLength(), "HemfComment.setMaxRecordLength()");
+    }
 
     public enum HemfCommentRecordType {
         emfGeneric(-1, EmfCommentDataGeneric::new, false),
@@ -286,7 +307,8 @@ public class HemfComment {
 
         @Override
         public long init(LittleEndianInputStream leis, long dataSize) throws IOException {
-            privateData = IOUtils.safelyAllocate(dataSize, HwmfPicture.getMaxRecordLength());
+            privateData = IOUtils.safelyAllocate(dataSize, getMaxRecordLength(),
+                    "HemfComment.setMaxRecordLength()");
             leis.readFully(privateData);
             return privateData.length;
         }
@@ -388,7 +410,8 @@ public class HemfComment {
             // The number of Unicode characters in the optional description string that follows.
             int nDescription = Math.toIntExact(leis.readUInt());
 
-            byte[] buf = IOUtils.safelyAllocate(nDescription * 2L, HwmfPicture.getMaxRecordLength());
+            byte[] buf = IOUtils.safelyAllocate(nDescription * 2L, getMaxRecordLength(),
+                    "HemfComment.setMaxRecordLength()");
             leis.readFully(buf);
             description = new String(buf, StandardCharsets.UTF_16LE);
 
@@ -463,7 +486,8 @@ public class HemfComment {
             for (EmfCommentDataFormat fmt : formats) {
                 int skip = fmt.offData-(leis.getReadIndex()-startIdx);
                 leis.skipFully(skip);
-                fmt.rawData = IOUtils.safelyAllocate(fmt.sizeData, HwmfPicture.getMaxRecordLength());
+                fmt.rawData = IOUtils.safelyAllocate(fmt.sizeData, getMaxRecordLength(),
+                        "HemfComment.setMaxRecordLength()");
                 int readBytes = leis.read(fmt.rawData);
                 if (readBytes < fmt.sizeData) {
                     // EOF
@@ -605,7 +629,8 @@ public class HemfComment {
             // WMF metafile in the WinMetafile field.
             int winMetafileSize = Math.toIntExact(leis.readUInt());
 
-            wmfData = IOUtils.safelyAllocate(winMetafileSize, HwmfPicture.getMaxRecordLength());
+            wmfData = IOUtils.safelyAllocate(winMetafileSize, getMaxRecordLength(),
+                    "HemfComment.setMaxRecordLength()");
             // some emf comments are truncated, so we don't use readFully here
             int readBytes = leis.read(wmfData);
             if (readBytes < wmfData.length) {

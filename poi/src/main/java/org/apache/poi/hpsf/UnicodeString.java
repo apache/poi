@@ -51,7 +51,8 @@ public class UnicodeString {
         } catch (ArithmeticException e) {
             throw new RecordFormatException("Invalid unicode length", e);
         }
-        _value = IOUtils.safelyAllocate(unicodeBytes, CodePageString.getMaxRecordLength());
+        _value = IOUtils.safelyAllocate(unicodeBytes, CodePageString.getMaxRecordLength(),
+                "CodePageString.setMaxRecordLength()");
         
         // If Length is zero, this field MUST be zero bytes in length. If Length is
         // nonzero, this field MUST be a null-terminated array of 16-bit Unicode characters, followed by

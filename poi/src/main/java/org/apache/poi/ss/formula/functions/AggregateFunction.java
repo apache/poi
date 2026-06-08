@@ -49,7 +49,7 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
                 return ErrorEval.NUM_ERROR;
             }
             // all other values are rounded up to the next integer
-            int k = (int) Math.ceil(dn);
+            int k = MathUtil.safeDoubleToInt(Math.ceil(dn));
 
             double result;
             try {

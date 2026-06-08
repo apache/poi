@@ -45,7 +45,7 @@ public class Blob {
 
     public void read( LittleEndianInput lei ) {
         int size = lei.readInt();
-        _value = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+        _value = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH, "Blob.setMaxRecordLength()");
         if ( size > 0 ) {
             lei.readFully(_value);
         }

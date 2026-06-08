@@ -141,6 +141,8 @@
         <section>
             <title>XOR/RC4 decryption for xls</title>
             <source><![CDATA[
+                // set password before opening the file - note that this is a ThreadLocal and needs to be
+                // reset to null after you are done with the file
                 Biff8EncryptionKey.setCurrentUserPassword("pass");
                 POIFSFileSystem fs = new POIFSFileSystem(new File("file.xls"), true);
                 HSSFWorkbook hwb = new HSSFWorkbook(fs.getRoot(), true);
@@ -151,6 +153,8 @@
         <section>
             <title>RC4 CryptoApi support ppt - decryption</title>
             <source><![CDATA[
+                // set password before opening the file - note that this is a ThreadLocal and needs to be
+                // reset to null after you are done with the file
                 Biff8EncryptionKey.setCurrentUserPassword("pass");
                 POIFSFileSystem fs = new POIFSFileSystem(new File("file.ppt"), true);
                 HSLFSlideShow hss = new HSLFSlideShow(fs);

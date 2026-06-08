@@ -53,7 +53,8 @@ public final class SprmBuffer implements Duplicatable {
     }
 
     public SprmBuffer(int sprmsStartOffset) {
-        _buf = IOUtils.safelyAllocate(sprmsStartOffset + 4L, SprmUtils.MAX_RECORD_LENGTH);
+        _buf = IOUtils.safelyAllocate(sprmsStartOffset + 4L, SprmUtils.MAX_RECORD_LENGTH,
+                "SprmUtils.setMaxRecordLength()");
         _offset = sprmsStartOffset;
         _sprmsStartOffset = sprmsStartOffset;
     }
@@ -115,7 +116,8 @@ public final class SprmBuffer implements Duplicatable {
             // commented - buffer shall not contain any additional bytes --
             // sergey
             // byte[] newBuf = new byte[_offset + addition + 6];
-            IOUtils.safelyAllocateCheck(_offset + (long)addition, SprmUtils.MAX_RECORD_LENGTH);
+            IOUtils.safelyAllocateCheck(_offset + (long)addition, SprmUtils.MAX_RECORD_LENGTH,
+                    "SprmUtils.setMaxRecordLength()");
             _buf = Arrays.copyOf(_buf, _offset + addition);
         }
     }

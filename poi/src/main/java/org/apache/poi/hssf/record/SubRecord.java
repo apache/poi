@@ -167,7 +167,8 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
 
         public UnknownSubRecord(LittleEndianInput in, int size, int sid) {
             _sid = sid;
-            byte[] buf = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+            byte[] buf = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH,
+                    "SubRecord.setMaxRecordLength");
             in.readFully(buf);
             _data = buf;
         }

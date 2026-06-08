@@ -122,7 +122,8 @@ public final class FileInformationBlock {
 
             // first short is already read as _nFibNew
             final int fibRgCswNewLength = ( _cswNew - 1 ) * LittleEndianConsts.SHORT_SIZE;
-            _fibRgCswNew = IOUtils.safelyClone(mainDocument, offset, fibRgCswNewLength, HWPFDocument.getMaxRecordLength());
+            _fibRgCswNew = IOUtils.safelyClone(mainDocument, offset, fibRgCswNewLength,
+                    HWPFDocument.getMaxRecordLength(), "HWPFDocument.setMaxRecordLength()");
         }
         else
         {

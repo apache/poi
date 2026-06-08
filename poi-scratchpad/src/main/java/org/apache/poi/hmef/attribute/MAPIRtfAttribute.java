@@ -35,7 +35,16 @@ import org.apache.poi.util.StringUtil;
 public final class MAPIRtfAttribute extends MAPIAttribute {
 
    //arbitrarily selected; may need to increase
-   private static final int MAX_RECORD_LENGTH = 50_000_000;
+   private static final int DEFAULT_MAX_RECORD_LENGTH = 50_000_000;
+   private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+
+   public static void setMaxRecordLength(int length) {
+      MAX_RECORD_LENGTH = length;
+   }
+
+   public static int getMaxRecordLength() {
+      return MAX_RECORD_LENGTH;
+   }
 
    private final byte[] decompressed;
    private final String data;
@@ -51,7 +60,8 @@ public final class MAPIRtfAttribute extends MAPIAttribute {
       }
 
       if(tmp.length > rtf.getDeCompressedSize()) {
-         this.decompressed = IOUtils.safelyClone(tmp, 0, rtf.getDeCompressedSize(), MAX_RECORD_LENGTH);
+         this.decompressed = IOUtils.safelyClone(tmp, 0, rtf.getDeCompressedSize(),
+                 MAX_RECORD_LENGTH, "MAPIRtfAttribute.setMaxRecordLength()");
       } else {
          this.decompressed = tmp;
       }

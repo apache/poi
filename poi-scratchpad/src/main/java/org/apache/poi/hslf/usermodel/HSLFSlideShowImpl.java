@@ -536,7 +536,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                     }
 
                     // Copy the data, ready to pass to PictureData
-                    byte[] imgdata = IOUtils.safelyClone(pictstream, pos, imgsize, MAX_RECORD_LENGTH);
+                    byte[] imgdata = IOUtils.safelyClone(pictstream, pos, imgsize, MAX_RECORD_LENGTH,
+                            "HSLFSlideShowImpl.setMaxRecordLength()");
 
                     factories.add(new PictureFactory(blipStore, pt, imgdata, offset, signature));
                 }

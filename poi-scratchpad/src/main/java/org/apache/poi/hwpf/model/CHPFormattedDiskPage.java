@@ -119,7 +119,8 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage {
 
         int size = LittleEndian.getUByte(_fkp, _offset + chpxOffset);
 
-        return IOUtils.safelyClone(_fkp, _offset + chpxOffset + 1, size, HWPFDocument.getMaxRecordLength());
+        return IOUtils.safelyClone(_fkp, _offset + chpxOffset + 1, size, HWPFDocument.getMaxRecordLength(),
+                "HWPFDocument.setMaxRecordLength()");
     }
 
     protected byte[] toByteArray( CharIndexTranslator translator )

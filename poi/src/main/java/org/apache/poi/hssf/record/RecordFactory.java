@@ -199,7 +199,8 @@ public final class RecordFactory {
         while ((record = recStream.nextRecord()) != null) {
             records.add(record);
 
-            IOUtils.safelyAllocateCheck(records.size(), MAX_NUMBER_OF_RECORDS);
+            IOUtils.safelyAllocateCheck(records.size(), MAX_NUMBER_OF_RECORDS,
+                    "RecordFactory.setMaxNumberOfRecords");
         }
 
         return records;

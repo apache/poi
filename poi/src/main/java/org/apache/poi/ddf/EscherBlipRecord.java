@@ -64,7 +64,8 @@ public class EscherBlipRecord extends EscherRecord {
         int bytesAfterHeader = readHeader( data, offset );
         int pos              = offset + HEADER_SIZE;
 
-        field_pictureData = IOUtils.safelyClone(data, pos, bytesAfterHeader, MAX_RECORD_LENGTH);
+        field_pictureData = IOUtils.safelyClone(data, pos, bytesAfterHeader, MAX_RECORD_LENGTH,
+                "EscherBlipRecord.setMaxRecordLength()");
         return bytesAfterHeader + 8;
     }
 
@@ -121,7 +122,8 @@ public class EscherBlipRecord extends EscherRecord {
         if (pictureData == null || offset < 0 || length < 0 || pictureData.length < offset+length) {
             throw new IllegalArgumentException("picture data can't be null");
         }
-        field_pictureData = IOUtils.safelyClone(pictureData, offset, length, MAX_RECORD_LENGTH);
+        field_pictureData = IOUtils.safelyClone(pictureData, offset, length, MAX_RECORD_LENGTH,
+                "EscherBlipRecord.setMaxRecordLength()");
     }
 
     @Override

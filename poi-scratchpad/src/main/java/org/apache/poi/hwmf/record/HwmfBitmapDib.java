@@ -262,14 +262,16 @@ public class HwmfBitmapDib implements GenericRecord {
             headerCompression == Compression.BI_CMYK) {
             int fileSize = Math.toIntExact(
                     Math.min(introSize + bodySize, recordSize));
-            imageData = IOUtils.safelyAllocate(fileSize, HwmfPicture.getMaxRecordLength());
+            imageData = IOUtils.safelyAllocate(fileSize, HwmfPicture.getMaxRecordLength(),
+                    "HwmfPicture.setMaxRecordLength()");
             leis.readFully(imageData, 0, introSize);
             leis.skipFully(recordSize-fileSize);
             // emfs are sometimes truncated, read as much as possible
             int readBytes = leis.read(imageData, introSize, fileSize-introSize);
             return introSize+(recordSize-fileSize)+readBytes;
         } else {
-            imageData = IOUtils.safelyAllocate(recordSize, HwmfPicture.getMaxRecordLength());
+            imageData = IOUtils.safelyAllocate(recordSize, HwmfPicture.getMaxRecordLength(),
+                    "HwmfPicture.setMaxRecordLength()");
             leis.readFully(imageData);
             return recordSize;
         }
@@ -364,13 +366,13 @@ public class HwmfBitmapDib implements GenericRecord {
             return 0;
         case BI_BITCOUNT_1:
             // 2 colors
-            return readRGBQuad(leis, (int)(headerColorUsed == 0 ? 2 : Math.min(headerColorUsed,2)));
+            return readRGBQuad(leis, headerColorUsed == 0 ? 2 : Math.toIntExact(Math.min(headerColorUsed,2)));
         case BI_BITCOUNT_2:
             // 16 colors
-            return readRGBQuad(leis, (int)(headerColorUsed == 0 ? 16 : Math.min(headerColorUsed,16)));
+            return readRGBQuad(leis, headerColorUsed == 0 ? 16 : Math.toIntExact(Math.min(headerColorUsed,16)));
         case BI_BITCOUNT_3:
             // 256 colors
-            return readRGBQuad(leis, (int)(headerColorUsed == 0 ? 256 : Math.min(headerColorUsed,256)));
+            return readRGBQuad(leis, headerColorUsed == 0 ? 256 : Math.toIntExact(Math.min(headerColorUsed,256)));
         case BI_BITCOUNT_4:
             switch (headerCompression) {
             case BI_RGB:
@@ -458,7 +460,7 @@ public class HwmfBitmapDib implements GenericRecord {
         }
 
         // sometimes there are missing bytes after the imageData which will be 0-filled
-        int imageSize = (int)Math.max(imageData.length, introSize+headerImageSize);
+        int imageSize = Math.toIntExact(Math.max(imageData.length, introSize + headerImageSize));
 
         // create the image data and leave the parsing to the ImageIO api
         byte[] buf = IOUtils.safelyAllocate(BMP_HEADER_SIZE + (long)imageSize, HwmfPicture.getMaxRecordLength());

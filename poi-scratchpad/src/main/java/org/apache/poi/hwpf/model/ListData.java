@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.MathUtil;
 
 @Internal
 public final class ListData
@@ -118,7 +119,7 @@ public final class ListData
 
     int resetListID()
     {
-        _lstf.setLsid( (int) ( ThreadLocalRandom.current().nextDouble() * System.currentTimeMillis() ) );
+        _lstf.setLsid( MathUtil.safeDoubleToInt( ThreadLocalRandom.current().nextDouble() * System.currentTimeMillis() ) );
         return _lstf.getLsid();
     }
 

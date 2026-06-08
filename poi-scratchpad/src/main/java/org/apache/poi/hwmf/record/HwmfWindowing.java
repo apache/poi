@@ -37,9 +37,11 @@ import java.util.function.Supplier;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -741,7 +743,8 @@ public class HwmfWindowing {
             bounds.setRect(left, top, right-left, bottom-top);
 
             int size = 9*LittleEndianConsts.SHORT_SIZE+LittleEndianConsts.INT_SIZE;
-
+            IOUtils.safelyAllocateCheck(scanCount, HwmfPicture.getMaxRecordLength(),
+                    "HwmfPicture.setMaxRecordLength()");
             scanObjects = new WmfScanObject[scanCount];
             for (int i=0; i<scanCount; i++) {
                 size += (scanObjects[i] = new WmfScanObject()).init(leis);

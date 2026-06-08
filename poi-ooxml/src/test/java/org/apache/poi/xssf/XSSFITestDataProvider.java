@@ -26,6 +26,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+
 public final class XSSFITestDataProvider implements ITestDataProvider {
     public static final XSSFITestDataProvider instance = new XSSFITestDataProvider();
 
@@ -40,9 +42,7 @@ public final class XSSFITestDataProvider implements ITestDataProvider {
 
     @Override
     public XSSFWorkbook writeOutAndReadBack(Workbook original) {
-        if(!(original instanceof XSSFWorkbook)) {
-            throw new IllegalArgumentException("Expected an instance of XSSFWorkbook, but had " + original.getClass());
-        }
+        assertInstanceOf(XSSFWorkbook.class, original, "Expected an instance of XSSFWorkbook");
         return XSSFTestDataSamples.writeOutAndReadBack((XSSFWorkbook)original);
     }
 

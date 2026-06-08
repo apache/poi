@@ -144,7 +144,8 @@ public final class PICT extends Metafile {
 
         byte[] checksum = getChecksum(data);
         long rawDataSize = calcRawDataSize(getUIDInstanceCount(), checksum.length, header.getSize(), compressed.length);
-        byte[] rawData = IOUtils.safelyAllocate(rawDataSize, getMaxRecordLength());
+        byte[] rawData = IOUtils.safelyAllocate(rawDataSize, Metafile.getMaxRecordLength(),
+                "Metafile.setMaxRecordLength()");
         int offset = 0;
 
         System.arraycopy(checksum, 0, rawData, offset, checksum.length);

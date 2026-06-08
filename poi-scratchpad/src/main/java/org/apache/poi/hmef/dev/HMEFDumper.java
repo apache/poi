@@ -156,7 +156,8 @@ public final class HMEFDumper {
                   thisLen = len - offset;
                }
 
-               byte[] data = IOUtils.safelyClone(attr.getData(), offset, thisLen, MAX_RECORD_LENGTH);
+               byte[] data = IOUtils.safelyClone(attr.getData(), offset, thisLen, MAX_RECORD_LENGTH,
+                       "HMEFDumper.setMaxRecordLength()");
 
                System.out.print(
                      indent + HexDump.dump(data, 0, 0)

@@ -49,11 +49,13 @@ public class StreamStore { // TODO - instantiable superclass
      * Creates a new, non compressed Stream Store
      */
     protected StreamStore(byte[] data, int offset, int length) {
-        contents = IOUtils.safelyClone(data, offset, length, MAX_RECORD_LENGTH);
+        contents = IOUtils.safelyClone(data, offset, length, MAX_RECORD_LENGTH,
+                "StreamStore.setMaxRecordLength()");
     }
 
     protected void prependContentsWith(byte[] b) {
-        byte[] newContents = IOUtils.safelyAllocate(contents.length + (long)b.length, MAX_RECORD_LENGTH);
+        byte[] newContents = IOUtils.safelyAllocate(contents.length + (long)b.length,
+                MAX_RECORD_LENGTH, "StreamStore.setMaxRecordLength()");
         System.arraycopy(b, 0, newContents, 0, b.length);
         System.arraycopy(contents, 0, newContents, b.length, contents.length);
         contents = newContents;

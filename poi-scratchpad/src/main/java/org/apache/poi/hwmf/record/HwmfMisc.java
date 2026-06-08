@@ -532,7 +532,7 @@ public class HwmfMisc {
             case BS_HATCHED:
             case BS_PATTERN:
                 patternDib = new HwmfBitmapDib();
-                size += patternDib.init(leis, (int)(recordSize-6-size));
+                size += patternDib.init(leis, Math.toIntExact(recordSize-6-size));
                 break;
             case BS_INDEXED:
             case BS_DIBPATTERN8X8:

@@ -78,11 +78,13 @@ public final class QuillContents extends HPBFPart {
                     throw new RecordFormatException(
                             "QuillContents bit offset " + fromU + " exceeds Integer.MAX_VALUE");
                 }
-                IOUtils.safelyAllocateCheck(lenU, EscherPart.getMaxRecordLength());
+                IOUtils.safelyAllocateCheck(lenU, EscherPart.getMaxRecordLength(),
+                        "EscherPart.setMaxRecordLength()");
                 int from = Math.toIntExact(fromU);
                 int len  = Math.toIntExact(lenU);
 
-                byte[] bitData = IOUtils.safelyClone(data, from, len, EscherPart.getMaxRecordLength());
+                byte[] bitData = IOUtils.safelyClone(data, from, len, EscherPart.getMaxRecordLength(),
+                        "EscherPart.setMaxRecordLength()");
 
                 // Create
                 if(bitType.equals("TEXT")) {
