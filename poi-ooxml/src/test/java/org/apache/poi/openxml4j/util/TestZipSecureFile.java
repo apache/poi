@@ -19,11 +19,19 @@ package org.apache.poi.openxml4j.util;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -100,5 +108,27 @@ class TestZipSecureFile {
         } finally {
             ZipSecureFile.setMaxFileCount(ZipSecureFile.DEFAULT_MAX_FILE_COUNT);
         }
+    }
+
+    @Test
+    void testConstructorExceptionReleasesFileHandle() throws Exception {
+        File tempFile = TempFile.createTempFile("duplicate-entries", ".zip");
+        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(tempFile)) {
+            ZipArchiveEntry entry1 = new ZipArchiveEntry("test.txt");
+            zos.putArchiveEntry(entry1);
+            zos.write("hello".getBytes(StandardCharsets.UTF_8));
+            zos.closeArchiveEntry();
+
+            ZipArchiveEntry entry2 = new ZipArchiveEntry("test.txt");
+            zos.putArchiveEntry(entry2);
+            zos.write("world".getBytes(StandardCharsets.UTF_8));
+            zos.closeArchiveEntry();
+        }
+
+        // The constructor should throw an IOException (specifically InvalidZipException)
+        assertThrows(IOException.class, () -> new ZipSecureFile(tempFile));
+
+        // If the file descriptor was correctly closed, we should be able to delete the file
+        assertTrue(tempFile.delete(), "Temporary file should be successfully deleted after constructor failure");
     }
 }
