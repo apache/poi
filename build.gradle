@@ -84,7 +84,7 @@ ant.taskdef(name: "junit",
 
 
 wrapper {
-    gradleVersion = '8.14.3'
+    gradleVersion = '8.14.4'
 }
 
 group = 'org.apache.poi'
