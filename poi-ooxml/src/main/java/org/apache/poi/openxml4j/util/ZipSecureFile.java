@@ -210,7 +210,12 @@ public class ZipSecureFile extends ZipFile {
     public ZipSecureFile(File file) throws IOException {
         super(file);
         this.fileName = file.getAbsolutePath();
-        validateEntryNames();
+        try {
+            validateEntryNames();
+        } catch (IOException | RuntimeException | Error e) {
+            super.close();
+            throw e;
+        }
     }
 
     /**
@@ -220,7 +225,12 @@ public class ZipSecureFile extends ZipFile {
     public ZipSecureFile(String name) throws IOException {
         super(name);
         this.fileName = new File(name).getAbsolutePath();
-        validateEntryNames();
+        try {
+            validateEntryNames();
+        } catch (IOException | RuntimeException | Error e) {
+            super.close();
+            throw e;
+        }
     }
 
     /**

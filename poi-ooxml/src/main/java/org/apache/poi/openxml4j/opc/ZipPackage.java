@@ -591,7 +591,7 @@ public final class ZipPackage extends OPCPackage {
             } finally {
                 // Either the save operation succeed or not, we delete the temporary file
                 if (!tempFile.delete()) {
-                    LOG.atWarn().log("The temporary file: '{}' cannot be deleted ! Make sure that no other application use it.", targetFile.getAbsolutePath());
+                    LOG.atWarn().log("The temporary file: '{}' cannot be deleted ! Make sure that no other application use it.", tempFile.getAbsolutePath());
                 }
             }
         }
