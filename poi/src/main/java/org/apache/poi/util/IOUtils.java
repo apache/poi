@@ -747,6 +747,15 @@ public final class IOUtils {
         return file;
     }
 
+    /**
+     * Replaces Windows Style `\` chars with `/` to allow path comparisons.
+     *
+     * @since 6.0.0
+     */
+    public static String normalizePath(final String path) {
+        return path == null ? path : path.replace('\\', '/');
+    }
+
     private static void throwRFE(long length, int maxLength) {
         throwRFE(length, maxLength, "IOUtils.setByteArrayMaxOverride()");
     }

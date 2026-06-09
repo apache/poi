@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.util.IOUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.function.Executable;
@@ -340,7 +341,7 @@ public class TestAllFiles {
         if (msg == null) return null;
 
         // Windows path replacement
-        msg = msg.replace('\\', '/');
+        msg = IOUtils.normalizePath(msg);
 
         // Adjust file paths to remove unwanted file path info.
         int filePathIndex = msg.indexOf(ROOT_DIR.toString());

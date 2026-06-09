@@ -33,6 +33,7 @@ import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.poi.util.IOUtils;
 import org.opentest4j.AssertionFailedError;
 
 public class StressMap {
@@ -48,7 +49,7 @@ public class StressMap {
 
     public List<FileHandlerKnown> getHandler(String file) {
         // ... failures/handlers lookup doesn't work on windows otherwise
-        final String uniFile = file.replace('\\', '/');
+        final String uniFile = IOUtils.normalizePath(file);
 
         String firstHandler = handlerMap.entrySet().stream()
             .filter(me -> uniFile.endsWith(me.getKey()))
@@ -62,7 +63,7 @@ public class StressMap {
 
     public ExcInfo getExcInfo(String file, String testName, FileHandlerKnown handler) {
         // ... failures/handlers lookup doesn't work on windows otherwise
-        final String uniFile = file.replace('\\', '/');
+        final String uniFile = IOUtils.normalizePath(file);
 
         return exMap.get(uniFile).stream()
             .filter(e -> e.isMatch(testName, handler.name()))

@@ -22,6 +22,7 @@ import java.util.Enumeration;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.poi.util.IOUtils;
 
 /**
  * A ZipEntrySource wrapper around a ZipFile.
@@ -66,7 +67,7 @@ public class ZipFileZipEntrySource implements ZipEntrySource {
 
     @Override
     public ZipArchiveEntry getEntry(final String path) {
-        String normalizedPath = path.replace('\\', '/');
+        String normalizedPath = IOUtils.normalizePath(path);
 
         final ZipArchiveEntry entry = zipArchive.getEntry(normalizedPath);
         if (entry != null) {
@@ -77,7 +78,7 @@ public class ZipFileZipEntrySource implements ZipEntrySource {
         final Enumeration<ZipArchiveEntry> zipArchiveEntryEnumeration = zipArchive.getEntries();
         while (zipArchiveEntryEnumeration.hasMoreElements()) {
             ZipArchiveEntry ze = zipArchiveEntryEnumeration.nextElement();
-            if (normalizedPath.equalsIgnoreCase(ze.getName().replace('\\', '/'))) {
+            if (normalizedPath.equalsIgnoreCase(IOUtils.normalizePath(ze.getName()))) {
                 return ze;
             }
         }
