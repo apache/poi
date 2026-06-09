@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Provides a way to get at all the ZipEntries
@@ -106,7 +107,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
             if (name == null || name.isEmpty()) {
                 throw new InvalidZipException("Input file contains an entry with an empty name");
             }
-            name = name.replace('\\', '/').toLowerCase(Locale.ROOT);
+            name = IOUtils.normalizePath(name).toLowerCase(Locale.ROOT);
             if (filenames.contains(name)) {
                 throw new InvalidZipException("Input file contains more than 1 entry with the name " + zipEntry.getName());
             }
@@ -147,14 +148,14 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 
     @Override
     public ZipArchiveEntry getEntry(final String path) {
-        final String normalizedPath = path.replace('\\', '/');
+        final String normalizedPath = IOUtils.normalizePath(path);
         final ZipArchiveEntry ze = zipEntries.get(normalizedPath);
         if (ze != null) {
             return ze;
         }
 
         for (final Map.Entry<String, ZipArchiveFakeEntry> fze : zipEntries.entrySet()) {
-            if (normalizedPath.equalsIgnoreCase(fze.getKey())) {
+            if (normalizedPath.equalsIgnoreCase(IOUtils.normalizePath(fze.getKey()))) {
                 return fze.getValue();
             }
         }

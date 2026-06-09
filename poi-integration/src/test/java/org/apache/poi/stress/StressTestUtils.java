@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import org.apache.poi.util.IOUtils;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,7 +29,7 @@ public class StressTestUtils {
     }
 
     static boolean excludeFile(String path, Set<String> excludeSet) {
-        String modifiedPath = path.replace('\\', '/');
+        String modifiedPath = IOUtils.normalizePath(path);
         return excludeSet.contains(modifiedPath);
     }
 }
