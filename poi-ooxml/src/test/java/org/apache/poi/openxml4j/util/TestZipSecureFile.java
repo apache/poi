@@ -131,4 +131,33 @@ class TestZipSecureFile {
         // If the file descriptor was correctly closed, we should be able to delete the file
         assertTrue(tempFile.delete(), "Temporary file should be successfully deleted after constructor failure");
     }
+
+    @Test
+    void testValidateMixedSeparatorDuplicateEntryNames() throws Exception {
+        File tempFile = TempFile.createTempFile("mixed-duplicate-entries", ".zip");
+        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(tempFile)) {
+            ZipArchiveEntry entry1 = new ZipArchiveEntry("sub/test.txt");
+            zos.putArchiveEntry(entry1);
+            zos.write("hello".getBytes(StandardCharsets.UTF_8));
+            zos.closeArchiveEntry();
+
+            ZipArchiveEntry entry2 = new ZipArchiveEntry("sub\\test.txt");
+            zos.putArchiveEntry(entry2);
+            zos.write("world".getBytes(StandardCharsets.UTF_8));
+            zos.closeArchiveEntry();
+        }
+
+        try {
+            // ZipSecureFile should detect the duplicate entries (mixed path separators)
+            assertThrows(IOException.class, () -> new ZipSecureFile(tempFile));
+
+            // ZipInputStreamZipEntrySource should also detect the duplicate entries
+            try (InputStream is = java.nio.file.Files.newInputStream(tempFile.toPath());
+                 ZipArchiveThresholdInputStream zis = org.apache.poi.openxml4j.opc.internal.ZipHelper.openZipStream(is)) {
+                assertThrows(IOException.class, () -> new ZipInputStreamZipEntrySource(zis));
+            }
+        } finally {
+            assertTrue(tempFile.delete(), "Temporary file should be successfully deleted");
+        }
+    }
 }
