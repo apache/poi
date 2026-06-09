@@ -30,18 +30,13 @@ import java.util.NoSuchElementException;
 
 /**
  * Fuzz target for the Apache POI Formula Parser.
- * Used by Google's OSS-Fuzz for continuous security testing.
  */
 public class FormulaParserFuzzer {
-    private static HSSFWorkbook workbook;
-    private static HSSFEvaluationWorkbook evalWorkbook;
-
-    public static void fuzzerInitialize() {
-        workbook = new HSSFWorkbook();
-        evalWorkbook = HSSFEvaluationWorkbook.create(workbook);
-    }
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFEvaluationWorkbook evalWorkbook = HSSFEvaluationWorkbook.create(workbook);
+
         try {
             FormulaType formulaType = data.pickValue(FormulaType.values());
             int sheetIndex = data.consumeInt(-1, 10);

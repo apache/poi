@@ -17,32 +17,25 @@
 
 package org.apache.poi.fuzz;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import org.apache.poi.fuzz.POIFileHandlerFuzzer;
+import java.io.File;
+import java.nio.file.Files;
 
-import org.apache.poi.fuzz.POIFuzzer;
-import org.apache.poi.hmef.HMEFMessage;
-import org.apache.poi.util.RecordFormatException;
-
-public class POIHMEFFuzzer {
-	public static void fuzzerInitialize() {
-		POIFuzzer.adjustLimits();
-	}
-
-	public static void fuzzerTestOneInput(byte[] input) {
-		try {
-			HMEFMessage msg = new HMEFMessage(new ByteArrayInputStream(input));
-			//noinspection ResultOfMethodCallIgnored
-			msg.getAttachments();
-			msg.getBody();
-			//noinspection ResultOfMethodCallIgnored
-			msg.getMessageAttributes();
-			msg.getSubject();
-			//noinspection ResultOfMethodCallIgnored
-			msg.getMessageMAPIAttributes();
-		} catch (IOException | IllegalArgumentException | IllegalStateException | RecordFormatException |
-				ArrayIndexOutOfBoundsException e) {
-			// expected here
-		}
-	}
+public class FuzzerRunner {
+    public static void main(String[] args) throws Exception {
+        if (args.length == 0) {
+            System.err.println("Usage: FuzzerRunner <file-to-fuzz>");
+            System.exit(1);
+        }
+        File f = new File(args[0]);
+        if (!f.exists()) {
+            System.err.println("File not found: " + args[0]);
+            System.exit(1);
+        }
+        byte[] input = Files.readAllBytes(f.toPath());
+        System.out.println("Running fuzzer for file: " + args[0] + " (" + input.length + " bytes)");
+        POIFileHandlerFuzzer.fuzzerInitialize();
+        POIFileHandlerFuzzer.fuzzerTestOneInput(input);
+        System.out.println("Success!");
+    }
 }
