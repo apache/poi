@@ -106,7 +106,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
             if (name == null || name.isEmpty()) {
                 throw new InvalidZipException("Input file contains an entry with an empty name");
             }
-            name = name.toLowerCase(Locale.ROOT);
+            name = name.replace('\\', '/').toLowerCase(Locale.ROOT);
             if (filenames.contains(name)) {
                 throw new InvalidZipException("Input file contains more than 1 entry with the name " + zipEntry.getName());
             }
