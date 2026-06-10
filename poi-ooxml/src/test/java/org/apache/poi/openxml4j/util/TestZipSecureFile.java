@@ -20,6 +20,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
@@ -28,10 +29,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -130,6 +135,63 @@ class TestZipSecureFile {
 
         // If the file descriptor was correctly closed, we should be able to delete the file
         assertTrue(tempFile.delete(), "Temporary file should be successfully deleted after constructor failure");
+     }
+
+    @Test
+    void testZipInputStreamZipEntrySourceExceptionReleasesResources() throws Exception {
+        List<File> createdFiles = new ArrayList<>();
+        TempFileCreationStrategy customStrategy = new TempFileCreationStrategy() {
+            @Override
+            public File createTempFile(String prefix, String suffix) throws IOException {
+                File f = Files.createTempFile(prefix, suffix).toFile();
+                createdFiles.add(f);
+                return f;
+            }
+            @Override
+            public File createTempDirectory(String prefix) throws IOException {
+                return Files.createTempDirectory(prefix).toFile();
+            }
+        };
+
+        TempFile.withStrategy(customStrategy, () -> {
+            try {
+                int oldThreshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
+                ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(0);
+                try {
+                    File tempZipFile = TempFile.createTempFile("test-leak", ".zip");
+                    try {
+                        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(tempZipFile)) {
+                            ZipArchiveEntry entry1 = new ZipArchiveEntry("first.txt");
+                            zos.putArchiveEntry(entry1);
+                            zos.write("hello".getBytes(StandardCharsets.UTF_8));
+                            zos.closeArchiveEntry();
+
+                            ZipArchiveEntry entry2 = new ZipArchiveEntry("first.txt");
+                            zos.putArchiveEntry(entry2);
+                            zos.write("world".getBytes(StandardCharsets.UTF_8));
+                            zos.closeArchiveEntry();
+                        }
+
+                        try (InputStream is = Files.newInputStream(tempZipFile.toPath());
+                             ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(is)) {
+                            assertThrows(IOException.class, () -> new ZipInputStreamZipEntrySource(zis));
+                        }
+                    } finally {
+                        tempZipFile.delete();
+                    }
+                } finally {
+                    ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(oldThreshold);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        });
+
+        assertFalse(createdFiles.isEmpty(), "At least one temporary file should have been created for the zip entries");
+        for (File f : createdFiles) {
+            assertFalse(f.exists(), "Temporary file " + f.getAbsolutePath() + " should have been deleted");
+        }
     }
 
     @Test
