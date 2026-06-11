@@ -305,15 +305,14 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         // Get the main document stream
         final Entry entry = dir.getEntryCaseInsensitive(POWERPOINT_DOCUMENT);
-        if (!(entry instanceof DocumentEntry)) {
+        if (entry instanceof DocumentEntry docProps) {
+            // Grab the document stream
+            int len = docProps.getSize();
+            try (InputStream is = dir.createDocumentInputStream(docProps)) {
+                _docstream = IOUtils.toByteArray(is, len, MAX_DOCUMENT_SIZE);
+            }
+        } else {
             throw new IllegalArgumentException("Had unexpected type of entry for name: " + POWERPOINT_DOCUMENT + ": " + entry.getClass());
-        }
-        DocumentEntry docProps = (DocumentEntry) entry;
-
-        // Grab the document stream
-        int len = docProps.getSize();
-        try (InputStream is = dir.createDocumentInputStream(docProps)) {
-            _docstream = IOUtils.toByteArray(is, len, MAX_DOCUMENT_SIZE);
         }
     }
 
@@ -1064,8 +1063,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         if (_objects == null) {
             List<HSLFObjectData> objects = new ArrayList<>();
             for (Record r : _records) {
-                if (r instanceof ExOleObjStg) {
-                    objects.add(new HSLFObjectData((ExOleObjStg) r));
+                if (r instanceof ExOleObjStg exOleObjStg) {
+                    objects.add(new HSLFObjectData(exOleObjStg));
                 }
             }
             _objects = objects.toArray(new HSLFObjectData[0]);
@@ -1080,10 +1079,11 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 throw new CorruptPowerPointFileException("Did not have a valid record: null");
             }
             if (record.getRecordType() == RecordTypes.Document.typeID) {
-                if (!(record instanceof Document)) {
+                if (record instanceof Document dr) {
+                    documentRecord = dr;
+                } else {
                     throw new CorruptPowerPointFileException("Did not have a Document: " + record);
                 }
-                documentRecord = (Document) record;
                 break;
             }
         }

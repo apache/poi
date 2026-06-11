@@ -83,13 +83,14 @@ public final class HDGFDiagram extends POIReadOnlyDocument {
 
         // Now grab the trailer
         Stream stream = Stream.createStream(trailerPointer, _docstream, chunkFactory, ptrFactory);
-        if (!(stream instanceof TrailerStream)) {
+        if (stream instanceof TrailerStream ts) {
+            trailer = ts;
+
+            // Finally, find all our streams
+            trailer.findChildren(_docstream);
+        } else {
             throw new IllegalStateException("Stream is not a TrailerStream: " + stream);
         }
-        trailer = (TrailerStream)stream;
-
-        // Finally, find all our streams
-        trailer.findChildren(_docstream);
     }
 
     /**
@@ -133,9 +134,7 @@ public final class HDGFDiagram extends POIReadOnlyDocument {
             System.err.println("\tCompressed is " + ptr.destinationCompressed());
             System.err.println("\tStream is " + stream.getClass());
 
-            if(stream instanceof PointerContainingStream) {
-                PointerContainingStream pcs = (PointerContainingStream)stream;
-
+            if(stream instanceof PointerContainingStream pcs) {
                 if(pcs.getPointedToStreams() != null && pcs.getPointedToStreams().length > 0) {
                     System.err.println("\tContains " + pcs.getPointedToStreams().length + " other pointers/streams");
                     for(int j=0; j<pcs.getPointedToStreams().length; j++) {
@@ -147,9 +146,8 @@ public final class HDGFDiagram extends POIReadOnlyDocument {
                 }
             }
 
-            if(stream instanceof StringsStream) {
+            if(stream instanceof StringsStream ss) {
                 System.err.println("\t\t**strings**");
-                StringsStream ss = (StringsStream)stream;
                 System.err.println("\t\t" + ss._getContentsLength());
             }
         }

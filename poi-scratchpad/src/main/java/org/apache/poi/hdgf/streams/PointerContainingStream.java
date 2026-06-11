@@ -79,15 +79,12 @@ public class PointerContainingStream extends Stream { // TODO - instantiable sup
             childStreams[i] = Stream.createStream(ptr, documentData, chunkFactory, pointerFactory);
 
             // Process chunk streams into their chunks
-            if(childStreams[i] instanceof ChunkStream) {
-                ChunkStream child = (ChunkStream)childStreams[i];
+            if(childStreams[i] instanceof ChunkStream child) {
                 child.findChunks();
             }
 
             // Recurse into pointer containing streams
-            if(childStreams[i] instanceof PointerContainingStream) {
-                PointerContainingStream child =
-                    (PointerContainingStream)childStreams[i];
+            if(childStreams[i] instanceof PointerContainingStream child) {
                 child.findChildren(documentData, nesting + 1);
             }
         }

@@ -200,8 +200,8 @@ public class HemfPlusObject {
             if (objectData.isContinuedRecord()) {
                 EmfPlusObject other;
                 HwmfObjectTableEntry entry = ctx.getPlusObjectTableEntry(getObjectId());
-                if (entry instanceof EmfPlusObject &&
-                    objectData.getClass().isInstance((other = (EmfPlusObject)entry).getObjectData())
+                if (entry instanceof EmfPlusObject emfPlusObject &&
+                    objectData.getClass().isInstance(other = emfPlusObject.getObjectData())
                 ) {
                     other.linkContinuedObject(objectData);
                 } else {
@@ -214,7 +214,11 @@ public class HemfPlusObject {
 
         @Override
         public void applyObject(HwmfGraphics ctx) {
-            objectData.applyObject((HemfGraphics)ctx, continuedObjectData);
+            if (ctx instanceof HemfGraphics hemfCtx) {
+                objectData.applyObject(hemfCtx, continuedObjectData);
+            } else {
+                throw new IllegalArgumentException("can't apply object to non-HemfGraphics context");
+            }
         }
 
         void linkContinuedObject(EmfPlusObjectData continueObject) {

@@ -575,14 +575,14 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         } else {
             setBullet(true);
             for (Object ostyle : styles) {
-                if (ostyle instanceof Number) {
-                    setBulletSize(((Number)ostyle).doubleValue());
-                } else if (ostyle instanceof Color) {
-                    setBulletColor((Color)ostyle);
-                } else if (ostyle instanceof Character) {
-                    setBulletChar((Character)ostyle);
-                } else if (ostyle instanceof String) {
-                    setBulletFont((String)ostyle);
+                if (ostyle instanceof Number num) {
+                    setBulletSize(num.doubleValue());
+                } else if (ostyle instanceof Color color) {
+                    setBulletColor(color);
+                } else if (ostyle instanceof Character character) {
+                    setBulletChar(character);
+                } else if (ostyle instanceof String str) {
+                    setBulletFont(str);
                 } else if (ostyle instanceof AutoNumberingScheme) {
                     throw new HSLFException("setting bullet auto-numbering scheme for HSLF not supported ... yet");
                 }

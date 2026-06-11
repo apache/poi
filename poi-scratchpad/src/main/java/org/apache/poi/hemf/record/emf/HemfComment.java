@@ -183,8 +183,8 @@ public class HemfComment {
 
         @Override
         public void setCharsetProvider(Supplier<Charset> provider) {
-            if (data instanceof HwmfCharsetAware) {
-                ((HwmfCharsetAware)data).setCharsetProvider(provider);
+            if (data instanceof HwmfCharsetAware charsetAware) {
+                charsetAware.setCharsetProvider(provider);
             }
         }
     }
