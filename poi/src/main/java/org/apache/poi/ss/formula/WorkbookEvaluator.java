@@ -404,8 +404,7 @@ public final class WorkbookEvaluator {
             if (dbgEvaluationOutputIndent > 0) {
                 EVAL_LOG.atInfo().log("{}  * ptg {}: {}, stack: {}", dbgIndentStr, box(i), ptg, stack);
             }
-            if (ptg instanceof AttrPtg) {
-                AttrPtg attrPtg = (AttrPtg) ptg;
+            if (ptg instanceof AttrPtg attrPtg) {
                 if (attrPtg.isSum()) {
                     // Excel prefers to encode 'SUM()' as a tAttr token, but this evaluator
                     // expects the equivalent function token
@@ -456,10 +455,10 @@ public final class WorkbookEvaluator {
                             int dist = attrPtg.getData();
                             i += countTokensToBeSkipped(ptgs, i, dist);
                             Ptg nextPtg = ptgs[i + 1];
-                            if (ptgs[i] instanceof AttrPtg && nextPtg instanceof FuncVarPtg &&
+                            if (ptgs[i] instanceof AttrPtg && nextPtg instanceof FuncVarPtg fvp &&
                                     // in order to verify that there is no third param, we need to check
                                     // if we really have the IF next or some other FuncVarPtg as third param, e.g. ROW()/COLUMN()!
-                                    ((FuncVarPtg) nextPtg).getFunctionIndex() == FunctionMetadataRegistry.FUNCTION_INDEX_IF) {
+                                    fvp.getFunctionIndex() == FunctionMetadataRegistry.FUNCTION_INDEX_IF) {
                                 // this is an if statement without a false param (as opposed to MissingArgPtg as the false param)
                                 //i++;
                                 stack.push(arg0);
@@ -499,9 +498,7 @@ public final class WorkbookEvaluator {
             }
 
             ValueEval opResult;
-            if (ptg instanceof OperationPtg) {
-                OperationPtg optg = (OperationPtg) ptg;
-
+            if (ptg instanceof OperationPtg optg) {
                 int numops = optg.getNumberOfOperands();
                 ValueEval[] ops = new ValueEval[numops];
 
@@ -517,8 +514,7 @@ public final class WorkbookEvaluator {
 
                 boolean arrayMode = false;
                 if (areaArg) for (int ii = i; ii < iSize; ii++) {
-                    if (ptgs[ii] instanceof FuncVarPtg) {
-                        FuncVarPtg f = (FuncVarPtg) ptgs[ii];
+                    if (ptgs[ii] instanceof FuncVarPtg f) {
                         try {
                             Function func = FunctionEval.getBasicFunction(f.getFunctionIndex());
                             if (func instanceof ArrayMode) {
@@ -620,8 +616,8 @@ public final class WorkbookEvaluator {
         EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
         EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
 
-        if (evalCell != null && evalCell.isPartOfArrayFormulaGroup() && evaluationResult instanceof AreaEval) {
-            value = OperandResolver.getElementFromArray((AreaEval) evaluationResult, evalCell);
+        if (evalCell != null && evalCell.isPartOfArrayFormulaGroup() && evaluationResult instanceof AreaEval ae) {
+            value = OperandResolver.getElementFromArray(ae, evalCell);
         } else {
             value = dereferenceResult(evaluationResult, ec.getRowIndex(), ec.getColumnIndex());
         }

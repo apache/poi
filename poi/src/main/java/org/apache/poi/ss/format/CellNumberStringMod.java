@@ -71,7 +71,7 @@ public class CellNumberStringMod implements Comparable<CellNumberStringMod> {
 
     @Override
     public boolean equals(Object that) {
-        return (that instanceof CellNumberStringMod) && compareTo((CellNumberStringMod) that) == 0;
+        return (that instanceof CellNumberStringMod mod) && compareTo(mod) == 0;
     }
 
     @Override

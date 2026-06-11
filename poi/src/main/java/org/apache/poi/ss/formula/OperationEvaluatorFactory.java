@@ -104,8 +104,7 @@ final class OperationEvaluatorFactory {
         Function result = _instancesByPtgClass.get(ptg.getSid());
         FreeRefFunction udfFunc = null;
         if (result == null) {
-            if (ptg instanceof AbstractFunctionPtg) {
-                AbstractFunctionPtg fptg = (AbstractFunctionPtg)ptg;
+            if (ptg instanceof AbstractFunctionPtg fptg) {
                 int functionIndex = fptg.getFunctionIndex();
                 switch (functionIndex) {
                     case FunctionMetadataRegistry.FUNCTION_INDEX_INDIRECT:
@@ -122,8 +121,7 @@ final class OperationEvaluatorFactory {
         }
         if (result != null) {
 
-            if (result instanceof ArrayFunction) {
-                ArrayFunction func = (ArrayFunction) result;
+            if (result instanceof ArrayFunction func) {
                 ValueEval eval = evaluateArrayFunction(func, args, ec);
                 if (eval != null) {
                     return eval;

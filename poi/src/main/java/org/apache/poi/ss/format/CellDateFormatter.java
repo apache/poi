@@ -178,8 +178,7 @@ public class CellDateFormatter extends CellFormatter {
     public synchronized void formatValue(StringBuffer toAppendTo, Object value) {
         if (value == null)
             value = 0.0;
-        if (value instanceof Number) {
-            Number num = (Number) value;
+        if (value instanceof Number num) {
             // Convert from fractional days to milliseconds. Excel always rounds up.
             double v = Math.round(num.doubleValue() * NUM_MILLISECONDS_IN_DAY);
             if (v == 0L) {

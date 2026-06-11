@@ -465,8 +465,8 @@ public final class CellUtil {
         if (policy.isMergeHyperlink()) {
             // if srcCell doesn't have a hyperlink and destCell has a hyperlink, don't clear destCell's hyperlink
             if (srcHyperlink != null) {
-                if (srcHyperlink instanceof Duplicatable) {
-                    Hyperlink newHyperlink = (Hyperlink) ((Duplicatable) srcHyperlink).copy();
+                if (srcHyperlink instanceof Duplicatable duplicatable) {
+                    Hyperlink newHyperlink = (Hyperlink) duplicatable.copy();
                     destCell.setHyperlink(newHyperlink);
                 } else {
                     throw new IllegalStateException("srcCell hyperlink is not an instance of Duplicatable");
@@ -477,8 +477,8 @@ public final class CellUtil {
             // if srcCell doesn't have a hyperlink, clear the hyperlink (if one exists) at destCell
             if (srcHyperlink == null) {
                 destCell.setHyperlink(null);
-            } else if (srcHyperlink instanceof Duplicatable) {
-                Hyperlink newHyperlink = (Hyperlink) ((Duplicatable) srcHyperlink).copy();
+            } else if (srcHyperlink instanceof Duplicatable duplicatable) {
+                Hyperlink newHyperlink = (Hyperlink) duplicatable.copy();
                 destCell.setHyperlink(newHyperlink);
             } else {
                 throw new IllegalStateException("srcCell hyperlink is not an instance of Duplicatable");
@@ -909,19 +909,19 @@ public final class CellUtil {
      */
     private static short getShort(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
-        if (value instanceof Number) {
-            return ((Number) value).shortValue();
+        if (value instanceof Number n) {
+            return n.shortValue();
         }
         return 0;
     }
 
     private static Short nullableShort(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
-        if (value instanceof Short) {
-            return (Short) value;
+        if (value instanceof Short s) {
+            return s;
         }
-        if (value instanceof Number) {
-            return ((Number) value).shortValue();
+        if (value instanceof Number n) {
+            return n.shortValue();
         }
         return null;
     }
@@ -936,8 +936,8 @@ public final class CellUtil {
      */
     private static Color getColor(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
-        if (value instanceof Color) {
-            return (Color) value;
+        if (value instanceof Color c) {
+            return c;
         }
         return null;
     }
@@ -953,8 +953,8 @@ public final class CellUtil {
      */
     private static int getInt(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
-        if (value instanceof Number) {
-            return ((Number) value).intValue();
+        if (value instanceof Number n) {
+            return n.intValue();
         }
         return 0;
     }
@@ -969,13 +969,12 @@ public final class CellUtil {
     private static BorderStyle getBorderStyle(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
         BorderStyle border;
-        if (value instanceof BorderStyle) {
-            border = (BorderStyle) value;
+        if (value instanceof BorderStyle bs) {
+            border = bs;
         }
         // @deprecated 3.15 beta 2. getBorderStyle will only work on BorderStyle enums instead of codes in the future.
-        else if (value instanceof Short) {
+        else if (value instanceof Short code) {
             LOGGER.atWarn().log("Deprecation warning: CellUtil properties map uses Short values for {}. Should use BorderStyle enums instead.", property);
-            short code = (Short) value;
             border = BorderStyle.valueOf(code);
         } else if (value == null) {
             border = BorderStyle.NONE;
@@ -996,13 +995,12 @@ public final class CellUtil {
     private static FillPatternType getFillPattern(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
         FillPatternType pattern;
-        if (value instanceof FillPatternType) {
-            pattern = (FillPatternType) value;
+        if (value instanceof FillPatternType fpt) {
+            pattern = fpt;
         }
         // @deprecated 3.15 beta 2. getFillPattern will only work on FillPatternType enums instead of codes in the future.
-        else if (value instanceof Short) {
+        else if (value instanceof Short code) {
             LOGGER.atWarn().log("Deprecation warning: CellUtil properties map uses Short values for {}. Should use FillPatternType enums instead.", property);
-            short code = (Short) value;
             pattern = FillPatternType.forInt(code);
         } else if (value == null) {
             pattern = FillPatternType.NO_FILL;
@@ -1023,13 +1021,12 @@ public final class CellUtil {
     private static HorizontalAlignment getHorizontalAlignment(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
         HorizontalAlignment align;
-        if (value instanceof HorizontalAlignment) {
-            align = (HorizontalAlignment) value;
+        if (value instanceof HorizontalAlignment ha) {
+            align = ha;
         }
         // @deprecated 3.15 beta 2. getHorizontalAlignment will only work on HorizontalAlignment enums instead of codes in the future.
-        else if (value instanceof Short) {
+        else if (value instanceof Short code) {
             LOGGER.atWarn().log("Deprecation warning: CellUtil properties map used a Short value for {}. Should use HorizontalAlignment enums instead.", property);
-            short code = (Short) value;
             align = HorizontalAlignment.forInt(code);
         } else if (value == null) {
             align = HorizontalAlignment.GENERAL;
@@ -1050,13 +1047,12 @@ public final class CellUtil {
     private static VerticalAlignment getVerticalAlignment(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
         VerticalAlignment align;
-        if (value instanceof VerticalAlignment) {
-            align = (VerticalAlignment) value;
+        if (value instanceof VerticalAlignment va) {
+            align = va;
         }
         // @deprecated 3.15 beta 2. getVerticalAlignment will only work on VerticalAlignment enums instead of codes in the future.
-        else if (value instanceof Short) {
+        else if (value instanceof Short code) {
             LOGGER.atWarn().log("Deprecation warning: CellUtil properties map used a Short value for {}. Should use VerticalAlignment enums instead.", property);
-            short code = (Short) value;
             align = VerticalAlignment.forInt(code);
         } else if (value == null) {
             align = VerticalAlignment.BOTTOM;
@@ -1077,8 +1073,8 @@ public final class CellUtil {
     private static boolean getBoolean(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
         //noinspection SimplifiableIfStatement
-        if (value instanceof Boolean) {
-            return (Boolean) value;
+        if (value instanceof Boolean bool) {
+            return bool;
         }
         return false;
     }
