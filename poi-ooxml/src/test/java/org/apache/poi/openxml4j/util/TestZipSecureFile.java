@@ -19,6 +19,7 @@ package org.apache.poi.openxml4j.util;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.DefaultTempFileCreationStrategy;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -141,15 +142,16 @@ class TestZipSecureFile {
     void testZipInputStreamZipEntrySourceExceptionReleasesResources() throws Exception {
         List<File> createdFiles = new ArrayList<>();
         TempFileCreationStrategy customStrategy = new TempFileCreationStrategy() {
+            private final TempFileCreationStrategy delegate = new DefaultTempFileCreationStrategy();
             @Override
             public File createTempFile(String prefix, String suffix) throws IOException {
-                File f = Files.createTempFile(prefix, suffix).toFile();
+                File f = delegate.createTempFile(prefix, suffix);
                 createdFiles.add(f);
                 return f;
             }
             @Override
             public File createTempDirectory(String prefix) throws IOException {
-                return Files.createTempDirectory(prefix).toFile();
+                return delegate.createTempDirectory(prefix);
             }
         };
 
