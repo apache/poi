@@ -17,7 +17,9 @@
 package org.apache.poi.openxml4j.util;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.DefaultTempFileCreationStrategy;
 import org.apache.poi.util.TempFile;
@@ -36,8 +38,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
