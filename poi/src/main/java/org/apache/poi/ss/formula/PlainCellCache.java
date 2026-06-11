@@ -51,11 +51,11 @@ final class PlainCellCache {
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof Loc)) {
+            if (obj instanceof Loc other) {
+                return _bookSheetColumn == other._bookSheetColumn && _rowIndex == other._rowIndex;
+            } else {
                 return false;
             }
-            Loc other = (Loc) obj;
-            return _bookSheetColumn == other._bookSheetColumn && _rowIndex == other._rowIndex;
         }
 
         public int getRowIndex() {

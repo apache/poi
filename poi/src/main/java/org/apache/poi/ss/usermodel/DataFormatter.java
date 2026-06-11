@@ -814,10 +814,10 @@ public class DataFormatter {
 
         private Object scaleInput(Object obj) {
             if (divider != null) {
-                if (obj instanceof BigDecimal) {
-                    obj = ((BigDecimal) obj).divide(divider, RoundingMode.HALF_UP);
-                } else if (obj instanceof Double) {
-                    obj = (Double) obj / divider.doubleValue();
+                if (obj instanceof BigDecimal bd) {
+                    obj = bd.divide(divider, RoundingMode.HALF_UP);
+                } else if (obj instanceof Double d) {
+                    obj = d / divider.doubleValue();
                 } else {
                     throw new UnsupportedOperationException("cannot scaleInput of type " + obj.getClass());
                 }
@@ -936,11 +936,9 @@ public class DataFormatter {
             }
         }
         synchronized (dateFormat) {
-            if(dateFormat instanceof ExcelStyleDateFormatter) {
+            if(dateFormat instanceof ExcelStyleDateFormatter formatter) {
                 // Hint about the raw excel value
-                ((ExcelStyleDateFormatter)dateFormat).setDateToBeFormatted(
-                        cell.getNumericCellValue()
-                );
+                formatter.setDateToBeFormatted(cell.getNumericCellValue());
             }
             Date d = cell.getDateCellValue();
             return performDateFormatting(d, dateFormat);
@@ -970,8 +968,7 @@ public class DataFormatter {
             return Double.toString(d);
         }
         String formatted = null;
-        if (numberFormat instanceof InternalDecimalFormatWithScale) {
-            InternalDecimalFormatWithScale idfws = (InternalDecimalFormatWithScale) numberFormat;
+        if (numberFormat instanceof InternalDecimalFormatWithScale idfws) {
             if (idfws.requiresScaling()) {
                 // hack for https://bz.apache.org/bugzilla/show_bug.cgi?id=69812
                 // the https://github.com/apache/poi/pull/321 hack causes problems here

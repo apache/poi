@@ -601,8 +601,7 @@ public class CellFormatPart {
             int pos = 0;
             while ((pos = fmt.indexOf("''", pos)) >= 0) {
                 fmt.delete(pos, pos + 2);
-                if (partHandler instanceof CellDateFormatter.DatePartHandler) {
-                    CellDateFormatter.DatePartHandler datePartHandler = (CellDateFormatter.DatePartHandler) partHandler;
+                if (partHandler instanceof CellDateFormatter.DatePartHandler datePartHandler) {
                     datePartHandler.updatePositions(pos, -2);
                 }
             }
@@ -611,8 +610,7 @@ public class CellFormatPart {
             pos = 0;
             while ((pos = fmt.indexOf("\u0000", pos)) >= 0) {
                 fmt.replace(pos, pos + 1, "''");
-                if (partHandler instanceof CellDateFormatter.DatePartHandler) {
-                    CellDateFormatter.DatePartHandler datePartHandler = (CellDateFormatter.DatePartHandler) partHandler;
+                if (partHandler instanceof CellDateFormatter.DatePartHandler datePartHandler) {
                     datePartHandler.updatePositions(pos, 1);
                 }
             }

@@ -246,8 +246,7 @@ public class CellFormat {
      * @return The result, in a {@link CellFormatResult}.
      */
     public CellFormatResult apply(Object value) {
-        if (value instanceof Number) {
-            Number num = (Number) value;
+        if (value instanceof Number num) {
             double val = num.doubleValue();
             if (val < 0 &&
                     ((formatPartCount == 2
@@ -261,10 +260,10 @@ public class CellFormat {
             } else {
                 return getApplicableFormatPart(val).apply(val);
             }
-        } else if (value instanceof java.util.Date) {
+        } else if (value instanceof java.util.Date d) {
             // Don't know (and can't get) the workbook date windowing (1900 or 1904)
             // so assume 1900 date windowing
-            double numericValue = DateUtil.getExcelDate((Date) value);
+            double numericValue = DateUtil.getExcelDate(d);
             if (DateUtil.isValidExcelDate(numericValue)) {
                 return getApplicableFormatPart(numericValue).apply(value);
             } else {
@@ -400,9 +399,9 @@ public class CellFormat {
      */
     private CellFormatPart getApplicableFormatPart(Object value) {
 
-        if (value instanceof Number) {
+        if (value instanceof Number num) {
 
-            double val = ((Number) value).doubleValue();
+            double val = num.doubleValue();
 
             if (formatPartCount == 1) {
                 if (!posNumFmt.hasCondition()
@@ -470,8 +469,7 @@ public class CellFormat {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj instanceof CellFormat) {
-            CellFormat that = (CellFormat) obj;
+        if (obj instanceof CellFormat that) {
             return format.equals(that.format);
         }
         return false;

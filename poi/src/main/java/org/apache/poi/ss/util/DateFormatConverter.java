@@ -192,7 +192,7 @@ public final class DateFormatConverter  {
 
     public static String getJavaDatePattern(int style, Locale locale) {
         DateFormat df = DateFormat.getDateInstance(style, locale);
-        if( df instanceof SimpleDateFormat sdf) {
+        if(df instanceof SimpleDateFormat sdf) {
             return sdf.toPattern();
         } else {
             return switch (style) {
@@ -206,8 +206,8 @@ public final class DateFormatConverter  {
 
     public static String getJavaTimePattern(int style, Locale locale) {
         DateFormat df = DateFormat.getTimeInstance(style, locale);
-        if( df instanceof SimpleDateFormat ) {
-            return ((SimpleDateFormat)df).toPattern();
+        if(df instanceof SimpleDateFormat sdf) {
+            return sdf.toPattern();
         } else {
             return switch (style) {
                 case DateFormat.SHORT -> "h:mm a";
@@ -218,8 +218,8 @@ public final class DateFormatConverter  {
 
     public static String getJavaDateTimePattern(int style, Locale locale) {
         DateFormat df = DateFormat.getDateTimeInstance(style, style, locale);
-        if( df instanceof SimpleDateFormat ) {
-            return ((SimpleDateFormat)df).toPattern();
+        if(df instanceof SimpleDateFormat sdf) {
+            return sdf.toPattern();
         } else {
             return switch (style) {
                 case DateFormat.SHORT -> "M/d/yy h:mm a";

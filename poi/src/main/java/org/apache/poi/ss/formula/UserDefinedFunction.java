@@ -54,8 +54,8 @@ final class UserDefinedFunction implements FreeRefFunction {
 
         ValueEval nameArg = args[0];
         String functionName;
-        if (nameArg instanceof FunctionNameEval) {
-            functionName = ((FunctionNameEval) nameArg).getFunctionName();
+        if (nameArg instanceof FunctionNameEval fne) {
+            functionName = fne.getFunctionName();
         } else {
             throw new IllegalStateException("First argument should be a NameEval, but got ("
                     + nameArg.getClass().getName() + ")");
@@ -67,8 +67,7 @@ final class UserDefinedFunction implements FreeRefFunction {
         int nOutGoingArgs = nIncomingArgs - 1;
         ValueEval[] outGoingArgs = new ValueEval[nOutGoingArgs];
         System.arraycopy(args, 1, outGoingArgs, 0, nOutGoingArgs);
-        if (targetFunc instanceof ArrayFunction) {
-            ArrayFunction func = (ArrayFunction) targetFunc;
+        if (targetFunc instanceof ArrayFunction func) {
             ValueEval eval = OperationEvaluatorFactory.evaluateArrayFunction(func, outGoingArgs, ec);
             if (eval != null) {
                 return eval;
