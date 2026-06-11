@@ -74,10 +74,6 @@ class TestExcelStyleDateFormatter {
      * is expected and selected via an index
      */
     private static int localeIndex(Locale locale) {
-        if (jreVersion < 9) {
-            return 0;
-        }
-
         // only Chinese needs special handling
         if (!locale.equals (Locale.CHINESE)) {
             return 0;
