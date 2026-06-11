@@ -417,20 +417,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             Map<String, ExternalLinksTable> elIdMap = new HashMap<>();
             for(RelationPart rp : getRelationParts()){
                 POIXMLDocumentPart p = rp.getDocumentPart();
-                if(p instanceof SharedStringsTable) {
-                    sharedStringSource = (SharedStringsTable)p;
-                } else if(p instanceof StylesTable) {
-                    stylesSource = (StylesTable)p;
-                } else if(p instanceof ThemesTable) {
-                    theme = (ThemesTable)p;
-                } else if(p instanceof CalculationChain) {
-                    calcChain = (CalculationChain)p;
-                } else if(p instanceof MapInfo) {
-                    mapInfo = (MapInfo)p;
-                } else if (p instanceof XSSFSheet) {
-                    shIdMap.put(rp.getRelationship().getId(), (XSSFSheet)p);
-                } else if (p instanceof ExternalLinksTable) {
-                    elIdMap.put(rp.getRelationship().getId(), (ExternalLinksTable)p);
+                if(p instanceof SharedStringsTable sharedStringsTable) {
+                    this.sharedStringSource = sharedStringsTable;
+                } else if(p instanceof StylesTable stylesTable) {
+                    this.stylesSource = stylesTable;
+                } else if(p instanceof ThemesTable themesTable) {
+                    theme = themesTable;
+                } else if(p instanceof CalculationChain calculationChain) {
+                    this.calcChain = calculationChain;
+                } else if(p instanceof MapInfo info) {
+                    this.mapInfo = info;
+                } else if (p instanceof XSSFSheet xssfSheet) {
+                    shIdMap.put(rp.getRelationship().getId(), xssfSheet);
+                } else if (p instanceof ExternalLinksTable externalLinksTable) {
+                    elIdMap.put(rp.getRelationship().getId(), externalLinksTable);
                 }
             }
             boolean packageReadOnly = (getPackage().getPackageAccess() == PackageAccess.READ);

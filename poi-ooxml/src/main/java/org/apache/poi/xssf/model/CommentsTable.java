@@ -217,7 +217,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     public XSSFComment createNewComment(ClientAnchor clientAnchor) {
         XSSFVMLDrawing vml = getVMLDrawing(sheet, true);
         CTShape vmlShape = vml == null ? null : vml.newCommentShape();
-        if (vmlShape != null && clientAnchor instanceof XSSFClientAnchor && ((XSSFClientAnchor)clientAnchor).isSet()) {
+        if (vmlShape != null && clientAnchor instanceof XSSFClientAnchor xssfClientAnchor && xssfClientAnchor.isSet()) {
             // convert offsets from emus to pixels since we get a
             // DrawingML-anchor
             // but create a VML Drawing
@@ -323,8 +323,8 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
 
     private XSSFVMLDrawing getVMLDrawing(Sheet sheet, boolean autocreate) {
         if (vmlDrawing == null) {
-            if (sheet instanceof OoxmlSheetExtensions) {
-                vmlDrawing = ((OoxmlSheetExtensions)sheet).getVMLDrawing(autocreate);
+            if (sheet instanceof OoxmlSheetExtensions ooxmlSheetExtensions) {
+                vmlDrawing = ooxmlSheetExtensions.getVMLDrawing(autocreate);
             }
         }
         return vmlDrawing;

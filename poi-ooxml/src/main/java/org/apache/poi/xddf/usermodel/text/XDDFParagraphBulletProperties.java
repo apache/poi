@@ -60,14 +60,14 @@ public class XDDFParagraphBulletProperties {
             props.unsetBuNone();
         }
         if (style != null) {
-            if (style instanceof XDDFBulletStyleAutoNumbered) {
-                props.setBuAutoNum(((XDDFBulletStyleAutoNumbered) style).getXmlObject());
-            } else if (style instanceof XDDFBulletStyleCharacter) {
-                props.setBuChar(((XDDFBulletStyleCharacter) style).getXmlObject());
-            } else if (style instanceof XDDFBulletStyleNone) {
-                props.setBuNone(((XDDFBulletStyleNone) style).getXmlObject());
-            } else if (style instanceof XDDFBulletStylePicture) {
-                props.setBuBlip(((XDDFBulletStylePicture) style).getXmlObject());
+            if (style instanceof XDDFBulletStyleAutoNumbered xstyle) {
+                props.setBuAutoNum(xstyle.getXmlObject());
+            } else if (style instanceof XDDFBulletStyleCharacter xstyle) {
+                props.setBuChar(xstyle.getXmlObject());
+            } else if (style instanceof XDDFBulletStyleNone xstyle) {
+                props.setBuNone(xstyle.getXmlObject());
+            } else if (style instanceof XDDFBulletStylePicture xstyle) {
+                props.setBuBlip(xstyle.getXmlObject());
             }
         }
     }

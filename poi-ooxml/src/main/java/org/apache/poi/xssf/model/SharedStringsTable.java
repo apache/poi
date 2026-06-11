@@ -217,10 +217,11 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
      * @return index the index of added entry
      */
     public int addSharedStringItem(RichTextString string) {
-        if(!(string instanceof XSSFRichTextString)){
+        if (string instanceof XSSFRichTextString richTextString) {
+            return addEntry(richTextString.getCTRst());
+        } else {
             throw new IllegalArgumentException("Only XSSFRichTextString argument is supported");
         }
-        return addEntry(((XSSFRichTextString) string).getCTRst());
     }
 
     /**

@@ -87,15 +87,14 @@ public class XDGFMasters extends XDGFXMLDocumentPart {
                     throw new POIXMLException("Master relationship for " + relId + " not found");
                 }
 
-                if (!(part instanceof XDGFMasterContents)) {
+
+                if (part instanceof XDGFMasterContents contents) {
+                    contents.onDocumentRead();
+                    XDGFMaster master = new XDGFMaster(settings, contents, _document);
+                    _masters.put(master.getID(), master);
+                } else {
                     throw new POIXMLException("Unexpected masters relationship for " + relId + ": " + part);
                 }
-
-                XDGFMasterContents contents = (XDGFMasterContents)part;
-                contents.onDocumentRead();
-
-                XDGFMaster master = new XDGFMaster(settings, contents, _document);
-                _masters.put(master.getID(), master);
             }
         } catch (POIXMLException e) {
             throw XDGFException.wrap(this, e);

@@ -163,11 +163,11 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
 
     @Override
     protected void setCellType(Cell cell, CellType cellType) {
-        if (cell instanceof XSSFCell) {
+        if (cell instanceof XSSFCell xssfCell) {
             EvaluationWorkbook evaluationWorkbook = getEvaluationWorkbook();
             BaseXSSFEvaluationWorkbook xewb = BaseXSSFEvaluationWorkbook.class.isAssignableFrom(evaluationWorkbook.getClass()) ? (BaseXSSFEvaluationWorkbook) evaluationWorkbook : null;
 
-            ((XSSFCell) cell).setCellType(cellType, xewb);
+            xssfCell.setCellType(cellType, xewb);
         } else {
             // could be an SXSSFCell
             cell.setCellType(cellType);

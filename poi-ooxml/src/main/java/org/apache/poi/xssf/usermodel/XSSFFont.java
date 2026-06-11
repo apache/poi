@@ -643,25 +643,26 @@ public class XSSFFont implements Font {
         return _ctFont.toString().hashCode();
     }
 
-    public boolean equals(Object o){
-        if(!(o instanceof XSSFFont)) return false;
+    public boolean equals(Object o) {
+        if (o instanceof XSSFFont cf) {
+            // BUG 60845
+            return Objects.equals(this.getItalic(), cf.getItalic())
+                    && Objects.equals(this.getBold(), cf.getBold())
+                    && Objects.equals(this.getStrikeout(), cf.getStrikeout())
+                    && Objects.equals(this.getCharSet(), cf.getCharSet())
+                    && Objects.equals(this.getColor(), cf.getColor())
+                    && Objects.equals(this.getFamily(), cf.getFamily())
+                    && Objects.equals(this.getFontHeight(), cf.getFontHeight())
+                    && Objects.equals(this.getFontName(), cf.getFontName())
+                    && Objects.equals(this.getScheme(), cf.getScheme())
+                    && Objects.equals(this.getThemeColor(), cf.getThemeColor())
+                    && Objects.equals(this.getTypeOffset(), cf.getTypeOffset())
+                    && Objects.equals(this.getUnderline(), cf.getUnderline())
+                    && Objects.equals(this.getXSSFColor(), cf.getXSSFColor());
 
-        XSSFFont cf = (XSSFFont)o;
-
-        // BUG 60845
-        return Objects.equals(this.getItalic(), cf.getItalic())
-                        && Objects.equals(this.getBold(), cf.getBold())
-                        && Objects.equals(this.getStrikeout(), cf.getStrikeout())
-                        && Objects.equals(this.getCharSet(), cf.getCharSet())
-                        && Objects.equals(this.getColor(), cf.getColor())
-                        && Objects.equals(this.getFamily(), cf.getFamily())
-                        && Objects.equals(this.getFontHeight(), cf.getFontHeight())
-                        && Objects.equals(this.getFontName(), cf.getFontName())
-                        && Objects.equals(this.getScheme(), cf.getScheme())
-                        && Objects.equals(this.getThemeColor(), cf.getThemeColor())
-                        && Objects.equals(this.getTypeOffset(), cf.getTypeOffset())
-                        && Objects.equals(this.getUnderline(), cf.getUnderline())
-                        && Objects.equals(this.getXSSFColor(), cf.getXSSFColor());
+        } else {
+            return false;
+        }
     }
 
 }

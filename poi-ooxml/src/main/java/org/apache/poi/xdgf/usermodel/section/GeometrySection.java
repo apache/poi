@@ -111,10 +111,10 @@ public class GeometrySection extends XDGFSection {
         // special cases
         GeometryRow first = rows.hasNext() ? rows.next() : null;
 
-        if (first instanceof Ellipse) {
-            return ((Ellipse)first).getPath();
-        } else if (first instanceof InfiniteLine) {
-            return ((InfiniteLine)first).getPath();
+        if (first instanceof Ellipse ellipse) {
+            return ellipse.getPath();
+        } else if (first instanceof InfiniteLine infiniteLine) {
+            return infiniteLine.getPath();
         } else if (first instanceof SplineStart) {
             throw new POIXMLException("SplineStart must be preceded by another type");
         } else {
