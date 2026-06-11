@@ -155,10 +155,10 @@ tasks.register('compileJava9', JavaCompile) {
     dependsOn 'compileJava', ':poi:jar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
+        languageVersion = JavaLanguageVersion.of(Math.max(17, jdkVersion))
     }
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
@@ -172,10 +172,10 @@ tasks.register('compileTest9', JavaCompile) {
     dependsOn 'compileTestJava', ':poi:testJar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
+        languageVersion = JavaLanguageVersion.of(Math.max(17, jdkVersion))
     }
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
     destinationDirectory = file(TEST9_OUT + VERSIONS9)
     source = file(TEST9_SRC)
     options.compilerArgs = [
@@ -216,10 +216,10 @@ javadoc {
         options {
             addBooleanOption('html5', true)
             links 'https://poi.apache.org/apidocs/dev/'
-            if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
+            if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/17/docs/api/'
             use = true
             splitIndex = true
-            source = "11"
+            source = "17"
             classpath += configurations.javadocs.files
         }
     }

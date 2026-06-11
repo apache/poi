@@ -43,7 +43,8 @@ def poijobs = [
           trigger: 'H */12 * * *',
           jenkinsLite: true,
         ],
-        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
+        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
+          disabled: true  // JDK 11 is no longer supported by POI 6
         ],
         [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true
         ],
@@ -90,7 +91,8 @@ def poijobs = [
           disabled: true  // JDK 8 is no longer supported by POI 6
         ],
         [ name: 'POI-DSL-Windows-1.11', jdk: '1.11', trigger: triggerSundays, windows: true, slaves: 'Windows',
-          jenkinsLite: true
+          jenkinsLite: true,
+          disabled: true  // JDK 11 is no longer supported by POI 6
         ],
         [ name: 'POI-DSL-Windows-1.17', jdk: '1.17', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
         ],
