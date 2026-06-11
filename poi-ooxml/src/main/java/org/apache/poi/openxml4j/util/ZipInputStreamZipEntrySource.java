@@ -98,21 +98,33 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
      */
     public ZipInputStreamZipEntrySource(ZipArchiveThresholdInputStream inp) throws IOException {
         final Set<String> filenames = new HashSet<>();
-        for (;;) {
-            final ZipArchiveEntry zipEntry = inp.getNextEntry();
-            if (zipEntry == null) {
-                break;
+        try {
+            for (;;) {
+                final ZipArchiveEntry zipEntry = inp.getNextEntry();
+                if (zipEntry == null) {
+                    break;
+                }
+                String name = zipEntry.getName();
+                if (name == null || name.isEmpty()) {
+                    throw new InvalidZipException("Input file contains an entry with an empty name");
+                }
+                name = IOUtils.normalizePath(name).toLowerCase(Locale.ROOT);
+                if (filenames.contains(name)) {
+                    throw new InvalidZipException("Input file contains more than 1 entry with the name " + zipEntry.getName());
+                }
+                filenames.add(name);
+                zipEntries.put(name, new ZipArchiveFakeEntry(zipEntry, inp));
             }
-            String name = zipEntry.getName();
-            if (name == null || name.isEmpty()) {
-                throw new InvalidZipException("Input file contains an entry with an empty name");
+        } catch (IOException | RuntimeException | Error e) {
+            for (ZipArchiveFakeEntry entry : zipEntries.values()) {
+                try {
+                    entry.close();
+                } catch (IOException ioex) {
+                    // ignore
+                }
             }
-            name = IOUtils.normalizePath(name).toLowerCase(Locale.ROOT);
-            if (filenames.contains(name)) {
-                throw new InvalidZipException("Input file contains more than 1 entry with the name " + zipEntry.getName());
-            }
-            filenames.add(name);
-            zipEntries.put(name, new ZipArchiveFakeEntry(zipEntry, inp));
+            zipEntries.clear();
+            throw e;
         }
 
         streamToClose = inp;
