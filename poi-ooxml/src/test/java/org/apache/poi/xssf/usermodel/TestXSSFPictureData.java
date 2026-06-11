@@ -143,6 +143,39 @@ public final class TestXSSFPictureData {
         }
     }
 
+	@Test
+	void testNewSvgFormat() throws IOException {
+		try (XSSFWorkbook wb = new XSSFWorkbook()) {
+			XSSFSheet sheet = wb.createSheet();
+			XSSFDrawing drawing = sheet.createDrawingPatriarch();
+			String svg = "<svg viewBox='0 0 125 80' xmlns='http://www.w3.org/2000/svg'>"
+					+ "<text y=\"75\" font-size=\"100\" font-family=\"serif\"><![CDATA[10]]></text>"
+					+ "</svg>";
+			byte[] data = svg.getBytes(LocaleUtil.CHARSET_1252);
+
+			List<XSSFPictureData> pictures = wb.getAllPictures();
+			assertEquals(0, pictures.size());
+
+			int idx = wb.addPicture(data, XSSFWorkbook.PICTURE_TYPE_SVG);
+			assertEquals(1, pictures.size());
+			assertEquals("svg", pictures.get(idx).suggestFileExtension());
+			assertArrayEquals(data, pictures.get(idx).getData());
+
+			//TODO finish usermodel API for XSSFPicture
+			XSSFPicture p1 = drawing.createPicture(new XSSFClientAnchor(), idx);
+			assertNotNull(p1);
+
+			//check that the added pictures are accessible after write
+			try (XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+				List<XSSFPictureData> pictures2 = wbBack.getAllPictures();
+				assertEquals(1, pictures2.size());
+
+				assertEquals("svg", pictures2.get(idx).suggestFileExtension());
+				assertArrayEquals(data, pictures2.get(idx).getData());
+			}
+		}
+	}
+
     /**
      * Bug 53568:  XSSFPicture.getPictureData() can return null.
      */

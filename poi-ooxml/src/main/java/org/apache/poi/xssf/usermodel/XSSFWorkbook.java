@@ -122,6 +122,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public static final int PICTURE_TYPE_EPS = 10;
     public static final int PICTURE_TYPE_BMP = 11;
     public static final int PICTURE_TYPE_WPG = 12;
+	// Picture Type WDP has ooxmlId 13 but is currently not implemented
+	public static final int PICTURE_TYPE_SVG = 14;
 
     /**
      * The underlying XML bean
@@ -597,6 +599,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @see Workbook#PICTURE_TYPE_JPEG
      * @see Workbook#PICTURE_TYPE_PNG
      * @see Workbook#PICTURE_TYPE_DIB
+	 * @see #PICTURE_TYPE_GIF
+	 * @see #PICTURE_TYPE_TIFF
+	 * @see #PICTURE_TYPE_EPS
+	 * @see #PICTURE_TYPE_BMP
+	 * @see #PICTURE_TYPE_WPG
+	 * @see #PICTURE_TYPE_SVG
      * @see #getAllPictures()
      */
     @Override
@@ -625,6 +633,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @see Workbook#PICTURE_TYPE_JPEG
      * @see Workbook#PICTURE_TYPE_PNG
      * @see Workbook#PICTURE_TYPE_DIB
+	 * @see #PICTURE_TYPE_GIF
+	 * @see #PICTURE_TYPE_TIFF
+	 * @see #PICTURE_TYPE_EPS
+	 * @see #PICTURE_TYPE_BMP
+	 * @see #PICTURE_TYPE_WPG
+	 * @see #PICTURE_TYPE_SVG
      * @see #getAllPictures()
      */
     public int addPicture(InputStream is, int format) throws IOException {
