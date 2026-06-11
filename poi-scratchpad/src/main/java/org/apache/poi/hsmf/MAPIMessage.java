@@ -528,32 +528,32 @@ public class MAPIMessage extends POIReadOnlyDocument {
 
     public void set7BitEncoding(String generalcharset, String htmlbodycharset, String bodycharset) {
         for (Chunk c : mainChunks.getChunks()) {
-            if (c instanceof StringChunk) {
+            if (c instanceof StringChunk stringChunk) {
                 if (c.getChunkId() == MAPIProperty.BODY_HTML.id) {
                     if (htmlbodycharset != null) {
-                        ((StringChunk) c).set7BitEncoding(htmlbodycharset);
+                        stringChunk.set7BitEncoding(htmlbodycharset);
                     }
                 } else if (c.getChunkId() == MAPIProperty.BODY.id) {
                     if (bodycharset != null) {
-                        ((StringChunk) c).set7BitEncoding(bodycharset);
+                        stringChunk.set7BitEncoding(bodycharset);
                     }
                 } else if (generalcharset != null) {
-                    ((StringChunk) c).set7BitEncoding(generalcharset);
+                    stringChunk.set7BitEncoding(generalcharset);
                 }
             }
         }
         if (generalcharset != null) {
             if (nameIdChunks != null) {
                 for (Chunk c : nameIdChunks.getChunks()) {
-                    if (c instanceof StringChunk) {
-                        ((StringChunk) c).set7BitEncoding(generalcharset);
+                    if (c instanceof StringChunk stringChunk) {
+                        stringChunk.set7BitEncoding(generalcharset);
                     }
                 }
             }
             for (RecipientChunks rc : recipientChunks) {
                 for (Chunk c : rc.getAll()) {
-                    if (c instanceof StringChunk) {
-                        ((StringChunk) c).set7BitEncoding(generalcharset);
+                    if (c instanceof StringChunk stringChunk) {
+                        stringChunk.set7BitEncoding(generalcharset);
                     }
                 }
             }

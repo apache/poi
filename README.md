@@ -69,7 +69,7 @@ A good resource for finding the published jars and forming build tool dependency
 
 # Contributing
 
-* Download and install git, Java JDK 11+, and Apache Ant 1.8+ or Gradle
+* Download and install git, Java JDK 17+, and Apache Ant 1.8+ or Gradle
 
 * Check out the code from git
 

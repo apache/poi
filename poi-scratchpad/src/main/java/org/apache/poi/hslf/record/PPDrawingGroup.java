@@ -135,9 +135,9 @@ public final class PPDrawingGroup extends RecordAtom {
 
     public EscherDggRecord getEscherDggRecord(){
         if(dgg == null){
-            for(EscherRecord r : dggContainer){
-                if(r instanceof EscherDggRecord){
-                    dgg = (EscherDggRecord)r;
+            for(EscherRecord r : dggContainer) {
+                if(r instanceof EscherDggRecord dggRecord) {
+                    dgg = dggRecord;
                     break;
                 }
             }

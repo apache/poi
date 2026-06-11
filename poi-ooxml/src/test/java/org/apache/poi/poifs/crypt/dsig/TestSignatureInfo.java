@@ -89,7 +89,6 @@ import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.util.ConditionalExecution.DisabledOnJreEx;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
@@ -353,7 +352,6 @@ class TestSignatureInfo {
     }
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void testSignSpreadsheet() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         try (OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE)) {
@@ -372,7 +370,6 @@ class TestSignatureInfo {
     }
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void testManipulation() throws Exception {
         // sign & validate
         String testFile = "hello-world-unsigned.xlsx";
@@ -400,7 +397,6 @@ class TestSignatureInfo {
     }
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void testSignSpreadsheetWithSignatureInfo() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         DummyKeystore ks = new DummyKeystore(STORE_PASS);
@@ -427,7 +423,6 @@ class TestSignatureInfo {
     }
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void testSignEnvelopingDocument() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         File sigCopy = testdata.getFile(testFile);
@@ -662,7 +657,6 @@ class TestSignatureInfo {
     }
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void testNonSha1() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         DummyKeystore ks = new DummyKeystore(STORE_PASS);
@@ -693,7 +687,6 @@ class TestSignatureInfo {
 
     // Test signing of external references / hyperlinks
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void bug65214() throws Exception {
         DummyKeystore ks = new DummyKeystore(STORE_PASS);
         KeyCertPair certPair = ks.createDummyKey();
@@ -733,7 +726,6 @@ class TestSignatureInfo {
     }
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     void bug58630() throws Exception {
         DummyKeystore ks = new DummyKeystore(STORE_PASS);
         KeyCertPair certPair = ks.createDummyKey();
@@ -968,7 +960,6 @@ class TestSignatureInfo {
 
 
     @Test
-    @DisabledOnJreEx("1.8.0_292")
     @Tag("scratchpad.ignore")
     void testSignatureImage() throws Exception {
         DummyKeystore ks = new DummyKeystore(STORE_PASS);
