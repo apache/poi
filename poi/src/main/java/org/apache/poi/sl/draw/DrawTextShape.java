@@ -62,8 +62,7 @@ public class DrawTextShape extends DrawSimpleShape {
         boolean vertFlip = s.getFlipVertical();
         boolean horzFlip = s.getFlipHorizontal();
         ShapeContainer<?,?> sc = s.getParent();
-        while (sc instanceof PlaceableShape) {
-            PlaceableShape<?,?> ps = (PlaceableShape<?,?>)sc;
+        while (sc instanceof PlaceableShape<?,?> ps) {
             vertFlip ^= ps.getFlipVertical();
             horzFlip ^= ps.getFlipHorizontal();
             sc = ps.getParent();

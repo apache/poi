@@ -65,8 +65,8 @@ public class Context {
 
     public double evaluate(Formula fmla){
         double result = fmla.evaluate(this);
-        if (fmla instanceof GuideIf) {
-            String key = ((GuideIf)fmla).getName();
+        if (fmla instanceof GuideIf guideIf) {
+            String key = guideIf.getName();
             if (key != null) {
                 _ctx.put(key, result);
             }

@@ -41,11 +41,11 @@ public class DrawMasterSheet extends DrawSheet {
     @Override
     protected boolean canDraw(Graphics2D graphics, Shape<?,?> shape) {
         Slide<?,?> slide = (Slide<?,?>)graphics.getRenderingHint(Drawable.CURRENT_SLIDE);
-        if (shape instanceof SimpleShape) {
+        if (shape instanceof SimpleShape<?,?> ss) {
             // in XSLF, slidenumber and date shapes aren't marked as placeholders opposed to HSLF
-            Placeholder ph = ((SimpleShape<?,?>)shape).getPlaceholder();
+            Placeholder ph = ss.getPlaceholder();
             if (ph != null) {
-                return slide.getDisplayPlaceholder((SimpleShape<?, ?>)shape);
+                return slide.getDisplayPlaceholder(ss);
             }
         }
         return slide.getFollowMasterGraphics();
