@@ -306,8 +306,7 @@ public class XSSFExportToXml implements Comparator<String>{
         default:
 
         }
-        if (node instanceof Element) {
-            Element currentElement = (Element) node;
+        if (node instanceof Element currentElement) {
             currentElement.setTextContent(value);
         } else {
             node.setNodeValue(value);

@@ -278,8 +278,8 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
 
         // TODO: the rotation handling is incomplete and the scale handling is missing
         //  see DrawTexturePaint on how to do it for AWT
-        if (!fill.isRotatedWithShape() && slShape instanceof SimpleShape) {
-            double rot = ((SimpleShape<?,?>)slShape).getRotation();
+        if (!fill.isRotatedWithShape() && slShape instanceof SimpleShape simpleShape) {
+            double rot = simpleShape.getRotation();
             if (rot != 0) {
                 setAttribute(genCtx, patternDef,
                     null, SVG_PATTERN_TRANSFORM_ATTRIBUTE, "rotate(" + genCtx.doubleString(-rot) + ")");

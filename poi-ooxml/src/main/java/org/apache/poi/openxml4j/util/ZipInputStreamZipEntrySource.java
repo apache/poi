@@ -137,8 +137,10 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 
     @Override
     public InputStream getInputStream(ZipArchiveEntry zipEntry) throws IOException {
-        assert (zipEntry instanceof ZipArchiveFakeEntry);
-        return ((ZipArchiveFakeEntry)zipEntry).getInputStream();
+        if (zipEntry instanceof ZipArchiveFakeEntry zipFakeEntry) {
+            return zipFakeEntry.getInputStream();
+        }
+        throw new IllegalArgumentException("This implementation only supports ZipArchiveFakeEntry");
     }
 
     @Override

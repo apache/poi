@@ -105,11 +105,11 @@ public final class XSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
      */
     @Override
     protected EvaluationCell toEvaluationCell(Cell cell) {
-        if (!(cell instanceof XSSFCell)){
+        if (cell instanceof XSSFCell xssfCell) {
+            return new XSSFEvaluationCell(xssfCell);
+        } else {
             throw new IllegalArgumentException("Unexpected type of cell: " + cell.getClass() + "." +
                     " Only XSSFCells can be evaluated.");
         }
-
-        return new XSSFEvaluationCell((XSSFCell)cell);
     }
 }

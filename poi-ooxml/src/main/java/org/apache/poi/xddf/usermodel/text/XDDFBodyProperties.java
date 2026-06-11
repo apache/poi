@@ -95,12 +95,12 @@ public class XDDFBodyProperties {
         if (props.isSetSpAutoFit()) {
             props.unsetSpAutoFit();
         }
-        if (autofit instanceof XDDFNoAutoFit) {
-            props.setNoAutofit(((XDDFNoAutoFit) autofit).getXmlObject());
-        } else if (autofit instanceof XDDFNormalAutoFit) {
-            props.setNormAutofit(((XDDFNormalAutoFit) autofit).getXmlObject());
-        } else if (autofit instanceof XDDFShapeAutoFit) {
-            props.setSpAutoFit(((XDDFShapeAutoFit) autofit).getXmlObject());
+        if (autofit instanceof XDDFNoAutoFit xddfNoAutoFit) {
+            props.setNoAutofit(xddfNoAutoFit.getXmlObject());
+        } else if (autofit instanceof XDDFNormalAutoFit xddfNormalAutoFit) {
+            props.setNormAutofit(xddfNormalAutoFit.getXmlObject());
+        } else if (autofit instanceof XDDFShapeAutoFit xddfShapeAutoFit) {
+            props.setSpAutoFit(xddfShapeAutoFit.getXmlObject());
         }
     }
 

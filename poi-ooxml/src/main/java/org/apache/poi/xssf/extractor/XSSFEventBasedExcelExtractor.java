@@ -300,8 +300,8 @@ public class XSSFEventBasedExcelExtractor
             return;
         }
         for (XSSFShape shape : shapes) {
-            if (shape instanceof XSSFSimpleShape) {
-                String sText = ((XSSFSimpleShape) shape).getText();
+            if (shape instanceof XSSFSimpleShape simpleShape) {
+                String sText = simpleShape.getText();
                 if (sText != null && !sText.isEmpty()) {
                     text.append(sText).append('\n');
                 }

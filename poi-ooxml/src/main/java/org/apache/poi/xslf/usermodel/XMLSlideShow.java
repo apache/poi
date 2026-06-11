@@ -192,21 +192,21 @@ public class XMLSlideShow extends POIXMLDocument
             Map<String, XSLFChart> chartMap = new HashMap<>();
             for (RelationPart rp : getRelationParts()) {
                 POIXMLDocumentPart p = rp.getDocumentPart();
-                if (p instanceof XSLFSlide) {
-                    shIdMap.put(rp.getRelationship().getId(), (XSLFSlide) p);
+                if (p instanceof XSLFSlide xslfSlide) {
+                    shIdMap.put(rp.getRelationship().getId(), xslfSlide);
                     for (POIXMLDocumentPart c : p.getRelations()) {
-                        if (c instanceof XSLFChart) {
-                            chartMap.put(c.getPackagePart().getPartName().getName(), (XSLFChart) c);
+                        if (c instanceof XSLFChart xslfChart) {
+                            chartMap.put(c.getPackagePart().getPartName().getName(), xslfChart);
                         }
                     }
-                } else if (p instanceof XSLFSlideMaster) {
-                    masterMap.put(getRelationId(p), (XSLFSlideMaster) p);
-                } else if (p instanceof XSLFTableStyles) {
-                    _tableStyles = (XSLFTableStyles) p;
-                } else if (p instanceof XSLFNotesMaster) {
-                    _notesMaster = (XSLFNotesMaster) p;
-                } else if (p instanceof XSLFCommentAuthors) {
-                    _commentAuthors = (XSLFCommentAuthors) p;
+                } else if (p instanceof XSLFSlideMaster xslfSlideMaster) {
+                    masterMap.put(getRelationId(p), xslfSlideMaster);
+                } else if (p instanceof XSLFTableStyles xslfTableStyles) {
+                    _tableStyles = xslfTableStyles;
+                } else if (p instanceof XSLFNotesMaster xslfNotesMaster) {
+                    _notesMaster = xslfNotesMaster;
+                } else if (p instanceof XSLFCommentAuthors xslfCommentAuthors) {
+                    _commentAuthors = xslfCommentAuthors;
                 }
             }
 
