@@ -500,6 +500,10 @@ xmlbeansjobs.each { xjob ->
             env('FORREST_HOME', xjob.windows ? 'f:\\jenkins\\tools\\forrest\\latest' : '/home/jenkins/tools/forrest/latest')
         }
         wrappers {
+            preBuildCleanup { // Clean before build
+                // gradle-wrapper.jar is downloaded by ASF modified gradlew
+                includePattern('gradle/wrapper/gradle-wrapper.jar')
+            }
             timeout {
                 absolute(180)
                 abortBuild()
