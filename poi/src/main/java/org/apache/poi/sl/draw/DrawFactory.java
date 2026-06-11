@@ -94,30 +94,30 @@ public class DrawFactory {
     }
 
     public Drawable getDrawable(Shape<?,?> shape) {
-        if (shape instanceof TextBox) {
-            return getDrawable((TextBox<?,?>)shape);
-        } else if (shape instanceof FreeformShape) {
-            return getDrawable((FreeformShape<?,?>)shape);
-        } else if (shape instanceof TextShape) {
-            return getDrawable((TextShape<?,?>)shape);
-        } else if (shape instanceof TableShape) {
-            return getDrawable((TableShape<?,?>)shape);
-        } else if (shape instanceof GroupShape) {
-            return getDrawable((GroupShape<?,?>)shape);
-        } else if (shape instanceof PictureShape) {
-            return getDrawable((PictureShape<?,?>)shape);
-        } else if (shape instanceof GraphicalFrame) {
-            return getDrawable((GraphicalFrame<?,?>)shape);
-        } else if (shape instanceof Background) {
-            return getDrawable((Background<?,?>)shape);
-        } else if (shape instanceof ConnectorShape) {
-            return getDrawable((ConnectorShape<?,?>)shape);
-        } else if (shape instanceof Slide) {
-            return getDrawable((Slide<?,?>)shape);
-        } else if (shape instanceof MasterSheet) {
-            return getDrawable((MasterSheet<?,?>)shape);
-        } else if (shape instanceof Sheet) {
-            return getDrawable((Sheet<?,?>)shape);
+        if (shape instanceof TextBox<?,?> tb) {
+            return getDrawable(tb);
+        } else if (shape instanceof FreeformShape<?,?> fs) {
+            return getDrawable(fs);
+        } else if (shape instanceof TextShape<?,?> ts) {
+            return getDrawable(ts);
+        } else if (shape instanceof TableShape<?,?> ts) {
+            return getDrawable(ts);
+        } else if (shape instanceof GroupShape<?,?> gs) {
+            return getDrawable(gs);
+        } else if (shape instanceof PictureShape<?,?> ps) {
+            return getDrawable(ps);
+        } else if (shape instanceof GraphicalFrame<?,?> gf) {
+            return getDrawable(gf);
+        } else if (shape instanceof Background<?,?> bg) {
+            return getDrawable(bg);
+        } else if (shape instanceof ConnectorShape<?,?> cs) {
+            return getDrawable(cs);
+        } else if (shape instanceof Slide<?,?> slide) {
+            return getDrawable(slide);
+        } else if (shape instanceof MasterSheet<?,?> sheet) {
+            return getDrawable(sheet);
+        } else if (shape instanceof Sheet<?,?> sheet) {
+            return getDrawable(sheet);
         } else if (shape.getClass().isAnnotationPresent(DrawNotImplemented.class)) {
             return new DrawNothing(shape);
         }

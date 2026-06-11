@@ -134,10 +134,11 @@ public class DrawPaint {
             if (this == o) {
                 return true;
             }
-            if (!(o instanceof SolidPaint)) {
+            if (o instanceof SolidPaint oth) {
+                return Objects.equals(getSolidColor(), oth.getSolidColor());
+            } else {
                 return false;
             }
-            return Objects.equals(getSolidColor(), ((SolidPaint) o).getSolidColor());
         }
 
         @Override
@@ -162,12 +163,12 @@ public class DrawPaint {
         if (modifier == PaintModifier.NONE) {
             return TRANSPARENT;
         }
-        if (paint instanceof SolidPaint) {
-            return getSolidPaint((SolidPaint)paint, graphics, modifier);
-        } else if (paint instanceof GradientPaint) {
-            return getGradientPaint((GradientPaint)paint, graphics);
-        } else if (paint instanceof TexturePaint) {
-            return getTexturePaint((TexturePaint)paint, graphics);
+        if (paint instanceof SolidPaint sp) {
+            return getSolidPaint(sp, graphics, modifier);
+        } else if (paint instanceof GradientPaint gp) {
+            return getGradientPaint(gp, graphics);
+        } else if (paint instanceof TexturePaint tp) {
+            return getTexturePaint(tp, graphics);
         }
         return TRANSPARENT;
     }

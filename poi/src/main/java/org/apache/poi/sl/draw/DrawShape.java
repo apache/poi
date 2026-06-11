@@ -56,52 +56,42 @@ public class DrawShape implements Drawable {
      */
     @Override
     public void applyTransform(Graphics2D graphics) {
-        if (!(shape instanceof PlaceableShape) || graphics == null) {
-            return;
-        }
+        if (shape instanceof PlaceableShape<?,?> ps && graphics != null) {
+            final Rectangle2D anchor = getAnchor(graphics, ps);
+            if (anchor == null) {
+                return;
+            }
 
-        final Rectangle2D anchor = getAnchor(graphics, (PlaceableShape<?,?>)shape);
-        if (anchor == null) {
-            return;
-        }
-
-        if (isHSLF(shape)) {
-            flipHorizontal(graphics, anchor);
-            flipVertical(graphics, anchor);
-            rotate(graphics, anchor);
-        } else {
-            rotate(graphics, anchor);
-            flipHorizontal(graphics, anchor);
-            flipVertical(graphics, anchor);
+            if (isHSLF(shape)) {
+                flipHorizontal(ps, graphics, anchor);
+                flipVertical(ps, graphics, anchor);
+                rotate(ps, graphics, anchor);
+            } else {
+                rotate(ps, graphics, anchor);
+                flipHorizontal(ps, graphics, anchor);
+                flipVertical(ps, graphics, anchor);
+            }
         }
     }
 
-    private void flipHorizontal(Graphics2D graphics, Rectangle2D anchor) {
-        assert(shape instanceof PlaceableShape && anchor != null);
-        if (((PlaceableShape<?,?>)shape).getFlipHorizontal()) {
-            graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
-            graphics.scale(-1, 1);
-            graphics.translate(-anchor.getX(), -anchor.getY());
-        }
+    private static void flipHorizontal(PlaceableShape<?,?> ps, Graphics2D graphics, Rectangle2D anchor) {
+        graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
+        graphics.scale(-1, 1);
+        graphics.translate(-anchor.getX(), -anchor.getY());
     }
 
-    private void flipVertical(Graphics2D graphics, Rectangle2D anchor) {
-        assert(shape instanceof PlaceableShape && anchor != null);
-        if (((PlaceableShape<?,?>)shape).getFlipVertical()) {
-            graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
-            graphics.scale(1, -1);
-            graphics.translate(-anchor.getX(), -anchor.getY());
-        }
+    private static void flipVertical(PlaceableShape<?,?> ps, Graphics2D graphics, Rectangle2D anchor) {
+        graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
+        graphics.scale(1, -1);
+        graphics.translate(-anchor.getX(), -anchor.getY());
     }
 
-    private void rotate(Graphics2D graphics, Rectangle2D anchor) {
-        assert(shape instanceof PlaceableShape && anchor != null);
-        double rotation = ((PlaceableShape<?,?>)shape).getRotation();
+    private static void rotate(PlaceableShape<?,?> ps, Graphics2D graphics, Rectangle2D anchor) {
+        double rotation = ps.getRotation();
         if (rotation != 0.) {
             // PowerPoint rotates shapes relative to the geometric center
             graphics.rotate(Math.toRadians(rotation), anchor.getCenterX(), anchor.getCenterY());
         }
-
     }
 
     private static double safeScale(double dim1, double dim2) {

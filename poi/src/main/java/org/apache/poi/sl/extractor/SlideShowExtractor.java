@@ -220,28 +220,26 @@ public class SlideShowExtractor<
 
         // write header texts and determine footer text
         for (Shape<S, P> s : m) {
-            if (!(s instanceof TextShape)) {
-                continue;
-            }
-            final TextShape<S, P> ts = (TextShape<S, P>) s;
-            final PlaceholderDetails pd = ts.getPlaceholderDetails();
-            if (pd == null || !pd.isVisible() || pd.getPlaceholder() == null) {
-                continue;
-            }
-            switch (pd.getPlaceholder()) {
-                case HEADER:
-                    printTextParagraphs(ts.getTextParagraphs(), consumer);
-                    break;
-                case FOOTER:
-                    printTextParagraphs(ts.getTextParagraphs(), footerCon);
-                    break;
-                case SLIDE_NUMBER:
-                    printTextParagraphs(ts.getTextParagraphs(), footerCon, "\n", SlideShowExtractor::replaceSlideNumber);
-                    break;
-                case DATETIME:
-                    // currently not supported
-                default:
-                    break;
+            if (s instanceof TextShape<S, P> ts) {
+                final PlaceholderDetails pd = ts.getPlaceholderDetails();
+                if (pd == null || !pd.isVisible() || pd.getPlaceholder() == null) {
+                    continue;
+                }
+                switch (pd.getPlaceholder()) {
+                    case HEADER:
+                        printTextParagraphs(ts.getTextParagraphs(), consumer);
+                        break;
+                    case FOOTER:
+                        printTextParagraphs(ts.getTextParagraphs(), footerCon);
+                        break;
+                    case SLIDE_NUMBER:
+                        printTextParagraphs(ts.getTextParagraphs(), footerCon, "\n", SlideShowExtractor::replaceSlideNumber);
+                        break;
+                    case DATETIME:
+                        // currently not supported
+                    default:
+                        break;
+                }
             }
         }
     }
@@ -265,10 +263,10 @@ public class SlideShowExtractor<
     @SuppressWarnings("unchecked")
     private void printShapeText(final ShapeContainer<S,P> container, final Consumer<String> consumer) {
         for (Shape<S,P> shape : container) {
-            if (shape instanceof TextShape) {
-                printTextParagraphs(((TextShape<S,P>)shape).getTextParagraphs(), consumer);
-            } else if (shape instanceof TableShape) {
-                printShapeText((TableShape<S,P>)shape, consumer);
+            if (shape instanceof TextShape<S,P> ts) {
+                printTextParagraphs(ts.getTextParagraphs(), consumer);
+            } else if (shape instanceof TableShape<S,P> ts) {
+                printShapeText(ts, consumer);
             } else if (shape instanceof ShapeContainer) {
                 printShapeText((ShapeContainer<S,P>)shape, consumer);
             }

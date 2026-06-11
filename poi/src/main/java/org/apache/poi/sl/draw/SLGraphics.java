@@ -185,7 +185,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
         if(paint == null) return;
 
         this._paint = paint;
-        if (paint instanceof Color) _foreground = (Color)paint;
+        if (paint instanceof Color c) _foreground = c;
     }
 
     /**
@@ -234,8 +234,8 @@ public class SLGraphics extends Graphics2D implements Cloneable {
         p.setPath(path);
         p.setFillColor(null);
         applyStroke(p);
-        if (_paint instanceof Color) {
-            p.setStrokeStyle((Color)_paint);
+        if (_paint instanceof Color c) {
+            p.setStrokeStyle(c);
         }
     }
 

@@ -46,9 +46,9 @@ public class DrawTableShape extends DrawShape {
     }
 
     protected Drawable getGroupShape(Graphics2D graphics) {
-        if (shape instanceof GroupShape) {
+        if (shape instanceof GroupShape<?,?> gs) {
             DrawFactory df = DrawFactory.getInstance(graphics);
-            return df.getDrawable((GroupShape<?,?>)shape);
+            return df.getDrawable(gs);
         }
         return null;
     }
@@ -242,14 +242,14 @@ public class DrawTableShape extends DrawShape {
                     cell.removeBorder(be);
                 } else {
                     for (Object o : args) {
-                        if (o instanceof Double) {
-                            cell.setBorderWidth(be, (Double)o);
-                        } else if (o instanceof Color) {
-                            cell.setBorderColor(be, (Color)o);
-                        } else if (o instanceof LineDash) {
-                            cell.setBorderDash(be, (LineDash)o);
-                        } else if (o instanceof LineCompound) {
-                            cell.setBorderCompound(be, (LineCompound)o);
+                        if (o instanceof Double d) {
+                            cell.setBorderWidth(be, d);
+                        } else if (o instanceof Color c) {
+                            cell.setBorderColor(be, c);
+                        } else if (o instanceof LineDash ld) {
+                            cell.setBorderDash(be, ld);
+                        } else if (o instanceof LineCompound lc) {
+                            cell.setBorderCompound(be, lc);
                         }
                     }
                 }
