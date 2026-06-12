@@ -27,9 +27,9 @@ import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 import org.apache.poi.util.SuppressForbidden;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -38,11 +38,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Isolated // modifies the default locale and we don't want to affect tests running in parallel
 class TestZipSecureFile {
     @Test
     void testThresholdInputStream() throws Exception {
