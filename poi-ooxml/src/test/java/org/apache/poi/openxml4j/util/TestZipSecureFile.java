@@ -224,4 +224,68 @@ class TestZipSecureFile {
             assertTrue(tempFile.delete(), "Temporary file should be successfully deleted");
         }
     }
+
+    @Test
+    void testZipInputStreamZipEntrySourceCopyFailureReleasesResources() throws Exception {
+        List<File> createdFiles = new ArrayList<>();
+        TempFileCreationStrategy customStrategy = new TempFileCreationStrategy() {
+            private final TempFileCreationStrategy delegate = new DefaultTempFileCreationStrategy();
+            @Override
+            public File createTempFile(String prefix, String suffix) throws IOException {
+                File f = delegate.createTempFile(prefix, suffix);
+                createdFiles.add(f);
+                return f;
+            }
+            @Override
+            public File createTempDirectory(String prefix) throws IOException {
+                return delegate.createTempDirectory(prefix);
+            }
+        };
+
+        TempFile.withStrategy(customStrategy, () -> {
+            try {
+                int oldThreshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
+                ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(0);
+                try {
+                    File tempZipFile = TempFile.createTempFile("test-leak-copy", ".zip");
+                    try {
+                        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(tempZipFile)) {
+                            ZipArchiveEntry entry = new ZipArchiveEntry("test.txt");
+                            zos.putArchiveEntry(entry);
+                            zos.write("some data that will fail during read".getBytes(StandardCharsets.UTF_8));
+                            zos.closeArchiveEntry();
+                        }
+
+                        try (InputStream is = Files.newInputStream(tempZipFile.toPath());
+                             ZipArchiveThresholdInputStream zis = new ZipArchiveThresholdInputStream(
+                                     new org.apache.commons.compress.archivers.zip.ZipArchiveInputStream(is)) {
+                                 private int readCount = 0;
+                                 @Override
+                                 public int read(byte[] b, int off, int len) throws IOException {
+                                     readCount += len;
+                                     if (readCount > 5) {
+                                         throw new IOException("Simulated copy failure");
+                                     }
+                                     return super.read(b, off, len);
+                                 }
+                             }) {
+                            assertThrows(IOException.class, () -> new ZipInputStreamZipEntrySource(zis));
+                        }
+                    } finally {
+                        tempZipFile.delete();
+                    }
+                } finally {
+                    ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(oldThreshold);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        });
+
+        assertFalse(createdFiles.isEmpty(), "At least one temporary file should have been created for the zip entry");
+        for (File f : createdFiles) {
+            assertFalse(f.exists(), "Temporary file " + f.getAbsolutePath() + " should have been deleted on copy failure");
+        }
+    }
 }

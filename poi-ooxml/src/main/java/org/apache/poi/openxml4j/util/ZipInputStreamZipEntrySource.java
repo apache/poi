@@ -162,18 +162,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 
     @Override
     public ZipArchiveEntry getEntry(final String path) {
-        final String normalizedPath = IOUtils.normalizePath(path);
-        final ZipArchiveEntry ze = zipEntries.get(normalizedPath);
-        if (ze != null) {
-            return ze;
-        }
-
-        for (final Map.Entry<String, ZipArchiveFakeEntry> fze : zipEntries.entrySet()) {
-            if (normalizedPath.equalsIgnoreCase(IOUtils.normalizePath(fze.getKey()))) {
-                return fze.getValue();
-            }
-        }
-
-        return null;
+        final String normalizedPath = IOUtils.normalizePath(path).toLowerCase(Locale.ROOT);
+        return zipEntries.get(normalizedPath);
     }
 }
