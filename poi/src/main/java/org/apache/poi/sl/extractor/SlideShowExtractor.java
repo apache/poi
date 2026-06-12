@@ -169,16 +169,15 @@ public class SlideShowExtractor<
             return;
         }
         for (final Shape<S,P> shape : master) {
-            if (shape instanceof TextShape) {
-                final TextShape<S,P> ts = (TextShape<S,P>)shape;
+            if (shape instanceof TextShape<S, P> ts) {
                 final String text = ts.getText();
                 if (text == null || text.isEmpty() || "*".equals(text)) {
                     continue;
                 }
 
                 if (ts.isPlaceholder()) {
-                    // don't bother about boiler plate text on master sheets
-                    LOG.atInfo().log("Ignoring boiler plate (placeholder) text on slide master: {}", text);
+                    // don't bother about boilerplate text on master sheets
+                    LOG.atInfo().log("Ignoring boilerplate (placeholder) text on slide master: {}", text);
                     continue;
                 }
 
@@ -403,14 +402,13 @@ public class SlideShowExtractor<
         return glyphs;
     }
     private static boolean filterFonts(Object o, String typeface, Boolean italic, Boolean bold) {
-        if (!(o instanceof TextRun)) {
+        if (o instanceof TextRun tr) {
+            return typeface.equalsIgnoreCase(tr.getFontFamily()) &&
+                    (italic == null || tr.isItalic() == italic) &&
+                    (bold == null || tr.isBold() == bold);
+        } else {
             return false;
         }
-        TextRun tr = (TextRun)o;
-        return
-            typeface.equalsIgnoreCase(tr.getFontFamily()) &&
-            (italic == null || tr.isItalic() == italic) &&
-            (bold == null || tr.isBold() == bold);
     }
 
     @Override
