@@ -348,20 +348,45 @@ public final class StringUtil {
         return haystack.regionMatches(true, start, suffix, 0, length);
     }
 
+    /**
+     * Uses Locale.ROOT
+     */
     @Internal
     public static String toLowerCase(char c) {
         return Character.toString(c).toLowerCase(Locale.ROOT);
     }
 
+    /**
+     * Uses Locale.ROOT
+     */
     @Internal
     public static String toUpperCase(char c) {
         return Character.toString(c).toUpperCase(Locale.ROOT);
     }
 
+    /**
+     * Uses Locale.ROOT
+     */
     @Internal
     public static boolean isUpperCase(char c) {
         String s = Character.toString(c);
         return s.toUpperCase(Locale.ROOT).equals(s);
+    }
+
+    /**
+     * Uses Locale.ROOT. Does null safe checks.
+     * @since 6.0.0
+     */
+    @Internal
+    public static boolean equalsIgnoreCase(String s1, String s2) {
+        if (s1 == null) {
+            return s2 == null;
+        } else if (s2 == null) {
+            return false;
+        } else if (s1.length() != s2.length()) {
+            return false;
+        }
+        return s1.toLowerCase(Locale.ROOT).equals(s2.toLowerCase(Locale.ROOT));
     }
 
     /**
