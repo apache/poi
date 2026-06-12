@@ -52,6 +52,7 @@ import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -450,7 +451,7 @@ public final class ZipPackage extends OPCPackage {
                 try {
                     // We get an error when we parse [Content_Types].xml
                     // because it's not a valid URI.
-                    ppn = (CONTENT_TYPES_PART_NAME.equalsIgnoreCase(entryName)) ? null
+                    ppn = StringUtil.equalsIgnoreCase(CONTENT_TYPES_PART_NAME, entryName) ? null
                             : PackagingURIHelper.createPartName(ZipHelper.getOPCNameFromZipItemName(entryName));
                 } catch (Exception e) {
                     // We assume we can continue, even in degraded mode ...

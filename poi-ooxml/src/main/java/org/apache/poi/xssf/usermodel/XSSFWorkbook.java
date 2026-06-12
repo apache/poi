@@ -90,6 +90,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -1232,7 +1233,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         }
 
         for (XSSFSheet sheet : sheets) {
-            if (name.equalsIgnoreCase(sheet.getSheetName())) {
+            if (StringUtil.equalsIgnoreCase(name, sheet.getSheetName())) {
                 return sheet;
             }
         }
@@ -1263,7 +1264,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public int getSheetIndex(String name) {
         int idx = 0;
         for (XSSFSheet sh : sheets) {
-            if (name.equalsIgnoreCase(sh.getSheetName())) {
+            if (StringUtil.equalsIgnoreCase(name, sh.getSheetName())) {
                 return idx;
             }
             idx++;
@@ -1941,7 +1942,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 ctName = ctName.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
             }
 
-            if (excludeSheetIdx != i && name.equalsIgnoreCase(ctName)) {
+            if (excludeSheetIdx != i && StringUtil.equalsIgnoreCase(name, ctName)) {
                 return true;
             }
         }
@@ -2553,7 +2554,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         if (name != null && sheets != null) {
             for (XSSFSheet sheet : sheets) {
                 for (XSSFTable tbl : sheet.getTables()) {
-                    if (name.equalsIgnoreCase(tbl.getName())) {
+                    if (StringUtil.equalsIgnoreCase(name, tbl.getName())) {
                         return tbl;
                     }
                 }

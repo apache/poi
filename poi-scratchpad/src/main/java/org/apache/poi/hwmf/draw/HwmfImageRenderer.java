@@ -41,6 +41,7 @@ import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.MathUtil;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 
 /**
@@ -54,7 +55,7 @@ public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
 
     @Override
     public boolean canRender(String contentType) {
-        return PictureType.WMF.contentType.equalsIgnoreCase(contentType);
+        return StringUtil.equalsIgnoreCase(PictureType.WMF.contentType, contentType);
     }
 
     @Override
@@ -170,7 +171,7 @@ public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
         return () -> {
             final Iterator<HwmfEmbedded> embit = embs.iterator();
             final int[] idx = { 1 };
-            return new Iterator<EmbeddedExtractor.EmbeddedPart>() {
+            return new Iterator<>() {
                 @Override
                 public boolean hasNext() {
                     return embit.hasNext();
