@@ -36,6 +36,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -286,6 +287,34 @@ class TestZipSecureFile {
         assertFalse(createdFiles.isEmpty(), "At least one temporary file should have been created for the zip entry");
         for (File f : createdFiles) {
             assertFalse(f.exists(), "Temporary file " + f.getAbsolutePath() + " should have been deleted on copy failure");
+        }
+    }
+
+    @Test
+    void testZipFileZipEntrySourceCaseInsensitiveMatchingUnderTurkishLocale() throws Exception {
+        Locale defaultLocale = Locale.getDefault();
+        try {
+            Locale.setDefault(new Locale("tr", "TR"));
+
+            File tempFile = TempFile.createTempFile("turkish-test", ".zip");
+            try {
+                try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(tempFile)) {
+                    ZipArchiveEntry entry = new ZipArchiveEntry("content.xml");
+                    zos.putArchiveEntry(entry);
+                    zos.write("data".getBytes(StandardCharsets.UTF_8));
+                    zos.closeArchiveEntry();
+                }
+
+                try (ZipSecureFile zipFile = new ZipSecureFile(tempFile)) {
+                    ZipFileZipEntrySource source = new ZipFileZipEntrySource(zipFile);
+                    ZipArchiveEntry entry = source.getEntry("Content.xml");
+                    assertNotNull(entry, "Should find the entry case-insensitively even under Turkish locale");
+                }
+            } finally {
+                tempFile.delete();
+            }
+        } finally {
+            Locale.setDefault(defaultLocale);
         }
     }
 }

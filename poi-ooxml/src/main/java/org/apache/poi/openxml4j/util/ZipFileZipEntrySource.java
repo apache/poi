@@ -75,10 +75,11 @@ public class ZipFileZipEntrySource implements ZipEntrySource {
         }
 
         // the opc spec allows case-insensitive filename matching (see #49609)
+        final String lowerPath = normalizedPath.toLowerCase(java.util.Locale.ROOT);
         final Enumeration<ZipArchiveEntry> zipArchiveEntryEnumeration = zipArchive.getEntries();
         while (zipArchiveEntryEnumeration.hasMoreElements()) {
             ZipArchiveEntry ze = zipArchiveEntryEnumeration.nextElement();
-            if (normalizedPath.equalsIgnoreCase(IOUtils.normalizePath(ze.getName()))) {
+            if (lowerPath.equals(IOUtils.normalizePath(ze.getName()).toLowerCase(java.util.Locale.ROOT))) {
                 return ze;
             }
         }
