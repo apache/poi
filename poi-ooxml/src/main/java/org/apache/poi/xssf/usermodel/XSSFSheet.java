@@ -805,22 +805,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         if (xSplitPos > 0 || ySplitPos > 0) {
             final CTPane pane = getPane(true);
             pane.setState(STPaneState.SPLIT);
-            STPane.Enum stPaneEnum;
-            switch (activePane) {
-                case LOWER_RIGHT:
-                    stPaneEnum = STPane.BOTTOM_RIGHT;
-                    break;
-                case UPPER_RIGHT:
-                    stPaneEnum = STPane.TOP_RIGHT;
-                    break;
-                case LOWER_LEFT:
-                    stPaneEnum = STPane.BOTTOM_LEFT;
-                    break;
-                case UPPER_LEFT:
-                default:
-                    stPaneEnum = STPane.TOP_LEFT;
-                    break;
-            }
+            STPane.Enum stPaneEnum = switch (activePane) {
+                case LOWER_RIGHT -> STPane.BOTTOM_RIGHT;
+                case UPPER_RIGHT -> STPane.TOP_RIGHT;
+                case LOWER_LEFT -> STPane.BOTTOM_LEFT;
+                default -> STPane.TOP_LEFT;
+            };
             pane.setActivePane(stPaneEnum);
         }
     }

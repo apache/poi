@@ -62,33 +62,20 @@ public class XWPFSignatureLine extends SignatureLine {
     }
 
     private static PictureType mapType(org.apache.poi.common.usermodel.PictureType type) throws InvalidFormatException {
-        switch (type) {
-            case BMP:
-                return PictureType.BMP;
-            case DIB:
-                return PictureType.DIB;
-            case EMF:
-                return PictureType.EMF;
-            case EPS:
-                return PictureType.EPS;
-            case GIF:
-                return PictureType.GIF;
-            case JPEG:
-                return PictureType.JPEG;
-            case PICT:
-                return PictureType.PICT;
-            case PNG:
-                return PictureType.PNG;
-            case TIFF:
-                return PictureType.TIFF;
-            case WMF:
-                return PictureType.WMF;
-            case WPG:
-                return PictureType.WPG;
-            case WDP:
-                return PictureType.WDP;
-            default:
-                throw new InvalidFormatException("Unsupported picture format "+type);
-        }
+        return switch (type) {
+            case BMP -> PictureType.BMP;
+            case DIB -> PictureType.DIB;
+            case EMF -> PictureType.EMF;
+            case EPS -> PictureType.EPS;
+            case GIF -> PictureType.GIF;
+            case JPEG -> PictureType.JPEG;
+            case PICT -> PictureType.PICT;
+            case PNG -> PictureType.PNG;
+            case TIFF -> PictureType.TIFF;
+            case WMF -> PictureType.WMF;
+            case WPG -> PictureType.WPG;
+            case WDP -> PictureType.WDP;
+            default -> throw new InvalidFormatException("Unsupported picture format " + type);
+        };
     }
 }

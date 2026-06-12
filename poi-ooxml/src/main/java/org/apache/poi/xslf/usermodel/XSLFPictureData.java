@@ -245,22 +245,22 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     }
     
     /* package */ static XSLFRelation getRelationForType(PictureType pt) {
-        switch (pt) {
-            case EMF: return XSLFRelation.IMAGE_EMF;
-            case WMF: return XSLFRelation.IMAGE_WMF;
-            case PICT: return XSLFRelation.IMAGE_PICT;
-            case JPEG: return XSLFRelation.IMAGE_JPEG;
-            case PNG: return XSLFRelation.IMAGE_PNG;
-            case DIB: return XSLFRelation.IMAGE_DIB;
-            case GIF: return XSLFRelation.IMAGE_GIF;
-            case EPS: return XSLFRelation.IMAGE_EPS;
-            case BMP: return XSLFRelation.IMAGE_BMP;
-            case WPG: return XSLFRelation.IMAGE_WPG;
-            case WDP: return XSLFRelation.HDPHOTO_WDP;
-            case TIFF: return XSLFRelation.IMAGE_TIFF;
-            case SVG: return XSLFRelation.IMAGE_SVG;
-            default: return null;
-        }
+        return switch (pt) {
+            case EMF -> XSLFRelation.IMAGE_EMF;
+            case WMF -> XSLFRelation.IMAGE_WMF;
+            case PICT -> XSLFRelation.IMAGE_PICT;
+            case JPEG -> XSLFRelation.IMAGE_JPEG;
+            case PNG -> XSLFRelation.IMAGE_PNG;
+            case DIB -> XSLFRelation.IMAGE_DIB;
+            case GIF -> XSLFRelation.IMAGE_GIF;
+            case EPS -> XSLFRelation.IMAGE_EPS;
+            case BMP -> XSLFRelation.IMAGE_BMP;
+            case WPG -> XSLFRelation.IMAGE_WPG;
+            case WDP -> XSLFRelation.HDPHOTO_WDP;
+            case TIFF -> XSLFRelation.IMAGE_TIFF;
+            case SVG -> XSLFRelation.IMAGE_SVG;
+            default -> null;
+        };
     }
 
     /**

@@ -341,20 +341,14 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         if (bodyPr != null) {
             STTextVerticalType.Enum val = bodyPr.getVert();
             if (val != null) {
-                switch (val.intValue()) {
-                default:
-                case STTextVerticalType.INT_HORZ:
-                    return TextDirection.HORIZONTAL;
-                case STTextVerticalType.INT_EA_VERT:
-                case STTextVerticalType.INT_MONGOLIAN_VERT:
-                case STTextVerticalType.INT_VERT:
-                    return TextDirection.VERTICAL;
-                case STTextVerticalType.INT_VERT_270:
-                    return TextDirection.VERTICAL_270;
-                case STTextVerticalType.INT_WORD_ART_VERT_RTL:
-                case STTextVerticalType.INT_WORD_ART_VERT:
-                    return TextDirection.STACKED;
-                }
+                return switch (val.intValue()) {
+                    case STTextVerticalType.INT_EA_VERT, STTextVerticalType.INT_MONGOLIAN_VERT,
+                         STTextVerticalType.INT_VERT -> TextDirection.VERTICAL;
+                    case STTextVerticalType.INT_VERT_270 -> TextDirection.VERTICAL_270;
+                    case STTextVerticalType.INT_WORD_ART_VERT_RTL, STTextVerticalType.INT_WORD_ART_VERT ->
+                            TextDirection.STACKED;
+                    default -> TextDirection.HORIZONTAL;
+                };
             }
         }
         return TextDirection.HORIZONTAL;
@@ -758,13 +752,6 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     @Override
     public void setTextPlaceholder(TextPlaceholder placeholder) {
         switch (placeholder) {
-        default:
-        case NOTES:
-        case HALF_BODY:
-        case QUARTER_BODY:
-        case BODY:
-            setPlaceholder(Placeholder.BODY);
-            break;
         case TITLE:
             setPlaceholder(Placeholder.TITLE);
             break;
@@ -778,6 +765,13 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         case OTHER:
             setPlaceholder(Placeholder.CONTENT);
             break;
+        case NOTES:
+        case HALF_BODY:
+        case QUARTER_BODY:
+        case BODY:
+        default:
+            setPlaceholder(Placeholder.BODY);
+            break;
         }
     }
 
@@ -787,17 +781,12 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         if (ph == null) {
             return TextPlaceholder.BODY;
         }
-        switch (ph) {
-        case BODY:
-            return TextPlaceholder.BODY;
-        case TITLE:
-            return TextPlaceholder.TITLE;
-        case CENTERED_TITLE:
-            return TextPlaceholder.CENTER_TITLE;
-        default:
-        case CONTENT:
-            return TextPlaceholder.OTHER;
-        }
+        return switch (ph) {
+            case BODY -> TextPlaceholder.BODY;
+            case TITLE -> TextPlaceholder.TITLE;
+            case CENTERED_TITLE -> TextPlaceholder.CENTER_TITLE;
+            default -> TextPlaceholder.OTHER;
+        };
     }
 
     /**

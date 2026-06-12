@@ -132,17 +132,12 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
     @Override
     public PaintStyle.FlipMode getFlipMode() {
         CTTileInfoProperties tile = blipFill.getTile();
-        switch (tile == null || tile.getFlip() == null ? STTileFlipMode.INT_NONE : tile.getFlip().intValue()) {
-            default:
-            case STTileFlipMode.INT_NONE:
-                return PaintStyle.FlipMode.NONE;
-            case STTileFlipMode.INT_X:
-                return PaintStyle.FlipMode.X;
-            case STTileFlipMode.INT_Y:
-                return PaintStyle.FlipMode.Y;
-            case STTileFlipMode.INT_XY:
-                return PaintStyle.FlipMode.XY;
-        }
+        return switch (tile == null || tile.getFlip() == null ? STTileFlipMode.INT_NONE : tile.getFlip().intValue()) {
+            case STTileFlipMode.INT_X -> FlipMode.X;
+            case STTileFlipMode.INT_Y -> FlipMode.Y;
+            case STTileFlipMode.INT_XY -> FlipMode.XY;
+            default -> FlipMode.NONE;
+        };
     }
 
     @Override

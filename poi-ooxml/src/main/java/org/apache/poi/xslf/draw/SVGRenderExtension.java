@@ -177,19 +177,11 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
         gradElem.setAttribute(SVG_GRADIENT_UNITS_ATTRIBUTE, SVG_USER_SPACE_ON_USE_VALUE);
 
         // Set cycle method
-        final String cycleVal;
-        switch (gradient.getCycleMethod()) {
-            case REFLECT:
-                cycleVal = SVG_REFLECT_VALUE;
-                break;
-            case REPEAT:
-                cycleVal = SVG_REPEAT_VALUE;
-                break;
-            case NO_CYCLE:
-            default:
-                cycleVal = SVG_PAD_VALUE;
-                break;
-        }
+        final String cycleVal = switch (gradient.getCycleMethod()) {
+            case REFLECT -> SVG_REFLECT_VALUE;
+            case REPEAT -> SVG_REPEAT_VALUE;
+            default -> SVG_PAD_VALUE;
+        };
         gradElem.setAttribute(SVG_SPREAD_METHOD_ATTRIBUTE, cycleVal);
 
         // Set color space

@@ -283,17 +283,15 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
         final Integer colI = Integer.valueOf(cellnum); // NOSONAR
         XSSFCell cell = _cells.get(colI);
-        switch (policy) {
-            case RETURN_NULL_AND_BLANK:
-                return cell;
-            case RETURN_BLANK_AS_NULL:
+        return switch (policy) {
+            case RETURN_NULL_AND_BLANK -> cell;
+            case RETURN_BLANK_AS_NULL -> {
                 boolean isBlank = (cell != null && cell.getCellType() == CellType.BLANK);
-                return (isBlank) ? null : cell;
-            case CREATE_NULL_AS_BLANK:
-                return (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
-            default:
-                throw new IllegalArgumentException("Illegal policy " + policy);
-        }
+                yield (isBlank) ? null : cell;
+            }
+            case CREATE_NULL_AS_BLANK -> (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
+            default -> throw new IllegalArgumentException("Illegal policy " + policy);
+        };
     }
 
     /**

@@ -97,34 +97,21 @@ public class XSLFTheme extends POIXMLDocumentPart {
         if (mapName == null || scheme == null) {
             return null;
         }
-        switch (mapName) {
-            case "accent1":
-                return scheme.getAccent1();
-            case "accent2":
-                return scheme.getAccent2();
-            case "accent3":
-                return scheme.getAccent3();
-            case "accent4":
-                return scheme.getAccent4();
-            case "accent5":
-                return scheme.getAccent5();
-            case "accent6":
-                return scheme.getAccent6();
-            case "dk1":
-                return scheme.getDk1();
-            case "dk2":
-                return scheme.getDk2();
-            case "folHlink":
-                return scheme.getFolHlink();
-            case "hlink":
-                return scheme.getHlink();
-            case "lt1":
-                return scheme.getLt1();
-            case "lt2":
-                return scheme.getLt2();
-            default:
-                return null;
-        }
+        return switch (mapName) {
+            case "accent1" -> scheme.getAccent1();
+            case "accent2" -> scheme.getAccent2();
+            case "accent3" -> scheme.getAccent3();
+            case "accent4" -> scheme.getAccent4();
+            case "accent5" -> scheme.getAccent5();
+            case "accent6" -> scheme.getAccent6();
+            case "dk1" -> scheme.getDk1();
+            case "dk2" -> scheme.getDk2();
+            case "folHlink" -> scheme.getFolHlink();
+            case "hlink" -> scheme.getHlink();
+            case "lt1" -> scheme.getLt1();
+            case "lt2" -> scheme.getLt2();
+            default -> null;
+        };
     }
 
     /**

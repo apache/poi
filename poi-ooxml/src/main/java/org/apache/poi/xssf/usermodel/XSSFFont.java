@@ -274,16 +274,12 @@ public class XSSFFont implements Font {
             return Font.SS_NONE;
         }
         int val = vAlign.getVal().intValue();
-        switch (val) {
-            case STVerticalAlignRun.INT_BASELINE:
-                return Font.SS_NONE;
-            case STVerticalAlignRun.INT_SUBSCRIPT:
-                return Font.SS_SUB;
-            case STVerticalAlignRun.INT_SUPERSCRIPT:
-                return Font.SS_SUPER;
-            default:
-                throw new POIXMLException("Wrong offset value " + val);
-        }
+        return switch (val) {
+            case STVerticalAlignRun.INT_BASELINE -> Font.SS_NONE;
+            case STVerticalAlignRun.INT_SUBSCRIPT -> Font.SS_SUB;
+            case STVerticalAlignRun.INT_SUPERSCRIPT -> Font.SS_SUPER;
+            default -> throw new POIXMLException("Wrong offset value " + val);
+        };
     }
 
     /**

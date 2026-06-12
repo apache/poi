@@ -439,25 +439,13 @@ public abstract class XSLFSimpleShape extends XSLFShape
                 ln.unsetCmpd();
             }
         } else {
-            STCompoundLine.Enum xCmpd;
-            switch (compound) {
-                default:
-                case SINGLE:
-                    xCmpd = STCompoundLine.SNG;
-                    break;
-                case DOUBLE:
-                    xCmpd = STCompoundLine.DBL;
-                    break;
-                case THICK_THIN:
-                    xCmpd = STCompoundLine.THICK_THIN;
-                    break;
-                case THIN_THICK:
-                    xCmpd = STCompoundLine.THIN_THICK;
-                    break;
-                case TRIPLE:
-                    xCmpd = STCompoundLine.TRI;
-                    break;
-            }
+            STCompoundLine.Enum xCmpd = switch (compound) {
+                case DOUBLE -> STCompoundLine.DBL;
+                case THICK_THIN -> STCompoundLine.THICK_THIN;
+                case THIN_THICK -> STCompoundLine.THIN_THICK;
+                case TRIPLE -> STCompoundLine.TRI;
+                default -> STCompoundLine.SNG;
+            };
             ln.setCmpd(xCmpd);
         }
     }
@@ -487,19 +475,13 @@ public abstract class XSLFSimpleShape extends XSLFShape
         if (cmpd == null) {
             CTLineProperties defaultLn = getDefaultLineProperties();
             if (defaultLn != null && defaultLn.isSetCmpd()) {
-                switch (defaultLn.getCmpd().intValue()) {
-                default:
-                case STCompoundLine.INT_SNG:
-                    return LineCompound.SINGLE;
-                case STCompoundLine.INT_DBL:
-                    return LineCompound.DOUBLE;
-                case STCompoundLine.INT_THICK_THIN:
-                    return LineCompound.THICK_THIN;
-                case STCompoundLine.INT_THIN_THICK:
-                    return LineCompound.THIN_THICK;
-                case STCompoundLine.INT_TRI:
-                    return LineCompound.TRIPLE;
-                }
+                return switch (defaultLn.getCmpd().intValue()) {
+                    case STCompoundLine.INT_DBL -> LineCompound.DOUBLE;
+                    case STCompoundLine.INT_THICK_THIN -> LineCompound.THICK_THIN;
+                    case STCompoundLine.INT_THIN_THICK -> LineCompound.THIN_THICK;
+                    case STCompoundLine.INT_TRI -> LineCompound.TRIPLE;
+                    default -> LineCompound.SINGLE;
+                };
             }
         }
 

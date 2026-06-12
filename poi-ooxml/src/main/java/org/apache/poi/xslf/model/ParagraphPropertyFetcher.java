@@ -141,27 +141,17 @@ public final class ParagraphPropertyFetcher<T> extends PropertyFetcher<T> {
             return null;
         }
 
-        switch (_level) {
-            case 0:
-                return dts.getLvl1PPr();
-            case 1:
-                return dts.getLvl2PPr();
-            case 2:
-                return dts.getLvl3PPr();
-            case 3:
-                return dts.getLvl4PPr();
-            case 4:
-                return dts.getLvl5PPr();
-            case 5:
-                return dts.getLvl6PPr();
-            case 6:
-                return dts.getLvl7PPr();
-            case 7:
-                return dts.getLvl8PPr();
-            case 8:
-                return dts.getLvl9PPr();
-            default:
-                return null;
-        }
+        return switch (_level) {
+            case 0 -> dts.getLvl1PPr();
+            case 1 -> dts.getLvl2PPr();
+            case 2 -> dts.getLvl3PPr();
+            case 3 -> dts.getLvl4PPr();
+            case 4 -> dts.getLvl5PPr();
+            case 5 -> dts.getLvl6PPr();
+            case 6 -> dts.getLvl7PPr();
+            case 7 -> dts.getLvl8PPr();
+            case 8 -> dts.getLvl9PPr();
+            default -> null;
+        };
     }
 }
