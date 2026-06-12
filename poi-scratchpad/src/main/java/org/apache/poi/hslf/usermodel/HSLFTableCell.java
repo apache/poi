@@ -192,14 +192,13 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
 
 
     public Double getBorderWidth(BorderEdge edge) {
-        HSLFLine l;
-        switch (edge) {
-            case bottom: l = borderBottom; break;
-            case top: l = borderTop; break;
-            case right: l = borderRight; break;
-            case left: l = borderLeft; break;
-            default: throw new IllegalArgumentException();
-        }
+        HSLFLine l = switch (edge) {
+            case bottom -> borderBottom;
+            case top -> borderTop;
+            case right -> borderRight;
+            case left -> borderLeft;
+            default -> throw new IllegalArgumentException();
+        };
         return (l == null) ? null : l.getLineWidth();
     }
 
@@ -210,14 +209,13 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
     }
 
     public Color getBorderColor(BorderEdge edge) {
-        HSLFLine l;
-        switch (edge) {
-            case bottom: l = borderBottom; break;
-            case top: l = borderTop; break;
-            case right: l = borderRight; break;
-            case left: l = borderLeft; break;
-            default: throw new IllegalArgumentException();
-        }
+        HSLFLine l = switch (edge) {
+            case bottom -> borderBottom;
+            case top -> borderTop;
+            case right -> borderRight;
+            case left -> borderLeft;
+            default -> throw new IllegalArgumentException();
+        };
         return (l == null) ? null : l.getLineColor();
     }
 
@@ -232,14 +230,13 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
     }
 
     public LineDash getBorderDash(BorderEdge edge) {
-        HSLFLine l;
-        switch (edge) {
-            case bottom: l = borderBottom; break;
-            case top: l = borderTop; break;
-            case right: l = borderRight; break;
-            case left: l = borderLeft; break;
-            default: throw new IllegalArgumentException();
-        }
+        HSLFLine l = switch (edge) {
+            case bottom -> borderBottom;
+            case top -> borderTop;
+            case right -> borderRight;
+            case left -> borderLeft;
+            default -> throw new IllegalArgumentException();
+        };
         return (l == null) ? null : l.getLineDash();
     }
 
@@ -254,14 +251,13 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
     }
 
     public LineCompound getBorderCompound(BorderEdge edge) {
-        HSLFLine l;
-        switch (edge) {
-            case bottom: l = borderBottom; break;
-            case top: l = borderTop; break;
-            case right: l = borderRight; break;
-            case left: l = borderLeft; break;
-            default: throw new IllegalArgumentException();
-        }
+        HSLFLine l = switch (edge) {
+            case bottom -> borderBottom;
+            case top -> borderTop;
+            case right -> borderRight;
+            case left -> borderLeft;
+            default -> throw new IllegalArgumentException();
+        };
         return (l == null) ? null : l.getLineCompound();
     }
 
@@ -277,54 +273,53 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
 
 
     protected HSLFLine addLine(BorderEdge edge) {
-        switch (edge) {
-            case bottom: {
+        return switch (edge) {
+            case bottom -> {
                 if (borderBottom == null) {
                     borderBottom = createBorder(edge);
-                    HSLFTableCell c = getSiblingCell(1,0);
+                    HSLFTableCell c = getSiblingCell(1, 0);
                     if (c != null) {
-                        assert(c.borderTop == null);
+                        assert (c.borderTop == null);
                         c.borderTop = borderBottom;
                     }
                 }
-                return borderBottom;
+                yield borderBottom;
             }
-            case top: {
+            case top -> {
                 if (borderTop == null) {
                     borderTop = createBorder(edge);
-                    HSLFTableCell c = getSiblingCell(-1,0);
+                    HSLFTableCell c = getSiblingCell(-1, 0);
                     if (c != null) {
-                        assert(c.borderBottom == null);
+                        assert (c.borderBottom == null);
                         c.borderBottom = borderTop;
                     }
                 }
-                return borderTop;
+                yield borderTop;
             }
-            case right: {
+            case right -> {
                 if (borderRight == null) {
                     borderRight = createBorder(edge);
-                    HSLFTableCell c = getSiblingCell(0,1);
+                    HSLFTableCell c = getSiblingCell(0, 1);
                     if (c != null) {
-                        assert(c.borderLeft == null);
+                        assert (c.borderLeft == null);
                         c.borderLeft = borderRight;
                     }
                 }
-                return borderRight;
+                yield borderRight;
             }
-            case left: {
+            case left -> {
                 if (borderLeft == null) {
                     borderLeft = createBorder(edge);
-                    HSLFTableCell c = getSiblingCell(0,-1);
+                    HSLFTableCell c = getSiblingCell(0, -1);
                     if (c != null) {
-                        assert(c.borderRight == null);
+                        assert (c.borderRight == null);
                         c.borderRight = borderLeft;
                     }
                 }
-                return borderLeft;
+                yield borderLeft;
             }
-            default:
-                throw new IllegalArgumentException();
-        }
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

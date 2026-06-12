@@ -320,35 +320,23 @@ final class RecordOrderer {
             return true;
         }
         short sid = ((org.apache.poi.hssf.record.Record)rb).getSid();
-        switch(sid) {
-            case WindowTwoRecord.sid:
-            case UnknownRecord.SCL_00A0:
-            case PaneRecord.sid:
-            case SelectionRecord.sid:
-            case UnknownRecord.STANDARDWIDTH_0099:
+        return switch (sid) {
             // MergedCellsTable
-            case UnknownRecord.LABELRANGES_015F:
-            case UnknownRecord.PHONETICPR_00EF:
             // ConditionalFormattingTable
-            case HyperlinkRecord.sid:
-            case UnknownRecord.QUICKTIP_0800:
             // name of a VBA module
-            case UnknownRecord.CODENAME_1BA:
-                return true;
-        }
-        return false;
+            case WindowTwoRecord.sid, UnknownRecord.SCL_00A0, PaneRecord.sid, SelectionRecord.sid,
+                 UnknownRecord.STANDARDWIDTH_0099, UnknownRecord.LABELRANGES_015F, UnknownRecord.PHONETICPR_00EF,
+                 HyperlinkRecord.sid, UnknownRecord.QUICKTIP_0800, UnknownRecord.CODENAME_1BA -> true;
+            default -> false;
+        };
     }
 
     private static boolean isDVTSubsequentRecord(short sid) {
-        switch(sid) {
-            case UnknownRecord.SHEETEXT_0862:
-            case UnknownRecord.SHEETPROTECTION_0867:
-            case UnknownRecord.PLV_MAC:
-            case FeatRecord.sid:
-            case EOFRecord.sid:
-                return true;
-        }
-        return false;
+        return switch (sid) {
+            case UnknownRecord.SHEETEXT_0862, UnknownRecord.SHEETPROTECTION_0867, UnknownRecord.PLV_MAC, FeatRecord.sid,
+                 EOFRecord.sid -> true;
+            default -> false;
+        };
     }
     /**
      * DIMENSIONS record is always present
@@ -409,27 +397,20 @@ final class RecordOrderer {
      * record
      */
     public static boolean isEndOfRowBlock(int sid) {
-        switch(sid) {
-            case ViewDefinitionRecord.sid:
-                // should have been prefixed with DrawingRecord (0x00EC), but bug 46280 seems to allow this
-            case DrawingRecord.sid:
-            case DrawingSelectionRecord.sid:
-            case ObjRecord.sid:
-            case TextObjectRecord.sid:
-            case ColumnInfoRecord.sid: // See Bugzilla 53984
-            case GutsRecord.sid:   // see Bugzilla 50426
-            case WindowOneRecord.sid:
-                // should really be part of workbook stream, but some apps seem to put this before WINDOW2
-            case WindowTwoRecord.sid:
-                return true;
-
-            case DVALRecord.sid:
-                return true;
-            case EOFRecord.sid:
-                // WINDOW2 should always be present, so shouldn't have got this far
-                throw new IllegalArgumentException("Found EOFRecord before WindowTwoRecord was encountered");
-        }
-        return PageSettingsBlock.isComponentRecord(sid);
+        // WINDOW2 should always be present, so shouldn't have got this far
+        return switch (sid) {
+            // should have been prefixed with DrawingRecord (0x00EC), but bug 46280 seems to allow this
+            // See Bugzilla 53984
+            // see Bugzilla 50426
+            // should really be part of workbook stream, but some apps seem to put this before WINDOW2
+            case ViewDefinitionRecord.sid, DrawingRecord.sid, DrawingSelectionRecord.sid, ObjRecord.sid,
+                 TextObjectRecord.sid, ColumnInfoRecord.sid, GutsRecord.sid, WindowOneRecord.sid, WindowTwoRecord.sid ->
+                    true;
+            case DVALRecord.sid -> true;
+            case EOFRecord.sid ->
+                    throw new IllegalArgumentException("Found EOFRecord before WindowTwoRecord was encountered");
+            default -> PageSettingsBlock.isComponentRecord(sid);
+        };
     }
 
     /**

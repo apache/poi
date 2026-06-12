@@ -93,18 +93,17 @@ public class HemfPlusGDIImageRenderer extends BitmapImageRenderer {
      */
     public BufferedImage readGDIImage(final byte[] data) {
         int[] nBits, bOffs;
-        switch (pixelFormat) {
-            case ARGB_32BPP:
+        bOffs = switch (pixelFormat) {
+            case ARGB_32BPP -> {
                 nBits = new int[]{8, 8, 8, 8};
-                bOffs = new int[]{2, 1, 0, 3};
-                break;
-            case RGB_24BPP:
+                yield new int[]{2, 1, 0, 3};
+            }
+            case RGB_24BPP -> {
                 nBits = new int[]{8, 8, 8};
-                bOffs = new int[]{2, 1, 0};
-                break;
-            default:
-                throw new IllegalStateException("not yet implemented");
-        }
+                yield new int[]{2, 1, 0};
+            }
+            default -> throw new IllegalStateException("not yet implemented");
+        };
 
         ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
         ComponentColorModel cm = new ComponentColorModel

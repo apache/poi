@@ -143,28 +143,29 @@ public final class CellRangeUtil {
      */
     private static CellRangeAddress[] mergeRanges(CellRangeAddress range1, CellRangeAddress range2) {
         int x = intersect(range1, range2);
-        switch(x)
-        {
-            case CellRangeUtil.NO_INTERSECTION:
+        return switch (x) {
+            case CellRangeUtil.NO_INTERSECTION -> {
                 // nothing in common: at most they could be adjacent to each other and thus form a single bigger area
-                if(hasExactSharedBorder(range1, range2)) {
-                    return new CellRangeAddress[] { createEnclosingCellRange(range1, range2), };
+                if (hasExactSharedBorder(range1, range2)) {
+                    yield new CellRangeAddress[]{createEnclosingCellRange(range1, range2),};
                 }
                 // else - No intersection and no shared border: do nothing
-                return null;
-            case CellRangeUtil.OVERLAP:
+                yield null;
+                // else - No intersection and no shared border: do nothing
+            }
+            case CellRangeUtil.OVERLAP ->
                 // commented out the cells overlap implementation, it caused endless loops, see Bug 55380
                 // disabled for now, the algorithm will not detect some border cases this way currently!
                 //return resolveRangeOverlap(range1, range2);
-                return null;
-            case CellRangeUtil.INSIDE:
+                    null;
+            case CellRangeUtil.INSIDE ->
                 // Remove range2, since it is completely inside of range1
-                return new CellRangeAddress[] { range1 };
-            case CellRangeUtil.ENCLOSES:
+                    new CellRangeAddress[]{range1};
+            case CellRangeUtil.ENCLOSES ->
                 // range2 encloses range1, so replace it with the enclosing one
-                return new CellRangeAddress[] { range2 };
-        }
-        throw new IllegalStateException("unexpected intersection result (" + x + ")");
+                    new CellRangeAddress[]{range2};
+            default -> throw new IllegalStateException("unexpected intersection result (" + x + ")");
+        };
     }
 
     private static CellRangeAddress[] toArray(List<CellRangeAddress> temp) {

@@ -181,13 +181,13 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
         try (LittleEndianInputStream in = new LittleEndianInputStream(
                 UnsynchronizedByteArrayInputStream.builder().setByteArray(formulaRawBytes).get())) {
             byte ptgSid = in.readByte();
-            switch(ptgSid) {
-                case AreaPtg.sid:   return new AreaPtg(in);
-                case Area3DPtg.sid: return new Area3DPtg(in);
-                case RefPtg.sid:    return new RefPtg(in);
-                case Ref3DPtg.sid:  return new Ref3DPtg(in);
-            }
-            return null;
+            return switch (ptgSid) {
+                case AreaPtg.sid -> new AreaPtg(in);
+                case Area3DPtg.sid -> new Area3DPtg(in);
+                case RefPtg.sid -> new RefPtg(in);
+                case Ref3DPtg.sid -> new Ref3DPtg(in);
+                default -> null;
+            };
         } catch (IOException e) {
             throw new IllegalStateException("Unexpected exception in readRefPtg", e);
         }

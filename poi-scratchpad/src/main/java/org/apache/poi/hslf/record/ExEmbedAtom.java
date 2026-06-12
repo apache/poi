@@ -175,14 +175,10 @@ public class ExEmbedAtom extends RecordAtom {
     }
 
     private String getFollowColorSchemeString() {
-        switch (getFollowColorScheme()) {
-            default:
-            case DOES_NOT_FOLLOW_COLOR_SCHEME:
-                return "DOES_NOT_FOLLOW_COLOR_SCHEME";
-            case FOLLOWS_ENTIRE_COLOR_SCHEME:
-                return "FOLLOWS_ENTIRE_COLOR_SCHEME";
-            case FOLLOWS_TEXT_AND_BACKGROUND_SCHEME:
-                return "FOLLOWS_TEXT_AND_BACKGROUND_SCHEME";
-        }
+        return switch (getFollowColorScheme()) {
+            case FOLLOWS_ENTIRE_COLOR_SCHEME -> "FOLLOWS_ENTIRE_COLOR_SCHEME";
+            case FOLLOWS_TEXT_AND_BACKGROUND_SCHEME -> "FOLLOWS_TEXT_AND_BACKGROUND_SCHEME";
+            default -> "DOES_NOT_FOLLOW_COLOR_SCHEME";
+        };
     }
 }

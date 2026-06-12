@@ -83,17 +83,16 @@ public final class ErrPtg extends ScalarConstantPtg {
     }
 
     public static ErrPtg valueOf(int code) {
-        switch(FormulaError.forInt(code)) {
-            case DIV0: return DIV_ZERO;
-            case NA: return N_A;
-            case NAME: return NAME_INVALID;
-            case NULL: return NULL_INTERSECTION;
-            case NUM: return NUM_ERROR;
-            case REF: return REF_INVALID;
-            case VALUE: return VALUE_INVALID;
-            default:
-                throw new IllegalStateException("Unexpected error code (" + code + ")");
-        }
+        return switch (FormulaError.forInt(code)) {
+            case DIV0 -> DIV_ZERO;
+            case NA -> N_A;
+            case NAME -> NAME_INVALID;
+            case NULL -> NULL_INTERSECTION;
+            case NUM -> NUM_ERROR;
+            case REF -> REF_INVALID;
+            case VALUE -> VALUE_INVALID;
+            default -> throw new IllegalStateException("Unexpected error code (" + code + ")");
+        };
     }
 
     @Override

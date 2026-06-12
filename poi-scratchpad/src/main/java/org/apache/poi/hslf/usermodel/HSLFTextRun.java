@@ -330,21 +330,12 @@ public final class HSLFTextRun implements TextRun {
             return;
         }
 
-        String propName;
-        switch (fg) {
-        default:
-        case LATIN:
-            propName = "ansi.font.index";
-            break;
-        case COMPLEX_SCRIPT:
+        String propName = switch (fg) {
             // TODO: implement TextCFException10 structure
-        case EAST_ASIAN:
-            propName = "asian.font.index";
-            break;
-        case SYMBOL:
-            propName = "symbol.font.index";
-            break;
-        }
+            case COMPLEX_SCRIPT, EAST_ASIAN -> "asian.font.index";
+            case SYMBOL -> "symbol.font.index";
+            default -> "ansi.font.index";
+        };
 
 
         // Get the index for this font, if it is not to be removed (typeface == null)
@@ -380,20 +371,11 @@ public final class HSLFTextRun implements TextRun {
             return (cachedFontInfo != null) ? cachedFontInfo[fg.ordinal()] : null;
         }
 
-        String propName;
-        switch (fg) {
-        default:
-        case LATIN:
-            propName = "font.index,ansi.font.index";
-            break;
-        case COMPLEX_SCRIPT:
-        case EAST_ASIAN:
-            propName = "asian.font.index";
-            break;
-        case SYMBOL:
-            propName = "symbol.font.index";
-            break;
-        }
+        String propName = switch (fg) {
+            case COMPLEX_SCRIPT, EAST_ASIAN -> "asian.font.index";
+            case SYMBOL -> "symbol.font.index";
+            default -> "font.index,ansi.font.index";
+        };
 
         TextProp tp = getTextParagraph().getPropVal(characterStyle, propName);
         return (tp != null) ? slideShow.getFont(tp.getValue()) : null;

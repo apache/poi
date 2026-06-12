@@ -405,21 +405,14 @@ public final class DStarRunner implements Function3Arg {
         }
 
         int result = NumberComparer.compare(value, conditionValue);
-        switch(op) {
-        case largerThan:
-            return result > 0;
-        case largerEqualThan:
-            return result >= 0;
-        case smallerThan:
-            return result < 0;
-        case smallerEqualThan:
-            return result <= 0;
-        case equal:
-            return result == 0;
-        case notEqual:
-            return result != 0;
-        }
-        return false; // Can not be reached.
+        return switch (op) {
+            case largerThan -> result > 0;
+            case largerEqualThan -> result >= 0;
+            case smallerThan -> result < 0;
+            case smallerEqualThan -> result <= 0;
+            case equal -> result == 0;
+            case notEqual -> result != 0;
+        };
     }
 
     /**

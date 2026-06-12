@@ -191,17 +191,13 @@ public final class SheetNameFormatter {
         if(Character.isLetterOrDigit(ch)) {
             return false;
         }
-        switch(ch) {
-            case '.': // dot is OK
-            case '_': // underscore is OK
-                return false;
-            case '\n':
-            case '\r':
-            case '\t':
-                throw new IllegalStateException("Illegal character (0x"
-                        + Integer.toHexString(ch) + ") found in sheet name");
-        }
-        return true;
+        return switch (ch) { // dot is OK
+            case '.', '_' -> // underscore is OK
+                    false;
+            case '\n', '\r', '\t' -> throw new IllegalStateException("Illegal character (0x"
+                    + Integer.toHexString(ch) + ") found in sheet name");
+            default -> true;
+        };
     }
 
 

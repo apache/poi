@@ -241,12 +241,12 @@ public final class PPTXMLDump {
         String type;
         int meta = LittleEndian.getUShort(header, 0);
 
-        switch(meta){
-            case 0x46A0: type = "jpeg"; break;
-            case 0x2160: type = "wmf"; break;
-            case 0x6E00: type = "png"; break;
-            default: type = "unknown"; break;
-        }
+        type = switch (meta) {
+            case 0x46A0 -> "jpeg";
+            case 0x2160 -> "wmf";
+            case 0x6E00 -> "png";
+            default -> "unknown";
+        };
         return type;
     }
 

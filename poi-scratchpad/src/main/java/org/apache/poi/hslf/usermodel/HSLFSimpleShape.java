@@ -360,23 +360,13 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         // see https://social.msdn.microsoft.com/Forums/en-US/33e458e6-58df-48fe-9a10-e303ab08991d/preset-shapes-for-ppt?forum=os_binaryfile
 
         // usually we deal with length units and only very few degree units:
-        boolean isDegreeUnit = false;
-        switch (getShapeType()) {
-            case ARC:
-            case BLOCK_ARC:
-            case CHORD:
-            case PIE:
-                isDegreeUnit = (adjInt == 1 || adjInt == 2);
-                break;
-            case CIRCULAR_ARROW:
-            case LEFT_CIRCULAR_ARROW:
-            case LEFT_RIGHT_CIRCULAR_ARROW:
-                isDegreeUnit = (adjInt == 2 || adjInt == 3 || adjInt == 4);
-                break;
-            case MATH_NOT_EQUAL:
-                isDegreeUnit = (adjInt == 2);
-                break;
-        }
+        boolean isDegreeUnit = switch (getShapeType()) {
+            case ARC, BLOCK_ARC, CHORD, PIE -> (adjInt == 1 || adjInt == 2);
+            case CIRCULAR_ARROW, LEFT_CIRCULAR_ARROW, LEFT_RIGHT_CIRCULAR_ARROW ->
+                    (adjInt == 2 || adjInt == 3 || adjInt == 4);
+            case MATH_NOT_EQUAL -> (adjInt == 2);
+            default -> false;
+        };
 
         Guide gd = new Guide();
         gd.setName(name);

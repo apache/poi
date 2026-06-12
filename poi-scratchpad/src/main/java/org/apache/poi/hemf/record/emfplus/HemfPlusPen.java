@@ -562,35 +562,18 @@ public class HemfPlusPen {
             brush.applyPen(ctx, continuedObjectData);
             prop.setPenWidth(penWidth);
 
-            HwmfLineCap cap;
+            HwmfLineCap cap = switch (startCap) {
+                case ROUND -> HwmfLineCap.ROUND;
+                case SQUARE -> HwmfLineCap.SQUARE;
+                default -> HwmfLineCap.FLAT;
+            };
             // ignore endCap for now
-            switch(startCap) {
-                default:
-                case FLAT:
-                    cap = HwmfLineCap.FLAT;
-                    break;
-                case ROUND:
-                    cap = HwmfLineCap.ROUND;
-                    break;
-                case SQUARE:
-                    cap = HwmfLineCap.SQUARE;
-                    break;
-            }
 
-            HwmfLineJoin lineJoin;
-            switch (this.lineJoin) {
-                default:
-                case BEVEL:
-                    lineJoin = HwmfLineJoin.BEVEL;
-                    break;
-                case ROUND:
-                    lineJoin = HwmfLineJoin.ROUND;
-                    break;
-                case MITER_CLIPPED:
-                case MITER:
-                    lineJoin = HwmfLineJoin.MITER;
-                    break;
-            }
+            HwmfLineJoin lineJoin = switch (this.lineJoin) {
+                case ROUND -> HwmfLineJoin.ROUND;
+                case MITER_CLIPPED, MITER -> HwmfLineJoin.MITER;
+                default -> HwmfLineJoin.BEVEL;
+            };
 
             HwmfLineDash lineDash = (dashedLineData == null) ? HwmfLineDash.SOLID : HwmfLineDash.USERSTYLE;
 
