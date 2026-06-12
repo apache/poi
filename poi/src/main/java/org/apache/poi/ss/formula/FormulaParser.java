@@ -82,6 +82,8 @@ import org.apache.poi.ss.util.CellReference.NameType;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.StringUtil;
 
+import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
+
 /**
  * This class parses a formula string into a List of tokens in RPN order.
  * Inspired by "Lets Build a Compiler" by Jack Crenshaw
@@ -320,7 +322,7 @@ public final class FormulaParser {
             value.appendCodePoint(this.look);
             nextChar();
         }
-        return value.length() == 0 ? null : value.toString();
+        return value.isEmpty() ? null : value.toString();
     }
 
     private ParseNode parseRangeExpression() {
@@ -412,8 +414,7 @@ public final class FormulaParser {
         }
 
         // next 2 are special cases of OperationPtg
-        if (tkn instanceof AbstractFunctionPtg) {
-            AbstractFunctionPtg afp = (AbstractFunctionPtg) tkn;
+        if (tkn instanceof AbstractFunctionPtg afp) {
             byte returnClass = afp.getDefaultOperandClass();
             //CLASS_VALUE was added as valid to support example 6 in
             //https://support.microsoft.com/en-us/office/xlookup-function-b7fd680e-6d10-43e6-84f9-88eae8bf5929
@@ -929,8 +930,8 @@ public final class FormulaParser {
         if(look == '['){
             return parseStructuredReference(name);
         }
-        if (name.equalsIgnoreCase("TRUE") || name.equalsIgnoreCase("FALSE")) {
-            return  new ParseNode(BoolPtg.valueOf(name.equalsIgnoreCase("TRUE")));
+        if (equalsIgnoreCase(name, "TRUE") || equalsIgnoreCase(name, "FALSE")) {
+            return  new ParseNode(BoolPtg.valueOf(equalsIgnoreCase(name, "TRUE")));
         }
         if (_book == null) {
             // Only test cases omit the book (expecting it not to be needed)
@@ -978,15 +979,13 @@ public final class FormulaParser {
         if (ch > 128) {
             return true;
         }
-        switch (ch) {
-            case '.':
-            case '_':
-            case '?':
-            case '\\': // of all things
-                return true;
-        }
-        // includes special non-name control characters like ! $ : , ( ) [ ] and space
-        return false;
+        return switch (ch) {
+            case '.', '_', '?', '\\' -> // of all things
+                    true;
+            default ->
+                // includes special non-name control characters like ! $ : , ( ) [ ] and space
+                    false;
+        };
     }
 
     /**
@@ -1285,13 +1284,12 @@ public final class FormulaParser {
         if (ch > 128) {
             return true;
         }
-        switch(ch) {
-            case '.': // dot is OK
-            case '_': // underscore is OK
-            case ' ': // space is OK
-                return true;
-        }
-        return false;
+        return switch (ch) { // dot is OK
+            // underscore is OK
+            case '.', '_', ' ' -> // space is OK
+                    true;
+            default -> false;
+        };
     }
 
     /**
@@ -1688,10 +1686,10 @@ public final class FormulaParser {
 
     private Boolean parseBooleanLiteral() {
         String iden = parseUnquotedIdentifier();
-        if ("TRUE".equalsIgnoreCase(iden)) {
+        if (StringUtil.equalsIgnoreCase("TRUE", iden)) {
             return Boolean.TRUE;
         }
-        if ("FALSE".equalsIgnoreCase(iden)) {
+        if (StringUtil.equalsIgnoreCase("FALSE", iden)) {
             return Boolean.FALSE;
         }
         throw expected("'TRUE' or 'FALSE'");
@@ -1825,7 +1823,7 @@ public final class FormulaParser {
             sb.appendCodePoint(look);
             nextChar();
         }
-        if (sb.length() < 1) {
+        if (sb.isEmpty()) {
             return null;
         }
 
@@ -1993,15 +1991,17 @@ public final class FormulaParser {
             }
             return GreaterThanPtg.instance;
         }
-        switch(look) {
-            case '=':
+        return switch (look) {
+            case '=' -> {
                 match('=');
-                return LessEqualPtg.instance;
-            case '>':
+                yield LessEqualPtg.instance;
+            }
+            case '>' -> {
                 match('>');
-                return NotEqualPtg.instance;
-        }
-        return LessThanPtg.instance;
+                yield NotEqualPtg.instance;
+            }
+            default -> LessThanPtg.instance;
+        };
     }
 
 

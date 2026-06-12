@@ -35,6 +35,9 @@ import org.apache.poi.poifs.filesystem.POIFSStream;
 import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.StringUtil;
+
+import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
 
 /**
  * Dump internal structure of a OLE2 file into file system
@@ -51,16 +54,16 @@ public final class POIFSDump {
         
         boolean dumpProps = false, dumpMini = false;
         for (String filename : args) {
-            if (filename.equalsIgnoreCase("-dumprops") ||
-                    filename.equalsIgnoreCase("-dump-props") ||
-                    filename.equalsIgnoreCase("-dump-properties")) {
+            if (equalsIgnoreCase(filename, "-dumprops") ||
+                    equalsIgnoreCase(filename, "-dump-props") ||
+                    equalsIgnoreCase(filename, "-dump-properties")) {
                 dumpProps = true;
                 continue;
             }
-            if (filename.equalsIgnoreCase("-dumpmini") ||
-                    filename.equalsIgnoreCase("-dump-mini") ||
-                    filename.equalsIgnoreCase("-dump-ministream") ||
-                    filename.equalsIgnoreCase("-dump-mini-stream")) {
+            if (equalsIgnoreCase(filename, "-dumpmini") ||
+                    equalsIgnoreCase(filename, "-dump-mini") ||
+                    equalsIgnoreCase(filename, "-dump-ministream") ||
+                    equalsIgnoreCase(filename, "-dump-mini-stream")) {
                 dumpMini = true;
                 continue;
             }
@@ -98,8 +101,7 @@ public final class POIFSDump {
     public static void dump(DirectoryEntry root, File parent) throws IOException {
         for(Iterator<Entry> it = root.getEntries(); it.hasNext();){
             Entry entry = it.next();
-            if(entry instanceof DocumentNode){
-                final DocumentNode node = (DocumentNode) entry;
+            if(entry instanceof DocumentNode node) {
                 final byte[] bytes;
                 try (DocumentInputStream is = new DocumentInputStream(node)) {
                    bytes = IOUtils.toByteArray(is);
@@ -108,8 +110,7 @@ public final class POIFSDump {
                         IOUtils.newFile(parent, node.getName().trim()).toPath())) {
                     out.write(bytes);
                 }
-            } else if (entry instanceof DirectoryEntry){
-                DirectoryEntry dir = (DirectoryEntry)entry;
+            } else if (entry instanceof DirectoryEntry dir) {
                 File file = IOUtils.newFile(parent, entry.getName());
                 if (!file.exists() && !file.mkdirs()) {
                     throw new IOException("Could not create directory " + file);

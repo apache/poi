@@ -31,6 +31,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
 import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Implementation for the function COUNTIF
@@ -87,54 +88,50 @@ public final class Countif extends Fixed2ArgFunction {
 
             char firstChar = value.charAt(0);
 
-            switch(firstChar) {
-                case '=':
-                    return OP_EQ;
-                case '>':
+            return switch (firstChar) {
+                case '=' -> OP_EQ;
+                case '>' -> {
                     if (len > 1) {
-                        switch(value.charAt(1)) {
+                        switch (value.charAt(1)) {
                             case '=':
-                                return OP_GE;
+                                yield OP_GE;
                         }
                     }
-                    return OP_GT;
-                case '<':
+                    yield OP_GT;
+                }
+                case '<' -> {
                     if (len > 1) {
-                        switch(value.charAt(1)) {
+                        switch (value.charAt(1)) {
                             case '=':
-                                return OP_LE;
+                                yield OP_LE;
                             case '>':
-                                return OP_NE;
+                                yield OP_NE;
                         }
                     }
-                    return OP_LT;
-            }
-            return OP_NONE;
+                    yield OP_LT;
+                }
+                default -> OP_NONE;
+            };
         }
         public boolean evaluate(boolean cmpResult) {
-            switch (_code) {
-                case NONE:
-                case EQ:
-                    return cmpResult;
-                case NE:
-                    return !cmpResult;
-            }
-            throw new IllegalStateException("Cannot call boolean evaluate on non-equality operator '"
-                    + _representation + "'");
+            return switch (_code) {
+                case NONE, EQ -> cmpResult;
+                case NE -> !cmpResult;
+                default -> throw new IllegalStateException("Cannot call boolean evaluate on non-equality operator '"
+                        + _representation + "'");
+            };
         }
         public boolean evaluate(int cmpResult) {
-            switch (_code) {
-                case NONE:
-                case EQ:
-                    return cmpResult == 0;
-                case NE: return cmpResult != 0;
-                case LT: return cmpResult <  0;
-                case LE: return cmpResult <= 0;
-                case GT: return cmpResult >  0;
-                case GE: return cmpResult >= 0;
-            }
-            throw new IllegalStateException("Cannot call boolean evaluate on non-equality operator '"
-                    + _representation + "'");
+            return switch (_code) {
+                case NONE, EQ -> cmpResult == 0;
+                case NE -> cmpResult != 0;
+                case LT -> cmpResult < 0;
+                case LE -> cmpResult <= 0;
+                case GT -> cmpResult > 0;
+                case GE -> cmpResult >= 0;
+                default -> throw new IllegalStateException("Cannot call boolean evaluate on non-equality operator '"
+                        + _representation + "'");
+            };
         }
         @Override
         public String toString() {
@@ -183,7 +180,7 @@ public final class Countif extends Fixed2ArgFunction {
         @Override
         public boolean matches(ValueEval x) {
             double testValue;
-            if(x instanceof StringEval) {
+            if(x instanceof StringEval se) {
                 // if the target(x) is a string, but parses as a number
                 // it may still count as a match, only for the equality operator
                 switch (getCode()) {
@@ -199,24 +196,16 @@ public final class Countif extends Fixed2ArgFunction {
                         // for example '>5' does not match '6',
                         return false;
                 }
-                StringEval se = (StringEval)x;
                 Double val = OperandResolver.parseDouble(se.getStringValue());
                 if(val == null) {
                     // x is text that is not a number
                     return false;
                 }
                 return _value == val;
-            } else if((x instanceof NumberEval)) {
-                NumberEval ne = (NumberEval) x;
+            } else if(x instanceof NumberEval ne) {
                 testValue = ne.getNumberValue();
-            } else if((x instanceof BlankEval)) {
-                switch (getCode()) {
-                    case CmpOp.NE:
-                        // Excel counts blank values in range as not equal to any value. See Bugzilla 51498
-                        return true;
-                    default:
-                        return false;
-                }
+            } else if(x instanceof BlankEval) {
+                return getCode() == CmpOp.NE; // Excel counts blank values in range as not equal to any value. See Bugzilla 51498
             } else {
                 return false;
             }
@@ -255,25 +244,12 @@ public final class Countif extends Fixed2ArgFunction {
                 //     return false;
                 // }
                 // testValue = boolToInt(val.booleanValue());
-            } else if((x instanceof BoolEval)) {
-                BoolEval be = (BoolEval) x;
+            } else if(x instanceof BoolEval be) {
                 testValue = boolToInt(be.getBooleanValue());
-            } else if((x instanceof BlankEval)) {
-                switch (getCode()) {
-                    case CmpOp.NE:
-                        // Excel counts blank values in range as not equal to any value. See Bugzilla 51498
-                        return true;
-                    default:
-                        return false;
-                }
-            } else if((x instanceof NumberEval)) {
-                switch (getCode()) {
-                    case CmpOp.NE:
-                        // not-equals comparison of a number to boolean always returnes false
-                        return true;
-                    default:
-                        return false;
-                }
+            } else if(x instanceof BlankEval) {
+                return getCode() == CmpOp.NE; // Excel counts blank values in range as not equal to any value. See Bugzilla 51498
+            } else if(x instanceof NumberEval) {
+                return getCode() == CmpOp.NE;// not-equals comparison of a number to boolean always returns false
             } else {
                 return false;
             }
@@ -295,8 +271,8 @@ public final class Countif extends Fixed2ArgFunction {
 
         @Override
         public boolean matches(ValueEval x) {
-            if(x instanceof ErrorEval) {
-                int testValue = ((ErrorEval)x).getErrorCode();
+            if(x instanceof ErrorEval errorEval) {
+                int testValue = errorEval.getErrorCode();
                 return evaluate(testValue - _value);
             }
             return false;
@@ -336,17 +312,16 @@ public final class Countif extends Fixed2ArgFunction {
         @Override
         public boolean matches(ValueEval x) {
             if (x instanceof BlankEval) {
-                switch(getCode()) {
-                    case CmpOp.NONE:
-                    case CmpOp.EQ:
-                        return _value.isEmpty();
-                    case CmpOp.NE:
+                return switch (getCode()) {
+                    case CmpOp.NONE, CmpOp.EQ -> _value.isEmpty();
+                    case CmpOp.NE ->
                         // pred '<>' matches empty string but not blank cell
                         // pred '<>ABC'  matches blank and 'not ABC'
-                        return _value.length() != 0;
-                }
-                // no other criteria matches a blank cell
-                return false;
+                            !_value.isEmpty();
+                    default ->
+                        // no other criteria matches a blank cell
+                            false;
+                };
             }
             if(!(x instanceof StringEval)) {
                 // must always be string
@@ -355,15 +330,15 @@ public final class Countif extends Fixed2ArgFunction {
                 return false;
             }
             String testedValue = ((StringEval) x).getStringValue();
-            if (testedValue.length() < 1 && _value.length() < 1) {
+            if (testedValue.isEmpty() && _value.isEmpty()) {
                 // odd case: criteria '=' behaves differently to criteria ''
 
-                switch(getCode()) {
-                    case CmpOp.NONE: return true;
-                    case CmpOp.EQ:   return false;
-                    case CmpOp.NE:   return true;
-                }
-                return false;
+                return switch (getCode()) {
+                    case CmpOp.NONE -> true;
+                    case CmpOp.EQ -> false;
+                    case CmpOp.NE -> true;
+                    default -> false;
+                };
             }
             if (_pattern != null) {
                 return evaluate(_pattern.matcher(testedValue).matches());
@@ -550,19 +525,19 @@ public final class Countif extends Fixed2ArgFunction {
      * @return {@code null} to represent blank values
      */
     /* package */ static Boolean parseBoolean(String strRep) {
-        if (strRep.length() < 1) {
+        if (strRep.isEmpty()) {
             return null;
         }
         switch(strRep.charAt(0)) {
             case 't':
             case 'T':
-                if("TRUE".equalsIgnoreCase(strRep)) {
+                if(StringUtil.equalsIgnoreCase("TRUE", strRep)) {
                     return Boolean.TRUE;
                 }
                 break;
             case 'f':
             case 'F':
-                if("FALSE".equalsIgnoreCase(strRep)) {
+                if(StringUtil.equalsIgnoreCase("FALSE", strRep)) {
                     return Boolean.FALSE;
                 }
                 break;

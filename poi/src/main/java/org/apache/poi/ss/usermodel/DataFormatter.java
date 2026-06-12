@@ -424,7 +424,7 @@ public class DataFormatter {
         }
 
         // Is it one of the special built in types, General or @?
-        if ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr)) {
+        if (StringUtil.equalsIgnoreCase("General", formatStr) || "@".equals(formatStr)) {
             return generalNumberFormat;
         }
 
@@ -493,7 +493,7 @@ public class DataFormatter {
             return getDefaultFormat(cellValue);
         }
 
-        if ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr)) {
+        if (StringUtil.equalsIgnoreCase("General", formatStr) || "@".equals(formatStr)) {
            return generalNumberFormat;
         }
 

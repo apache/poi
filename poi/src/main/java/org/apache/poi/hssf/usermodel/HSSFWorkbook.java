@@ -114,6 +114,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.StringUtil;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -1163,7 +1164,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         for (int k = 0; k < _sheets.size(); k++) {
             String sheetname = workbook.getSheetName(k);
 
-            if (sheetname.equalsIgnoreCase(name)) {
+            if (StringUtil.equalsIgnoreCase(sheetname, name)) {
                 return _sheets.get(k);
             }
         }
@@ -1934,7 +1935,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         for (int k = 0; k < names.size(); k++) {
             String nameName = getNameName(k);
 
-            if (nameName.equalsIgnoreCase(name)) {
+            if (StringUtil.equalsIgnoreCase(nameName, name)) {
                 return k;
             }
         }

@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.apache.poi.ss.format.CellFormatter.quote;
+import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
 
 /**
  * Objects of this class represent a single part of a cell format expression.
@@ -390,7 +391,7 @@ public class CellFormatPart {
      */
     private CellFormatType formatType(String fdesc) {
         fdesc = fdesc.trim();
-        if (fdesc.isEmpty() || fdesc.equalsIgnoreCase("General"))
+        if (fdesc.isEmpty() || equalsIgnoreCase(fdesc, "General"))
             return CellFormatType.GENERAL;
 
         Matcher m = SPECIFICATION_PAT.matcher(fdesc);
