@@ -45,6 +45,7 @@ import org.apache.poi.util.SuppressForbidden;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Tests of {@link DataFormatter}
@@ -52,6 +53,7 @@ import org.junit.jupiter.api.Test;
  * See {@link TestHSSFDataFormatter} too for
  *  more tests.
  */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 class TestDataFormatter {
     private static final double _15_MINUTES = 0.041666667;
 

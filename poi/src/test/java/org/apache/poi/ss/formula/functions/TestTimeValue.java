@@ -23,6 +23,7 @@ import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Tests for Excel function TIMEVALUE()
  */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 final class TestTimeValue {
 
     @BeforeAll

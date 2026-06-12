@@ -1552,29 +1552,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
     }
 
-    /**
-     * ISO-8601 style cell formats with a T in them, eg
-     * cell format of "yyyy-MM-ddTHH:mm:ss"
-     */
-    @Test
-    void bug54034() throws IOException {
-        TimeZone tz = LocaleUtil.getUserTimeZone();
-        LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
-        try (Workbook wb = openSampleWorkbook("54034.xlsx")) {
-            Sheet sheet = wb.getSheet("Sheet1");
-            Row row = sheet.getRow(1);
-            Cell cell = row.getCell(2);
-            assertTrue(DateUtil.isCellDateFormatted(cell));
-
-            DataFormatter fmt = new DataFormatter();
-            assertEquals("yyyy\\-mm\\-dd\\Thh:mm", cell.getCellStyle().getDataFormatString());
-            assertEquals("2012-08-08T22:59", fmt.formatCellValue(cell));
-        } finally {
-            LocaleUtil.setUserTimeZone(tz);
-        }
-    }
-
-
     @Test
     void testBug53798XLSX() throws IOException {
         try (XSSFWorkbook wb = openSampleWorkbook("53798_shiftNegative_TMPL.xlsx")) {

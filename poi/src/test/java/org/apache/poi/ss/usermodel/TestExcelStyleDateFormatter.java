@@ -35,10 +35,12 @@ import java.util.stream.Stream;
 import org.apache.poi.POITestCase;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 class TestExcelStyleDateFormatter {
     private static final String EXCEL_DATE_FORMAT = "MMMMM";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);

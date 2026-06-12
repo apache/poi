@@ -27,6 +27,7 @@ import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -39,6 +40,7 @@ import static org.apache.poi.ss.util.Utils.assertError;
 /**
  * Testcase for DAYS() functions
  */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 public class TestDays {
 
     @BeforeAll

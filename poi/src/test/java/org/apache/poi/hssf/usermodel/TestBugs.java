@@ -93,6 +93,7 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -103,6 +104,7 @@ import org.junit.jupiter.params.provider.CsvSource;
  * <b>YK: If a bug can be tested in terms of common ss interfaces,
  * define the test in the base class {@link BaseTestBugzillaIssues}</b>
  */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 final class TestBugs extends BaseTestBugzillaIssues {
 
     public TestBugs() {
