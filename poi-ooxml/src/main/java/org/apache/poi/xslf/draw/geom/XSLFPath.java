@@ -111,12 +111,12 @@ public class XSLFPath implements PathIf {
     @Override
     public void setFill(PaintStyle.PaintModifier fill) {
         STPathFillMode.Enum f = switch (fill) {
-            default -> STPathFillMode.NONE;
             case NORM -> STPathFillMode.NORM;
             case LIGHTEN -> STPathFillMode.LIGHTEN;
             case LIGHTEN_LESS -> STPathFillMode.LIGHTEN_LESS;
             case DARKEN -> STPathFillMode.DARKEN;
             case DARKEN_LESS -> STPathFillMode.DARKEN_LESS;
+            default -> STPathFillMode.NONE;
         };
         pathXml.setFill(f);
     }

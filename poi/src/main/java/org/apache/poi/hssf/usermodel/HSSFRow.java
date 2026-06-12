@@ -378,17 +378,15 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
     @Override
     public HSSFCell getCell(int cellnum, MissingCellPolicy policy) {
         HSSFCell cell = retrieveCell(cellnum);
-        switch (policy) {
-            case RETURN_NULL_AND_BLANK:
-                return cell;
-            case RETURN_BLANK_AS_NULL:
+        return switch (policy) {
+            case RETURN_NULL_AND_BLANK -> cell;
+            case RETURN_BLANK_AS_NULL -> {
                 boolean isBlank = (cell != null && cell.getCellType() == CellType.BLANK);
-                return (isBlank) ? null : cell;
-            case CREATE_NULL_AS_BLANK:
-                return (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
-            default:
-                throw new IllegalArgumentException("Illegal policy " + policy);
-        }
+                yield (isBlank) ? null : cell;
+            }
+            case CREATE_NULL_AS_BLANK -> (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
+            default -> throw new IllegalArgumentException("Illegal policy " + policy);
+        };
     }
 
     /**

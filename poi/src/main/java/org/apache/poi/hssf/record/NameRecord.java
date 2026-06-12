@@ -563,25 +563,23 @@ public final class NameRecord extends ContinuableRecord {
      */
     private static String translateBuiltInName(byte name)
     {
-        switch (name)
-        {
-            case NameRecord.BUILTIN_AUTO_ACTIVATE :     return "Auto_Activate";
-            case NameRecord.BUILTIN_AUTO_CLOSE :        return "Auto_Close";
-            case NameRecord.BUILTIN_AUTO_DEACTIVATE :   return "Auto_Deactivate";
-            case NameRecord.BUILTIN_AUTO_OPEN :         return "Auto_Open";
-            case NameRecord.BUILTIN_CONSOLIDATE_AREA :  return "Consolidate_Area";
-            case NameRecord.BUILTIN_CRITERIA :          return "Criteria";
-            case NameRecord.BUILTIN_DATABASE :          return "Database";
-            case NameRecord.BUILTIN_DATA_FORM :         return "Data_Form";
-            case NameRecord.BUILTIN_PRINT_AREA :        return "Print_Area";
-            case NameRecord.BUILTIN_PRINT_TITLE :       return "Print_Titles";
-            case NameRecord.BUILTIN_RECORDER :          return "Recorder";
-            case NameRecord.BUILTIN_SHEET_TITLE :       return "Sheet_Title";
-            case NameRecord.BUILTIN_FILTER_DB  :        return "_FilterDatabase";
+        return switch (name) {
+            case NameRecord.BUILTIN_AUTO_ACTIVATE -> "Auto_Activate";
+            case NameRecord.BUILTIN_AUTO_CLOSE -> "Auto_Close";
+            case NameRecord.BUILTIN_AUTO_DEACTIVATE -> "Auto_Deactivate";
+            case NameRecord.BUILTIN_AUTO_OPEN -> "Auto_Open";
+            case NameRecord.BUILTIN_CONSOLIDATE_AREA -> "Consolidate_Area";
+            case NameRecord.BUILTIN_CRITERIA -> "Criteria";
+            case NameRecord.BUILTIN_DATABASE -> "Database";
+            case NameRecord.BUILTIN_DATA_FORM -> "Data_Form";
+            case NameRecord.BUILTIN_PRINT_AREA -> "Print_Area";
+            case NameRecord.BUILTIN_PRINT_TITLE -> "Print_Titles";
+            case NameRecord.BUILTIN_RECORDER -> "Recorder";
+            case NameRecord.BUILTIN_SHEET_TITLE -> "Sheet_Title";
+            case NameRecord.BUILTIN_FILTER_DB -> "_FilterDatabase";
+            default -> "Unknown";
+        };
 
-        }
-
-        return "Unknown";
     }
 
     @Override

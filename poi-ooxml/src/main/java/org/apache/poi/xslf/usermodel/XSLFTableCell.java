@@ -126,18 +126,13 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             return null;
         }
 
-        switch (edge) {
-        case bottom:
-            return (pr.isSetLnB()) ? pr.getLnB() : (create ? pr.addNewLnB() : null);
-        case left:
-            return (pr.isSetLnL()) ? pr.getLnL() : (create ? pr.addNewLnL() : null);
-        case top:
-            return (pr.isSetLnT()) ? pr.getLnT() : (create ? pr.addNewLnT() : null);
-        case right:
-            return (pr.isSetLnR()) ? pr.getLnR() : (create ? pr.addNewLnR() : null);
-        default:
-            return null;
-        }
+        return switch (edge) {
+            case bottom -> (pr.isSetLnB()) ? pr.getLnB() : (create ? pr.addNewLnB() : null);
+            case left -> (pr.isSetLnL()) ? pr.getLnL() : (create ? pr.addNewLnL() : null);
+            case top -> (pr.isSetLnT()) ? pr.getLnT() : (create ? pr.addNewLnT() : null);
+            case right -> (pr.isSetLnR()) ? pr.getLnR() : (create ? pr.addNewLnR() : null);
+            default -> null;
+        };
     }
 
     public XDDFLineProperties getBorderProperties(BorderEdge edge) {

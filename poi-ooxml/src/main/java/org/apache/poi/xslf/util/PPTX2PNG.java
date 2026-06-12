@@ -378,11 +378,11 @@ public final class PPTX2PNG {
         final Dimension2D pgsize = proxy.getSize();
 
         final double lenSide = switch (fixSide) {
-            default -> 1;
             case "long" -> Math.max(pgsize.getWidth(), pgsize.getHeight());
             case "short" -> Math.min(pgsize.getWidth(), pgsize.getHeight());
             case "width" -> pgsize.getWidth();
             case "height" -> pgsize.getHeight();
+            default -> 1;
         };
 
         dim.setSize(pgsize.getWidth() * scale / lenSide, pgsize.getHeight() * scale / lenSide);

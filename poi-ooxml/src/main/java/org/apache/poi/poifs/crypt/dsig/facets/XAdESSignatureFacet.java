@@ -370,13 +370,6 @@ public class XAdESSignatureFacet implements SignatureFacet {
             while (cur.hasNextToken()) {
                 TokenType nextToken = cur.toNextToken();
                 switch (nextToken.intValue()) {
-                    default:
-                    case TokenType.INT_NONE:
-                    case TokenType.INT_STARTDOC:
-                    case TokenType.INT_ENDDOC:
-                    case TokenType.INT_PROCINST:
-                        // ignore
-                        break;
                     case TokenType.INT_START: {
                         QName name = cur.getName();
                         Element el = document.createElementNS(name.getNamespaceURI(), name.getLocalPart());
@@ -411,6 +404,13 @@ public class XAdESSignatureFacet implements SignatureFacet {
                         lastNode.appendChild(document.createComment(cur.getTextValue()));
                         break;
                     }
+                    case TokenType.INT_NONE:
+                    case TokenType.INT_STARTDOC:
+                    case TokenType.INT_ENDDOC:
+                    case TokenType.INT_PROCINST:
+                    default:
+                        // ignore
+                        break;
                 }
             }
             return lastNode;
