@@ -26,6 +26,7 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
+import org.apache.poi.util.SuppressForbidden;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -291,6 +292,7 @@ class TestZipSecureFile {
     }
 
     @Test
+    @SuppressForbidden("test code")
     void testZipFileZipEntrySourceCaseInsensitiveMatchingUnderTurkishLocale() throws Exception {
         Locale defaultLocale = Locale.getDefault();
         try {
