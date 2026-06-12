@@ -274,26 +274,15 @@ public final class WorkbookEvaluator {
             } catch (RuntimeException re) {
                 if (re.getCause() instanceof WorkbookNotFoundException && _ignoreMissingWorkbooks) {
                     LOG.atInfo().log("{} - Continuing with cached value!", re.getCause().getMessage());
-                    switch (srcCell.getCachedFormulaResultType()) {
-                        case NUMERIC:
-                            result = new NumberEval(srcCell.getNumericCellValue());
-                            break;
-                        case STRING:
-                            result = new StringEval(srcCell.getStringCellValue());
-                            break;
-                        case BLANK:
-                            result = BlankEval.instance;
-                            break;
-                        case BOOLEAN:
-                            result = BoolEval.valueOf(srcCell.getBooleanCellValue());
-                            break;
-                        case ERROR:
-                            result = ErrorEval.valueOf(srcCell.getErrorCellValue());
-                            break;
-                        case FORMULA:
-                        default:
-                            throw new IllegalStateException("Unexpected cell type '" + srcCell.getCellType() + "' found!");
-                    }
+                    result = switch (srcCell.getCachedFormulaResultType()) {
+                        case NUMERIC -> new NumberEval(srcCell.getNumericCellValue());
+                        case STRING -> new StringEval(srcCell.getStringCellValue());
+                        case BLANK -> BlankEval.instance;
+                        case BOOLEAN -> BoolEval.valueOf(srcCell.getBooleanCellValue());
+                        case ERROR -> ErrorEval.valueOf(srcCell.getErrorCellValue());
+                        default ->
+                                throw new IllegalStateException("Unexpected cell type '" + srcCell.getCellType() + "' found!");
+                    };
                 } else {
                     throw re;
                 }
@@ -350,20 +339,14 @@ public final class WorkbookEvaluator {
             return BlankEval.instance;
         }
         CellType cellType = cell.getCellType();
-        switch (cellType) {
-            case NUMERIC:
-                return new NumberEval(cell.getNumericCellValue());
-            case STRING:
-                return new StringEval(cell.getStringCellValue());
-            case BOOLEAN:
-                return BoolEval.valueOf(cell.getBooleanCellValue());
-            case BLANK:
-                return BlankEval.instance;
-            case ERROR:
-                return ErrorEval.valueOf(cell.getErrorCellValue());
-            default:
-                throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
-        }
+        return switch (cellType) {
+            case NUMERIC -> new NumberEval(cell.getNumericCellValue());
+            case STRING -> new StringEval(cell.getStringCellValue());
+            case BOOLEAN -> BoolEval.valueOf(cell.getBooleanCellValue());
+            case BLANK -> BlankEval.instance;
+            case ERROR -> ErrorEval.valueOf(cell.getErrorCellValue());
+            default -> throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
+        };
 
     }
 
@@ -376,7 +359,6 @@ public final class WorkbookEvaluator {
         if (dbgEvaluationOutputForNextEval) {
             // first evaluation call when output is desired, so iit. this evaluator instance
             dbgEvaluationOutputIndent = 1;
-            dbgEvaluationOutputForNextEval = true;
         }
         if (dbgEvaluationOutputIndent > 0) {
             // init. indent string to needed spaces (create as substring from very long space-only string;
@@ -667,9 +649,8 @@ public final class WorkbookEvaluator {
     private ValueEval getEvalForPtg(Ptg ptg, OperationEvaluationContext ec) {
         //  consider converting all these (ptg instanceof XxxPtg) expressions to (ptg.getClass() == XxxPtg.class)
 
-        if (ptg instanceof NamePtg) {
+        if (ptg instanceof NamePtg namePtg) {
             // Named ranges, macro functions
-            NamePtg namePtg = (NamePtg) ptg;
             EvaluationName nameRecord = _workbook.getName(namePtg);
             return getEvalForNameRecord(nameRecord, ec);
         }
@@ -716,17 +697,14 @@ public final class WorkbookEvaluator {
         if (ptg instanceof Area3DPxg) {
             return ec.getArea3DEval((Area3DPxg) ptg);
         }
-        if (ptg instanceof RefPtg) {
-            RefPtg rptg = (RefPtg) ptg;
+        if (ptg instanceof RefPtg rptg) {
             return ec.getRefEval(rptg.getRow(), rptg.getColumn());
         }
-        if (ptg instanceof AreaPtg) {
-            AreaPtg aptg = (AreaPtg) ptg;
+        if (ptg instanceof AreaPtg aptg) {
             return ec.getAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn());
         }
 
-        if (ptg instanceof ArrayPtg) {
-            ArrayPtg aptg = (ArrayPtg) ptg;
+        if (ptg instanceof ArrayPtg aptg) {
             return ec.getAreaValueEval(0, 0, aptg.getRowCount() - 1, aptg.getColumnCount() - 1, aptg.getTokenArrayValues());
         }
 

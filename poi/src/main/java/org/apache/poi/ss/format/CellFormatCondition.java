@@ -64,54 +64,47 @@ public abstract class CellFormatCondition {
 
         final double c = Double.parseDouble(constStr);
 
-        switch (test) {
-        case LT:
-            return new CellFormatCondition() {
+        return switch (test) {
+            case LT -> new CellFormatCondition() {
                 @Override
                 public boolean pass(double value) {
                     return value < c;
                 }
             };
-        case LE:
-            return new CellFormatCondition() {
+            case LE -> new CellFormatCondition() {
                 @Override
                 public boolean pass(double value) {
                     return value <= c;
                 }
             };
-        case GT:
-            return new CellFormatCondition() {
+            case GT -> new CellFormatCondition() {
                 @Override
                 public boolean pass(double value) {
                     return value > c;
                 }
             };
-        case GE:
-            return new CellFormatCondition() {
+            case GE -> new CellFormatCondition() {
                 @Override
                 public boolean pass(double value) {
                     return value >= c;
                 }
             };
-        case EQ:
-            return new CellFormatCondition() {
+            case EQ -> new CellFormatCondition() {
                 @Override
                 public boolean pass(double value) {
                     return value == c;
                 }
             };
-        case NE:
-            return new CellFormatCondition() {
+            case NE -> new CellFormatCondition() {
                 @Override
                 public boolean pass(double value) {
                     return value != c;
                 }
             };
-        default:
-            throw new IllegalArgumentException(
+            default -> throw new IllegalArgumentException(
                     "Cannot create for test number " + test + "(\"" + opString +
                             "\")");
-        }
+        };
     }
 
     /**

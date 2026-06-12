@@ -155,21 +155,10 @@ public class StressMap {
     }
 
     private static String secondHandler(String handlerStr) {
-        switch (handlerStr) {
-            case "XSSF":
-            case "XWPF":
-            case "XSLF":
-            case "XDGF":
-                return "OPC";
-            case "HSSF":
-            case "HWPF":
-            case "HSLF":
-            case "HDGF":
-            case "HSMF":
-            case "HBPF":
-                return "HPSF";
-            default:
-                return "NULL";
-        }
+        return switch (handlerStr) {
+            case "XSSF", "XWPF", "XSLF", "XDGF" -> "OPC";
+            case "HSSF", "HWPF", "HSLF", "HDGF", "HSMF", "HBPF" -> "HPSF";
+            default -> "NULL";
+        };
     }
 }

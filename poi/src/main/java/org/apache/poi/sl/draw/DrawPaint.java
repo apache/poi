@@ -241,18 +241,13 @@ public class DrawPaint {
 
     @SuppressWarnings("WeakerAccess")
     protected Paint getGradientPaint(GradientPaint fill, Graphics2D graphics) {
-        switch (fill.getGradientType()) {
-        case linear:
-            return createLinearGradientPaint(fill, graphics);
-        case rectangular:
+        return switch (fill.getGradientType()) {
+            case linear -> createLinearGradientPaint(fill, graphics);
             // TODO: implement rectangular gradient fill
-        case circular:
-            return createRadialGradientPaint(fill, graphics);
-        case shape:
-            return createPathGradientPaint(fill, graphics);
-        default:
-            throw new UnsupportedOperationException("gradient fill of type "+fill+" not supported.");
-        }
+            case rectangular, circular -> createRadialGradientPaint(fill, graphics);
+            case shape -> createPathGradientPaint(fill, graphics);
+            default -> throw new UnsupportedOperationException("gradient fill of type " + fill + " not supported.");
+        };
     }
 
     @SuppressWarnings("WeakerAccess")

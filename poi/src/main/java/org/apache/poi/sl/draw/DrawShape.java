@@ -228,19 +228,11 @@ public class DrawShape implements Drawable {
         if (lineCapE == null) {
             lineCapE = LineCap.FLAT;
         }
-        int lineCap;
-        switch (lineCapE) {
-            case ROUND:
-                lineCap = BasicStroke.CAP_ROUND;
-                break;
-            case SQUARE:
-                lineCap = BasicStroke.CAP_SQUARE;
-                break;
-            default:
-            case FLAT:
-                lineCap = BasicStroke.CAP_BUTT;
-                break;
-        }
+        int lineCap = switch (lineCapE) {
+            case ROUND -> BasicStroke.CAP_ROUND;
+            case SQUARE -> BasicStroke.CAP_SQUARE;
+            default -> BasicStroke.CAP_BUTT;
+        };
 
         int lineJoin = BasicStroke.JOIN_ROUND;
 

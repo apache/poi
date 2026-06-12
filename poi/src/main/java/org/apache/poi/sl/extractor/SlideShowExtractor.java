@@ -45,7 +45,6 @@ import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.StringUtil;
 
 /**
  * Common SlideShow extractor
@@ -170,15 +169,16 @@ public class SlideShowExtractor<
             return;
         }
         for (final Shape<S,P> shape : master) {
-            if (shape instanceof TextShape<S,P> ts) {
+            if (shape instanceof TextShape) {
+                final TextShape<S,P> ts = (TextShape<S,P>)shape;
                 final String text = ts.getText();
                 if (text == null || text.isEmpty() || "*".equals(text)) {
                     continue;
                 }
 
                 if (ts.isPlaceholder()) {
-                    // don't bother about boilerplate text on master sheets
-                    LOG.atInfo().log("Ignoring boilerplate (placeholder) text on slide master: {}", text);
+                    // don't bother about boiler plate text on master sheets
+                    LOG.atInfo().log("Ignoring boiler plate (placeholder) text on slide master: {}", text);
                     continue;
                 }
 
@@ -367,11 +367,13 @@ public class SlideShowExtractor<
         txt = txt.replace('\r', '\n');
         txt = txt.replace((char) 0x0B, sep);
 
-        return switch (tr.getTextCap()) {
+        txt = switch (tr.getTextCap()) {
             case ALL -> txt.toUpperCase(LocaleUtil.getUserLocale());
             case SMALL -> txt.toLowerCase(LocaleUtil.getUserLocale());
             default -> txt;
         };
+
+        return txt;
     }
 
     /**
@@ -401,12 +403,14 @@ public class SlideShowExtractor<
         return glyphs;
     }
     private static boolean filterFonts(Object o, String typeface, Boolean italic, Boolean bold) {
-        if (o instanceof TextRun tr) {
-            return StringUtil.equalsIgnoreCase(typeface, tr.getFontFamily()) &&
-                    (italic == null || tr.isItalic() == italic) &&
-                    (bold == null || tr.isBold() == bold);
+        if (!(o instanceof TextRun)) {
+            return false;
         }
-        return false;
+        TextRun tr = (TextRun)o;
+        return
+            typeface.equalsIgnoreCase(tr.getFontFamily()) &&
+            (italic == null || tr.isItalic() == italic) &&
+            (bold == null || tr.isBold() == bold);
     }
 
     @Override

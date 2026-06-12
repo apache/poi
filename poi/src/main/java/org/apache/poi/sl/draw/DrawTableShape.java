@@ -97,22 +97,12 @@ public class DrawTableShape extends DrawShape {
                     graphics.setPaint(linePaint);
 
                     double x=cellAnc.getX(), y=cellAnc.getY(), w=cellAnc.getWidth(), h=cellAnc.getHeight();
-                    Line2D line;
-                    switch (edge) {
-                        default:
-                        case bottom:
-                            line = new Line2D.Double(x-borderSize, y+h, x+w+borderSize, y+h);
-                            break;
-                        case left:
-                            line = new Line2D.Double(x, y, x, y+h+borderSize);
-                            break;
-                        case right:
-                            line = new Line2D.Double(x+w, y, x+w, y+h+borderSize);
-                            break;
-                        case top:
-                            line = new Line2D.Double(x-borderSize, y, x+w+borderSize, y);
-                            break;
-                    }
+                    Line2D line = switch (edge) {
+                        case left -> new Line2D.Double(x, y, x, y + h + borderSize);
+                        case right -> new Line2D.Double(x + w, y, x + w, y + h + borderSize);
+                        case top -> new Line2D.Double(x - borderSize, y, x + w + borderSize, y);
+                        default -> new Line2D.Double(x - borderSize, y + h, x + w + borderSize, y + h);
+                    };
 
                     graphics.draw(line);
                 }

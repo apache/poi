@@ -34,25 +34,25 @@ public interface Drawable {
         }
 
         public String toString() {
-            switch (intKey()) {
-            case 1: return "DRAW_FACTORY";
-            case 2: return "GROUP_TRANSFORM";
-            case 3: return "IMAGE_RENDERER";
-            case 4: return "TEXT_RENDERING_MODE";
-            case 5: return "GRADIENT_SHAPE";
-            case 6: return "PRESET_GEOMETRY_CACHE";
-            case 7: return "FONT_HANDLER";
-            case 8: return "FONT_FALLBACK";
-            case 9: return "FONT_MAP";
-            case 10: return "GSAVE";
-            case 11: return "GRESTORE";
-            case 12: return "CURRENT_SLIDE";
-            case 13: return "BUFFERED_IMAGE";
-            case 14: return "DEFAULT_CHARSET";
-            case 15: return "EMF_FORCE_HEADER_BOUNDS";
-            case 16: return "CACHE_IMAGE_SOURCE";
-            default: return "UNKNOWN_ID "+intKey();
-            }
+            return switch (intKey()) {
+                case 1 -> "DRAW_FACTORY";
+                case 2 -> "GROUP_TRANSFORM";
+                case 3 -> "IMAGE_RENDERER";
+                case 4 -> "TEXT_RENDERING_MODE";
+                case 5 -> "GRADIENT_SHAPE";
+                case 6 -> "PRESET_GEOMETRY_CACHE";
+                case 7 -> "FONT_HANDLER";
+                case 8 -> "FONT_FALLBACK";
+                case 9 -> "FONT_MAP";
+                case 10 -> "GSAVE";
+                case 11 -> "GRESTORE";
+                case 12 -> "CURRENT_SLIDE";
+                case 13 -> "BUFFERED_IMAGE";
+                case 14 -> "DEFAULT_CHARSET";
+                case 15 -> "EMF_FORCE_HEADER_BOUNDS";
+                case 16 -> "CACHE_IMAGE_SOURCE";
+                default -> "UNKNOWN_ID " + intKey();
+            };
         }
     }
 

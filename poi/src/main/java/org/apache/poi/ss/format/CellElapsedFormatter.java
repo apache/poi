@@ -155,34 +155,24 @@ public class CellElapsedFormatter extends CellFormatter {
     }
 
     private static double factorFor(char type, int len) {
-        switch (type) {
-        case 'h':
-            return HOUR__FACTOR;
-        case 'm':
-            return MIN__FACTOR;
-        case 's':
-            return SEC__FACTOR;
-        case '0':
-            return SEC__FACTOR / Math.pow(10, len);
-        default:
-            throw new IllegalArgumentException(
+        return switch (type) {
+            case 'h' -> HOUR__FACTOR;
+            case 'm' -> MIN__FACTOR;
+            case 's' -> SEC__FACTOR;
+            case '0' -> SEC__FACTOR / Math.pow(10, len);
+            default -> throw new IllegalArgumentException(
                     "Unknown elapsed time spec: " + type);
-        }
+        };
     }
 
     private static double modFor(char type, int len) {
-        switch (type) {
-        case 'h':
-            return 24;
-        case 'm':
-        case 's':
-            return 60;
-        case '0':
-            return Math.pow(10, len);
-        default:
-            throw new IllegalArgumentException(
+        return switch (type) {
+            case 'h' -> 24;
+            case 'm', 's' -> 60;
+            case '0' -> Math.pow(10, len);
+            default -> throw new IllegalArgumentException(
                     "Unknown elapsed time spec: " + type);
-        }
+        };
     }
 
     @Override

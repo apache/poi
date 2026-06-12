@@ -91,10 +91,6 @@ public class DrawTextShape extends DrawSimpleShape {
         double textHeight;
 
         switch (s.getVerticalAlignment()){
-            default:
-            case TOP:
-                y += insets.top;
-                break;
             case BOTTOM:
                 textHeight = getTextHeight(graphics);
                 y += anchor.getHeight() - textHeight - insets.bottom;
@@ -103,6 +99,10 @@ public class DrawTextShape extends DrawSimpleShape {
                 textHeight = getTextHeight(graphics);
                 double delta = anchor.getHeight() - textHeight - insets.top - insets.bottom;
                 y += insets.top + delta/2;
+                break;
+            case TOP:
+            default:
+                y += insets.top;
                 break;
         }
 
