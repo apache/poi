@@ -372,7 +372,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
         String thisStr = null;
 
         // Process the value contents as required, now we have it all
-        if (formulasNotResults && formula.length() > 0) {
+        if (formulasNotResults && !formula.isEmpty()) {
             thisStr = formula.toString();
         } else {
             switch (nextDataType) {

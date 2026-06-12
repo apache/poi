@@ -1040,15 +1040,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     public boolean isHeaderOrFooter() {
         CTPlaceholder ph = _shape.getPlaceholderDetails().getCTPlaceholder(false);
         int phId = (ph == null ? -1 : ph.getType().intValue());
-        switch (phId) {
-            case STPlaceholderType.INT_SLD_NUM:
-            case STPlaceholderType.INT_DT:
-            case STPlaceholderType.INT_FTR:
-            case STPlaceholderType.INT_HDR:
-                return true;
-            default:
-                return false;
-        }
+        return switch (phId) {
+            case STPlaceholderType.INT_SLD_NUM, STPlaceholderType.INT_DT, STPlaceholderType.INT_FTR,
+                 STPlaceholderType.INT_HDR -> true;
+            default -> false;
+        };
     }
 
     /**

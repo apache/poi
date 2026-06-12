@@ -234,39 +234,38 @@ public class XWPFSettings extends POIXMLDocumentPart {
                 hashAlgo = HashAlgorithm.sha1;
             }
 
-            switch (hashAlgo) {
-                case md2:
+            sid = switch (hashAlgo) {
+                case md2 -> {
                     providerType = STCryptProv.RSA_FULL;
-                    sid = 1;
-                    break;
-                case md4:
+                    yield 1;
+                }
+                case md4 -> {
                     providerType = STCryptProv.RSA_FULL;
-                    sid = 2;
-                    break;
-                case md5:
+                    yield 2;
+                }
+                case md5 -> {
                     providerType = STCryptProv.RSA_FULL;
-                    sid = 3;
-                    break;
-                case sha1:
+                    yield 3;
+                }
+                case sha1 -> {
                     providerType = STCryptProv.RSA_FULL;
-                    sid = 4;
-                    break;
-                case sha256:
+                    yield 4;
+                }
+                case sha256 -> {
                     providerType = STCryptProv.RSA_AES;
-                    sid = 12;
-                    break;
-                case sha384:
+                    yield 12;
+                }
+                case sha384 -> {
                     providerType = STCryptProv.RSA_AES;
-                    sid = 13;
-                    break;
-                case sha512:
+                    yield 13;
+                }
+                case sha512 -> {
                     providerType = STCryptProv.RSA_AES;
-                    sid = 14;
-                    break;
-                default:
-                    throw new EncryptedDocumentException
-                            ("Hash algorithm '" + hashAlgo + "' is not supported for document write protection.");
-            }
+                    yield 14;
+                }
+                default -> throw new EncryptedDocumentException
+                        ("Hash algorithm '" + hashAlgo + "' is not supported for document write protection.");
+            };
 
 
             byte[] salt = RandomSingleton.getInstance().generateSeed(16);

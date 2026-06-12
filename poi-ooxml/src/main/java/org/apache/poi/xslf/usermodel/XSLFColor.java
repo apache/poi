@@ -167,14 +167,11 @@ public class XSLFColor {
     }
 
     private static XmlObject nextObject(XmlObject obj, XmlCursor cur, int idx) {
-        switch (idx) {
-            case 0:
-                return obj;
-            case 1:
-                return cur.toFirstChild() ? cur.getObject() : null;
-            default:
-                return cur.toNextSibling() ? cur.getObject() : null;
-        }
+        return switch (idx) {
+            case 0 -> obj;
+            case 1 -> cur.toFirstChild() ? cur.getObject() : null;
+            default -> cur.toNextSibling() ? cur.getObject() : null;
+        };
     }
 
     /**

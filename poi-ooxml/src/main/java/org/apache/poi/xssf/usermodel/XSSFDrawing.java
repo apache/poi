@@ -535,20 +535,12 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         ctAnchor.addNewClientData();
         anchor.setTo(ctAnchor.getTo());
         anchor.setFrom(ctAnchor.getFrom());
-        STEditAs.Enum editAs;
-        switch (anchor.getAnchorType()) {
-        case DONT_MOVE_AND_RESIZE:
-            editAs = STEditAs.ABSOLUTE;
-            break;
-        case MOVE_AND_RESIZE:
-            editAs = STEditAs.TWO_CELL;
-            break;
-        case MOVE_DONT_RESIZE:
-            editAs = STEditAs.ONE_CELL;
-            break;
-        default:
-            editAs = STEditAs.ONE_CELL;
-        }
+        STEditAs.Enum editAs = switch (anchor.getAnchorType()) {
+            case DONT_MOVE_AND_RESIZE -> STEditAs.ABSOLUTE;
+            case MOVE_AND_RESIZE -> STEditAs.TWO_CELL;
+            case MOVE_DONT_RESIZE -> STEditAs.ONE_CELL;
+            default -> STEditAs.ONE_CELL;
+        };
         ctAnchor.setEditAs(editAs);
         return ctAnchor;
     }

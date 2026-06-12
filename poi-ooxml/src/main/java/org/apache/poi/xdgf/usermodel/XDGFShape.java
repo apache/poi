@@ -392,7 +392,7 @@ public class XDGFShape extends XDGFSheet {
     }
 
     public boolean isDeleted() {
-        return getXmlObject().isSetDel() ? getXmlObject().getDel() : false;
+        return getXmlObject().isSetDel() && getXmlObject().getDel();
     }
 
     public XDGFText getText() {
@@ -725,19 +725,12 @@ public class XDGFShape extends XDGFSheet {
         int cap;
         int join = BasicStroke.JOIN_MITER;
 
-        switch (getLineCap()) {
-        case 0:
-            cap = BasicStroke.CAP_ROUND;
-            break;
-        case 1:
-            cap = BasicStroke.CAP_SQUARE;
-            break;
-        case 2:
-            cap = BasicStroke.CAP_BUTT; // TODO: what does extended mean?
-            break;
-        default:
-            throw new POIXMLException("Invalid line cap specified");
-        }
+        cap = switch (getLineCap()) {
+            case 0 -> BasicStroke.CAP_ROUND;
+            case 1 -> BasicStroke.CAP_SQUARE;
+            case 2 -> BasicStroke.CAP_BUTT; // TODO: what does extended mean?
+            default -> throw new POIXMLException("Invalid line cap specified");
+        };
 
         float[] dash = null;
 

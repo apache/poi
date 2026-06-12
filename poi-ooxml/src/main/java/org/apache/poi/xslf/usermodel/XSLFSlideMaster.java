@@ -139,19 +139,11 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
     protected CTTextListStyle getTextProperties(Placeholder textType) {
         CTTextListStyle props;
         CTSlideMasterTextStyles txStyles = getXmlObject().getTxStyles();
-        switch (textType){
-            case TITLE:
-            case CENTERED_TITLE:
-            case SUBTITLE:
-                props = txStyles.getTitleStyle();
-                break;
-            case BODY:
-                props = txStyles.getBodyStyle();
-                break;
-            default:
-                props = txStyles.getOtherStyle();
-                break;
-        }
+        props = switch (textType) {
+            case TITLE, CENTERED_TITLE, SUBTITLE -> txStyles.getTitleStyle();
+            case BODY -> txStyles.getBodyStyle();
+            default -> txStyles.getOtherStyle();
+        };
         return props;
     }
 

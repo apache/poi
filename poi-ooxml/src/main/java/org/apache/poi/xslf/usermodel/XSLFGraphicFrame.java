@@ -114,16 +114,12 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
 
     static XSLFGraphicFrame create(CTGraphicalObjectFrame shape, XSLFSheet sheet){
         final String uri = getUri(shape);
-        switch (uri == null ? "" : uri) {
-        case XSLFTable.TABLE_URI:
-            return new XSLFTable(shape, sheet);
-        case XSLFObjectShape.OLE_URI:
-            return new XSLFObjectShape(shape, sheet);
-        case XSLFDiagram.DRAWINGML_DIAGRAM_URI:
-            return new XSLFDiagram(shape, sheet);
-        default:
-            return new XSLFGraphicFrame(shape, sheet);
-        }
+        return switch (uri == null ? "" : uri) {
+            case XSLFTable.TABLE_URI -> new XSLFTable(shape, sheet);
+            case XSLFObjectShape.OLE_URI -> new XSLFObjectShape(shape, sheet);
+            case XSLFDiagram.DRAWINGML_DIAGRAM_URI -> new XSLFDiagram(shape, sheet);
+            default -> new XSLFGraphicFrame(shape, sheet);
+        };
     }
 
     private static String getUri(CTGraphicalObjectFrame shape) {

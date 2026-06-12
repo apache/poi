@@ -377,25 +377,13 @@ public final class PPTX2PNG {
     private double getDimensions(MFProxy proxy, Dimension2D dim) {
         final Dimension2D pgsize = proxy.getSize();
 
-        final double lenSide;
-        switch (fixSide) {
-            default:
-            case "scale":
-                lenSide = 1;
-                break;
-            case "long":
-                lenSide = Math.max(pgsize.getWidth(), pgsize.getHeight());
-                break;
-            case "short":
-                lenSide = Math.min(pgsize.getWidth(), pgsize.getHeight());
-                break;
-            case "width":
-                lenSide = pgsize.getWidth();
-                break;
-            case "height":
-                lenSide = pgsize.getHeight();
-                break;
-        }
+        final double lenSide = switch (fixSide) {
+            default -> 1;
+            case "long" -> Math.max(pgsize.getWidth(), pgsize.getHeight());
+            case "short" -> Math.min(pgsize.getWidth(), pgsize.getHeight());
+            case "width" -> pgsize.getWidth();
+            case "height" -> pgsize.getHeight();
+        };
 
         dim.setSize(pgsize.getWidth() * scale / lenSide, pgsize.getHeight() * scale / lenSide);
         return lenSide;
@@ -457,17 +445,11 @@ public final class PPTX2PNG {
         if (fm == FileMagic.UNKNOWN) {
             fm = defaultFileType;
         }
-        switch (fm) {
-            case EMF:
-                proxy = new EMFHandler();
-                break;
-            case WMF:
-                proxy = new WMFHandler();
-                break;
-            default:
-                proxy = new PPTHandler();
-                break;
-        }
+        proxy = switch (fm) {
+            case EMF -> new EMFHandler();
+            case WMF -> new WMFHandler();
+            default -> new PPTHandler();
+        };
         proxy.setIgnoreParse(ignoreParse);
         proxy.setQuiet(quiet);
         con.parse(proxy);

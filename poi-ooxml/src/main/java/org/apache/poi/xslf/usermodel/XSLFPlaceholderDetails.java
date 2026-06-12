@@ -100,18 +100,13 @@ public class XSLFPlaceholderDetails implements PlaceholderDetails {
         if (pl == null) {
             return true;
         }
-        switch (pl) {
-            case DATETIME:
-                return !hf.isSetDt() || hf.getDt();
-            case FOOTER:
-                return !hf.isSetFtr() || hf.getFtr();
-            case HEADER:
-                return !hf.isSetHdr() || hf.getHdr();
-            case SLIDE_NUMBER:
-                return !hf.isSetSldNum() || hf.getSldNum();
-            default:
-                return true;
-        }
+        return switch (pl) {
+            case DATETIME -> !hf.isSetDt() || hf.getDt();
+            case FOOTER -> !hf.isSetFtr() || hf.getFtr();
+            case HEADER -> !hf.isSetHdr() || hf.getHdr();
+            case SLIDE_NUMBER -> !hf.isSetSldNum() || hf.getSldNum();
+            default -> true;
+        };
     }
 
     @Override
@@ -151,16 +146,12 @@ public class XSLFPlaceholderDetails implements PlaceholderDetails {
         if (ph == null || !ph.isSetSz()) {
             return null;
         }
-        switch (ph.getSz().intValue()) {
-            case STPlaceholderSize.INT_FULL:
-                return PlaceholderSize.full;
-            case STPlaceholderSize.INT_HALF:
-                return PlaceholderSize.half;
-            case STPlaceholderSize.INT_QUARTER:
-                return PlaceholderSize.quarter;
-            default:
-                return null;
-        }
+        return switch (ph.getSz().intValue()) {
+            case STPlaceholderSize.INT_FULL -> PlaceholderSize.full;
+            case STPlaceholderSize.INT_HALF -> PlaceholderSize.half;
+            case STPlaceholderSize.INT_QUARTER -> PlaceholderSize.quarter;
+            default -> null;
+        };
     }
 
     @Override
