@@ -26,6 +26,8 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
+import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
+
 /**
  * Represents a defined named range in a SpreadsheetML workbook.
  * <p>
@@ -396,7 +398,7 @@ public final class XSSFName implements Name {
         if (name.length() > 255) {
             throw new IllegalArgumentException("Invalid name: '"+name+"': cannot exceed 255 characters in length");
         }
-        if (name.equalsIgnoreCase("R") || name.equalsIgnoreCase("C")) {
+        if (equalsIgnoreCase(name, "R") || equalsIgnoreCase(name, ("C"))) {
             throw new IllegalArgumentException("Invalid name: '"+name+"': cannot be special shorthand R or C");
         }
 

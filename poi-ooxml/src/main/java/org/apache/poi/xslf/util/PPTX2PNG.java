@@ -46,6 +46,7 @@ import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.MathUtil;
+import org.apache.poi.util.StringUtil;
 
 /**
  * An utility to convert slides of a .pptx slide show to a PNG image
@@ -238,7 +239,7 @@ public final class PPTX2PNG {
             }
         }
 
-        final boolean isStdin = file != null && "stdin".equalsIgnoreCase(file.getName());
+        final boolean isStdin = file != null && StringUtil.equalsIgnoreCase("stdin", file.getName());
 
         if (!isStdin && (file == null || !file.exists())) {
             usage("File not specified or it doesn't exist");

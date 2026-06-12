@@ -27,6 +27,7 @@ import com.microsoft.schemas.compatibility.AlternateContentDocument;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -185,7 +186,7 @@ public final class XPathHelper {
             XmlCursor innerCur = null;
             try (XmlCursor cCur = choice.newCursor()) {
                 String requiresNS = cCur.namespaceForPrefix(choice.getRequires());
-                if (MAC_DML_NS.equalsIgnoreCase(requiresNS)) {
+                if (StringUtil.equalsIgnoreCase(MAC_DML_NS, requiresNS)) {
                     // Mac DML usually contains PDFs ...
                     continue;
                 }

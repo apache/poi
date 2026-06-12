@@ -29,6 +29,7 @@ import java.util.Set;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Provides a way to get at all the ZipEntries
@@ -169,7 +170,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
         }
 
         for (final Map.Entry<String, ZipArchiveFakeEntry> fze : zipEntries.entrySet()) {
-            if (normalizedPath.equalsIgnoreCase(IOUtils.normalizePath(fze.getKey()))) {
+            if (StringUtil.equalsIgnoreCase(normalizedPath, IOUtils.normalizePath(fze.getKey()))) {
                 return fze.getValue();
             }
         }

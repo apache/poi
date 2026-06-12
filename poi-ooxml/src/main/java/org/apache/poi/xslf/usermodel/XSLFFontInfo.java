@@ -38,6 +38,7 @@ import org.apache.poi.common.usermodel.fonts.FontPitch;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.StringUtil;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTEmbeddedFontDataId;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTEmbeddedFontList;
@@ -59,7 +60,7 @@ public class XSLFFontInfo implements FontInfo {
             ? pres.getEmbeddedFontLst() : pres.addNewEmbeddedFontLst();
 
         for (CTEmbeddedFontListEntry fe : fontList.getEmbeddedFontArray()) {
-            if (typeface.equalsIgnoreCase(fe.getFont().getTypeface())) {
+            if (StringUtil.equalsIgnoreCase(typeface, fe.getFont().getTypeface())) {
                 fontListEntry = fe;
                 return;
             }
@@ -154,24 +155,16 @@ public class XSLFFontInfo implements FontInfo {
         final int style =
                 (header.getWeight() > 400 ? Font.BOLD : Font.PLAIN) |
                         (header.isItalic() ? Font.ITALIC : Font.PLAIN);
-        switch (style) {
-            case Font.PLAIN:
-                dataId = fontListEntry.isSetRegular()
+        dataId = switch (style) {
+            case Font.PLAIN -> fontListEntry.isSetRegular()
                     ? fontListEntry.getRegular() : fontListEntry.addNewRegular();
-                break;
-            case Font.BOLD:
-                dataId = fontListEntry.isSetBold()
+            case Font.BOLD -> fontListEntry.isSetBold()
                     ? fontListEntry.getBold() : fontListEntry.addNewBold();
-                break;
-            case Font.ITALIC:
-                dataId = fontListEntry.isSetItalic()
+            case Font.ITALIC -> fontListEntry.isSetItalic()
                     ? fontListEntry.getItalic() : fontListEntry.addNewItalic();
-                break;
-            default:
-                dataId = fontListEntry.isSetBoldItalic()
+            default -> fontListEntry.isSetBoldItalic()
                     ? fontListEntry.getBoldItalic() : fontListEntry.addNewBoldItalic();
-                break;
-        }
+        };
 
         XSLFFontFacet facet = new XSLFFontFacet(dataId);
         facet.setFontData(is);
@@ -275,7 +268,6 @@ public class XSLFFontInfo implements FontInfo {
     public static List<XSLFFontInfo> getFonts(XMLSlideShow ppt) {
         final CTPresentation pres = ppt.getCTPresentation();
 
-        //noinspection deprecation
         return pres.isSetEmbeddedFontLst()
             ? Stream.of(pres.getEmbeddedFontLst().getEmbeddedFontArray())
                 .map(fe -> new XSLFFontInfo(ppt, fe)).collect(Collectors.toList())
