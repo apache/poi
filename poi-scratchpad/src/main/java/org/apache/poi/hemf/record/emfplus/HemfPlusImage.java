@@ -33,6 +33,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
@@ -40,6 +41,7 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
@@ -52,6 +54,8 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public class HemfPlusImage {
+    private static final Logger LOG = PoiLogManager.getLogger(HemfPlusImage.class);
+
     /** The ImageDataType enumeration defines types of image data formats. */
     public enum EmfPlusImageDataType {
         /** The type of image is not known. */
@@ -270,7 +274,6 @@ public class HemfPlusImage {
         }
     }
 
-
     public static class EmfPlusImage implements EmfPlusObjectData {
         private static final int MAX_OBJECT_SIZE = 50_000_000;
         private static final String GDI_CONTENT = "GDI";
@@ -438,11 +441,11 @@ public class HemfPlusImage {
                                 }
                             };
                         }
-                        break;
                     default:
                         break;
                 }
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                LOG.info("Unable to read image bounds, returning default bounds of (1,1,1,1)", e);
             }
             return new Rectangle2D.Double(1,1,1,1);
         }
