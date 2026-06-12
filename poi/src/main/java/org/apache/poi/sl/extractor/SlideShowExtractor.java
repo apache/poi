@@ -46,6 +46,8 @@ import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 
+import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
+
 /**
  * Common SlideShow extractor
  *
@@ -366,13 +368,11 @@ public class SlideShowExtractor<
         txt = txt.replace('\r', '\n');
         txt = txt.replace((char) 0x0B, sep);
 
-        txt = switch (tr.getTextCap()) {
+        return switch (tr.getTextCap()) {
             case ALL -> txt.toUpperCase(LocaleUtil.getUserLocale());
             case SMALL -> txt.toLowerCase(LocaleUtil.getUserLocale());
             default -> txt;
         };
-
-        return txt;
     }
 
     /**
@@ -403,7 +403,7 @@ public class SlideShowExtractor<
     }
     private static boolean filterFonts(Object o, String typeface, Boolean italic, Boolean bold) {
         if (o instanceof TextRun tr) {
-            return typeface.equalsIgnoreCase(tr.getFontFamily()) &&
+            return equalsIgnoreCase(typeface, tr.getFontFamily()) &&
                     (italic == null || tr.isItalic() == italic) &&
                     (bold == null || tr.isBold() == bold);
         } else {
