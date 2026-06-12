@@ -26,9 +26,10 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
+import org.apache.poi.util.SuppressForbidden;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -36,11 +37,11 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Isolated // modifies the default locale and we don't want to affect tests running in parallel
 class TestZipSecureFile {
     @Test
     void testThresholdInputStream() throws Exception {
@@ -222,6 +223,99 @@ class TestZipSecureFile {
             }
         } finally {
             assertTrue(tempFile.delete(), "Temporary file should be successfully deleted");
+        }
+    }
+
+    @Test
+    void testZipInputStreamZipEntrySourceCopyFailureReleasesResources() throws Exception {
+        List<File> createdFiles = new ArrayList<>();
+        TempFileCreationStrategy customStrategy = new TempFileCreationStrategy() {
+            private final TempFileCreationStrategy delegate = new DefaultTempFileCreationStrategy();
+            @Override
+            public File createTempFile(String prefix, String suffix) throws IOException {
+                File f = delegate.createTempFile(prefix, suffix);
+                createdFiles.add(f);
+                return f;
+            }
+            @Override
+            public File createTempDirectory(String prefix) throws IOException {
+                return delegate.createTempDirectory(prefix);
+            }
+        };
+
+        TempFile.withStrategy(customStrategy, () -> {
+            try {
+                int oldThreshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
+                ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(0);
+                try {
+                    File tempZipFile = TempFile.createTempFile("test-leak-copy", ".zip");
+                    try {
+                        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(tempZipFile)) {
+                            ZipArchiveEntry entry = new ZipArchiveEntry("test.txt");
+                            zos.putArchiveEntry(entry);
+                            zos.write("some data that will fail during read".getBytes(StandardCharsets.UTF_8));
+                            zos.closeArchiveEntry();
+                        }
+
+                        try (InputStream is = Files.newInputStream(tempZipFile.toPath());
+                             ZipArchiveThresholdInputStream zis = new ZipArchiveThresholdInputStream(
+                                     new org.apache.commons.compress.archivers.zip.ZipArchiveInputStream(is)) {
+                                 private int readCount = 0;
+                                 @Override
+                                 public int read(byte[] b, int off, int len) throws IOException {
+                                     readCount += len;
+                                     if (readCount > 5) {
+                                         throw new IOException("Simulated copy failure");
+                                     }
+                                     return super.read(b, off, len);
+                                 }
+                             }) {
+                            assertThrows(IOException.class, () -> new ZipInputStreamZipEntrySource(zis));
+                        }
+                    } finally {
+                        tempZipFile.delete();
+                    }
+                } finally {
+                    ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(oldThreshold);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        });
+
+        assertFalse(createdFiles.isEmpty(), "At least one temporary file should have been created for the zip entry");
+        for (File f : createdFiles) {
+            assertFalse(f.exists(), "Temporary file " + f.getAbsolutePath() + " should have been deleted on copy failure");
+        }
+    }
+
+    @Test
+    @SuppressForbidden("test code")
+    void testZipFileZipEntrySourceCaseInsensitiveMatchingUnderTurkishLocale() throws Exception {
+        Locale defaultLocale = Locale.getDefault();
+        try {
+            Locale.setDefault(new Locale("tr", "TR"));
+
+            File tempFile = TempFile.createTempFile("turkish-test", ".zip");
+            try {
+                try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(tempFile)) {
+                    ZipArchiveEntry entry = new ZipArchiveEntry("content.xml");
+                    zos.putArchiveEntry(entry);
+                    zos.write("data".getBytes(StandardCharsets.UTF_8));
+                    zos.closeArchiveEntry();
+                }
+
+                try (ZipSecureFile zipFile = new ZipSecureFile(tempFile)) {
+                    ZipFileZipEntrySource source = new ZipFileZipEntrySource(zipFile);
+                    ZipArchiveEntry entry = source.getEntry("Content.xml");
+                    assertNotNull(entry, "Should find the entry case-insensitively even under Turkish locale");
+                }
+            } finally {
+                tempFile.delete();
+            }
+        } finally {
+            Locale.setDefault(defaultLocale);
         }
     }
 }

@@ -72,16 +72,28 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
 
         final int threshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
         if (threshold >= 0 && (entrySize >= threshold || entrySize == -1)) {
-            if (ZipInputStreamZipEntrySource.shouldEncryptTempFiles()) {
-                encryptedTempData = new EncryptedTempData();
-                try (OutputStream os = encryptedTempData.getOutputStream()) {
-                    IOUtils.copy(inp, os);
+            boolean success = false;
+            try {
+                if (ZipInputStreamZipEntrySource.shouldEncryptTempFiles()) {
+                    encryptedTempData = new EncryptedTempData();
+                    try (OutputStream os = encryptedTempData.getOutputStream()) {
+                        IOUtils.copy(inp, os);
+                    }
+                } else {
+                    tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
+                    LOG.atInfo().log("Creating temp file {} for zip entry {} of size {} bytes",
+                            tempFile.getAbsolutePath(), entry.getName(), entrySize);
+                    IOUtils.copy(inp, tempFile);
                 }
-            } else {
-                tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
-                LOG.atInfo().log("Creating temp file {} for zip entry {} of size {} bytes",
-                        tempFile.getAbsolutePath(), entry.getName(), entrySize);
-                IOUtils.copy(inp, tempFile);
+                success = true;
+            } finally {
+                if (!success) {
+                    try {
+                        close();
+                    } catch (IOException e) {
+                        LOG.atWarn().withThrowable(e).log("Failed to clean up temporary resources on construction failure");
+                    }
+                }
             }
         } else {
             if (entrySize < -1 || entrySize >= Integer.MAX_VALUE) {
