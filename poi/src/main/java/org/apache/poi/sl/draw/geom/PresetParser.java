@@ -283,21 +283,14 @@ class PresetParser {
     }
 
     private static PaintModifier mapFill(String fill) {
-        switch (fill) {
-            default:
-            case "none":
-                return PaintModifier.NONE;
-            case "norm":
-                return PaintModifier.NORM;
-            case "lighten":
-                return PaintModifier.LIGHTEN;
-            case "lightenLess":
-                return PaintModifier.LIGHTEN_LESS;
-            case "darken":
-                return PaintModifier.DARKEN;
-            case "darkenLess":
-                return PaintModifier.DARKEN_LESS;
-        }
+        return switch (fill) {
+            default -> PaintModifier.NONE;
+            case "norm" -> PaintModifier.NORM;
+            case "lighten" -> PaintModifier.LIGHTEN;
+            case "lightenLess" -> PaintModifier.LIGHTEN_LESS;
+            case "darken" -> PaintModifier.DARKEN;
+            case "darkenLess" -> PaintModifier.DARKEN_LESS;
+        };
     }
 
     private void updatePath(XMLStreamReader sr) throws XMLStreamException {

@@ -1340,39 +1340,27 @@ public final class InternalWorkbook {
      */
     private static ExtendedFormatRecord createExtendedFormat(int id) {
         // we'll need multiple editions
-        switch (id) {
-            case  0: return createExtendedFormat(0,    0, 0xfffffff5,          0);
-            case  1:
-            case  2: return createExtendedFormat(1,    0, 0xfffffff5, 0xfffff400);
-            case  3:
-            case  4: return createExtendedFormat(2,    0, 0xfffffff5, 0xfffff400);
-            case  5:
-            case  6:
-            case  7:
-            case  8:
-            case  9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-            case 14: return createExtendedFormat(0,    0, 0xfffffff5, 0xfffff400);
+        return switch (id) {
+            case 0 -> createExtendedFormat(0, 0, 0xfffffff5, 0);
+            case 1, 2 -> createExtendedFormat(1, 0, 0xfffffff5, 0xfffff400);
+            case 3, 4 -> createExtendedFormat(2, 0, 0xfffffff5, 0xfffff400);
+            case 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 -> createExtendedFormat(0, 0, 0xfffffff5, 0xfffff400);
             // cell records
-            case 15: return createExtendedFormat(0,    0,          1,          0);
+            case 15 -> createExtendedFormat(0, 0, 1, 0);
             // style
-            case 16: return createExtendedFormat(1, 0x2b, 0xfffffff5, 0xfffff800);
-            case 17: return createExtendedFormat(1, 0x29, 0xfffffff5, 0xfffff800);
-            case 18: return createExtendedFormat(1, 0x2c, 0xfffffff5, 0xfffff800);
-            case 19: return createExtendedFormat(1, 0x2a, 0xfffffff5, 0xfffff800);
-            case 20: return createExtendedFormat(1, 0x09, 0xfffffff5, 0xfffff800);
+            case 16 -> createExtendedFormat(1, 0x2b, 0xfffffff5, 0xfffff800);
+            case 17 -> createExtendedFormat(1, 0x29, 0xfffffff5, 0xfffff800);
+            case 18 -> createExtendedFormat(1, 0x2c, 0xfffffff5, 0xfffff800);
+            case 19 -> createExtendedFormat(1, 0x2a, 0xfffffff5, 0xfffff800);
+            case 20 -> createExtendedFormat(1, 0x09, 0xfffffff5, 0xfffff800);
             // unused from this point down
-            case 21: return createExtendedFormat(5,    0,          1,      0x800);
-            case 22: return createExtendedFormat(6,    0,          1,     0x5c00);
-            case 23: return createExtendedFormat(0, 0x31,          1,     0x5c00);
-            case 24: return createExtendedFormat(0,    8,          1,     0x5c00);
-            case 25: return createExtendedFormat(6,    8,          1,     0x5c00);
-
-            default: throw new IllegalStateException("Unrecognized format id: " + id);
-        }
+            case 21 -> createExtendedFormat(5, 0, 1, 0x800);
+            case 22 -> createExtendedFormat(6, 0, 1, 0x5c00);
+            case 23 -> createExtendedFormat(0, 0x31, 1, 0x5c00);
+            case 24 -> createExtendedFormat(0, 8, 1, 0x5c00);
+            case 25 -> createExtendedFormat(6, 8, 1, 0x5c00);
+            default -> throw new IllegalStateException("Unrecognized format id: " + id);
+        };
     }
 
     private static ExtendedFormatRecord createExtendedFormat(

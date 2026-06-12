@@ -1276,17 +1276,12 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             typeValue = STTblWidth.NIL;
             ctWidth.setType(typeValue);
         }
-        switch (typeValue.intValue()) {
-        case STTblWidth.INT_NIL:
-            return TableWidthType.NIL;
-        case STTblWidth.INT_DXA:
-            return TableWidthType.DXA;
-        case STTblWidth.INT_PCT:
-            return TableWidthType.PCT;
-        default:
-        case STTblWidth.INT_AUTO:
-            return TableWidthType.AUTO;
-        }
+        return switch (typeValue.intValue()) {
+            case STTblWidth.INT_NIL -> TableWidthType.NIL;
+            case STTblWidth.INT_DXA -> TableWidthType.DXA;
+            case STTblWidth.INT_PCT -> TableWidthType.PCT;
+            default -> TableWidthType.AUTO;
+        };
     }
 
     /**

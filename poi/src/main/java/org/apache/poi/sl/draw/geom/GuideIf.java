@@ -57,63 +57,62 @@ public interface GuideIf extends Formula {
         double x = (operands.length > 1) ? ctx.getValue(operands[1]) : 0;
         double y = (operands.length > 2) ? ctx.getValue(operands[2]) : 0;
         double z = (operands.length > 3) ? ctx.getValue(operands[3]) : 0;
-        switch (op) {
-            case abs:
+        return switch (op) {
+            case abs ->
                 // Absolute Value Formula
-                return abs(x);
-            case adddiv:
+                    abs(x);
+            case adddiv ->
                 // Add Divide Formula
-                return (z == 0) ? 0 : (x + y) / z;
-            case addsub:
+                    (z == 0) ? 0 : (x + y) / z;
+            case addsub ->
                 // Add Subtract Formula
-                return (x + y) - z;
-            case at2:
+                    (x + y) - z;
+            case at2 ->
                 // ArcTan Formula: "at2 x y" = arctan( y / z ) = value of this guide
-                return toDegrees(atan2(y, x)) * OOXML_DEGREE;
-            case cos:
+                    toDegrees(atan2(y, x)) * OOXML_DEGREE;
+            case cos ->
                 // Cosine Formula: "cos x y" = (x * cos( y )) = value of this guide
-                return x * cos(toRadians(y / OOXML_DEGREE));
-            case cat2:
+                    x * cos(toRadians(y / OOXML_DEGREE));
+            case cat2 ->
                 // Cosine ArcTan Formula: "cat2 x y z" = (x * cos(arctan(z / y) )) = value of this guide
-                return x * cos(atan2(z, y));
-            case ifelse:
+                    x * cos(atan2(z, y));
+            case ifelse ->
                 // If Else Formula: "?: x y z" = if (x > 0), then y = value of this guide,
                 // else z = value of this guide
-                return x > 0 ? y : z;
-            case val:
+                    x > 0 ? y : z;
+            case val ->
                 // Literal Value Expression
-                return x;
-            case max:
+                    x;
+            case max ->
                 // Maximum Value Formula
-                return max(x, y);
-            case min:
+                    max(x, y);
+            case min ->
                 // Minimum Value Formula
-                return min(x, y);
-            case mod:
+                    min(x, y);
+            case mod ->
                 // Modulo Formula: "mod x y z" = sqrt(x^2 + b^2 + c^2) = value of this guide
-                return sqrt(x*x + y*y + z*z);
-            case muldiv:
+                    sqrt(x * x + y * y + z * z);
+            case muldiv ->
                 // Multiply Divide Formula
-                return (z == 0) ? 0 : (x * y) / z;
-            case pin:
+                    (z == 0) ? 0 : (x * y) / z;
+            case pin ->
                 // Pin To Formula: "pin x y z" = if (y < x), then x = value of this guide
                 // else if (y > z), then z = value of this guide
                 // else y = value of this guide
-                return max(x, min(y, z));
-            case sat2:
+                    max(x, min(y, z));
+            case sat2 ->
                 // Sine ArcTan Formula: "sat2 x y z" = (x*sin(arctan(z / y))) = value of this guide
-                return x * sin(atan2(z, y));
-            case sin:
+                    x * sin(atan2(z, y));
+            case sin ->
                 // Sine Formula: "sin x y" = (x * sin( y )) = value of this guide
-                return x * sin(toRadians(y / OOXML_DEGREE));
-            case sqrt:
+                    x * sin(toRadians(y / OOXML_DEGREE));
+            case sqrt ->
                 // Square Root Formula: "sqrt x" = sqrt(x) = value of this guide
-                return sqrt(x);
-            case tan:
+                    sqrt(x);
+            case tan ->
                 // Tangent Formula: "tan x y" = (x * tan( y )) = value of this guide
-                return x * tan(toRadians(y / OOXML_DEGREE));
-            default:
-                return 0;
-        }
+                    x * tan(toRadians(y / OOXML_DEGREE));
+            default -> 0;
+        };
     }
 }

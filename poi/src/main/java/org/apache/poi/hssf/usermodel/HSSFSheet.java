@@ -1329,14 +1329,11 @@ public final class HSSFSheet implements Sheet {
      */
     @Override
     public double getMargin(PageMargin margin) {
-        switch (margin) {
-            case FOOTER:
-                return _sheet.getPageSettings().getPrintSetup().getFooterMargin();
-            case HEADER:
-                return _sheet.getPageSettings().getPrintSetup().getHeaderMargin();
-            default:
-                return _sheet.getPageSettings().getMargin(margin.getLegacyApiValue());
-        }
+        return switch (margin) {
+            case FOOTER -> _sheet.getPageSettings().getPrintSetup().getFooterMargin();
+            case HEADER -> _sheet.getPageSettings().getPrintSetup().getHeaderMargin();
+            default -> _sheet.getPageSettings().getMargin(margin.getLegacyApiValue());
+        };
     }
 
     /**
@@ -1902,22 +1899,12 @@ public final class HSSFSheet implements Sheet {
      */
     @Override
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, PaneType activePane) {
-        byte activePaneByte;
-        switch (activePane) {
-            case LOWER_RIGHT:
-                activePaneByte = Sheet.PANE_LOWER_RIGHT;
-                break;
-            case UPPER_RIGHT:
-                activePaneByte = Sheet.PANE_UPPER_RIGHT;
-                break;
-            case LOWER_LEFT:
-                activePaneByte = Sheet.PANE_LOWER_LEFT;
-                break;
-            case UPPER_LEFT:
-            default:
-                activePaneByte = Sheet.PANE_UPPER_LEFT;
-                break;
-        }
+        byte activePaneByte = switch (activePane) {
+            case LOWER_RIGHT -> Sheet.PANE_LOWER_RIGHT;
+            case UPPER_RIGHT -> Sheet.PANE_UPPER_RIGHT;
+            case LOWER_LEFT -> Sheet.PANE_LOWER_LEFT;
+            default -> Sheet.PANE_UPPER_LEFT;
+        };
         getSheet().createSplitPane(xSplitPos, ySplitPos, topRow, leftmostColumn, activePaneByte);
     }
 

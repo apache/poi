@@ -892,17 +892,12 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
 
         CTFonts fonts = pr.getRFontsArray(0);
-        switch (fcr == null ? FontCharRange.ascii : fcr) {
-            default:
-            case ascii:
-                return fonts.getAscii();
-            case cs:
-                return fonts.getCs();
-            case eastAsia:
-                return fonts.getEastAsia();
-            case hAnsi:
-                return fonts.getHAnsi();
-        }
+        return switch (fcr == null ? FontCharRange.ascii : fcr) {
+            case cs -> fonts.getCs();
+            case eastAsia -> fonts.getEastAsia();
+            case hAnsi -> fonts.getHAnsi();
+            default -> fonts.getAscii();
+        };
     }
 
     /**

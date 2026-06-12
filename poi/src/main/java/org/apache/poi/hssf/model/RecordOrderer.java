@@ -366,8 +366,7 @@ final class RecordOrderer {
     }
 
     private static boolean isGutsPriorRecord(RecordBase rb) {
-        if (rb instanceof Record) {
-            Record record = (org.apache.poi.hssf.record.Record) rb;
+        if (rb instanceof Record record) {
             switch (record.getSid()) {
                 case BOFRecord.sid:
                 case IndexRecord.sid:
@@ -418,22 +417,11 @@ final class RecordOrderer {
      * of the sheet records
      */
     public static boolean isRowBlockRecord(int sid) {
-        switch (sid) {
-            case RowRecord.sid:
-
-            case BlankRecord.sid:
-            case BoolErrRecord.sid:
-            case FormulaRecord.sid:
-            case LabelRecord.sid:
-            case LabelSSTRecord.sid:
-            case NumberRecord.sid:
-            case RKRecord.sid:
-
-            case ArrayRecord.sid:
-            case SharedFormulaRecord.sid:
-            case TableRecord.sid:
-                return true;
-        }
-        return false;
+        return switch (sid) {
+            case RowRecord.sid, BlankRecord.sid, BoolErrRecord.sid, FormulaRecord.sid, LabelRecord.sid,
+                 LabelSSTRecord.sid, NumberRecord.sid, RKRecord.sid, ArrayRecord.sid, SharedFormulaRecord.sid,
+                 TableRecord.sid -> true;
+            default -> false;
+        };
     }
 }

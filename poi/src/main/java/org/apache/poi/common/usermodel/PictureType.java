@@ -98,28 +98,19 @@ public enum PictureType {
     }
 
     public static PictureType valueOf(FileMagic fm) {
-        switch (fm) {
-            case BMP:
-                return PictureType.BMP;
-            case GIF:
-                return PictureType.GIF;
-            case JPEG:
-                return PictureType.JPEG;
-            case PNG:
-                return PictureType.PNG;
-            case XML:
+        return switch (fm) {
+            case BMP -> PictureType.BMP;
+            case GIF -> PictureType.GIF;
+            case JPEG -> PictureType.JPEG;
+            case PNG -> PictureType.PNG;
+            case XML ->
                 // this is quite fuzzy, to suppose all XMLs are SVGs when handling pictures ...
-                return PictureType.SVG;
-            case WMF:
-                return PictureType.WMF;
-            case EMF:
-                return PictureType.EMF;
-            case TIFF:
-                return PictureType.TIFF;
-            default:
-            case UNKNOWN:
-                return PictureType.UNKNOWN;
-        }
+                    PictureType.SVG;
+            case WMF -> PictureType.WMF;
+            case EMF -> PictureType.EMF;
+            case TIFF -> PictureType.TIFF;
+            default -> PictureType.UNKNOWN;
+        };
     }
 
     /**

@@ -82,46 +82,30 @@ public class HSSFPictureData implements PictureData
     */
     @Override
     public String suggestFileExtension() {
-        switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
-            case BLIP_WMF:
-                return "wmf";
-            case BLIP_EMF:
-                return "emf";
-            case BLIP_PICT:
-                return "pict";
-            case BLIP_PNG:
-                return "png";
-            case BLIP_JPEG:
-                return "jpeg";
-            case BLIP_DIB:
-                return "dib";
-            case BLIP_TIFF:
-                return "tif";
-            default:
-                return "";
-        }
+        return switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
+            case BLIP_WMF -> "wmf";
+            case BLIP_EMF -> "emf";
+            case BLIP_PICT -> "pict";
+            case BLIP_PNG -> "png";
+            case BLIP_JPEG -> "jpeg";
+            case BLIP_DIB -> "dib";
+            case BLIP_TIFF -> "tif";
+            default -> "";
+        };
     }
 
     @Override
     public String getMimeType() {
-       switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
-           case BLIP_WMF:
-               return "image/x-wmf";
-           case BLIP_EMF:
-               return "image/x-emf";
-           case BLIP_PICT:
-               return "image/x-pict";
-           case BLIP_PNG:
-               return "image/png";
-           case BLIP_JPEG:
-               return "image/jpeg";
-           case BLIP_DIB:
-               return "image/bmp";
-           case BLIP_TIFF:
-               return "image/tiff";
-           default:
-               return "image/unknown";
-       }
+        return switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
+            case BLIP_WMF -> "image/x-wmf";
+            case BLIP_EMF -> "image/x-emf";
+            case BLIP_PICT -> "image/x-pict";
+            case BLIP_PNG -> "image/png";
+            case BLIP_JPEG -> "image/jpeg";
+            case BLIP_DIB -> "image/bmp";
+            case BLIP_TIFF -> "image/tiff";
+            default -> "image/unknown";
+        };
     }
 
     /**
@@ -130,23 +114,15 @@ public class HSSFPictureData implements PictureData
      */
     @Override
     public int getPictureType() {
-        switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
-            case BLIP_WMF:
-                return Workbook.PICTURE_TYPE_WMF;
-            case BLIP_EMF:
-                return Workbook.PICTURE_TYPE_EMF;
-            case BLIP_PICT:
-                return Workbook.PICTURE_TYPE_PICT;
-            case BLIP_PNG:
-                return Workbook.PICTURE_TYPE_PNG;
-            case BLIP_JPEG:
-                return Workbook.PICTURE_TYPE_JPEG;
-            case BLIP_DIB:
-                return Workbook.PICTURE_TYPE_DIB;
-            case BLIP_TIFF:
-                // not another int constant ...
-            default:
-                return 0;
-        }
+        return switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
+            case BLIP_WMF -> Workbook.PICTURE_TYPE_WMF;
+            case BLIP_EMF -> Workbook.PICTURE_TYPE_EMF;
+            case BLIP_PICT -> Workbook.PICTURE_TYPE_PICT;
+            case BLIP_PNG -> Workbook.PICTURE_TYPE_PNG;
+            case BLIP_JPEG -> Workbook.PICTURE_TYPE_JPEG;
+            case BLIP_DIB -> Workbook.PICTURE_TYPE_DIB;
+            // not another int constant ...
+            default -> 0;
+        };
     }
 }

@@ -219,24 +219,19 @@ public class FontHeader implements FontInfo, GenericRecord {
     }
 
     public FontPitch getPitch() {
-        switch (getPanoseFamily()) {
-            default:
-            case ANY:
-            case NO_FIT:
-                return FontPitch.VARIABLE;
-
+        return switch (getPanoseFamily()) {
             // Latin Text
-            case TEXT_DISPLAY:
             // Latin Decorative
-            case DECORATIVE:
-                return (getPanoseProportion() == PanoseProportion.MONOSPACED) ? FontPitch.FIXED : FontPitch.VARIABLE;
+            case TEXT_DISPLAY, DECORATIVE ->
+                    (getPanoseProportion() == PanoseProportion.MONOSPACED) ? FontPitch.FIXED : FontPitch.VARIABLE;
 
             // Latin Hand Written
-            case SCRIPT:
             // Latin Symbol
-            case PICTORIAL:
-                return (getPanoseProportion() == PanoseProportion.MODERN) ? FontPitch.FIXED : FontPitch.VARIABLE;
-        }
+            case SCRIPT, PICTORIAL ->
+                    (getPanoseProportion() == PanoseProportion.MODERN) ? FontPitch.FIXED : FontPitch.VARIABLE;
+
+            default -> FontPitch.VARIABLE;
+        };
 
     }
 
@@ -247,27 +242,20 @@ public class FontHeader implements FontInfo, GenericRecord {
                 return FontFamily.FF_DONTCARE;
             // Latin Text
             case TEXT_DISPLAY:
-                switch (getPanoseSerif()) {
-                    case TRIANGLE:
-                    case NORMAL_SANS:
-                    case OBTUSE_SANS:
-                    case PERP_SANS:
-                    case FLARED:
-                    case ROUNDED:
-                        return FontFamily.FF_SWISS;
-                    default:
-                        return FontFamily.FF_ROMAN;
-                }
+                return switch (getPanoseSerif()) {
+                    case TRIANGLE, NORMAL_SANS, OBTUSE_SANS, PERP_SANS, FLARED, ROUNDED -> FontFamily.FF_SWISS;
+                    default -> FontFamily.FF_ROMAN;
+                };
             // Latin Hand Written
             case SCRIPT:
                 return FontFamily.FF_SCRIPT;
-            // Latin Decorative
-            default:
-            case DECORATIVE:
-                return FontFamily.FF_DECORATIVE;
             // Latin Symbol
             case PICTORIAL:
                 return FontFamily.FF_MODERN;
+            // Latin Decorative
+            case DECORATIVE:
+            default:
+                return FontFamily.FF_DECORATIVE;
         }
     }
 

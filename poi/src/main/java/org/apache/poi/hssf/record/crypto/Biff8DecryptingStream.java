@@ -180,27 +180,23 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
      * @return {@code true} if record type specified by {@code sid} is never encrypted
      */
     public static boolean isNeverEncryptedRecord(int sid) {
-        switch (sid) {
-            case BOFRecord.sid:
-                // sheet BOFs for sure
-                // TODO - find out about chart BOFs
+        return switch (sid) {
+            // sheet BOFs for sure
+            // TODO - find out about chart BOFs
 
-            case InterfaceHdrRecord.sid:
-                // don't know why this record doesn't seem to get encrypted
+            // don't know why this record doesn't seem to get encrypted
 
-            case FilePassRecord.sid:
+            case BOFRecord.sid, InterfaceHdrRecord.sid, FilePassRecord.sid ->
                 // this only really counts when writing because FILEPASS is read early
 
-            // UsrExcl(0x0194)
-            // FileLock
-            // RRDInfo(0x0196)
-            // RRDHead(0x0138)
+                // UsrExcl(0x0194)
+                // FileLock
+                // RRDInfo(0x0196)
+                // RRDHead(0x0138)
 
-                return true;
-
-            default:
-                return false;
-        }
+                    true;
+            default -> false;
+        };
     }
 
     @Override

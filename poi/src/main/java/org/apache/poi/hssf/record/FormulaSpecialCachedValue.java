@@ -101,17 +101,13 @@ public final class FormulaSpecialCachedValue implements GenericRecord {
 
     private String formatValue() {
         int typeCode = getTypeCode();
-        switch (typeCode) {
-            case STRING:
-                return "<string>";
-            case BOOLEAN:
-                return getDataValue() == 0 ? "FALSE" : "TRUE";
-            case ERROR_CODE:
-                return ErrorEval.getText(getDataValue());
-            case EMPTY:
-                return "<empty>";
-        }
-        return "#error(type=" + typeCode + ")#";
+        return switch (typeCode) {
+            case STRING -> "<string>";
+            case BOOLEAN -> getDataValue() == 0 ? "FALSE" : "TRUE";
+            case ERROR_CODE -> ErrorEval.getText(getDataValue());
+            case EMPTY -> "<empty>";
+            default -> "#error(type=" + typeCode + ")#";
+        };
     }
 
     private int getDataValue() {
@@ -150,16 +146,12 @@ public final class FormulaSpecialCachedValue implements GenericRecord {
     @Deprecated
     public int getValueType() {
         int typeCode = getTypeCode();
-        switch (typeCode) {
-            case EMPTY: // is this correct?
-            case STRING:
-                return CellType.STRING.getCode();
-            case BOOLEAN:
-                return CellType.BOOLEAN.getCode();
-            case ERROR_CODE:
-                return CellType.ERROR.getCode();
-        }
-        throw new IllegalStateException("Unexpected type id (" + typeCode + ")");
+        return switch (typeCode) { // is this correct?
+            case EMPTY, STRING -> CellType.STRING.getCode();
+            case BOOLEAN -> CellType.BOOLEAN.getCode();
+            case ERROR_CODE -> CellType.ERROR.getCode();
+            default -> throw new IllegalStateException("Unexpected type id (" + typeCode + ")");
+        };
     }
 
     /**
@@ -169,16 +161,12 @@ public final class FormulaSpecialCachedValue implements GenericRecord {
      */
     public CellType getValueTypeEnum() {
         int typeCode = getTypeCode();
-        switch (typeCode) {
-            case EMPTY: // is this correct?
-            case STRING:
-                return CellType.STRING;
-            case BOOLEAN:
-                return CellType.BOOLEAN;
-            case ERROR_CODE:
-                return CellType.ERROR;
-        }
-        throw new IllegalStateException("Unexpected type id (" + typeCode + ")");
+        return switch (typeCode) { // is this correct?
+            case EMPTY, STRING -> CellType.STRING;
+            case BOOLEAN -> CellType.BOOLEAN;
+            case ERROR_CODE -> CellType.ERROR;
+            default -> throw new IllegalStateException("Unexpected type id (" + typeCode + ")");
+        };
     }
 
     public boolean getBooleanValue() {
@@ -197,17 +185,14 @@ public final class FormulaSpecialCachedValue implements GenericRecord {
 
     private Object getGenericValue() {
         int typeCode = getTypeCode();
-        switch (typeCode) {
-            case EMPTY: // is this correct?
-                return null;
-            case STRING:
-                return "string";
-            case BOOLEAN:
-                return getBooleanValue();
-            case ERROR_CODE:
-                return getErrorValue();
-        }
-        throw new IllegalStateException("Unexpected type id (" + typeCode + ")");
+        return switch (typeCode) {
+            case EMPTY -> // is this correct?
+                    null;
+            case STRING -> "string";
+            case BOOLEAN -> getBooleanValue();
+            case ERROR_CODE -> getErrorValue();
+            default -> throw new IllegalStateException("Unexpected type id (" + typeCode + ")");
+        };
     }
 
     @Override

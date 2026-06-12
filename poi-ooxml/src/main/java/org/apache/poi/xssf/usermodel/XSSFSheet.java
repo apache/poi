@@ -548,8 +548,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             // Search the referenced drawing in the list of the sheet's relations
             for (RelationPart rp : getRelationParts()){
                 POIXMLDocumentPart p = rp.getDocumentPart();
-                if (p instanceof XSSFDrawing) {
-                    XSSFDrawing dr = (XSSFDrawing)p;
+                if (p instanceof XSSFDrawing dr) {
                     String drId = rp.getRelationship().getId();
                     if (drId.equals(ctDrawing.getId())){
                         return dr;
@@ -619,8 +618,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                 final String id = ctDrawing.getId();
                 for (RelationPart rp : getRelationParts()){
                     POIXMLDocumentPart p = rp.getDocumentPart();
-                    if(p instanceof XSSFVMLDrawing) {
-                        XSSFVMLDrawing dr = (XSSFVMLDrawing)p;
+                    if(p instanceof XSSFVMLDrawing dr) {
                         String drId = rp.getRelationship().getId();
                         if (drId.equals(id)) {
                             drawing = dr;
@@ -1259,22 +1257,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         }
 
         CTPageMargins pageMargins = worksheet.getPageMargins();
-        switch (margin) {
-            case LEFT:
-                return pageMargins.getLeft();
-            case RIGHT:
-                return pageMargins.getRight();
-            case TOP:
-                return pageMargins.getTop();
-            case BOTTOM:
-                return pageMargins.getBottom();
-            case HEADER:
-                return pageMargins.getHeader();
-            case FOOTER:
-                return pageMargins.getFooter();
-            default :
-                throw new IllegalArgumentException("Unknown margin constant:  " + margin);
-        }
+        return switch (margin) {
+            case LEFT -> pageMargins.getLeft();
+            case RIGHT -> pageMargins.getRight();
+            case TOP -> pageMargins.getTop();
+            case BOTTOM -> pageMargins.getBottom();
+            case HEADER -> pageMargins.getHeader();
+            case FOOTER -> pageMargins.getFooter();
+            default -> throw new IllegalArgumentException("Unknown margin constant:  " + margin);
+        };
     }
 
     /**
@@ -4645,7 +4636,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         StringBuilder rng = new StringBuilder();
         rng.append(c);
-        if(rng.length() > 0 && !r.isEmpty()) {
+        if(!rng.isEmpty() && !r.isEmpty()) {
             rng.append(',');
         }
         rng.append(r);
@@ -5136,41 +5127,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         final int INT_STD_DEV = 8;
         final int INT_VAR = 9;
         final int INT_CUSTOM = 10;
-        String subtotalFormulaStart = null;
-        switch (intTotalsRowFunction) {
-            case INT_NONE:
-                subtotalFormulaStart = null;
-                break;
-            case INT_SUM:
-                subtotalFormulaStart = "SUBTOTAL(109";
-                break;
-            case INT_MIN:
-                subtotalFormulaStart = "SUBTOTAL(105";
-                break;
-            case INT_MAX:
-                subtotalFormulaStart = "SUBTOTAL(104";
-                break;
-            case INT_AVERAGE:
-                subtotalFormulaStart = "SUBTOTAL(101";
-                break;
-            case INT_COUNT:
-                subtotalFormulaStart = "SUBTOTAL(103";
-                break;
-            case INT_COUNT_NUMS:
-                subtotalFormulaStart = "SUBTOTAL(102";
-                break;
-            case INT_STD_DEV:
-                subtotalFormulaStart = "SUBTOTAL(107";
-                break;
-            case INT_VAR:
-                subtotalFormulaStart = "SUBTOTAL(110";
-                break;
-            case INT_CUSTOM:
-                subtotalFormulaStart = null;
-                break;
-            default:
-                subtotalFormulaStart = null;
-        }
-        return subtotalFormulaStart;
+        return switch (intTotalsRowFunction) {
+            case INT_NONE -> null;
+            case INT_SUM -> "SUBTOTAL(109";
+            case INT_MIN -> "SUBTOTAL(105";
+            case INT_MAX -> "SUBTOTAL(104";
+            case INT_AVERAGE -> "SUBTOTAL(101";
+            case INT_COUNT -> "SUBTOTAL(103";
+            case INT_COUNT_NUMS -> "SUBTOTAL(102";
+            case INT_STD_DEV -> "SUBTOTAL(107";
+            case INT_VAR -> "SUBTOTAL(110";
+            case INT_CUSTOM -> null;
+            default -> null;
+        };
     }
 }
