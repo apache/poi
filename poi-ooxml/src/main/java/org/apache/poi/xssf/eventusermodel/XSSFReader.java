@@ -43,6 +43,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.model.*;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
@@ -535,14 +536,14 @@ public class XSSFReader {
         // and add XSSFSheetRef(id="rId6", name="Sheet6") to sheetRefs
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-            if (localName.equalsIgnoreCase(SHEET)) {
+            if (StringUtil.equalsIgnoreCase(localName, SHEET)) {
                 String name = null;
                 String id = null;
                 for (int i = 0; i < attrs.getLength(); i++) {
                     final String attrName = attrs.getLocalName(i);
-                    if (attrName.equalsIgnoreCase(NAME)) {
+                    if (StringUtil.equalsIgnoreCase(attrName, NAME)) {
                         name = attrs.getValue(i);
-                    } else if (attrName.equalsIgnoreCase(ID)) {
+                    } else if (StringUtil.equalsIgnoreCase(attrName, ID)) {
                         id = attrs.getValue(i);
                     }
                     if (name != null && id != null) {

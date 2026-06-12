@@ -334,34 +334,83 @@ public final class StringUtil {
 
     /**
      * Tests if the string starts with the specified prefix, ignoring case consideration.
+     * <p>
+     *     In POI 6.0.0, this was changed to use the root locale.
+     * </p>
      */
+    @Internal
     public static boolean startsWithIgnoreCase(String haystack, String prefix) {
-        return haystack.regionMatches(true, 0, prefix, 0, prefix.length());
+        if (haystack == null || prefix == null) {
+            return false;
+        }
+
+        int len = prefix.length();
+        if (len > haystack.length()) {
+            return false;
+        }
+
+        return equalsIgnoreCase(haystack.substring(0, len), prefix);
     }
 
     /**
      * Tests if the string ends with the specified suffix, ignoring case consideration.
+     * <p>
+     *     In POI 6.0.0, this was changed to use the root locale.
+     * </p>
      */
+    @Internal
     public static boolean endsWithIgnoreCase(String haystack, String suffix) {
-        int length = suffix.length();
-        int start = haystack.length() - length;
-        return haystack.regionMatches(true, start, suffix, 0, length);
+        if (suffix == null || haystack == null) {
+            return false;
+        }
+        int len = suffix.length();
+        if (len > haystack.length()) {
+            return false;
+        }
+        int start = haystack.length() - len;
+
+        return equalsIgnoreCase(haystack.substring(start), suffix);
     }
 
+    /**
+     * Uses Locale.ROOT
+     */
     @Internal
     public static String toLowerCase(char c) {
         return Character.toString(c).toLowerCase(Locale.ROOT);
     }
 
+    /**
+     * Uses Locale.ROOT
+     */
     @Internal
     public static String toUpperCase(char c) {
         return Character.toString(c).toUpperCase(Locale.ROOT);
     }
 
+    /**
+     * Uses Locale.ROOT
+     */
     @Internal
     public static boolean isUpperCase(char c) {
         String s = Character.toString(c);
         return s.toUpperCase(Locale.ROOT).equals(s);
+    }
+
+    /**
+     * Uses Locale.ROOT. Does null safe checks.
+     * @since 6.0.0
+     */
+    @Internal
+    public static boolean equalsIgnoreCase(String s1, String s2) {
+        if (s1 == null) {
+            return s2 == null;
+        } else if (s2 == null) {
+            return false;
+        } else if (s1.length() != s2.length()) {
+            return false;
+        }
+        return s1.toLowerCase(Locale.ROOT).equals(s2.toLowerCase(Locale.ROOT));
     }
 
     /**

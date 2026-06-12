@@ -43,6 +43,7 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.xssf.model.ExternalLinksTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
@@ -170,7 +171,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
             XSSFName nm = _uBook.getNameAt(i);
             String nameText = nm.getNameName();
             int nameSheetindex = nm.getSheetIndex();
-            if (name.equalsIgnoreCase(nameText) &&
+            if (StringUtil.equalsIgnoreCase(name, nameText) &&
                    (nameSheetindex == -1 || nameSheetindex == sheetIndex)) {
                 return new Name(nm, i, this);
             }

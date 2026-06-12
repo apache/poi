@@ -53,6 +53,7 @@ import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.Comments;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
@@ -4749,7 +4750,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     @Beta
     public XSSFPivotTable createPivotTable(final AreaReference source, CellReference position, Sheet sourceSheet) {
         final String sourceSheetName = source.getFirstCell().getSheetName();
-        if(sourceSheetName != null && !sourceSheetName.equalsIgnoreCase(sourceSheet.getSheetName())) {
+        if(sourceSheetName != null && !StringUtil.equalsIgnoreCase(sourceSheetName, sourceSheet.getSheetName())) {
             throw new IllegalArgumentException("The area is referenced in another sheet than the "
                     + "defined source sheet " + sourceSheet.getSheetName() + ".");
         }
@@ -4801,7 +4802,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     @Beta
     public XSSFPivotTable createPivotTable(AreaReference source, CellReference position){
         final String sourceSheetName = source.getFirstCell().getSheetName();
-        if(sourceSheetName != null && !sourceSheetName.equalsIgnoreCase(this.getSheetName())) {
+        if(sourceSheetName != null && !StringUtil.equalsIgnoreCase(sourceSheetName, this.getSheetName())) {
             final XSSFSheet sourceSheet = getWorkbook().getSheet(sourceSheetName);
             return createPivotTable(source, position, sourceSheet);
         }

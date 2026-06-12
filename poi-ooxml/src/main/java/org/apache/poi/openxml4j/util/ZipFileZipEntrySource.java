@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.StringUtil;
 
 /**
  * A ZipEntrySource wrapper around a ZipFile.
@@ -79,7 +80,7 @@ public class ZipFileZipEntrySource implements ZipEntrySource {
         final Enumeration<ZipArchiveEntry> zipArchiveEntryEnumeration = zipArchive.getEntries();
         while (zipArchiveEntryEnumeration.hasMoreElements()) {
             ZipArchiveEntry ze = zipArchiveEntryEnumeration.nextElement();
-            if (lowerPath.equals(IOUtils.normalizePath(ze.getName()).toLowerCase(java.util.Locale.ROOT))) {
+            if (StringUtil.equalsIgnoreCase(normalizedPath, IOUtils.normalizePath(ze.getName()))) {
                 return ze;
             }
         }

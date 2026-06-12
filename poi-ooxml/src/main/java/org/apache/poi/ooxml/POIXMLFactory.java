@@ -25,6 +25,7 @@ import org.apache.poi.ooxml.POIXMLRelation.ParentPartConstructor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.StringUtil;
 import org.apache.xmlbeans.XmlException;
 
 /**
@@ -111,7 +112,7 @@ public abstract class POIXMLFactory {
              String partName = part.getPartName().getName();
              for (PackageRelationship pr : parent.getPackagePart().getRelationships()) {
                  String packName = pr.getTargetURI().toASCIIString();
-                 if (packName.equalsIgnoreCase(partName)) {
+                 if (StringUtil.equalsIgnoreCase(packName, partName)) {
                      return pr;
                  }
              }
