@@ -111,6 +111,9 @@ class TestStringUtil {
         assertTrue(StringUtil.startsWithIgnoreCase("APACHE POI", "Apache POI"), "different case");
         assertFalse(StringUtil.startsWithIgnoreCase(" Apache POI project", "Apache POI"), "leading whitespace should not be ignored");
         assertFalse(StringUtil.startsWithIgnoreCase("Apache", "Apache POI"), "shorter string");
+        assertFalse(StringUtil.startsWithIgnoreCase(null, null), "returns false when nulls involved");
+        assertFalse(StringUtil.startsWithIgnoreCase(null, "null"), "returns false when nulls involved");
+        assertFalse(StringUtil.startsWithIgnoreCase("null", null), "returns false when nulls involved");
     }
 
     @Test
@@ -120,6 +123,9 @@ class TestStringUtil {
         assertTrue(StringUtil.endsWithIgnoreCase("APACHE POI", "Apache POI"), "different case");
         assertFalse(StringUtil.endsWithIgnoreCase("Apache POI project ", "Apache POI"), "trailing whitespace should not be ignored");
         assertFalse(StringUtil.endsWithIgnoreCase("Apache", "Apache POI"), "shorter string");
+        assertFalse(StringUtil.endsWithIgnoreCase(null, null), "returns false when nulls involved");
+        assertFalse(StringUtil.endsWithIgnoreCase(null, "null"), "returns false when nulls involved");
+        assertFalse(StringUtil.endsWithIgnoreCase("null", null), "returns false when nulls involved");
     }
 
     @Test

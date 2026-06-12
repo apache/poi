@@ -334,18 +334,42 @@ public final class StringUtil {
 
     /**
      * Tests if the string starts with the specified prefix, ignoring case consideration.
+     * <p>
+     *     In POI 6.0.0, this was changed to use the root locale.
+     * </p>
      */
+    @Internal
     public static boolean startsWithIgnoreCase(String haystack, String prefix) {
-        return haystack.regionMatches(true, 0, prefix, 0, prefix.length());
+        if (haystack == null || prefix == null) {
+            return false;
+        }
+
+        int len = prefix.length();
+        if (len > haystack.length()) {
+            return false;
+        }
+
+        return equalsIgnoreCase(haystack.substring(0, len), prefix);
     }
 
     /**
      * Tests if the string ends with the specified suffix, ignoring case consideration.
+     * <p>
+     *     In POI 6.0.0, this was changed to use the root locale.
+     * </p>
      */
+    @Internal
     public static boolean endsWithIgnoreCase(String haystack, String suffix) {
-        int length = suffix.length();
-        int start = haystack.length() - length;
-        return haystack.regionMatches(true, start, suffix, 0, length);
+        if (suffix == null || haystack == null) {
+            return false;
+        }
+        int len = suffix.length();
+        if (len > haystack.length()) {
+            return false;
+        }
+        int start = haystack.length() - len;
+
+        return equalsIgnoreCase(haystack.substring(start), suffix);
     }
 
     /**
