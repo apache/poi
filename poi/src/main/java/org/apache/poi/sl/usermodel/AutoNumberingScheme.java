@@ -125,50 +125,56 @@ public enum AutoNumberingScheme {
     }
 
     public String getDescription() {
-        switch (this) {
-        case alphaLcPeriod          : return "Lowercase Latin character followed by a period. Example: a., b., c., ...";
-        case alphaUcPeriod          : return "Uppercase Latin character followed by a period. Example: A., B., C., ...";
-        case arabicParenRight       : return "Arabic numeral followed by a closing parenthesis. Example: 1), 2), 3), ...";
-        case arabicPeriod           : return "Arabic numeral followed by a period. Example: 1., 2., 3., ...";
-        case romanLcParenBoth       : return "Lowercase Roman numeral enclosed in parentheses. Example: (i), (ii), (iii), ...";
-        case romanLcParenRight      : return "Lowercase Roman numeral followed by a closing parenthesis. Example: i), ii), iii), ...";
-        case romanLcPeriod          : return "Lowercase Roman numeral followed by a period. Example: i., ii., iii., ...";
-        case romanUcPeriod          : return "Uppercase Roman numeral followed by a period. Example: I., II., III., ...";
-        case alphaLcParenBoth       : return "Lowercase alphabetic character enclosed in parentheses. Example: (a), (b), (c), ...";
-        case alphaLcParenRight      : return "Lowercase alphabetic character followed by a closing parenthesis. Example: a), b), c), ...";
-        case alphaUcParenBoth       : return "Uppercase alphabetic character enclosed in parentheses. Example: (A), (B), (C), ...";
-        case alphaUcParenRight      : return "Uppercase alphabetic character followed by a closing parenthesis. Example: A), B), C), ...";
-        case arabicParenBoth        : return "Arabic numeral enclosed in parentheses. Example: (1), (2), (3), ...";
-        case arabicPlain            : return "Arabic numeral. Example: 1, 2, 3, ...";
-        case romanUcParenBoth       : return "Uppercase Roman numeral enclosed in parentheses. Example: (I), (II), (III), ...";
-        case romanUcParenRight      : return "Uppercase Roman numeral followed by a closing parenthesis. Example: I), II), III), ...";
-        case ea1ChsPlain            : return "Simplified Chinese.";
-        case ea1ChsPeriod           : return "Simplified Chinese with single-byte period.";
-        case circleNumDbPlain       : return "Double byte circle numbers.";
-        case circleNumWdWhitePlain  : return "Wingdings white circle numbers.";
-        case circleNumWdBlackPlain  : return "Wingdings black circle numbers.";
-        case ea1ChtPlain            : return "Traditional Chinese.";
-        case ea1ChtPeriod           : return "Traditional Chinese with single-byte period.";
-        case arabic1Minus           : return "Bidi Arabic 1 (AraAlpha) with ANSI minus symbol.";
-        case arabic2Minus           : return "Bidi Arabic 2 (AraAbjad) with ANSI minus symbol.";
-        case hebrew2Minus           : return "Bidi Hebrew 2 with ANSI minus symbol.";
-        case ea1JpnKorPlain         : return "Japanese/Korean.";
-        case ea1JpnKorPeriod        : return "Japanese/Korean with single-byte period.";
-        case arabicDbPlain          : return "Double-byte Arabic numbers.";
-        case arabicDbPeriod         : return "Double-byte Arabic numbers with double-byte period.";
-        case thaiAlphaPeriod        : return "Thai alphabetic character followed by a period.";
-        case thaiAlphaParenRight    : return "Thai alphabetic character followed by a closing parenthesis.";
-        case thaiAlphaParenBoth     : return "Thai alphabetic character enclosed by parentheses.";
-        case thaiNumPeriod          : return "Thai numeral followed by a period.";
-        case thaiNumParenRight      : return "Thai numeral followed by a closing parenthesis.";
-        case thaiNumParenBoth       : return "Thai numeral enclosed in parentheses.";
-        case hindiAlphaPeriod       : return "Hindi alphabetic character followed by a period.";
-        case hindiNumPeriod         : return "Hindi numeric character followed by a period.";
-        case ea1JpnChsDbPeriod      : return "Japanese with double-byte period.";
-        case hindiNumParenRight     : return "Hindi numeric character followed by a closing parenthesis.";
-        case hindiAlpha1Period      : return "Hindi alphabetic character followed by a period.";
-        default                     : return "Unknown Numbered Scheme";
-        }
+        return switch (this) {
+            case alphaLcPeriod -> "Lowercase Latin character followed by a period. Example: a., b., c., ...";
+            case alphaUcPeriod -> "Uppercase Latin character followed by a period. Example: A., B., C., ...";
+            case arabicParenRight -> "Arabic numeral followed by a closing parenthesis. Example: 1), 2), 3), ...";
+            case arabicPeriod -> "Arabic numeral followed by a period. Example: 1., 2., 3., ...";
+            case romanLcParenBoth -> "Lowercase Roman numeral enclosed in parentheses. Example: (i), (ii), (iii), ...";
+            case romanLcParenRight ->
+                    "Lowercase Roman numeral followed by a closing parenthesis. Example: i), ii), iii), ...";
+            case romanLcPeriod -> "Lowercase Roman numeral followed by a period. Example: i., ii., iii., ...";
+            case romanUcPeriod -> "Uppercase Roman numeral followed by a period. Example: I., II., III., ...";
+            case alphaLcParenBoth ->
+                    "Lowercase alphabetic character enclosed in parentheses. Example: (a), (b), (c), ...";
+            case alphaLcParenRight ->
+                    "Lowercase alphabetic character followed by a closing parenthesis. Example: a), b), c), ...";
+            case alphaUcParenBoth ->
+                    "Uppercase alphabetic character enclosed in parentheses. Example: (A), (B), (C), ...";
+            case alphaUcParenRight ->
+                    "Uppercase alphabetic character followed by a closing parenthesis. Example: A), B), C), ...";
+            case arabicParenBoth -> "Arabic numeral enclosed in parentheses. Example: (1), (2), (3), ...";
+            case arabicPlain -> "Arabic numeral. Example: 1, 2, 3, ...";
+            case romanUcParenBoth -> "Uppercase Roman numeral enclosed in parentheses. Example: (I), (II), (III), ...";
+            case romanUcParenRight ->
+                    "Uppercase Roman numeral followed by a closing parenthesis. Example: I), II), III), ...";
+            case ea1ChsPlain -> "Simplified Chinese.";
+            case ea1ChsPeriod -> "Simplified Chinese with single-byte period.";
+            case circleNumDbPlain -> "Double byte circle numbers.";
+            case circleNumWdWhitePlain -> "Wingdings white circle numbers.";
+            case circleNumWdBlackPlain -> "Wingdings black circle numbers.";
+            case ea1ChtPlain -> "Traditional Chinese.";
+            case ea1ChtPeriod -> "Traditional Chinese with single-byte period.";
+            case arabic1Minus -> "Bidi Arabic 1 (AraAlpha) with ANSI minus symbol.";
+            case arabic2Minus -> "Bidi Arabic 2 (AraAbjad) with ANSI minus symbol.";
+            case hebrew2Minus -> "Bidi Hebrew 2 with ANSI minus symbol.";
+            case ea1JpnKorPlain -> "Japanese/Korean.";
+            case ea1JpnKorPeriod -> "Japanese/Korean with single-byte period.";
+            case arabicDbPlain -> "Double-byte Arabic numbers.";
+            case arabicDbPeriod -> "Double-byte Arabic numbers with double-byte period.";
+            case thaiAlphaPeriod -> "Thai alphabetic character followed by a period.";
+            case thaiAlphaParenRight -> "Thai alphabetic character followed by a closing parenthesis.";
+            case thaiAlphaParenBoth -> "Thai alphabetic character enclosed by parentheses.";
+            case thaiNumPeriod -> "Thai numeral followed by a period.";
+            case thaiNumParenRight -> "Thai numeral followed by a closing parenthesis.";
+            case thaiNumParenBoth -> "Thai numeral enclosed in parentheses.";
+            case hindiAlphaPeriod -> "Hindi alphabetic character followed by a period.";
+            case hindiNumPeriod -> "Hindi numeric character followed by a period.";
+            case ea1JpnChsDbPeriod -> "Japanese with double-byte period.";
+            case hindiNumParenRight -> "Hindi numeric character followed by a closing parenthesis.";
+            case hindiAlpha1Period -> "Hindi alphabetic character followed by a period.";
+            default -> "Unknown Numbered Scheme";
+        };
     }
 
     public String format(int value) {

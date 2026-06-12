@@ -573,24 +573,15 @@ public class CellFormatPart {
             if (!part.isEmpty()) {
                 String repl = partHandler.handlePart(m, part, type, fmt);
                 if (repl == null) {
-                    switch (part.charAt(0)) {
-                    case '\"':
-                        repl = quoteSpecial(part.substring(1,
+                    repl = switch (part.charAt(0)) {
+                        case '\"' -> quoteSpecial(part.substring(1,
                                 part.length() - 1), type);
-                        break;
-                    case '\\':
-                        repl = quoteSpecial(part.substring(1), type);
-                        break;
-                    case '_':
-                        repl = " ";
-                        break;
-                    case '*': //!! We don't do this for real, we just put in 3 of them
-                        repl = expandChar(part);
-                        break;
-                    default:
-                        repl = part;
-                        break;
-                    }
+                        case '\\' -> quoteSpecial(part.substring(1), type);
+                        case '_' -> " ";
+                        case '*' -> //!! We don't do this for real, we just put in 3 of them
+                                expandChar(part);
+                        default -> part;
+                    };
                 }
                 m.appendReplacement(fmt, Matcher.quoteReplacement(repl));
             }

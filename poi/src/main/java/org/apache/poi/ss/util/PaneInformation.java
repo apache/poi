@@ -105,18 +105,13 @@ public class PaneInformation
      * @since 5.2.3
      */
     public PaneType getActivePaneType() {
-        switch (activePane) {
-            case PANE_LOWER_RIGHT:
-                return PaneType.LOWER_RIGHT;
-            case PANE_UPPER_RIGHT:
-                return PaneType.UPPER_RIGHT;
-            case PANE_LOWER_LEFT:
-                return PaneType.LOWER_LEFT;
-            case PANE_UPPER_LEFT:
-                return PaneType.UPPER_LEFT;
-            default:
-                return null;
-        }
+        return switch (activePane) {
+            case PANE_LOWER_RIGHT -> PaneType.LOWER_RIGHT;
+            case PANE_UPPER_RIGHT -> PaneType.UPPER_RIGHT;
+            case PANE_LOWER_LEFT -> PaneType.LOWER_LEFT;
+            case PANE_UPPER_LEFT -> PaneType.UPPER_LEFT;
+            default -> null;
+        };
     }
 
     /** Returns true if this is a Freeze pane, false if it is a split pane.

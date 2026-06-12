@@ -95,22 +95,15 @@ public final class ForkedEvaluator {
     public ValueEval evaluate(String sheetName, int rowIndex, int columnIndex) {
         EvaluationCell cell = _sewb.getEvaluationCell(sheetName, rowIndex, columnIndex);
 
-        switch (cell.getCellType()) {
-            case BOOLEAN:
-                return BoolEval.valueOf(cell.getBooleanCellValue());
-            case ERROR:
-                return ErrorEval.valueOf(cell.getErrorCellValue());
-            case FORMULA:
-                return _evaluator.evaluate(cell);
-            case NUMERIC:
-                return new NumberEval(cell.getNumericCellValue());
-            case STRING:
-                return new StringEval(cell.getStringCellValue());
-            case BLANK:
-                return null;
-            default:
-                throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
-        }
+        return switch (cell.getCellType()) {
+            case BOOLEAN -> BoolEval.valueOf(cell.getBooleanCellValue());
+            case ERROR -> ErrorEval.valueOf(cell.getErrorCellValue());
+            case FORMULA -> _evaluator.evaluate(cell);
+            case NUMERIC -> new NumberEval(cell.getNumericCellValue());
+            case STRING -> new StringEval(cell.getStringCellValue());
+            case BLANK -> null;
+            default -> throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
+        };
     }
     /**
      * Coordinates several formula evaluators together so that formulas that involve external
