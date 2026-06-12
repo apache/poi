@@ -39,6 +39,7 @@ import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Internal POI use only
@@ -113,7 +114,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
     public EvaluationName getName(String name, int sheetIndex) {
         for(int i=0; i < _iBook.getNumNames(); i++) {
             NameRecord nr = _iBook.getNameRecord(i);
-            if (nr.getSheetNumber() == sheetIndex+1 && name.equalsIgnoreCase(nr.getNameText())) {
+            if (nr.getSheetNumber() == sheetIndex+1 && StringUtil.equalsIgnoreCase(name, nr.getNameText())) {
                 return new Name(nr, i);
             }
         }

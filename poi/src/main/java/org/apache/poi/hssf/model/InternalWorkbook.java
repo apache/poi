@@ -60,6 +60,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Low level model implementation of a Workbook.  Provides creational methods
@@ -603,7 +604,7 @@ public final class InternalWorkbook {
             if (bName.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
                 bName = bName.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
             }
-            if (aName.equalsIgnoreCase(bName)) {
+            if (StringUtil.equalsIgnoreCase(aName, bName)) {
                 return true;
             }
         }
@@ -725,7 +726,7 @@ public final class InternalWorkbook {
         for (int k = 0; k < size; k++) {
             String sheet = getSheetName(k);
 
-            if (sheet.equalsIgnoreCase(name)) {
+            if (StringUtil.equalsIgnoreCase(sheet, name)) {
                 retval = k;
                 break;
             }

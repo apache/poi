@@ -48,6 +48,7 @@ import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.MathUtil;
+import org.apache.poi.util.StringUtil;
 
 /**
  * For now this class renders only images supported by the javax.imageio.ImageIO framework.
@@ -79,7 +80,8 @@ public class BitmapImageRenderer implements ImageRenderer {
 
     @Override
     public boolean canRender(String contentType) {
-        return Stream.of(ALLOWED_TYPES).anyMatch(t -> t.contentType.equalsIgnoreCase(contentType));
+        return Stream.of(ALLOWED_TYPES).anyMatch(t ->
+                StringUtil.equalsIgnoreCase(t.contentType, contentType));
     }
 
     @Override

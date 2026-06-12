@@ -248,7 +248,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
             return false;
         }
         final EvaluationConditionalFormatRule r = (EvaluationConditionalFormatRule) obj;
-        return getSheet().getSheetName().equalsIgnoreCase(r.getSheet().getSheetName())
+        return StringUtil.equalsIgnoreCase(getSheet().getSheetName(), r.getSheet().getSheetName())
             && getFormattingIndex() == r.getFormattingIndex()
             && getRuleIndex() == r.getRuleIndex();
     }

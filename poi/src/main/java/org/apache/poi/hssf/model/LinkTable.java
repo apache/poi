@@ -38,6 +38,7 @@ import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Link Table (OOO pdf reference: 4.10.3 ) <p>
@@ -167,7 +168,7 @@ final class LinkTable {
          */
         public int getIndexOfName(String name) {
             for (int i = 0; i < _externalNameRecords.length; i++) {
-                if (_externalNameRecords[i].getText().equalsIgnoreCase(name)) {
+                if (StringUtil.equalsIgnoreCase(_externalNameRecords[i].getText(), name)) {
                     return i;
                 }
             }
@@ -359,7 +360,7 @@ final class LinkTable {
     }
 
     private static boolean isDuplicatedNames(NameRecord firstName, NameRecord lastName) {
-        return lastName.getNameText().equalsIgnoreCase(firstName.getNameText())
+        return StringUtil.equalsIgnoreCase(lastName.getNameText(), firstName.getNameText())
                 && isSameSheetNames(firstName, lastName);
     }
 

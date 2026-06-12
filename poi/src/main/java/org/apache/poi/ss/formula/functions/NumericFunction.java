@@ -22,6 +22,7 @@ import static org.apache.poi.ss.formula.eval.ErrorEval.VALUE_INVALID;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.MathUtil;
+import org.apache.poi.util.StringUtil;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -107,7 +108,7 @@ public abstract class NumericFunction implements Function {
 
             DecimalFormat nf = (DecimalFormat) NumberFormat.getCurrencyInstance(LocaleUtil.getUserLocale());
             int decimalPlaces = Math.max(nPlaces, 0);
-            if (LocaleUtil.getUserLocale().getCountry().equalsIgnoreCase("US")) {
+            if (StringUtil.equalsIgnoreCase(LocaleUtil.getUserLocale().getCountry(), "US")) {
                 // Java 23 removed "COMPAT" locale provider and thus
                 // we need to ensure that the dollar-sign is used and not "USD" as Java 23 and newer
                 // would do
