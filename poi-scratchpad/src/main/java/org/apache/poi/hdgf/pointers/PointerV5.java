@@ -29,25 +29,19 @@ public final class PointerV5 extends Pointer {
     }
     
     public boolean destinationHasPointers() {
-        switch (getType()) {
-            case 20:
-                return true;
-            case 22:
-                return false;
-            default:
-                return isFormatBetween(0x1d, 0x1f) || isFormatBetween(0x50, 0x60);
-        }
+        return switch (getType()) {
+            case 20 -> true;
+            case 22 -> false;
+            default -> isFormatBetween(0x1d, 0x1f) || isFormatBetween(0x50, 0x60);
+        };
     }
  
     public boolean destinationHasChunks() {
-        switch (getType()) {
-            case 21:
-                return true;
-            case 24:
-                return true;
-            default:
-                return isFormatBetween(0xd0, 0xdf);
-        }
+        return switch (getType()) {
+            case 21 -> true;
+            case 24 -> true;
+            default -> isFormatBetween(0xd0, 0xdf);
+        };
     }
 
     public boolean destinationCompressed() {
@@ -64,16 +58,12 @@ public final class PointerV5 extends Pointer {
      * Depends on the type only, not stored
      */
     public int getNumPointersOffset(byte[] data) {
-        switch (getType()) {
-            case 0x1d:
-            case 0x4e:
-                return 30;
-            case 0x1e:
-                return 54;
-            case 0x14:
-                return 130;
-        }
-        return 10;
+        return switch (getType()) {
+            case 0x1d, 0x4e -> 30;
+            case 0x1e -> 54;
+            case 0x14 -> 130;
+            default -> 10;
+        };
     }
     /**
      * 16 bit int at the given offset

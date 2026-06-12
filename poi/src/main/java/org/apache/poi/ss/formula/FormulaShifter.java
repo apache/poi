@@ -164,23 +164,18 @@ public final class FormulaShifter {
     }
 
     private Ptg adjustPtg(Ptg ptg, int currentExternSheetIx) {
-        switch(_mode){
-            case RowMove:
-                return adjustPtgDueToRowMove(ptg, currentExternSheetIx);
-            case RowCopy:
+        return switch (_mode) {
+            case RowMove -> adjustPtgDueToRowMove(ptg, currentExternSheetIx);
+            case RowCopy ->
                 // Covered Scenarios:
                 // * row copy on same sheet
                 // * row copy between different sheets in the same workbook
-                return adjustPtgDueToRowCopy(ptg);
-            case ColumnMove:
-                return adjustPtgDueToColumnMove(ptg, currentExternSheetIx);
-            case ColumnCopy:
-                return adjustPtgDueToColumnCopy(ptg);
-            case SheetMove:
-                return adjustPtgDueToSheetMove(ptg);
-            default:
-                throw new IllegalStateException("Unsupported shift mode: " + _mode);
-        }
+                    adjustPtgDueToRowCopy(ptg);
+            case ColumnMove -> adjustPtgDueToColumnMove(ptg, currentExternSheetIx);
+            case ColumnCopy -> adjustPtgDueToColumnCopy(ptg);
+            case SheetMove -> adjustPtgDueToSheetMove(ptg);
+            default -> throw new IllegalStateException("Unsupported shift mode: " + _mode);
+        };
     }
 
     /**

@@ -488,16 +488,11 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
         final SlideLayoutType slt = getSlideRecord().getSlideAtom().getSSlideLayoutAtom().getGeometryType();
         final boolean isTitle =
             (slt == SlideLayoutType.TITLE_SLIDE || slt == SlideLayoutType.TITLE_ONLY || slt == SlideLayoutType.MASTER_TITLE);
-        switch (placeholder) {
-            case HEADER:
-                return hf.isHeaderVisible() && hf.getHeaderAtom() != null && !isTitle;
-            case FOOTER:
-                return hf.isFooterVisible() && hf.getFooterAtom() != null && !isTitle;
-            case DATETIME:
-            case SLIDE_NUMBER:
-            default:
-                return false;
-        }
+        return switch (placeholder) {
+            case HEADER -> hf.isHeaderVisible() && hf.getHeaderAtom() != null && !isTitle;
+            case FOOTER -> hf.isFooterVisible() && hf.getFooterAtom() != null && !isTitle;
+            default -> false;
+        };
     }
 
     @Override

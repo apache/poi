@@ -168,13 +168,13 @@ public class XSSFFontFormatting implements FontFormatting {
     public short getUnderlineType(){
         if(_font.sizeOfUArray() == 0) return Font.U_NONE;
         CTUnderlineProperty u = _font.getUArray(0);
-        switch(u.getVal().intValue()){
-            case STUnderlineValues.INT_SINGLE: return Font.U_SINGLE;
-            case STUnderlineValues.INT_DOUBLE: return Font.U_DOUBLE;
-            case STUnderlineValues.INT_SINGLE_ACCOUNTING: return Font.U_SINGLE_ACCOUNTING;
-            case STUnderlineValues.INT_DOUBLE_ACCOUNTING: return Font.U_DOUBLE_ACCOUNTING;
-            default: return Font.U_NONE;
-        }
+        return switch (u.getVal().intValue()) {
+            case STUnderlineValues.INT_SINGLE -> Font.U_SINGLE;
+            case STUnderlineValues.INT_DOUBLE -> Font.U_DOUBLE;
+            case STUnderlineValues.INT_SINGLE_ACCOUNTING -> Font.U_SINGLE_ACCOUNTING;
+            case STUnderlineValues.INT_DOUBLE_ACCOUNTING -> Font.U_DOUBLE_ACCOUNTING;
+            default -> Font.U_NONE;
+        };
     }
 
     /**

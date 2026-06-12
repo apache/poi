@@ -131,23 +131,16 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
      */
     @Override
     public HyperlinkType getType() {
-        switch (info.getInteractiveInfoAtom().getHyperlinkType()) {
-            case InteractiveInfoAtom.LINK_Url:
-                return (exHyper.getLinkURL().startsWith("mailto:")) ? HyperlinkType.EMAIL : HyperlinkType.URL;
-            case InteractiveInfoAtom.LINK_NextSlide:
-            case InteractiveInfoAtom.LINK_PreviousSlide:
-            case InteractiveInfoAtom.LINK_FirstSlide:
-            case InteractiveInfoAtom.LINK_LastSlide:
-            case InteractiveInfoAtom.LINK_SlideNumber:
-                return HyperlinkType.DOCUMENT;
-            case InteractiveInfoAtom.LINK_CustomShow:
-            case InteractiveInfoAtom.LINK_OtherPresentation:
-            case InteractiveInfoAtom.LINK_OtherFile:
-                return HyperlinkType.FILE;
-            default:
-            case InteractiveInfoAtom.LINK_NULL:
-                return HyperlinkType.NONE;
-        }
+        return switch (info.getInteractiveInfoAtom().getHyperlinkType()) {
+            case InteractiveInfoAtom.LINK_Url ->
+                    (exHyper.getLinkURL().startsWith("mailto:")) ? HyperlinkType.EMAIL : HyperlinkType.URL;
+            case InteractiveInfoAtom.LINK_NextSlide, InteractiveInfoAtom.LINK_PreviousSlide,
+                 InteractiveInfoAtom.LINK_FirstSlide, InteractiveInfoAtom.LINK_LastSlide,
+                 InteractiveInfoAtom.LINK_SlideNumber -> HyperlinkType.DOCUMENT;
+            case InteractiveInfoAtom.LINK_CustomShow, InteractiveInfoAtom.LINK_OtherPresentation,
+                 InteractiveInfoAtom.LINK_OtherFile -> HyperlinkType.FILE;
+            default -> HyperlinkType.NONE;
+        };
     }
 
     @Override

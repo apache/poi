@@ -386,17 +386,17 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         STConditionalFormattingOperator.Enum op = _cfRule.getOperator();
         if(op == null) return ComparisonOperator.NO_COMPARISON;
 
-        switch(op.intValue()){
-            case STConditionalFormattingOperator.INT_LESS_THAN: return ComparisonOperator.LT;
-            case STConditionalFormattingOperator.INT_LESS_THAN_OR_EQUAL: return ComparisonOperator.LE;
-            case STConditionalFormattingOperator.INT_GREATER_THAN: return ComparisonOperator.GT;
-            case STConditionalFormattingOperator.INT_GREATER_THAN_OR_EQUAL: return ComparisonOperator.GE;
-            case STConditionalFormattingOperator.INT_EQUAL: return ComparisonOperator.EQUAL;
-            case STConditionalFormattingOperator.INT_NOT_EQUAL: return ComparisonOperator.NOT_EQUAL;
-            case STConditionalFormattingOperator.INT_BETWEEN: return ComparisonOperator.BETWEEN;
-            case STConditionalFormattingOperator.INT_NOT_BETWEEN: return ComparisonOperator.NOT_BETWEEN;
-        }
-        return ComparisonOperator.NO_COMPARISON;
+        return switch (op.intValue()) {
+            case STConditionalFormattingOperator.INT_LESS_THAN -> ComparisonOperator.LT;
+            case STConditionalFormattingOperator.INT_LESS_THAN_OR_EQUAL -> ComparisonOperator.LE;
+            case STConditionalFormattingOperator.INT_GREATER_THAN -> ComparisonOperator.GT;
+            case STConditionalFormattingOperator.INT_GREATER_THAN_OR_EQUAL -> ComparisonOperator.GE;
+            case STConditionalFormattingOperator.INT_EQUAL -> ComparisonOperator.EQUAL;
+            case STConditionalFormattingOperator.INT_NOT_EQUAL -> ComparisonOperator.NOT_EQUAL;
+            case STConditionalFormattingOperator.INT_BETWEEN -> ComparisonOperator.BETWEEN;
+            case STConditionalFormattingOperator.INT_NOT_BETWEEN -> ComparisonOperator.NOT_BETWEEN;
+            default -> ComparisonOperator.NO_COMPARISON;
+        };
     }
 
     /**

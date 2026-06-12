@@ -29,28 +29,18 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIgnoredError;
  */
 public class XSSFIgnoredErrorHelper {
     public static boolean isSet(IgnoredErrorType errorType, CTIgnoredError error) {
-        switch(errorType) {
-            case CALCULATED_COLUMN:
-                return error.isSetCalculatedColumn();
-            case EMPTY_CELL_REFERENCE:
-                return error.isSetEmptyCellReference();
-            case EVALUATION_ERROR:
-                return error.isSetEvalError();
-            case FORMULA:
-                return error.isSetFormula();
-            case FORMULA_RANGE:
-                return error.isSetFormulaRange();
-            case LIST_DATA_VALIDATION:
-                return error.isSetListDataValidation();
-            case NUMBER_STORED_AS_TEXT:
-                return error.isSetNumberStoredAsText();
-            case TWO_DIGIT_TEXT_YEAR:
-                return error.isSetTwoDigitTextYear();
-            case UNLOCKED_FORMULA:
-                return error.isSetUnlockedFormula();
-            default:
-                throw new IllegalStateException();
-            }
+        return switch (errorType) {
+            case CALCULATED_COLUMN -> error.isSetCalculatedColumn();
+            case EMPTY_CELL_REFERENCE -> error.isSetEmptyCellReference();
+            case EVALUATION_ERROR -> error.isSetEvalError();
+            case FORMULA -> error.isSetFormula();
+            case FORMULA_RANGE -> error.isSetFormulaRange();
+            case LIST_DATA_VALIDATION -> error.isSetListDataValidation();
+            case NUMBER_STORED_AS_TEXT -> error.isSetNumberStoredAsText();
+            case TWO_DIGIT_TEXT_YEAR -> error.isSetTwoDigitTextYear();
+            case UNLOCKED_FORMULA -> error.isSetUnlockedFormula();
+            default -> throw new IllegalStateException();
+        };
     }
     
     public static void set(IgnoredErrorType errorType, CTIgnoredError error) {

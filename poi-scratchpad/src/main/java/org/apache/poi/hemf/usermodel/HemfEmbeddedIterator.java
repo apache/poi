@@ -239,23 +239,13 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         switch (img.getImageDataType()) {
             case BITMAP:
                 if (img.getBitmapType() == EmfPlusBitmapDataType.COMPRESSED) {
-                    switch (FileMagic.valueOf(emb.getRawData())) {
-                        case JPEG:
-                            et = HwmfEmbeddedType.JPEG;
-                            break;
-                        case GIF:
-                            et = HwmfEmbeddedType.GIF;
-                            break;
-                        case PNG:
-                            et = HwmfEmbeddedType.PNG;
-                            break;
-                        case TIFF:
-                            et = HwmfEmbeddedType.TIFF;
-                            break;
-                        default:
-                            et = HwmfEmbeddedType.BITMAP;
-                            break;
-                    }
+                    et = switch (FileMagic.valueOf(emb.getRawData())) {
+                        case JPEG -> HwmfEmbeddedType.JPEG;
+                        case GIF -> HwmfEmbeddedType.GIF;
+                        case PNG -> HwmfEmbeddedType.PNG;
+                        case TIFF -> HwmfEmbeddedType.TIFF;
+                        default -> HwmfEmbeddedType.BITMAP;
+                    };
                 } else {
                     et = HwmfEmbeddedType.PNG;
                     compressGDIBitmap(img, emb, et);
@@ -263,20 +253,11 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
                 break;
             case METAFILE:
                 assert(img.getMetafileType() != null);
-                switch (img.getMetafileType()) {
-                    case Wmf:
-                    case WmfPlaceable:
-                        et = HwmfEmbeddedType.WMF;
-                        break;
-                    case Emf:
-                    case EmfPlusDual:
-                    case EmfPlusOnly:
-                        et = HwmfEmbeddedType.EMF;
-                        break;
-                    default:
-                        et = HwmfEmbeddedType.UNKNOWN;
-                        break;
-                }
+                et = switch (img.getMetafileType()) {
+                    case Wmf, WmfPlaceable -> HwmfEmbeddedType.WMF;
+                    case Emf, EmfPlusDual, EmfPlusOnly -> HwmfEmbeddedType.EMF;
+                    default -> HwmfEmbeddedType.UNKNOWN;
+                };
                 break;
             default:
                 et = HwmfEmbeddedType.UNKNOWN;

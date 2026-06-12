@@ -46,13 +46,10 @@ public class ChunkHeaderV6 extends ChunkHeader {
      * Does the chunk have a trailer?
      */
     public boolean hasTrailer() {
-        switch (getType()) {
-            case 0x2c: case 0x65: case 0x66: case 0x69:
-            case 0x6a: case 0x6b: case 0x70: case 0x71:
-                return true;
-            default:
-                return (getUnknown1() != 0);
-        }
+        return switch (getType()) {
+            case 0x2c, 0x65, 0x66, 0x69, 0x6a, 0x6b, 0x70, 0x71 -> true;
+            default -> (getUnknown1() != 0);
+        };
     }
 
     /**

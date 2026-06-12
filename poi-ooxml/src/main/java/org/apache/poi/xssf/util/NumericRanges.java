@@ -26,19 +26,13 @@ public class NumericRanges {
     public static final int OVERLAPS_2_WRAPS = 3;
     
     public static long[] getOverlappingRange(long[] range1, long[] range2) {
-        switch(getOverlappingType(range1, range2)) {
-            case OVERLAPS_1_MINOR:
-                return new long[]{range2[0], range1[1]};
-            case OVERLAPS_2_MINOR:
-                return new long[]{range1[0], range2[1]};
-            case OVERLAPS_2_WRAPS:
-                return range1;
-            case OVERLAPS_1_WRAPS:
-                return range2;
-            default:
-            case NO_OVERLAPS:
-                return new long[]{-1, -1};
-        }
+        return switch (getOverlappingType(range1, range2)) {
+            case OVERLAPS_1_MINOR -> new long[]{range2[0], range1[1]};
+            case OVERLAPS_2_MINOR -> new long[]{range1[0], range2[1]};
+            case OVERLAPS_2_WRAPS -> range1;
+            case OVERLAPS_1_WRAPS -> range2;
+            default -> new long[]{-1, -1};
+        };
     }
     
     public static int getOverlappingType(long[] range1, long[] range2) {

@@ -437,16 +437,15 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     public void setTextAlign(TextAlign align) {
         Integer alignInt = null;
         if (align != null) {
-            switch (align) {
-                default:
-                case LEFT: alignInt = TextAlignmentProp.LEFT;break;
-                case CENTER: alignInt = TextAlignmentProp.CENTER; break;
-                case RIGHT: alignInt = TextAlignmentProp.RIGHT; break;
-                case DIST: alignInt = TextAlignmentProp.DISTRIBUTED; break;
-                case JUSTIFY: alignInt = TextAlignmentProp.JUSTIFY; break;
-                case JUSTIFY_LOW: alignInt = TextAlignmentProp.JUSTIFYLOW; break;
-                case THAI_DIST: alignInt = TextAlignmentProp.THAIDISTRIBUTED; break;
-            }
+            alignInt = switch (align) {
+                default -> TextAlignmentProp.LEFT;
+                case CENTER -> TextAlignmentProp.CENTER;
+                case RIGHT -> TextAlignmentProp.RIGHT;
+                case DIST -> TextAlignmentProp.DISTRIBUTED;
+                case JUSTIFY -> TextAlignmentProp.JUSTIFY;
+                case JUSTIFY_LOW -> TextAlignmentProp.JUSTIFYLOW;
+                case THAI_DIST -> TextAlignmentProp.THAIDISTRIBUTED;
+            };
         }
         setParagraphTextPropVal("alignment", alignInt);
     }
@@ -457,16 +456,15 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         if (tp == null) {
             return null;
         }
-        switch (tp.getValue()) {
-            default:
-            case TextAlignmentProp.LEFT: return TextAlign.LEFT;
-            case TextAlignmentProp.CENTER: return TextAlign.CENTER;
-            case TextAlignmentProp.RIGHT: return TextAlign.RIGHT;
-            case TextAlignmentProp.JUSTIFY: return TextAlign.JUSTIFY;
-            case TextAlignmentProp.JUSTIFYLOW: return TextAlign.JUSTIFY_LOW;
-            case TextAlignmentProp.DISTRIBUTED: return TextAlign.DIST;
-            case TextAlignmentProp.THAIDISTRIBUTED: return TextAlign.THAI_DIST;
-        }
+        return switch (tp.getValue()) {
+            case TextAlignmentProp.CENTER -> TextAlign.CENTER;
+            case TextAlignmentProp.RIGHT -> TextAlign.RIGHT;
+            case TextAlignmentProp.JUSTIFY -> TextAlign.JUSTIFY;
+            case TextAlignmentProp.JUSTIFYLOW -> TextAlign.JUSTIFY_LOW;
+            case TextAlignmentProp.DISTRIBUTED -> TextAlign.DIST;
+            case TextAlignmentProp.THAIDISTRIBUTED -> TextAlign.THAI_DIST;
+            default -> TextAlign.LEFT;
+        };
     }
 
     @Override
@@ -476,13 +474,13 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             return null;
         }
 
-        switch (tp.getValue()) {
-            case FontAlignmentProp.BASELINE: return FontAlign.BASELINE;
-            case FontAlignmentProp.TOP: return FontAlign.TOP;
-            case FontAlignmentProp.CENTER: return FontAlign.CENTER;
-            case FontAlignmentProp.BOTTOM: return FontAlign.BOTTOM;
-            default: return FontAlign.AUTO;
-        }
+        return switch (tp.getValue()) {
+            case FontAlignmentProp.BASELINE -> FontAlign.BASELINE;
+            case FontAlignmentProp.TOP -> FontAlign.TOP;
+            case FontAlignmentProp.CENTER -> FontAlign.CENTER;
+            case FontAlignmentProp.BOTTOM -> FontAlign.BOTTOM;
+            default -> FontAlign.AUTO;
+        };
     }
 
     public AutoNumberingScheme getAutoNumberingScheme() {
@@ -1738,14 +1736,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         if (ph == null) {
             return false;
         }
-        switch (ph) {
-            case DATETIME:
-            case SLIDE_NUMBER:
-            case FOOTER:
-            case HEADER:
-                return true;
-            default:
-                return false;
-        }
+        return switch (ph) {
+            case DATETIME, SLIDE_NUMBER, FOOTER, HEADER -> true;
+            default -> false;
+        };
     }
 }

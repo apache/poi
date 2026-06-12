@@ -233,15 +233,15 @@ public final class BOFRecord extends StandardRecord {
     }
 
     private String getTypeName() {
-        switch(field_2_type) {
-            case TYPE_CHART: return "chart";
-            case TYPE_EXCEL_4_MACRO: return "excel 4 macro";
-            case TYPE_VB_MODULE: return "vb module";
-            case TYPE_WORKBOOK: return "workbook";
-            case TYPE_WORKSHEET: return "worksheet";
-            case TYPE_WORKSPACE_FILE: return "workspace file";
-        }
-        return "#error unknown type#";
+        return switch (field_2_type) {
+            case TYPE_CHART -> "chart";
+            case TYPE_EXCEL_4_MACRO -> "excel 4 macro";
+            case TYPE_VB_MODULE -> "vb module";
+            case TYPE_WORKBOOK -> "workbook";
+            case TYPE_WORKSHEET -> "worksheet";
+            case TYPE_WORKSPACE_FILE -> "workspace file";
+            default -> "#error unknown type#";
+        };
     }
 
     public void serialize(LittleEndianOutput out) {

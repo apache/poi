@@ -197,17 +197,14 @@ public final class XSSFCell extends CellBase {
     @Override
     public boolean getBooleanCellValue() {
         CellType cellType = getCellType();
-        switch(cellType) {
-            case BLANK:
-                return false;
-            case BOOLEAN:
-                return _cell.isSetV() && TRUE_AS_STRING.equals(_cell.getV());
-            case FORMULA:
+        return switch (cellType) {
+            case BLANK -> false;
+            case BOOLEAN -> _cell.isSetV() && TRUE_AS_STRING.equals(_cell.getV());
+            case FORMULA ->
                 //YK: should throw an exception if requesting boolean value from a non-boolean formula
-                return _cell.isSetV() && TRUE_AS_STRING.equals(_cell.getV());
-            default:
-                throw typeMismatch(CellType.BOOLEAN, cellType, false);
-        }
+                    _cell.isSetV() && TRUE_AS_STRING.equals(_cell.getV());
+            default -> throw typeMismatch(CellType.BOOLEAN, cellType, false);
+        };
     }
 
     /**

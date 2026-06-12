@@ -259,26 +259,18 @@ public final class HSLFFill {
         // TODO: fix gradient types, this mismatches with the MS-ODRAW definition ...
         // need to handle (not only) the type (radial,rectangular,linear),
         // the direction, e.g. top right, and bounds (e.g. for rectangular boxes)
-        switch (fillType) {
-            case FILL_BACKGROUND:
-                return DrawPaint.createSolidPaint(getBackgroundColor());
-            case FILL_SOLID:
-                return DrawPaint.createSolidPaint(getForegroundColor());
-            case FILL_SHADE_SHAPE:
-                return getGradientPaint(GradientType.shape);
-            case FILL_SHADE_CENTER:
-            case FILL_SHADE_TITLE:
-                return getGradientPaint(GradientType.circular);
-            case FILL_SHADE:
-            case FILL_SHADE_SCALE:
-                return getGradientPaint(GradientType.linear);
-            case FILL_TEXTURE:
-            case FILL_PICTURE:
-                return getTexturePaint();
-            default:
+        return switch (fillType) {
+            case FILL_BACKGROUND -> DrawPaint.createSolidPaint(getBackgroundColor());
+            case FILL_SOLID -> DrawPaint.createSolidPaint(getForegroundColor());
+            case FILL_SHADE_SHAPE -> getGradientPaint(GradientType.shape);
+            case FILL_SHADE_CENTER, FILL_SHADE_TITLE -> getGradientPaint(GradientType.circular);
+            case FILL_SHADE, FILL_SHADE_SCALE -> getGradientPaint(GradientType.linear);
+            case FILL_TEXTURE, FILL_PICTURE -> getTexturePaint();
+            default -> {
                 LOG.atWarn().log("unsupported fill type: {}", box(fillType));
-                return null;
-        }
+                yield null;
+            }
+        };
     }
 
     private boolean isRotatedWithShape() {

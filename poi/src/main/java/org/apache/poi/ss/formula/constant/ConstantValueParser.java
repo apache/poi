@@ -80,14 +80,13 @@ public final class ConstantValueParser {
 
     private static Object readBoolean(LittleEndianInput in) {
         byte val = (byte)in.readLong(); // 7 bytes 'not used'
-        switch(val) {
-            case FALSE_ENCODING:
-                return Boolean.FALSE;
-            case TRUE_ENCODING:
-                return Boolean.TRUE;
-        }
-        // Don't tolerate unusual boolean encoded values (unless it becomes evident that they occur)
-        throw new IllegalArgumentException("unexpected boolean encoding (" + val + ")");
+        return switch (val) {
+            case FALSE_ENCODING -> Boolean.FALSE;
+            case TRUE_ENCODING -> Boolean.TRUE;
+            default ->
+                // Don't tolerate unusual boolean encoded values (unless it becomes evident that they occur)
+                    throw new IllegalArgumentException("unexpected boolean encoding (" + val + ")");
+        };
     }
 
     public static int getEncodedSize(Object[] values) {

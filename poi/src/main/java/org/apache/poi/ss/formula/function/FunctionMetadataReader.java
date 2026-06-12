@@ -171,12 +171,13 @@ final class FunctionMetadataReader {
         if(code.length() != 1) {
             throw new IllegalStateException("Bad operand type code format '" + code  + "' expected single char");
         }
-        switch(code.charAt(0)) {
-            case 'V': return Ptg.CLASS_VALUE;
-            case 'R': return Ptg.CLASS_REF;
-            case 'A': return Ptg.CLASS_ARRAY;
-        }
-        throw new IllegalArgumentException("Unexpected operand type code '" + code + "' (" + (int)code.charAt(0) + ")");
+        return switch (code.charAt(0)) {
+            case 'V' -> Ptg.CLASS_VALUE;
+            case 'R' -> Ptg.CLASS_REF;
+            case 'A' -> Ptg.CLASS_ARRAY;
+            default ->
+                    throw new IllegalArgumentException("Unexpected operand type code '" + code + "' (" + (int) code.charAt(0) + ")");
+        };
     }
 
     /**

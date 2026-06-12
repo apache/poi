@@ -727,22 +727,12 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     @Internal
     public CTTextParagraphProperties getDefaultMasterStyle() {
         CTPlaceholder ph = _shape.getPlaceholderDetails().getCTPlaceholder(false);
-        String defaultStyleSelector;
-        switch(ph == null ? -1 : ph.getType().intValue()) {
-            case STPlaceholderType.INT_TITLE:
-            case STPlaceholderType.INT_CTR_TITLE:
-                defaultStyleSelector = "titleStyle";
-                break;
-            case -1: // no placeholder means plain text box
-            case STPlaceholderType.INT_FTR:
-            case STPlaceholderType.INT_SLD_NUM:
-            case STPlaceholderType.INT_DT:
-                defaultStyleSelector = "otherStyle";
-                break;
-            default:
-                defaultStyleSelector = "bodyStyle";
-                break;
-        }
+        String defaultStyleSelector = switch (ph == null ? -1 : ph.getType().intValue()) {
+            case STPlaceholderType.INT_TITLE, STPlaceholderType.INT_CTR_TITLE ->
+                    "titleStyle"; // no placeholder means plain text box
+            case -1, STPlaceholderType.INT_FTR, STPlaceholderType.INT_SLD_NUM, STPlaceholderType.INT_DT -> "otherStyle";
+            default -> "bodyStyle";
+        };
         int level = getIndentLevel();
 
         // wind up and find the root master sheet which must be slide master

@@ -206,19 +206,11 @@ public class HSLFFontInfo implements FontInfo {
         fnt.setCharSet(getCharset().getNativeId());
         fnt.setFontFlags((byte)(isEmbedSubsetted() ? 1 : 0));
 
-        int typeFlag;
-        switch (renderType) {
-        case device:
-            typeFlag = FLAGS_RENDER_FONTTYPE.setValue(0, 1);
-            break;
-        case raster:
-            typeFlag = FLAGS_RENDER_FONTTYPE.setValue(0, 2);
-            break;
-        default:
-        case truetype:
-            typeFlag = FLAGS_RENDER_FONTTYPE.setValue(0, 4);
-            break;
-        }
+        int typeFlag = switch (renderType) {
+            case device -> FLAGS_RENDER_FONTTYPE.setValue(0, 1);
+            case raster -> FLAGS_RENDER_FONTTYPE.setValue(0, 2);
+            default -> FLAGS_RENDER_FONTTYPE.setValue(0, 4);
+        };
         typeFlag = FLAGS_NO_FONT_SUBSTITUTION.setBoolean(typeFlag, isFontSubstitutable());
         fnt.setFontType(typeFlag);
         

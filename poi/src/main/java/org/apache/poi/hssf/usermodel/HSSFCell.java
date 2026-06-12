@@ -671,10 +671,10 @@ public class HSSFCell extends CellBase {
                 return 0.0;
             case NUMERIC:
                 return ((NumberRecord)_record).getValue();
-            default:
-                throw typeMismatch(CellType.NUMERIC, _cellType, false);
             case FORMULA:
                 break;
+            default:
+                throw typeMismatch(CellType.NUMERIC, _cellType, false);
         }
         FormulaRecord fr = ((FormulaRecordAggregate)_record).getFormulaRecord();
         checkFormulaCachedValueType(CellType.NUMERIC, fr);
@@ -746,10 +746,10 @@ public class HSSFCell extends CellBase {
                 return new HSSFRichTextString("");
             case STRING:
                 return _stringValue;
-            default:
-                throw typeMismatch(CellType.STRING, _cellType, false);
             case FORMULA:
                 break;
+            default:
+                throw typeMismatch(CellType.STRING, _cellType, false);
         }
         FormulaRecordAggregate fra = ((FormulaRecordAggregate)_record);
         checkFormulaCachedValueType(CellType.STRING, fra.getFormulaRecord());
