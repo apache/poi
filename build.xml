@@ -1515,6 +1515,7 @@ under the License.
                 <pathelement path="${main-tests.lib}"/>
                 <pathelement path="${ooxml.lib}"/>
                 <pathelement path="${ooxml-provided.lib}"/>
+                <pathelement path="${ooxml-tests.lib}"/>
             </modulepath>
         </javac>
 
