@@ -60,26 +60,12 @@ under the License.
 
 
     <!-- compiler options -->
-    <property name="jdk.version.source" value="11" description="JDK version of source code"/>
-    <property name="jdk.version.class" value="11" description="JDK version of generated class files"/>
+    <property name="jdk.version.source" value="17" description="JDK version of source code"/>
+    <property name="jdk.version.class" value="17" description="JDK version of generated class files"/>
     <property name="compile.debug" value="true"/>
 
     <condition property="isIBMVM">
         <contains string="${java.vendor}" substring="IBM" casesensitive="false"/>
-    </condition>
-
-    <condition property="isJava8" else="false">
-        <equals arg1="${ant.java.version}" arg2="11"/>
-    </condition>
-
-    <!-- add addOpens parameter for Java 9 and higher -->
-    <condition property="addOpens">
-        <not><matches pattern="^1\..*" string="${java.version}"/></not>
-    </condition>
-
-    <!-- add addOpens parameter for Java 10 -->
-    <condition property="addOpens10">
-        <matches pattern="^10\..*" string="${java.version}"/>
     </condition>
 
     <!-- issue warnings if source code contains unmappable characters for encoding ASCII  -->
@@ -567,7 +553,7 @@ under the License.
     <target name="help" description="Prints Apache POI's Ant usage help">
       <echo>
   This is POI ${version.id}
-  Java Version ${ant.java.version}/${java.version}, isJava8: ${isJava8}
+  Java Version ${ant.java.version}/${java.version}
   Timestamp ${DSTAMP}
   The main targets of interest are:
     - clean       Erase all build work products (ie. everything in the build directory)
@@ -610,9 +596,7 @@ under the License.
 
         <echo message="Using Ant: ${ant.version} from ${ant.home}, Ant detected Java ${ant.java.version} (may be different than actual Java sometimes...)" />
         <echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />
-        <echo message="Building Apache POI version ${version.id} and RC: ${release.rc}, isJava8: ${isJava8}" />
-        <echo if:true="${isJava8}">Compiling for Java 8</echo>
-        <echo unless:true="${isJava8}">Compiling for Java 9+</echo>
+        <echo message="Building Apache POI version ${version.id} and RC: ${release.rc}" />
 
         <loadresource property="RELEASE_TAG">
             <string>REL_${version.id}</string>
@@ -971,7 +955,7 @@ under the License.
             </classpath>
         </xmlbean>
 
-        <javac release="8"
+        <javac release="17"
                target="${jdk.version.class}"
                source="${jdk.version.source}"
                srcdir="${ooxml-schema.output.gen-sources.dir}"
@@ -987,13 +971,12 @@ under the License.
             </classpath>
         </javac>
 
-        <javac release="11"
+        <javac release="17"
                srcdir="${basedir}/poi-ooxml-full/src/main/java9"
                destdir="${basedir}/poi-ooxml-full/src/main/java9"
                includeantruntime="false"
                fork="true"
-               modulepath="lib/ooxml"
-               unless:true="${isJava8}">
+               modulepath="lib/ooxml">
             <compilerarg line="--patch-module org.apache.poi.ooxml.schemas=${ooxml-schema.output.dir}${path.separator}${ooxml-schema.output.gen-classes.dir}"/>
         </javac>
 
@@ -1086,13 +1069,11 @@ under the License.
 
             <echo message="Building java9+ classes for @{module}"/>
 
-            <!-- compile jigsaw files to sources, so we don't forget to update/provide them for Java 8 builds -->
-            <javac release="11"
+            <javac release="17"
                    srcdir="${basedir}/@{module}/src/main/java9"
                    destdir="${basedir}/@{module}/src/main/java9"
                    includeantruntime="false"
-                   fork="true"
-                   unless:true="${isJava8}">
+                   fork="true">
                 <compilerarg line="--patch-module org.apache.poi.${module-name}=@{classes}"/>
                 <modulepath>
                     <lib/>
@@ -1101,7 +1082,7 @@ under the License.
 
             <mkdir dir="build/dist/maven/${maven-name}"/>
 
-            <echo message="Building jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8}"/>
+            <echo message="Building jar for @{module}, module-name: ${module-name}"/>
 
             <!-- create classes jar -->
             <jar destfile="build/dist/maven/${maven-name}/${maven-name}-@{version}.jar">
@@ -1126,7 +1107,7 @@ under the License.
             </jar>
 
             <!-- compile the tests -->
-            <javac release="11"
+            <javac release="17"
                    target="${jdk.version.class}"
                    source="${jdk.version.source}"
                    destdir="@{test-classes}"
@@ -1148,19 +1129,19 @@ under the License.
                 <path location="@{test-classes}"/>
             </pathconvert>
 
-            <javac release="11"
+            <javac release="17"
                    srcdir="${basedir}/@{module}/src/test/java9"
                    destdir="${basedir}/@{module}/src/test/java9"
                    includeantruntime="false"
                    fork="true"
-                   unless:true="${isJava8}" unless:blank="@{test}">
+                   unless:blank="@{test}">
                 <compilerarg line="--patch-module org.apache.poi.${module-name}=${merged}"/>
                 <modulepath>
                     <lib/>
                 </modulepath>
             </javac>
 
-            <echo message="Building test-jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8}"/>
+            <echo message="Building test-jar for @{module}, module-name: ${module-name}"/>
 
             <!-- create test classes jar - using the module-info of the tests -->
             <jar destfile="build/dist/maven/${maven-name}-tests/${maven-name}-@{version}-tests.jar" unless:blank="@{test}">
@@ -1276,7 +1257,7 @@ under the License.
 
         <!-- create ooxml-lite-agent jar -->
         <mkdir dir="${ooxml.lite.output.dir}"/>
-        <javac release="11"
+        <javac release="17"
                srcdir="${basedir}/poi-ooxml-lite-agent/src/main/java"
                destdir="${ooxml.lite.output.dir}"
                includeantruntime="false"
@@ -1287,13 +1268,12 @@ under the License.
             </classpath>
         </javac>
 
-        <javac release="11"
+        <javac release="17"
                srcdir="${basedir}/poi-ooxml-lite-agent/src/main/java9"
                destdir="${basedir}/poi-ooxml-lite-agent/src/main/java9"
                includeantruntime="false"
                fork="true"
-               modulepath="${basedir}/lib/main-tests"
-               unless:true="${isJava8}">
+               modulepath="${basedir}/lib/main-tests">
             <compilerarg line="--patch-module org.apache.poi.ooxml_lite=${ooxml.output.test.dir}${path.separator}${ooxml.lite.output.dir}"/>
         </javac>
 
@@ -1373,16 +1353,16 @@ under the License.
             <local name="use_module2"/>
             <local name="use_module3"/>
             <local name="use_module4"/>
-            <condition property="use_module1" value="true" unless:true="${isJava8}">
+            <condition property="use_module1" value="true">
                 <length string="@{module1}" when="greater" length="0"/>
             </condition>
-            <condition property="use_module2" value="true" unless:true="${isJava8}">
+            <condition property="use_module2" value="true">
                 <length string="@{module2}" when="greater" length="0"/>
             </condition>
-            <condition property="use_module3" value="true" unless:true="${isJava8}">
+            <condition property="use_module3" value="true">
                 <length string="@{module3}" when="greater" length="0"/>
             </condition>
-            <condition property="use_module4" value="true" unless:true="${isJava8}">
+            <condition property="use_module4" value="true">
                 <length string="@{module4}" when="greater" length="0"/>
             </condition>
 
@@ -1393,8 +1373,6 @@ under the License.
 
             <junitlauncher printsummary="false" haltonfailure="${halt.on.test.failure}" failureproperty="@{failureproperty}">
                 <classpath>
-                    <path refid="junit-jars" if:true="${isJava8}"/>
-                    <fileset dir="${basedir}" includes="${cp_java}" if:true="${isJava8}"/>
                     <pathelement location="poi-excelant/build/poi-ant-contrib"/>
                 </classpath>
 
@@ -1406,9 +1384,8 @@ under the License.
                         <jvmarg value="-ea"/>
 
                         <!-- some "add-opens" and other properties are needed when running with Java 9 or newer -->
-                        <sysproperty key="sun.reflect.debugModuleAccessChecks" value="true" if:true="${addOpens}" />
-                        <sysproperty key="com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize" value="true" if:true="${addOpens}" />
-                        <jvmarg value="--illegal-access=warn" if:true="${addOpens}" />
+                        <sysproperty key="sun.reflect.debugModuleAccessChecks" value="true"/>
+                        <sysproperty key="com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize" value="true"/>
                         <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}" if:true="${ooxml.lite.agent.exists}"/>
                         <jvmarg line="${jacocoagent}"/>
 
@@ -1423,13 +1400,13 @@ under the License.
 <!--                        <jvmarg value="&#45;&#45;show-module-resolution"/>-->
 
 
-                        <modulepath refid="@{modulepath-ref}" unless:true="${isJava8}"/>
+                        <modulepath refid="@{modulepath-ref}"/>
 
                         <!--jvmarg line="-verbose:module"/-->
-                        <jvmarg line="--add-opens java.base/java.lang=net.bytebuddy" unless:true="${isJava8}"/>
+                        <jvmarg line="--add-opens java.base/java.lang=net.bytebuddy"/>
 
-                        <jvmarg line="--add-modules org.junit.platform.launcher" unless:true="${isJava8}"/>
-                        <jvmarg line="--add-modules org.junit.jupiter.params" unless:true="${isJava8}"/>
+                        <jvmarg line="--add-modules org.junit.platform.launcher"/>
+                        <jvmarg line="--add-modules org.junit.jupiter.params"/>
                         <jvmarg line="--add-modules org.apache.poi.@{module1}" if:set="use_module1"/>
                         <jvmarg line="--add-modules org.apache.poi.@{module2}" if:set="use_module2"/>
                         <jvmarg line="--add-modules @{module3}" if:set="use_module3"/>
@@ -1495,7 +1472,7 @@ under the License.
     </target>
 
     <target name="compile-integration" depends="compile-scratchpad, compile-main, compile-ooxml, compile-examples">
-        <javac release="11"
+        <javac release="17"
                target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${integration.output.test.dir}"
@@ -1522,12 +1499,11 @@ under the License.
 
         <mkdir dir="${integration.output.test.dir}/META-INF/versions/9"/>
 
-        <javac release="11"
+        <javac release="17"
                srcdir="${basedir}/poi-integration/src/test/java9"
                destdir="${integration.output.test.dir}/META-INF/versions/9"
                includeantruntime="false"
-               fork="true"
-               unless:true="${isJava8}">
+               fork="true">
             <compilerarg line="--patch-module org.apache.poi.stress=${integration.output.test.dir}"/>
             <modulepath>
                 <pathelement path="build/dist/maven/poi-ooxml-full"/>
@@ -1896,12 +1872,11 @@ under the License.
 
         <echo output="${basedir}/poi-ooxml-lite/src/main/java9/module-info.java">${full.schema}${lite.exports}}</echo>
 
-        <javac release="11"
+        <javac release="17"
                srcdir="${basedir}/poi-ooxml-lite/src/main/java9"
                destdir="${basedir}/poi-ooxml-lite/src/main/java9"
                includeantruntime="false"
-               fork="true"
-               unless:true="${isJava8}">
+               fork="true">
             <compilerarg line="--patch-module org.apache.poi.ooxml.schemas=${ooxml.xsds.jar}"/>
             <modulepath>
                 <pathelement path="lib/ooxml"/>
@@ -2119,7 +2094,7 @@ under the License.
                 <include name="org/apache/poi/**"/>
             </packageset>
 
-            <arg value="--add-modules=java.xml.bind" if:true="${addOpens10}"/>
+            <arg value="--add-modules=java.xml.bind"/>
 
             <doctitle><![CDATA[<h1>POI API Documentation</h1>]]></doctitle>
             <bottom>
@@ -2248,15 +2223,14 @@ under the License.
                 </filterchain>
             </loadresource>
 
-            <echo message="Building maven-jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8} and src: @{src}"/>
+            <echo message="Building maven-jar for @{module}, module-name: ${module-name} with src: @{src}"/>
 
-            <javac release="11"
+            <javac release="17"
                    srcdir="${basedir}/@{module}/src/main/java9"
                    destdir="@{src}/META-INF/versions/9"
                    includeantruntime="false"
                    fork="true"
-                   modulepath="${main.lib}"
-                   unless:true="${isJava8}">
+                   modulepath="${main.lib}">
                 <compilerarg line="--patch-module org.apache.poi.${module-name}=@{src}"/>
                 <elements/>
             </javac>

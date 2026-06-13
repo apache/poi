@@ -453,13 +453,6 @@ subprojects {
         systemProperties['java.locale.providers'] = 'JRE,CLDR'
 
         doFirst {
-            // some options were removed in JDK 18
-            if (jdkVersion < 18) {
-                jvmArgs += [
-                    '--illegal-access=warn',
-                ]
-            }
-
             jvmArgs += [
                 // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
                 // opposed to the recommendation there, it doesn't work to add ... to the dependencies
