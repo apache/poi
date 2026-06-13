@@ -125,7 +125,7 @@ def xmlbeansjobs = [
 def gitBase = 'https://github.com/apache/poi.git'
 def xmlbeansGitBase = 'https://github.com/apache/xmlbeans.git'
 
-def defaultJdk = '1.11'
+def defaultJdk = '1.17'
 def defaultBranch = 'trunk'
 def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
