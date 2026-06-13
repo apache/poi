@@ -53,10 +53,6 @@ def poijobs = [
         [ name: 'POI-DSL-1.24', jdk: '1.24', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-DSL-1.25', jdk: '1.25', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
-          // use Ant for building until Gradle supports JDK 25
-          // see https://docs.gradle.org/current/userguide/compatibility.html
-          // and https://github.com/gradle/gradle/issues/31625
-          useAnt: true
         ],
         // Use Ant-build for now as selecting IBM JDK via toolchain does not work (yet)
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, useAnt: true
