@@ -97,11 +97,7 @@ def poijobs = [
         [ name: 'POI-DSL-Windows-1.24', jdk: '1.24', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
         ],
         [ name: 'POI-DSL-Windows-1.25', jdk: '1.25', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          skipSpotbugs: true,
-          // use Ant for building until Gradle supports JDK 24
-          // see https://docs.gradle.org/current/userguide/compatibility.html
-          // and https://github.com/gradle/gradle/issues/31625
-          useAnt: true
+          skipSpotbugs: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', skipcigame: true, disabled: true
         ],
