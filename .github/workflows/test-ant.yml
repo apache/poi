@@ -22,7 +22,7 @@ jobs:
 
     name: Java ${{ matrix.java }} build
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v7
 
     - name: Setup java ${{ matrix.java }}
       uses: actions/setup-java@v5
@@ -38,7 +38,7 @@ jobs:
         ANT_HOME=`pwd`/apache-ant-1.10.17 apache-ant-1.10.17/bin/ant -version
 
     - name: Cache downloaded third-party libraries
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         # A list of files, directories, and wildcard patterns to cache and restore
         path: lib
