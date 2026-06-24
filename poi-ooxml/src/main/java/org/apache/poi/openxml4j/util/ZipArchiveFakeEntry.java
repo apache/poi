@@ -64,6 +64,7 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
     private byte[] data;
     private File tempFile;
     private EncryptedTempData encryptedTempData;
+    private final long numberOfBytes;
 
     ZipArchiveFakeEntry(ZipArchiveEntry entry, InputStream inp) throws IOException {
         super(entry.getName());
@@ -77,13 +78,13 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
                 if (ZipInputStreamZipEntrySource.shouldEncryptTempFiles()) {
                     encryptedTempData = new EncryptedTempData();
                     try (OutputStream os = encryptedTempData.getOutputStream()) {
-                        IOUtils.copy(inp, os);
+                        numberOfBytes = IOUtils.copy(inp, os);
                     }
                 } else {
                     tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
                     LOG.atInfo().log("Creating temp file {} for zip entry {} of size {} bytes",
                             tempFile.getAbsolutePath(), entry.getName(), entrySize);
-                    IOUtils.copy(inp, tempFile);
+                    numberOfBytes = IOUtils.copy(inp, tempFile);
                 }
                 success = true;
             } finally {
@@ -103,7 +104,13 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
             // Grab the de-compressed contents for later
             data = (entrySize == -1) ? IOUtils.toByteArrayWithMaxLength(inp, getMaxEntrySize()) :
                     IOUtils.toByteArray(inp, entrySize, getMaxEntrySize(), "ZipArchiveFakeEntry.setMaxEntrySize()");
+            numberOfBytes = data.length;
         }
+    }
+
+    @Override
+    public long getSize() {
+        return numberOfBytes;
     }
 
     /**
@@ -150,4 +157,15 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
             }
         }
     }
+
+    // open for testing
+    boolean isUnencryptedTempFileBacked() {
+        return tempFile != null && tempFile.exists();
+    }
+
+    // open for testing
+    boolean isEncryptedTempFileBacked() {
+        return encryptedTempData != null;
+    }
+
 }

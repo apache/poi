@@ -29,7 +29,6 @@ import java.util.Set;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.StringUtil;
 
 /**
  * Provides a way to get at all the ZipEntries
@@ -44,7 +43,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
     private static boolean encryptTempFiles = false;
     private final Map<String, ZipArchiveFakeEntry> zipEntries = new HashMap<>();
 
-    private InputStream streamToClose;
+    private final InputStream streamToClose;
 
     /**
      * Set the threshold at which a zip entry is regarded as too large for holding in memory
