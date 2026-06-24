@@ -157,4 +157,15 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
             }
         }
     }
+
+    // open for testing
+    boolean isUnencryptedTempFileBacked() {
+        return tempFile != null && tempFile.exists();
+    }
+
+    // open for testing
+    boolean isEncryptedTempFileBacked() {
+        return encryptedTempData != null;
+    }
+
 }
