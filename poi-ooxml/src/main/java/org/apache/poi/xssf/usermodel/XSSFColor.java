@@ -382,7 +382,13 @@ public class XSSFColor extends ExtendedColor {
 
     @Override
     public int hashCode() {
-        return ctColor.toString().hashCode();
+        int result = 17;
+        result = 31 * result + (isAuto() ? 1 : 0);
+        result = 31 * result + (isIndexed() ? Short.hashCode(getIndex()) : 0);
+        result = 31 * result + (isRGB() ? java.util.Arrays.hashCode(getARGB()) : 0);
+        result = 31 * result + (isThemed() ? Integer.hashCode(getTheme()) : 0);
+        result = 31 * result + (hasTint() ? Double.hashCode(getTint()) : 0);
+        return result;
     }
 
     // Helper methods for {@link #equals(Object)}

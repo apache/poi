@@ -198,4 +198,26 @@ public final class TestXSSFColor {
           assertEquals(hexRgb, color.getARGBHex());
        }
    }
+
+    @Test
+    void testEqualsAndHashCodeContract() throws Exception {
+        // Create programmatic CTColor
+        org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor ct1 = 
+                org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor.Factory.newInstance();
+        ct1.setRgb(new byte[]{1, 2, 3});
+
+        // Parse equivalent CTColor from string with custom namespace attribute to simulate different document contexts
+        org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor ct2 = 
+                org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor.Factory.parse(
+                        "<xml-fragment rgb=\"010203\" xmlns:custom=\"http://custom-namespace\"/>");
+
+        XSSFColor color1 = XSSFColor.from(ct1);
+        XSSFColor color2 = XSSFColor.from(ct2);
+
+        // They must be logically equal
+        assertEquals(color1, color2, "Colors must be logically equal");
+
+        // The hashCodes must be identical under the Java equals-hashCode contract
+        assertEquals(color1.hashCode(), color2.hashCode(), "Equal colors must have the same hashCode");
+    }
 }
