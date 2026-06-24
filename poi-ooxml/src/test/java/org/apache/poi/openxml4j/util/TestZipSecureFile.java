@@ -318,4 +318,86 @@ class TestZipSecureFile {
             Locale.setDefault(defaultLocale);
         }
     }
+
+    @Test
+    void testZipInputStreamZipEntrySourcePreservesMetadata() throws Exception {
+        File tempFile = TempFile.createTempFile("metadata-test", ".zip");
+        try {
+            long expectedTime = 123456789000L;
+            try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(tempFile)) {
+                ZipArchiveEntry entry = new ZipArchiveEntry("test.txt");
+                entry.setSize(5);
+                entry.setTime(expectedTime);
+                entry.setMethod(ZipArchiveEntry.DEFLATED);
+                entry.setComment("test comment");
+                org.apache.commons.compress.archivers.zip.UnrecognizedExtraField uef = 
+                        new org.apache.commons.compress.archivers.zip.UnrecognizedExtraField();
+                uef.setHeaderId(new org.apache.commons.compress.archivers.zip.ZipShort(0x1234));
+                uef.setLocalFileDataData(new byte[]{1, 2, 3, 4});
+                entry.addExtraField(uef);
+                zos.putArchiveEntry(entry);
+                zos.write("hello".getBytes(StandardCharsets.UTF_8));
+                zos.closeArchiveEntry();
+            }
+
+            try (InputStream is = Files.newInputStream(tempFile.toPath());
+                 ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(is);
+                 ZipInputStreamZipEntrySource source = new ZipInputStreamZipEntrySource(zis)) {
+                ZipArchiveEntry entry = source.getEntry("test.txt");
+                assertNotNull(entry);
+                assertEquals(5, entry.getSize(), "Size should be preserved");
+                assertEquals(expectedTime, entry.getTime(), "Time should be preserved");
+                assertEquals(ZipArchiveEntry.DEFLATED, entry.getMethod(), "Method should be preserved");
+                // Sequential ZIP stream parser (ZipArchiveInputStream) reads local headers,
+                // which do not store comments. Thus, comment is expected to be null.
+                assertNull(entry.getComment(), "Comment should be null for sequential stream");
+                org.apache.commons.compress.archivers.zip.ZipExtraField field = 
+                        entry.getExtraField(new org.apache.commons.compress.archivers.zip.ZipShort(0x1234));
+                assertNotNull(field, "Extra field 0x1234 should be present");
+                assertArrayEquals(new byte[]{1, 2, 3, 4}, field.getLocalFileDataData(), "Extra field data should be preserved");
+            }
+        } finally {
+            tempFile.delete();
+        }
+    }
+
+    @Test
+    void testZipFileZipEntrySourcePreservesMetadata() throws Exception {
+        File tempFile = TempFile.createTempFile("metadata-test-file", ".zip");
+        try {
+            long expectedTime = 123456789000L;
+            try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(tempFile)) {
+                ZipArchiveEntry entry = new ZipArchiveEntry("test.txt");
+                entry.setSize(5);
+                entry.setTime(expectedTime);
+                entry.setMethod(ZipArchiveEntry.DEFLATED);
+                entry.setComment("test comment");
+                org.apache.commons.compress.archivers.zip.UnrecognizedExtraField uef = 
+                        new org.apache.commons.compress.archivers.zip.UnrecognizedExtraField();
+                uef.setHeaderId(new org.apache.commons.compress.archivers.zip.ZipShort(0x1234));
+                uef.setLocalFileDataData(new byte[]{1, 2, 3, 4});
+                entry.addExtraField(uef);
+                zos.putArchiveEntry(entry);
+                zos.write("hello".getBytes(StandardCharsets.UTF_8));
+                zos.closeArchiveEntry();
+            }
+
+            try (ZipSecureFile zipFile = new ZipSecureFile(tempFile)) {
+                ZipFileZipEntrySource source = new ZipFileZipEntrySource(zipFile);
+                ZipArchiveEntry entry = source.getEntry("test.txt");
+                assertNotNull(entry);
+                assertEquals(5, entry.getSize(), "Size should be preserved");
+                assertEquals(expectedTime, entry.getTime(), "Time should be preserved");
+                assertEquals(ZipArchiveEntry.DEFLATED, entry.getMethod(), "Method should be preserved");
+                assertEquals("test comment", entry.getComment(), "Comment should be preserved");
+                org.apache.commons.compress.archivers.zip.ZipExtraField field = 
+                        entry.getExtraField(new org.apache.commons.compress.archivers.zip.ZipShort(0x1234));
+                assertNotNull(field, "Extra field 0x1234 should be present");
+                assertArrayEquals(new byte[]{1, 2, 3, 4}, field.getLocalFileDataData(), "Extra field data should be preserved");
+            }
+        } finally {
+            tempFile.delete();
+        }
+    }
 }
+

@@ -66,7 +66,8 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
     private EncryptedTempData encryptedTempData;
 
     ZipArchiveFakeEntry(ZipArchiveEntry entry, InputStream inp) throws IOException {
-        super(entry.getName());
+        super(entry);
+        setComment(entry.getComment());
 
         final long entrySize = entry.getSize();
 
