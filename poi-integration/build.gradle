@@ -41,7 +41,7 @@ sourceSets {
 dependencies {
     testImplementation 'org.apache.ant:ant:1.10.15'
     testImplementation 'org.apache.commons:commons-collections4:4.5.0'
-    testImplementation 'com.google.guava:guava:33.5.0-jre'
+    testImplementation 'com.google.guava:guava:33.6.0-jre'
     testImplementation 'org.apache.commons:commons-csv:1.14.1'
 
     misc(project(':poi-ooxml')) {
