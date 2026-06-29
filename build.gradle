@@ -95,6 +95,18 @@ allprojects {
     apply plugin: 'idea'
 
     version = '6.0.0-SNAPSHOT'
+
+    tasks.cyclonedxDirectBom {
+        // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
+        includeConfigs = ["runtimeClasspath"]
+        // skipConfigs is a list of configuration names to exclude when generating the BOM
+        //skipConfigs = ["compileClasspath", "testCompileClasspath"]
+        // Specified the version of the CycloneDX specification to use
+        //schemaVersion = org.cyclonedx.model.schema.SchemaVersion.VERSION_16
+        // Specified the type of project being built. Defaults to 'library'
+        projectType = "library"
+        jsonOutput = file("build/reports/sbom/${project.name}-sbom.json")
+    }
 }
 
 abstract class VerifyModuleInfoIsPresent extends DefaultTask {
@@ -753,7 +765,6 @@ task jenkins(dependsOn: [
             subprojects.javadoc,
             subprojects.jacocoTestReport,
             subprojects.getDeps,
-            'srcDistZip',
             'srcDistTar',
             rat
 ]) {}
