@@ -261,6 +261,7 @@ under the License.
     <dependency prefix="main.junit-params" artifact="org.junit.jupiter:junit-jupiter-params:6.1.1" usage="main-tests"/>
     <dependency prefix="main.junit-opentest4j" artifact="org.opentest4j:opentest4j:1.2.0" usage="main-tests"/>
     <dependency prefix="main.junit-apiguardian" artifact="org.apiguardian:apiguardian-api:1.1.2" usage="main-tests"/>
+    <dependency prefix="main.junit-jspecify" artifact="org.jspecify:jspecify:1.0.0" usage="main-tests"/>
     <dependency prefix="main.junit-pcommons" artifact="org.junit.platform:junit-platform-commons:6.1.1" usage="main-tests"/>
     <dependency prefix="main.junit-pengine" artifact="org.junit.platform:junit-platform-engine:6.1.1" usage="main-tests"/>
     <dependency prefix="main.junit-plauncher" artifact="org.junit.platform:junit-platform-launcher:6.1.1" usage="main-tests"/>
@@ -419,6 +420,7 @@ under the License.
         <pathelement location="${main.junit-pcommons.jar}"/>
         <pathelement location="${main.junit-opentest4j.jar}"/>
         <pathelement location="${main.junit-apiguardian.jar}"/>
+        <pathelement location="${main.junit-jspecify.jar}"/>
         <pathelement location="${main.jmh.jar}"/>
         <pathelement location="${main.jmhAnnotation.jar}"/>
         <pathelement location="${main.hamcrest.jar}"/>
@@ -727,6 +729,7 @@ under the License.
                     <available file="${main.junit-pcommons.jar}"/>
                     <available file="${main.junit-opentest4j.jar}"/>
                     <available file="${main.junit-apiguardian.jar}"/>
+                    <available file="${main.junit-jspecify.jar}"/>
                     <available file="${main.jmh.jar}"/>
                     <available file="${main.jmhAnnotation.jar}"/>
                     <available file="${main.hamcrest.jar}"/>
@@ -775,6 +778,7 @@ under the License.
         <downloadfile src="${main.junit-pcommons.url}" dest="${main.junit-pcommons.jar}"/>
         <downloadfile src="${main.junit-opentest4j.url}" dest="${main.junit-opentest4j.jar}"/>
         <downloadfile src="${main.junit-apiguardian.url}" dest="${main.junit-apiguardian.jar}"/>
+        <downloadfile src="${main.junit-jspecify.url}" dest="${main.junit-jspecify.jar}"/>
         <downloadfile src="${main.jmh.url}" dest="${main.jmh.jar}"/>
         <downloadfile src="${main.jmhAnnotation.url}" dest="${main.jmhAnnotation.jar}"/>
         <downloadfile src="${main.hamcrest.url}" dest="${main.hamcrest.jar}"/>
@@ -1325,6 +1329,7 @@ under the License.
                 <pathelement location="${main.junit-params.jar}"/>
                 <pathelement location="${main.junit-opentest4j.jar}"/>
                 <pathelement location="${main.junit-apiguardian.jar}"/>
+                <pathelement location="${main.junit-jspecify.jar}"/>
                 <pathelement location="${main.junit-pcommons.jar}"/>
                 <pathelement location="${main.junit-pengine.jar}"/>
                 <pathelement location="${main.junit-plauncher.jar}"/>
@@ -2663,6 +2668,7 @@ under the License.
             <auxClasspath path="${main.junit-pcommons.jar}" />
             <auxClasspath path="${main.junit-opentest4j.jar}" />
             <auxClasspath path="${main.junit-apiguardian.jar}" />
+            <auxClasspath path="${main.junit-jspecify.jar}" />
             <auxClasspath path="${main.jmh.jar}"/>
             <auxClasspath path="${main.jmhAnnotation.jar}"/>
             <auxClasspath path="${main.ant.jar}" />
