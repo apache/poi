@@ -31,7 +31,7 @@ sourceSets {
 }
 
 dependencies {
-    api 'org.apache.ant:ant:1.10.17'
+    api "org.apache.ant:ant:${antVersion}"
 
     api project(':poi-ooxml')
     compileOnly project(path: ':poi-ooxml', configuration: 'archives')
@@ -41,9 +41,9 @@ dependencies {
     testImplementation(project(path: ':poi-ooxml', configuration: 'tests')) {
         exclude group: 'org.apache.poi', module: 'poi-scratchpad'
     }
-    testImplementation 'com.google.guava:guava:33.6.0-jre'
+    testImplementation "com.google.guava:guava:${guavaVersion}"
     testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
-    testImplementation 'org.slf4j:slf4j-simple:2.0.17'
+    testImplementation "org.slf4j:slf4j-simple:${slf4jVersion}"
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
     testRuntimeOnly "org.jspecify:jspecify:${jspecifyVersion}"
 }
