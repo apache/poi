@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.ExtendedColor;
@@ -382,7 +383,12 @@ public class XSSFColor extends ExtendedColor {
 
     @Override
     public int hashCode() {
-        return ctColor.toString().hashCode();
+        return Objects.hash(
+                isAuto(),
+                isIndexed() ? getIndex() : null,
+                isRGB() ? Arrays.hashCode(getARGB()) : null,
+                isThemed() ? getTheme() : null,
+                hasTint() ? getTint() : null);
     }
 
     // Helper methods for {@link #equals(Object)}
