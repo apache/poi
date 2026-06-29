@@ -48,6 +48,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
+    testRuntimeOnly "org.jspecify:jspecify:${jspecifyVersion}"
 
     // needed for locating the external references
     javadocs project(':poi-ooxml')

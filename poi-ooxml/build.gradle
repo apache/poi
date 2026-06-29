@@ -125,6 +125,7 @@ dependencies {
     testImplementation project(path:':poi', configuration:'tests')
     testImplementation project(path:':poi-ooxml-lite-agent', configuration: 'archives')
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
+    testRuntimeOnly "org.jspecify:jspecify:${jspecifyVersion}"
     testImplementation 'org.xmlunit:xmlunit-core:2.11.0'
     testImplementation 'org.reflections:reflections:0.10.2'
     testImplementation 'org.openjdk.jmh:jmh-core:1.37'
