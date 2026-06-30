@@ -170,7 +170,7 @@ subprojects {
         pdfboxVersion = '3.0.6'
         saxonVersion = '12.9'
         guavaVersion = '33.6.0-jre'
-        slf4jVersion = '2.0.17'
+        slf4jVersion = '2.0.18'
         jspecifyVersion = '1.0.0'
         xmlSecVersion = '3.0.6'
         apiGuardianVersion = '1.1.2'
