@@ -167,7 +167,7 @@ subprojects {
         xmlbeansVersion = '5.3.0'
         batikVersion = '1.19'
         graphics2dVersion = '3.0.5'
-        pdfboxVersion = '3.0.6'
+        pdfboxVersion = '3.0.7'
         saxonVersion = '12.9'
         guavaVersion = '33.6.0-jre'
         slf4jVersion = '2.0.18'
