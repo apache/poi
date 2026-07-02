@@ -190,14 +190,15 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
             return;
         }
 
-        final CTSRgbColor rgbCol = col.getSrgbClr();
-        if (rgbCol == null) {
+        XSLFSheet sheet = shape.getSheet();
+        XSLFTheme theme = sheet.getTheme();
+        XSLFColor xslfCol = new XSLFColor(col, theme, null, sheet);
+        Color javaCol = xslfCol.getColor();
+        if (javaCol == null) {
             return;
         }
 
-        final byte[] cols = rgbCol.getVal();
-        final SolidPaint paint = DrawPaint.createSolidPaint(new Color(0xFF & cols[0], 0xFF & cols[1], 0xFF & cols[2]));
-        highlightColor.accept(paint);
+        highlightColor.accept(DrawPaint.createSolidPaint(javaCol));
     }
 
     /**
