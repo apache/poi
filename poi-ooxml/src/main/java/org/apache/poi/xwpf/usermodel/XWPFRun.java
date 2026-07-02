@@ -1847,4 +1847,16 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public List<XWPFChart> getEmbeddedCharts() {
         return Collections.unmodifiableList(charts);
     }
+
+    /**
+     * Specifies if the reading order is set to right-to-left in the current run
+     * properties.
+     * @return The value of the right-to-left flag for the run. Defaults to false if not present
+     * in the document.
+     * @since 6.0.0
+     */
+    public boolean isRtl() {
+        CTRPr pr = getRunProperties(false);
+        return pr != null && pr.sizeOfRtlArray() > 0 && isCTOnOff(pr.getRtlArray(0));
+    }
 }
