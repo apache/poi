@@ -697,7 +697,7 @@ class TestXWPFTable {
 
             XWPFTable xtab = new XWPFTable(table, doc);
 
-            assertEquals(1, xtab.getNumberOfRows(), "Table should have 1 row at top level (SDT rows are not counted)");
+            assertEquals(2, xtab.getNumberOfRows(), "Table should have 2 rows total (1 normal + 1 SDT)");
 
             String text = xtab.getText();
             assertTrue(text.contains("Normal Row Cell 1"), "Text should contain normal row cell 1");
@@ -748,8 +748,8 @@ class TestXWPFTable {
 
             XWPFTable xtab = new XWPFTable(table, doc);
 
-            assertEquals(1, xtab.getNumberOfRows(), "Table has 1 row from createEmptyTable");
-            assertEquals(2, xtab.getRows().size(), "Table should have 2 rows (1 empty + 1 SDT)");
+            assertEquals(1, xtab.getNumberOfRows(), "Table has 1 SDT row");
+            assertEquals(1, xtab.getRows().size(), "Table should have 1 SDT row");
 
             String text = xtab.getText();
             assertTrue(text.contains("Only SDT Row"), "Text should contain SDT row content");
@@ -781,8 +781,8 @@ class TestXWPFTable {
 
             XWPFTable xtab = new XWPFTable(table, doc);
 
-            assertEquals(1, xtab.getNumberOfRows(), "Table has 1 top-level row (empty + 2 SDTs)");
-            assertEquals(3, xtab.getRows().size(), "Table should have 3 rows (empty + 2 SDTs)");
+            assertEquals(2, xtab.getNumberOfRows(), "Table has 2 SDT rows");
+            assertEquals(2, xtab.getRows().size(), "Table should have 2 SDT rows");
 
             String text = xtab.getText();
             assertTrue(text.contains("SDT Row 1"), "Text should contain first SDT row");
