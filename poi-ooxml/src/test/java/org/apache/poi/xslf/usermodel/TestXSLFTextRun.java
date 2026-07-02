@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.draw.DrawPaint;
@@ -200,4 +201,19 @@ class TestXSLFTextRun {
         }
     }
 
+    @Test
+    void testHighlightColorFromTextBoxes() throws IOException {
+        try (InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("text-highlight.pptx");
+             XMLSlideShow ppt = new XMLSlideShow(is)) {
+            List<XSLFShape> shapes = ppt.getSlides().get(0).getShapes();
+
+            XSLFTextShape presetColorBox = (XSLFTextShape) shapes.get(0);
+            XSLFTextRun presetColorRun = presetColorBox.getTextParagraphs().get(0).getTextRuns().get(0);
+            assertEquals(new Color(0xFF, 0x00, 0x00), getColor(presetColorRun.getHighlightColor()));
+
+            XSLFTextShape themeColorBox = (XSLFTextShape) shapes.get(1);
+            XSLFTextRun themeColorRun = themeColorBox.getTextParagraphs().get(0).getTextRuns().get(0);
+            assertEquals(new Color(0x0F, 0x9E, 0xD5), getColor(themeColorRun.getHighlightColor()));
+        }
+    }
 }
