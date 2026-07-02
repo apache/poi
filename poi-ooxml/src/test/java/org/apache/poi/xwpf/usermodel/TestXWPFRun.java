@@ -958,4 +958,16 @@ class TestXWPFRun {
             }
         }
     }
+
+    @Test
+    void testIsRtl() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("rtl.docx")) {
+            XWPFParagraph p = doc.getParagraphArray(0);
+
+            assertTrue(p.getRuns().get(0).isRtl());   // contains: <w:rtl/>
+            assertTrue(p.getRuns().get(1).isRtl());   // contains: <w:rtl w:val="true"/>
+            assertFalse(p.getRuns().get(5).isRtl());  // no rtl element
+            assertFalse(p.getRuns().get(13).isRtl()); // contains: <w:rtl w:val="false"/>
+        }
+    }
 }
