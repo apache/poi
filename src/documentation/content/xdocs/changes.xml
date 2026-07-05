@@ -70,6 +70,30 @@
         </p>
     </section>
 
+    <release version="6.0.0" date="TBD">
+        <summary>
+            <summary-item>Minimum Java version is now JDK 17 (was JDK 8 in POI 5.x)</summary-item>
+            <summary-item>Upgrade bouncycastle dependency to 1.84</summary-item>
+            <summary-item>Upgrade commons-codec dependency to 1.22.0</summary-item>
+            <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
+            <summary-item>Upgrade commons-io dependency to 2.22.0</summary-item>
+            <summary-item>Upgrade log4j-api dependency to 2.26.1</summary-item>
+            <summary-item>Upgrade mockito dependency to 5.23.0</summary-item>
+            <summary-item>Upgrade pdfbox dependency to 3.0.7</summary-item>
+            <summary-item>Upgrade saxon dependency to 13.0</summary-item>
+            <summary-item>Upgrade SLF4J to 2.0.18</summary-item>
+            <summary-item>Upgrade xmlsec dependency to 3.0.6</summary-item>
+            <summary-item>Upgrade spotbugs to 4.9.8</summary-item>
+            <summary-item>Upgrade Gradle to 9.6.1</summary-item>
+            <summary-item>Upgrade JUnit to 6.1.1</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="github-1150" context="OOXML">Improve ZipArchiveFakeEntry getSize</action>
+            <action type="add" fixes-bug="github-1172" context="XWPF">Implement XWPFRun.isRtl() getter</action>
+            <action type="add" fixes-bug="github-1174" context="XSLF">Support theme colors as highlight color in pptx</action>
+        </actions>
+    </release>
+
     <release version="5.5.1" date="2025-11-30">
         <summary>
             <summary-item>Upgrade bouncycastle dependency to 1.83</summary-item>
