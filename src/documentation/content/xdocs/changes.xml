@@ -73,6 +73,7 @@
     <release version="6.0.0" date="TBD">
         <summary>
             <summary-item>Minimum Java version is now JDK 17 (was JDK 8 in POI 5.x)</summary-item>
+            <summary-item>Add new methods so users can supply passwords via APIs instead of using Biff8EncryptionKey ThreadLocal</summary-item>
             <summary-item>Upgrade bouncycastle dependency to 1.84</summary-item>
             <summary-item>Upgrade commons-codec dependency to 1.22.0</summary-item>
             <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
@@ -84,10 +85,14 @@
             <summary-item>Upgrade SLF4J to 2.0.18</summary-item>
             <summary-item>Upgrade xmlsec dependency to 3.0.6</summary-item>
             <summary-item>Upgrade spotbugs to 4.9.8</summary-item>
+            <summary-item>Upgrade Ant to 1.10.17</summary-item>
             <summary-item>Upgrade Gradle to 9.6.1</summary-item>
             <summary-item>Upgrade JUnit to 6.1.1</summary-item>
         </summary>
         <actions>
+            <action type="fix" fixes-bug="github-1136" context="OOXML">Fix case-insensitive ZIP entry matching in ZipFileZipEntrySource under Turkish Locale</action>
+            <action type="fix" fixes-bug="66568" context="XSLF">Adjust selecting color from master-slide</action>
+            <action type="fix" fixes-bug="github-1149" context="XSSF">Fix equals() and hashCode() contract violation in XSSFColor</action>
             <action type="fix" fixes-bug="github-1150" context="OOXML">Improve ZipArchiveFakeEntry getSize</action>
             <action type="add" fixes-bug="github-1172" context="XWPF">Implement XWPFRun.isRtl() getter</action>
             <action type="add" fixes-bug="github-1174" context="XSLF">Support theme colors as highlight color in pptx</action>
