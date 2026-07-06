@@ -52,9 +52,9 @@ import static org.apache.logging.log4j.util.Unbox.box;
      * Updated named ranges
      */
     /*package*/
-    static void updateNamedRanges(Sheet sheet, FormulaShifter formulaShifter) {
-        Workbook wb = sheet.getWorkbook();
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
+    static void updateNamedRanges(XSSFSheet sheet, FormulaShifter formulaShifter) {
+        XSSFWorkbook wb = sheet.getWorkbook();
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         for (Name name : wb.getAllNames()) {
             String formula = name.getRefersToFormula();
             int sheetIndex = name.getSheetIndex();
@@ -71,20 +71,20 @@ import static org.apache.logging.log4j.util.Unbox.box;
     /**
      * Update formulas.
      */
-    /*package*/ static void updateFormulas(Sheet sheet, FormulaShifter formulaShifter) {
+    /*package*/ static void updateFormulas(XSSFSheet sheet, FormulaShifter formulaShifter) {
         //update formulas on the parent sheet
-        updateSheetFormulas(sheet,formulaShifter);
+        updateSheetFormulas(sheet, formulaShifter);
 
         //update formulas on other sheets
-        Workbook wb = sheet.getWorkbook();
+        XSSFWorkbook wb = sheet.getWorkbook();
         for(Sheet sh : wb)
         {
             if (sheet == sh) continue;
-            updateSheetFormulas(sh, formulaShifter);
+            updateSheetFormulas((XSSFSheet) sh, formulaShifter);
         }
     }
 
-    /*package*/ static void updateSheetFormulas(Sheet sh, FormulaShifter formulashifter) {
+    /*package*/ static void updateSheetFormulas(XSSFSheet sh, FormulaShifter formulashifter) {
         for (Row r : sh) {
             XSSFRow row = (XSSFRow) r;
             updateRowFormulas(row, formulashifter);
@@ -106,7 +106,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
             if (ctCell.isSetF()) {
                 CTCellFormula f = ctCell.getF();
                 String formula = f.getStringValue();
-                if (formula.length() > 0) {
+                if (!formula.isEmpty()) {
                     String shiftedFormula = shiftFormula(row, formula, formulaShifter);
                     if (shiftedFormula != null) {
                         f.setStringValue(shiftedFormula);
@@ -137,12 +137,12 @@ import static org.apache.logging.log4j.util.Unbox.box;
      * <code>null</code> if the formula wasn't modified
      */
     /*package*/
-    static String shiftFormula(Row row, String formula, FormulaShifter formulaShifter) {
-        Sheet sheet = row.getSheet();
-        Workbook wb = sheet.getWorkbook();
-        int sheetIndex = wb.getSheetIndex(sheet);
+    static String shiftFormula(XSSFRow row, String formula, FormulaShifter formulaShifter) {
+        XSSFSheet sheet = row.getSheet();
+        XSSFWorkbook wb = sheet.getWorkbook();
+        final int sheetIndex = wb.getSheetIndex(sheet);
         final int rowIndex = row.getRowNum();
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
 
         try {
             Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, rowIndex);
@@ -159,7 +159,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
     }
 
     /*package*/
-    static void updateRefInCTCellFormula(Row row, FormulaShifter formulaShifter, CTCellFormula f) {
+    static void updateRefInCTCellFormula(XSSFRow row, FormulaShifter formulaShifter, CTCellFormula f) {
         if (f.isSetRef()) { //Range of cells which the formula applies to.
             String ref = f.getRef();
             String shiftedRef = shiftFormula(row, ref, formulaShifter);
@@ -167,16 +167,13 @@ import static org.apache.logging.log4j.util.Unbox.box;
         }
     }
 
-
-
-    /*package*/ static void updateConditionalFormatting(Sheet sheet, FormulaShifter formulaShifter) {
-        XSSFSheet xsheet = (XSSFSheet) sheet;
-        XSSFWorkbook wb = xsheet.getWorkbook();
+    /*package*/ static void updateConditionalFormatting(XSSFSheet sheet, FormulaShifter formulaShifter) {
+        XSSFWorkbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
         final int rowIndex = -1; //don't care, structured references not allowed in conditional formatting
 
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
-        CTWorksheet ctWorksheet = xsheet.getCTWorksheet();
+        CTWorksheet ctWorksheet = sheet.getCTWorksheet();
         CTConditionalFormatting[] conditionalFormattingArray = ctWorksheet.getConditionalFormattingArray();
         // iterate backwards due to possible calls to ctWorksheet.removeConditionalFormatting(j)
         for (int j = conditionalFormattingArray.length - 1; j >= 0; j--) {
@@ -230,19 +227,18 @@ import static org.apache.logging.log4j.util.Unbox.box;
     }
 
 
-    /*package*/ static void updateHyperlinks(Sheet sheet, FormulaShifter formulaShifter) {
+    /*package*/ static void updateHyperlinks(XSSFSheet sheet, FormulaShifter formulaShifter) {
         final int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
 
-        for (Hyperlink hyperlink : sheet.getHyperlinkList()) {
-            XSSFHyperlink xhyperlink = (XSSFHyperlink) hyperlink;
-            String cellRef = xhyperlink.getCellRef();
+        for (XSSFHyperlink hyperlink : sheet.getHyperlinkList()) {
+            String cellRef = hyperlink.getCellRef();
             CellRangeAddress cra = CellRangeAddress.valueOf(cellRef);
             CellRangeAddress shiftedRange = BaseRowColShifter.shiftRange(formulaShifter, cra, sheetIndex);
             if (shiftedRange != null && shiftedRange != cra) {
                 // shiftedRange should not be null. If shiftedRange is null, that means
                 // that a hyperlink wasn't deleted at the beginning of shiftRows when
                 // identifying rows that should be removed because they will be overwritten
-                xhyperlink.setCellReference(shiftedRange.formatAsString());
+                hyperlink.setCellReference(shiftedRange.formatAsString());
             }
         }
     }
