@@ -624,8 +624,15 @@ public class XWPFTableCell implements IBody, ICell {
         XWPFTable.setWidthType(widthType, getTcWidth());
     }
 
+    /**
+     * Get the raw value of the table cell width. The units of this width depend on the width type.
+     *
+     * @see XWPFTableCell#getWidthType()
+     * @return raw value for table cell width, or -1 if it's not present.
+     */
     public int getWidth() {
-        return MathUtil.safeDoubleToInt(
-                Units.toDXA(POIXMLUnits.parseLength(getTcWidth().xgetW())));
+        return getTcPr().isSetTcW() ?
+                MathUtil.safeDoubleToInt(
+                        Units.toDXA(POIXMLUnits.parseLength(getTcWidth().xgetW()))) : -1;
     }
 }
