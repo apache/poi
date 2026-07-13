@@ -74,7 +74,7 @@ configurations {
 allprojects {
     ext {
         antVersion = '1.10.17'
-        junitVersion = '6.1.1'
+        junitVersion = '6.1.2'
     }
 }
 
