@@ -57,6 +57,14 @@ public interface XDDFDataSource<T> {
     String getFormatCode();
 
     /**
+     * @return number format for the point, or {@code null} to use {@link #getFormatCode()}
+     * @since 6.0.0
+     */
+    default String getPointFormatCode(int index) {
+        return null;
+    }
+
+    /**
      * @since 5.0.0
      */
     @Internal
@@ -78,6 +86,10 @@ public interface XDDFDataSource<T> {
                 CTNumVal ctNumVal = cache.addNewPt();
                 ctNumVal.setIdx(i);
                 ctNumVal.setV(value.toString());
+                String pointFormat = getPointFormatCode(i);
+                if (pointFormat != null && !pointFormat.equals(formatCode)) {
+                    ctNumVal.setFormatCode(pointFormat);
+                }
                 effectiveNumOfPoints++;
             }
         }

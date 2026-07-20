@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -500,7 +501,7 @@ public class XDDFDataSourcesFactory {
             return cellRangeAddress.formatAsString(sheet.getSheetName(), true);
         }
 
-        protected CellValue getCellValueAt(int index) {
+        protected XSSFCell getCellAt(int index) {
             if (index < 0 || index >= numOfCells) {
                 throw new IndexOutOfBoundsException(
                         "Index must be between 0 and " + (numOfCells - 1) + " (inclusive), given: " + index);
@@ -512,26 +513,54 @@ public class XDDFDataSourcesFactory {
             int rowIndex = firstRow + index / width;
             int cellIndex = firstCol + index % width;
             XSSFRow row = sheet.getRow(rowIndex);
-            return (row == null) ? null : evaluator.evaluate(row.getCell(cellIndex));
+            return (row == null) ? null : row.getCell(cellIndex);
+        }
+
+        protected CellValue getCellValueAt(int index) {
+            XSSFCell cell = getCellAt(index);
+            return (cell == null) ? null : evaluator.evaluate(cell);
+        }
+
+        protected String getCellFormatCodeAt(int index) {
+            XSSFCell cell = getCellAt(index);
+            return (cell == null) ? null : cell.getCellStyle().getDataFormatString();
         }
     }
 
     private static class NumericalCellRangeDataSource extends AbstractCellRangeDataSource<Double>
             implements XDDFNumericalDataSource<Double> {
+        private String formatCode;
+        private boolean formatCodeSet;
+
         protected NumericalCellRangeDataSource(XSSFSheet sheet, CellRangeAddress cellRangeAddress) {
             super(sheet, cellRangeAddress);
         }
 
-        private String formatCode;
-
         @Override
         public String getFormatCode() {
-            return formatCode;
+            if (formatCodeSet) {
+                return formatCode;
+            }
+            for (int i = 0; i < getPointCount(); i++) {
+                if (getPointAt(i) != null) {
+                    String cellFormat = getCellFormatCodeAt(i);
+                    if (cellFormat != null) {
+                        return cellFormat;
+                    }
+                }
+            }
+            return null;
         }
 
         @Override
         public void setFormatCode(String formatCode) {
             this.formatCode = formatCode;
+            this.formatCodeSet = true;
+        }
+
+        @Override
+        public String getPointFormatCode(int index) {
+            return getCellFormatCodeAt(index);
         }
 
         @Override
