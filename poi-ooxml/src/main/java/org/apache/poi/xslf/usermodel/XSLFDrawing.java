@@ -38,17 +38,24 @@ public class XSLFDrawing {
     /*package*/ XSLFDrawing(XSLFSheet sheet, CTGroupShape spTree){
         _sheet = sheet;
         _spTree = spTree;
-        XmlObject[] cNvPr = sheet.getSpTree().selectPath(
-                "declare namespace p='" + NS_PRESENTATIONML + "' .//*/p:cNvPr");
-        for(XmlObject o : cNvPr) {
-            // powerpoint generates AlternateContent elements which cNvPr elements aren't recognized
-            // ignore them for now
-            if (o instanceof CTNonVisualDrawingProps) {
-                CTNonVisualDrawingProps p = (CTNonVisualDrawingProps)o;
-                try {
-                    sheet.registerShapeId(Math.toIntExact(p.getId()));
-                } catch (ArithmeticException e) {
-                    throw new IllegalStateException("Int overflow with drawing id " + p.getId());
+
+        // Only performs the shape id scan when this is the sheet's own top-level
+        // drawing, since that scan is already recursive and covers every shape in
+        // the sheet. This avoids unnecessary re-scanning and the annoying
+        // "shape id _ has been already used" warning. See https://github.com/apache/poi/issues/924.
+        if (spTree == sheet.getSpTree()) {
+            XmlObject[] cNvPr = _spTree.selectPath(
+                    "declare namespace p='" + NS_PRESENTATIONML + "' .//*/p:cNvPr");
+            for(XmlObject o : cNvPr) {
+                // powerpoint generates AlternateContent elements which cNvPr elements aren't recognized
+                // ignore them for now
+                if (o instanceof CTNonVisualDrawingProps) {
+                    CTNonVisualDrawingProps p = (CTNonVisualDrawingProps)o;
+                    try {
+                        sheet.registerShapeId(Math.toIntExact(p.getId()));
+                    } catch (ArithmeticException e) {
+                        throw new IllegalStateException("Int overflow with drawing id " + p.getId());
+                    }
                 }
             }
         }

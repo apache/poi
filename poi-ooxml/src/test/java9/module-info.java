@@ -124,6 +124,7 @@ module org.apache.poi.ooxml {
     requires org.junit.jupiter.params;
     requires com.google.common;
     requires org.mockito;
+    requires org.apache.logging.log4j.core;
 
     exports org.apache.poi.extractor.ooxml to org.junit.platform.commons;
     exports org.apache.poi.openxml4j.opc.compliance to org.junit.platform.commons;
