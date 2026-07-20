@@ -114,9 +114,23 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
      * unset text from this shape
      */
     public void clearText() {
-        _paragraphs.clear();
+        // Removing every paragraph leaves the text body with zero <a:p> elements,
+        // which violates the OOXML schema requirement that a text body contain at
+        // least one paragraph. Keep the first paragraph and just clear its content
+        // instead, same approach setText() below already relies on. See
+        // https://github.com/apache/poi/issues/919
+        if (_paragraphs.isEmpty()) {
+            return;
+        }
+
         CTTextBody txBody = getTextBody(true);
-        txBody.setPArray(null); // remove any existing paragraphs
+        int cntPs = txBody.sizeOfPArray();
+        for (int i = cntPs; i > 1; i--) {
+            txBody.removeP(i - 1);
+            _paragraphs.remove(i - 1);
+        }
+
+        _paragraphs.get(0).clearButKeepProperties();
     }
 
     @Override
@@ -743,7 +757,20 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
         clearText();
 
-        for (XSLFTextParagraph srcP : otherTS.getTextParagraphs()) {
+        // clearText() leaves one empty paragraph behind to satisfy the OOXML
+        // requirement of at least one paragraph. If the source has paragraphs of
+        // its own to copy in, remove that leftover empty one first so it doesn't
+        // end up as a stray leading paragraph in front of the real copied content.
+        // If the source has no paragraphs either, leave it - it's already exactly
+        // the state clearText() is supposed to produce. See
+        // https://github.com/apache/poi/issues/919
+        List<XSLFTextParagraph> srcParagraphs = otherTS.getTextParagraphs();
+        if (!srcParagraphs.isEmpty()) {
+            getTextBody(true).removeP(0);
+            _paragraphs.remove(0);
+        }
+
+        for (XSLFTextParagraph srcP : srcParagraphs) {
             XSLFTextParagraph tgtP = addNewTextParagraph();
             tgtP.copy(srcP);
         }
