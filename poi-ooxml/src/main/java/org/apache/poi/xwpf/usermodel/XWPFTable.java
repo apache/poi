@@ -218,8 +218,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             return;
         }
 
-        XmlCursor cursor = sdtContent.newCursor();
-        try {
+        try (XmlCursor cursor = sdtContent.newCursor()) {
             if (!cursor.toFirstChild()) {
                 return;
             }
@@ -231,8 +230,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                     collectCTRowsInnerSdtRow((CTSdtRow) child, rows);
                 }
             } while (cursor.toNextSibling());
-        } finally {
-            cursor.dispose();
         }
     }
 
