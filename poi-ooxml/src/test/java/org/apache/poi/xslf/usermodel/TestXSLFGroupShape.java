@@ -19,19 +19,15 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.appender.AbstractAppender;
-import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
@@ -95,36 +91,22 @@ class TestXSLFGroupShape {
         }
     }
 
+    // https://github.com/apache/poi/issues/924
     @Test
-    void testCreatingShapeInGroupDoesNotWarnAboutReusedShapeIds() throws Exception {
-        List<String> capturedWarnings = new ArrayList<>();
-        LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
-        Configuration config = loggerContext.getConfiguration();
-        Appender captureAppender = new AbstractAppender("capture-for-test", null, null, false, null) {
-            @Override
-            public void append(LogEvent event) {
-                capturedWarnings.add(event.getMessage().getFormattedMessage());
-            }
-        };
-        captureAppender.start();
-        config.addAppender(captureAppender);
-        config.getRootLogger().addAppender(captureAppender, Level.WARN, null);
-        loggerContext.updateLoggers();
-
+    void testCreatingShapeInGroupDoesNotReregisterShapeIds() throws Exception {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
-            XSLFSlide slide = ppt.createSlide();
+            XSLFSlide slide = spy(ppt.createSlide());
             slide.createTextBox();
             slide.createTextBox();
             XSLFGroupShape group = slide.createGroup();
 
+            clearInvocations(slide);
+
             // This is the trigger: the first shape created directly on the group.
             group.createTextBox();
-        } finally {
-            config.getRootLogger().removeAppender("capture-for-test");
-            loggerContext.updateLoggers();
-        }
 
-        assertTrue(capturedWarnings.isEmpty(), () -> "Expected no shape-id warnings, but got: " + capturedWarnings);
+            verify(slide, never()).registerShapeId(anyInt());
+        }
     }
 
     @Test

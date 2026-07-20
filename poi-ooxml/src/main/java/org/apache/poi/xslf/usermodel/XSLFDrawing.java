@@ -49,8 +49,7 @@ public class XSLFDrawing {
             for(XmlObject o : cNvPr) {
                 // powerpoint generates AlternateContent elements which cNvPr elements aren't recognized
                 // ignore them for now
-                if (o instanceof CTNonVisualDrawingProps) {
-                    CTNonVisualDrawingProps p = (CTNonVisualDrawingProps)o;
+                if (o instanceof CTNonVisualDrawingProps p) {
                     try {
                         sheet.registerShapeId(Math.toIntExact(p.getId()));
                     } catch (ArithmeticException e) {
