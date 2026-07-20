@@ -709,7 +709,8 @@ public class DateUtil {
         // Ensure it has some date letters in it
         // (Avoids false positives on the rest of pattern 3)
         if (! date_ptrn3a.matcher(fs).find()) {
-           return false;
+            cache(formatString, formatIndex, false);
+            return false;
         }
 
         // If we get here, check it's only made up, in any case, of:
