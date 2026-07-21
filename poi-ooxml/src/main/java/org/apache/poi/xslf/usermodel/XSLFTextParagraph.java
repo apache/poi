@@ -1026,9 +1026,6 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         for (int i=thisP.sizeOfFldArray(); i>0; i--) {
             thisP.removeFld(i-1);
         }
-        // _runs.size() counts fields too, but fields and runs are removed from
-        // separate XML arrays - remove exactly what's actually there instead of
-        // relying on _runs.size() as the bound.
         for (int i=thisP.sizeOfRArray(); i>0; i--) {
             thisP.removeR(i-1);
         }

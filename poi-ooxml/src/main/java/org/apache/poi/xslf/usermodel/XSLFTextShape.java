@@ -116,8 +116,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     public void clearText() {
         // Removing every paragraph leaves the text body with zero <a:p> elements,
         // which violates the OOXML schema requirement that a text body contain at
-        // least one paragraph. Keep the first paragraph and just clear its content
-        // instead, same approach setText() below already relies on. See
+        // least one paragraph. Here we keep the first paragraph and clear its
+        // contents instead, similarly to the approach in setText(). See
         // https://github.com/apache/poi/issues/919
         if (_paragraphs.isEmpty()) {
             return;
@@ -761,8 +761,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         // requirement of at least one paragraph. If the source has paragraphs of
         // its own to copy in, remove that leftover empty one first so it doesn't
         // end up as a stray leading paragraph in front of the real copied content.
-        // If the source has no paragraphs either, leave it - it's already exactly
-        // the state clearText() is supposed to produce. See
+        // If the source has no paragraphs either, leave it as that's already the
+        // state clearText() is supposed to produce. See
         // https://github.com/apache/poi/issues/919
         List<XSLFTextParagraph> srcParagraphs = otherTS.getTextParagraphs();
         if (!srcParagraphs.isEmpty()) {
