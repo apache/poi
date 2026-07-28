@@ -178,12 +178,12 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject xmlObject = cursor.getObject();
-                if (xmlObject instanceof CTRow) {
-                    processCTRow((CTRow)xmlObject);
+                if (xmlObject instanceof CTRow ctRow) {
+                    processCTRow(ctRow);
                 }
-                else if (xmlObject instanceof CTSdtRow) {
+                else if (xmlObject instanceof CTSdtRow sdtRow) {
                     List<CTRow> rows = new ArrayList<>();
-                    collectCTRowsInnerSdtRow((CTSdtRow)xmlObject, rows);
+                    collectCTRowsInnerSdtRow(sdtRow, rows);
                     for (CTRow row : rows)
                     {
                         processCTRow(row);
@@ -224,10 +224,10 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             }
             do {
                 XmlObject child = cursor.getObject();
-                if (child instanceof CTRow) {
-                    rows.add((CTRow) child);
-                } else if (child instanceof CTSdtRow) {
-                    collectCTRowsInnerSdtRow((CTSdtRow) child, rows);
+                if (child instanceof CTRow ctRow) {
+                    rows.add(ctRow);
+                } else if (child instanceof CTSdtRow sdtChild) {
+                    collectCTRowsInnerSdtRow(sdtChild, rows);
                 }
             } while (cursor.toNextSibling());
         }
