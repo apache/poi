@@ -121,7 +121,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                 NodeList kids = t.getDomNode().getChildNodes();
                 for (int n = 0; n < kids.getLength(); n++) {
                     if (kids.item(n) instanceof Text) {
-                        if (text.length() > 0) {
+                        if (!text.isEmpty()) {
                             text.append("\n");
                         }
                         text.append(kids.item(n).getNodeValue());
@@ -145,8 +145,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             for (XmlObject chartRel : chartRels) {
                 if (chartRel instanceof CTRelId) {
                     POIXMLDocumentPart chart = getDocument().getRelationById(((CTRelId) chartRel).getId());
-                    if (chart instanceof XWPFChart) {
-                        charts.add((XWPFChart) chart);
+                    if (chart instanceof XWPFChart xwpfChart) {
+                        charts.add(xwpfChart);
                     }
                 }
             }
@@ -190,8 +190,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                     throw new POIXMLException(e);
                 }
             }
-            if (pict instanceof CTPicture) {
-                pics.add((CTPicture) pict);
+            if (pict instanceof CTPicture ctPicture) {
+                pics.add(ctPicture);
             }
         }
         return pics;
@@ -223,8 +223,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Deprecated
     public XWPFParagraph getParagraph() {
-        if (parent instanceof XWPFParagraph) {
-            return (XWPFParagraph) parent;
+        if (parent instanceof XWPFParagraph xwpfParagraph) {
+            return xwpfParagraph;
         }
         return null;
     }
@@ -625,8 +625,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (underline != null) {
             Object rawValue = underline.getColor();
             if (rawValue != null) {
-                if (rawValue instanceof String) {
-                    colorName = (String) rawValue;
+                if (rawValue instanceof String str) {
+                    colorName = str;
                 } else {
                     byte[] rgbColor = (byte[]) rawValue;
                     colorName = HexDump.toHex(rgbColor[0]) + HexDump.toHex(rgbColor[1]) + HexDump.toHex(rgbColor[2]);
@@ -1270,12 +1270,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         // Work out what to add the picture to, then add both the
         //  picture and the relationship for it
         // TODO Should we have an interface for this sort of thing?
-        if (parent.getPart() instanceof XWPFHeaderFooter) {
-            XWPFHeaderFooter headerFooter = (XWPFHeaderFooter) parent.getPart();
+        if (parent.getPart() instanceof XWPFHeaderFooter headerFooter) {
             relationId = headerFooter.addPictureData(pictureData, pictureType);
             picData = (XWPFPictureData) headerFooter.getRelationById(relationId);
-        } else if (parent.getPart() instanceof XWPFComments) {
-            XWPFComments comments = (XWPFComments) parent.getPart();
+        } else if (parent.getPart() instanceof XWPFComments comments) {
             relationId = comments.addPictureData(pictureData, pictureType);
             picData = (XWPFPictureData) comments.getRelationById(relationId);
         } else {
@@ -1614,8 +1612,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                 }
             }
         }
-        if (o instanceof CTFtnEdnRef) {
-            CTFtnEdnRef ftn = (CTFtnEdnRef) o;
+        if (o instanceof CTFtnEdnRef ftn) {
             final int i = ftn.getId() == null ? -1 : ftn.getId().intValue();
             String footnoteRef = ftn.getDomNode().getLocalName().equals("footnoteReference") ?
                     "[footnoteRef:" + i + "]" : "[endnoteRef:" + i + "]";

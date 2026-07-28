@@ -77,8 +77,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 c.selectPath("child::*");
                 while (c.toNextSelection()) {
                     XmlObject o = c.getObject();
-                    if (o instanceof CTFtnEdnRef) {
-                        CTFtnEdnRef ftn = (CTFtnEdnRef) o;
+                    if (o instanceof CTFtnEdnRef ftn) {
                         final BigInteger id = ftn.getId();
                         footnoteText.append(" [").append(id).append(": ");
                         XWPFAbstractFootnoteEndnote footnote =
@@ -115,37 +114,34 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             c.selectPath("child::*");
             while (c.toNextSelection()) {
                 XmlObject o = c.getObject();
-                if (o instanceof CTR) {
-                    XWPFRun r = new XWPFRun((CTR) o, (IRunBody) this);
+                if (o instanceof CTR ctr) {
+                    XWPFRun r = new XWPFRun(ctr, (IRunBody) this);
                     runs.add(r);
                     iruns.add(r);
                 }
-                if (o instanceof CTHyperlink) {
-                    CTHyperlink link = (CTHyperlink)o;
+                if (o instanceof CTHyperlink link) {
                     for (CTR r : link.getRArray()) {
                         XWPFHyperlinkRun hr = new XWPFHyperlinkRun(link, r, this);
                         runs.add(hr);
                         iruns.add(hr);
                     }
                 }
-                if (o instanceof CTSimpleField) {
-                    CTSimpleField field = (CTSimpleField)o;
+                if (o instanceof CTSimpleField field) {
                     for (CTR r : field.getRArray()) {
                         XWPFFieldRun fr = new XWPFFieldRun(field, r, this);
                         runs.add(fr);
                         iruns.add(fr);
                     }
                 }
-                if (o instanceof CTSdtBlock) {
-                    XWPFSDT cc = new XWPFSDT((CTSdtBlock) o, part);
+                if (o instanceof CTSdtBlock block) {
+                    XWPFSDT cc = new XWPFSDT(block, part);
                     iruns.add(cc);
                 }
-                if (o instanceof CTSdtRun) {
-                    XWPFSDT cc = new XWPFSDT((CTSdtRun) o, part);
+                if (o instanceof CTSdtRun run) {
+                    XWPFSDT cc = new XWPFSDT(run, part);
                     iruns.add(cc);
                 }
-                if (o instanceof CTRunTrackChange) {
-                    final CTRunTrackChange parentRecord = (CTRunTrackChange) o;
+                if (o instanceof CTRunTrackChange parentRecord) {
                     for (CTR r : parentRecord.getRArray()) {
                         XWPFRun cr = new XWPFRun(r, (IRunBody) this);
                         runs.add(cr);
@@ -201,14 +197,13 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public String getText() {
         StringBuilder out = new StringBuilder(64);
         for (IRunElement run : iruns) {
-            if (run instanceof XWPFRun) {
-                XWPFRun xRun = (XWPFRun) run;
+            if (run instanceof XWPFRun xRun) {
                 // don't include the text if reviewing is enabled and this is a deleted run
                 if (xRun.getCTR().sizeOfDelTextArray() == 0) {
                     out.append(xRun);
                 }
-            } else if (run instanceof XWPFSDT) {
-                out.append(((XWPFSDT) run).getContent().getText());
+            } else if (run instanceof XWPFSDT xSdt) {
+                out.append(xSdt.getContent().getText());
             } else {
                 out.append(run);
             }
@@ -466,7 +461,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         StringBuilder out = new StringBuilder(64);
         for (XWPFRun run : runs) {
             String pictureText = run.getPictureText();
-            if (out.length() > 0 && pictureText.length() > 0) {
+            if (!out.isEmpty() && !pictureText.isEmpty()) {
                 out.append("\n");
             }
             out.append(pictureText);
@@ -1718,9 +1713,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 c.selectPath("./*");
                 while (c.toNextSelection()) {
                     XmlObject o = c.getObject();
-                    if (o instanceof CTText) {
+                    if (o instanceof CTText ctText) {
                         if (textPos >= startText) {
-                            String candidate = ((CTText) o).getStringValue();
+                            String candidate = ctText.getStringValue();
                             if (runPos == startRun) {
                                 charPos = startChar;
                             } else {
@@ -1811,9 +1806,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         if (pos >= 0 && pos < runs.size()) {
             XWPFRun run = runs.get(pos);
             // CTP -> CTHyperlink -> R array
-            if (run instanceof XWPFHyperlinkRun
-                    && isTheOnlyCTHyperlinkInRuns((XWPFHyperlinkRun) run)) {
-                try (XmlCursor c = ((XWPFHyperlinkRun) run).getCTHyperlink().newCursor()) {
+            if (run instanceof XWPFHyperlinkRun hyperlinkRun
+                    && isTheOnlyCTHyperlinkInRuns(hyperlinkRun)) {
+                try (XmlCursor c = hyperlinkRun.getCTHyperlink().newCursor()) {
                     c.removeXml();
                 }
                 runs.remove(pos);
@@ -1821,9 +1816,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 return true;
             }
             // CTP -> CTField -> R array
-            if (run instanceof XWPFFieldRun
-                    && isTheOnlyCTFieldInRuns((XWPFFieldRun) run)) {
-                try (XmlCursor c = ((XWPFFieldRun) run).getCTField().newCursor()) {
+            if (run instanceof XWPFFieldRun fieldRun
+                    && isTheOnlyCTFieldInRuns(fieldRun)) {
+                try (XmlCursor c = fieldRun.getCTField().newCursor()) {
                     c.removeXml();
                 }
                 runs.remove(pos);
@@ -1847,8 +1842,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     private boolean isTheOnlyCTHyperlinkInRuns(XWPFHyperlinkRun run) {
         CTHyperlink ctHyperlink = run.getCTHyperlink();
-        long count = runs.stream().filter(r -> (r instanceof XWPFHyperlinkRun
-                && ctHyperlink == ((XWPFHyperlinkRun) r).getCTHyperlink()))
+        long count = runs.stream().filter(r -> (r instanceof XWPFHyperlinkRun hyperlinkRun
+                && ctHyperlink == hyperlinkRun.getCTHyperlink()))
                 .count();
         return count <= 1;
     }
@@ -1860,8 +1855,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     private boolean isTheOnlyCTFieldInRuns(XWPFFieldRun run) {
         CTSimpleField ctField = run.getCTField();
-        long count = runs.stream().filter(r -> (r instanceof XWPFFieldRun
-                && ctField == ((XWPFFieldRun) r).getCTField())).count();
+        long count = runs.stream().filter(r -> (r instanceof XWPFFieldRun fieldRun
+                && ctField == fieldRun.getCTField())).count();
         return count <= 1;
     }
 
@@ -1934,10 +1929,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         XWPFRun run = createRun();
         CTR ctRun = run.getCTR();
         ctRun.addNewRPr().addNewRStyle().setVal("FootnoteReference");
-        if (footnote instanceof XWPFEndnote) {
-            ctRun.addNewEndnoteReference().setId(footnote.getId());
-        } else {
-            ctRun.addNewFootnoteReference().setId(footnote.getId());
+        if (footnote instanceof XWPFEndnote endnote) {
+            ctRun.addNewEndnoteReference().setId(endnote.getId());
+        } else if (footnote instanceof XWPFFootnote footnoteRef) {
+            ctRun.addNewFootnoteReference().setId(footnoteRef.getId());
         }
     }
 }

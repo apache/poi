@@ -226,16 +226,16 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                             bodyCursor.selectPath("./*");
                             while (bodyCursor.toNextSelection()) {
                                 XmlObject bodyObj = bodyCursor.getObject();
-                                if (bodyObj instanceof CTP) {
-                                    XWPFParagraph p = new XWPFParagraph((CTP) bodyObj, this);
+                                if (bodyObj instanceof CTP ctp) {
+                                    XWPFParagraph p = new XWPFParagraph(ctp, this);
                                     bodyElements.add(p);
                                     paragraphs.add(p);
-                                } else if (bodyObj instanceof CTTbl) {
-                                    XWPFTable t = new XWPFTable((CTTbl) bodyObj, this, false);
+                                } else if (bodyObj instanceof CTTbl table) {
+                                    XWPFTable t = new XWPFTable(table, this, false);
                                     bodyElements.add(t);
                                     tables.add(t);
-                                } else if (bodyObj instanceof CTSdtBlock) {
-                                    XWPFSDT c = new XWPFSDT((CTSdtBlock) bodyObj, this);
+                                } else if (bodyObj instanceof CTSdtBlock sdtBlock) {
+                                    XWPFSDT c = new XWPFSDT(sdtBlock, this);
                                     bodyElements.add(c);
                                     contentControls.add(c);
                                 }
@@ -763,10 +763,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     private void insertIntoParentElement(IBodyElement iBodyElement, Deque<XmlObject> path) {
         XmlObject firstObject = path.pop();
         if (path.isEmpty()) {
-            if (iBodyElement instanceof XWPFParagraph) {
-                insertIntoParagraphsAndElements((XWPFParagraph) iBodyElement, paragraphs, bodyElements);
-            } else if (iBodyElement instanceof XWPFTable) {
-                insertIntoTablesAndElements((XWPFTable) iBodyElement, tables, bodyElements);
+            if (iBodyElement instanceof XWPFParagraph xwpfParagraph) {
+                insertIntoParagraphsAndElements(xwpfParagraph, paragraphs, bodyElements);
+            } else if (iBodyElement instanceof XWPFTable xwpfTable) {
+                insertIntoTablesAndElements(xwpfTable, tables, bodyElements);
             }
         } else {
             CTTbl ctTbl = (CTTbl) path.pop(); //first object is always the body, we want the second one
@@ -873,10 +873,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     private Optional<XmlCursor> getNewCursor(IBodyElement iBodyElement) {
-        if (iBodyElement instanceof XWPFParagraph) {
-            return Optional.ofNullable(((XWPFParagraph) iBodyElement).getCTP().newCursor());
-        } else if (iBodyElement instanceof XWPFTable) {
-            return Optional.ofNullable(((XWPFTable) iBodyElement).getCTTbl().newCursor());
+        if (iBodyElement instanceof XWPFParagraph paragraph) {
+            return Optional.ofNullable(paragraph.getCTP().newCursor());
+        } else if (iBodyElement instanceof XWPFTable table) {
+            return Optional.ofNullable(table.getCTTbl().newCursor());
         }
         return Optional.empty();
     }
@@ -902,10 +902,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     private void insertElementIntoCell(XWPFTableCell tableCell, IBodyElement iBodyElement, Deque<XmlObject> path) {
         if (path.isEmpty()) {
-            if (iBodyElement instanceof XWPFParagraph) {
-                insertIntoParagraphsAndElements((XWPFParagraph) iBodyElement, tableCell.paragraphs, tableCell.bodyElements);
-            }  else if (iBodyElement instanceof XWPFTable) {
-                insertIntoTablesAndElements((XWPFTable) iBodyElement, tableCell.tables, tableCell.bodyElements);
+            if (iBodyElement instanceof XWPFParagraph paragraph) {
+                insertIntoParagraphsAndElements(paragraph, tableCell.paragraphs, tableCell.bodyElements);
+            }  else if (iBodyElement instanceof XWPFTable table) {
+                insertIntoTablesAndElements(table, tableCell.tables, tableCell.bodyElements);
             }
         } else {
             // another table
