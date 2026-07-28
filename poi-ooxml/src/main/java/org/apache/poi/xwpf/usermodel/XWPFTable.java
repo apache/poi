@@ -200,13 +200,13 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         for (CTTc cell : row.getTcList()) {
             for (CTP ctp : cell.getPList()) {
                 XWPFParagraph p = new XWPFParagraph(ctp, part);
-                if (rowText.length() > 0) {
+                if (!rowText.isEmpty()) {
                     rowText.append('\t');
                 }
                 rowText.append(p.getText());
             }
         }
-        if (rowText.length() > 0) {
+        if (!rowText.isEmpty()) {
             this.text.append(rowText);
             this.text.append('\n');
         }
@@ -1197,9 +1197,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                 try (XmlCursor cursor = nextCTRow.newCursor()) {
                     if (cursor.toParent()) {
                         XmlObject parent = cursor.getObject();
-                        if (parent instanceof CTTbl) {
+                        if (parent instanceof CTTbl tbl) {
                             // Top-level row - insert into table
-                            CTTbl tbl = (CTTbl) parent;
                             List<CTRow> trList = tbl.getTrList();
                             int idx = trList.indexOf(nextCTRow);
                             if (idx >= 0) {
@@ -1210,9 +1209,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                                 CTRow addedRow = ctTbl.addNewTr();
                                 addedRow.set(row.getCtRow());
                             }
-                        } else if (parent instanceof CTSdtContentRow) {
+                        } else if (parent instanceof CTSdtContentRow sdtContent) {
                             // SDT-wrapped row - insert into SDT content
-                            CTSdtContentRow sdtContent = (CTSdtContentRow) parent;
                             List<CTRow> trList = sdtContent.getTrList();
                             int idx = trList.indexOf(nextCTRow);
                             if (idx >= 0) {
@@ -1264,9 +1262,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                 try (XmlCursor cursor = nextCTRow.newCursor()) {
                     if (cursor.toParent()) {
                         XmlObject parent = cursor.getObject();
-                        if (parent instanceof CTTbl) {
+                        if (parent instanceof CTTbl tbl) {
                             // Top-level row - insert into table
-                            CTTbl tbl = (CTTbl) parent;
                             List<CTRow> trList = tbl.getTrList();
                             int idx = trList.indexOf(nextCTRow);
                             if (idx >= 0) {
@@ -1277,9 +1274,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                                 CTRow addedRow = ctTbl.addNewTr();
                                 newRow.set(addedRow);
                             }
-                        } else if (parent instanceof CTSdtContentRow) {
+                        } else if (parent instanceof CTSdtContentRow sdtContent) {
                             // SDT-wrapped row - insert into SDT content
-                            CTSdtContentRow sdtContent = (CTSdtContentRow) parent;
                             List<CTRow> trList = sdtContent.getTrList();
                             int idx = trList.indexOf(nextCTRow);
                             if (idx >= 0) {
@@ -1324,17 +1320,15 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             try (XmlCursor cursor = ctRow.newCursor()) {
                 if (cursor.toParent()) {
                     XmlObject parent = cursor.getObject();
-                    if (parent instanceof CTTbl) {
+                    if (parent instanceof CTTbl tbl) {
                         // Top-level row - find its actual position in tr array
-                        CTTbl tbl = (CTTbl) parent;
                         List<CTRow> trList = tbl.getTrList();
                         int idx = trList.indexOf(ctRow);
                         if (idx >= 0) {
                             tbl.removeTr(idx);
                         }
-                    } else if (parent instanceof CTSdtContentRow) {
+                    } else if (parent instanceof CTSdtContentRow sdtContent) {
                         // SDT-wrapped row - remove from SDT content
-                        CTSdtContentRow sdtContent = (CTSdtContentRow) parent;
                         List<CTRow> trList = sdtContent.getTrList();
                         int idx = trList.indexOf(ctRow);
                         if (idx >= 0) {
