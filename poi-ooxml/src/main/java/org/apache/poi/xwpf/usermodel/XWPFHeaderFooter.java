@@ -137,7 +137,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         for (XWPFParagraph paragraph : paragraphs) {
             if (!paragraph.isEmpty()) {
                 String text = paragraph.getText();
-                if (text != null && text.length() > 0) {
+                if (text != null && !text.isEmpty()) {
                     t.append(text);
                     t.append('\n');
                 }
@@ -146,7 +146,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 
         for (XWPFTable table : tables) {
             String text = table.getText();
-            if (text != null && text.length() > 0) {
+            if (text != null && !text.isEmpty()) {
                 t.append(text);
                 t.append('\n');
             }
@@ -543,13 +543,13 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
-                if (o instanceof CTP) {
-                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                if (o instanceof CTP ctp) {
+                    XWPFParagraph p = new XWPFParagraph(ctp, this);
                     paragraphs.add(p);
                     bodyElements.add(p);
                 }
-                if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
+                if (o instanceof CTTbl table) {
+                    XWPFTable t = new XWPFTable(table, this, false);
                     tables.add(t);
                     bodyElements.add(t);
                 }

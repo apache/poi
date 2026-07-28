@@ -51,16 +51,16 @@ public class XWPFComment implements IBody {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
-                if (o instanceof CTP) {
-                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                if (o instanceof CTP ctp) {
+                    XWPFParagraph p = new XWPFParagraph(ctp, this);
                     bodyElements.add(p);
                     paragraphs.add(p);
-                } else if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
+                } else if (o instanceof CTTbl table) {
+                    XWPFTable t = new XWPFTable(table, this, false);
                     bodyElements.add(t);
                     tables.add(t);
-                } else if (o instanceof CTSdtBlock) {
-                    XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
+                } else if (o instanceof CTSdtBlock block) {
+                    XWPFSDT c = new XWPFSDT(block, this);
                     bodyElements.add(c);
                 }
 

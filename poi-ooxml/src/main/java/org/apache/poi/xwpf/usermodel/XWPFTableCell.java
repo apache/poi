@@ -471,13 +471,12 @@ public class XWPFTableCell implements IBody, ICell {
     }
 
     private void appendBodyElementText(StringBuilder text, IBodyElement e, boolean isLast) {
-        if (e instanceof XWPFParagraph) {
-            text.append(((XWPFParagraph) e).getText());
+        if (e instanceof XWPFParagraph paragraph) {
+            text.append(paragraph.getText());
             if (!isLast) {
                 text.append('\t');
             }
-        } else if (e instanceof XWPFTable) {
-            XWPFTable eTable = (XWPFTable) e;
+        } else if (e instanceof XWPFTable eTable) {
             for (XWPFTableRow row : eTable.getRows()) {
                 for (XWPFTableCell cell : row.getTableCells()) {
                     List<IBodyElement> localBodyElements = cell.getBodyElements();
@@ -491,8 +490,8 @@ public class XWPFTableCell implements IBody, ICell {
             if (!isLast) {
                 text.append('\n');
             }
-        } else if (e instanceof XWPFSDT) {
-            text.append(((XWPFSDT) e).getContent().getText());
+        } else if (e instanceof XWPFSDT sdt) {
+            text.append(sdt.getContent().getText());
             if (!isLast) {
                 text.append('\t');
             }
@@ -549,8 +548,8 @@ public class XWPFTableCell implements IBody, ICell {
         if (depth > MAX_RECURSION_DEPTH) {
             throw new IllegalStateException("Recursion depth exceeded while trying to get XWPFDocument from XWPFTableCell");
         }
-        if (cell.part instanceof XWPFTableCell) {
-            return getCellDocument((XWPFTableCell) cell.part, depth + 1);
+        if (cell.part instanceof XWPFTableCell tableCell) {
+            return getCellDocument(tableCell, depth + 1);
         } else {
             return cell.part.getXWPFDocument();
         }

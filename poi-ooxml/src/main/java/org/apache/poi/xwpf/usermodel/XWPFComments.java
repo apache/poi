@@ -94,8 +94,7 @@ public class XWPFComments extends POIXMLDocumentPart {
         }
 
         for (POIXMLDocumentPart poixmlDocumentPart : getRelations()) {
-            if (poixmlDocumentPart instanceof XWPFPictureData) {
-                XWPFPictureData xwpfPicData = (XWPFPictureData) poixmlDocumentPart;
+            if (poixmlDocumentPart instanceof XWPFPictureData xwpfPicData) {
                 pictures.add(xwpfPicData);
                 document.registerPackagePictureData(xwpfPicData);
             }
