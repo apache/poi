@@ -987,6 +987,7 @@ public final class TestXWPFParagraph {
                     "A square shape with text inside\n" +
                     "An ellipse with text inside\n" +
                     "A group of shapes\nWhere some contain text", p.getPictureText());
+        }
     }
 
     @Test
