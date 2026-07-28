@@ -117,6 +117,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         _paragraphs.clear();
         CTTextBody txBody = getTextBody(true);
         txBody.setPArray(null); // remove any existing paragraphs
+        // add a default empty paragraph to keep the XML valid
+        txBody.addNewP();
+        _paragraphs.add(newTextParagraph(txBody.getPArray(0)));
     }
 
     @Override

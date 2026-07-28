@@ -30,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -980,6 +982,28 @@ class TestXSLFTextShape {
             String textExp = " ___ ___ ___ ________ __  _______ ___  ___________  __________ __ _____ ___ ___ ___ _______ ____ ______ ___________  _____________ ___ _______ ______  ____ ______ __ ___________  __________ ___ _________  _____ ________ __________  ___ _______ __________ ";
             textAct = xsh.getText();
             assertEquals(textExp, textAct);
+        }
+    }
+
+    @Test
+    void testClearTextWithEmptyParagraph() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide = ppt.createSlide();
+            XSLFTextBox textBox = slide.createTextBox();
+            textBox.clearText();
+            // After clearText, the shape should still produce valid XML
+            // when re-read from a byte stream
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ppt.write(bos);
+            byte[] pptBytes = bos.toByteArray();
+            try (XMLSlideShow readBack = new XMLSlideShow(new ByteArrayInputStream(pptBytes))) {
+                XSLFSlide readSlide = readBack.getSlides().get(0);
+                XSLFTextBox readTextBox = (XSLFTextBox) readSlide.getShapes().get(0);
+                assertNotNull(readTextBox);
+                // The shape should have at least one empty paragraph
+                assertFalse(readTextBox.getTextParagraphs().isEmpty());
+                assertEquals("", readTextBox.getText());
+            }
         }
     }
 }
