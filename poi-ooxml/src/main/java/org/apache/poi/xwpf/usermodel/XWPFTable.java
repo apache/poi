@@ -176,13 +176,13 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             for (CTTc cell : row.getTcList()) {
                 for (CTP ctp : cell.getPList()) {
                     XWPFParagraph p = new XWPFParagraph(ctp, part);
-                    if (rowText.length() > 0) {
+                    if (!rowText.isEmpty()) {
                         rowText.append('\t');
                     }
                     rowText.append(p.getText());
                 }
             }
-            if (rowText.length() > 0) {
+            if (!rowText.isEmpty()) {
                 this.text.append(rowText);
                 this.text.append('\n');
             }
