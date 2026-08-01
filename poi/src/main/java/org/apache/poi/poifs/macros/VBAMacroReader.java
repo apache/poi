@@ -490,40 +490,19 @@ public class VBAMacroReader implements Closeable {
         }
     }
 
-
     private enum DIR_STATE {
         INFORMATION_RECORD,
         REFERENCES_RECORD,
         MODULES_RECORD
     }
 
-    private static class ASCIIUnicodeStringPair {
-        private final String ascii;
-        private final String unicode;
-        private final int pushbackRecordId;
-
+    private record ASCIIUnicodeStringPair(String ascii, String unicode, int pushbackRecordId) {
         ASCIIUnicodeStringPair(String ascii, int pushbackRecordId) {
-            this.ascii = ascii;
-            this.unicode = "";
-            this.pushbackRecordId = pushbackRecordId;
+            this(ascii, "", pushbackRecordId);
         }
 
         ASCIIUnicodeStringPair(String ascii, String unicode) {
-            this.ascii = ascii;
-            this.unicode = unicode;
-            pushbackRecordId = -1;
-        }
-
-        private String getAscii() {
-            return ascii;
-        }
-
-        private String getUnicode() {
-            return unicode;
-        }
-
-        private int getPushbackRecordId() {
-            return pushbackRecordId;
+            this(ascii, unicode, -1);
         }
     }
 
@@ -556,7 +535,7 @@ public class VBAMacroReader implements Closeable {
                             break;
                         case MODULE_STREAM_NAME:
                             ASCIIUnicodeStringPair pair = readStringPair(in, modules.charset, STREAMNAME_RESERVED);
-                            streamName = pair.getAscii();
+                            streamName = pair.ascii();
                             break;
                         case PROJECT_DOC_STRING:
                             readStringPair(in, modules.charset, DOC_STRING_RESERVED);
@@ -573,18 +552,18 @@ public class VBAMacroReader implements Closeable {
                             }
                             ASCIIUnicodeStringPair stringPair = readStringPair(in,
                                     modules.charset, REFERENCE_NAME_RESERVED, false);
-                            if (stringPair.getPushbackRecordId() == -1) {
+                            if (stringPair.pushbackRecordId() == -1) {
                                 break;
                             }
                             //Special handling for when there's only an ascii string and a REFERENCED_REGISTERED
                             //record that follows.
                             //See https://github.com/decalage2/oletools/blob/master/oletools/olevba.py#L1516
                             //and https://github.com/decalage2/oletools/pull/135 from (@c1fe)
-                            if (stringPair.getPushbackRecordId() != RecordType.REFERENCE_REGISTERED.id) {
+                            if (stringPair.pushbackRecordId() != RecordType.REFERENCE_REGISTERED.id) {
                                 throw new IllegalArgumentException("Unexpected reserved character. "+
                                         "Expected "+Integer.toHexString(REFERENCE_NAME_RESERVED)
                                         + " or "+Integer.toHexString(RecordType.REFERENCE_REGISTERED.id)+
-                                        " not: "+Integer.toHexString(stringPair.getPushbackRecordId()));
+                                        " not: "+Integer.toHexString(stringPair.pushbackRecordId()));
                             }
                             //fall through!
                         case REFERENCE_REGISTERED:
