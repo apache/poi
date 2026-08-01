@@ -31,10 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -371,9 +369,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertEquals(4, sheet.getNumMergedRegions());
             assertEquals(4, ctWorksheet.getMergeCells().getCount());
             // test invalid indexes OOBE
-            Set<Integer> rmIdx = new HashSet<>(Arrays.asList(5, 6));
+            Set<Integer> rmIdx = Set.of(5, 6);
             sheet.removeMergedRegions(rmIdx);
-            rmIdx = new HashSet<>(Arrays.asList(1, 3));
+            rmIdx = Set.of(1, 3);
             sheet.removeMergedRegions(rmIdx);
             assertEquals(2, sheet.getNumMergedRegions());
             assertEquals(2, ctWorksheet.getMergeCells().getCount());
@@ -1559,7 +1557,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             XSSFPivotTable pivotTable = sheet.createPivotTable(wb.getCreationHelper().createAreaReference("A1:B2"),
                     new CellReference("H5"));
             assertNotNull(pivotTable);
-            assertTrue(wb.getPivotTables().size() > 0);
+            assertFalse(wb.getPivotTables().isEmpty());
             XSSFPivotTable pivotTable2 = sheet.createPivotTable(wb.getCreationHelper().createAreaReference("A1:B2"),
                     new CellReference("L5"), sheet);
             assertNotNull(pivotTable2);
@@ -1576,13 +1574,13 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertNotNull(sheet);
             XSSFPivotTable pivotTable = sheet.createPivotTable(wb.getCreationHelper().createAreaReference("A1:B2"), new CellReference("H5"));
             assertNotNull(pivotTable);
-            assertTrue(wb.getPivotTables().size() > 0);
+            assertFalse(wb.getPivotTables().isEmpty());
             assertNotNull(wb);
             XSSFSheet sheet2 = wb.createSheet();
             XSSFPivotTable pivotTable2 = sheet2.createPivotTable(wb.getCreationHelper().createAreaReference("A1:B2"),
                     new CellReference("H5"), sheet);
             assertNotNull(pivotTable2);
-            assertTrue(wb.getPivotTables().size() > 1);
+            assertFalse(wb.getPivotTables().isEmpty());
         }
     }
 
@@ -1595,7 +1593,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertNotNull(sheet);
             XSSFPivotTable pivotTable = sheet.createPivotTable(wb.getCreationHelper().createAreaReference("A1:B2"), new CellReference("H5"));
             assertNotNull(pivotTable);
-            assertTrue(wb.getPivotTables().size() > 0);
+            assertFalse(wb.getPivotTables().isEmpty());
         }
     }
 

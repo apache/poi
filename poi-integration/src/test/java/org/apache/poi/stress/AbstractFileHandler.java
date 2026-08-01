@@ -109,8 +109,7 @@ public abstract class AbstractFileHandler implements FileHandler {
                 assertEquals(length, file.length(), "File should not be modified by extractor");
                 assertEquals(modified, file.lastModified(), "File should not be modified by extractor");
 
-                if (extractor instanceof POIOLE2TextExtractor) {
-                    POIOLE2TextExtractor ole2Extractor = (POIOLE2TextExtractor) extractor;
+                if (extractor instanceof POIOLE2TextExtractor ole2Extractor) {
                     ole2Extractor.getRoot();
                     if (!(ole2Extractor instanceof EventBasedExcelExtractor)) {
                         ole2Extractor.getSummaryInformation();

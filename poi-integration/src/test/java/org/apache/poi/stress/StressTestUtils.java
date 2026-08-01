@@ -18,14 +18,11 @@ package org.apache.poi.stress;
 
 import org.apache.poi.util.IOUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 public class StressTestUtils {
     static Set<String> unmodifiableHashSet(String... a) {
-        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(a)));
+        return Set.of(a);
     }
 
     static boolean excludeFile(String path, Set<String> excludeSet) {
