@@ -151,12 +151,11 @@ public class VBAMacroReader implements Closeable {
                 }
             }
         }
-        if (fallback != null) {
-            this.fs = new POIFSFileSystem(
-                    UnsynchronizedByteArrayInputStream.builder().setByteArray(fallback).get());
-            return;
+        if (fallback == null) {
+            throw new IllegalArgumentException("No VBA project found");
         }
-        throw new IllegalArgumentException("No VBA project found");
+        this.fs = new POIFSFileSystem(
+                UnsynchronizedByteArrayInputStream.builder().setByteArray(fallback).get());
     }
 
     @Override
