@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -43,7 +45,7 @@ import org.apache.poi.util.IOUtils;
  */
 public abstract class AbstractFileHandler implements FileHandler {
     // some FileHandlers extend this list!?!
-    protected static final Set<String> EXPECTED_EXTRACTOR_FAILURES = Set.of(
+    protected static final Set<String> EXPECTED_EXTRACTOR_FAILURES = new HashSet<>(Arrays.asList(
         // password protected files without password
         // ... currently none ...
 
@@ -58,7 +60,7 @@ public abstract class AbstractFileHandler implements FileHandler {
         "poifs/64322.ole2",
         //commons-compress 1.21 no longer supports truncated files
         "document/truncated62886.docx"
-    );
+    ));
 
     @Override
     public void handleExtracting(File file) throws Exception {
