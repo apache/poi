@@ -125,7 +125,7 @@ public class VBAMacroReader implements Closeable {
     }
 
     private static final Set<String> CANONICAL_VBA_DIRS =
-            new HashSet<>(Arrays.asList("xl/", "word/", "ppt/", "visio/"));
+            Set.of("xl/", "word/", "ppt/", "visio/");
 
     private void openOOXML(InputStream zipFile) throws IOException {
         byte[] fallback = null;
