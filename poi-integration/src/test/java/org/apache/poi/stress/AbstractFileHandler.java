@@ -25,8 +25,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -45,7 +43,7 @@ import org.apache.poi.util.IOUtils;
  */
 public abstract class AbstractFileHandler implements FileHandler {
     // some FileHandlers extend this list!?!
-    protected static final Set<String> EXPECTED_EXTRACTOR_FAILURES = new HashSet<>(Arrays.asList(
+    protected static final Set<String> EXPECTED_EXTRACTOR_FAILURES = Set.of(
         // password protected files without password
         // ... currently none ...
 
@@ -60,7 +58,7 @@ public abstract class AbstractFileHandler implements FileHandler {
         "poifs/64322.ole2",
         //commons-compress 1.21 no longer supports truncated files
         "document/truncated62886.docx"
-    ));
+    );
 
     @Override
     public void handleExtracting(File file) throws Exception {
@@ -109,8 +107,7 @@ public abstract class AbstractFileHandler implements FileHandler {
                 assertEquals(length, file.length(), "File should not be modified by extractor");
                 assertEquals(modified, file.lastModified(), "File should not be modified by extractor");
 
-                if (extractor instanceof POIOLE2TextExtractor) {
-                    POIOLE2TextExtractor ole2Extractor = (POIOLE2TextExtractor) extractor;
+                if (extractor instanceof POIOLE2TextExtractor ole2Extractor) {
                     ole2Extractor.getRoot();
                     if (!(ole2Extractor instanceof EventBasedExcelExtractor)) {
                         ole2Extractor.getSummaryInformation();

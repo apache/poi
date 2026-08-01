@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -54,7 +53,7 @@ final class FunctionMetadataReader {
         // except in these cases
         "LOG10", "ATAN2", "DAYS360", "SUMXMY2", "SUMX2MY2", "SUMX2PY2", "A1.R1C1",
     };
-    private static final Set<String> DIGIT_ENDING_FUNCTION_NAMES_SET = new HashSet<>(Arrays.asList(DIGIT_ENDING_FUNCTION_NAMES));
+    private static final Set<String> DIGIT_ENDING_FUNCTION_NAMES_SET = Set.of(DIGIT_ENDING_FUNCTION_NAMES);
 
     /**
      * @param length the max record length allowed for FunctionMetadataReader
@@ -95,11 +94,11 @@ final class FunctionMetadataReader {
                     if (line == null) {
                         break;
                     }
-                    if (line.length() < 1 || line.charAt(0) == '#') {
+                    if (line.isEmpty() || line.charAt(0) == '#') {
                         continue;
                     }
                     String trimLine = line.trim();
-                    if (trimLine.length() < 1) {
+                    if (trimLine.isEmpty()) {
                         continue;
                     }
                     processLine(fdb, line);
@@ -141,7 +140,7 @@ final class FunctionMetadataReader {
     }
 
     private static byte[] parseOperandTypeCodes(String codes) {
-        if(codes.length() < 1) {
+        if(codes.isEmpty()) {
             return EMPTY_BYTE_ARRAY; // happens for GETPIVOTDATA
         }
         if(isDash(codes)) {
