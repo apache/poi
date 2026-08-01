@@ -29,7 +29,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -120,26 +124,38 @@ public class VBAMacroReader implements Closeable {
         this.fs = fs;
     }
 
+    private static final Set<String> CANONICAL_VBA_DIRS =
+            Set.of("xl/", "word/", "ppt/", "visio/");
+
     private void openOOXML(InputStream zipFile) throws IOException {
-        try(ZipInputStream zis = new ZipInputStream(zipFile)) {
+        byte[] fallback = null;
+        try (ZipInputStream zis = new ZipInputStream(zipFile)) {
             ZipEntry zipEntry;
             while ((zipEntry = zis.getNextEntry()) != null) {
                 if (endsWithIgnoreCase(zipEntry.getName(), VBA_PROJECT_OOXML)) {
-                    try {
-                        // Make a POIFSFileSystem from the contents, and close the stream
-                        this.fs = new POIFSFileSystem(zis);
+                    byte[] bytes = IOUtils.toByteArray(zis);
+                    String lowerName = zipEntry.getName().toLowerCase(Locale.ROOT);
+                    boolean canonical = CANONICAL_VBA_DIRS.stream()
+                            .anyMatch(lowerName::startsWith);
+                    if (canonical) {
+                        // Found vbaProject.bin at a standard OPC path.
+                        // Prefer this over any earlier non-canonical match.
+                        this.fs = new POIFSFileSystem(
+                                UnsynchronizedByteArrayInputStream.builder().setByteArray(bytes).get());
                         return;
-                    } catch (IOException e) {
-                        // Tidy up
-                        zis.close();
-
-                        // Pass on
-                        throw e;
+                    }
+                    // Non-canonical path — keep as fallback in case no canonical match appears
+                    if (fallback == null) {
+                        fallback = bytes;
                     }
                 }
             }
         }
-        throw new IllegalArgumentException("No VBA project found");
+        if (fallback == null) {
+            throw new IllegalArgumentException("No VBA project found");
+        }
+        this.fs = new POIFSFileSystem(
+                UnsynchronizedByteArrayInputStream.builder().setByteArray(fallback).get());
     }
 
     @Override
@@ -474,40 +490,19 @@ public class VBAMacroReader implements Closeable {
         }
     }
 
-
     private enum DIR_STATE {
         INFORMATION_RECORD,
         REFERENCES_RECORD,
         MODULES_RECORD
     }
 
-    private static class ASCIIUnicodeStringPair {
-        private final String ascii;
-        private final String unicode;
-        private final int pushbackRecordId;
-
+    private record ASCIIUnicodeStringPair(String ascii, String unicode, int pushbackRecordId) {
         ASCIIUnicodeStringPair(String ascii, int pushbackRecordId) {
-            this.ascii = ascii;
-            this.unicode = "";
-            this.pushbackRecordId = pushbackRecordId;
+            this(ascii, "", pushbackRecordId);
         }
 
         ASCIIUnicodeStringPair(String ascii, String unicode) {
-            this.ascii = ascii;
-            this.unicode = unicode;
-            pushbackRecordId = -1;
-        }
-
-        private String getAscii() {
-            return ascii;
-        }
-
-        private String getUnicode() {
-            return unicode;
-        }
-
-        private int getPushbackRecordId() {
-            return pushbackRecordId;
+            this(ascii, unicode, -1);
         }
     }
 
@@ -540,7 +535,7 @@ public class VBAMacroReader implements Closeable {
                             break;
                         case MODULE_STREAM_NAME:
                             ASCIIUnicodeStringPair pair = readStringPair(in, modules.charset, STREAMNAME_RESERVED);
-                            streamName = pair.getAscii();
+                            streamName = pair.ascii();
                             break;
                         case PROJECT_DOC_STRING:
                             readStringPair(in, modules.charset, DOC_STRING_RESERVED);
@@ -557,18 +552,18 @@ public class VBAMacroReader implements Closeable {
                             }
                             ASCIIUnicodeStringPair stringPair = readStringPair(in,
                                     modules.charset, REFERENCE_NAME_RESERVED, false);
-                            if (stringPair.getPushbackRecordId() == -1) {
+                            if (stringPair.pushbackRecordId() == -1) {
                                 break;
                             }
                             //Special handling for when there's only an ascii string and a REFERENCED_REGISTERED
                             //record that follows.
                             //See https://github.com/decalage2/oletools/blob/master/oletools/olevba.py#L1516
                             //and https://github.com/decalage2/oletools/pull/135 from (@c1fe)
-                            if (stringPair.getPushbackRecordId() != RecordType.REFERENCE_REGISTERED.id) {
+                            if (stringPair.pushbackRecordId() != RecordType.REFERENCE_REGISTERED.id) {
                                 throw new IllegalArgumentException("Unexpected reserved character. "+
                                         "Expected "+Integer.toHexString(REFERENCE_NAME_RESERVED)
                                         + " or "+Integer.toHexString(RecordType.REFERENCE_REGISTERED.id)+
-                                        " not: "+Integer.toHexString(stringPair.getPushbackRecordId()));
+                                        " not: "+Integer.toHexString(stringPair.pushbackRecordId()));
                             }
                             //fall through!
                         case REFERENCE_REGISTERED:
