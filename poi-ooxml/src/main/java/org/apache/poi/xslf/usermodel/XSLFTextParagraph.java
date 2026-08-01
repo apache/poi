@@ -1002,15 +1002,14 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      */
     /* package */ void clearButKeepProperties() {
         CTTextParagraph thisP = getXmlObject();
-        for (int i=thisP.sizeOfBrArray(); i>0; i--) {
-            thisP.removeBr(i-1);
-        }
-        for (int i=thisP.sizeOfFldArray(); i>0; i--) {
-            thisP.removeFld(i-1);
-        }
+
+        // Capture the last run's properties before removing anything - _runs can
+        // include field-backed runs (<a:fld>, e.g. slide number/date placeholders),
+        // and reading from one after its underlying XML has already been removed
+        // throws XmlValueDisconnectedException. See
+        // https://github.com/apache/poi/issues/919
         if (!_runs.isEmpty()) {
-            int size = _runs.size();
-            XSLFTextRun lastRun = _runs.get(size-1);
+            XSLFTextRun lastRun = _runs.get(_runs.size() - 1);
             CTTextCharacterProperties cpOther = lastRun.getRPr(false);
             if (cpOther != null) {
                 if (thisP.isSetEndParaRPr()) {
@@ -1019,11 +1018,18 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                 CTTextCharacterProperties cp = thisP.addNewEndParaRPr();
                 cp.set(cpOther);
             }
-            for (int i=size; i>0; i--) {
-                thisP.removeR(i-1);
-            }
-            _runs.clear();
         }
+
+        for (int i=thisP.sizeOfBrArray(); i>0; i--) {
+            thisP.removeBr(i-1);
+        }
+        for (int i=thisP.sizeOfFldArray(); i>0; i--) {
+            thisP.removeFld(i-1);
+        }
+        for (int i=thisP.sizeOfRArray(); i>0; i--) {
+            thisP.removeR(i-1);
+        }
+        _runs.clear();
     }
 
     @Override
