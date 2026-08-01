@@ -768,7 +768,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * Convenience method to set the active sheet.  The active sheet is is the sheet
+     * Convenience method to set the active sheet.  The active sheet is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      */

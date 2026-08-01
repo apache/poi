@@ -191,7 +191,7 @@ public class SXSSFWorkbook implements Workbook {
 
 
     /**
-     * Constructs an workbook from an existing workbook.
+     * Constructs a workbook from an existing workbook.
      * <p>
      * When a new node is created via {@link SXSSFSheet#createRow} and the total number
      * of unflushed records would exceed the specified value, then the
@@ -215,7 +215,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Constructs an workbook from an existing workbook.
+     * Constructs a workbook from an existing workbook.
      * <p>
      * When a new node is created via {@link SXSSFSheet#createRow} and the total number
      * of unflushed records would exceed the specified value, then the
@@ -240,7 +240,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Constructs an workbook from an existing workbook.
+     * Constructs a workbook from an existing workbook.
      * <p>
      * When a new node is created via {@link SXSSFSheet#createRow} and the total number
      * of unflushed records would exceed the specified value, then the
@@ -341,7 +341,7 @@ public class SXSSFWorkbook implements Workbook {
      * Set whether temp files should be compressed.
      * <p>
      *   SXSSF writes sheet data in temporary files (a temp file per-sheet)
-     *   and the size of these temp files can grow to to a very large size,
+     *   and the size of these temp files can grow to a very large size,
      *   e.g. for a 20 MB csv data the size of the temp xml file become few GB large.
      *   If the "compress" flag is set to <code>true</code> then the temporary XML is gzipped.
      * </p>
@@ -567,7 +567,7 @@ public class SXSSFWorkbook implements Workbook {
 //start of interface implementation
 
     /**
-     * Convenience method to get the active sheet.  The active sheet is is the sheet
+     * Convenience method to get the active sheet.  The active sheet is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      *
@@ -579,7 +579,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Convenience method to set the active sheet.  The active sheet is is the sheet
+     * Convenience method to set the active sheet.  The active sheet is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      *
