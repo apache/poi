@@ -33,13 +33,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.util.RecordFormatException;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 class TestVBAMacroReader {
     private static final Map<POIDataSamples, String> expectedMacroContents;
@@ -343,5 +350,122 @@ class TestVBAMacroReader {
         } finally {
             VBAMacroReader.setMaxStringLength(prevLimit);
         }
+    }
+
+    /**
+     * Verify that VBAMacroReader prefers the vbaProject.bin at a canonical OPC path
+     * (xl/vbaProject.bin) over one at a non-canonical path (docProps/vbaProject.bin),
+     * regardless of ZIP stream order.
+     *
+     * This prevents evasion where a crafted file places a benign decoy VBA project at a
+     * non-standard path that appears earlier in the ZIP stream than the real project.
+     */
+    @Test
+    void prefersCanonicalVbaProjectPath() throws IOException {
+        File realSrc = POIDataSamples.getSpreadSheetInstance().getFile("SimpleMacro.xlsm");
+        File decoySrc = POIDataSamples.getSpreadSheetInstance().getFile("testNames.xlsm");
+
+        byte[] realVba = extractZipEntry(realSrc, "xl/vbaProject.bin");
+        byte[] decoyVba = extractZipEntry(decoySrc, "xl/vbaProject.bin");
+
+        // Ground-truth: what each project's macros look like
+        Map<String, String> realMacros;
+        try (VBAMacroReader r = new VBAMacroReader(realSrc)) {
+            realMacros = new TreeMap<>(r.readMacros());
+        }
+        Map<String, String> decoyMacros;
+        try (VBAMacroReader r = new VBAMacroReader(decoySrc)) {
+            decoyMacros = new TreeMap<>(r.readMacros());
+        }
+        assertFalse(realMacros.equals(decoyMacros), "test fixtures must have different macros");
+
+        // Craft an .xlsm with decoy at docProps/vbaProject.bin (non-canonical, first in stream)
+        // and real at xl/vbaProject.bin (canonical, second in stream).
+        byte[] crafted = craftDualVbaXlsm(realVba, decoyVba, /*decoyFirst=*/true);
+
+        // VBAMacroReader should return the REAL macros (from the canonical xl/ path),
+        // not the decoy (from the non-canonical docProps/ path).
+        Map<String, String> seen;
+        try (VBAMacroReader r = new VBAMacroReader(new ByteArrayInputStream(crafted))) {
+            seen = new TreeMap<>(r.readMacros());
+        }
+        assertEquals(realMacros, seen,
+                "VBAMacroReader must prefer canonical xl/vbaProject.bin over non-canonical docProps/vbaProject.bin");
+
+        // Reverse order: real first, decoy second — should still get real macros.
+        byte[] craftedReverse = craftDualVbaXlsm(realVba, decoyVba, /*decoyFirst=*/false);
+        Map<String, String> seenReverse;
+        try (VBAMacroReader r = new VBAMacroReader(new ByteArrayInputStream(craftedReverse))) {
+            seenReverse = new TreeMap<>(r.readMacros());
+        }
+        assertEquals(realMacros, seenReverse,
+                "VBAMacroReader must return canonical xl/vbaProject.bin regardless of stream order");
+    }
+
+    private static byte[] extractZipEntry(File zip, String entryName) throws IOException {
+        try (ZipFile zf = new ZipFile(zip)) {
+            ZipEntry e = zf.getEntry(entryName);
+            assertNotNull(e, "entry '" + entryName + "' not in " + zip);
+            try (InputStream in = zf.getInputStream(e)) {
+                return in.readAllBytes();
+            }
+        }
+    }
+
+    /**
+     * Assemble a minimal .xlsm with two vbaProject.bin entries:
+     * real at xl/vbaProject.bin (canonical) and decoy at docProps/vbaProject.bin (non-canonical).
+     * Stream order is controlled by {@code decoyFirst}.
+     */
+    private static byte[] craftDualVbaXlsm(byte[] realVba, byte[] decoyVba, boolean decoyFirst) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(bos)) {
+            putZipEntry(zos, "[Content_Types].xml",
+                    ("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                    + "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">"
+                    + "<Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/>"
+                    + "<Default Extension=\"xml\" ContentType=\"application/xml\"/>"
+                    + "<Default Extension=\"bin\" ContentType=\"application/vnd.ms-office.vbaProject\"/>"
+                    + "<Override PartName=\"/xl/workbook.xml\" ContentType=\"application/vnd.ms-excel.sheet.macroEnabled.main+xml\"/>"
+                    + "</Types>").getBytes(StandardCharsets.UTF_8));
+
+            putZipEntry(zos, "_rels/.rels",
+                    ("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                    + "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">"
+                    + "<Relationship Id=\"rId1\" "
+                    + "Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" "
+                    + "Target=\"xl/workbook.xml\"/>"
+                    + "</Relationships>").getBytes(StandardCharsets.UTF_8));
+
+            putZipEntry(zos, "xl/workbook.xml",
+                    ("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                    + "<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" "
+                    + "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">"
+                    + "<sheets><sheet name=\"Sheet1\" sheetId=\"1\" r:id=\"rId1\"/></sheets>"
+                    + "</workbook>").getBytes(StandardCharsets.UTF_8));
+
+            putZipEntry(zos, "xl/_rels/workbook.xml.rels",
+                    ("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                    + "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">"
+                    + "<Relationship Id=\"rIdVba\" "
+                    + "Type=\"http://schemas.microsoft.com/office/2006/relationships/vbaProject\" "
+                    + "Target=\"vbaProject.bin\"/>"
+                    + "</Relationships>").getBytes(StandardCharsets.UTF_8));
+
+            if (decoyFirst) {
+                putZipEntry(zos, "docProps/vbaProject.bin", decoyVba);
+                putZipEntry(zos, "xl/vbaProject.bin", realVba);
+            } else {
+                putZipEntry(zos, "xl/vbaProject.bin", realVba);
+                putZipEntry(zos, "docProps/vbaProject.bin", decoyVba);
+            }
+        }
+        return bos.toByteArray();
+    }
+
+    private static void putZipEntry(ZipOutputStream zos, String name, byte[] data) throws IOException {
+        zos.putNextEntry(new ZipEntry(name));
+        zos.write(data);
+        zos.closeEntry();
     }
 }
