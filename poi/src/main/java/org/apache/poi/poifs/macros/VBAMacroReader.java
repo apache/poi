@@ -29,7 +29,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -120,24 +124,37 @@ public class VBAMacroReader implements Closeable {
         this.fs = fs;
     }
 
+    private static final Set<String> CANONICAL_VBA_DIRS =
+            new HashSet<>(Arrays.asList("xl/", "word/", "ppt/", "visio/"));
+
     private void openOOXML(InputStream zipFile) throws IOException {
-        try(ZipInputStream zis = new ZipInputStream(zipFile)) {
+        byte[] fallback = null;
+        try (ZipInputStream zis = new ZipInputStream(zipFile)) {
             ZipEntry zipEntry;
             while ((zipEntry = zis.getNextEntry()) != null) {
                 if (endsWithIgnoreCase(zipEntry.getName(), VBA_PROJECT_OOXML)) {
-                    try {
-                        // Make a POIFSFileSystem from the contents, and close the stream
-                        this.fs = new POIFSFileSystem(zis);
+                    byte[] bytes = IOUtils.toByteArray(zis);
+                    String lowerName = zipEntry.getName().toLowerCase(Locale.ROOT);
+                    boolean canonical = CANONICAL_VBA_DIRS.stream()
+                            .anyMatch(lowerName::startsWith);
+                    if (canonical) {
+                        // Found vbaProject.bin at a standard OPC path.
+                        // Prefer this over any earlier non-canonical match.
+                        this.fs = new POIFSFileSystem(
+                                UnsynchronizedByteArrayInputStream.builder().setByteArray(bytes).get());
                         return;
-                    } catch (IOException e) {
-                        // Tidy up
-                        zis.close();
-
-                        // Pass on
-                        throw e;
+                    }
+                    // Non-canonical path — keep as fallback in case no canonical match appears
+                    if (fallback == null) {
+                        fallback = bytes;
                     }
                 }
             }
+        }
+        if (fallback != null) {
+            this.fs = new POIFSFileSystem(
+                    UnsynchronizedByteArrayInputStream.builder().setByteArray(fallback).get());
+            return;
         }
         throw new IllegalArgumentException("No VBA project found");
     }
