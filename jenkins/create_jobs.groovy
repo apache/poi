@@ -123,7 +123,7 @@ def xmlbeansjobs = [
 ]
 
 def gitBase = 'https://github.com/apache/poi.git'
-def xmlbeansGitBase = 'https://github.com/apache/xmlbeans.git'
+def xmlbeansGitBase = 'https://github.com/apache/poi-xmlbeans.git'
 
 def defaultJdk = '1.17'
 def defaultBranch = 'trunk'
