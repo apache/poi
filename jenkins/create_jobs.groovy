@@ -53,9 +53,9 @@ def poijobs = [
         [ name: 'POI-DSL-1.24', jdk: '1.24', trigger: triggerSundays, skipcigame: true,
           disabled: true  // don't test non-LTS with newer LTS 25
         ],
-        [ name: 'POI-DSL-1.25', jdk: '1.25', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
+        [ name: 'POI-DSL-1.25', jdk: '1.25', trigger: triggerSundays, skipcigame: true,
         ],
-        [ name: 'POI-DSL-1.26', jdk: '1.26', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
+        [ name: 'POI-DSL-1.26', jdk: '1.26', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-DSL-1.27', jdk: '1.27', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
                 useAnt: true
@@ -105,8 +105,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Windows-1.25', jdk: '1.25', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
         ],
-        [ name: 'POI-DSL-Windows-1.26', jdk: '1.26', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          skipSpotbugs: true
+        [ name: 'POI-DSL-Windows-1.26', jdk: '1.26', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.27', jdk: '1.27', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
           skipSpotbugs: true, useAnt: true
