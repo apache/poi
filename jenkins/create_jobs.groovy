@@ -51,8 +51,13 @@ def poijobs = [
         [ name: 'POI-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true
         ],
         [ name: 'POI-DSL-1.24', jdk: '1.24', trigger: triggerSundays, skipcigame: true,
+          disabled: true  // don't test non-LTS with newer LTS 25
         ],
         [ name: 'POI-DSL-1.25', jdk: '1.25', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
+        ],
+        [ name: 'POI-DSL-1.26', jdk: '1.26', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
+        ],
+        [ name: 'POI-DSL-1.27', jdk: '1.27', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
         ],
         // Use Ant-build for now as selecting IBM JDK via toolchain does not work (yet)
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, useAnt: true
@@ -95,8 +100,14 @@ def poijobs = [
         [ name: 'POI-DSL-Windows-1.21', jdk: '1.21', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.24', jdk: '1.24', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
+          disabled: true  // don't test non-LTS with newer LTS 25
         ],
-        [ name: 'POI-DSL-Windows-1.25', jdk: '1.25', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
+        [ name: 'POI-DSL-Windows-1.25', jdk: '1.25', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
+        ],
+        [ name: 'POI-DSL-Windows-1.26', jdk: '1.26', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
+          skipSpotbugs: true
+        ],
+        [ name: 'POI-DSL-Windows-1.27', jdk: '1.27', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
           skipSpotbugs: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', skipcigame: true, disabled: true
@@ -116,6 +127,10 @@ def xmlbeansjobs = [
           disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.25', jdk: '1.25', trigger: triggerSundays, skipcigame: true,
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.26', jdk: '1.26', trigger: triggerSundays, skipcigame: true,
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.27', jdk: '1.27', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.17', trigger: triggerSundays, skipcigame: true,
           sonar: true
@@ -142,6 +157,8 @@ def jdkMapping = [
         '1.21': [ jenkinsJdk: 'jdk_21_latest', jdkVersion: 21, jdkVendor: '' ],
         '1.24': [ jenkinsJdk: 'jdk_24_latest', jdkVersion: 24, jdkVendor: '' ],
         '1.25': [ jenkinsJdk: 'jdk_25_latest', jdkVersion: 25, jdkVendor: '' ],
+        '1.26': [ jenkinsJdk: 'jdk_26_latest', jdkVersion: 26, jdkVendor: '' ],
+        '1.27': [ jenkinsJdk: 'jdk_27_latest', jdkVersion: 27, jdkVendor: '' ],
         // one of the few IBM JDKs that is still supported on ci-builds.apache.org
         'IBMJDK': [ jenkinsJdk: 'ibm_semeru_21.0.2_13', jdkVersion: 21, jdkVendor: 'ibm' ]
 ]
@@ -485,7 +502,8 @@ xmlbeansjobs.each { xjob ->
         environmentVariables {
             env('LANG', 'en_US.UTF-8')
             if (jdkKey == '1.11' || jdkKey == '1.17' || jdkKey == '1.21'
-                    || jdkKey == '1.23' || jdkKey == '1.24' || jdkKey == '1.25') {
+                    || jdkKey == '1.24' || jdkKey == '1.25' || jdkKey == '1.26'
+                    || jdkKey == '1.27') {
                 env('ANT_OPTS', '--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
             }
             // will be needed for forbidden-apis-check: env('ANT_HOME', xjob.windows ? 'f:\\jenkins\\tools\\ant\\latest' : '/usr/share/ant')
@@ -617,6 +635,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_24_latest',
                 'jdk_25_latest',
                 'jdk_26_latest',
+                'jdk_27_latest',
                 'ibm_semeru_21.0.2_13'
         )
         // Note H50 is reserved according to its node-description
