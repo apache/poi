@@ -407,3 +407,5 @@ slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-4983252485210112.ppt,"han
 slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-4983252485210112.ppt,handle,HSLF,,org.apache.poi.util.RecordFormatException,Tried to allocate an array,
 slideshow/clusterfuzz-testcase-minimized-POIFileHandlerFuzzer-6060921738035200.wmf,handle,HWMF,,java.lang.IllegalStateException,invalid wmf file
 spreadsheet/LIBRE_OFFICE-128382-0.xlsx,handle,XSSF,,org.apache.poi.ss.formula.FormulaParseException,Illegal table name
+spreadsheet/LIBRE_OFFICE-116306-0.xlsx,extract,"XSSF,OPC",,org.apache.poi.util.RecordFormatException,Tried to allocate an array
+spreadsheet/LIBRE_OFFICE-116306-0.xlsx,handle,XSSF,,org.apache.poi.util.RecordFormatException,Tried to allocate an array
