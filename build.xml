@@ -2383,7 +2383,7 @@ under the License.
             <union refid="src-files"/>
         </zip>
 
-        <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tar.gz" longfile="gnu" compression="gzip">
+        <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tgz" longfile="gnu" compression="gzip">
             <union refid="src-files"/>
         </tar>
 
@@ -2748,7 +2748,7 @@ under the License.
     </target>
 
     <target name="dist-checksum" depends="load-maven-server-settings">
-        <fileset id="dist-archives" dir="${dist.dir}" includes="**/*.jar,**/*.pom,**/*.zip,**/*.tar.gz"/>
+        <fileset id="dist-archives" dir="${dist.dir}" includes="**/*.jar,**/*.pom,**/*.zip,**/*.tgz"/>
 
         <checksum algorithm="sha1" format="MD5SUM">
             <fileset refid="dist-archives"/>
@@ -2900,9 +2900,9 @@ under the License.
         <local name="li2"/>
         <local name="li3"/>
         <local name="li4"/>
-        <download-line prop="li1" dist="bin" pack="tar.gz"/>
+        <download-line prop="li1" dist="bin" pack="tgz"/>
         <download-line prop="li2" dist="bin" pack="zip"/>
-        <download-line prop="li3" dist="src" pack="tar.gz"/>
+        <download-line prop="li3" dist="src" pack="tgz"/>
         <download-line prop="li4" dist="src" pack="zip"/>
 
 <echo file="download-snipplet.xml"><![CDATA[
