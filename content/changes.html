@@ -224,12 +224,417 @@ document.write("Last Published: " + document.lastModified);
 </div>
 
     
+<a name="6.0.0"></a>
+<h2 class="boxed">Version
+                6.0.0 (TBD)
+            </h2>
+<div class="section">
+<a name="Summary"></a>
+<h3 class="boxed">Summary</h3>
+<ul>
+            
+<li>Minimum Java version is now JDK 17 (was JDK 8 in POI 5.x)</li>
+            
+<li>Upgrade bouncycastle dependency to 1.85</li>
+            
+<li>Upgrade commons-codec dependency to 1.22.1</li>
+            
+<li>Upgrade commons-compress dependency to 1.28.0</li>
+            
+<li>Upgrade commons-io dependency to 2.22.0</li>
+            
+<li>Upgrade log4j-api dependency to 2.26.1</li>
+            
+<li>Upgrade mockito dependency to 5.23.0</li>
+            
+<li>Upgrade pdfbox dependency to 3.0.8</li>
+            
+<li>Upgrade SLF4J to 2.0.18</li>
+            
+<li>Upgrade xmlsec dependency to 3.0.6</li>
+            
+<li>Upgrade Ant to 1.10.17</li>
+            
+<li>Upgrade Gradle to 9.6.1</li>
+            
+<li>Upgrade JUnit to 6.1.2</li>
+        
+</ul>
+<a name="Changes"></a>
+<h3 class="boxed">Changes</h3>
+<table class="POITable">
+<colgroup>
+<col width="100">
+<col width="200">
+<col width="150">
+<col>
+</colgroup>
+<thead>
+<tr>
+<th>Type</th><th>Bug</th><th>Module</th><th>Description</th>
+</tr>
+</thead>
+<tbody>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=60848">60848</a></td><td>SS_Common</td><td>Fix SUMPRODUCT with unary minus (--) on array arguments and other cases</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=66568">66568</a></td><td>XSLF</td><td>Adjust selecting color from master-slide</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=69897">69897</a></td><td>XSLF</td><td>Fix null check for LineDash properties</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=69905">69905</a></td><td>SS_Common</td><td>Check cell before recursing to prevent infinite loops</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=69927">69927</a></td><td>HWMF</td><td>Avoid NPE when parsing wmf-file</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=69935">69935</a></td><td>SS_Common</td><td>Add short-based column setters to ClientAnchor</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=70005">70005</a></td><td>SS_Common</td><td>Fix countifs with multi-element arrays</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=70159">70159</a></td><td>SS_Common</td><td>Cache that format is not a datetime format string to improve performance</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/939">github-939</a></td><td>SS_Common</td><td>Make getCachedResultType return enum instead of int</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="remove" src="images/remove.png"></td><td><a href="https://github.com/apache/poi/pull/940">github-940</a></td><td>OOXML</td><td>Remove deprecated getCodepoints method</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="remove" src="images/remove.png"></td><td><a href="https://github.com/apache/poi/pull/941">github-941</a></td><td>OOXML</td><td>Remove deprecated hasOOXMLHeader method</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="remove" src="images/remove.png"></td><td><a href="https://github.com/apache/poi/pull/942">github-942</a></td><td>SS_Common</td><td>Remove deprecated AddDimensionedImage</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/952">github-952</a></td><td>XSSF</td><td>Add XSSFOptimiser - XSSF equivalent of HSSFOptimiser</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/961">github-961</a></td><td>SS_Common</td><td>Fix null safety in format properties handling</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/962">github-962</a></td><td>XSSF</td><td>Remove pre-existing inline strings when updating cell value</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/968">github-968</a></td><td>XSLF</td><td>Add methods to manage first slide number (firstSlideNum)</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/969">github-969</a></td><td>XSLF</td><td>Fix rules for table style application in XSLFTables</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/982">github-982</a></td><td>XWPF</td><td>Allow loading a word document with chartex chart</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/986">github-986</a></td><td>XWPF</td><td>Allow public access of theme and add helpers for theme fonts in XWPF</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/990">github-990</a></td><td>XSLF</td><td>Support rendering transparent bitmaps in presentations</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/991">github-991</a></td><td>XWPF</td><td>Add getter for body elements in XWPFSDTContent</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/996">github-996</a></td><td>XSSF</td><td>XSSFReader: tolerate missing comments file</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1000">github-1000</a></td><td>XSLF</td><td>Throw exception if getAlpha returns very large value that overflows int</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1012">github-1012</a></td><td>OOXML</td><td>Check input stream read parameters for validity</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1016">github-1016</a></td><td>HSSF</td><td>Support reading HSSFWorkbook with password passed as parameter</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1017">github-1017</a></td><td>HWPF</td><td>Support opening HWPF documents by passing passwords</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1023">github-1023</a></td><td>HSLF</td><td>Support passing password as a parameter when opening HSLFSlideShow</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1026">github-1026</a></td><td>POI_Overall</td><td>Event-based extractor: refactor password support to allow passing passwords as parameters</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1031">github-1031</a></td><td>XSSF</td><td>Fix Row.setRowStyle() not propagating styles to cells</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1033">github-1033</a></td><td>XSLF</td><td>Fix ArrayIndexOutOfBoundsException in XSSFTextParagraph when auto number scheme index is out of range</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1040">github-1040</a></td><td>XSLF</td><td>Remove redundant stripe style settings in CreateTable</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1042">github-1042</a></td><td>XSSF</td><td>Open up xssfb to simplify client usage and modifications</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1043">github-1043</a></td><td>XSSF</td><td>Decouple XLSB reading from xmlbeans dependency</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1045">github-1045</a></td><td>HWMF</td><td>Reject invalid WMF unitsPerInch=0 to prevent infinite scaling</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1050">github-1050</a></td><td>HSLF HWPF</td><td>Add setOutputPassword for HSLFSlideShow and HWPFDocument</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1052">github-1052</a></td><td>XSLF</td><td>Fix XSLFTableCell.setBorderColor overwrites other border properties</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1054">github-1054</a></td><td>DDF</td><td>Fix overflow in blip calculations</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1057">github-1057</a></td><td>OOXML</td><td>Apply zip bomb checks to encrypted temp ZIP processing</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1060">github-1060</a></td><td>HEMF</td><td>Validate EMF description bounds before allocation</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1062">github-1062</a></td><td>OOXML</td><td>Enforce ZipSecureFile limits for encrypted temp ZIP streams</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1063">github-1063</a></td><td>POI_Overall</td><td>Harden and rework temporary file permissions</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1064">github-1064</a></td><td>HPSF</td><td>Harden HPSF allocation-size arithmetic against silent overflow</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1066">github-1066</a></td><td>HMEF</td><td>Reject path traversal filenames during HMEF attachment extraction</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1067">github-1067</a></td><td>XSSF</td><td>Reject oversized XSSF table counts during integer conversion</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1070">github-1070</a></td><td>XDDF</td><td>Reject oversized OOXML ptCount values in XDDFDataSourcesFactory</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1071">github-1071</a></td><td>HSMF</td><td>Add boundary handling and decompression limits in CompressedRTF</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1072">github-1072</a></td><td>OOXML</td><td>Replace unsafe long-to-int casts with Math.toIntExact</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1075">github-1075</a></td><td>HDGF</td><td>Validate HDGF v6+ chunk Length before narrowing to int</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1076">github-1076</a></td><td>HDGF</td><td>Guard HDGF PointerFactory offset/length uint32 narrowing</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1077">github-1077</a></td><td>HSLF</td><td>Handle oversized uint32 offsets in QuillContents descriptors</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1078">github-1078</a></td><td>HSLF</td><td>Reject oversized PersistPtr sheet offsets in HSLF</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1079">github-1079</a></td><td>XSSF</td><td>Guard XSSFBUtils wide-string byte length against int overflow</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1080">github-1080</a></td><td>POIFS</td><td>Guard Ole10Native readUtf16 byte length against int overflow</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1082">github-1082</a></td><td>HEMF</td><td>Fix out-of-bounds fill in EmfPlusPath RLE point-type expansion</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1084">github-1084</a></td><td>OOXML</td><td>Fix spin count loop issue</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1085">github-1085</a></td><td>OOXML</td><td>Fix issue with inflating picture data when decompressed data is bigger than expected</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1086">github-1086</a></td><td>OOXML</td><td>Add input validation checks in InflaterInputStream</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1089">github-1089</a></td><td>SS_Common</td><td>Prevent crashes when calculating cells on absolute anchors</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1090">github-1090</a></td><td>XSSF</td><td>Implement ImageUtils.getDimensionFromAnchor variation for absolute anchors</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1091">github-1091</a></td><td>XWPF</td><td>Support mc:AlternateContent for XWPFRun.getPictureText()</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1095">github-1095</a></td><td>OOXML</td><td>Use Math.multiplyExact for safer multiplication in OOXML parsing</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1096">github-1096</a></td><td>OOXML</td><td>Improve number conversion safety in OOXML parsing</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1098">github-1098</a></td><td>HEMF</td><td>Use long for EmfPlusDrawDriverString glyph byte length</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1099">github-1099</a></td><td>OOXML</td><td>Remove information-losing int casts in OOXML parsing</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1100">github-1100</a></td><td>OOXML</td><td>Fix int overflow risks in OOXML parsing</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1101">github-1101</a></td><td>OOXML</td><td>Fix int overflow risks in OOXML parsing</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1102">github-1102</a></td><td>OOXML</td><td>Fix int overflow possibilities in OOXML parsing</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1103">github-1103</a></td><td>HEMF</td><td>Validate PointCount before array allocation in HemfPlusPath</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1104">github-1104</a></td><td>HEMF</td><td>Apply allocation bounds checks to EMF+ path and brush element counts</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1105">github-1105</a></td><td>DDF</td><td>EscherBSERecord fillFields() to return consumed bytes</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1106">github-1106</a></td><td>HWMF</td><td>Harden integer conversions and arithmetic in HwmfBitmapDib, AggregateFunction, and DStarRunner</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1107">github-1107</a></td><td>HEMF</td><td>Apply allocation bounds checks to EmfPolyDraw and WmfCreateRegion</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1113">github-1113</a></td><td>HEMF</td><td>Apply allocation bounds check to EmfExtCreatePen style entries</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1116">github-1116</a></td><td>DDF</td><td>Use unsigned element count when parsing EscherArrayProperty</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1122">github-1122</a></td><td>HWPF</td><td>Read OldFfn font description length as unsigned byte</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1123">github-1123</a></td><td>OOXML</td><td>Fix resource leak in ZipSecureFile constructors and correct path logging in ZipPackage</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1124">github-1124</a></td><td>OOXML</td><td>Harden duplicate ZIP entry validation against path separator bypasses</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1127">github-1127</a></td><td>HWPF</td><td>Fix offset calculation in ParagraphSprmUncompressor.handleTabs()</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1128">github-1128</a></td><td>OOXML</td><td>Fix temporary file leak in ZipInputStreamZipEntrySource on constructor failure</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1136">github-1136</a></td><td>OOXML</td><td>Fix case-insensitive ZIP entry matching in ZipFileZipEntrySource under Turkish Locale</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1144">github-1144</a></td><td>OOXML</td><td>Optimize getEntry performance in ZipInputStreamZipEntrySource using O(1) case-insensitive lookups</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1149">github-1149</a></td><td>XSSF</td><td>Fix equals() and hashCode() contract violation in XSSFColor</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1150">github-1150</a></td><td>OOXML</td><td>Improve ZipArchiveFakeEntry getSize</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1172">github-1172</a></td><td>XWPF</td><td>Implement XWPFRun.isRtl() getter</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1174">github-1174</a></td><td>XSLF</td><td>Support theme colors as highlight color in pptx</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1179">github-1179</a></td><td>XSLF</td><td>Prevent rendering a bitmap when its effective size is 0</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1187">github-1187</a></td><td>XSLF</td><td>Adjust XSLFDrawing's slide shape tree scan in constructor to prevent shape ID warnings</td>
+</tr>
+        
+</tbody>
+</table>
+</div>
+
+    
 <a name="5.5.1"></a>
 <h2 class="boxed">Version
                 5.5.1 (2025-11-30)
             </h2>
 <div class="section">
-<a name="Summary"></a>
+<a name="Summary-N105DE"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -242,7 +647,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade pdfbox dependency to 3.0.6</li>
         
 </ul>
-<a name="Changes"></a>
+<a name="Changes-N105F1"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -276,7 +681,7 @@ document.write("Last Published: " + document.lastModified);
                 5.5.0 (2025-11-15)
             </h2>
 <div class="section">
-<a name="Summary-N10073"></a>
+<a name="Summary-N10632"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -301,7 +706,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade JaCoCo code-coverage tooling to 0.8.13</li>
         
 </ul>
-<a name="Changes-N10098"></a>
+<a name="Changes-N10657"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -403,7 +808,7 @@ document.write("Last Published: " + document.lastModified);
                 5.4.1 (2025-04-06)
             </h2>
 <div class="section">
-<a name="Summary-N101E9"></a>
+<a name="Summary-N107A8"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -418,7 +823,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade graphics2d dependency to 3.0.3</li>
         
 </ul>
-<a name="Changes-N101FF"></a>
+<a name="Changes-N107BE"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -508,7 +913,7 @@ document.write("Last Published: " + document.lastModified);
                 5.4.0 (2025-01-08)
             </h2>
 <div class="section">
-<a name="Summary-N10320"></a>
+<a name="Summary-N108DF"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -537,7 +942,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade JaCoCo code-coverage tooling to 0.8.12</li>
         
 </ul>
-<a name="Changes-N1034B"></a>
+<a name="Changes-N1090A"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -619,7 +1024,7 @@ document.write("Last Published: " + document.lastModified);
                 5.3.0 (2024-07-02)
             </h2>
 <div class="section">
-<a name="Summary-N1044C"></a>
+<a name="Summary-N10A0B"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -640,7 +1045,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade xmlbeans dependency to 5.2.1</li>
         
 </ul>
-<a name="Changes-N1046B"></a>
+<a name="Changes-N10A2A"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -710,7 +1115,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.5 (2023-11-25)
             </h2>
 <div class="section">
-<a name="Summary-N1053C"></a>
+<a name="Summary-N10AFB"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -727,7 +1132,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade xmlbeans dependency to 5.2.0</li>
         
 </ul>
-<a name="Changes-N10555"></a>
+<a name="Changes-N10B14"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -781,7 +1186,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.4 (2023-09-28)
             </h2>
 <div class="section">
-<a name="Summary-N105E6"></a>
+<a name="Summary-N10BA5"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -808,7 +1213,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Use jdk18on versions of bouncycastle jars (v1.76)</li>
         
 </ul>
-<a name="Changes-N1060E"></a>
+<a name="Changes-N10BCD"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -954,7 +1359,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.3 (2022-09-16)
             </h2>
 <div class="section">
-<a name="Summary-N1080F"></a>
+<a name="Summary-N10DCE"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -973,7 +1378,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Avoid some more possible overly large memory allocations on certain input documents</li>
         
 </ul>
-<a name="Changes-N1082B"></a>
+<a name="Changes-N10DEA"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1175,14 +1580,14 @@ document.write("Last Published: " + document.lastModified);
                 5.2.2 (2022-03-19)
             </h2>
 <div class="section">
-<a name="Summary-N10B0C"></a>
+<a name="Summary-N110CB"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
 <li>Upgrade log4j-api dependency to 2.17.2 and graphics2d dependency to 0.35 as well as some test dependencies</li>
         
 </ul>
-<a name="Changes-N10B16"></a>
+<a name="Changes-N110D5"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1236,14 +1641,14 @@ document.write("Last Published: " + document.lastModified);
                 5.2.1 (2022-03-03)
             </h2>
 <div class="section">
-<a name="Summary-N10BA7"></a>
+<a name="Summary-N11166"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
 <li>Upgrade curvesapi dependency to 1.07</li>
         
 </ul>
-<a name="Changes-N10BB1"></a>
+<a name="Changes-N11170"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1317,7 +1722,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.0 (2022-01-14)
             </h2>
 <div class="section">
-<a name="Summary-N10C92"></a>
+<a name="Summary-N11251"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1330,7 +1735,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade PDFBox Graphics2d dependency to 0.34 and PDFBox dependency to 2.0.25</li>
         
 </ul>
-<a name="Changes-N10CA5"></a>
+<a name="Changes-N11264"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1424,7 +1829,7 @@ document.write("Last Published: " + document.lastModified);
                 5.1.0 (2021-11-01)
             </h2>
 <div class="section">
-<a name="Summary-N10DD6"></a>
+<a name="Summary-N11395"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1451,7 +1856,7 @@ document.write("Last Published: " + document.lastModified);
 <li>By default, no DTDs will be accepted in XML files. This can be relaxed by setting POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(false).</li>
         
 </ul>
-<a name="Changes-N10DFE"></a>
+<a name="Changes-N113BD"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1653,7 +2058,7 @@ document.write("Last Published: " + document.lastModified);
                 5.0.0 (2021-01-20)
             </h2>
 <div class="section">
-<a name="Summary-N110DF"></a>
+<a name="Summary-N1169E"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1680,7 +2085,7 @@ document.write("Last Published: " + document.lastModified);
 <li>new experimental DeferredSXSSFWorkbook which creates fewer temp files by lazily generating rows (see DeferredGeneration in poi-examples)</li>
         
 </ul>
-<a name="Changes-N11104"></a>
+<a name="Changes-N116C3"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1990,7 +2395,7 @@ document.write("Last Published: " + document.lastModified);
                 4.1.2 (2020-02-17)
             </h2>
 <div class="section">
-<a name="Summary-N1158C"></a>
+<a name="Summary-N11B4B"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2005,7 +2410,7 @@ document.write("Last Published: " + document.lastModified);
 <li>updated dependencies to Bouncycastle 1.64</li>
         
 </ul>
-<a name="Changes-N115A2"></a>
+<a name="Changes-N11B61"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2139,7 +2544,7 @@ document.write("Last Published: " + document.lastModified);
                 4.1.1 (2019-10-20)
             </h2>
 <div class="section">
-<a name="Summary-N1176D"></a>
+<a name="Summary-N11D2C"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2158,7 +2563,7 @@ document.write("Last Published: " + document.lastModified);
 <li>CVE-2019-12415 - XML External Entity (XXE) Processing in Apache POI</li>
         
 </ul>
-<a name="Changes-N11789"></a>
+<a name="Changes-N11D48"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2308,7 +2713,7 @@ document.write("Last Published: " + document.lastModified);
                 4.1.0 (2019-04-09)
             </h2>
 <div class="section">
-<a name="Summary-N11991"></a>
+<a name="Summary-N11F50"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2333,7 +2738,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade to XMLSec 2.1.2</li>
         
 </ul>
-<a name="Changes-N119B6"></a>
+<a name="Changes-N11F75"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2507,7 +2912,7 @@ document.write("Last Published: " + document.lastModified);
                 4.0.1 (2018-12-03)
             </h2>
 <div class="section">
-<a name="Summary-N11C27"></a>
+<a name="Summary-N121E6"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2518,7 +2923,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade to XMLBeans 3.0.2</li>
         
 </ul>
-<a name="Changes-N11C37"></a>
+<a name="Changes-N121F6"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2676,7 +3081,7 @@ document.write("Last Published: " + document.lastModified);
                 4.0.0 (2018-09-07)
             </h2>
 <div class="section">
-<a name="Summary-N11E68"></a>
+<a name="Summary-N12427"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2685,7 +3090,7 @@ document.write("Last Published: " + document.lastModified);
 <li>New OOXML schema (1.4) necessary, because of incompatible XMLBeans loading not anymore through POIXMLTypeLoader</li>
         
 </ul>
-<a name="Changes-N11E75"></a>
+<a name="Changes-N12434"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
