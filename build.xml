@@ -380,7 +380,7 @@ under the License.
 
     <!-- helper jars for pgp signing, building and nexus staging -->
     <dependency prefix="dist.commons-openpgp" artifact="org.apache.commons:commons-openpgp:1.0-SNAPSHOT" usage="util"
-        repo="https://repository.apache.org/content/groups/snapshots" snapshot="1.0-20190121.221905-12"/>
+        repo="https://repository.apache.org/content/groups/snapshots" snapshot="1.0-20210121.043649-14"/>
     <dependency prefix="dist.nexus-staging" artifact="org.sonatype.nexus.ant:nexus-staging-ant-tasks:1.6.3:uber" usage="util"/>
 
     <!-- jars required for maven helper targets -->
@@ -2775,6 +2775,9 @@ under the License.
                 <pathelement path="${dist.commons-openpgp.jar}"/>
                 <pathelement path="${dsig.bouncycastle-prov.jar}"/>
                 <pathelement path="${dsig.bouncycastle-bcpg.jar}"/>
+
+                <!-- for bcutil -->
+                <path refid="ooxml.xmlsec.classpath"/>
             </classpath>
         </taskdef>
 
