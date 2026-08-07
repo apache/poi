@@ -524,7 +524,7 @@ public final class FormulaParser {
                 resetPointer(colonPos);
                 if (!part1.isCell()) {
                     String prefix = "";
-                    if (sheetIden != null) {
+                    if (sheetIden != null && sheetIden.getSheetIdentifier() != null) {
                         prefix = "'" + sheetIden.getSheetIdentifier().getName() + '!';
                     }
                     throw new FormulaParseException(prefix + part1.getRep() + "' is not a proper reference.");
