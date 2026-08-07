@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Helper for part and pack URI.
@@ -686,9 +687,7 @@ public final class PackagingURIHelper {
      */
     public static URI toURI(String value) throws URISyntaxException  {
         //5. Convert all back slashes to forward slashes
-        if (value.contains("\\")) {
-             value = value.replace('\\', '/');
-        }
+        value = IOUtils.normalizePath(value);
 
         // URI fragments (those starting with '#') are not encoded
         // and may contain white spaces and raw unicode characters
@@ -704,7 +703,7 @@ public final class PackagingURIHelper {
         if(!value.isEmpty()){
             StringBuilder b = new StringBuilder();
             int idx = value.length() - 1;
-            for(; idx >= 0; idx--){
+            for(; idx >= 0; idx--) {
                 char c = value.charAt(idx);
                 if(Character.isWhitespace(c) || c == '\u00A0') {
                     b.append(c);

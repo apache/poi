@@ -79,8 +79,8 @@ public final class CollaboratingWorkbooksEnvironment {
         for (Map.Entry<String,FormulaEvaluator> swb : evaluators.entrySet()) {
             String wbName = swb.getKey();
             FormulaEvaluator eval = swb.getValue();
-            if (eval instanceof WorkbookEvaluatorProvider) {
-                evaluatorsByName.put(wbName, ((WorkbookEvaluatorProvider)eval)._getWorkbookEvaluator());
+            if (eval instanceof WorkbookEvaluatorProvider wep) {
+                evaluatorsByName.put(wbName, wep._getWorkbookEvaluator());
             } else {
                 throw new IllegalArgumentException("Formula Evaluator " + eval +
                                                    " provides no WorkbookEvaluator access");

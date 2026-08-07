@@ -54,8 +54,8 @@ public class ExcelGeneralNumberFormat extends Format {
     @SuppressWarnings("squid:S2111")
     public StringBuffer format(Object number, StringBuffer toAppendTo, FieldPosition pos) {
         final double value;
-        if (number instanceof Number) {
-            value = ((Number)number).doubleValue();
+        if (number instanceof Number n) {
+            value = n.doubleValue();
             if (Double.isInfinite(value) || Double.isNaN(value)) {
                 return integerFormat.format(number, toAppendTo, pos);
             }

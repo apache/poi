@@ -248,7 +248,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
             return false;
         }
         final EvaluationConditionalFormatRule r = (EvaluationConditionalFormatRule) obj;
-        return getSheet().getSheetName().equalsIgnoreCase(r.getSheet().getSheetName())
+        return StringUtil.equalsIgnoreCase(getSheet().getSheetName(), r.getSheet().getSheetName())
             && getFormattingIndex() == r.getFormattingIndex()
             && getRuleIndex() == r.getRuleIndex();
     }
@@ -387,8 +387,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
     private ValueEval unwrapEval(ValueEval eval) {
         ValueEval comp = eval;
 
-        while (comp instanceof RefEval) {
-            RefEval ref = (RefEval) comp;
+        while (comp instanceof RefEval ref) {
             comp = ref.getInnerValueEval(ref.getFirstSheetIndex());
         }
         return comp;
@@ -408,13 +407,13 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         if (comp instanceof ErrorEval) {
             return false;
         }
-        if (comp instanceof BoolEval) {
-            return ((BoolEval) comp).getBooleanValue();
+        if (comp instanceof BoolEval bool) {
+            return bool.getBooleanValue();
         }
         // empirically tested in Excel - 0=false, any other number = true/valid
         // see test file DataValidationEvaluations.xlsx
-        if (comp instanceof NumberEval) {
-            return ((NumberEval) comp).getNumberValue() != 0;
+        if (comp instanceof NumberEval num) {
+            return num.getNumberValue() != 0;
         }
         return false; // anything else is false, such as text
     }
@@ -708,13 +707,13 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof ValueAndFormat)) {
+            if (obj instanceof ValueAndFormat o) {
+                return (Objects.equals(value, o.value)
+                        && Objects.equals(format, o.format)
+                        && Objects.equals(string, o.string));
+            } else {
                 return false;
             }
-            ValueAndFormat o = (ValueAndFormat) obj;
-            return (Objects.equals(value, o.value)
-                    && Objects.equals(format, o.format)
-                    && Objects.equals(string, o.string));
         }
 
         /**

@@ -13,21 +13,28 @@ permissions: {}
 
 jobs:
   build:
+    runs-on: ${{ matrix.os }}
 
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        # for now verify JDK 8 and 11
+        java: [ 17, 21 ]
 
+    name: Java ${{ matrix.java }} build
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
-    - name: Set up JDK
+    - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
-        java-version: '11'
+        java-version: ${{ matrix.java }}
         cache: 'gradle'
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew check -PjdkVersion=11 --no-daemon --refresh-dependencies
+      run: ./gradlew check -PjdkVersion=17 --no-daemon --refresh-dependencies

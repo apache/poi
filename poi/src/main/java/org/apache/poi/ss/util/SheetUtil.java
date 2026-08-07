@@ -41,6 +41,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Helper methods for when working with Usermodel sheets
@@ -578,7 +579,7 @@ public class SheetUtil {
     private static boolean initIgnoreMissingFontSystemFlag() {
         final String flag = System.getProperty("org.apache.poi.ss.ignoreMissingFontSystem");
         if (flag != null) {
-            return !flag.trim().equalsIgnoreCase("false");
+            return !StringUtil.equalsIgnoreCase(flag.trim(), "false");
         }
         return true;
     }

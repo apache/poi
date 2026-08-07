@@ -82,16 +82,16 @@ public final class VSDDumper {
         String ds = (db.length >= 8) ? Arrays.toString(db) : "[]";
         dumpVal("First few bytes are", ds, indent+1);
 
-        if (stream instanceof PointerContainingStream) {
-            Stream[] streams = ((PointerContainingStream) stream).getPointedToStreams();
+        if (stream instanceof PointerContainingStream pcs) {
+            Stream[] streams = pcs.getPointedToStreams();
             dumpVal("Nbr of children", streams.length, indent+1);
 
             for(Stream s : streams) {
                 dumpStream(s, indent+1);
             }
         }
-        if(stream instanceof ChunkStream) {
-            Chunk[] chunks = ((ChunkStream) stream).getChunks();
+        if(stream instanceof ChunkStream cs) {
+            Chunk[] chunks = cs.getChunks();
             dumpVal("Nbr of chunks", chunks.length, indent+1);
 
             for(Chunk chunk : chunks) {

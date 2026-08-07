@@ -161,8 +161,7 @@ public final class IOUtils {
                 bos.write(new byte[limit-readBytes]);
             }
             byte[] peekedBytes = bos.toByteArray();
-            if(stream instanceof PushbackInputStream) {
-                PushbackInputStream pin = (PushbackInputStream)stream;
+            if(stream instanceof PushbackInputStream pin) {
                 pin.unread(peekedBytes, 0, readBytes);
             } else {
                 stream.reset();
@@ -745,6 +744,15 @@ public final class IOUtils {
                     Locale.ROOT, "Failing due to path traversal in `%s`", name));
         }
         return file;
+    }
+
+    /**
+     * Replaces Windows Style `\` chars with `/` to allow path comparisons.
+     *
+     * @since 6.0.0
+     */
+    public static String normalizePath(final String path) {
+        return path == null ? path : path.replace('\\', '/');
     }
 
     private static void throwRFE(long length, int maxLength) {

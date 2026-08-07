@@ -22,6 +22,7 @@ import org.apache.poi.ss.formula.LazyRefEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.MathUtil;
+import org.apache.poi.util.StringUtil;
 
 import java.time.DateTimeException;
 import java.util.regex.Pattern;
@@ -256,12 +257,12 @@ public final class OperandResolver {
         if (ev == BlankEval.instance) {
             return 0.0;
         }
-        if (ev instanceof NumericValueEval) {
+        if (ev instanceof NumericValueEval num) {
             // this also handles booleans
-            return ((NumericValueEval)ev).getNumberValue();
+            return num.getNumberValue();
         }
-        if (ev instanceof StringEval) {
-            String sval = ((StringEval) ev).getStringValue();
+        if (ev instanceof StringEval sve) {
+            String sval = sve.getStringValue();
             Double dd = parseDouble(sval);
             if(dd == null) dd = parseDateTime(sval);
             if (dd == null) {
@@ -269,8 +270,7 @@ public final class OperandResolver {
             }
             return dd;
         }
-        if (ev instanceof LazyRefEval) {
-            final LazyRefEval lre = (LazyRefEval) ev;
+        if (ev instanceof LazyRefEval lre) {
             final ValueEval innerValueEval = lre.getInnerValueEvalForFirstSheet();
             if (innerValueEval == ev) {
                 throw new IllegalStateException("Circular lazy reference " + lre);
@@ -328,8 +328,7 @@ public final class OperandResolver {
      * @return the converted string value. never {@code null}
      */
     public static String coerceValueToString(ValueEval ve) {
-        if (ve instanceof StringValueEval) {
-            StringValueEval sve = (StringValueEval) ve;
+        if (ve instanceof StringValueEval sve) {
             return sve.getStringValue();
         }
         if (ve == BlankEval.instance) {
@@ -348,35 +347,34 @@ public final class OperandResolver {
             // TODO - remove 've == null' condition once AreaEval is fixed
             return null;
         }
-        if (ve instanceof BoolEval) {
-            return ((BoolEval) ve).getBooleanValue();
+        if (ve instanceof BoolEval be) {
+            return be.getBooleanValue();
         }
 
-        if (ve instanceof StringEval) {
+        if (ve instanceof StringEval se) {
             if (stringsAreBlanks) {
                 return null;
             }
-            String str = ((StringEval) ve).getStringValue();
-            if (str.equalsIgnoreCase("true")) {
+            String str = se.getStringValue();
+            if (StringUtil.equalsIgnoreCase(str, "true")) {
                 return Boolean.TRUE;
             }
-            if (str.equalsIgnoreCase("false")) {
+            if (StringUtil.equalsIgnoreCase(str, "false")) {
                 return Boolean.FALSE;
             }
             // else - string cannot be converted to boolean
             throw new EvaluationException(ErrorEval.VALUE_INVALID);
         }
 
-        if (ve instanceof NumericValueEval) {
-            NumericValueEval ne = (NumericValueEval) ve;
+        if (ve instanceof NumericValueEval ne) {
             double d = ne.getNumberValue();
             if (Double.isNaN(d)) {
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
             }
             return d != 0;
         }
-        if (ve instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval) ve);
+        if (ve instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
         throw new IllegalStateException("Unexpected eval (" + ve.getClass().getName() + ")");
     }

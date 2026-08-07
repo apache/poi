@@ -53,15 +53,14 @@ public final class TextStyleListing {
 
                             int lastTextLen = -1;
                             for (Record slwtChild : slwtChildren) {
-                                if (slwtChild instanceof TextCharsAtom) {
-                                    lastTextLen = ((TextCharsAtom) slwtChild).getText().length();
+                                if (slwtChild instanceof TextCharsAtom textCharsAtom) {
+                                    lastTextLen = textCharsAtom.getText().length();
                                 }
-                                if (slwtChild instanceof TextBytesAtom) {
-                                    lastTextLen = ((TextBytesAtom) slwtChild).getText().length();
+                                if (slwtChild instanceof TextBytesAtom textBytesAtom) {
+                                    lastTextLen = textBytesAtom.getText().length();
                                 }
 
-                                if (slwtChild instanceof StyleTextPropAtom) {
-                                    StyleTextPropAtom stpa = (StyleTextPropAtom) slwtChild;
+                                if (slwtChild instanceof StyleTextPropAtom stpa) {
                                     stpa.setParentTextSize(lastTextLen);
                                     showStyleTextPropAtom(stpa);
                                 }

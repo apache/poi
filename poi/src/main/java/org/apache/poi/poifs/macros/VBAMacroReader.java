@@ -18,8 +18,7 @@
 package org.apache.poi.poifs.macros;
 
 import static org.apache.logging.log4j.util.Unbox.box;
-import static org.apache.poi.util.StringUtil.endsWithIgnoreCase;
-import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
+import static org.apache.poi.util.StringUtil.*;
 
 import java.io.Closeable;
 import java.io.EOFException;
@@ -30,7 +29,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -53,7 +56,6 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RLEDecompressingInputStream;
-import org.apache.poi.util.StringUtil;
 
 /**
  * <p>Finds all VBA Macros in an office file (OLE2/POIFS and OOXML/OPC),
@@ -76,10 +78,22 @@ public class VBAMacroReader implements Closeable {
     private static final int DEFAULT_MAX_STRING_LENGTH = 20000;
     private static int MAX_STRING_LENGTH = DEFAULT_MAX_STRING_LENGTH;
 
+    /**
+     * Set the maximum number of bytes to be allocated for a single VBA entry or decompressed
+     * stream. Use this to adjust the default limit if you need to process very large VBA projects,
+     * or to tighten the limit on memory-constrained systems.
+     *
+     * @param maxStringLength the maximum number of bytes that may be allocated; must be &gt; 0
+     * @since 5.4.1
+     */
     public static void setMaxStringLength(int maxStringLength) {
         MAX_STRING_LENGTH = maxStringLength;
     }
 
+    /**
+     * @return the maximum number of bytes that may be allocated per VBA entry or decompressed stream
+     * @since 5.4.1
+     */
     public static int getMaxStringLength() {
         return MAX_STRING_LENGTH;
     }
@@ -110,26 +124,38 @@ public class VBAMacroReader implements Closeable {
         this.fs = fs;
     }
 
+    private static final Set<String> CANONICAL_VBA_DIRS =
+            Set.of("xl/", "word/", "ppt/", "visio/");
+
     private void openOOXML(InputStream zipFile) throws IOException {
-        try(ZipInputStream zis = new ZipInputStream(zipFile)) {
+        byte[] fallback = null;
+        try (ZipInputStream zis = new ZipInputStream(zipFile)) {
             ZipEntry zipEntry;
             while ((zipEntry = zis.getNextEntry()) != null) {
                 if (endsWithIgnoreCase(zipEntry.getName(), VBA_PROJECT_OOXML)) {
-                    try {
-                        // Make a POIFSFileSystem from the contents, and close the stream
-                        this.fs = new POIFSFileSystem(zis);
+                    byte[] bytes = IOUtils.toByteArray(zis);
+                    String lowerName = zipEntry.getName().toLowerCase(Locale.ROOT);
+                    boolean canonical = CANONICAL_VBA_DIRS.stream()
+                            .anyMatch(lowerName::startsWith);
+                    if (canonical) {
+                        // Found vbaProject.bin at a standard OPC path.
+                        // Prefer this over any earlier non-canonical match.
+                        this.fs = new POIFSFileSystem(
+                                UnsynchronizedByteArrayInputStream.builder().setByteArray(bytes).get());
                         return;
-                    } catch (IOException e) {
-                        // Tidy up
-                        zis.close();
-
-                        // Pass on
-                        throw e;
+                    }
+                    // Non-canonical path — keep as fallback in case no canonical match appears
+                    if (fallback == null) {
+                        fallback = bytes;
                     }
                 }
             }
         }
-        throw new IllegalArgumentException("No VBA project found");
+        if (fallback == null) {
+            throw new IllegalArgumentException("No VBA project found");
+        }
+        this.fs = new POIFSFileSystem(
+                UnsynchronizedByteArrayInputStream.builder().setByteArray(fallback).get());
     }
 
     @Override
@@ -190,7 +216,7 @@ public class VBAMacroReader implements Closeable {
         }
     }
     protected static class ModuleMap extends HashMap<String, ModuleImpl> {
-        Charset charset = StringUtil.WIN_1252; // default charset
+        Charset charset = WIN_1252; // default charset
     }
 
     /**
@@ -204,14 +230,14 @@ public class VBAMacroReader implements Closeable {
      * @since 3.15-beta2
      */
     protected void findMacros(DirectoryNode dir, ModuleMap modules) throws IOException {
-        if (VBA_PROJECT_POIFS.equalsIgnoreCase(dir.getName())) {
+        if (equalsIgnoreCase(VBA_PROJECT_POIFS, dir.getName())) {
             // VBA project directory, process
             readMacros(dir, modules);
         } else {
             // Check children
             for (Entry child : dir) {
-                if (child instanceof DirectoryNode) {
-                    findMacros((DirectoryNode)child, modules);
+                if (child instanceof DirectoryNode dn) {
+                    findMacros(dn, modules);
                 }
             }
         }
@@ -334,50 +360,61 @@ public class VBAMacroReader implements Closeable {
         //but may be in another directory (\_VBA_PROJECT_CUR\VBA ENTRY NAME)
         //process the dirstream first -- "dir" is case insensitive
         for (String entryName : macroDir.getEntryNames()) {
-            if ("dir".equalsIgnoreCase(entryName)) {
+            if (equalsIgnoreCase("dir", entryName)) {
                 processDirStream(macroDir.getEntryCaseInsensitive(entryName), modules);
                 break;
             }
         }
 
         for (Entry entry : macroDir) {
-            if (! (entry instanceof DocumentNode)) { continue; }
 
-            String name = entry.getName();
-            DocumentNode document = (DocumentNode)entry;
+            if (entry instanceof DocumentNode document) {
+                String name = entry.getName();
 
-            if (! "dir".equalsIgnoreCase(name) && !startsWithIgnoreCase(name, "__SRP")
+                if (!equalsIgnoreCase("dir", name) && !startsWithIgnoreCase(name, "__SRP")
                         && !startsWithIgnoreCase(name, "_VBA_PROJECT")) {
                     // process module, skip __SRP and _VBA_PROJECT since these do not contain macros
                     readModuleFromDocumentStream(document, name, modules);
+                }
             }
+
         }
     }
 
     protected void findProjectProperties(DirectoryNode node, Map<String, String> moduleNameMap, ModuleMap modules) throws IOException {
         for (Entry entry : node) {
-            if ("project".equalsIgnoreCase(entry.getName())) {
-                DocumentNode document = (DocumentNode)entry;
-                try(DocumentInputStream dis = new DocumentInputStream(document)) {
-                    readProjectProperties(dis, moduleNameMap, modules);
-                    return;
+            if (equalsIgnoreCase("project", entry.getName())) {
+                if (entry instanceof DocumentNode document) {
+                    try(DocumentInputStream dis = new DocumentInputStream(document)) {
+                        readProjectProperties(dis, moduleNameMap, modules);
+                        return;
+                    }
+                } else {
+                    throw new IllegalStateException("project node is expected to be a DocumentNode, found " +
+                            entry.getClass().getName());
                 }
-            } else if (entry instanceof DirectoryNode) {
-                findProjectProperties((DirectoryNode)entry, moduleNameMap, modules);
+            } else if (entry instanceof DirectoryNode dn) {
+                findProjectProperties(dn, moduleNameMap, modules);
             }
         }
     }
 
     protected void findModuleNameMap(DirectoryNode node, Map<String, String> moduleNameMap, ModuleMap modules) throws IOException {
         for (Entry entry : node) {
-            if ("projectwm".equalsIgnoreCase(entry.getName())) {
-                DocumentNode document = (DocumentNode)entry;
-                try(DocumentInputStream dis = new DocumentInputStream(document)) {
-                    readNameMapRecords(dis, moduleNameMap, modules.charset);
-                    return;
+            if (equalsIgnoreCase("projectwm", entry.getName())) {
+                if (entry instanceof DocumentNode document) {
+                    try (DocumentInputStream dis = new DocumentInputStream(document)) {
+                        readNameMapRecords(dis, moduleNameMap, modules.charset);
+                        return;
+                    }
+                } else {
+                    throw new IllegalStateException("projectwm node is expected to be a DocumentNode, found " +
+                            entry.getClass().getName());
                 }
             } else if (entry.isDirectoryEntry()) {
-                findModuleNameMap((DirectoryNode)entry, moduleNameMap, modules);
+                if (entry instanceof DirectoryNode dn) {
+                    findModuleNameMap(dn, moduleNameMap, modules);
+                }
             }
         }
     }
@@ -453,40 +490,19 @@ public class VBAMacroReader implements Closeable {
         }
     }
 
-
     private enum DIR_STATE {
         INFORMATION_RECORD,
         REFERENCES_RECORD,
         MODULES_RECORD
     }
 
-    private static class ASCIIUnicodeStringPair {
-        private final String ascii;
-        private final String unicode;
-        private final int pushbackRecordId;
-
+    private record ASCIIUnicodeStringPair(String ascii, String unicode, int pushbackRecordId) {
         ASCIIUnicodeStringPair(String ascii, int pushbackRecordId) {
-            this.ascii = ascii;
-            this.unicode = "";
-            this.pushbackRecordId = pushbackRecordId;
+            this(ascii, "", pushbackRecordId);
         }
 
         ASCIIUnicodeStringPair(String ascii, String unicode) {
-            this.ascii = ascii;
-            this.unicode = unicode;
-            pushbackRecordId = -1;
-        }
-
-        private String getAscii() {
-            return ascii;
-        }
-
-        private String getUnicode() {
-            return unicode;
-        }
-
-        private int getPushbackRecordId() {
-            return pushbackRecordId;
+            this(ascii, unicode, -1);
         }
     }
 
@@ -519,7 +535,7 @@ public class VBAMacroReader implements Closeable {
                             break;
                         case MODULE_STREAM_NAME:
                             ASCIIUnicodeStringPair pair = readStringPair(in, modules.charset, STREAMNAME_RESERVED);
-                            streamName = pair.getAscii();
+                            streamName = pair.ascii();
                             break;
                         case PROJECT_DOC_STRING:
                             readStringPair(in, modules.charset, DOC_STRING_RESERVED);
@@ -536,18 +552,18 @@ public class VBAMacroReader implements Closeable {
                             }
                             ASCIIUnicodeStringPair stringPair = readStringPair(in,
                                     modules.charset, REFERENCE_NAME_RESERVED, false);
-                            if (stringPair.getPushbackRecordId() == -1) {
+                            if (stringPair.pushbackRecordId() == -1) {
                                 break;
                             }
                             //Special handling for when there's only an ascii string and a REFERENCED_REGISTERED
                             //record that follows.
                             //See https://github.com/decalage2/oletools/blob/master/oletools/olevba.py#L1516
                             //and https://github.com/decalage2/oletools/pull/135 from (@c1fe)
-                            if (stringPair.getPushbackRecordId() != RecordType.REFERENCE_REGISTERED.id) {
+                            if (stringPair.pushbackRecordId() != RecordType.REFERENCE_REGISTERED.id) {
                                 throw new IllegalArgumentException("Unexpected reserved character. "+
                                         "Expected "+Integer.toHexString(REFERENCE_NAME_RESERVED)
                                         + " or "+Integer.toHexString(RecordType.REFERENCE_REGISTERED.id)+
-                                        " not: "+Integer.toHexString(stringPair.getPushbackRecordId()));
+                                        " not: "+Integer.toHexString(stringPair.pushbackRecordId()));
                             }
                             //fall through!
                         case REFERENCE_REGISTERED:
@@ -672,7 +688,7 @@ public class VBAMacroReader implements Closeable {
             } catch (EOFException e) {
                 return;
             }
-            if (StringUtil.isNotBlank(mbcs) && StringUtil.isNotBlank(unicode)) {
+            if (isNotBlank(mbcs) && isNotBlank(unicode)) {
                 moduleNames.put(mbcs, unicode);
             }
 
@@ -795,7 +811,7 @@ public class VBAMacroReader implements Closeable {
         if (bytesRead != unicodeNameRecordLength) {
             throw new EOFException();
         }
-        return new String(buffer, StringUtil.UTF16LE);
+        return new String(buffer, UTF16LE);
     }
 
     /**
@@ -828,7 +844,7 @@ public class VBAMacroReader implements Closeable {
                         //can be many 0 length or junk streams that are uncompressed
                         //look in the first 20 characters for "Attribute"
                         int firstX = Math.min(20, decompressed.length);
-                        String start = new String(decompressed, 0, firstX, StringUtil.WIN_1252);
+                        String start = new String(decompressed, 0, firstX, WIN_1252);
                         if (start.contains("Attribute")) {
                             return decompressed;
                         }

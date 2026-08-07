@@ -44,22 +44,22 @@ Before running this, you should execute the "jar" target in the main build.gradl
         <delete dir="${build}"/>
         <mkdir dir="${build}"/>
 
-        <!-- select latest built source zip -->
+        <!-- select latest built source tar-gz -->
         <pathconvert property="srcpackage">
             <last>
                 <sort>
                     <date xmlns="antlib:org.apache.tools.ant.types.resources.comparators"/>
                     <resources>
                         <fileset dir="${dist}">
-                            <include name="apache-poi-src-*.zip"/>
+                            <include name="apache-poi-src-*.tgz"/>
                         </fileset>
                     </resources>
                 </sort>
             </last>
         </pathconvert>
 
-        <echo message="Found source package with pattern 'apache-poi-src-*.zip' in ${dist} at '${srcpackage}'. Run Gradle-task 'srcDistZip' in the main directory if it is missing"/>
-        <unzip src="${srcpackage}" dest="${build}" failOnEmptyArchive="true"/>
+        <echo message="Found source package with pattern 'apache-poi-src-*.tgz' in ${dist} at '${srcpackage}'. Run Gradle-task 'srcDistTar' in the main directory if it is missing"/>
+        <untar src="${srcpackage}" compression="gzip" dest="${build}" failOnEmptyArchive="true"/>
 
         <!-- look for name of sub-dir, do this dynamically as it changes with every (beta|rc)-release -->
         <pathconvert property="dirversion">

@@ -43,6 +43,7 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.xssf.model.ExternalLinksTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
@@ -170,7 +171,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
             XSSFName nm = _uBook.getNameAt(i);
             String nameText = nm.getNameName();
             int nameSheetindex = nm.getSheetIndex();
-            if (name.equalsIgnoreCase(nameText) &&
+            if (StringUtil.equalsIgnoreCase(name, nameText) &&
                    (nameSheetindex == -1 || nameSheetindex == sheetIndex)) {
                 return new Name(nm, i, this);
             }
@@ -274,7 +275,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
     @Override
     public String resolveNameXText(NameXPtg n) {
         int idx = n.getNameIndex();
-        String name = null;
+        String name;
 
         // First, try to find it as a User Defined Function
         IndexedUDFFinder udfFinder = (IndexedUDFFinder)getUDFFinder();
@@ -368,7 +369,10 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
 
         for (Sheet sheet : _uBook) {
             for (XSSFTable tbl : ((XSSFSheet)sheet).getTables()) {
-                _tableCache.put(tbl.getName(), tbl);
+                String name = tbl.getName();
+                if (name != null) {
+                    _tableCache.put(name, tbl);
+                }
             }
         }
         return _tableCache;

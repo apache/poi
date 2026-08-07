@@ -33,6 +33,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
@@ -40,6 +41,7 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
@@ -52,6 +54,8 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public class HemfPlusImage {
+    private static final Logger LOG = PoiLogManager.getLogger(HemfPlusImage.class);
+
     /** The ImageDataType enumeration defines types of image data formats. */
     public enum EmfPlusImageDataType {
         /** The type of image is not known. */
@@ -270,7 +274,6 @@ public class HemfPlusImage {
         }
     }
 
-
     public static class EmfPlusImage implements EmfPlusObjectData {
         private static final int MAX_OBJECT_SIZE = 50_000_000;
         private static final String GDI_CONTENT = "GDI";
@@ -337,20 +340,8 @@ public class HemfPlusImage {
                 imageDataType = EmfPlusImageDataType.UNKNOWN;
             }
 
-            int fileSize;
+            long fileSize;
             switch (imageDataType) {
-                default:
-                case UNKNOWN:
-                case CONTINUED:
-                    bitmapWidth = -1;
-                    bitmapHeight = -1;
-                    bitmapStride = -1;
-                    bitmapType = null;
-                    pixelFormat = null;
-
-                    fileSize = (int) (dataSize);
-                    break;
-
                 case BITMAP:
                     // A 32-bit signed integer that specifies the width in pixels of the area occupied by the bitmap.
                     // If the image is compressed, according to the Type field, this value is undefined and MUST be ignored.
@@ -377,7 +368,7 @@ public class HemfPlusImage {
                             : EmfPlusPixelFormat.UNDEFINED;
                     assert (pixelFormat != null);
 
-                    fileSize = (int) (dataSize - size);
+                    fileSize = dataSize - size;
 
                     break;
 
@@ -394,8 +385,21 @@ public class HemfPlusImage {
 
                     // ignore metafileDataSize, which might ignore a (placeable) header in front
                     // and also use the remaining bytes, which might contain padding bytes ...
-                    fileSize = (int) (dataSize - size);
+                    fileSize = dataSize - size;
                     break;
+
+                case UNKNOWN:
+                case CONTINUED:
+                default:
+                    bitmapWidth = -1;
+                    bitmapHeight = -1;
+                    bitmapStride = -1;
+                    bitmapType = null;
+                    pixelFormat = null;
+
+                    fileSize = dataSize;
+                    break;
+
             }
 
             assert (fileSize <= dataSize - size);
@@ -426,23 +430,22 @@ public class HemfPlusImage {
                         }
                     case METAFILE:
                         try(UnsynchronizedByteArrayInputStream bis = UnsynchronizedByteArrayInputStream.builder().setByteArray(getRawData(continuedObjectData)).get()) {
-                            switch (getMetafileType()) {
-                                case Wmf:
-                                case WmfPlaceable:
+                            return switch (getMetafileType()) {
+                                case Wmf, WmfPlaceable -> {
                                     HwmfPicture wmf = new HwmfPicture(bis);
-                                    return wmf.getBounds();
-                                case Emf:
-                                case EmfPlusDual:
-                                case EmfPlusOnly:
+                                    yield wmf.getBounds();
+                                }
+                                case Emf, EmfPlusDual, EmfPlusOnly -> {
                                     HemfPicture emf = new HemfPicture(bis);
-                                    return emf.getBounds();
-                            }
+                                    yield emf.getBounds();
+                                }
+                            };
                         }
-                        break;
                     default:
                         break;
                 }
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                LOG.info("Unable to read image bounds, returning default bounds of (1,1,1,1)", e);
             }
             return new Rectangle2D.Double(1,1,1,1);
         }
@@ -514,39 +517,22 @@ public class HemfPlusImage {
                         return GDI_CONTENT;
                     }
 
-                    switch (FileMagic.valueOf(data)) {
-                        case GIF:
-                            pictureType = PictureType.GIF;
-                            break;
-                        case TIFF:
-                            pictureType = PictureType.TIFF;
-                            break;
-                        case PNG:
-                            pictureType = PictureType.PNG;
-                            break;
-                        case JPEG:
-                            pictureType = PictureType.JPEG;
-                            break;
-                        case BMP:
-                            pictureType = PictureType.BMP;
-                            break;
-                    }
+                    pictureType = switch (FileMagic.valueOf(data)) {
+                        case GIF -> PictureType.GIF;
+                        case TIFF -> PictureType.TIFF;
+                        case PNG -> PictureType.PNG;
+                        case JPEG -> PictureType.JPEG;
+                        case BMP -> PictureType.BMP;
+                        default -> pictureType;
+                    };
                     break;
 
                 case METAFILE:
                     assert (getMetafileType() != null);
-                    switch (getMetafileType()) {
-                        case Wmf:
-                        case WmfPlaceable:
-                            pictureType = PictureType.WMF;
-                            break;
-
-                        case Emf:
-                        case EmfPlusDual:
-                        case EmfPlusOnly:
-                            pictureType = PictureType.EMF;
-                            break;
-                    }
+                    pictureType = switch (getMetafileType()) {
+                        case Wmf, WmfPlaceable -> PictureType.WMF;
+                        case Emf, EmfPlusDual, EmfPlusOnly -> PictureType.EMF;
+                    };
                     break;
             }
 

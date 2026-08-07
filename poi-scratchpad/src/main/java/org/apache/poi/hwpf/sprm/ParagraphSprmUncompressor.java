@@ -27,7 +27,6 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hwpf.model.TabDescriptor;
-import org.apache.poi.hwpf.model.types.TBDAbstractType;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
 import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
@@ -419,7 +418,7 @@ public final class ParagraphSprmUncompressor extends SprmUncompressor {
         int start = offset;
         for (int x = 0; x < addSize; x++) {
             Integer key = (int) LittleEndian.getShort(grpprl, offset);
-            TabDescriptor val = new TabDescriptor(grpprl, start + ((TBDAbstractType.getSize() * addSize) + x));
+            TabDescriptor val = new TabDescriptor(grpprl, start + ((LittleEndianConsts.SHORT_SIZE * addSize) + x));
             tabMap.put(key, val);
             offset += LittleEndianConsts.SHORT_SIZE;
         }

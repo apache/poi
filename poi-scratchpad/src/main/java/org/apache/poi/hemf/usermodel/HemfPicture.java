@@ -125,8 +125,8 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
                     header[0] = (HemfHeader) r;
                 }
                 r.setHeader(header[0]);
-                if (r instanceof HwmfCharsetAware) {
-                    ((HwmfCharsetAware)r).setCharsetProvider(this::getDefaultCharset);
+                if (r instanceof HwmfCharsetAware charsetAware) {
+                    charsetAware.setCharsetProvider(this::getDefaultCharset);
                 }
                 records.add(r);
             });

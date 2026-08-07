@@ -143,12 +143,11 @@ public class TextProp implements Duplicatable, GenericRecord {
 
     @Override
     public String toString() {
-        int len;
-        switch (getSize()) {
-        case 1: len = 4; break;
-        case 2: len = 6; break;
-        default: len = 10; break;
-        }
+        int len = switch (getSize()) {
+            case 1 -> 4;
+            case 2 -> 6;
+            default -> 10;
+        };
         return String.format(Locale.ROOT, "%s = %d (%0#"+len+"X mask / %d bytes)", getName(), getValue(), getMask(), getSize());
     }
 

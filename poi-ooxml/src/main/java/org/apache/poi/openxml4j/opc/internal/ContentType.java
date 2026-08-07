@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Represents an immutable MIME ContentType value (RFC 2616 &#167;3.7)
@@ -206,7 +207,7 @@ public final class ContentType {
     @Override
     public boolean equals(Object obj) {
         return (!(obj instanceof ContentType))
-                || (this.toString().equalsIgnoreCase(obj.toString()));
+                || (StringUtil.equalsIgnoreCase(this.toString(), obj.toString()));
     }
 
     @Override

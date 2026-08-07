@@ -40,10 +40,12 @@ import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Unit tests for HSSFDataFormatter.java
  */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 public final class TestHSSFDataFormatter {
     private static TimeZone userTimeZone;
 

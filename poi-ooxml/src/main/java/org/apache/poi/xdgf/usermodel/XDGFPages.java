@@ -81,15 +81,13 @@ public class XDGFPages extends XDGFXMLDocumentPart {
                 if (pageContentsPart == null)
                     throw new POIXMLException("PageSettings relationship for " + relId + " not found");
 
-                if (!(pageContentsPart instanceof XDGFPageContents))
+                if (pageContentsPart instanceof XDGFPageContents contents) {
+                    XDGFPage page = new XDGFPage(pageSettings, contents, _document, this);
+                    contents.onDocumentRead();
+                    _pages.add(page);
+                } else {
                     throw new POIXMLException("Unexpected pages relationship for " + relId + ": " + pageContentsPart);
-
-                XDGFPageContents contents = (XDGFPageContents)pageContentsPart;
-                XDGFPage page = new XDGFPage(pageSettings, contents, _document, this);
-
-                contents.onDocumentRead();
-
-                _pages.add(page);
+                }
             }
 
         } catch (POIXMLException e) {

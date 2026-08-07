@@ -124,13 +124,13 @@ public class SheetBuilder {
             return;
         }
 
-        if (value instanceof Number) {
-            double doubleValue = ((Number) value).doubleValue();
+        if (value instanceof Number num) {
+            double doubleValue = num.doubleValue();
             cell.setCellValue(doubleValue);
-        } else if (value instanceof Date) {
-            cell.setCellValue((Date) value);
-        } else if (value instanceof Calendar) {
-            cell.setCellValue((Calendar) value);
+        } else if (value instanceof Date d) {
+            cell.setCellValue(d);
+        } else if (value instanceof Calendar c) {
+            cell.setCellValue(c);
         } else if (isFormulaDefinition(value)) {
             cell.setCellFormula(getFormula(value));
         } else {
@@ -139,8 +139,7 @@ public class SheetBuilder {
     }
 
     private boolean isFormulaDefinition(Object obj) {
-        if (obj instanceof String) {
-            String str = (String) obj;
+        if (obj instanceof String str) {
             return str.length() >= 2 && str.charAt(0) == '=';
         } else {
             return false;

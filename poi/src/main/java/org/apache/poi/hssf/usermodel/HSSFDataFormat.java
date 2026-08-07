@@ -26,6 +26,7 @@ import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.FormatRecord;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Identifies both built-in and user defined formats within a workbook.<p>
@@ -85,7 +86,7 @@ public final class HSSFDataFormat implements DataFormat {
     public short getFormat(String pFormat) {
        // Normalise the format string
         String format;
-        if (pFormat.equalsIgnoreCase("TEXT")) {
+        if (StringUtil.equalsIgnoreCase(pFormat, "TEXT")) {
             format = "@";
         } else {
             format = pFormat;

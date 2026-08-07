@@ -442,14 +442,11 @@ public class DrawTextParagraph implements Drawable {
         txtSpace = txtSpace.replace('\u000b', '\n');
         final Locale loc = LocaleUtil.getUserLocale();
 
-        switch (tr.getTextCap()) {
-            case ALL:
-                return txtSpace.toUpperCase(loc);
-            case SMALL:
-                return txtSpace.toLowerCase(loc);
-            default:
-                return txtSpace;
-        }
+        return switch (tr.getTextCap()) {
+            case ALL -> txtSpace.toUpperCase(loc);
+            case SMALL -> txtSpace.toLowerCase(loc);
+            default -> txtSpace;
+        };
     }
 
     /**
@@ -531,27 +528,16 @@ public class DrawTextParagraph implements Drawable {
         if (!ts.getWordWrap()) {
             Dimension pageDim = ts.getSheet().getSlideShow().getPageSize();
             // if wordWrap == false then we return the advance to the (right) border of the sheet
-            switch (textDir) {
-                default:
-                    width = pageDim.getWidth() - anchor.getX();
-                    break;
-                case VERTICAL:
-                    width = pageDim.getHeight() - anchor.getX();
-                    break;
-                case VERTICAL_270:
-                    width = anchor.getX();
-                    break;
-            }
+            width = switch (textDir) {
+                case VERTICAL -> pageDim.getHeight() - anchor.getX();
+                case VERTICAL_270 -> anchor.getX();
+                default -> pageDim.getWidth() - anchor.getX();
+            };
         } else {
-            switch (textDir) {
-                default:
-                    width = anchor.getWidth() - leftInset - rightInset - leftMargin - rightMargin;
-                    break;
-                case VERTICAL:
-                case VERTICAL_270:
-                    width = anchor.getHeight() - leftInset - rightInset - leftMargin - rightMargin;
-                    break;
-            }
+            width = switch (textDir) {
+                case VERTICAL, VERTICAL_270 -> anchor.getHeight() - leftInset - rightInset - leftMargin - rightMargin;
+                default -> anchor.getWidth() - leftInset - rightInset - leftMargin - rightMargin;
+            };
             if (firstLine && bullet == null) {
                 // indent is usually negative in XSLF
                 width += isHSLF() ? (leftMargin - indent) : -indent;
@@ -613,9 +599,9 @@ public class DrawTextParagraph implements Drawable {
 
             att.put(TextAttribute.FOREGROUND, fgPaint);
 
-            if (run instanceof HighlightColorSupport) {
+            if (run instanceof HighlightColorSupport hcs) {
                 // Highlight color is only supported in XSLF (PPTX) text runs.
-                final PaintStyle highlightPaintStyle = ((HighlightColorSupport)run).getHighlightColor();
+                final PaintStyle highlightPaintStyle = hcs.getHighlightColor();
                 if (highlightPaintStyle != null) {
                     final Paint bgPaint = dp.getPaint(graphics, highlightPaintStyle);
                     att.put(TextAttribute.BACKGROUND, bgPaint);

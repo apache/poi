@@ -44,6 +44,8 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.StringUtil;
 
+import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
+
 /**
  * Evaluates Data Validation constraints.<p>
  *
@@ -60,7 +62,7 @@ public class DataValidationEvaluator {
     /**
      * Expensive to compute, so cache them as they are retrieved.
      * <p>
-     * Sheets don't implement equals, and since its an interface,
+     * Sheets don't implement equals, and since it's an interface,
      * there's no guarantee instances won't be recreated on the fly by some implementation.
      * So we use sheet name.
      */
@@ -318,11 +320,11 @@ public class DataValidationEvaluator {
                             continue; // check the rest
                         }
                     }
-                    if (comp instanceof StringEval) {
+                    if (comp instanceof StringEval se) {
                         // interestingly, in testing, a validation value of the string "TRUE" or "true"
                         // did not match a boolean cell value of TRUE - so apparently cell type matters
                         // also, Excel validation is case insensitive - "true" is valid for the list value "TRUE"
-                        if (isType(cell, CellType.STRING) && ((StringEval) comp).getStringValue().equalsIgnoreCase(cell.getStringCellValue())) {
+                        if (isType(cell, CellType.STRING) && equalsIgnoreCase(se.getStringValue(), cell.getStringCellValue())) {
                             return true;
                         } else {
                             continue; // check the rest;
@@ -338,7 +340,7 @@ public class DataValidationEvaluator {
             public boolean isValidValue(Cell cell, DataValidationContext context) {
                 if (! isType(cell, CellType.STRING)) return false;
                 String v = cell.getStringCellValue();
-                return isValidNumericValue(Double.valueOf(v.length()), context);
+                return isValidNumericValue((double) v.length(), context);
             }
         },
         FORMULA {
@@ -383,8 +385,7 @@ public class DataValidationEvaluator {
         protected boolean isValidNumericCell(Cell cell, DataValidationContext context) {
             if ( ! isType(cell, CellType.NUMERIC)) return false;
 
-            Double value = Double.valueOf(cell.getNumericCellValue());
-            return isValidNumericValue(value, context);
+            return isValidNumericValue(cell.getNumericCellValue(), context);
         }
 
         /**
@@ -427,13 +428,13 @@ public class DataValidationEvaluator {
             }
             // note the call to the "unwrapped" version, which returns a single value
             ValueEval eval = context.getEvaluator().getWorkbookEvaluator().evaluate(formula, context.getTarget(), context.getRegion());
-            if (eval instanceof RefEval) {
-                eval = ((RefEval) eval).getInnerValueEval(((RefEval) eval).getFirstSheetIndex());
+            if (eval instanceof RefEval re) {
+                eval = re.getInnerValueEval(re.getFirstSheetIndex());
             }
             if (eval instanceof BlankEval) return null;
-            if (eval instanceof NumberEval) return Double.valueOf(((NumberEval) eval).getNumberValue());
-            if (eval instanceof StringEval) {
-                final String value = ((StringEval) eval).getStringValue();
+            if (eval instanceof NumberEval ne) return ne.getNumberValue();
+            if (eval instanceof StringEval se) {
+                final String value = se.getStringValue();
                 if (StringUtil.isBlank(value)) return null;
                 // try to parse the cell value as a double and return it
                 return Double.valueOf(value);

@@ -189,9 +189,9 @@ public class XSSFExcelExtractor
             if (includeTextBoxes){
                 XSSFDrawing drawing = sheet.getDrawingPatriarch();
                 if (drawing != null) {
-                    for (XSSFShape shape : drawing.getShapes()){
-                        if (shape instanceof XSSFSimpleShape){
-                            String boxText = ((XSSFSimpleShape)shape).getText();
+                    for (XSSFShape shape : drawing.getShapes()) {
+                        if (shape instanceof XSSFSimpleShape simpleShape) {
+                            String boxText = simpleShape.getText();
                             if (!boxText.isEmpty()){
                                 text.append(boxText);
                                 text.append('\n');

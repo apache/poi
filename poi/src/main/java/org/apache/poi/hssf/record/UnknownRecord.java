@@ -202,66 +202,21 @@ public final class UnknownRecord extends StandardRecord {
      */
     private static boolean isObservedButUnknown(int sid) {
         // TODO Look up more of these in the latest [MS-XLS] doc and move to getBiffName
-        switch (sid) {
-            case 0x0033:
-                // contains 2 bytes of data: 0x0001 or 0x0003
-            case 0x0034:
-                // Seems to be written by MSAccess
-                // contains text "[Microsoft JET Created Table]0021010"
-                // appears after last cell value record and before WINDOW2
-            case 0x01BD:
-            case 0x01C2:
-                // Written by Excel 2007
-                // rawData is multiple of 12 bytes long
-                // appears after last cell value record and before WINDOW2 or drawing records
+        return switch (sid) {
+            // contains 2 bytes of data: 0x0001 or 0x0003
+            // Seems to be written by MSAccess
+            // contains text "[Microsoft JET Created Table]0021010"
+            // appears after last cell value record and before WINDOW2
+            // Written by Excel 2007
+            // rawData is multiple of 12 bytes long
+            // appears after last cell value record and before WINDOW2 or drawing records
 
-            case 0x1009:
-            case 0x100A:
-            case 0x100B:
-            case 0x100C:
-            case 0x1014:
-            case 0x1017:
-            case 0x1018:
-            case 0x1019:
-            case 0x101A:
-            case 0x101B:
-            case 0x101D:
-            case 0x101E:
-            case 0x101F:
-            case 0x1020:
-            case 0x1021:
-            case 0x1022:
-            case 0x1024:
-            case 0x1025:
-            case 0x1026:
-            case 0x1027:
-            case 0x1032:
-            case 0x1033:
-            case 0x1034:
-            case 0x1035:
-            case 0x103A:
-            case 0x1041:
-            case 0x1043:
-            case 0x1044:
-            case 0x1045:
-            case 0x1046:
-            case 0x104A:
-            case 0x104B:
-            case 0x104E:
-            case 0x104F:
-            case 0x1051:
-            case 0x105C:
-            case 0x105D:
-            case 0x105F:
-            case 0x1060:
-            case 0x1062:
-            case 0x1063:
-            case 0x1064:
-            case 0x1065:
-            case 0x1066:
-                return true;
-        }
-        return false;
+            case 0x0033, 0x0034, 0x01BD, 0x01C2, 0x1009, 0x100A, 0x100B, 0x100C, 0x1014, 0x1017, 0x1018, 0x1019, 0x101A,
+                 0x101B, 0x101D, 0x101E, 0x101F, 0x1020, 0x1021, 0x1022, 0x1024, 0x1025, 0x1026, 0x1027, 0x1032, 0x1033,
+                 0x1034, 0x1035, 0x103A, 0x1041, 0x1043, 0x1044, 0x1045, 0x1046, 0x104A, 0x104B, 0x104E, 0x104F, 0x1051,
+                 0x105C, 0x105D, 0x105F, 0x1060, 0x1062, 0x1063, 0x1064, 0x1065, 0x1066 -> true;
+            default -> false;
+        };
     }
 
     @Override

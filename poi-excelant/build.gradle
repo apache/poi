@@ -31,7 +31,7 @@ sourceSets {
 }
 
 dependencies {
-    api 'org.apache.ant:ant:1.10.15'
+    api "org.apache.ant:ant:${antVersion}"
 
     api project(':poi-ooxml')
     compileOnly project(path: ':poi-ooxml', configuration: 'archives')
@@ -41,10 +41,11 @@ dependencies {
     testImplementation(project(path: ':poi-ooxml', configuration: 'tests')) {
         exclude group: 'org.apache.poi', module: 'poi-scratchpad'
     }
-    testImplementation 'com.google.guava:guava:33.5.0-jre'
+    testImplementation "com.google.guava:guava:${guavaVersion}"
     testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
-    testImplementation 'org.slf4j:slf4j-simple:2.0.17'
+    testImplementation "org.slf4j:slf4j-simple:${slf4jVersion}"
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
+    testRuntimeOnly "org.jspecify:jspecify:${jspecifyVersion}"
 }
 
 final String MODULE_NAME = 'org.apache.poi.excelant'
@@ -61,10 +62,10 @@ tasks.register('compileJava9', JavaCompile) {
     dependsOn 'compileJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
+        languageVersion = JavaLanguageVersion.of(Math.max(17, jdkVersion))
     }
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
@@ -78,10 +79,10 @@ tasks.register('compileTest9', JavaCompile) {
     dependsOn 'compileTestJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
+        languageVersion = JavaLanguageVersion.of(Math.max(17, jdkVersion))
     }
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
     destinationDirectory = file(TEST9_OUT + VERSIONS9)
     source = file(TEST9_SRC)
     options.compilerArgs = [
@@ -157,23 +158,4 @@ publishing {
             }
         }
     }
-}
-
-cyclonedxBom {
-    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
-    includeConfigs = ["runtimeClasspath"]
-    // skipConfigs is a list of configuration names to exclude when generating the BOM
-    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
-    // Specified the type of project being built. Defaults to 'library'
-    projectType = "library"
-    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
-    schemaVersion = "1.4"
-    // Boms destination directory (defaults to build/reports)
-    destination = file("build/reports")
-    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
-    outputName = "poi-excelant-${project.version}.bom"
-    // The file format generated, can be xml, json or all for generating both
-    outputFormat = "all"
-    // Exclude BOM Serial Number
-    includeBomSerialNumber = true
 }

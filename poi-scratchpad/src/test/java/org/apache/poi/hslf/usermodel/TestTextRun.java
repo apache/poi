@@ -47,10 +47,12 @@ import org.apache.poi.sl.usermodel.BaseTestSlideShow;
 import org.apache.poi.sl.usermodel.PlaceholderDetails;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Tests for TextRuns
  */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 @SuppressWarnings("UnusedAssignment")
 public final class TestTextRun {
     /**

@@ -117,8 +117,7 @@ public final class Comment2000 extends RecordContainer {
     private void findInterestingChildren() {
 
         for(org.apache.poi.hslf.record.Record r : _children){
-            if (r instanceof CString){
-                CString cs = (CString)r;
+            if (r instanceof CString cs) {
                 int recInstance = cs.getOptions() >> 4;
                 switch(recInstance){
                     case 0: authorRecord = cs; break;

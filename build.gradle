@@ -21,6 +21,7 @@ import org.w3c.dom.NodeList
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
+import java.util.zip.ZipFile
 
 buildscript {
     repositories {
@@ -35,22 +36,19 @@ plugins {
     id 'org.nosphere.apache.rat' version '0.8.1'
     id 'distribution'
 
-    // 6.2.0+ requires JDK 11
-    // this is the version of the Gradle plugin, it usually includes a
-    // different version of spotbugs itself
     // Latest spotbugs: https://github.com/spotbugs/spotbugs
     // Latest gradle plugin: https://plugins.gradle.org/plugin/com.github.spotbugs
-    id 'com.github.spotbugs' version '6.4.8'
+    id 'com.github.spotbugs' version '6.5.9'
 
     id 'de.thetaphi.forbiddenapis' version '3.10'
-    id 'org.sonarqube' version '7.2.3.7755'
-    id 'org.cyclonedx.bom' version '2.4.1'
+    id 'org.sonarqube' version '7.3.1.8318'
+    id 'org.cyclonedx.bom' version '3.3.0'
     id 'com.adarshr.test-logger' version '4.0.0'
 }
 
 repositories {
     mavenCentral()
-    // maven { url 'https://repository.apache.org/content/repositories/staging' }
+    maven { url 'https://repository.apache.org/content/repositories/staging' }
 }
 
 // Only add the plugin for Sonar if enabled
@@ -73,9 +71,16 @@ configurations {
     }
 }
 
+allprojects {
+    ext {
+        antVersion = '1.10.17'
+        junitVersion = '6.1.2'
+    }
+}
+
 dependencies {
-    antLibs("org.junit.jupiter:junit-jupiter:5.13.4")
-    antLibs("org.apache.ant:ant-junitlauncher:1.10.15")
+    antLibs("org.junit.jupiter:junit-jupiter:${junitVersion}")
+    antLibs("org.apache.ant:ant-junitlauncher:${antVersion}")
 }
 
 ant.taskdef(name: "junit",
@@ -84,7 +89,7 @@ ant.taskdef(name: "junit",
 
 
 wrapper {
-    gradleVersion = '8.14.3'
+    gradleVersion = '9.6.1'
 }
 
 group = 'org.apache.poi'
@@ -97,6 +102,43 @@ allprojects {
     apply plugin: 'idea'
 
     version = '6.0.0-SNAPSHOT'
+
+    tasks.cyclonedxDirectBom {
+        // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
+        includeConfigs = ["runtimeClasspath"]
+        // skipConfigs is a list of configuration names to exclude when generating the BOM
+        //skipConfigs = ["compileClasspath", "testCompileClasspath"]
+        // Specified the version of the CycloneDX specification to use
+        //schemaVersion = org.cyclonedx.model.schema.SchemaVersion.VERSION_16
+        // Specified the type of project being built. Defaults to 'library'
+        projectType = "library"
+        jsonOutput = file("build/reports/sbom/${project.name}-sbom.json")
+    }
+}
+
+abstract class VerifyModuleInfoIsPresent extends DefaultTask {
+    @InputFile
+    abstract RegularFileProperty getVerifiedJar()
+
+    @TaskAction
+    void verifyModuleInfo() {
+        def jar = verifiedJar.get().asFile
+        if (jar.getName().contains('poi-integration') || jar.getName().contains('poi-fuzz')) {
+            return
+        }
+
+        new ZipFile(jar).withCloseable { zip ->
+            def moduleInfo9Present = zip.getEntry("META-INF/versions/9/module-info.class") != null
+            def moduleInfoRootPresent = zip.getEntry("module-info.class") != null
+            if (moduleInfo9Present) {
+                if (moduleInfoRootPresent) {
+                    throw new VerificationException("Duplicate module-info in $jar")
+                }
+            } else if (!moduleInfoRootPresent) {
+                throw new VerificationException("Missing module-info in $jar")
+            }
+        }
+    }
 }
 
 /**
@@ -114,24 +156,26 @@ subprojects {
     apply plugin: 'com.adarshr.test-logger'
 
     ext {
-        bouncyCastleVersion = '1.84'
-        commonsCodecVersion = '1.21.0'
+        bouncyCastleVersion = '1.85'
+        commonsCodecVersion = '1.22.1'
         commonsCompressVersion = '1.28.0'
-        commonsIoVersion = '2.21.0'
+        commonsIoVersion = '2.22.0'
         commonsMathVersion = '3.6.1'
-        junitVersion = '5.13.4'
-        log4jVersion = '2.26.0'
+        log4jVersion = '2.26.1'
         mockitoVersion = '5.23.0'
         hamcrestVersion = '3.0'
-        xmlbeansVersion = '5.3.0'
+        xmlbeansVersion = '5.4.0'
         batikVersion = '1.19'
         graphics2dVersion = '3.0.5'
-        pdfboxVersion = '3.0.6'
-        saxonVersion = '12.9'
+        pdfboxVersion = '3.0.8'
+        saxonVersion = '13.0'
+        guavaVersion = '33.6.0-jre'
+        slf4jVersion = '2.0.18'
+        jspecifyVersion = '1.0.1'
         xmlSecVersion = '3.0.6'
         apiGuardianVersion = '1.1.2'
 
-        jdkVersion = (project.properties['jdkVersion'] ?: '11') as int
+        jdkVersion = (project.properties['jdkVersion'] ?: '17') as int
         // see https://github.com/gradle/gradle/blob/master/subprojects/jvm-services/src/main/java/org/gradle/internal/jvm/inspection/JvmVendor.java
         jdkVendor = (project.properties['jdkVendor'] ?: '') as String
 
@@ -149,8 +193,8 @@ subprojects {
         configureEach {
             resolutionStrategy {
                 force "commons-io:commons-io:${commonsIoVersion}"
-                force 'org.slf4j:slf4j-api:2.0.17'
-                force 'com.fasterxml.woodstox:woodstox-core:7.1.1'
+                force "org.slf4j:slf4j-api:${slf4jVersion}"
+                force 'com.fasterxml.woodstox:woodstox-core:7.2.1'
             }
         }
     }
@@ -174,7 +218,7 @@ subprojects {
 
     repositories {
         mavenCentral()
-        // maven { url 'https://repository.apache.org/content/repositories/staging' }
+        maven { url 'https://repository.apache.org/content/repositories/staging' }
     }
 
     dependencies {
@@ -215,12 +259,12 @@ subprojects {
                 addBooleanOption('html5', true)
                 addBooleanOption('Xdoclint:all,-missing', true)
                 links 'https://poi.apache.org/apidocs/dev/'
-                if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
+                if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/17/docs/api/'
                 links 'https://xmlbeans.apache.org/docs/5.0.0/'
                 links 'https://www.javadocs.dev/org.apache.commons/commons-compress/1.28.0/'
                 use = true
                 splitIndex = true
-                source = "11"
+                source = "17"
             }
         }
     }
@@ -323,6 +367,15 @@ subprojects {
         }
     }
 
+    // Verify if module-info is present in the jar-file
+    def verifyModuleInfoPresentRef = tasks.register("verifyModuleInfoPresent", VerifyModuleInfoIsPresent) {
+        verifiedJar = tasks.named("jar").flatMap { it.archiveFile }
+    }
+
+    tasks.named("check") {
+        dependsOn(verifyModuleInfoPresentRef)
+    }
+
     javadocJar {
         // if javadocs and binaries are in the same directory, JPMS complaints about duplicated modules
         // in the module-path
@@ -421,13 +474,6 @@ subprojects {
         systemProperties['java.locale.providers'] = 'JRE,CLDR'
 
         doFirst {
-            // some options were removed in JDK 18
-            if (jdkVersion < 18) {
-                jvmArgs += [
-                    '--illegal-access=warn',
-                ]
-            }
-
             jvmArgs += [
                 // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
                 // opposed to the recommendation there, it doesn't work to add ... to the dependencies
@@ -452,7 +498,7 @@ subprojects {
     }
 
     jacoco {
-        toolVersion = '0.8.13'
+        toolVersion = '0.8.15'
     }
 
     jacocoTestReport {
@@ -728,7 +774,6 @@ task jenkins(dependsOn: [
             subprojects.javadoc,
             subprojects.jacocoTestReport,
             subprojects.getDeps,
-            'srcDistZip',
             'srcDistTar',
             rat
 ]) {}

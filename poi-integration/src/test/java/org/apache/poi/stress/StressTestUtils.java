@@ -16,18 +16,17 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+import org.apache.poi.util.IOUtils;
+
 import java.util.Set;
 
 public class StressTestUtils {
     static Set<String> unmodifiableHashSet(String... a) {
-        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(a)));
+        return Set.of(a);
     }
 
     static boolean excludeFile(String path, Set<String> excludeSet) {
-        String modifiedPath = path.replace('\\', '/');
+        String modifiedPath = IOUtils.normalizePath(path);
         return excludeSet.contains(modifiedPath);
     }
 }

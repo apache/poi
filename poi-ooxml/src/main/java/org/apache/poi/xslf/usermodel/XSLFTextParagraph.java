@@ -727,22 +727,12 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     @Internal
     public CTTextParagraphProperties getDefaultMasterStyle() {
         CTPlaceholder ph = _shape.getPlaceholderDetails().getCTPlaceholder(false);
-        String defaultStyleSelector;
-        switch(ph == null ? -1 : ph.getType().intValue()) {
-            case STPlaceholderType.INT_TITLE:
-            case STPlaceholderType.INT_CTR_TITLE:
-                defaultStyleSelector = "titleStyle";
-                break;
-            case -1: // no placeholder means plain text box
-            case STPlaceholderType.INT_FTR:
-            case STPlaceholderType.INT_SLD_NUM:
-            case STPlaceholderType.INT_DT:
-                defaultStyleSelector = "otherStyle";
-                break;
-            default:
-                defaultStyleSelector = "bodyStyle";
-                break;
-        }
+        String defaultStyleSelector = switch (ph == null ? -1 : ph.getType().intValue()) {
+            case STPlaceholderType.INT_TITLE, STPlaceholderType.INT_CTR_TITLE ->
+                    "titleStyle"; // no placeholder means plain text box
+            case -1, STPlaceholderType.INT_FTR, STPlaceholderType.INT_SLD_NUM, STPlaceholderType.INT_DT -> "otherStyle";
+            default -> "bodyStyle";
+        };
         int level = getIndentLevel();
 
         // wind up and find the root master sheet which must be slide master
@@ -1012,15 +1002,14 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      */
     /* package */ void clearButKeepProperties() {
         CTTextParagraph thisP = getXmlObject();
-        for (int i=thisP.sizeOfBrArray(); i>0; i--) {
-            thisP.removeBr(i-1);
-        }
-        for (int i=thisP.sizeOfFldArray(); i>0; i--) {
-            thisP.removeFld(i-1);
-        }
+
+        // Capture the last run's properties before removing anything - _runs can
+        // include field-backed runs (<a:fld>, e.g. slide number/date placeholders),
+        // and reading from one after its underlying XML has already been removed
+        // throws XmlValueDisconnectedException. See
+        // https://github.com/apache/poi/issues/919
         if (!_runs.isEmpty()) {
-            int size = _runs.size();
-            XSLFTextRun lastRun = _runs.get(size-1);
+            XSLFTextRun lastRun = _runs.get(_runs.size() - 1);
             CTTextCharacterProperties cpOther = lastRun.getRPr(false);
             if (cpOther != null) {
                 if (thisP.isSetEndParaRPr()) {
@@ -1029,26 +1018,29 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                 CTTextCharacterProperties cp = thisP.addNewEndParaRPr();
                 cp.set(cpOther);
             }
-            for (int i=size; i>0; i--) {
-                thisP.removeR(i-1);
-            }
-            _runs.clear();
         }
+
+        for (int i=thisP.sizeOfBrArray(); i>0; i--) {
+            thisP.removeBr(i-1);
+        }
+        for (int i=thisP.sizeOfFldArray(); i>0; i--) {
+            thisP.removeFld(i-1);
+        }
+        for (int i=thisP.sizeOfRArray(); i>0; i--) {
+            thisP.removeR(i-1);
+        }
+        _runs.clear();
     }
 
     @Override
     public boolean isHeaderOrFooter() {
         CTPlaceholder ph = _shape.getPlaceholderDetails().getCTPlaceholder(false);
         int phId = (ph == null ? -1 : ph.getType().intValue());
-        switch (phId) {
-            case STPlaceholderType.INT_SLD_NUM:
-            case STPlaceholderType.INT_DT:
-            case STPlaceholderType.INT_FTR:
-            case STPlaceholderType.INT_HDR:
-                return true;
-            default:
-                return false;
-        }
+        return switch (phId) {
+            case STPlaceholderType.INT_SLD_NUM, STPlaceholderType.INT_DT, STPlaceholderType.INT_FTR,
+                 STPlaceholderType.INT_HDR -> true;
+            default -> false;
+        };
     }
 
     /**

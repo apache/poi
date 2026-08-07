@@ -98,47 +98,26 @@ public class XSLFPath implements PathIf {
 
     @Override
     public PaintStyle.PaintModifier getFill() {
-        switch (pathXml.getFill().intValue()) {
-            default:
-            case STPathFillMode.INT_NONE:
-                return PaintStyle.PaintModifier.NONE;
-            case STPathFillMode.INT_NORM:
-                return PaintStyle.PaintModifier.NORM;
-            case STPathFillMode.INT_LIGHTEN:
-                return PaintStyle.PaintModifier.LIGHTEN;
-            case STPathFillMode.INT_LIGHTEN_LESS:
-                return PaintStyle.PaintModifier.LIGHTEN_LESS;
-            case STPathFillMode.INT_DARKEN:
-                return PaintStyle.PaintModifier.DARKEN;
-            case STPathFillMode.INT_DARKEN_LESS:
-                return PaintStyle.PaintModifier.DARKEN_LESS;
-        }
+        return switch (pathXml.getFill().intValue()) {
+            case STPathFillMode.INT_NORM -> PaintStyle.PaintModifier.NORM;
+            case STPathFillMode.INT_LIGHTEN -> PaintStyle.PaintModifier.LIGHTEN;
+            case STPathFillMode.INT_LIGHTEN_LESS -> PaintStyle.PaintModifier.LIGHTEN_LESS;
+            case STPathFillMode.INT_DARKEN -> PaintStyle.PaintModifier.DARKEN;
+            case STPathFillMode.INT_DARKEN_LESS -> PaintStyle.PaintModifier.DARKEN_LESS;
+            default -> PaintStyle.PaintModifier.NONE;
+        };
     }
 
     @Override
     public void setFill(PaintStyle.PaintModifier fill) {
-        STPathFillMode.Enum f;
-        switch (fill) {
-            default:
-            case NONE:
-                f = STPathFillMode.NONE;
-                break;
-            case NORM:
-                f = STPathFillMode.NORM;
-                break;
-            case LIGHTEN:
-                f = STPathFillMode.LIGHTEN;
-                break;
-            case LIGHTEN_LESS:
-                f = STPathFillMode.LIGHTEN_LESS;
-                break;
-            case DARKEN:
-                f = STPathFillMode.DARKEN;
-                break;
-            case DARKEN_LESS:
-                f = STPathFillMode.DARKEN_LESS;
-                break;
-        }
+        STPathFillMode.Enum f = switch (fill) {
+            case NORM -> STPathFillMode.NORM;
+            case LIGHTEN -> STPathFillMode.LIGHTEN;
+            case LIGHTEN_LESS -> STPathFillMode.LIGHTEN_LESS;
+            case DARKEN -> STPathFillMode.DARKEN;
+            case DARKEN_LESS -> STPathFillMode.DARKEN_LESS;
+            default -> STPathFillMode.NONE;
+        };
         pathXml.setFill(f);
     }
 

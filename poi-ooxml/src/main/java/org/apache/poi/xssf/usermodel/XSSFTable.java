@@ -280,7 +280,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         // check if name is unique and calculate unique column id
         long nextColumnId = 0;
         for (XSSFTableColumn tableColumn : getColumns()) {
-            if (columnName != null && columnName.equalsIgnoreCase(tableColumn.getName())) {
+            if (columnName != null && StringUtil.equalsIgnoreCase(columnName, tableColumn.getName())) {
                 throw new IllegalArgumentException("Column '" + columnName
                         + "' already exists. Column names must be unique per table.");
             }

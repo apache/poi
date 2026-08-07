@@ -126,18 +126,13 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             return null;
         }
 
-        switch (edge) {
-        case bottom:
-            return (pr.isSetLnB()) ? pr.getLnB() : (create ? pr.addNewLnB() : null);
-        case left:
-            return (pr.isSetLnL()) ? pr.getLnL() : (create ? pr.addNewLnL() : null);
-        case top:
-            return (pr.isSetLnT()) ? pr.getLnT() : (create ? pr.addNewLnT() : null);
-        case right:
-            return (pr.isSetLnR()) ? pr.getLnR() : (create ? pr.addNewLnR() : null);
-        default:
-            return null;
-        }
+        return switch (edge) {
+            case bottom -> (pr.isSetLnB()) ? pr.getLnB() : (create ? pr.addNewLnB() : null);
+            case left -> (pr.isSetLnL()) ? pr.getLnL() : (create ? pr.addNewLnL() : null);
+            case top -> (pr.isSetLnT()) ? pr.getLnT() : (create ? pr.addNewLnT() : null);
+            case right -> (pr.isSetLnR()) ? pr.getLnR() : (create ? pr.addNewLnR() : null);
+            default -> null;
+        };
     }
 
     public XDDFLineProperties getBorderProperties(BorderEdge edge) {
@@ -595,22 +590,12 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
                 cellProps.unsetVert();
             }
         } else {
-            STTextVerticalType.Enum vt;
-            switch (orientation) {
-            default:
-            case HORIZONTAL:
-                vt = STTextVerticalType.HORZ;
-                break;
-            case VERTICAL:
-                vt = STTextVerticalType.VERT;
-                break;
-            case VERTICAL_270:
-                vt = STTextVerticalType.VERT_270;
-                break;
-            case STACKED:
-                vt = STTextVerticalType.WORD_ART_VERT;
-                break;
-            }
+            STTextVerticalType.Enum vt = switch (orientation) {
+                case VERTICAL -> STTextVerticalType.VERT;
+                case VERTICAL_270 -> STTextVerticalType.VERT_270;
+                case STACKED -> STTextVerticalType.WORD_ART_VERT;
+                default -> STTextVerticalType.HORZ;
+            };
 
             cellProps.setVert(vt);
         }
@@ -630,20 +615,14 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             orientation = STTextVerticalType.HORZ;
         }
 
-        switch (orientation.intValue()) {
-        default:
-        case STTextVerticalType.INT_HORZ:
-            return TextDirection.HORIZONTAL;
-        case STTextVerticalType.INT_VERT:
-        case STTextVerticalType.INT_EA_VERT:
-        case STTextVerticalType.INT_MONGOLIAN_VERT:
-            return TextDirection.VERTICAL;
-        case STTextVerticalType.INT_VERT_270:
-            return TextDirection.VERTICAL_270;
-        case STTextVerticalType.INT_WORD_ART_VERT:
-        case STTextVerticalType.INT_WORD_ART_VERT_RTL:
-            return TextDirection.STACKED;
-        }
+        return switch (orientation.intValue()) {
+            case STTextVerticalType.INT_VERT, STTextVerticalType.INT_EA_VERT, STTextVerticalType.INT_MONGOLIAN_VERT ->
+                    TextDirection.VERTICAL;
+            case STTextVerticalType.INT_VERT_270 -> TextDirection.VERTICAL_270;
+            case STTextVerticalType.INT_WORD_ART_VERT, STTextVerticalType.INT_WORD_ART_VERT_RTL ->
+                    TextDirection.STACKED;
+            default -> TextDirection.HORIZONTAL;
+        };
     }
 
     private CTTableCell getCell() {

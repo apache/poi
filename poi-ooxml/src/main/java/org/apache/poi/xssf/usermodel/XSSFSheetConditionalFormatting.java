@@ -84,18 +84,17 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         cfRule.addFormula(formula1);
         if(formula2 != null) cfRule.addFormula(formula2);
         cfRule.setType(STCfType.CELL_IS);
-        STConditionalFormattingOperator.Enum operator;
-        switch (comparisonOperation){
-            case ComparisonOperator.BETWEEN: operator = STConditionalFormattingOperator.BETWEEN; break;
-            case ComparisonOperator.NOT_BETWEEN: operator = STConditionalFormattingOperator.NOT_BETWEEN; break;
-            case ComparisonOperator.LT: operator = STConditionalFormattingOperator.LESS_THAN; break;
-            case ComparisonOperator.LE: operator = STConditionalFormattingOperator.LESS_THAN_OR_EQUAL; break;
-            case ComparisonOperator.GT: operator = STConditionalFormattingOperator.GREATER_THAN; break;
-            case ComparisonOperator.GE: operator = STConditionalFormattingOperator.GREATER_THAN_OR_EQUAL; break;
-            case ComparisonOperator.EQUAL: operator = STConditionalFormattingOperator.EQUAL; break;
-            case ComparisonOperator.NOT_EQUAL: operator = STConditionalFormattingOperator.NOT_EQUAL; break;
-            default: throw new IllegalArgumentException("Unknown comparison operator: " + comparisonOperation);
-        }
+        STConditionalFormattingOperator.Enum operator = switch (comparisonOperation) {
+            case ComparisonOperator.BETWEEN -> STConditionalFormattingOperator.BETWEEN;
+            case ComparisonOperator.NOT_BETWEEN -> STConditionalFormattingOperator.NOT_BETWEEN;
+            case ComparisonOperator.LT -> STConditionalFormattingOperator.LESS_THAN;
+            case ComparisonOperator.LE -> STConditionalFormattingOperator.LESS_THAN_OR_EQUAL;
+            case ComparisonOperator.GT -> STConditionalFormattingOperator.GREATER_THAN;
+            case ComparisonOperator.GE -> STConditionalFormattingOperator.GREATER_THAN_OR_EQUAL;
+            case ComparisonOperator.EQUAL -> STConditionalFormattingOperator.EQUAL;
+            case ComparisonOperator.NOT_EQUAL -> STConditionalFormattingOperator.NOT_EQUAL;
+            default -> throw new IllegalArgumentException("Unknown comparison operator: " + comparisonOperation);
+        };
         cfRule.setOperator(operator);
 
         return rule;

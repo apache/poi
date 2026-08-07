@@ -134,40 +134,40 @@ public abstract class Ptg implements Duplicatable, GenericRecord {
     }
 
     private static Ptg createBasePtg(byte id, LittleEndianInput in) {
-        switch(id) {
-            case 0x00:                return new UnknownPtg(id); // TODO - not a real Ptg
-            case ExpPtg.sid:          return new ExpPtg(in);          // 0x01
-            case TblPtg.sid:          return new TblPtg(in);          // 0x02
-            case AddPtg.sid:          return AddPtg.instance;         // 0x03
-            case SubtractPtg.sid:     return SubtractPtg.instance;    // 0x04
-            case MultiplyPtg.sid:     return MultiplyPtg.instance;    // 0x05
-            case DividePtg.sid:       return DividePtg.instance;      // 0x06
-            case PowerPtg.sid:        return PowerPtg.instance;       // 0x07
-            case ConcatPtg.sid:       return ConcatPtg.instance;      // 0x08
-            case LessThanPtg.sid:     return LessThanPtg.instance;    // 0x09
-            case LessEqualPtg.sid:    return LessEqualPtg.instance;   // 0x0a
-            case EqualPtg.sid:        return EqualPtg.instance;       // 0x0b
-            case GreaterEqualPtg.sid: return GreaterEqualPtg.instance;// 0x0c
-            case GreaterThanPtg.sid:  return GreaterThanPtg.instance; // 0x0d
-            case NotEqualPtg.sid:     return NotEqualPtg.instance;    // 0x0e
-            case IntersectionPtg.sid: return IntersectionPtg.instance;// 0x0f
-            case UnionPtg.sid:        return UnionPtg.instance;       // 0x10
-            case RangePtg.sid:        return RangePtg.instance;       // 0x11
-            case UnaryPlusPtg.sid:    return UnaryPlusPtg.instance;   // 0x12
-            case UnaryMinusPtg.sid:   return UnaryMinusPtg.instance;  // 0x13
-            case PercentPtg.sid:      return PercentPtg.instance;     // 0x14
-            case ParenthesisPtg.sid:  return ParenthesisPtg.instance; // 0x15
-            case MissingArgPtg.sid:   return MissingArgPtg.instance;  // 0x16
+        return switch (id) {
+            case 0x00 -> new UnknownPtg(id); // TODO - not a real Ptg
+            case ExpPtg.sid -> new ExpPtg(in);          // 0x01
+            case TblPtg.sid -> new TblPtg(in);          // 0x02
+            case AddPtg.sid -> AddPtg.instance;         // 0x03
+            case SubtractPtg.sid -> SubtractPtg.instance;    // 0x04
+            case MultiplyPtg.sid -> MultiplyPtg.instance;    // 0x05
+            case DividePtg.sid -> DividePtg.instance;      // 0x06
+            case PowerPtg.sid -> PowerPtg.instance;       // 0x07
+            case ConcatPtg.sid -> ConcatPtg.instance;      // 0x08
+            case LessThanPtg.sid -> LessThanPtg.instance;    // 0x09
+            case LessEqualPtg.sid -> LessEqualPtg.instance;   // 0x0a
+            case EqualPtg.sid -> EqualPtg.instance;       // 0x0b
+            case GreaterEqualPtg.sid -> GreaterEqualPtg.instance;// 0x0c
+            case GreaterThanPtg.sid -> GreaterThanPtg.instance; // 0x0d
+            case NotEqualPtg.sid -> NotEqualPtg.instance;    // 0x0e
+            case IntersectionPtg.sid -> IntersectionPtg.instance;// 0x0f
+            case UnionPtg.sid -> UnionPtg.instance;       // 0x10
+            case RangePtg.sid -> RangePtg.instance;       // 0x11
+            case UnaryPlusPtg.sid -> UnaryPlusPtg.instance;   // 0x12
+            case UnaryMinusPtg.sid -> UnaryMinusPtg.instance;  // 0x13
+            case PercentPtg.sid -> PercentPtg.instance;     // 0x14
+            case ParenthesisPtg.sid -> ParenthesisPtg.instance; // 0x15
+            case MissingArgPtg.sid -> MissingArgPtg.instance;  // 0x16
 
-            case StringPtg.sid:       return new StringPtg(in);       // 0x17
+            case StringPtg.sid -> new StringPtg(in);       // 0x17
             // not implemented yet: case SxNamePtg.sid:       return new SxNamePtg(in);       // 0x18
-            case AttrPtg.sid:         return new AttrPtg(in);         // 0x19
-            case ErrPtg.sid:          return ErrPtg.read(in);         // 0x1c
-            case BoolPtg.sid:         return BoolPtg.read(in);        // 0x1d
-            case IntPtg.sid:          return new IntPtg(in);          // 0x1e
-            case NumberPtg.sid:       return new NumberPtg(in);       // 0x1f
-        }
-        throw new IllegalArgumentException("Unexpected base token id (" + id + ")");
+            case AttrPtg.sid -> new AttrPtg(in);         // 0x19
+            case ErrPtg.sid -> ErrPtg.read(in);         // 0x1c
+            case BoolPtg.sid -> BoolPtg.read(in);        // 0x1d
+            case IntPtg.sid -> new IntPtg(in);          // 0x1e
+            case NumberPtg.sid -> new NumberPtg(in);       // 0x1f
+            default -> throw new IllegalArgumentException("Unexpected base token id (" + id + ")");
+        };
     }
 
     private static Ptg[] toPtgArray(List<Ptg> l) {

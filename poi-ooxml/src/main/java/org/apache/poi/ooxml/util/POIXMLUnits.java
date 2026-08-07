@@ -17,6 +17,8 @@
 
 package org.apache.poi.ooxml.util;
 
+import org.apache.poi.util.StringUtil;
+
 import static org.apache.poi.util.Units.EMU_PER_DXA;
 import static org.apache.poi.util.Units.EMU_PER_INCH;
 import static org.apache.poi.util.Units.EMU_PER_POINT;
@@ -264,7 +266,10 @@ public class POIXMLUnits {
     public static boolean parseOnOff(org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff onOff) {
         if (onOff == null) return false;
         String str = onOff.getStringValue();
-        return ("true".equalsIgnoreCase(str) || "on".equalsIgnoreCase(str) || "x".equalsIgnoreCase(str) || "1".equals(str));
+        return StringUtil.equalsIgnoreCase("true", str) ||
+                StringUtil.equalsIgnoreCase("on", str) ||
+                StringUtil.equalsIgnoreCase("x", str) ||
+                "1".equals(str);
     }
 
 }

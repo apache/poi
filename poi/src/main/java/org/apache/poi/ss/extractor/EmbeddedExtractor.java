@@ -123,8 +123,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
     protected void extractAll(ShapeContainer<?> parent, List<EmbeddedData> embeddings) throws IOException {
         for (Shape shape : parent) {
             EmbeddedData data = null;
-            if (shape instanceof ObjectData) {
-                ObjectData od = (ObjectData)shape;
+            if (shape instanceof ObjectData od) {
                 try {
                     if (od.hasDirectoryEntry()) {
                         data = extractOne((DirectoryNode)od.getDirectory());
@@ -134,10 +133,10 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
                 } catch (Exception e) {
                     LOG.atWarn().withThrowable(e).log("Entry not found / readable - ignoring OLE embedding");
                 }
-            } else if (shape instanceof Picture) {
-                data = extractOne((Picture)shape);
-            } else if (shape instanceof ShapeContainer) {
-                extractAll((ShapeContainer<?>)shape, embeddings);
+            } else if (shape instanceof Picture pict) {
+                data = extractOne(pict);
+            } else if (shape instanceof ShapeContainer<?> sc) {
+                extractAll(sc, embeddings);
             }
 
             if (data == null) {
@@ -354,8 +353,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
 
     protected static void copyNodes(DirectoryNode src, DirectoryNode dest) throws IOException {
         for (Entry e : src) {
-            if (e instanceof DirectoryNode) {
-                DirectoryNode srcDir = (DirectoryNode)e;
+            if (e instanceof DirectoryNode srcDir) {
                 DirectoryNode destDir = (DirectoryNode)dest.createDirectory(srcDir.getName());
                 destDir.setStorageClsid(srcDir.getStorageClsid());
                 copyNodes(srcDir, destDir);

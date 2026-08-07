@@ -191,45 +191,44 @@ public class DrawTexturePaint extends java.awt.TexturePaint {
         PaintStyle.TextureAlignment ta = fill.getAlignment();
         final double alg_x, alg_y;
         final double usr_w = usedBounds.getWidth(), usr_h = usedBounds.getHeight();
-        switch (ta == null ? PaintStyle.TextureAlignment.TOP_LEFT : ta) {
-            case BOTTOM:
-                alg_x = (usr_w-img_w)/2;
-                alg_y = usr_h-img_h;
-                break;
-            case BOTTOM_LEFT:
+        alg_y = switch (ta == null ? PaintStyle.TextureAlignment.TOP_LEFT : ta) {
+            case BOTTOM -> {
+                alg_x = (usr_w - img_w) / 2;
+                yield usr_h - img_h;
+            }
+            case BOTTOM_LEFT -> {
                 alg_x = 0;
-                alg_y = usr_h-img_h;
-                break;
-            case BOTTOM_RIGHT:
-                alg_x = usr_w-img_w;
-                alg_y = usr_h-img_h;
-                break;
-            case CENTER:
-                alg_x = (usr_w-img_w)/2;
-                alg_y = (usr_h-img_h)/2;
-                break;
-            case LEFT:
+                yield usr_h - img_h;
+            }
+            case BOTTOM_RIGHT -> {
+                alg_x = usr_w - img_w;
+                yield usr_h - img_h;
+            }
+            case CENTER -> {
+                alg_x = (usr_w - img_w) / 2;
+                yield (usr_h - img_h) / 2;
+            }
+            case LEFT -> {
                 alg_x = 0;
-                alg_y = (usr_h-img_h)/2;
-                break;
-            case RIGHT:
-                alg_x = usr_w-img_w;
-                alg_y = (usr_h-img_h)/2;
-                break;
-            case TOP:
-                alg_x = (usr_w-img_w)/2;
-                alg_y = 0;
-                break;
-            default:
-            case TOP_LEFT:
+                yield (usr_h - img_h) / 2;
+            }
+            case RIGHT -> {
+                alg_x = usr_w - img_w;
+                yield (usr_h - img_h) / 2;
+            }
+            case TOP -> {
+                alg_x = (usr_w - img_w) / 2;
+                yield 0;
+            }
+            default -> {
                 alg_x = 0;
-                alg_y = 0;
-                break;
-            case TOP_RIGHT:
-                alg_x = usr_w-img_w;
-                alg_y = 0;
-                break;
-        }
+                yield 0;
+            }
+            case TOP_RIGHT -> {
+                alg_x = usr_w - img_w;
+                yield 0;
+            }
+        };
         xform.translate(alg_x, alg_y);
 
         // Apply additional horizontal/vertical offset after alignment.

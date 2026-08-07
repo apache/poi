@@ -66,23 +66,13 @@ final class OperandClassTransformer {
      * token to set its operand class.
      */
     public void transformFormula(ParseNode rootNode) {
-        byte rootNodeOperandClass;
-        switch (_formulaType) {
-            case CELL:
-                rootNodeOperandClass = Ptg.CLASS_VALUE;
-                break;
-            case ARRAY:
-                rootNodeOperandClass = Ptg.CLASS_ARRAY;
-                break;
-            case NAMEDRANGE:
-            case DATAVALIDATION_LIST:
-                rootNodeOperandClass = Ptg.CLASS_REF;
-                break;
-            default:
-                throw new IllegalStateException("Incomplete code - formula type ("
-                        + _formulaType + ") not supported yet");
-
-        }
+        byte rootNodeOperandClass = switch (_formulaType) {
+            case CELL -> Ptg.CLASS_VALUE;
+            case ARRAY -> Ptg.CLASS_ARRAY;
+            case NAMEDRANGE, DATAVALIDATION_LIST -> Ptg.CLASS_REF;
+            default -> throw new IllegalStateException("Incomplete code - formula type ("
+                    + _formulaType + ") not supported yet");
+        };
         transformNode(rootNode, rootNodeOperandClass, false);
     }
 
@@ -200,27 +190,26 @@ final class OperandClassTransformer {
         byte defaultReturnOperandClass = afp.getDefaultOperandClass();
 
         if (callerForceArrayFlag) {
-            switch (defaultReturnOperandClass) {
-                case Ptg.CLASS_REF:
+            localForceArrayFlag = switch (defaultReturnOperandClass) {
+                case Ptg.CLASS_REF -> {
                     if (desiredOperandClass == Ptg.CLASS_REF) {
                         afp.setClass(Ptg.CLASS_REF);
                     } else {
                         afp.setClass(Ptg.CLASS_ARRAY);
                     }
-                    localForceArrayFlag = false;
-                    break;
-                case Ptg.CLASS_ARRAY:
+                    yield false;
+                }
+                case Ptg.CLASS_ARRAY -> {
                     afp.setClass(Ptg.CLASS_ARRAY);
-                    localForceArrayFlag = false;
-                    break;
-                case Ptg.CLASS_VALUE:
+                    yield false;
+                }
+                case Ptg.CLASS_VALUE -> {
                     afp.setClass(Ptg.CLASS_ARRAY);
-                    localForceArrayFlag = true;
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected operand class ("
-                            + defaultReturnOperandClass + ")");
-            }
+                    yield true;
+                }
+                default -> throw new IllegalStateException("Unexpected operand class ("
+                        + defaultReturnOperandClass + ")");
+            };
         } else {
             if (defaultReturnOperandClass == desiredOperandClass) {
                 localForceArrayFlag = false;

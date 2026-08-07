@@ -70,6 +70,113 @@
         </p>
     </section>
 
+    <release version="6.0.0" date="TBD">
+        <summary>
+            <summary-item>Minimum Java version is now JDK 17 (was JDK 8 in POI 5.x)</summary-item>
+            <summary-item>Upgrade bouncycastle dependency to 1.85</summary-item>
+            <summary-item>Upgrade commons-codec dependency to 1.22.1</summary-item>
+            <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
+            <summary-item>Upgrade commons-io dependency to 2.22.0</summary-item>
+            <summary-item>Upgrade log4j-api dependency to 2.26.1</summary-item>
+            <summary-item>Upgrade mockito dependency to 5.23.0</summary-item>
+            <summary-item>Upgrade pdfbox dependency to 3.0.8</summary-item>
+            <summary-item>Upgrade SLF4J to 2.0.18</summary-item>
+            <summary-item>Upgrade xmlsec dependency to 3.0.6</summary-item>
+            <summary-item>Upgrade Ant to 1.10.17</summary-item>
+            <summary-item>Upgrade Gradle to 9.6.1</summary-item>
+            <summary-item>Upgrade JUnit to 6.1.2</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="60848" context="SS_Common">Fix SUMPRODUCT with unary minus (--) on array arguments and other cases</action>
+            <action type="fix" fixes-bug="66568" context="XSLF">Adjust selecting color from master-slide</action>
+            <action type="fix" fixes-bug="69897" context="XSLF">Fix null check for LineDash properties</action>
+            <action type="fix" fixes-bug="69905" context="SS_Common">Check cell before recursing to prevent infinite loops</action>
+            <action type="fix" fixes-bug="69927" context="HWMF">Avoid NPE when parsing wmf-file</action>
+            <action type="add" fixes-bug="69935" context="SS_Common">Add short-based column setters to ClientAnchor</action>
+            <action type="fix" fixes-bug="70005" context="SS_Common">Fix countifs with multi-element arrays</action>
+            <action type="fix" fixes-bug="70159" context="SS_Common">Cache that format is not a datetime format string to improve performance</action>
+            <action type="fix" fixes-bug="github-939" context="SS_Common">Make getCachedResultType return enum instead of int</action>
+            <action type="remove" fixes-bug="github-940" context="OOXML">Remove deprecated getCodepoints method</action>
+            <action type="remove" fixes-bug="github-941" context="OOXML">Remove deprecated hasOOXMLHeader method</action>
+            <action type="remove" fixes-bug="github-942" context="SS_Common">Remove deprecated AddDimensionedImage</action>
+            <action type="add" fixes-bug="github-952" context="XSSF">Add XSSFOptimiser - XSSF equivalent of HSSFOptimiser</action>
+            <action type="fix" fixes-bug="github-961" context="SS_Common">Fix null safety in format properties handling</action>
+            <action type="fix" fixes-bug="github-962" context="XSSF">Remove pre-existing inline strings when updating cell value</action>
+            <action type="add" fixes-bug="github-968" context="XSLF">Add methods to manage first slide number (firstSlideNum)</action>
+            <action type="fix" fixes-bug="github-969" context="XSLF">Fix rules for table style application in XSLFTables</action>
+            <action type="add" fixes-bug="github-982" context="XWPF">Allow loading a word document with chartex chart</action>
+            <action type="add" fixes-bug="github-986" context="XWPF">Allow public access of theme and add helpers for theme fonts in XWPF</action>
+            <action type="add" fixes-bug="github-990" context="XSLF">Support rendering transparent bitmaps in presentations</action>
+            <action type="add" fixes-bug="github-991" context="XWPF">Add getter for body elements in XWPFSDTContent</action>
+            <action type="fix" fixes-bug="github-996" context="XSSF">XSSFReader: tolerate missing comments file</action>
+            <action type="fix" fixes-bug="github-1000" context="XSLF">Throw exception if getAlpha returns very large value that overflows int</action>
+            <action type="fix" fixes-bug="github-1012" context="OOXML">Check input stream read parameters for validity</action>
+            <action type="add" fixes-bug="github-1016" context="HSSF">Support reading HSSFWorkbook with password passed as parameter</action>
+            <action type="add" fixes-bug="github-1017" context="HWPF">Support opening HWPF documents by passing passwords</action>
+            <action type="add" fixes-bug="github-1023" context="HSLF">Support passing password as a parameter when opening HSLFSlideShow</action>
+            <action type="add" fixes-bug="github-1026" context="POI_Overall">Event-based extractor: refactor password support to allow passing passwords as parameters</action>
+            <action type="fix" fixes-bug="github-1031" context="XSSF">Fix Row.setRowStyle() not propagating styles to cells</action>
+            <action type="fix" fixes-bug="github-1033" context="XSLF">Fix ArrayIndexOutOfBoundsException in XSSFTextParagraph when auto number scheme index is out of range</action>
+            <action type="fix" fixes-bug="github-1040" context="XSLF">Remove redundant stripe style settings in CreateTable</action>
+            <action type="add" fixes-bug="github-1042" context="XSSF">Open up xssfb to simplify client usage and modifications</action>
+            <action type="fix" fixes-bug="github-1043" context="XSSF">Decouple XLSB reading from xmlbeans dependency</action>
+            <action type="fix" fixes-bug="github-1045" context="HWMF">Reject invalid WMF unitsPerInch=0 to prevent infinite scaling</action>
+            <action type="add" fixes-bug="github-1050" context="HSLF HWPF">Add setOutputPassword for HSLFSlideShow and HWPFDocument</action>
+            <action type="fix" fixes-bug="github-1052" context="XSLF">Fix XSLFTableCell.setBorderColor overwrites other border properties</action>
+            <action type="fix" fixes-bug="github-1054" context="DDF">Fix overflow in blip calculations</action>
+            <action type="fix" fixes-bug="github-1057" context="OOXML">Apply zip bomb checks to encrypted temp ZIP processing</action>
+            <action type="fix" fixes-bug="github-1060" context="HEMF">Validate EMF description bounds before allocation</action>
+            <action type="fix" fixes-bug="github-1062" context="OOXML">Enforce ZipSecureFile limits for encrypted temp ZIP streams</action>
+            <action type="fix" fixes-bug="github-1063" context="POI_Overall">Harden and rework temporary file permissions</action>
+            <action type="fix" fixes-bug="github-1064" context="HPSF">Harden HPSF allocation-size arithmetic against silent overflow</action>
+            <action type="fix" fixes-bug="github-1066" context="HMEF">Reject path traversal filenames during HMEF attachment extraction</action>
+            <action type="fix" fixes-bug="github-1067" context="XSSF">Reject oversized XSSF table counts during integer conversion</action>
+            <action type="fix" fixes-bug="github-1070" context="XDDF">Reject oversized OOXML ptCount values in XDDFDataSourcesFactory</action>
+            <action type="fix" fixes-bug="github-1071" context="HSMF">Add boundary handling and decompression limits in CompressedRTF</action>
+            <action type="fix" fixes-bug="github-1072" context="OOXML">Replace unsafe long-to-int casts with Math.toIntExact</action>
+            <action type="fix" fixes-bug="github-1075" context="HDGF">Validate HDGF v6+ chunk Length before narrowing to int</action>
+            <action type="fix" fixes-bug="github-1076" context="HDGF">Guard HDGF PointerFactory offset/length uint32 narrowing</action>
+            <action type="fix" fixes-bug="github-1077" context="HSLF">Handle oversized uint32 offsets in QuillContents descriptors</action>
+            <action type="fix" fixes-bug="github-1078" context="HSLF">Reject oversized PersistPtr sheet offsets in HSLF</action>
+            <action type="fix" fixes-bug="github-1079" context="XSSF">Guard XSSFBUtils wide-string byte length against int overflow</action>
+            <action type="fix" fixes-bug="github-1080" context="POIFS">Guard Ole10Native readUtf16 byte length against int overflow</action>
+            <action type="fix" fixes-bug="github-1082" context="HEMF">Fix out-of-bounds fill in EmfPlusPath RLE point-type expansion</action>
+            <action type="fix" fixes-bug="github-1084" context="OOXML">Fix spin count loop issue</action>
+            <action type="fix" fixes-bug="github-1085" context="OOXML">Fix issue with inflating picture data when decompressed data is bigger than expected</action>
+            <action type="fix" fixes-bug="github-1086" context="OOXML">Add input validation checks in InflaterInputStream</action>
+            <action type="fix" fixes-bug="github-1089" context="SS_Common">Prevent crashes when calculating cells on absolute anchors</action>
+            <action type="add" fixes-bug="github-1090" context="XSSF">Implement ImageUtils.getDimensionFromAnchor variation for absolute anchors</action>
+            <action type="add" fixes-bug="github-1091" context="XWPF">Support mc:AlternateContent for XWPFRun.getPictureText()</action>
+            <action type="fix" fixes-bug="github-1095" context="OOXML">Use Math.multiplyExact for safer multiplication in OOXML parsing</action>
+            <action type="fix" fixes-bug="github-1096" context="OOXML">Improve number conversion safety in OOXML parsing</action>
+            <action type="fix" fixes-bug="github-1098" context="HEMF">Use long for EmfPlusDrawDriverString glyph byte length</action>
+            <action type="fix" fixes-bug="github-1099" context="OOXML">Remove information-losing int casts in OOXML parsing</action>
+            <action type="fix" fixes-bug="github-1100" context="OOXML">Fix int overflow risks in OOXML parsing</action>
+            <action type="fix" fixes-bug="github-1101" context="OOXML">Fix int overflow risks in OOXML parsing</action>
+            <action type="fix" fixes-bug="github-1102" context="OOXML">Fix int overflow possibilities in OOXML parsing</action>
+            <action type="fix" fixes-bug="github-1103" context="HEMF">Validate PointCount before array allocation in HemfPlusPath</action>
+            <action type="fix" fixes-bug="github-1104" context="HEMF">Apply allocation bounds checks to EMF+ path and brush element counts</action>
+            <action type="fix" fixes-bug="github-1105" context="DDF">EscherBSERecord fillFields() to return consumed bytes</action>
+            <action type="fix" fixes-bug="github-1106" context="HWMF">Harden integer conversions and arithmetic in HwmfBitmapDib, AggregateFunction, and DStarRunner</action>
+            <action type="fix" fixes-bug="github-1107" context="HEMF">Apply allocation bounds checks to EmfPolyDraw and WmfCreateRegion</action>
+            <action type="fix" fixes-bug="github-1113" context="HEMF">Apply allocation bounds check to EmfExtCreatePen style entries</action>
+            <action type="fix" fixes-bug="github-1116" context="DDF">Use unsigned element count when parsing EscherArrayProperty</action>
+            <action type="fix" fixes-bug="github-1122" context="HWPF">Read OldFfn font description length as unsigned byte</action>
+            <action type="fix" fixes-bug="github-1123" context="OOXML">Fix resource leak in ZipSecureFile constructors and correct path logging in ZipPackage</action>
+            <action type="fix" fixes-bug="github-1124" context="OOXML">Harden duplicate ZIP entry validation against path separator bypasses</action>
+            <action type="fix" fixes-bug="github-1127" context="HWPF">Fix offset calculation in ParagraphSprmUncompressor.handleTabs()</action>
+            <action type="fix" fixes-bug="github-1128" context="OOXML">Fix temporary file leak in ZipInputStreamZipEntrySource on constructor failure</action>
+            <action type="fix" fixes-bug="github-1136" context="OOXML">Fix case-insensitive ZIP entry matching in ZipFileZipEntrySource under Turkish Locale</action>
+            <action type="fix" fixes-bug="github-1144" context="OOXML">Optimize getEntry performance in ZipInputStreamZipEntrySource using O(1) case-insensitive lookups</action>
+            <action type="fix" fixes-bug="github-1149" context="XSSF">Fix equals() and hashCode() contract violation in XSSFColor</action>
+            <action type="fix" fixes-bug="github-1150" context="OOXML">Improve ZipArchiveFakeEntry getSize</action>
+            <action type="add" fixes-bug="github-1172" context="XWPF">Implement XWPFRun.isRtl() getter</action>
+            <action type="add" fixes-bug="github-1174" context="XSLF">Support theme colors as highlight color in pptx</action>
+            <action type="fix" fixes-bug="github-1179" context="XSLF">Prevent rendering a bitmap when its effective size is 0</action>
+            <action type="fix" fixes-bug="github-1187" context="XSLF">Adjust XSLFDrawing's slide shape tree scan in constructor to prevent shape ID warnings</action>
+        </actions>
+    </release>
+
     <release version="5.5.1" date="2025-11-30">
         <summary>
             <summary-item>Upgrade bouncycastle dependency to 1.83</summary-item>

@@ -32,6 +32,7 @@ import org.apache.poi.hmef.attribute.TNEFStringAttribute;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Developer focused raw dumper
@@ -63,7 +64,7 @@ public final class HMEFDumper {
 
       boolean truncatePropData = true;
       for (String arg : args) {
-         if (arg.equalsIgnoreCase("--full")) {
+         if (StringUtil.equalsIgnoreCase(arg, "--full")) {
             truncatePropData = false;
             continue;
          }

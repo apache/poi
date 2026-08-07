@@ -85,14 +85,15 @@ final class ForkedEvaluationCell implements EvaluationCell {
         }
         throw new IllegalArgumentException("Unexpected value class (" + cls.getName() + ")");
     }
+
     public void copyValue(Cell destCell) {
         switch (_cellType) {
-            case BLANK:   destCell.setBlank();                           return;
-            case NUMERIC: destCell.setCellValue(_numberValue);           return;
-            case BOOLEAN: destCell.setCellValue(_booleanValue);          return;
-            case STRING:  destCell.setCellValue(_stringValue);           return;
-            case ERROR:   destCell.setCellErrorValue((byte)_errorValue); return;
-            default: throw new IllegalStateException("Unexpected data type (" + _cellType + ")");
+            case BLANK -> destCell.setBlank();
+            case NUMERIC -> destCell.setCellValue(_numberValue);
+            case BOOLEAN -> destCell.setCellValue(_booleanValue);
+            case STRING -> destCell.setCellValue(_stringValue);
+            case ERROR -> destCell.setCellErrorValue((byte)_errorValue);
+            default -> throw new IllegalStateException("Unexpected data type (" + _cellType + ")");
         }
     }
 

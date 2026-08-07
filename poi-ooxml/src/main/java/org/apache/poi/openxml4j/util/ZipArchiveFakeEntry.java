@@ -64,6 +64,7 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
     private byte[] data;
     private File tempFile;
     private EncryptedTempData encryptedTempData;
+    private final long numberOfBytes;
 
     ZipArchiveFakeEntry(ZipArchiveEntry entry, InputStream inp) throws IOException {
         super(entry.getName());
@@ -72,16 +73,28 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
 
         final int threshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
         if (threshold >= 0 && (entrySize >= threshold || entrySize == -1)) {
-            if (ZipInputStreamZipEntrySource.shouldEncryptTempFiles()) {
-                encryptedTempData = new EncryptedTempData();
-                try (OutputStream os = encryptedTempData.getOutputStream()) {
-                    IOUtils.copy(inp, os);
+            boolean success = false;
+            try {
+                if (ZipInputStreamZipEntrySource.shouldEncryptTempFiles()) {
+                    encryptedTempData = new EncryptedTempData();
+                    try (OutputStream os = encryptedTempData.getOutputStream()) {
+                        numberOfBytes = IOUtils.copy(inp, os);
+                    }
+                } else {
+                    tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
+                    LOG.atInfo().log("Creating temp file {} for zip entry {} of size {} bytes",
+                            tempFile.getAbsolutePath(), entry.getName(), entrySize);
+                    numberOfBytes = IOUtils.copy(inp, tempFile);
                 }
-            } else {
-                tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
-                LOG.atInfo().log("Creating temp file {} for zip entry {} of size {} bytes",
-                        tempFile.getAbsolutePath(), entry.getName(), entrySize);
-                IOUtils.copy(inp, tempFile);
+                success = true;
+            } finally {
+                if (!success) {
+                    try {
+                        close();
+                    } catch (IOException e) {
+                        LOG.atWarn().withThrowable(e).log("Failed to clean up temporary resources on construction failure");
+                    }
+                }
             }
         } else {
             if (entrySize < -1 || entrySize >= Integer.MAX_VALUE) {
@@ -91,7 +104,13 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
             // Grab the de-compressed contents for later
             data = (entrySize == -1) ? IOUtils.toByteArrayWithMaxLength(inp, getMaxEntrySize()) :
                     IOUtils.toByteArray(inp, entrySize, getMaxEntrySize(), "ZipArchiveFakeEntry.setMaxEntrySize()");
+            numberOfBytes = data.length;
         }
+    }
+
+    @Override
+    public long getSize() {
+        return numberOfBytes;
     }
 
     /**
@@ -138,4 +157,15 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
             }
         }
     }
+
+    // open for testing
+    boolean isUnencryptedTempFileBacked() {
+        return tempFile != null && tempFile.exists();
+    }
+
+    // open for testing
+    boolean isEncryptedTempFileBacked() {
+        return encryptedTempData != null;
+    }
+
 }

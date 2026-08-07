@@ -90,6 +90,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -417,20 +418,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             Map<String, ExternalLinksTable> elIdMap = new HashMap<>();
             for(RelationPart rp : getRelationParts()){
                 POIXMLDocumentPart p = rp.getDocumentPart();
-                if(p instanceof SharedStringsTable) {
-                    sharedStringSource = (SharedStringsTable)p;
-                } else if(p instanceof StylesTable) {
-                    stylesSource = (StylesTable)p;
-                } else if(p instanceof ThemesTable) {
-                    theme = (ThemesTable)p;
-                } else if(p instanceof CalculationChain) {
-                    calcChain = (CalculationChain)p;
-                } else if(p instanceof MapInfo) {
-                    mapInfo = (MapInfo)p;
-                } else if (p instanceof XSSFSheet) {
-                    shIdMap.put(rp.getRelationship().getId(), (XSSFSheet)p);
-                } else if (p instanceof ExternalLinksTable) {
-                    elIdMap.put(rp.getRelationship().getId(), (ExternalLinksTable)p);
+                if(p instanceof SharedStringsTable sharedStringsTable) {
+                    this.sharedStringSource = sharedStringsTable;
+                } else if(p instanceof StylesTable stylesTable) {
+                    this.stylesSource = stylesTable;
+                } else if(p instanceof ThemesTable themesTable) {
+                    theme = themesTable;
+                } else if(p instanceof CalculationChain calculationChain) {
+                    this.calcChain = calculationChain;
+                } else if(p instanceof MapInfo info) {
+                    this.mapInfo = info;
+                } else if (p instanceof XSSFSheet xssfSheet) {
+                    shIdMap.put(rp.getRelationship().getId(), xssfSheet);
+                } else if (p instanceof ExternalLinksTable externalLinksTable) {
+                    elIdMap.put(rp.getRelationship().getId(), externalLinksTable);
                 }
             }
             boolean packageReadOnly = (getPackage().getPackageAccess() == PackageAccess.READ);
@@ -1038,7 +1039,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
-     * Convenience method to get the active sheet.  The active sheet is is the sheet
+     * Convenience method to get the active sheet.  The active sheet is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      */
@@ -1232,7 +1233,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         }
 
         for (XSSFSheet sheet : sheets) {
-            if (name.equalsIgnoreCase(sheet.getSheetName())) {
+            if (StringUtil.equalsIgnoreCase(name, sheet.getSheetName())) {
                 return sheet;
             }
         }
@@ -1263,7 +1264,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public int getSheetIndex(String name) {
         int idx = 0;
         for (XSSFSheet sh : sheets) {
-            if (name.equalsIgnoreCase(sh.getSheetName())) {
+            if (StringUtil.equalsIgnoreCase(name, sh.getSheetName())) {
                 return idx;
             }
             idx++;
@@ -1521,7 +1522,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
-     * Convenience method to set the active sheet.  The active sheet is is the sheet
+     * Convenience method to set the active sheet.  The active sheet is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      */
@@ -1941,7 +1942,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 ctName = ctName.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
             }
 
-            if (excludeSheetIdx != i && name.equalsIgnoreCase(ctName)) {
+            if (excludeSheetIdx != i && StringUtil.equalsIgnoreCase(name, ctName)) {
                 return true;
             }
         }
@@ -2553,7 +2554,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         if (name != null && sheets != null) {
             for (XSSFSheet sheet : sheets) {
                 for (XSSFTable tbl : sheet.getTables()) {
-                    if (name.equalsIgnoreCase(tbl.getName())) {
+                    if (StringUtil.equalsIgnoreCase(name, tbl.getName())) {
                         return tbl;
                     }
                 }

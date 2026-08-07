@@ -709,7 +709,8 @@ public class DateUtil {
         // Ensure it has some date letters in it
         // (Avoids false positives on the rest of pattern 3)
         if (! date_ptrn3a.matcher(fs).find()) {
-           return false;
+            cache(formatString, formatIndex, false);
+            return false;
         }
 
         // If we get here, check it's only made up, in any case, of:
@@ -727,27 +728,15 @@ public class DateUtil {
      * @see #isADateFormat(int, java.lang.String)
      */
     public static boolean isInternalDateFormat(int format) {
-        switch(format) {
+        return switch (format) {
             // Internal Date Formats as described on page 427 in
             // Microsoft Excel Dev's Kit...
             // see also javadoc in org.apache.poi.ss.usermodel.BuiltinFormats
-            case 0x0e:
-            case 0x0f:
-            case 0x10:
-            case 0x11:
             // the 0x12 to 0x15 formats are time (only) formats
-            case 0x12:
-            case 0x13:
-            case 0x14:
-            case 0x15:
-            case 0x16:
             // the 0x2d to 0x2f formats are time (only) formats
-            case 0x2d:
-            case 0x2e:
-            case 0x2f:
-                return true;
-        }
-        return false;
+            case 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x2d, 0x2e, 0x2f -> true;
+            default -> false;
+        };
     }
 
     /**

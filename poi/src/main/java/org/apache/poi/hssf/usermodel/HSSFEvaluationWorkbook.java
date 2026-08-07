@@ -27,6 +27,7 @@ import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
+import org.apache.poi.ss.formula.NameIdentifier;
 import org.apache.poi.ss.formula.SheetIdentifier;
 import org.apache.poi.ss.formula.SheetRangeIdentifier;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
@@ -39,6 +40,7 @@ import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Internal POI use only
@@ -113,7 +115,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
     public EvaluationName getName(String name, int sheetIndex) {
         for(int i=0; i < _iBook.getNumNames(); i++) {
             NameRecord nr = _iBook.getNameRecord(i);
-            if (nr.getSheetNumber() == sheetIndex+1 && name.equalsIgnoreCase(nr.getNameText())) {
+            if (nr.getSheetNumber() == sheetIndex+1 && StringUtil.equalsIgnoreCase(name, nr.getNameText())) {
                 return new Name(nr, i);
             }
         }
@@ -276,7 +278,11 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
             extIx = -1;
         } else {
             String workbookName = sheetIden.getBookName();
-            String firstSheetName = sheetIden.getSheetIdentifier().getName();
+            NameIdentifier sheetIdentifier = sheetIden.getSheetIdentifier();
+            if (sheetIdentifier == null) {
+                throw new IllegalStateException("Did not have a sheet identifier for formula evaluation of book " + sheetIden.getBookName());
+            }
+            String firstSheetName = sheetIdentifier.getName();
             String lastSheetName = firstSheetName;
 
             if (sheetIden instanceof SheetRangeIdentifier) {

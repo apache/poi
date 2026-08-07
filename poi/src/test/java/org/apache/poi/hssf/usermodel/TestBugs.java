@@ -32,7 +32,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -93,6 +92,7 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -103,6 +103,7 @@ import org.junit.jupiter.params.provider.CsvSource;
  * <b>YK: If a bug can be tested in terms of common ss interfaces,
  * define the test in the base class {@link BaseTestBugzillaIssues}</b>
  */
+@Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 final class TestBugs extends BaseTestBugzillaIssues {
 
     public TestBugs() {
@@ -753,9 +754,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
                 int i = 0;
                 for (Iterator<CellValueRecordInterface> it = ns.getSheet().getCellValueIterator(); it.hasNext(); i++) {
                     CellValueRecordInterface cvr = it.next();
-                    if (cvr instanceof FormulaRecordAggregate) {
-                        FormulaRecordAggregate fr = (FormulaRecordAggregate) cvr;
-
+                    if (cvr instanceof FormulaRecordAggregate fr) {
                         if (i == 0) {
                             assertEquals(70164.0, fr.getFormulaRecord().getValue(), 0.0001);
                             assertNull(fr.getStringRecord());
@@ -1552,14 +1551,14 @@ final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     void bug49751() throws Exception {
-        Set<String> exp = new HashSet<>(Arrays.asList(
+        Set<String> exp = Set.of(
             "20% - Accent1", "20% - Accent2", "20% - Accent3", "20% - Accent4", "20% - Accent5",
             "20% - Accent6", "40% - Accent1", "40% - Accent2", "40% - Accent3", "40% - Accent4",
             "40% - Accent5", "40% - Accent6", "60% - Accent1", "60% - Accent2", "60% - Accent3",
             "60% - Accent4", "60% - Accent5", "60% - Accent6", "Accent1", "Accent2", "Accent3",
             "Accent4", "Accent5", "Accent6", "Bad", "Calculation", "Check Cell", "Explanatory Text",
             "Good", "Heading 1", "Heading 2", "Heading 3", "Heading 4", "Input", "Linked Cell",
-            "Neutral", "Note", "Output", "Title", "Total", "Warning Text"));
+            "Neutral", "Note", "Output", "Title", "Total", "Warning Text");
 
         try (HSSFWorkbook wb = openSampleWorkbook("49751.xls")) {
             Set<String> act = IntStream

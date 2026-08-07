@@ -223,14 +223,14 @@ public class XDDFLineProperties {
         if (properties == null) {
             return;
         }
-        if (properties instanceof XDDFGradientFillProperties) {
-            props.setGradFill(((XDDFGradientFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFNoFillProperties) {
-            props.setNoFill(((XDDFNoFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFPatternFillProperties) {
-            props.setPattFill(((XDDFPatternFillProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFSolidFillProperties) {
-            props.setSolidFill(((XDDFSolidFillProperties) properties).getXmlObject());
+        if (properties instanceof XDDFGradientFillProperties xprops) {
+            props.setGradFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFNoFillProperties xprops) {
+            props.setNoFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFPatternFillProperties xprops) {
+            props.setPattFill(xprops.getXmlObject());
+        } else if (properties instanceof XDDFSolidFillProperties xprops) {
+            props.setSolidFill(xprops.getXmlObject());
         }
     }
 
@@ -259,12 +259,12 @@ public class XDDFLineProperties {
         if (properties == null) {
             return;
         }
-        if (properties instanceof XDDFLineJoinBevelProperties) {
-            props.setBevel(((XDDFLineJoinBevelProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFLineJoinMiterProperties) {
-            props.setMiter(((XDDFLineJoinMiterProperties) properties).getXmlObject());
-        } else if (properties instanceof XDDFLineJoinRoundProperties) {
-            props.setRound(((XDDFLineJoinRoundProperties) properties).getXmlObject());
+        if (properties instanceof XDDFLineJoinBevelProperties xprops) {
+            props.setBevel(xprops.getXmlObject());
+        } else if (properties instanceof XDDFLineJoinMiterProperties xprops) {
+            props.setMiter(xprops.getXmlObject());
+        } else if (properties instanceof XDDFLineJoinRoundProperties xprops) {
+            props.setRound(xprops.getXmlObject());
         }
     }
 

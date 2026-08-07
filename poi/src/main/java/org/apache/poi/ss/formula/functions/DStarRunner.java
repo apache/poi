@@ -34,6 +34,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.util.NumberComparer;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.StringUtil;
 
 /**
  * This class performs a D* calculation. It takes an {@link IDStarAlgorithm} object and
@@ -121,9 +122,9 @@ public final class DStarRunner implements Function3Arg {
         int fc = -1;
         try {
             filterColumn = OperandResolver.getSingleValue(filterColumn, srcRowIndex, srcColumnIndex);
-            if (filterColumn instanceof NumericValueEval) {
+            if (filterColumn instanceof NumericValueEval num) {
                 //fc is zero based while Excel uses 1 based column numbering
-                fc = Math.toIntExact(Math.round(((NumericValueEval)filterColumn).getNumberValue())) - 1;
+                fc = Math.toIntExact(Math.round(num.getNumberValue())) - 1;
             } else {
                 fc = getColumnForName(filterColumn, db);
             }
@@ -222,7 +223,7 @@ public final class DStarRunner implements Function3Arg {
                 continue;
             }
             String columnName = OperandResolver.coerceValueToString(columnNameValueEval);
-            if(name.equalsIgnoreCase(columnName)) {
+            if(StringUtil.equalsIgnoreCase(name, columnName)) {
                 resultColumn = column;
                 break;
             }
@@ -404,21 +405,14 @@ public final class DStarRunner implements Function3Arg {
         }
 
         int result = NumberComparer.compare(value, conditionValue);
-        switch(op) {
-        case largerThan:
-            return result > 0;
-        case largerEqualThan:
-            return result >= 0;
-        case smallerThan:
-            return result < 0;
-        case smallerEqualThan:
-            return result <= 0;
-        case equal:
-            return result == 0;
-        case notEqual:
-            return result != 0;
-        }
-        return false; // Can not be reached.
+        return switch (op) {
+            case largerThan -> result > 0;
+            case largerEqualThan -> result >= 0;
+            case smallerThan -> result < 0;
+            case smallerEqualThan -> result <= 0;
+            case equal -> result == 0;
+            case notEqual -> result != 0;
+        };
     }
 
     /**
@@ -432,21 +426,19 @@ public final class DStarRunner implements Function3Arg {
         ValueEval valueEval, operator op, String condition) {
 
         String valueString = valueEval instanceof BlankEval ? "" : OperandResolver.coerceValueToString(valueEval);
-        switch(op) {
-        case equal:
-            return valueString.equalsIgnoreCase(condition);
-        case notEqual:
-            return !valueString.equalsIgnoreCase(condition);
-        }
-        return false; // Can not be reached.
+        return switch (op) {
+            case equal -> StringUtil.equalsIgnoreCase(valueString, condition);
+            case notEqual -> !StringUtil.equalsIgnoreCase(valueString, condition);
+            default -> false;
+        };
     }
 
     private static Double getNumberFromValueEval(ValueEval value) {
-        if(value instanceof NumericValueEval) {
-            return ((NumericValueEval)value).getNumberValue();
+        if(value instanceof NumericValueEval num) {
+            return num.getNumberValue();
         }
-        else if(value instanceof StringValueEval) {
-            String stringValue = ((StringValueEval)value).getStringValue();
+        else if(value instanceof StringValueEval sve) {
+            String stringValue = sve.getStringValue();
             try {
                 return Double.parseDouble(stringValue);
             } catch (NumberFormatException e2) {

@@ -19,6 +19,7 @@ package org.apache.poi.poifs.crypt.dsig;
 
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.OO_DIGSIG_NS;
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XADES_132_NS;
+import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -465,16 +466,14 @@ public class SignatureConfig {
             return defaultMethod;
         }
 
-        switch (canonicalizationMethod) {
-            case Transform.ENVELOPED:
-            case CanonicalizationMethod.INCLUSIVE:
-            case CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS:
-            case CanonicalizationMethod.EXCLUSIVE:
-            case CanonicalizationMethod.EXCLUSIVE_WITH_COMMENTS:
-                return canonicalizationMethod;
-        }
+        return switch (canonicalizationMethod) {
+            case Transform.ENVELOPED, CanonicalizationMethod.INCLUSIVE, CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
+                 CanonicalizationMethod.EXCLUSIVE, CanonicalizationMethod.EXCLUSIVE_WITH_COMMENTS ->
+                    canonicalizationMethod;
+            default ->
+                    throw new EncryptedDocumentException("Unknown CanonicalizationMethod: " + canonicalizationMethod);
+        };
 
-        throw new EncryptedDocumentException("Unknown CanonicalizationMethod: "+canonicalizationMethod);
     }
 
     /**
@@ -856,16 +855,16 @@ public class SignatureConfig {
      * supported, so it's the rsa variant of the main digest
      */
     public String getSignatureMethodUri() {
-        switch (getDigestAlgo()) {
-        case sha1:   return XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1;
-        case sha224: return XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA224;
-        case sha256: return XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
-        case sha384: return XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA384;
-        case sha512: return XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA512;
-        case ripemd160: return XMLSignature.ALGO_ID_SIGNATURE_RSA_RIPEMD160;
-        default: throw new EncryptedDocumentException("Hash algorithm "
-            +getDigestAlgo()+" not supported for signing.");
-        }
+        return switch (getDigestAlgo()) {
+            case sha1 -> XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1;
+            case sha224 -> XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA224;
+            case sha256 -> XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
+            case sha384 -> XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA384;
+            case sha512 -> XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA512;
+            case ripemd160 -> XMLSignature.ALGO_ID_SIGNATURE_RSA_RIPEMD160;
+            default -> throw new EncryptedDocumentException("Hash algorithm "
+                    + getDigestAlgo() + " not supported for signing.");
+        };
     }
 
     /**
@@ -883,16 +882,16 @@ public class SignatureConfig {
      * @return the uri for the given digest
      */
     public static String getDigestMethodUri(HashAlgorithm digestAlgo) {
-        switch (digestAlgo) {
-        case sha1:   return DigestMethod.SHA1;
-        case sha224: return DigestMethod_SHA224;
-        case sha256: return DigestMethod.SHA256;
-        case sha384: return DigestMethod_SHA384;
-        case sha512: return DigestMethod.SHA512;
-        case ripemd160: return DigestMethod.RIPEMD160;
-        default: throw new EncryptedDocumentException("Hash algorithm "
-            +digestAlgo+" not supported for signing.");
-        }
+        return switch (digestAlgo) {
+            case sha1 -> DigestMethod.SHA1;
+            case sha224 -> DigestMethod_SHA224;
+            case sha256 -> DigestMethod.SHA256;
+            case sha384 -> DigestMethod_SHA384;
+            case sha512 -> DigestMethod.SHA512;
+            case ripemd160 -> DigestMethod.RIPEMD160;
+            default -> throw new EncryptedDocumentException("Hash algorithm "
+                    + digestAlgo + " not supported for signing.");
+        };
     }
 
     /**
@@ -906,16 +905,16 @@ public class SignatureConfig {
         if (digestMethodUri == null || digestMethodUri.isEmpty()) {
             return null;
         }
-        switch (digestMethodUri) {
-            case DigestMethod.SHA1:   return HashAlgorithm.sha1;
-            case DigestMethod_SHA224: return HashAlgorithm.sha224;
-            case DigestMethod.SHA256: return HashAlgorithm.sha256;
-            case DigestMethod_SHA384: return HashAlgorithm.sha384;
-            case DigestMethod.SHA512: return HashAlgorithm.sha512;
-            case DigestMethod.RIPEMD160: return HashAlgorithm.ripemd160;
-            default: throw new EncryptedDocumentException("Hash algorithm "
-                    +digestMethodUri+" not supported for signing.");
-        }
+        return switch (digestMethodUri) {
+            case DigestMethod.SHA1 -> HashAlgorithm.sha1;
+            case DigestMethod_SHA224 -> HashAlgorithm.sha224;
+            case DigestMethod.SHA256 -> HashAlgorithm.sha256;
+            case DigestMethod_SHA384 -> HashAlgorithm.sha384;
+            case DigestMethod.SHA512 -> HashAlgorithm.sha512;
+            case DigestMethod.RIPEMD160 -> HashAlgorithm.ripemd160;
+            default -> throw new EncryptedDocumentException("Hash algorithm "
+                    + digestMethodUri + " not supported for signing.");
+        };
     }
 
     /**
@@ -1150,7 +1149,7 @@ public class SignatureConfig {
                 }
                 Optional<X509Certificate> found = Stream.of(chain)
                     .map(X509Certificate.class::cast)
-                    .filter(c -> principalName.equalsIgnoreCase(c.getSubjectX500Principal().getName()))
+                    .filter(c -> equalsIgnoreCase(principalName, c.getSubjectX500Principal().getName()))
                     .findFirst();
                 if (found.isPresent()) {
                     return found.get();

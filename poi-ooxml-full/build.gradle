@@ -58,10 +58,10 @@ tasks.register('compileJava9', JavaCompile) {
     dependsOn 'compileJava'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
+        languageVersion = JavaLanguageVersion.of(Math.max(17, jdkVersion))
     }
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
@@ -163,22 +163,3 @@ spotbugsTest.enabled = false
 spotbugsMain.enabled = false
 javadoc.enabled = false
 javadocJar.enabled = false
-
-cyclonedxBom {
-    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
-    includeConfigs = ["runtimeClasspath"]
-    // skipConfigs is a list of configuration names to exclude when generating the BOM
-    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
-    // Specified the type of project being built. Defaults to 'library'
-    projectType = "library"
-    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
-    schemaVersion = "1.4"
-    // Boms destination directory (defaults to build/reports)
-    destination = file("build/reports")
-    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
-    outputName = "poi-ooxml-full-${project.version}.bom"
-    // The file format generated, can be xml, json or all for generating both
-    outputFormat = "all"
-    // Exclude BOM Serial Number
-    includeBomSerialNumber = true
-}

@@ -17,12 +17,9 @@
 
 package org.apache.poi.ss.formula.atp;
 
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,26 +34,26 @@ public class WorkdayCalculator {
     public static final WorkdayCalculator instance = new WorkdayCalculator();
 
     private static final Set<Integer> standardWeekend =
-            new HashSet<>(Arrays.asList(Calendar.SATURDAY, Calendar.SUNDAY));
+            Set.of(Calendar.SATURDAY, Calendar.SUNDAY);
     private static final Set<Integer> sunMonWeekend =
-            new HashSet<>(Arrays.asList(Calendar.SUNDAY, Calendar.MONDAY));
+            Set.of(Calendar.SUNDAY, Calendar.MONDAY);
     private static final Set<Integer> monTuesWeekend =
-            new HashSet<>(Arrays.asList(Calendar.MONDAY, Calendar.TUESDAY));
+            Set.of(Calendar.MONDAY, Calendar.TUESDAY);
     private static final Set<Integer> tuesWedsWeekend =
-            new HashSet<>(Arrays.asList(Calendar.TUESDAY, Calendar.WEDNESDAY));
+            Set.of(Calendar.TUESDAY, Calendar.WEDNESDAY);
     private static final Set<Integer> wedsThursWeekend =
-            new HashSet<>(Arrays.asList(Calendar.WEDNESDAY, Calendar.THURSDAY));
+            Set.of(Calendar.WEDNESDAY, Calendar.THURSDAY);
     private static final Set<Integer> thursFriWeekend =
-            new HashSet<>(Arrays.asList(Calendar.THURSDAY, Calendar.FRIDAY));
+            Set.of(Calendar.THURSDAY, Calendar.FRIDAY);
     private static final Set<Integer> friSatWeekend =
-            new HashSet<>(Arrays.asList(Calendar.FRIDAY, Calendar.SATURDAY));
-    private static final Set<Integer> monWeekend =  Collections.singleton(Calendar.MONDAY);
-    private static final Set<Integer> tuesWeekend =  Collections.singleton(Calendar.TUESDAY);
-    private static final Set<Integer> wedsWeekend =  Collections.singleton(Calendar.WEDNESDAY);
-    private static final Set<Integer> thursWeekend = Collections.singleton(Calendar.THURSDAY);
-    private static final Set<Integer> friWeekend = Collections.singleton(Calendar.FRIDAY);
-    private static final Set<Integer> satWeekend = Collections.singleton(Calendar.SATURDAY);
-    private static final Set<Integer> sunWeekend = Collections.singleton(Calendar.SUNDAY);
+            Set.of(Calendar.FRIDAY, Calendar.SATURDAY);
+    private static final Set<Integer> monWeekend =  Set.of(Calendar.MONDAY);
+    private static final Set<Integer> tuesWeekend =  Set.of(Calendar.TUESDAY);
+    private static final Set<Integer> wedsWeekend =  Set.of(Calendar.WEDNESDAY);
+    private static final Set<Integer> thursWeekend = Set.of(Calendar.THURSDAY);
+    private static final Set<Integer> friWeekend = Set.of(Calendar.FRIDAY);
+    private static final Set<Integer> satWeekend = Set.of(Calendar.SATURDAY);
+    private static final Set<Integer> sunWeekend = Set.of(Calendar.SUNDAY);
     private static final Map<Integer, Set<Integer>> weekendTypeMap = new HashMap<>();
 
     static {

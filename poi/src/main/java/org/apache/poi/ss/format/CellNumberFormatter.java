@@ -87,8 +87,7 @@ public class CellNumberFormatter extends CellFormatter {
             }
 
             CellFormatter cf;
-            if (value instanceof Number) {
-                Number num = (Number) value;
+            if (value instanceof Number num) {
                 cf = (num.doubleValue() % 1.0 == 0) ? new CellNumberFormatter(locale, "#") :
                     new CellNumberFormatter(locale, "#.#");
             } else {

@@ -93,18 +93,12 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
         }
 
         TextPlaceholder tp = TextPlaceholder.fromNativeId(txtype);
-        switch (tp == null ? TextPlaceholder.BODY : tp) {
-            case BODY:
-            case CENTER_BODY:
-            case HALF_BODY:
-            case QUARTER_BODY:
-                return getPropHelper(TextPlaceholder.BODY.nativeId, level, name, isCharacter);
-            case TITLE:
-            case CENTER_TITLE:
-                return getPropHelper(TextPlaceholder.TITLE.nativeId, level, name, isCharacter);
-            default:
-                return null;
-        }
+        return switch (tp == null ? TextPlaceholder.BODY : tp) {
+            case BODY, CENTER_BODY, HALF_BODY, QUARTER_BODY ->
+                    getPropHelper(TextPlaceholder.BODY.nativeId, level, name, isCharacter);
+            case TITLE, CENTER_TITLE -> getPropHelper(TextPlaceholder.TITLE.nativeId, level, name, isCharacter);
+            default -> null;
+        };
     }
 
     private TextPropCollection getPropHelper(final int txtype, final int level, final String name, final boolean isCharacter) {

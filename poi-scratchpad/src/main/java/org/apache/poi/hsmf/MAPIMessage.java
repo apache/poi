@@ -475,7 +475,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
         if (generalcodepage == null) {
             try {
                 String[] headers = getHeaders();
-                if (headers != null && headers.length > 0) {
+                if (headers != null) {
                     for (String header : headers) {
                         if (header.toLowerCase(LocaleUtil.getUserLocale()).startsWith("content-type")) {
                             Matcher m = GUESS_7_BIT_ENCODING_PATTERN.matcher(header);
@@ -498,7 +498,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
             try {
                 String encoding = CodePageUtil.codepageToEncoding(codepage, true);
                 htmlbodycodepage = encoding;
-                if (!encoding.equalsIgnoreCase("utf-8")) {
+                if (!StringUtil.equalsIgnoreCase(encoding, "utf-8")) {
                     bodycodepage = encoding;
                 }
             } catch (UnsupportedEncodingException e) {
@@ -528,32 +528,32 @@ public class MAPIMessage extends POIReadOnlyDocument {
 
     public void set7BitEncoding(String generalcharset, String htmlbodycharset, String bodycharset) {
         for (Chunk c : mainChunks.getChunks()) {
-            if (c instanceof StringChunk) {
+            if (c instanceof StringChunk stringChunk) {
                 if (c.getChunkId() == MAPIProperty.BODY_HTML.id) {
                     if (htmlbodycharset != null) {
-                        ((StringChunk) c).set7BitEncoding(htmlbodycharset);
+                        stringChunk.set7BitEncoding(htmlbodycharset);
                     }
                 } else if (c.getChunkId() == MAPIProperty.BODY.id) {
                     if (bodycharset != null) {
-                        ((StringChunk) c).set7BitEncoding(bodycharset);
+                        stringChunk.set7BitEncoding(bodycharset);
                     }
                 } else if (generalcharset != null) {
-                    ((StringChunk) c).set7BitEncoding(generalcharset);
+                    stringChunk.set7BitEncoding(generalcharset);
                 }
             }
         }
         if (generalcharset != null) {
             if (nameIdChunks != null) {
                 for (Chunk c : nameIdChunks.getChunks()) {
-                    if (c instanceof StringChunk) {
-                        ((StringChunk) c).set7BitEncoding(generalcharset);
+                    if (c instanceof StringChunk stringChunk) {
+                        stringChunk.set7BitEncoding(generalcharset);
                     }
                 }
             }
             for (RecipientChunks rc : recipientChunks) {
                 for (Chunk c : rc.getAll()) {
-                    if (c instanceof StringChunk) {
-                        ((StringChunk) c).set7BitEncoding(generalcharset);
+                    if (c instanceof StringChunk stringChunk) {
+                        stringChunk.set7BitEncoding(generalcharset);
                     }
                 }
             }
@@ -630,17 +630,17 @@ public class MAPIMessage extends POIReadOnlyDocument {
         String mc = getStringFromChunk(mainChunks.getMessageClass());
         if (StringUtil.isBlank(mc)) {
             return MESSAGE_CLASS.UNSPECIFIED;
-        } else if (mc.equalsIgnoreCase("IPM.Note")) {
+        } else if (StringUtil.equalsIgnoreCase(mc, "IPM.Note")) {
             return MESSAGE_CLASS.NOTE;
-        } else if (mc.equalsIgnoreCase("IPM.Contact")) {
+        } else if (StringUtil.equalsIgnoreCase(mc, "IPM.Contact")) {
             return MESSAGE_CLASS.CONTACT;
-        } else if (mc.equalsIgnoreCase("IPM.Appointment")) {
+        } else if (StringUtil.equalsIgnoreCase(mc, "IPM.Appointment")) {
             return MESSAGE_CLASS.APPOINTMENT;
-        } else if (mc.equalsIgnoreCase("IPM.StickyNote")) {
+        } else if (StringUtil.equalsIgnoreCase(mc, "IPM.StickyNote")) {
             return MESSAGE_CLASS.STICKY_NOTE;
-        } else if (mc.equalsIgnoreCase("IPM.Task")) {
+        } else if (StringUtil.equalsIgnoreCase(mc, "IPM.Task")) {
             return MESSAGE_CLASS.TASK;
-        } else if (mc.equalsIgnoreCase("IPM.Post")) {
+        } else if (StringUtil.equalsIgnoreCase(mc, "IPM.Post")) {
             return MESSAGE_CLASS.POST;
         } else {
             LOG.atWarn().log("I don't recognize message class '{}'. Please open an issue on POI's bugzilla", mc);

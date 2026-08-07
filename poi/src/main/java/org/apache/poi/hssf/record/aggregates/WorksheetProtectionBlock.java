@@ -52,14 +52,10 @@ public final class WorksheetProtectionBlock extends RecordAggregate {
      *         the 'Page Settings Block'.
      */
     public static boolean isComponentRecord(int sid) {
-        switch (sid) {
-            case ProtectRecord.sid:
-            case ObjectProtectRecord.sid:
-            case ScenarioProtectRecord.sid:
-            case PasswordRecord.sid:
-                return true;
-        }
-        return false;
+        return switch (sid) {
+            case ProtectRecord.sid, ObjectProtectRecord.sid, ScenarioProtectRecord.sid, PasswordRecord.sid -> true;
+            default -> false;
+        };
     }
 
     private boolean readARecord(RecordStream rs) {

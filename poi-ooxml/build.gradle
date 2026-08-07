@@ -125,17 +125,18 @@ dependencies {
     testImplementation project(path:':poi', configuration:'tests')
     testImplementation project(path:':poi-ooxml-lite-agent', configuration: 'archives')
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
-    testImplementation 'org.xmlunit:xmlunit-core:2.11.0'
+    testRuntimeOnly "org.jspecify:jspecify:${jspecifyVersion}"
+    testImplementation 'org.xmlunit:xmlunit-core:2.13.0'
     testImplementation 'org.reflections:reflections:0.10.2'
-    testImplementation 'org.openjdk.jmh:jmh-core:1.36'
-    testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.36'
-    testImplementation 'com.google.guava:guava:33.5.0-jre'
+    testImplementation 'org.openjdk.jmh:jmh-core:1.37'
+    testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
+    testImplementation "com.google.guava:guava:${guavaVersion}"
     testImplementation 'com.github.rzymek:opczip:1.2.0'
 
     // prevent slf4j warnings coming from xmlsec -> slf4j-api 1.7.x dependency
     // see https://logging.apache.org/log4j/2.x/log4j-slf4j-impl/
     testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
-    testImplementation 'org.slf4j:slf4j-simple:2.0.17'
+    testImplementation "org.slf4j:slf4j-simple:${slf4jVersion}"
 
     javadocs project(':poi')
     javadocs project(':poi-scratchpad')
@@ -155,10 +156,10 @@ tasks.register('compileJava9', JavaCompile) {
     dependsOn 'compileJava', ':poi:jar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
+        languageVersion = JavaLanguageVersion.of(Math.max(17, jdkVersion))
     }
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
@@ -172,10 +173,10 @@ tasks.register('compileTest9', JavaCompile) {
     dependsOn 'compileTestJava', ':poi:testJar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
+        languageVersion = JavaLanguageVersion.of(Math.max(17, jdkVersion))
     }
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
     destinationDirectory = file(TEST9_OUT + VERSIONS9)
     source = file(TEST9_SRC)
     options.compilerArgs = [
@@ -211,15 +212,17 @@ task testJar(type: Jar, dependsOn: testClasses) {
 }
 
 javadoc {
+    dependsOn configurations.javadocs.dependencies.collect{ ':' + project.project(it.path).name + ':compileJava' }
+
     failOnError = true
     doFirst {
         options {
             addBooleanOption('html5', true)
             links 'https://poi.apache.org/apidocs/dev/'
-            if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
+            if (jdkVersion >= 23) links 'https://docs.oracle.com/en/java/javase/23/docs/api/' else links 'https://docs.oracle.com/en/java/javase/17/docs/api/'
             use = true
             splitIndex = true
-            source = "11"
+            source = "17"
             classpath += configurations.javadocs.files
         }
     }
@@ -283,23 +286,4 @@ publishing {
             suppressPomMetadataWarningsFor('rendersignRuntimeElements')
         }
     }
-}
-
-cyclonedxBom {
-    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
-    includeConfigs = ["runtimeClasspath"]
-    // skipConfigs is a list of configuration names to exclude when generating the BOM
-    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
-    // Specified the type of project being built. Defaults to 'library'
-    projectType = "library"
-    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
-    schemaVersion = "1.4"
-    // Boms destination directory (defaults to build/reports)
-    destination = file("build/reports")
-    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
-    outputName = "poi-ooxml-${project.version}.bom"
-    // The file format generated, can be xml, json or all for generating both
-    outputFormat = "all"
-    // Exclude BOM Serial Number
-    includeBomSerialNumber = true
 }

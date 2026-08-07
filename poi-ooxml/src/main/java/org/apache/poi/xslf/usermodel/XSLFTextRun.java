@@ -190,14 +190,15 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
             return;
         }
 
-        final CTSRgbColor rgbCol = col.getSrgbClr();
-        if (rgbCol == null) {
+        XSLFSheet sheet = shape.getSheet();
+        XSLFTheme theme = sheet.getTheme();
+        XSLFColor xslfCol = new XSLFColor(col, theme, null, sheet);
+        Color javaCol = xslfCol.getColor();
+        if (javaCol == null) {
             return;
         }
 
-        final byte[] cols = rgbCol.getVal();
-        final SolidPaint paint = DrawPaint.createSolidPaint(new Color(0xFF & cols[0], 0xFF & cols[1], 0xFF & cols[2]));
-        highlightColor.accept(paint);
+        highlightColor.accept(DrawPaint.createSolidPaint(javaCol));
     }
 
     /**
@@ -674,12 +675,6 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
             }
             FontGroup fg = FontGroup.getFontGroupFirst(getRawText());
             switch (fg) {
-            default:
-            case LATIN:
-                if (props.isSetLatin()) {
-                    props.unsetLatin();
-                }
-                break;
             case EAST_ASIAN:
                 if (props.isSetEa()) {
                     props.unsetEa();
@@ -693,6 +688,12 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
             case SYMBOL:
                 if (props.isSetSym()) {
                     props.unsetSym();
+                }
+                break;
+            case LATIN:
+            default:
+                if (props.isSetLatin()) {
+                    props.unsetLatin();
                 }
                 break;
             }
@@ -777,13 +778,6 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
 
             CTTextFont font;
             switch (fontGroup) {
-            default:
-            case LATIN:
-                font = props.getLatin();
-                if (font == null && create) {
-                    font = props.addNewLatin();
-                }
-                break;
             case EAST_ASIAN:
                 font = props.getEa();
                 if (font == null && create) {
@@ -800,6 +794,13 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
                 font = props.getSym();
                 if (font == null && create) {
                     font = props.addNewSym();
+                }
+                break;
+            case LATIN:
+            default:
+                font = props.getLatin();
+                if (font == null && create) {
+                    font = props.addNewLatin();
                 }
                 break;
             }

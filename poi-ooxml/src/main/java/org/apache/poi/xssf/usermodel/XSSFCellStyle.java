@@ -1234,18 +1234,13 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * @return the used color
      */
     public XSSFColor getBorderColor(BorderSide side) {
-        switch(side){
-            case BOTTOM:
-                return getBottomBorderXSSFColor();
-            case RIGHT:
-                return getRightBorderXSSFColor();
-            case TOP:
-                return getTopBorderXSSFColor();
-            case LEFT:
-                return getLeftBorderXSSFColor();
-            default:
-                throw new IllegalArgumentException("Unknown border: " + side);
-        }
+        return switch (side) {
+            case BOTTOM -> getBottomBorderXSSFColor();
+            case RIGHT -> getRightBorderXSSFColor();
+            case TOP -> getTopBorderXSSFColor();
+            case LEFT -> getLeftBorderXSSFColor();
+            default -> throw new IllegalArgumentException("Unknown border: " + side);
+        };
     }
 
     /**

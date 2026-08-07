@@ -34,120 +34,119 @@ import java.awt.geom.Rectangle2D;
     public double evaluate(Context ctx) {
         Rectangle2D anchor = ctx.getShapeAnchor();
         double height = anchor.getHeight(), width = anchor.getWidth(), ss = Math.min(width, height);
-        switch (this) {
-            case _3cd4:
+        return switch (this) {
+            case _3cd4 ->
                 // 3 circles div 4: 3 x 360 / 4 = 270
-                return 270 * OOXML_DEGREE;
-            case _3cd8:
+                    270 * OOXML_DEGREE;
+            case _3cd8 ->
                 // 3 circles div 8: 3 x 360 / 8 = 135
-                return 135 * OOXML_DEGREE;
-            case _5cd8:
+                    135 * OOXML_DEGREE;
+            case _5cd8 ->
                 // 5 circles div 8: 5 x 360 / 8 = 225
-                return 225 * OOXML_DEGREE;
-            case _7cd8:
+                    225 * OOXML_DEGREE;
+            case _7cd8 ->
                 // 7 circles div 8: 7 x 360 / 8 = 315
-                return 315 * OOXML_DEGREE;
-            case _t:
+                    315 * OOXML_DEGREE;
+            case _t ->
                 // top
-                return anchor.getY();
-            case _b:
+                    anchor.getY();
+            case _b ->
                 // bottom
-                return anchor.getMaxY();
-            case _l:
+                    anchor.getMaxY();
+            case _l ->
                 // left
-                return anchor.getX();
-            case _r:
+                    anchor.getX();
+            case _r ->
                 // right
-                return anchor.getMaxX();
-            case _cd2:
+                    anchor.getMaxX();
+            case _cd2 ->
                 // circle div 2: 360 / 2 = 180
-                return 180 * OOXML_DEGREE;
-            case _cd4:
+                    180 * OOXML_DEGREE;
+            case _cd4 ->
                 // circle div 4: 360 / 4 = 90
-                return 90 * OOXML_DEGREE;
-            case _cd8:
+                    90 * OOXML_DEGREE;
+            case _cd8 ->
                 // circle div 8: 360 / 8 = 45
-                return 45 * OOXML_DEGREE;
-            case _hc:
+                    45 * OOXML_DEGREE;
+            case _hc ->
                 // horizontal center
-                return anchor.getCenterX();
-            case _h:
+                    anchor.getCenterX();
+            case _h ->
                 // height
-                return height;
-            case _hd2:
+                    height;
+            case _hd2 ->
                 // height div 2
-                return height / 2.;
-            case _hd3:
+                    height / 2.;
+            case _hd3 ->
                 // height div 3
-                return height / 3.;
-            case _hd4:
+                    height / 3.;
+            case _hd4 ->
                 // height div 4
-                return height / 4.;
-            case _hd5:
+                    height / 4.;
+            case _hd5 ->
                 // height div 5
-                return height / 5.;
-            case _hd6:
+                    height / 5.;
+            case _hd6 ->
                 // height div 6
-                return height / 6.;
-            case _hd8:
+                    height / 6.;
+            case _hd8 ->
                 // height div 8
-                return height / 8.;
-            case _ls:
+                    height / 8.;
+            case _ls ->
                 // long side
-                return Math.max(width, height);
-            case _ss:
+                    Math.max(width, height);
+            case _ss ->
                 // short side
-                return ss;
-            case _ssd2:
+                    ss;
+            case _ssd2 ->
                 // short side div 2
-                return ss / 2.;
-            case _ssd4:
+                    ss / 2.;
+            case _ssd4 ->
                 // short side div 4
-                return ss / 4.;
-            case _ssd6:
+                    ss / 4.;
+            case _ssd6 ->
                 // short side div 6
-                return ss / 6.;
-            case _ssd8:
+                    ss / 6.;
+            case _ssd8 ->
                 // short side div 8
-                return ss / 8.;
-            case _ssd16:
+                    ss / 8.;
+            case _ssd16 ->
                 // short side div 16
-                return ss / 16.;
-            case _ssd32:
+                    ss / 16.;
+            case _ssd32 ->
                 // short side div 32
-                return ss / 32.;
-            case _vc:
+                    ss / 32.;
+            case _vc ->
                 // vertical center
-                return anchor.getCenterY();
-            case _w:
+                    anchor.getCenterY();
+            case _w ->
                 // width
-                return width;
-            case _wd2:
+                    width;
+            case _wd2 ->
                 // width div 2
-                return width / 2.;
-            case _wd3:
+                    width / 2.;
+            case _wd3 ->
                 // width div 3
-                return width / 3.;
-            case _wd4:
+                    width / 3.;
+            case _wd4 ->
                 // width div 4
-                return width / 4.;
-            case _wd5:
+                    width / 4.;
+            case _wd5 ->
                 // width div 5
-                return width / 5.;
-            case _wd6:
+                    width / 5.;
+            case _wd6 ->
                 // width div 6
-                return width / 6.;
-            case _wd8:
+                    width / 6.;
+            case _wd8 ->
                 // width div 8
-                return width / 8.;
-            case _wd10:
+                    width / 8.;
+            case _wd10 ->
                 // width div 10
-                return width / 10.;
-            case _wd32:
+                    width / 10.;
+            case _wd32 ->
                 // width div 32
-                return width / 32.;
-            default:
-                return 0;
-        }
+                    width / 32.;
+            default -> 0;
+        };
     }
 }

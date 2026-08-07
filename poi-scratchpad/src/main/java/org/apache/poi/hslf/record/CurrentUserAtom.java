@@ -122,41 +122,41 @@ public class CurrentUserAtom {
     public CurrentUserAtom(DirectoryNode dir) throws IOException {
         // Decide how big it is
         final Entry entry = dir.getEntry("Current User");
-        if (!(entry instanceof DocumentEntry)) {
+        if (entry instanceof DocumentEntry docProps) {
+            // If it's clearly junk, bail out
+            if(docProps.getSize() > 131072) {
+                throw new CorruptPowerPointFileException("The Current User stream is implausibly long. It's normally 28-200 bytes long, but was " + docProps.getSize() + " bytes");
+            }
+
+            // Grab the contents
+            try (InputStream in = dir.createDocumentInputStream("Current User")) {
+                _contents = IOUtils.toByteArray(in, docProps.getSize(), RecordAtom.getMaxRecordLength(),
+                        "RecordAtom.setMaxRecordLength()");
+            }
+
+            // See how long it is. If it's under 28 bytes long, we can't
+            //  read it
+            if(_contents.length < 28) {
+                boolean isPP95 = dir.hasEntryCaseInsensitive(PP95_DOCUMENT);
+                // PPT95 has 4 byte size, then data
+                if (!isPP95 && _contents.length >= 4) {
+                    int size = LittleEndian.getInt(_contents);
+                    isPP95 = (size + 4 == _contents.length);
+                }
+
+                if (isPP95) {
+                    throw new OldPowerPointFormatException("Based on the Current User stream, you seem to have supplied a PowerPoint95 file, which isn't supported");
+                } else {
+                    throw new CorruptPowerPointFileException("The Current User stream must be at least 28 bytes long, but was only " + _contents.length);
+                }
+            }
+
+            // Set everything up
+            init();
+        } else {
             throw new IllegalArgumentException("Had unexpected type of entry for name: Current User: " + entry.getClass());
         }
-        DocumentEntry docProps = (DocumentEntry) entry;
 
-        // If it's clearly junk, bail out
-        if(docProps.getSize() > 131072) {
-            throw new CorruptPowerPointFileException("The Current User stream is implausibly long. It's normally 28-200 bytes long, but was " + docProps.getSize() + " bytes");
-        }
-
-        // Grab the contents
-        try (InputStream in = dir.createDocumentInputStream("Current User")) {
-            _contents = IOUtils.toByteArray(in, docProps.getSize(), RecordAtom.getMaxRecordLength(),
-                    "RecordAtom.setMaxRecordLength()");
-        }
-
-        // See how long it is. If it's under 28 bytes long, we can't
-        //  read it
-        if(_contents.length < 28) {
-            boolean isPP95 = dir.hasEntryCaseInsensitive(PP95_DOCUMENT);
-            // PPT95 has 4 byte size, then data
-            if (!isPP95 && _contents.length >= 4) {
-                int size = LittleEndian.getInt(_contents);
-                isPP95 = (size + 4 == _contents.length);
-            }
-
-            if (isPP95) {
-                throw new OldPowerPointFormatException("Based on the Current User stream, you seem to have supplied a PowerPoint95 file, which isn't supported");
-            } else {
-                throw new CorruptPowerPointFileException("The Current User stream must be at least 28 bytes long, but was only " + _contents.length);
-            }
-        }
-
-        // Set everything up
-        init();
     }
 
     /**

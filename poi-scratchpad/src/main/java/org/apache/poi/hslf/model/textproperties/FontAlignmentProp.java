@@ -42,18 +42,13 @@ public class FontAlignmentProp extends TextProp {
     }
 
     public FontAlign getFontAlign() {
-        switch (getValue()) {
-            default:
-                return FontAlign.AUTO;
-            case BASELINE:
-                return FontAlign.BASELINE;
-            case TOP:
-                return FontAlign.TOP;
-            case CENTER:
-                return FontAlign.CENTER;
-            case BOTTOM:
-                return FontAlign.BOTTOM;
-        }
+        return switch (getValue()) {
+            case BASELINE -> FontAlign.BASELINE;
+            case TOP -> FontAlign.TOP;
+            case CENTER -> FontAlign.CENTER;
+            case BOTTOM -> FontAlign.BOTTOM;
+            default -> FontAlign.AUTO;
+        };
     }
 
     @Override

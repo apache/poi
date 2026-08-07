@@ -2599,6 +2599,29 @@ OzQuaMAqRP8viuuA29GAsy59x92LWEhm6RRSyU6rMGqfhbHQEs6FZ0x6zuBq8Ru7
 T9wf/cc6uGGG6BqnjxFbWL/g9XJeU8gDxQ+ElJbYDXHT255g8kb92mHbJziPbxM=
 =WUaV
 -----END PGP PUBLIC KEY BLOCK-----
+pub   ed25519 2026-07-16 [SC] [expires: 2028-07-15]
+      6FFE44D6F720907EDBD75D84258E7A9DC3490481
+uid           [ultimate] PJ Fanning <fanningpj@apache.org>
+uid           [ultimate] PJ Fanning <fanningpj@yahoo.com>
+sub   cv25519 2026-07-16 [E] [expires: 2028-07-15]
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mDMEaliwMhYJKwYBBAHaRw8BAQdA+D8cxU11jx2s6Oa3B7mRGA6W4i7gO198fO5K
+aySQA460IFBKIEZhbm5pbmcgPGZhbm5pbmdwakB5YWhvby5jb20+iJkEExYKAEEW
+IQRv/kTW9yCQftvXXYQljnqdw0kEgQUCaliwMgIbAwUJA8JnAAULCQgHAgIiAgYV
+CgkICwIEFgIDAQIeBwIXgAAKCRAljnqdw0kEgYpLAQDececAlWJ2OND2TBvD8om2
+Xvwn+dctZw9QEeM7NWrUpAEAvYE9BkoVybxlzz3v8OMSOLlWl/3tQQlQGUAoJXjp
+9wO0IVBKIEZhbm5pbmcgPGZhbm5pbmdwakBhcGFjaGUub3JnPoiZBBMWCgBBFiEE
+b/5E1vcgkH7b112EJY56ncNJBIEFAmpYsXYCGwMFCQPCZwAFCwkIBwICIgIGFQoJ
+CAsCBBYCAwECHgcCF4AACgkQJY56ncNJBIGZbQD/WpXpQM89zYtqYRTyh4qcfdhV
+RsgIpgETojL94BWxoo8A/3H9AhhMYLCMMwKE7bH8Z92B2U5TIoLSI+HpXouneGcG
+uDgEaliwMhIKKwYBBAGXVQEFAQEHQALB07QHMtq/IuFdseK1l88wYEDR+RLEtx/w
+Ih/+fdUIAwEIB4h+BBgWCgAmFiEEb/5E1vcgkH7b112EJY56ncNJBIEFAmpYsDIC
+GwwFCQPCZwAACgkQJY56ncNJBIE7LgEA8GWOMGhBFfbrBLFegJldNqBFv0cP9Mx1
+sHdDV1DAw+gBANerwGsuMdxW8YbCDToILl1/X/NPqwsW3zlW/m0FJkoO
+=wga6
+-----END PGP PUBLIC KEY BLOCK-----
 pub   2048R/1556F3A4 2016-10-04
 uid                  Greg Woolsey <gwoolsey@apache.org>
 uid                  Greg Woolsey (personal) <greg.woolsey@gmail.com>

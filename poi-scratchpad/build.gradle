@@ -41,6 +41,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
+    testRuntimeOnly "org.jspecify:jspecify:${jspecifyVersion}"
 
     javadocs project(':poi')
     javadocs project(':poi-ooxml')
@@ -56,10 +57,10 @@ tasks.register('compileJava9', JavaCompile) {
     dependsOn 'compileJava', ':poi:jar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
+        languageVersion = JavaLanguageVersion.of(Math.max(17, jdkVersion))
     }
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
@@ -73,10 +74,10 @@ tasks.register('compileTest9', JavaCompile) {
     dependsOn 'compileTestJava', ':poi:jar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
+        languageVersion = JavaLanguageVersion.of(Math.max(17, jdkVersion))
     }
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
     destinationDirectory = file(TEST9_OUT + VERSIONS9)
     source = file(TEST9_SRC)
     options.compilerArgs = [
@@ -112,6 +113,8 @@ task testJar(type: Jar, dependsOn: testClasses) {
 }
 
 javadoc {
+    dependsOn configurations.javadocs.dependencies.collect{ ':' + project.project(it.path).name + ':compileJava' }
+
     doFirst {
         options {
             classpath += configurations.javadocs.files
@@ -163,23 +166,4 @@ publishing {
             }
         }
     }
-}
-
-cyclonedxBom {
-    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
-    includeConfigs = ["runtimeClasspath"]
-    // skipConfigs is a list of configuration names to exclude when generating the BOM
-    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
-    // Specified the type of project being built. Defaults to 'library'
-    projectType = "library"
-    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
-    schemaVersion = "1.4"
-    // Boms destination directory (defaults to build/reports)
-    destination = file("build/reports")
-    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
-    outputName = "poi-scratchpad-${project.version}.bom"
-    // The file format generated, can be xml, json or all for generating both
-    outputFormat = "all"
-    // Exclude BOM Serial Number
-    includeBomSerialNumber = true
 }

@@ -406,3 +406,4 @@ slideshow/clusterfuzz-testcase-minimized-POIFileHandlerFuzzer-6466833057382400.e
 slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-4983252485210112.ppt,"handle,additional",HPSF,,java.lang.IndexOutOfBoundsException,Block 21 not found,
 slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-4983252485210112.ppt,handle,HSLF,,org.apache.poi.util.RecordFormatException,Tried to allocate an array,
 slideshow/clusterfuzz-testcase-minimized-POIFileHandlerFuzzer-6060921738035200.wmf,handle,HWMF,,java.lang.IllegalStateException,invalid wmf file
+spreadsheet/LIBRE_OFFICE-128382-0.xlsx,handle,XSSF,,org.apache.poi.ss.formula.FormulaParseException,Illegal table name

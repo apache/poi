@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Formats sheet names for use in formula expressions.
@@ -173,13 +174,11 @@ public final class SheetNameFormatter {
     }
 
     private static boolean nameLooksLikeBooleanLiteral(String rawSheetName) {
-        switch(rawSheetName.charAt(0)) {
-            case 'T': case 't':
-                return "TRUE".equalsIgnoreCase(rawSheetName);
-            case 'F': case 'f':
-                return "FALSE".equalsIgnoreCase(rawSheetName);
-        }
-        return false;
+        return switch (rawSheetName.charAt(0)) {
+            case 'T', 't' -> StringUtil.equalsIgnoreCase("TRUE", rawSheetName);
+            case 'F', 'f' -> StringUtil.equalsIgnoreCase("FALSE", rawSheetName);
+            default -> false;
+        };
     }
 
     /**
@@ -192,17 +191,13 @@ public final class SheetNameFormatter {
         if(Character.isLetterOrDigit(ch)) {
             return false;
         }
-        switch(ch) {
-            case '.': // dot is OK
-            case '_': // underscore is OK
-                return false;
-            case '\n':
-            case '\r':
-            case '\t':
-                throw new IllegalStateException("Illegal character (0x"
-                        + Integer.toHexString(ch) + ") found in sheet name");
-        }
-        return true;
+        return switch (ch) { // dot is OK
+            case '.', '_' -> // underscore is OK
+                    false;
+            case '\n', '\r', '\t' -> throw new IllegalStateException("Illegal character (0x"
+                    + Integer.toHexString(ch) + ") found in sheet name");
+            default -> true;
+        };
     }
 
 

@@ -177,19 +177,11 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
         gradElem.setAttribute(SVG_GRADIENT_UNITS_ATTRIBUTE, SVG_USER_SPACE_ON_USE_VALUE);
 
         // Set cycle method
-        final String cycleVal;
-        switch (gradient.getCycleMethod()) {
-            case REFLECT:
-                cycleVal = SVG_REFLECT_VALUE;
-                break;
-            case REPEAT:
-                cycleVal = SVG_REPEAT_VALUE;
-                break;
-            case NO_CYCLE:
-            default:
-                cycleVal = SVG_PAD_VALUE;
-                break;
-        }
+        final String cycleVal = switch (gradient.getCycleMethod()) {
+            case REFLECT -> SVG_REFLECT_VALUE;
+            case REPEAT -> SVG_REPEAT_VALUE;
+            default -> SVG_PAD_VALUE;
+        };
         gradElem.setAttribute(SVG_SPREAD_METHOD_ATTRIBUTE, cycleVal);
 
         // Set color space
@@ -278,8 +270,8 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
 
         // TODO: the rotation handling is incomplete and the scale handling is missing
         //  see DrawTexturePaint on how to do it for AWT
-        if (!fill.isRotatedWithShape() && slShape instanceof SimpleShape) {
-            double rot = ((SimpleShape<?,?>)slShape).getRotation();
+        if (!fill.isRotatedWithShape() && slShape instanceof SimpleShape<?,?> simpleShape) {
+            double rot = simpleShape.getRotation();
             if (rot != 0) {
                 setAttribute(genCtx, patternDef,
                     null, SVG_PATTERN_TRANSFORM_ATTRIBUTE, "rotate(" + genCtx.doubleString(-rot) + ")");

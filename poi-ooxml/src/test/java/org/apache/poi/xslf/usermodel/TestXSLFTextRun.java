@@ -22,6 +22,7 @@ import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,19 +31,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.DrawTextParagraph;
 import org.apache.poi.sl.usermodel.PaintStyle;
-import org.apache.poi.xslf.model.PropertyFetcher;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientFillProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
@@ -159,6 +156,30 @@ class TestXSLFTextRun {
     }
 
     @Test
+    void testFontColorFromCorrectLayoutPlaceholder() throws IOException {
+        // When a layout has two placeholders with the same type but different idx values
+        // (e.g. type="title" with no idx carrying cyan, and type="title" idx="2" carrying red),
+        // a slide text run that inherits its color must resolve to the canonical (unindexed)
+        // placeholder's style — not the secondary indexed one.
+        try (InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("placeholder-layout-color.pptx");
+             XMLSlideShow ppt = new XMLSlideShow(is)) {
+            XSLFSlide slide = ppt.getSlides().get(0);
+            XSLFTextShape titleShape = (XSLFTextShape) slide.getShapes().get(0);
+            XSLFTextRun run = titleShape.getTextParagraphs().get(0).getTextRuns().get(0);
+
+            // The text run has no explicit color; the color comes from the layout's
+            // lstStyle.lvl1pPr.defRPr for the canonical title placeholder (cyan, 00FFFF).
+            PaintStyle paintStyle = run.getFontColor();
+            assertInstanceOf(PaintStyle.SolidPaint.class, paintStyle,
+                    "Expected a SolidPaint, got: " + paintStyle);
+
+            Color color = ((PaintStyle.SolidPaint) paintStyle).getSolidColor().getColor();
+            assertEquals(new Color(0, 255, 255), color,
+                    "Expected cyan from the canonical (unindexed) layout placeholder, got: " + color);
+        }
+    }
+
+    @Test
     void testDefaultRunProperties() throws IOException {
         // bug #63290
         POIDataSamples pds = POIDataSamples.getSlideShowInstance();
@@ -180,4 +201,19 @@ class TestXSLFTextRun {
         }
     }
 
+    @Test
+    void testHighlightColorFromTextBoxes() throws IOException {
+        try (InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("text-highlight.pptx");
+             XMLSlideShow ppt = new XMLSlideShow(is)) {
+            List<XSLFShape> shapes = ppt.getSlides().get(0).getShapes();
+
+            XSLFTextShape presetColorBox = (XSLFTextShape) shapes.get(0);
+            XSLFTextRun presetColorRun = presetColorBox.getTextParagraphs().get(0).getTextRuns().get(0);
+            assertEquals(new Color(0xFF, 0x00, 0x00), getColor(presetColorRun.getHighlightColor()));
+
+            XSLFTextShape themeColorBox = (XSLFTextShape) shapes.get(1);
+            XSLFTextRun themeColorRun = themeColorBox.getTextParagraphs().get(0).getTextRuns().get(0);
+            assertEquals(new Color(0x0F, 0x9E, 0xD5), getColor(themeColorRun.getHighlightColor()));
+        }
+    }
 }

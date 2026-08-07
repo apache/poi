@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
+import org.apache.poi.util.StringUtil;
 
 /**
  * An immutable Open Packaging Convention compliant part name.
@@ -528,7 +529,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
             return 1;
         }
 
-        if (str1.equalsIgnoreCase(str2)) {
+        if (StringUtil.equalsIgnoreCase(str1, str2)) {
             return 0;
         }
         final String name1 = str1.toLowerCase(Locale.ROOT);

@@ -41,6 +41,7 @@ import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.MathUtil;
+import org.apache.poi.util.StringUtil;
 import org.w3c.dom.svg.SVGDocument;
 
 public class SVGImageRenderer implements ImageRenderer {
@@ -146,7 +147,7 @@ public class SVGImageRenderer implements ImageRenderer {
 
     @Override
     public boolean canRender(String contentType) {
-        return PictureData.PictureType.SVG.contentType.equalsIgnoreCase(contentType);
+        return StringUtil.equalsIgnoreCase(PictureData.PictureType.SVG.contentType, contentType);
     }
 
     @Override

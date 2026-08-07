@@ -29,18 +29,21 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 // non-Javadoc: When possible, code should be implemented in the RowShifter abstract class to avoid duplication with
 // {@link org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter}
 public final class XSSFRowShifter extends RowShifter {
+    private final XSSFSheet xssfSheet;
 
     public XSSFRowShifter(XSSFSheet sh) {
         super(sh);
+        xssfSheet = sh;
     }
+
     @Override
     public void updateNamedRanges(FormulaShifter formulaShifter) {
-        XSSFRowColShifter.updateNamedRanges(sheet, formulaShifter);
+        XSSFRowColShifter.updateNamedRanges(xssfSheet, formulaShifter);
     }
 
     @Override
     public void updateFormulas(FormulaShifter formulaShifter) {
-        XSSFRowColShifter.updateFormulas(sheet, formulaShifter);
+        XSSFRowColShifter.updateFormulas(xssfSheet, formulaShifter);
     }
 
     /**
@@ -56,11 +59,11 @@ public final class XSSFRowShifter extends RowShifter {
 
     @Override
     public void updateConditionalFormatting(FormulaShifter formulaShifter) {
-        XSSFRowColShifter.updateConditionalFormatting(sheet, formulaShifter);
+        XSSFRowColShifter.updateConditionalFormatting(xssfSheet, formulaShifter);
     }
 
     @Override
     public void updateHyperlinks(FormulaShifter formulaShifter) {
-        XSSFRowColShifter.updateHyperlinks(sheet, formulaShifter);
+        XSSFRowColShifter.updateHyperlinks(xssfSheet, formulaShifter);
     }
 }

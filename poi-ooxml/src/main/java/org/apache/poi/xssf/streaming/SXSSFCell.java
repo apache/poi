@@ -747,27 +747,22 @@ public class SXSSFCell extends CellBase {
      */
     @Override
     public String toString() {
-        switch (getCellType()) {
-            case BLANK:
-                return "";
-            case BOOLEAN:
-                return getBooleanCellValue() ? "TRUE" : "FALSE";
-            case ERROR:
-                return ErrorEval.getText(getErrorCellValue());
-            case FORMULA:
-                return getCellFormula();
-            case NUMERIC:
+        return switch (getCellType()) {
+            case BLANK -> "";
+            case BOOLEAN -> getBooleanCellValue() ? "TRUE" : "FALSE";
+            case ERROR -> ErrorEval.getText(getErrorCellValue());
+            case FORMULA -> getCellFormula();
+            case NUMERIC -> {
                 if (DateUtil.isCellDateFormatted(this)) {
                     DataFormatter df = new DataFormatter();
                     df.setUseCachedValuesForFormulaCells(true);
-                    return df.formatCellValue(this);
+                    yield df.formatCellValue(this);
                 }
-                return Double.toString(getNumericCellValue());
-            case STRING:
-                return getRichStringCellValue().toString();
-            default:
-                return "Unknown Cell Type: " + getCellType();
-        }
+                yield Double.toString(getNumericCellValue());
+            }
+            case STRING -> getRichStringCellValue().toString();
+            default -> "Unknown Cell Type: " + getCellType();
+        };
     }
 
     /*package*/ void removeProperty(int type)
@@ -980,21 +975,17 @@ public class SXSSFCell extends CellBase {
             cellType = getCachedFormulaResultType();
         }
 
-        switch (cellType) {
-            case BOOLEAN:
-                return getBooleanCellValue();
-            case STRING:
+        return switch (cellType) {
+            case BOOLEAN -> getBooleanCellValue();
+            case STRING -> {
 
                 String text = getStringCellValue();
-                return Boolean.parseBoolean(text);
-            case NUMERIC:
-                return getNumericCellValue() != 0;
-            case ERROR:
-            case BLANK:
-                return false;
-            default:
-                throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
-        }
+                yield Boolean.parseBoolean(text);
+            }
+            case NUMERIC -> getNumericCellValue() != 0;
+            case ERROR, BLANK -> false;
+            default -> throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
+        };
 
     }
     private String convertCellValueToString() {
@@ -1002,29 +993,26 @@ public class SXSSFCell extends CellBase {
         return convertCellValueToString(cellType);
     }
     private String convertCellValueToString(CellType cellType) {
-        switch (cellType) {
-            case BLANK:
-                return "";
-            case BOOLEAN:
-                return getBooleanCellValue() ? "TRUE" : "FALSE";
-            case STRING:
-                return getStringCellValue();
-            case NUMERIC:
-                return Double.toString( getNumericCellValue() );
-            case ERROR:
+        return switch (cellType) {
+            case BLANK -> "";
+            case BOOLEAN -> getBooleanCellValue() ? "TRUE" : "FALSE";
+            case STRING -> getStringCellValue();
+            case NUMERIC -> Double.toString(getNumericCellValue());
+            case ERROR -> {
                 byte errVal = getErrorCellValue();
-                return FormulaError.forInt(errVal).getString();
-            case FORMULA:
+                yield FormulaError.forInt(errVal).getString();
+            }
+            case FORMULA -> {
                 if (_value != null) {
-                    FormulaValue fv = (FormulaValue)_value;
+                    FormulaValue fv = (FormulaValue) _value;
                     if (fv.getFormulaType() != CellType.FORMULA) {
-                        return convertCellValueToString(fv.getFormulaType());
+                        yield convertCellValueToString(fv.getFormulaType());
                     }
                 }
-                return "";
-            default:
-                throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
-        }
+                yield "";
+            }
+            default -> throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
+        };
     }
 
 //END OF COPIED CODE

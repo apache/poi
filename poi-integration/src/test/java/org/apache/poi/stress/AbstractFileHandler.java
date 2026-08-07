@@ -37,6 +37,7 @@ import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ss.extractor.ExcelExtractor;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Base class with things that can be run for any supported file handler
@@ -92,7 +93,7 @@ public abstract class AbstractFileHandler implements FileHandler {
             handleExtractingAsStream(file);
 
             // fix windows absolute paths for exception message tracking
-            String relPath = file.getPath().replaceAll(".*test-data", "test-data").replace('\\', '/');
+            String relPath = IOUtils.normalizePath(file.getPath().replaceAll(".*test-data", "test-data"));
             try (POITextExtractor extractor = ExtractorFactory.createExtractor(file)) {
                 assertNotNull(extractor, "Should get a POITextExtractor but had none for file " + relPath);
 
@@ -108,8 +109,7 @@ public abstract class AbstractFileHandler implements FileHandler {
                 assertEquals(length, file.length(), "File should not be modified by extractor");
                 assertEquals(modified, file.lastModified(), "File should not be modified by extractor");
 
-                if (extractor instanceof POIOLE2TextExtractor) {
-                    POIOLE2TextExtractor ole2Extractor = (POIOLE2TextExtractor) extractor;
+                if (extractor instanceof POIOLE2TextExtractor ole2Extractor) {
                     ole2Extractor.getRoot();
                     if (!(ole2Extractor instanceof EventBasedExcelExtractor)) {
                         ole2Extractor.getSummaryInformation();

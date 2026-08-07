@@ -274,26 +274,15 @@ public final class WorkbookEvaluator {
             } catch (RuntimeException re) {
                 if (re.getCause() instanceof WorkbookNotFoundException && _ignoreMissingWorkbooks) {
                     LOG.atInfo().log("{} - Continuing with cached value!", re.getCause().getMessage());
-                    switch (srcCell.getCachedFormulaResultType()) {
-                        case NUMERIC:
-                            result = new NumberEval(srcCell.getNumericCellValue());
-                            break;
-                        case STRING:
-                            result = new StringEval(srcCell.getStringCellValue());
-                            break;
-                        case BLANK:
-                            result = BlankEval.instance;
-                            break;
-                        case BOOLEAN:
-                            result = BoolEval.valueOf(srcCell.getBooleanCellValue());
-                            break;
-                        case ERROR:
-                            result = ErrorEval.valueOf(srcCell.getErrorCellValue());
-                            break;
-                        case FORMULA:
-                        default:
-                            throw new IllegalStateException("Unexpected cell type '" + srcCell.getCellType() + "' found!");
-                    }
+                    result = switch (srcCell.getCachedFormulaResultType()) {
+                        case NUMERIC -> new NumberEval(srcCell.getNumericCellValue());
+                        case STRING -> new StringEval(srcCell.getStringCellValue());
+                        case BLANK -> BlankEval.instance;
+                        case BOOLEAN -> BoolEval.valueOf(srcCell.getBooleanCellValue());
+                        case ERROR -> ErrorEval.valueOf(srcCell.getErrorCellValue());
+                        default ->
+                                throw new IllegalStateException("Unexpected cell type '" + srcCell.getCellType() + "' found!");
+                    };
                 } else {
                     throw re;
                 }
@@ -350,20 +339,14 @@ public final class WorkbookEvaluator {
             return BlankEval.instance;
         }
         CellType cellType = cell.getCellType();
-        switch (cellType) {
-            case NUMERIC:
-                return new NumberEval(cell.getNumericCellValue());
-            case STRING:
-                return new StringEval(cell.getStringCellValue());
-            case BOOLEAN:
-                return BoolEval.valueOf(cell.getBooleanCellValue());
-            case BLANK:
-                return BlankEval.instance;
-            case ERROR:
-                return ErrorEval.valueOf(cell.getErrorCellValue());
-            default:
-                throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
-        }
+        return switch (cellType) {
+            case NUMERIC -> new NumberEval(cell.getNumericCellValue());
+            case STRING -> new StringEval(cell.getStringCellValue());
+            case BOOLEAN -> BoolEval.valueOf(cell.getBooleanCellValue());
+            case BLANK -> BlankEval.instance;
+            case ERROR -> ErrorEval.valueOf(cell.getErrorCellValue());
+            default -> throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
+        };
 
     }
 
@@ -376,7 +359,6 @@ public final class WorkbookEvaluator {
         if (dbgEvaluationOutputForNextEval) {
             // first evaluation call when output is desired, so iit. this evaluator instance
             dbgEvaluationOutputIndent = 1;
-            dbgEvaluationOutputForNextEval = true;
         }
         if (dbgEvaluationOutputIndent > 0) {
             // init. indent string to needed spaces (create as substring from very long space-only string;
@@ -404,8 +386,7 @@ public final class WorkbookEvaluator {
             if (dbgEvaluationOutputIndent > 0) {
                 EVAL_LOG.atInfo().log("{}  * ptg {}: {}, stack: {}", dbgIndentStr, box(i), ptg, stack);
             }
-            if (ptg instanceof AttrPtg) {
-                AttrPtg attrPtg = (AttrPtg) ptg;
+            if (ptg instanceof AttrPtg attrPtg) {
                 if (attrPtg.isSum()) {
                     // Excel prefers to encode 'SUM()' as a tAttr token, but this evaluator
                     // expects the equivalent function token
@@ -456,10 +437,10 @@ public final class WorkbookEvaluator {
                             int dist = attrPtg.getData();
                             i += countTokensToBeSkipped(ptgs, i, dist);
                             Ptg nextPtg = ptgs[i + 1];
-                            if (ptgs[i] instanceof AttrPtg && nextPtg instanceof FuncVarPtg &&
+                            if (ptgs[i] instanceof AttrPtg && nextPtg instanceof FuncVarPtg fvp &&
                                     // in order to verify that there is no third param, we need to check
                                     // if we really have the IF next or some other FuncVarPtg as third param, e.g. ROW()/COLUMN()!
-                                    ((FuncVarPtg) nextPtg).getFunctionIndex() == FunctionMetadataRegistry.FUNCTION_INDEX_IF) {
+                                    fvp.getFunctionIndex() == FunctionMetadataRegistry.FUNCTION_INDEX_IF) {
                                 // this is an if statement without a false param (as opposed to MissingArgPtg as the false param)
                                 //i++;
                                 stack.push(arg0);
@@ -499,9 +480,7 @@ public final class WorkbookEvaluator {
             }
 
             ValueEval opResult;
-            if (ptg instanceof OperationPtg) {
-                OperationPtg optg = (OperationPtg) ptg;
-
+            if (ptg instanceof OperationPtg optg) {
                 int numops = optg.getNumberOfOperands();
                 ValueEval[] ops = new ValueEval[numops];
 
@@ -517,8 +496,7 @@ public final class WorkbookEvaluator {
 
                 boolean arrayMode = false;
                 if (areaArg) for (int ii = i; ii < iSize; ii++) {
-                    if (ptgs[ii] instanceof FuncVarPtg) {
-                        FuncVarPtg f = (FuncVarPtg) ptgs[ii];
+                    if (ptgs[ii] instanceof FuncVarPtg f) {
                         try {
                             Function func = FunctionEval.getBasicFunction(f.getFunctionIndex());
                             if (func instanceof ArrayMode) {
@@ -620,8 +598,8 @@ public final class WorkbookEvaluator {
         EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
         EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
 
-        if (evalCell != null && evalCell.isPartOfArrayFormulaGroup() && evaluationResult instanceof AreaEval) {
-            value = OperandResolver.getElementFromArray((AreaEval) evaluationResult, evalCell);
+        if (evalCell != null && evalCell.isPartOfArrayFormulaGroup() && evaluationResult instanceof AreaEval ae) {
+            value = OperandResolver.getElementFromArray(ae, evalCell);
         } else {
             value = dereferenceResult(evaluationResult, ec.getRowIndex(), ec.getColumnIndex());
         }
@@ -671,9 +649,8 @@ public final class WorkbookEvaluator {
     private ValueEval getEvalForPtg(Ptg ptg, OperationEvaluationContext ec) {
         //  consider converting all these (ptg instanceof XxxPtg) expressions to (ptg.getClass() == XxxPtg.class)
 
-        if (ptg instanceof NamePtg) {
+        if (ptg instanceof NamePtg namePtg) {
             // Named ranges, macro functions
-            NamePtg namePtg = (NamePtg) ptg;
             EvaluationName nameRecord = _workbook.getName(namePtg);
             return getEvalForNameRecord(nameRecord, ec);
         }
@@ -720,17 +697,14 @@ public final class WorkbookEvaluator {
         if (ptg instanceof Area3DPxg) {
             return ec.getArea3DEval((Area3DPxg) ptg);
         }
-        if (ptg instanceof RefPtg) {
-            RefPtg rptg = (RefPtg) ptg;
+        if (ptg instanceof RefPtg rptg) {
             return ec.getRefEval(rptg.getRow(), rptg.getColumn());
         }
-        if (ptg instanceof AreaPtg) {
-            AreaPtg aptg = (AreaPtg) ptg;
+        if (ptg instanceof AreaPtg aptg) {
             return ec.getAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn());
         }
 
-        if (ptg instanceof ArrayPtg) {
-            ArrayPtg aptg = (ArrayPtg) ptg;
+        if (ptg instanceof ArrayPtg aptg) {
             return ec.getAreaValueEval(0, 0, aptg.getRowCount() - 1, aptg.getColumnCount() - 1, aptg.getTokenArrayValues());
         }
 

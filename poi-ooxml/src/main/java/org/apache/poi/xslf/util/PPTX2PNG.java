@@ -46,6 +46,7 @@ import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.MathUtil;
+import org.apache.poi.util.StringUtil;
 
 /**
  * An utility to convert slides of a .pptx slide show to a PNG image
@@ -238,7 +239,7 @@ public final class PPTX2PNG {
             }
         }
 
-        final boolean isStdin = file != null && "stdin".equalsIgnoreCase(file.getName());
+        final boolean isStdin = file != null && StringUtil.equalsIgnoreCase("stdin", file.getName());
 
         if (!isStdin && (file == null || !file.exists())) {
             usage("File not specified or it doesn't exist");
@@ -376,25 +377,13 @@ public final class PPTX2PNG {
     private double getDimensions(MFProxy proxy, Dimension2D dim) {
         final Dimension2D pgsize = proxy.getSize();
 
-        final double lenSide;
-        switch (fixSide) {
-            default:
-            case "scale":
-                lenSide = 1;
-                break;
-            case "long":
-                lenSide = Math.max(pgsize.getWidth(), pgsize.getHeight());
-                break;
-            case "short":
-                lenSide = Math.min(pgsize.getWidth(), pgsize.getHeight());
-                break;
-            case "width":
-                lenSide = pgsize.getWidth();
-                break;
-            case "height":
-                lenSide = pgsize.getHeight();
-                break;
-        }
+        final double lenSide = switch (fixSide) {
+            case "long" -> Math.max(pgsize.getWidth(), pgsize.getHeight());
+            case "short" -> Math.min(pgsize.getWidth(), pgsize.getHeight());
+            case "width" -> pgsize.getWidth();
+            case "height" -> pgsize.getHeight();
+            default -> 1;
+        };
 
         dim.setSize(pgsize.getWidth() * scale / lenSide, pgsize.getHeight() * scale / lenSide);
         return lenSide;
@@ -456,17 +445,11 @@ public final class PPTX2PNG {
         if (fm == FileMagic.UNKNOWN) {
             fm = defaultFileType;
         }
-        switch (fm) {
-            case EMF:
-                proxy = new EMFHandler();
-                break;
-            case WMF:
-                proxy = new WMFHandler();
-                break;
-            default:
-                proxy = new PPTHandler();
-                break;
-        }
+        proxy = switch (fm) {
+            case EMF -> new EMFHandler();
+            case WMF -> new WMFHandler();
+            default -> new PPTHandler();
+        };
         proxy.setIgnoreParse(ignoreParse);
         proxy.setQuiet(quiet);
         con.parse(proxy);

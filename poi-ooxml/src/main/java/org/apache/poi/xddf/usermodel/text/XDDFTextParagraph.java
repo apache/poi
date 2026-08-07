@@ -64,12 +64,12 @@ public class XDDFTextParagraph implements Iterable<XDDFTextRun> {
         this._runs = new ArrayList<>(count);
 
         for (XmlObject xo : paragraph.selectChildren(QNameSet.ALL)) {
-            if (xo instanceof CTTextLineBreak) {
-                _runs.add(new XDDFTextRun((CTTextLineBreak) xo, this));
-            } else if (xo instanceof CTTextField) {
-                _runs.add(new XDDFTextRun((CTTextField) xo, this));
-            } else if (xo instanceof CTRegularTextRun) {
-                _runs.add(new XDDFTextRun((CTRegularTextRun) xo, this));
+            if (xo instanceof CTTextLineBreak ctTextLineBreak) {
+                _runs.add(new XDDFTextRun(ctTextLineBreak, this));
+            } else if (xo instanceof CTTextField ctTextField) {
+                _runs.add(new XDDFTextRun(ctTextField, this));
+            } else if (xo instanceof CTRegularTextRun ctRegularTextRun) {
+                _runs.add(new XDDFTextRun(ctRegularTextRun, this));
             }
         }
 

@@ -282,12 +282,10 @@ public class SignatureInfo {
     }
 
     private static DigestOutputStream getDigestStream(final HashAlgorithm algo, final PrivateKey key) {
-        switch (algo) {
-            case md2: case md5: case sha1: case sha256: case sha384: case sha512:
-                return new SignatureOutputStream(algo, key);
-            default:
-                return new DigestOutputStream(algo, key);
-        }
+        return switch (algo) {
+            case md2, md5, sha1, sha256, sha384, sha512 -> new SignatureOutputStream(algo, key);
+            default -> new DigestOutputStream(algo, key);
+        };
     }
 
     /**

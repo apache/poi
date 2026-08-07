@@ -28,6 +28,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -99,7 +100,7 @@ public final class SlideShowDumper {
             SlideShowDumper foo = new SlideShowDumper(poifs, System.out);
 
             if (args.length > 1) {
-                if (args[0].equalsIgnoreCase("-escher")) {
+                if (StringUtil.equalsIgnoreCase(args[0], "-escher")) {
                     foo.setDDFEscher(true);
                 } else {
                     foo.setBasicEscher(true);
