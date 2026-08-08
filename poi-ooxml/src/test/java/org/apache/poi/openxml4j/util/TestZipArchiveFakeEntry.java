@@ -90,7 +90,9 @@ public class TestZipArchiveFakeEntry {
         try (ZipArchiveFakeEntry zipArchiveFakeEntry = new ZipArchiveFakeEntry(entry, baos.toInputStream())) {
             assertEquals(fakeEntryName, zipArchiveFakeEntry.getName());
             UnsynchronizedByteArrayOutputStream baos2 = UnsynchronizedByteArrayOutputStream.builder().get();
-            assertEquals(data.length, IOUtils.copy(zipArchiveFakeEntry.getInputStream(), baos2));
+            try (InputStream stream = zipArchiveFakeEntry.getInputStream()) {
+                assertEquals(data.length, IOUtils.copy(stream, baos2));
+            }
             assertEquals(fakeValue, baos2.toString(StandardCharsets.UTF_8.name()));
             assertEquals(data.length, zipArchiveFakeEntry.getSize());
             assertEquals(unencryptedTempFileExpected, zipArchiveFakeEntry.isUnencryptedTempFileBacked());
