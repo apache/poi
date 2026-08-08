@@ -83,7 +83,7 @@ def poijobs = [
 //		  // replaced by Gradle-based build now
 //		  disabled: true
 //        ],
-        [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.17', trigger: 'H 7 * * *', sonar: true, skipcigame: true
+        [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.21', trigger: 'H 7 * * *', sonar: true, skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.8',
           trigger: 'H */12 * * *',
