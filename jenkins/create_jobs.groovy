@@ -133,7 +133,7 @@ def xmlbeansjobs = [
         ],
         [ name: 'POI-XMLBeans-DSL-1.27', jdk: '1.27', trigger: triggerSundays, skipcigame: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.17', trigger: triggerSundays, skipcigame: true,
+        [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.21', trigger: triggerSundays, skipcigame: true,
           sonar: true
         ]
 ]
