@@ -172,34 +172,16 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         }
     }
 
-    private boolean isRunInParagraphEditContainer(CTR ctr) {
-        try (XmlCursor cursor = ctr.newCursor()) {
-            // Walk up the parent chain to see if we're inside a valid container
-            // We need to check all ancestors, not just immediate parent,
-            // because the run could be wrapped in SDT or other elements
-            while (cursor.toParent()) {
-                XmlObject ancestor = cursor.getObject();
-                if (ancestor instanceof CTP
-                        || ancestor instanceof CTHyperlink
-                        || ancestor instanceof CTSimpleField) {
-                    return true;
-                }
-                // If we've gone too far up (reached the document level), stop
-                if (ancestor instanceof org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody) {
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
-
     private void processCTRs(List<CTR> ctrs) {
         if (ctrs == null) {
             return;
         }
         for (CTR ctr : ctrs) {
-            if (ctr.getRPr() != null && isRunInParagraphEditContainer(ctr)) {
-                runs.add(new XWPFRun(ctr, (IRunBody)this));
+            // Only add runs that have formatting properties (RPr).
+            // SDT content runs are added to the runs list for formatting access,
+            // while the SDT element itself is in iruns for text extraction.
+            if (ctr.getRPr() != null) {
+                runs.add(new XWPFRun(ctr, (IRunBody) this));
             }
         }
     }
