@@ -184,8 +184,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                 else if (xmlObject instanceof CTSdtRow sdtRow) {
                     List<CTRow> rows = new ArrayList<>();
                     collectCTRowsInnerSdtRow(sdtRow, rows);
-                    for (CTRow row : rows)
-                    {
+                    for (CTRow row : rows) {
                         processCTRow(row);
                     }
                 }
@@ -1247,12 +1246,11 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     public XWPFTableRow insertNewTableRow(int pos) {
         if (pos >= 0 && pos <= tableRows.size()) {
-            CTRow newRow = CTRow.Factory.newInstance();
+            CTRow insertedRow;
 
             if (pos == tableRows.size() || tableRows.isEmpty()) {
                 // Insert at end or first row in empty table - add to table
-                CTRow addedRow = ctTbl.addNewTr();
-                newRow.set(addedRow);
+                insertedRow = ctTbl.addNewTr();
             } else {
                 // Insert before the row currently at position pos
                 XWPFTableRow nextRow = tableRows.get(pos);
@@ -1267,39 +1265,33 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                             List<CTRow> trList = tbl.getTrList();
                             int idx = trList.indexOf(nextCTRow);
                             if (idx >= 0) {
-                                CTRow addedRow = tbl.insertNewTr(idx);
-                                newRow.set(addedRow);
+                                insertedRow = tbl.insertNewTr(idx);
                             } else {
                                 // Fallback: add to end of table
-                                CTRow addedRow = ctTbl.addNewTr();
-                                newRow.set(addedRow);
+                                insertedRow = ctTbl.addNewTr();
                             }
                         } else if (parent instanceof CTSdtContentRow sdtContent) {
                             // SDT-wrapped row - insert into SDT content
                             List<CTRow> trList = sdtContent.getTrList();
                             int idx = trList.indexOf(nextCTRow);
                             if (idx >= 0) {
-                                CTRow addedRow = sdtContent.insertNewTr(idx);
-                                newRow.set(addedRow);
+                                insertedRow = sdtContent.insertNewTr(idx);
                             } else {
                                 // Fallback: add to end of SDT content
-                                CTRow addedRow = sdtContent.addNewTr();
-                                newRow.set(addedRow);
+                                insertedRow = sdtContent.addNewTr();
                             }
                         } else {
                             // Unknown parent - add to table as fallback
-                            CTRow addedRow = ctTbl.addNewTr();
-                            newRow.set(addedRow);
+                            insertedRow = ctTbl.addNewTr();
                         }
                     } else {
                         // No parent - add to table as fallback
-                        CTRow addedRow = ctTbl.addNewTr();
-                        newRow.set(addedRow);
+                        insertedRow = ctTbl.addNewTr();
                     }
                 }
             }
 
-            XWPFTableRow tableRow = new XWPFTableRow(newRow, this);
+            XWPFTableRow tableRow = new XWPFTableRow(insertedRow, this);
             tableRows.add(pos, tableRow);
             return tableRow;
         }
