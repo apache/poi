@@ -57,7 +57,15 @@ public interface XDDFDataSource<T> {
     String getFormatCode();
 
     /**
-     * @return number format for the point, or {@code null} to use {@link #getFormatCode()}
+     * Optional number format for a single data point in the numerical cache.
+     * <p>
+     * Return {@code null} when this point has no point-specific format and should
+     * inherit the series format from {@link #getFormatCode()}. Implementations that
+     * never use per-point formats can keep the default.
+     * </p>
+     *
+     * @param index zero-based point index
+     * @return the point's format code, or {@code null} to fall back to {@link #getFormatCode()}
      * @since 6.0.0
      */
     default String getPointFormatCode(int index) {
