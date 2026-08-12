@@ -32,7 +32,7 @@ buildscript {
 
 plugins {
     id 'base'
-    id 'com.dorongold.task-tree' version '4.0.1'
+    id 'com.dorongold.task-tree' version '4.0.2'
     id 'org.nosphere.apache.rat' version '0.8.1'
     id 'distribution'
 
