@@ -65,7 +65,7 @@ public interface XDDFDataSource<T> {
      * </p>
      *
      * @param index zero-based point index
-     * @return the point's format code, or {@code null} to fall back to {@link #getFormatCode()}
+     * @return the data point's format code, or {@code null} if the underlying class does not support this method or if there is no format code set for this data point - NumericalCellRangeDataSource is one class that implements this method.
      * @since 6.0.0
      */
     default String getPointFormatCode(int index) {
