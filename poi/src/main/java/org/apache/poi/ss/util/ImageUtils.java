@@ -316,6 +316,14 @@ public final class ImageUtils {
                 }
                 targetSize += dim - leadSpace - trailSpace;
             }
+
+            // Degenerate same-cell XSSF anchor (typically dx1=dy1=dx2=dy2=0): endD - startD
+            // is zero or negative. Use remaining cell space so resize has a positive base size.
+            if (hssfUnits == 0 && startCell == endCell && targetSize <= 0) {
+                final double dim = nextSize.apply(startCell).doubleValue() * EMU_PER_PIXEL;
+                final double leadSpace = startD;
+                targetSize = (startD == 0 && endD == 0) ? dim : dim - leadSpace;
+            }
         }
 
         return MathUtil.safeDoubleToInt(Math.rint(targetSize));
