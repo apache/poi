@@ -37,7 +37,7 @@ sourceSets {
 
 dependencies {
     api "commons-codec:commons-codec:${commonsCodecVersion}"
-    api 'org.apache.commons:commons-collections4:4.5.0'
+    api 'org.apache.commons:commons-collections4:4.6.0'
     api "org.apache.commons:commons-math3:${commonsMathVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
     api 'com.zaxxer:SparseBitSet:1.3'
