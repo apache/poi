@@ -76,6 +76,7 @@
             <summary-item>Upgrade bouncycastle dependency to 1.85</summary-item>
             <summary-item>Upgrade commons-codec dependency to 1.22.1</summary-item>
             <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
+            <summary-item>Upgrade commons-collections4 dependency to 4.6.0</summary-item>
             <summary-item>Upgrade commons-io dependency to 2.22.0</summary-item>
             <summary-item>Upgrade log4j-api dependency to 2.26.1</summary-item>
             <summary-item>Upgrade mockito dependency to 5.23.0</summary-item>
