@@ -95,25 +95,13 @@ public enum FontUnderline {
     }
 
     public static FontUnderline valueOf(byte value){
-        FontUnderline val;
-        switch (value) {
-            case Font.U_DOUBLE:
-                val = FontUnderline.DOUBLE;
-                break;
-            case Font.U_DOUBLE_ACCOUNTING:
-                val = FontUnderline.DOUBLE_ACCOUNTING;
-                break;
-            case Font.U_SINGLE_ACCOUNTING:
-                val = FontUnderline.SINGLE_ACCOUNTING;
-                break;
-            case Font.U_SINGLE:
-                val = FontUnderline.SINGLE;
-                break;
-            default:
-                val = FontUnderline.NONE;
-                break;
-        }
-        return val;
+        return switch (value) {
+            case Font.U_DOUBLE             -> FontUnderline.DOUBLE;
+            case Font.U_DOUBLE_ACCOUNTING  -> FontUnderline.DOUBLE_ACCOUNTING;
+            case Font.U_SINGLE_ACCOUNTING  -> FontUnderline.SINGLE_ACCOUNTING;
+            case Font.U_SINGLE             -> FontUnderline.SINGLE;
+            default                        -> FontUnderline.NONE;
+        };
     }
 
 }

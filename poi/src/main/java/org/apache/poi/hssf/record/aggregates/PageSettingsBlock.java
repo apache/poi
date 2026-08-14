@@ -421,13 +421,13 @@ public final class PageSettingsBlock extends RecordAggregate {
         if (m != null) {
             return m.getMargin();
         }
-        switch (margin) {
-            case InternalSheet.LeftMargin:   return .75;
-            case InternalSheet.RightMargin:  return .75;
-            case InternalSheet.TopMargin:    return 1.0;
-            case InternalSheet.BottomMargin: return 1.0;
-        }
-        throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
+        return switch (margin) {
+            case InternalSheet.LeftMargin   -> .75;
+            case InternalSheet.RightMargin  -> .75;
+            case InternalSheet.TopMargin    -> 1.0;
+            case InternalSheet.BottomMargin -> 1.0;
+            default -> throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
+        };
     }
 
     /**

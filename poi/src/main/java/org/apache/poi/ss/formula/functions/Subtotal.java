@@ -73,31 +73,31 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 public class Subtotal implements Function {
 
     private static Function findFunction(int functionCode) throws EvaluationException {
-        switch (functionCode) {
-            case 1: return subtotalInstance(AggregateFunction.AVERAGE, true);
-            case 2: return Count.subtotalInstance(true);
-            case 3: return Counta.subtotalInstance(true);
-            case 4: return subtotalInstance(AggregateFunction.MAX, true);
-            case 5: return subtotalInstance(AggregateFunction.MIN, true);
-            case 6: return subtotalInstance(AggregateFunction.PRODUCT, true);
-            case 7: return subtotalInstance(AggregateFunction.STDEV, true);
-            case 8: return subtotalInstance(AggregateFunction.STDEVP, true);
-            case 9: return subtotalInstance(AggregateFunction.SUM, true);
-            case 10: return subtotalInstance(AggregateFunction.VAR, true);
-            case 11: return subtotalInstance(AggregateFunction.VARP, true);
-            case 101: return subtotalInstance(AggregateFunction.AVERAGE, false);
-            case 102: return Count.subtotalInstance(false);
-            case 103: return Counta.subtotalInstance(false);
-            case 104: return subtotalInstance(AggregateFunction.MAX, false);
-            case 105: return subtotalInstance(AggregateFunction.MIN, false);
-            case 106: return subtotalInstance(AggregateFunction.PRODUCT, false);
-            case 107: return subtotalInstance(AggregateFunction.STDEV, false);
-            case 108: return subtotalInstance(AggregateFunction.STDEVP, false);
-            case 109: return subtotalInstance(AggregateFunction.SUM, false);
-            case 110: return subtotalInstance(AggregateFunction.VAR, false);
-            case 111: return subtotalInstance(AggregateFunction.VARP, false);
-        }
-        throw EvaluationException.invalidValue();
+        return switch (functionCode) {
+            case 1 -> subtotalInstance(AggregateFunction.AVERAGE, true);
+            case 2 -> Count.subtotalInstance(true);
+            case 3 -> Counta.subtotalInstance(true);
+            case 4 -> subtotalInstance(AggregateFunction.MAX, true);
+            case 5 -> subtotalInstance(AggregateFunction.MIN, true);
+            case 6 -> subtotalInstance(AggregateFunction.PRODUCT, true);
+            case 7 -> subtotalInstance(AggregateFunction.STDEV, true);
+            case 8 -> subtotalInstance(AggregateFunction.STDEVP, true);
+            case 9 -> subtotalInstance(AggregateFunction.SUM, true);
+            case 10 -> subtotalInstance(AggregateFunction.VAR, true);
+            case 11 -> subtotalInstance(AggregateFunction.VARP, true);
+            case 101 -> subtotalInstance(AggregateFunction.AVERAGE, false);
+            case 102 -> Count.subtotalInstance(false);
+            case 103 -> Counta.subtotalInstance(false);
+            case 104 -> subtotalInstance(AggregateFunction.MAX, false);
+            case 105 -> subtotalInstance(AggregateFunction.MIN, false);
+            case 106 -> subtotalInstance(AggregateFunction.PRODUCT, false);
+            case 107 -> subtotalInstance(AggregateFunction.STDEV, false);
+            case 108 -> subtotalInstance(AggregateFunction.STDEVP, false);
+            case 109 -> subtotalInstance(AggregateFunction.SUM, false);
+            case 110 -> subtotalInstance(AggregateFunction.VAR, false);
+            case 111 -> subtotalInstance(AggregateFunction.VARP, false);
+            default -> throw EvaluationException.invalidValue();
+        };
     }
 
     @Override

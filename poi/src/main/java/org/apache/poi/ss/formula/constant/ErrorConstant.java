@@ -58,16 +58,19 @@ public final class ErrorConstant {
 
     public static ErrorConstant valueOf(int errorCode) {
         if (FormulaError.isValidCode(errorCode)) {
-            switch (FormulaError.forInt(errorCode)) {
-                case NULL:  return NULL;
-                case DIV0:  return DIV_0;
-                case VALUE: return VALUE;
-                case REF:   return REF;
-                case NAME:  return NAME;
-                case NUM:   return NUM;
-                case NA:    return NA;
-                default:    break;
-            }
+            return switch (FormulaError.forInt(errorCode)) {
+                case NULL  -> NULL;
+                case DIV0  -> DIV_0;
+                case VALUE -> VALUE;
+                case REF   -> REF;
+                case NAME  -> NAME;
+                case NUM   -> NUM;
+                case NA    -> NA;
+                default    -> {
+                    LOG.atWarn().log("Warning - unexpected error code ({})", box(errorCode));
+                    yield new ErrorConstant(errorCode);
+                }
+            };
         }
         LOG.atWarn().log("Warning - unexpected error code ({})", box(errorCode));
         return new ErrorConstant(errorCode);
