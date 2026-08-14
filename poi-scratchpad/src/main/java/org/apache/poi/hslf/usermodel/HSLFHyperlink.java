@@ -167,8 +167,9 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
 
     @Override
     public void linkToSlide(Slide<HSLFShape,HSLFTextParagraph> slide) {
-        assert(slide instanceof HSLFSlide);
-        HSLFSlide sl = (HSLFSlide)slide;
+        if (!(slide instanceof HSLFSlide sl)) {
+            throw new AssertionError("Expected HSLFSlide");
+        }
         int slideNum = slide.getSlideNumber();
         String alias = "Slide "+slideNum;
 

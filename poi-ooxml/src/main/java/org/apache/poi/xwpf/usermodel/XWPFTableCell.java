@@ -99,22 +99,22 @@ public class XWPFTableCell implements IBody, ICell {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
-                if (o instanceof CTP) {
-                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                if (o instanceof CTP ctp) {
+                    XWPFParagraph p = new XWPFParagraph(ctp, this);
                     paragraphs.add(p);
                     bodyElements.add(p);
                 }
-                if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
+                if (o instanceof CTTbl ctTbl) {
+                    XWPFTable t = new XWPFTable(ctTbl, this, false);
                     tables.add(t);
                     bodyElements.add(t);
                 }
-                if (o instanceof CTSdtBlock) {
-                    XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
+                if (o instanceof CTSdtBlock sdtBlock) {
+                    XWPFSDT c = new XWPFSDT(sdtBlock, this);
                     bodyElements.add(c);
                 }
-                if (o instanceof CTSdtRun) {
-                    XWPFSDT c = new XWPFSDT((CTSdtRun) o, this);
+                if (o instanceof CTSdtRun sdtRun) {
+                    XWPFSDT c = new XWPFSDT(sdtRun, this);
                     bodyElements.add(c);
                 }
             }
@@ -508,17 +508,16 @@ public class XWPFTableCell implements IBody, ICell {
         try (final XmlCursor cursor = cell.newCursor()) {
             cursor.toParent();
             o = cursor.getObject();
-            if (!(o instanceof CTRow)) {
+            if (!(o instanceof CTRow ctRow)) {
                 return null;
             }
-            row = (CTRow) o;
+            row = ctRow;
             cursor.toParent();
             o = cursor.getObject();
         }
-        if (!(o instanceof CTTbl)) {
+        if (!(o instanceof CTTbl tbl)) {
             return null;
         }
-        CTTbl tbl = (CTTbl) o;
         XWPFTable table = getTable(tbl);
         if (table == null) {
             return null;

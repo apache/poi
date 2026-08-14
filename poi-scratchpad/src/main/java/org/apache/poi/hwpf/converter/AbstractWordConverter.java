@@ -281,8 +281,7 @@ public abstract class AbstractWordConverter {
          * reconstruct the structure of range -- sergey
          */
         List<Structure> structures = new LinkedList<>();
-        if (wordDocument instanceof HWPFDocument) {
-            final HWPFDocument doc = (HWPFDocument) wordDocument;
+        if (wordDocument instanceof HWPFDocument doc) {
 
             Map<Integer, List<Bookmark>> rangeBookmarks = doc.getBookmarks()
                 .getBookmarksStartedBetween(range.getStartOffset(),
@@ -354,10 +353,12 @@ public abstract class AbstractWordConverter {
             }
 
             if (structure.structure instanceof Bookmark) {
-                assert(wordDocument instanceof HWPFDocument);
+                if (!(wordDocument instanceof HWPFDocument doc)) {
+                    throw new AssertionError("Expected HWPFDocument");
+                }
                 // other bookmarks with same boundaries
                 List<Bookmark> bookmarks = new LinkedList<>();
-                for (Bookmark bookmark : ((HWPFDocument) wordDocument)
+                for (Bookmark bookmark : doc
                     .getBookmarks()
                     .getBookmarksStartedBetween(structure.start,
                         structure.start + 1).values().iterator()
@@ -383,12 +384,12 @@ public abstract class AbstractWordConverter {
                 } finally {
                     bookmarkStack.removeAll(bookmarks);
                 }
-            } else if (structure.structure instanceof Field) {
-                assert(wordDocument instanceof HWPFDocument);
-                Field field = (Field) structure.structure;
-                processField((HWPFDocument) wordDocument, range, currentTableLevel, field, block);
-            } else if (structure.structure instanceof DeadFieldBoundaries) {
-                DeadFieldBoundaries boundaries = (DeadFieldBoundaries) structure.structure;
+            } else if (structure.structure instanceof Field field) {
+                if (!(wordDocument instanceof HWPFDocument doc)) {
+                    throw new AssertionError("Expected HWPFDocument");
+                }
+                processField(doc, range, currentTableLevel, field, block);
+            } else if (structure.structure instanceof DeadFieldBoundaries boundaries) {
                 processDeadField(wordDocument, block, range,
                     currentTableLevel, boundaries.beginMark,
                     boundaries.separatorMark, boundaries.endMark);

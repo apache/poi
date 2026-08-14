@@ -261,8 +261,9 @@ public abstract class NumericFunction implements Function {
                 if (res instanceof ErrorEval) {
                     return (ErrorEval)res;
                 }
-                assert(res instanceof Double);
-                double d = (Double)res;
+                if (!(res instanceof Double d)) {
+                    throw new AssertionError("Expected Double");
+                }
                 return (Double.isNaN(d) || Double.isInfinite(d)) ? ErrorEval.NUM_ERROR : new NumberEval(d);
             } catch (EvaluationException e) {
                 return e.getErrorEval();

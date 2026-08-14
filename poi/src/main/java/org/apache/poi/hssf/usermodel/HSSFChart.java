@@ -192,12 +192,11 @@ public final class HSSFChart {
         List<RecordBase> records = sheet.getSheet().getRecords();
         for(RecordBase r : records) {
 
-            if(r instanceof ChartRecord) {
+            if(r instanceof ChartRecord chartRecord) {
                 lastSeries = null;
-                lastChart = new HSSFChart(sheet,(ChartRecord)r);
+                lastChart = new HSSFChart(sheet, chartRecord);
                 charts.add(lastChart);
-            } else if (r instanceof LinkedDataRecord) {
-                LinkedDataRecord linkedDataRecord = (LinkedDataRecord) r;
+            } else if (r instanceof LinkedDataRecord linkedDataRecord) {
                 if (lastSeries != null) {
                     lastSeries.insertData(linkedDataRecord);
                 }
@@ -207,27 +206,25 @@ public final class HSSFChart {
                 continue;
             }
 
-            if (r instanceof LegendRecord) {
-                lastChart.legendRecord = (LegendRecord)r;
-            } else if(r instanceof SeriesRecord) {
-                HSSFSeries series = new HSSFSeries( (SeriesRecord)r );
+            if (r instanceof LegendRecord legendRecord) {
+                lastChart.legendRecord = legendRecord;
+            } else if(r instanceof SeriesRecord seriesRecord) {
+                HSSFSeries series = new HSSFSeries(seriesRecord);
                 lastChart.series.add(series);
                 lastSeries = series;
-            } else if(r instanceof ChartTitleFormatRecord) {
-                lastChart.chartTitleFormat = (ChartTitleFormatRecord)r;
-            } else if(r instanceof SeriesTextRecord) {
+            } else if(r instanceof ChartTitleFormatRecord chartTitleFormatRecord) {
+                lastChart.chartTitleFormat = chartTitleFormatRecord;
+            } else if(r instanceof SeriesTextRecord str) {
                 // Applies to a series, unless we've seen a legend already
-                SeriesTextRecord str = (SeriesTextRecord)r;
                 if(lastChart.legendRecord == null && !lastChart.series.isEmpty()) {
                     HSSFSeries series = lastChart.series.get(lastChart.series.size()-1);
                     series.seriesTitleText = str;
                 } else {
                     lastChart.chartTitleText = str;
                 }
-            } else if(r instanceof ValueRangeRecord){
-                lastChart.valueRanges.add((ValueRangeRecord)r);
-            } else if (r instanceof Record) {
-                Record record = (Record) r;
+            } else if(r instanceof ValueRangeRecord valueRangeRecord){
+                lastChart.valueRanges.add(valueRangeRecord);
+            } else if (r instanceof Record record) {
                 for (HSSFChartType type : HSSFChartType.values()) {
                     if (type == HSSFChartType.Unknown) {
                         continue;
@@ -1073,9 +1070,7 @@ public final class HSSFChart {
             int lastCol = 0;
 
             for (Ptg ptg : linkedDataRecord.getFormulaOfLink()) {
-                if (ptg instanceof AreaPtgBase) {
-                    AreaPtgBase areaPtg = (AreaPtgBase) ptg;
-
+                if (ptg instanceof AreaPtgBase areaPtg) {
                     firstRow = areaPtg.getFirstRow();
                     lastRow = areaPtg.getLastRow();
 
@@ -1108,9 +1103,7 @@ public final class HSSFChart {
             int colCount = (range.getLastColumn() - range.getFirstColumn()) + 1;
 
             for (Ptg ptg : linkedDataRecord.getFormulaOfLink()) {
-                if (ptg instanceof AreaPtgBase) {
-                    AreaPtgBase areaPtg = (AreaPtgBase) ptg;
-
+                if (ptg instanceof AreaPtgBase areaPtg) {
                     areaPtg.setFirstRow(range.getFirstRow());
                     areaPtg.setLastRow(range.getLastRow());
 
@@ -1220,31 +1213,31 @@ public final class HSSFChart {
                 newRecord = new BeginRecord();
             } else if (record instanceof EndRecord) {
                 newRecord = new EndRecord();
-            } else if (record instanceof SeriesRecord) {
-                SeriesRecord seriesRecord = ((SeriesRecord) record).copy();
-                newSeries = new HSSFSeries(seriesRecord);
-                newRecord = seriesRecord;
-            } else if (record instanceof LinkedDataRecord) {
-                LinkedDataRecord linkedDataRecord = ((LinkedDataRecord) record).copy();
+            } else if (record instanceof SeriesRecord seriesRecord) {
+                SeriesRecord copy = seriesRecord.copy();
+                newSeries = new HSSFSeries(copy);
+                newRecord = copy;
+            } else if (record instanceof LinkedDataRecord linkedDataRecord) {
+                LinkedDataRecord copy = linkedDataRecord.copy();
                 if (newSeries != null) {
-                    newSeries.insertData(linkedDataRecord);
+                    newSeries.insertData(copy);
                 }
-                newRecord = linkedDataRecord;
-            } else if (record instanceof DataFormatRecord) {
-                DataFormatRecord dataFormatRecord = ((DataFormatRecord) record).copy();
+                newRecord = copy;
+            } else if (record instanceof DataFormatRecord dataFormatRecord) {
+                DataFormatRecord copy = dataFormatRecord.copy();
 
-                dataFormatRecord.setSeriesIndex((short) seriesIdx) ;
-                dataFormatRecord.setSeriesNumber((short) seriesIdx) ;
+                copy.setSeriesIndex((short) seriesIdx) ;
+                copy.setSeriesNumber((short) seriesIdx) ;
 
-                newRecord = dataFormatRecord;
-            } else if (record instanceof SeriesTextRecord) {
-                SeriesTextRecord seriesTextRecord = ((SeriesTextRecord) record).copy();
+                newRecord = copy;
+            } else if (record instanceof SeriesTextRecord seriesTextRecord) {
+                SeriesTextRecord copy = seriesTextRecord.copy();
                 if (newSeries != null) {
-                    newSeries.setSeriesTitleText(seriesTextRecord);
+                    newSeries.setSeriesTitleText(copy);
                 }
-                newRecord = seriesTextRecord;
-            } else if (record instanceof Record) {
-                newRecord = ((Record) record).copy();
+                newRecord = copy;
+            } else if (record instanceof Record rec) {
+                newRecord = rec.copy();
             }
 
             if (newRecord != null)

@@ -323,13 +323,13 @@ public final class Countif extends Fixed2ArgFunction {
                             false;
                 };
             }
-            if(!(x instanceof StringEval)) {
+            if(!(x instanceof StringEval stringEval)) {
                 // must always be string
                 // even if match str is wild, but contains only digits
                 // e.g. '4*7', NumberEval(4567) does not match
                 return false;
             }
-            String testedValue = ((StringEval) x).getStringValue();
+            String testedValue = stringEval.getStringValue();
             if (testedValue.isEmpty() && _value.isEmpty()) {
                 // odd case: criteria '=' behaves differently to criteria ''
 
@@ -419,10 +419,10 @@ public final class Countif extends Fixed2ArgFunction {
      */
     private double countMatchingCellsInArea(ValueEval rangeArg, I_MatchPredicate criteriaPredicate) {
 
-        if (rangeArg instanceof RefEval) {
-            return CountUtils.countMatchingCellsInRef((RefEval) rangeArg, criteriaPredicate);
-        } else if (rangeArg instanceof ThreeDEval) {
-            return CountUtils.countMatchingCellsInArea((ThreeDEval) rangeArg, criteriaPredicate);
+        if (rangeArg instanceof RefEval refEval) {
+            return CountUtils.countMatchingCellsInRef(refEval, criteriaPredicate);
+        } else if (rangeArg instanceof ThreeDEval threeDEval) {
+            return CountUtils.countMatchingCellsInArea(threeDEval, criteriaPredicate);
         } else {
             throw new IllegalArgumentException("Bad range arg type (" + rangeArg.getClass().getName() + ")");
         }
@@ -436,15 +436,15 @@ public final class Countif extends Fixed2ArgFunction {
 
         ValueEval evaluatedCriteriaArg = evaluateCriteriaArg(arg, srcRowIndex, srcColumnIndex);
 
-        if(evaluatedCriteriaArg instanceof NumberEval) {
-            return new NumberMatcher(((NumberEval)evaluatedCriteriaArg).getNumberValue(), CmpOp.OP_NONE);
+        if(evaluatedCriteriaArg instanceof NumberEval numberEval) {
+            return new NumberMatcher(numberEval.getNumberValue(), CmpOp.OP_NONE);
         }
-        if(evaluatedCriteriaArg instanceof BoolEval) {
-            return new BooleanMatcher(((BoolEval)evaluatedCriteriaArg).getBooleanValue(), CmpOp.OP_NONE);
+        if(evaluatedCriteriaArg instanceof BoolEval boolEval) {
+            return new BooleanMatcher(boolEval.getBooleanValue(), CmpOp.OP_NONE);
         }
 
-        if(evaluatedCriteriaArg instanceof StringEval) {
-            return createGeneralMatchPredicate((StringEval)evaluatedCriteriaArg);
+        if(evaluatedCriteriaArg instanceof StringEval stringEval) {
+            return createGeneralMatchPredicate(stringEval);
         }
         if(evaluatedCriteriaArg instanceof ErrorEval) {
             return new ErrorMatcher(((ErrorEval)evaluatedCriteriaArg).getErrorCode(), CmpOp.OP_NONE);

@@ -590,8 +590,10 @@ public final class Picture {
         }
 
         Enum<?> recordType = escherRecord.getGenericRecordType();
-        assert (recordType instanceof EscherRecordTypes);
-        switch ((EscherRecordTypes)recordType) {
+        if (!(recordType instanceof EscherRecordTypes escherRecordType)) {
+            throw new AssertionError("Expected EscherRecordTypes");
+        }
+        switch (escherRecordType) {
             case BLIP_EMF:
                 return PictureType.EMF;
             case BLIP_WMF:
