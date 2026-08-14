@@ -34,7 +34,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.Shape;
 import org.apache.poi.ss.util.ImageUtils;
-import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -189,7 +188,7 @@ public final class TestXSSFPicture extends BaseTestPicture {
     void testGetDimensionFromAnchorDegenerateInCell() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
-            byte[] png = HSSFITestDataProvider.instance.getTestDataFileContent("45829.png");
+            byte[] png = XSSFITestDataProvider.instance.getTestDataFileContent("45829.png");
             int idx = wb.addPicture(png, Workbook.PICTURE_TYPE_PNG);
 
             XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 1, 1);
