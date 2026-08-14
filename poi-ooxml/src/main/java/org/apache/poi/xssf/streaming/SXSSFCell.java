@@ -259,8 +259,10 @@ public class SXSSFCell extends CellBase {
                     if (_value instanceof PlainStringValue) {
                         _value = new StringFormulaValue(formula, getStringCellValue());
                     } else {
-                        assert(_value instanceof RichTextValue);
-                        _value = new RichTextStringFormulaValue(formula, ((RichTextValue) _value).getValue());
+                        if (!(_value instanceof RichTextValue richTextValue)) {
+                            throw new AssertionError("Expected RichTextValue");
+                        }
+                        _value = new RichTextStringFormulaValue(formula, richTextValue.getValue());
                     }
                     break;
                 case BOOLEAN:

@@ -458,8 +458,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
         List<Integer> obsoleteOffsets = new ArrayList<>();
         int duplicatedCount = 0;
         for (org.apache.poi.hslf.record.Record r : records) {
-            assert(r instanceof PositionDependentRecord);
-            PositionDependentRecord pdr = (PositionDependentRecord)r;
+            if (!(r instanceof PositionDependentRecord pdr)) {
+                throw new AssertionError("Expected PositionDependentRecord");
+            }
             if (pdr instanceof UserEditAtom) {
                 uea = (UserEditAtom)pdr;
                 continue;
