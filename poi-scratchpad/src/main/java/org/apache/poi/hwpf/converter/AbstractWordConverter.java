@@ -353,7 +353,9 @@ public abstract class AbstractWordConverter {
             }
 
             if (structure.structure instanceof Bookmark) {
-                assert(wordDocument instanceof HWPFDocument doc);
+                if (!(wordDocument instanceof HWPFDocument doc)) {
+                    throw new AssertionError("Expected HWPFDocument");
+                }
                 // other bookmarks with same boundaries
                 List<Bookmark> bookmarks = new LinkedList<>();
                 for (Bookmark bookmark : doc
@@ -383,7 +385,9 @@ public abstract class AbstractWordConverter {
                     bookmarkStack.removeAll(bookmarks);
                 }
             } else if (structure.structure instanceof Field field) {
-                assert(wordDocument instanceof HWPFDocument doc);
+                if (!(wordDocument instanceof HWPFDocument doc)) {
+                    throw new AssertionError("Expected HWPFDocument");
+                }
                 processField(doc, range, currentTableLevel, field, block);
             } else if (structure.structure instanceof DeadFieldBoundaries boundaries) {
                 processDeadField(wordDocument, block, range,
