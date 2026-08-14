@@ -428,8 +428,8 @@ public final class LookupUtils {
     private static final class TolerantStringLookupComparer extends StringLookupComparer {
 
         static StringEval convertToStringEval(ValueEval eval) {
-            if (eval instanceof StringEval) {
-                return (StringEval)eval;
+            if (eval instanceof StringEval se) {
+                return se;
             }
             String sv = OperandResolver.coerceValueToString(eval);
             return new StringEval(sv);
@@ -525,8 +525,7 @@ public final class LookupUtils {
             throw EvaluationException.invalidRef();
         }
         int oneBasedIndex;
-        if(veRowColIndexArg instanceof StringEval) {
-            StringEval se = (StringEval) veRowColIndexArg;
+        if(veRowColIndexArg instanceof StringEval se) {
             String strVal = se.getStringValue();
             Double dVal = OperandResolver.parseDouble(strVal);
             if(dVal == null) {
@@ -552,12 +551,11 @@ public final class LookupUtils {
      * which case it is interpreted as a 1x1 area ref.  Other scalar values cause #VALUE! error.
      */
     public static TwoDEval resolveTableArrayArg(ValueEval eval) throws EvaluationException {
-        if (eval instanceof TwoDEval) {
-            return (TwoDEval) eval;
+        if (eval instanceof TwoDEval twoDEval) {
+            return twoDEval;
         }
 
-        if(eval instanceof RefEval) {
-            RefEval refEval = (RefEval) eval;
+        if(eval instanceof RefEval refEval) {
             // Make this cell ref look like a 1x1 area ref.
 
             // It doesn't matter if eval is a 2D or 3D ref, because that detail is never asked of AreaEval.
@@ -585,14 +583,13 @@ public final class LookupUtils {
             // this does not get the default value
             return false;
         }
-        if(valEval instanceof BoolEval) {
+        if(valEval instanceof BoolEval boolEval) {
             // Happy day flow
-            BoolEval boolEval = (BoolEval) valEval;
             return boolEval.getBooleanValue();
         }
 
-        if (valEval instanceof StringEval) {
-            String stringValue = ((StringEval) valEval).getStringValue();
+        if (valEval instanceof StringEval stringEval) {
+            String stringValue = stringEval.getStringValue();
             if(stringValue.isEmpty()) {
                 // More trickiness:
                 // Empty string is not the same as BlankEval.  It causes #VALUE! error
@@ -611,8 +608,7 @@ public final class LookupUtils {
             // This is in contrast to the code below,, where NumberEvals values (for
             // example 0.01) *do* resolve to equivalent boolean values.
         }
-        if (valEval instanceof NumericValueEval) {
-            NumericValueEval nve = (NumericValueEval) valEval;
+        if (valEval instanceof NumericValueEval nve) {
             // zero is FALSE, everything else is TRUE
             return 0.0 != nve.getNumberValue();
         }

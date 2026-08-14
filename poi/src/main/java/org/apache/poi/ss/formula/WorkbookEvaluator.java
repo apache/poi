@@ -654,29 +654,29 @@ public final class WorkbookEvaluator {
             EvaluationName nameRecord = _workbook.getName(namePtg);
             return getEvalForNameRecord(nameRecord, ec);
         }
-        if (ptg instanceof NameXPtg) {
+        if (ptg instanceof NameXPtg nameXPtg) {
             // Externally defined named ranges or macro functions
-            return processNameEval(ec.getNameXEval((NameXPtg) ptg), ec);
+            return processNameEval(ec.getNameXEval(nameXPtg), ec);
         }
-        if (ptg instanceof NameXPxg) {
+        if (ptg instanceof NameXPxg nameXPxg) {
             // Externally defined named ranges or macro functions
-            return processNameEval(ec.getNameXEval((NameXPxg) ptg), ec);
+            return processNameEval(ec.getNameXEval(nameXPxg), ec);
         }
 
-        if (ptg instanceof IntPtg) {
-            return new NumberEval(((IntPtg) ptg).getValue());
+        if (ptg instanceof IntPtg intPtg) {
+            return new NumberEval(intPtg.getValue());
         }
-        if (ptg instanceof NumberPtg) {
-            return new NumberEval(((NumberPtg) ptg).getValue());
+        if (ptg instanceof NumberPtg numberPtg) {
+            return new NumberEval(numberPtg.getValue());
         }
-        if (ptg instanceof StringPtg) {
-            return new StringEval(((StringPtg) ptg).getValue());
+        if (ptg instanceof StringPtg stringPtg) {
+            return new StringEval(stringPtg.getValue());
         }
-        if (ptg instanceof BoolPtg) {
-            return BoolEval.valueOf(((BoolPtg) ptg).getValue());
+        if (ptg instanceof BoolPtg boolPtg) {
+            return BoolEval.valueOf(boolPtg.getValue());
         }
-        if (ptg instanceof ErrPtg) {
-            return ErrorEval.valueOf(((ErrPtg) ptg).getErrorCode());
+        if (ptg instanceof ErrPtg errPtg) {
+            return ErrorEval.valueOf(errPtg.getErrorCode());
         }
         if (ptg instanceof MissingArgPtg) {
             return MissingArgEval.instance;
@@ -685,17 +685,17 @@ public final class WorkbookEvaluator {
                 || ptg instanceof DeletedArea3DPtg || ptg instanceof DeletedRef3DPtg) {
             return ErrorEval.REF_INVALID;
         }
-        if (ptg instanceof Ref3DPtg) {
-            return ec.getRef3DEval((Ref3DPtg) ptg);
+        if (ptg instanceof Ref3DPtg ref3DPtg) {
+            return ec.getRef3DEval(ref3DPtg);
         }
-        if (ptg instanceof Ref3DPxg) {
-            return ec.getRef3DEval((Ref3DPxg) ptg);
+        if (ptg instanceof Ref3DPxg ref3DPxg) {
+            return ec.getRef3DEval(ref3DPxg);
         }
-        if (ptg instanceof Area3DPtg) {
-            return ec.getArea3DEval((Area3DPtg) ptg);
+        if (ptg instanceof Area3DPtg area3DPtg) {
+            return ec.getArea3DEval(area3DPtg);
         }
-        if (ptg instanceof Area3DPxg) {
-            return ec.getArea3DEval((Area3DPxg) ptg);
+        if (ptg instanceof Area3DPxg area3DPxg) {
+            return ec.getArea3DEval(area3DPxg);
         }
         if (ptg instanceof RefPtg rptg) {
             return ec.getRefEval(rptg.getRow(), rptg.getColumn());
