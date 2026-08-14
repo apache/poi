@@ -142,21 +142,24 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
         // i.e. these keys are NOT the same as the order in which theme colors appear
         // in theme1.xml. They are keys to a mapped color.
         CTColorScheme colorScheme = theme.getTheme().getThemeElements().getClrScheme();
-        CTColor ctColor;
-        switch (ThemeElement.byId(idx)) {
-            case LT1: ctColor = colorScheme.getLt1(); break;
-            case DK1: ctColor = colorScheme.getDk1(); break;
-            case LT2: ctColor = colorScheme.getLt2(); break;
-            case DK2: ctColor = colorScheme.getDk2(); break;
-            case ACCENT1: ctColor = colorScheme.getAccent1(); break;
-            case ACCENT2: ctColor = colorScheme.getAccent2(); break;
-            case ACCENT3: ctColor = colorScheme.getAccent3(); break;
-            case ACCENT4: ctColor = colorScheme.getAccent4(); break;
-            case ACCENT5: ctColor = colorScheme.getAccent5(); break;
-            case ACCENT6: ctColor = colorScheme.getAccent6(); break;
-            case HLINK:   ctColor = colorScheme.getHlink();   break;
-            case FOLHLINK:ctColor = colorScheme.getFolHlink();break;
-            default: return null;
+        CTColor ctColor = switch (ThemeElement.byId(idx)) {
+            case LT1     -> colorScheme.getLt1();
+            case DK1     -> colorScheme.getDk1();
+            case LT2     -> colorScheme.getLt2();
+            case DK2     -> colorScheme.getDk2();
+            case ACCENT1 -> colorScheme.getAccent1();
+            case ACCENT2 -> colorScheme.getAccent2();
+            case ACCENT3 -> colorScheme.getAccent3();
+            case ACCENT4 -> colorScheme.getAccent4();
+            case ACCENT5 -> colorScheme.getAccent5();
+            case ACCENT6 -> colorScheme.getAccent6();
+            case HLINK   -> colorScheme.getHlink();
+            case FOLHLINK-> colorScheme.getFolHlink();
+            default -> { yield null; }
+        };
+
+        if (ctColor == null) {
+            return null;
         }
 
         byte[] rgb;
