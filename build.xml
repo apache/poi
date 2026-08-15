@@ -68,6 +68,13 @@ under the License.
         <contains string="${java.vendor}" substring="IBM" casesensitive="false"/>
     </condition>
 
+    <!-- Some JDK versions are not fully supported yet
+    adjust the check here when newer JDKs are supported by newer
+    versions of spotbugs -->
+    <condition property="spotbugs.disable">
+        <equals arg1="${ant.java.version}" arg2="27"/>
+    </condition>
+
     <!-- issue warnings if source code contains unmappable characters for encoding ASCII  -->
     <property name="java.source.encoding" value="UTF-8"/>
 
@@ -2550,10 +2557,19 @@ under the License.
         </forbiddenapis>
     </target>
 
+    <target name="-findbugs-check">
+        <condition property="findbugs.notRequired">
+            <or>
+                <isset property="isIBMVM"/>
+                <isset property="spotbugs.disable"/>
+            </or>
+        </condition>
+    </target>
+
     <!-- disabling findbugs until jenkins is updated to a current IBM JDK
          see https://stackoverflow.com/a/48561534/2066598
          this should be replaced by spotbugs when available in the jenkins warnings plugin -->
-    <target name="findbugs" depends="jar" unless="${isIBMVM}">
+    <target name="findbugs" depends="-findbugs-check,jar" unless="findbugs.notRequired">
         <property name="spotbugs.home" value="build/findbugs" />
         <property name="spotbugs.lib" value="/build/findbugs/lib" />
 
