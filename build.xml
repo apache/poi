@@ -2109,8 +2109,6 @@ under the License.
                 <include name="org/apache/poi/**"/>
             </packageset>
 
-            <arg value="--add-modules=java.xml.bind"/>
-
             <doctitle><![CDATA[<h1>POI API Documentation</h1>]]></doctitle>
             <bottom>
                 <![CDATA[<i>Copyright ${tstamp.year} The Apache Software Foundation or
