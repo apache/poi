@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula.functions;
 import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -156,6 +157,32 @@ final class TestIrr {
                 1462.8749999999998, 1462.8749999999998, 1462.8749999999998, 10000.0};
         double result = Irr.irr(incomes);
         assertEquals(-0.009463562705856032, result, 1E-4); // should agree within 0.01%
+    }
+
+    @Test
+    void bug64137StyleDivergenceIsRescuedByBracketedFallback() {
+        // From an unlucky guess, plain Newton-Raphson overshoots far outside the
+        // domain, the shared denominator overflows and the derivative collapses
+        // to zero; the bracketed fallback must still find the root.
+        double[] incomes = {-1000, 0, 0, 0, 0, 0, 0, 0, 0, 6000};
+        // true IRR: 6000/1000 = (1+r)^9  =>  r = 6^(1/9) - 1
+        assertEquals(Math.pow(6.0, 1.0 / 9) - 1, Irr.irr(incomes, 9.0), 1E-7);
+    }
+
+    @Test
+    void irrNeverReturnsRateAtOrBelowMinus100Percent() {
+        // NPV of {-2, 1, 1} is zero at 0% and at -150%; a rate of -150% is
+        // financially meaningless and must not be returned even when the
+        // caller's guess sits next to that spurious root.
+        assertEquals(0.0, Irr.irr(new double[]{-2, 1, 1}, -1.4), 1E-7);
+    }
+
+    @Test
+    void noValidIrrReturnsNaN() {
+        // all-positive cash flow: NPV is positive for every rate
+        assertTrue(Double.isNaN(Irr.irr(new double[]{100, 50, 60})));
+        // NPV polynomial of {-1, 3, -2.5} has no real root
+        assertTrue(Double.isNaN(Irr.irr(new double[]{-1, 3, -2.5})));
     }
 
     private static void assertFormulaResult(CellValue cv, HSSFCell cell){
