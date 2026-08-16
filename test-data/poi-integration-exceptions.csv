@@ -396,3 +396,4 @@ spreadsheet/LIBRE_OFFICE-128382-0.xlsx,handle,XSSF,,org.apache.poi.ss.formula.Fo
 spreadsheet/LIBRE_OFFICE-116306-0.xlsx,extract,"XSSF,OPC",,org.apache.poi.util.RecordFormatException,Tried to allocate an array
 spreadsheet/LIBRE_OFFICE-116306-0.xlsx,handle,XSSF,,org.apache.poi.util.RecordFormatException,Tried to allocate an array
 spreadsheet/clusterfuzz-testcase-minimized-POIFileHandlerFuzzer-5318384433823744.emf,"handle,extract",HEMF,,org.apache.poi.util.RecordFormatException,Invalid value for undefinedSpace2
+spreadsheet/clusterfuzz-testcase-minimized-FormulaParserFuzzer-6709334927802368.dat,handle,HMEF,,java.lang.IllegalArgumentException,TNEF signature not detected in file
