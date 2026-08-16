@@ -234,6 +234,17 @@ public class TestHemfPicture {
     }
 
     @Test
+    void testAssertion() throws Exception {
+        try (InputStream is = ss_samples.openResourceAsStream("clusterfuzz-testcase-minimized-POIFileHandlerFuzzer-5318384433823744.emf")) {
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+            IOUtils.copy(is, bos);
+
+            HemfPicture pic = new HemfPicture(bos.toInputStream());
+            assertThrows(RecordFormatException.class, () -> pic.forEach(r -> {}));
+        }
+    }
+
+    @Test
     void testHeaderDescriptionBoundsAreValidated() throws Exception {
         HemfHeader header = new HemfHeader();
         byte[] data = createHeaderRecordData(0x40000001L, 88);

@@ -52,6 +52,7 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.RecordFormatException;
 
 public final class HemfFill {
     private static final Logger LOG = PoiLogManager.getLogger(HemfFill.class);
@@ -778,7 +779,9 @@ public final class HemfFill {
         }
 
         final int undefinedSpace2 = offBits-offCurr-cbBmi-undefinedSpace1;
-        assert(undefinedSpace2 >= 0);
+        if (undefinedSpace2 < 0) {
+            throw new RecordFormatException("Invalid value for undefinedSpace2: " + undefinedSpace2);
+        }
 
         leis.skipFully(undefinedSpace1);
 
