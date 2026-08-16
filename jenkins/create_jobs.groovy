@@ -58,7 +58,7 @@ def poijobs = [
         [ name: 'POI-DSL-1.26', jdk: '1.26', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-DSL-1.27', jdk: '1.27', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
-                useAnt: true
+                useAnt: true, skipSourceBuild: true
         ],
         // Use Ant-build for now as selecting IBM JDK via toolchain does not work (yet)
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, useAnt: true
@@ -108,7 +108,7 @@ def poijobs = [
         [ name: 'POI-DSL-Windows-1.26', jdk: '1.26', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.27', jdk: '1.27', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          skipSpotbugs: true, useAnt: true
+          skipSpotbugs: true, useAnt: true, skipSourceBuild: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', skipcigame: true, disabled: true
         ],
