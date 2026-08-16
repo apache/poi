@@ -42,7 +42,11 @@ public final class Irr implements Function {
     // Rates at or below -100% are meaningless, and NPV blows up as the rate
     // approaches -1. The grid starts just above -1 and is dense there, since
     // roots pushed toward -100% by extreme cash flows are exactly the ones
-    // plain Newton-Raphson used to miss.
+    // plain Newton-Raphson used to miss. The coarse tail (100, 1000, 10000)
+    // is intentional: a single root between two grid points still flips the
+    // sign of NPV at the endpoints and is found; only an even number of
+    // roots inside one gap can be missed, and cash flows with paired roots
+    // between 10,000% and 1,000,000% are pathological.
     private static final double[] BRACKET_GRID;
     static {
         BRACKET_GRID = new double[8 + 20 + 7];
@@ -120,6 +124,10 @@ public final class Irr implements Function {
      */
     public static double irr(double[] values, double guess) {
         double result = newtonIrr(values, guess);
+        // Any finite rate above -100% is a genuinely converged root of NPV,
+        // so it is returned as-is for backward compatibility; the fallback
+        // runs only when the historical algorithm diverged (NaN) or landed
+        // on a financially meaningless root at or below -100%.
         if (!Double.isNaN(result) && result > -1) {
             return result;
         }
@@ -202,10 +210,12 @@ public final class Irr implements Function {
         double f = npv(values, rts);
         double df = npvDerivative(values, rts);
         for (int i = 0; i < MAX_ITERATION_COUNT; i++) {
-            // Newton is unusable when the derivative is 0, when the step
-            // would leave the bracket, or when it is not converging fast
-            // enough (would not halve the bracket).
-            boolean newtonUnusable = df == 0
+            // Newton is unusable when NPV or its derivative overflowed (an
+            // iterate in the overflow sliver next to -1), when the derivative
+            // is 0, when the step would leave the bracket, or when it is not
+            // converging fast enough (would not halve the bracket).
+            boolean newtonUnusable = !Double.isFinite(f) || !Double.isFinite(df)
+                    || df == 0
                     || ((rts - hi) * df - f) * ((rts - lo) * df - f) > 0
                     || Math.abs(2.0 * f) > Math.abs(dxold * df);
             if (newtonUnusable) {
@@ -231,9 +241,12 @@ public final class Irr implements Function {
             }
             f = npv(values, rts);
             df = npvDerivative(values, rts);
+            // a NaN NPV (indeterminate inf - inf next to -1) must not move
+            // either end: its sign is unknown, and a wrong move would break
+            // the bracket invariant npv(lo) < 0 < npv(hi)
             if (f < 0) {
                 lo = rts;
-            } else {
+            } else if (f > 0) {
                 hi = rts;
             }
         }
