@@ -48,7 +48,7 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven { url 'https://repository.apache.org/content/repositories/staging' }
+    // maven { url 'https://repository.apache.org/content/repositories/staging' }
 }
 
 // Only add the plugin for Sonar if enabled
@@ -218,7 +218,7 @@ subprojects {
 
     repositories {
         mavenCentral()
-        maven { url 'https://repository.apache.org/content/repositories/staging' }
+        // maven { url 'https://repository.apache.org/content/repositories/staging' }
     }
 
     dependencies {
