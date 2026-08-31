@@ -18,6 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import com.microsoft.schemas.office.drawing.x2008.diagram.DrawingDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLTypeLoader;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
@@ -45,7 +46,7 @@ public class XSLFDiagramDrawing extends POIXMLDocumentPart {
 
     private static DrawingDocument readPackagePart(PackagePart part) throws IOException, XmlException {
         try (InputStream is = part.getInputStream()) {
-            return DrawingDocument.Factory.parse(is);
+            return DrawingDocument.Factory.parse(is, POIXMLTypeLoader.DEFAULT_XML_OPTIONS);
         }
     }
 
