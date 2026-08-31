@@ -101,9 +101,13 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
                 throw new IOException("ZIP entry size is too large or invalid");
             }
 
-            // Grab the de-compressed contents for later
-            data = (entrySize == -1) ? IOUtils.toByteArrayWithMaxLength(inp, getMaxEntrySize()) :
-                    IOUtils.toByteArray(inp, entrySize, getMaxEntrySize(), "ZipArchiveFakeEntry.setMaxEntrySize()");
+            // Grab the de-compressed contents for later.
+            // Note: we deliberately do not use the declared entrySize to size the read buffer.
+            // entrySize comes from the (untrusted) zip local file header, so a tiny entry can
+            // claim a huge uncompressed size and force a large eager allocation before any data
+            // is read. Instead read what is actually present, growing as needed and bounded by
+            // getMaxEntrySize() (a stream longer than that fails with a RecordFormatException).
+            data = IOUtils.toByteArrayWithMaxLength(inp, getMaxEntrySize());
             numberOfBytes = data.length;
         }
     }
