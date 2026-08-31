@@ -267,6 +267,48 @@ public final class XMLHelper {
         return getDepthOfChildNodes(node, maxSupportedDepth, 0);
     }
 
+    /**
+     * Escapes the five predefined XML entities ({@code & < > " '}) in the supplied string so it
+     * can be safely embedded as XML element text or as a single- or double-quoted attribute value.
+     * <p>
+     * This is intended for the rare cases where XML is assembled by hand; prefer building XML
+     * through a DOM/{@link javax.xml.stream.XMLStreamWriter} where practical.
+     *
+     * @param value the string to escape, may be {@code null}
+     * @return the escaped string, or {@code null} if {@code value} was {@code null}
+     * @since POI 6.0.0
+     */
+    public static String escapeXml(final String value) {
+        if (value == null) {
+            return null;
+        }
+        StringBuilder sb = null;
+        for (int i = 0; i < value.length(); i++) {
+            final char c = value.charAt(i);
+            final String replacement;
+            switch (c) {
+                case '&':  replacement = "&amp;";  break;
+                case '<':  replacement = "&lt;";   break;
+                case '>':  replacement = "&gt;";   break;
+                case '"':  replacement = "&quot;"; break;
+                case '\'': replacement = "&apos;"; break;
+                default:   replacement = null;     break;
+            }
+            if (replacement == null) {
+                if (sb != null) {
+                    sb.append(c);
+                }
+            } else {
+                if (sb == null) {
+                    sb = new StringBuilder(value.length() + 16);
+                    sb.append(value, 0, i);
+                }
+                sb.append(replacement);
+            }
+        }
+        return sb == null ? value : sb.toString();
+    }
+
     private static int getDepthOfChildNodes(final Node node, final int maxSupportedDepth,
                                             final int nodeDepth) throws POIException {
         final int currentDepth = nodeDepth + 1;

@@ -1380,11 +1380,16 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
             CTInline inline = run.addNewDrawing().addNewInline();
 
+            // chartRelId is interpolated into an XML attribute value below, so escape it.
+            // A relationship id is an xsd:ID and cannot legitimately contain these characters,
+            // but escaping keeps a malformed id from corrupting or injecting into the fragment.
+            String escapedRelId = XMLHelper.escapeXml(chartRelId);
+
             //xml part of chart in document
             String xml =
                     "<a:graphic xmlns:a=\"" + CTGraphicalObject.type.getName().getNamespaceURI() + "\">" +
                             "<a:graphicData uri=\"" + CTChart.type.getName().getNamespaceURI() + "\">" +
-                            "<c:chart xmlns:c=\"" + CTChart.type.getName().getNamespaceURI() + "\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"" + chartRelId + "\" />" +
+                            "<c:chart xmlns:c=\"" + CTChart.type.getName().getNamespaceURI() + "\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"" + escapedRelId + "\" />" +
                             "</a:graphicData>" +
                             "</a:graphic>";
 
