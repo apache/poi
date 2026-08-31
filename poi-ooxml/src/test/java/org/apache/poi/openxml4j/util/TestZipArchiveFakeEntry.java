@@ -20,10 +20,10 @@ package org.apache.poi.openxml4j.util;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -61,8 +61,12 @@ public class TestZipArchiveFakeEntry {
     }
 
     @Test
-    void testInvalidEntrySize() throws IOException {
-        final long fakeLen = 123;
+    void testEntrySizeLargerThanData() throws IOException {
+        // A malicious zip local file header can declare a huge uncompressed size while the entry
+        // actually contains only a few bytes. We must not trust that declared size to size the
+        // read buffer (that would allow a tiny input to trigger a large eager allocation).
+        // Instead the actual bytes present are read, bounded by getMaxEntrySize().
+        final long fakeLen = 99_000_000;
         final String fakeValue = "fakeValue";
         ZipArchiveEntry entry = new ZipArchiveEntry("hack123") {
             @Override
@@ -73,10 +77,30 @@ public class TestZipArchiveFakeEntry {
         UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         final byte[] data = fakeValue.getBytes(StandardCharsets.UTF_8);
         baos.write(data);
-        // the data in the stream is less than the fakeLen in the entry
-        // this is a regression test for the existing internal behaviour - if we choose to change the
-        // behaviour in the future, this test can be updated
-        assertThrows(EOFException.class, () -> new ZipArchiveFakeEntry(entry, baos.toInputStream()));
+        try (ZipArchiveFakeEntry zipArchiveFakeEntry = new ZipArchiveFakeEntry(entry, baos.toInputStream())) {
+            assertEquals(data.length, zipArchiveFakeEntry.getSize());
+            UnsynchronizedByteArrayOutputStream baos2 = UnsynchronizedByteArrayOutputStream.builder().get();
+            try (InputStream stream = zipArchiveFakeEntry.getInputStream()) {
+                assertEquals(data.length, IOUtils.copy(stream, baos2));
+            }
+            assertEquals(fakeValue, baos2.toString(StandardCharsets.UTF_8.name()));
+        }
+    }
+
+    @Test
+    void testEntryDataLargerThanMaxEntrySize() throws IOException {
+        // Reading is bounded by getMaxEntrySize(): a stream longer than the limit is rejected
+        // rather than buffered in full.
+        final int previous = ZipArchiveFakeEntry.getMaxEntrySize();
+        ZipArchiveFakeEntry.setMaxEntrySize(4);
+        try {
+            ZipArchiveEntry entry = new ZipArchiveEntry("hack123");
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
+            baos.write("fakeValue".getBytes(StandardCharsets.UTF_8));
+            assertThrows(RecordFormatException.class, () -> new ZipArchiveFakeEntry(entry, baos.toInputStream()));
+        } finally {
+            ZipArchiveFakeEntry.setMaxEntrySize(previous);
+        }
     }
 
     static void runTestSize(boolean unencryptedTempFileExpected,
