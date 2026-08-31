@@ -47,6 +47,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
+import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
@@ -80,6 +81,22 @@ class TestXWPFRun {
     @AfterEach
     void tearDown() throws Exception {
         doc.close();
+    }
+
+    @Test
+    void addChartEscapesRelationshipId() {
+        XWPFRun run = p.createRun();
+        // A relationship id is an xsd:ID and can never legitimately contain XML metacharacters,
+        // but a hostile/malformed id must not break out of the r:id attribute of the generated
+        // drawing fragment (which would otherwise throw on parse, or inject markup).
+        final String craftedId = "rId1\"/><evil>";
+        CTInline inline = assertDoesNotThrow(() -> run.addChart(craftedId));
+        String xml = inline.getGraphic().xmlText();
+        assertFalse(xml.contains("<evil>"), "relationship id must not inject markup: " + xml);
+
+        // a normal relationship id still round-trips
+        CTInline ok = assertDoesNotThrow(() -> p.createRun().addChart("rId42"));
+        assertTrue(ok.getGraphic().xmlText().contains("rId42"));
     }
 
     @Test
