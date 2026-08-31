@@ -317,7 +317,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
             // We certainly found an encoded character, check for length
             // now ( '%' HEXDIGIT HEXDIGIT)
-            if ((length - i) < 2 || !isHexDigit(segment.charAt(i+1)) || !isHexDigit(segment.charAt(i+2))) {
+            if ((length - i) < 3 || !isHexDigit(segment.charAt(i+1)) || !isHexDigit(segment.charAt(i+2))) {
                 throw new InvalidFormatException("The segment " + segment + " contain invalid encoded character !");
             }
 
