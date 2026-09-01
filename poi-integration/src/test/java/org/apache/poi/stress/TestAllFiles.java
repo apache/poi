@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.util.IOUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.jupiter.api.function.Executable;
@@ -81,6 +82,14 @@ public class TestAllFiles {
 		}
 
 		ROOT_DIR = dir;
+
+		// Buffer large (or unknown-size) zip entries to temp files instead of holding them in
+		// memory. Some test files inflate to nearly the 100MB per-entry limit (e.g.
+		// spreadsheet/deep-data.xlsx has an entry that inflates to ~92MB while staying just
+		// above the minimum inflate ratio); materialising those on the heap on every open,
+		// with tests running in parallel in a 2GB JVM, drives the CI builds into
+		// OutOfMemoryError.
+		ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(16_000_000);
 	}
 
     public static final String[] SCAN_EXCLUDES = {
