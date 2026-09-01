@@ -230,6 +230,36 @@ final class TestIOUtils {
     }
 
     @Test
+    void testCalculateByteArrayInitLengthWithMaxInitBufferSize() {
+        // cap applies when the (known) length exceeds it
+        assertEquals(5000, IOUtils.calculateByteArrayInitLength(true, 10000, 12000, 5000));
+        // no effect when the length is already below the cap
+        assertEquals(3000, IOUtils.calculateByteArrayInitLength(true, 3000, 12000, 5000));
+        // values <= 0 disable the cap
+        assertEquals(10000, IOUtils.calculateByteArrayInitLength(true, 10000, 12000, -1));
+        assertEquals(10000, IOUtils.calculateByteArrayInitLength(true, 10000, 12000, 0));
+    }
+
+    @Test
+    void testToByteArrayWithMaxInitBufferSize() throws IOException {
+        final byte[] array = new byte[]{1, 2, 3, 4, 5, 6, 7};
+        // a cap smaller than the read length must not change the result, only the initial allocation
+        try (ByteArrayInputStream is = new ByteArrayInputStream(array)) {
+            assertArrayEquals(array, IOUtils.toByteArray(is, array.length, 100, 2, "setByteArrayMaxOverride"));
+        }
+        // fewer bytes than the declared length still fails
+        try (ByteArrayInputStream is = new ByteArrayInputStream(array)) {
+            assertThrows(EOFException.class,
+                    () -> IOUtils.toByteArray(is, array.length + 1, 100, 2, "setByteArrayMaxOverride"));
+        }
+        // length above maxLength still fails
+        try (ByteArrayInputStream is = new ByteArrayInputStream(array)) {
+            assertThrows(RecordFormatException.class,
+                    () -> IOUtils.toByteArray(is, 200, 100, 2, "setByteArrayMaxOverride"));
+        }
+    }
+
+    @Test
     void testSkipFully() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
             long skipped = IOUtils.skipFully(is, 20000L);

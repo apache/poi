@@ -281,6 +281,37 @@ public final class IOUtils {
     }
 
     /**
+     * Reads up to {@code length} bytes from the input stream, and returns the bytes read,
+     * while capping the initial buffer allocation.
+     *
+     * <p>Use this variant when {@code length} comes from untrusted input (e.g. a size field in a
+     * file header): the initial buffer is at most {@code maxInitBufferSize} bytes, so a bogus
+     * huge declared length cannot force a large eager allocation before any data is read. The
+     * buffer still grows as needed while real data arrives, bounded by {@code length} and
+     * {@code maxLength}.</p>
+     *
+     * @param stream The byte stream of data to read.
+     * @param length The maximum length to read, use {@link Integer#MAX_VALUE} to read the stream
+     *               until EOF
+     * @param maxLength if the input is equal to/longer than {@code maxLength} bytes,
+     *                  then throw an {@link IOException} complaining about the length.
+     *                  use {@link Integer#MAX_VALUE} to disable the check - if {@link #setByteArrayMaxOverride(int)} is
+     *                  set then that max of that value and this maxLength is used
+     * @param maxInitBufferSize the maximum initial size of the internal buffer; values &lt;= 0 disable
+     *                          the cap. Reads of more than this many bytes grow the buffer as needed.
+     * @param limitMethod name of method that can be used to change the max length
+     * @return A byte array with the read bytes.
+     * @throws IOException If reading data fails or EOF is encountered too early for the given length.
+     * @throws RecordFormatException If the requested length is invalid.
+     * @since 6.0.0
+     */
+    public static byte[] toByteArray(final InputStream stream, final int length, final int maxLength,
+                                     final int maxInitBufferSize, final String limitMethod) throws IOException {
+        return toByteArray(stream, length, maxLength, true, length != Integer.MAX_VALUE,
+                maxInitBufferSize, limitMethod);
+    }
+
+    /**
      * Reads the input stream, and returns the bytes read.
      *
      * @param stream The byte stream of data to read.
@@ -300,6 +331,12 @@ public final class IOUtils {
     private static byte[] toByteArray(InputStream stream, final int length, final int maxLength,
                                       final boolean checkEOFException, final boolean isLengthKnown,
                                       final String limitMethod) throws IOException {
+        return toByteArray(stream, length, maxLength, checkEOFException, isLengthKnown, -1, limitMethod);
+    }
+
+    private static byte[] toByteArray(InputStream stream, final int length, final int maxLength,
+                                      final boolean checkEOFException, final boolean isLengthKnown,
+                                      final int maxInitBufferSize, final String limitMethod) throws IOException {
         final int derivedMaxLength = Math.max(maxLength, BYTE_ARRAY_MAX_OVERRIDE);
         if ((length != Integer.MAX_VALUE) || (derivedMaxLength != Integer.MAX_VALUE)) {
             if (limitMethod != null) {
@@ -310,7 +347,7 @@ public final class IOUtils {
         }
 
         final int derivedLen = isLengthKnown && length >= 0 ? Math.min(length, derivedMaxLength) : derivedMaxLength;
-        final int byteArrayInitLen = calculateByteArrayInitLength(isLengthKnown, length, derivedMaxLength);
+        final int byteArrayInitLen = calculateByteArrayInitLength(isLengthKnown, length, derivedMaxLength, maxInitBufferSize);
         final int internalBufferLen = DEFAULT_BUFFER_SIZE;
         try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(byteArrayInitLen).get()) {
             byte[] buffer = new byte[internalBufferLen];
@@ -338,8 +375,17 @@ public final class IOUtils {
 
     //open for testing
     static int calculateByteArrayInitLength(final boolean isLengthKnown, final int length, final int maxLength) {
+        return calculateByteArrayInitLength(isLengthKnown, length, maxLength, -1);
+    }
+
+    //open for testing
+    static int calculateByteArrayInitLength(final boolean isLengthKnown, final int length, final int maxLength,
+                                            final int maxInitBufferSize) {
         final int derivedLen = Math.min(length, maxLength);
-        final int bufferLen = isLengthKnown ? derivedLen : Math.min(DEFAULT_BUFFER_SIZE, derivedLen);
+        int bufferLen = isLengthKnown ? derivedLen : Math.min(DEFAULT_BUFFER_SIZE, derivedLen);
+        if (maxInitBufferSize > 0 && bufferLen > maxInitBufferSize) {
+            bufferLen = maxInitBufferSize;
+        }
         if (MAX_BYTE_ARRAY_INIT_SIZE > 0 && bufferLen > MAX_BYTE_ARRAY_INIT_SIZE) {
             return MAX_BYTE_ARRAY_INIT_SIZE;
         }
