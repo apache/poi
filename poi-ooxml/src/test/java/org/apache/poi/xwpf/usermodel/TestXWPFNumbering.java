@@ -24,10 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigInteger;
 
-import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
@@ -171,16 +169,12 @@ class TestXWPFNumbering {
     }
 
     @Test
-    void testNPE() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("clusterfuzz-testcase-minimized-POIXWPFFuzzer-6120975439364096.docx");
-            OutputStream out = NullOutputStream.INSTANCE) {
-
-            // settings and numbering are null for this malformed document
-            assertNull(doc.getNumbering());
-            assertNull(doc.getSettings());
-
-            assertThrows(IllegalStateException.class, () ->
-                doc.write(out), "Fails because settings are not populated in this malformed document");
-        }
+    void testNPE() {
+        // this malformed document used to open with null settings/numbering - the zip entry
+        // size validation now rejects it while reading (an entry holds more data than its
+        // declared size)
+        IOException ex = assertThrows(IOException.class, () ->
+            XWPFTestDataSamples.openSampleDocument("clusterfuzz-testcase-minimized-POIXWPFFuzzer-6120975439364096.docx"));
+        assertTrue(ex.getMessage().contains("more data than its declared size"), ex.getMessage());
     }
 }

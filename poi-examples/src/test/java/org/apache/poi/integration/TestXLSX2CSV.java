@@ -29,7 +29,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.examples.xssf.eventusermodel.XLSX2CSV;
-import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -103,21 +103,16 @@ public class TestXLSX2CSV {
 
     @Test
     public void testInvalidSampleFile() throws Exception {
-        final UnsynchronizedByteArrayOutputStream outputBytes = UnsynchronizedByteArrayOutputStream.builder().get();
-        PrintStream out = new PrintStream(outputBytes, true, StandardCharsets.UTF_8.name());
-
-        // The package open is instantaneous, as it should be.
-        try (OPCPackage p = OPCPackage.open(XSSFTestDataSamples.getSampleFile("clusterfuzz-testcase-minimized-XLSX2CSVFuzzer-5025401116950528.xlsx").getAbsolutePath(), PackageAccess.READ)) {
-            XLSX2CSV xlsx2csv = new XLSX2CSV(p, out, -1);
-            assertThrows(POIXMLException.class,
-                    xlsx2csv::process);
-        }
+        // this malformed package used to open and then fail in process() - the zip entry size
+        // validation now rejects it at open time (an entry holds more data than its declared
+        // size; the broken central directory forces the stream-based fallback which reads the
+        // entries eagerly)
+        InvalidOperationException ex = assertThrows(InvalidOperationException.class, () ->
+                OPCPackage.open(XSSFTestDataSamples.getSampleFile("clusterfuzz-testcase-minimized-XLSX2CSVFuzzer-5025401116950528.xlsx").getAbsolutePath(), PackageAccess.READ));
+        assertContains(ex.getCause().getMessage(), "more data than its declared size");
 
         String errorOutput = errorBytes.toString(StandardCharsets.UTF_8);
         assertEquals("", errorOutput);
-
-        String output = outputBytes.toString(StandardCharsets.UTF_8);
-        assertEquals("", output, "Had: " + output);
     }
 
     @Test
