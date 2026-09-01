@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -132,6 +133,73 @@ public class TestZipArchiveFakeEntry {
             assertThrows(RecordFormatException.class, () -> new ZipArchiveFakeEntry(entry, baos.toInputStream()));
         } finally {
             ZipArchiveFakeEntry.setMaxEntrySize(previous);
+        }
+    }
+
+    @Test
+    void testUnknownSizeBelowThresholdStaysInMemory() throws IOException {
+        // an entry that does not declare its size (getSize() == -1) is buffered in memory
+        // as long as it stays below the temp-file threshold - no temp file is created
+        ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(1000);
+        try {
+            ZipArchiveEntry entry = new ZipArchiveEntry("hack123");
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
+            final byte[] data = "fakeValue".getBytes(StandardCharsets.UTF_8);
+            baos.write(data);
+            try (ZipArchiveFakeEntry zipArchiveFakeEntry = new ZipArchiveFakeEntry(entry, baos.toInputStream())) {
+                assertFalse(zipArchiveFakeEntry.isUnencryptedTempFileBacked());
+                assertFalse(zipArchiveFakeEntry.isEncryptedTempFileBacked());
+                assertEquals(data.length, zipArchiveFakeEntry.getSize());
+                UnsynchronizedByteArrayOutputStream baos2 = UnsynchronizedByteArrayOutputStream.builder().get();
+                try (InputStream stream = zipArchiveFakeEntry.getInputStream()) {
+                    IOUtils.copy(stream, baos2);
+                }
+                assertEquals("fakeValue", baos2.toString(StandardCharsets.UTF_8.name()));
+            }
+        } finally {
+            ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(-1);
+        }
+    }
+
+    @Test
+    void testUnknownSizeAboveThresholdSpillsToTempFile() throws IOException {
+        // an entry that does not declare its size and turns out to be larger than the
+        // temp-file threshold spills to a temp file with no data lost
+        ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(4);
+        try {
+            runTestSpill(true, false);
+        } finally {
+            ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(-1);
+        }
+    }
+
+    @Test
+    void testUnknownSizeAboveThresholdSpillsToEncryptedTempFile() throws IOException {
+        ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(4);
+        ZipInputStreamZipEntrySource.setEncryptTempFiles(true);
+        try {
+            runTestSpill(false, true);
+        } finally {
+            ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(-1);
+            ZipInputStreamZipEntrySource.setEncryptTempFiles(false);
+        }
+    }
+
+    private static void runTestSpill(boolean unencryptedTempFileExpected,
+                                     boolean encryptedTempFileExpected) throws IOException {
+        ZipArchiveEntry entry = new ZipArchiveEntry("hack123");
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
+        final byte[] data = "fakeValue".getBytes(StandardCharsets.UTF_8);
+        baos.write(data);
+        try (ZipArchiveFakeEntry zipArchiveFakeEntry = new ZipArchiveFakeEntry(entry, baos.toInputStream())) {
+            assertEquals(unencryptedTempFileExpected, zipArchiveFakeEntry.isUnencryptedTempFileBacked());
+            assertEquals(encryptedTempFileExpected, zipArchiveFakeEntry.isEncryptedTempFileBacked());
+            assertEquals(data.length, zipArchiveFakeEntry.getSize());
+            UnsynchronizedByteArrayOutputStream baos2 = UnsynchronizedByteArrayOutputStream.builder().get();
+            try (InputStream stream = zipArchiveFakeEntry.getInputStream()) {
+                assertEquals(data.length, IOUtils.copy(stream, baos2));
+            }
+            assertEquals("fakeValue", baos2.toString(StandardCharsets.UTF_8.name()));
         }
     }
 
