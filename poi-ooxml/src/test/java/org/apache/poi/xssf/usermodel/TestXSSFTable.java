@@ -29,6 +29,9 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -709,6 +712,50 @@ public final class TestXSSFTable {
                 List<XSSFTableColumn> tabColumns = wb2Table.getColumns();
                 assertEquals(2, tabColumns.size());
                 assertEquals("Column1_x000a_with a line break", tabColumns.get(0).getName());
+                assertEquals(0, wb2Table.findColumnIndex("Column1\nwith a line break"));
+            }
+        }
+    }
+
+    @Test
+    void testFormulaWithNewlineColumnName() throws IOException {
+        try (
+                XSSFWorkbook wb = new XSSFWorkbook();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
+        ) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFRow headersRow = sheet.createRow(0);
+            headersRow.createCell(0).setCellValue("Value\nA");
+            headersRow.createCell(1).setCellValue("Value\nB");
+
+            XSSFRow row1 = sheet.createRow(1);
+            row1.createCell(0).setCellValue(100);
+            row1.createCell(1).setCellValue(50);
+
+            XSSFRow row2 = sheet.createRow(2);
+            row2.createCell(0).setCellValue(200);
+            row2.createCell(1).setCellValue(75);
+
+            AreaReference area = wb.getCreationHelper().createAreaReference(
+                    new CellReference(0, 0), new CellReference(2, 1));
+            XSSFTable table = sheet.createTable(area);
+            table.setName("Table1");
+
+            // write and reload so updateHeaders() encodes \n to _x000a_
+            wb.write(bos);
+            try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet wb2Sheet = wb2.getSheetAt(0);
+                XSSFTable wb2Table = wb2Sheet.getTables().get(0);
+
+                assertEquals(0, wb2Table.findColumnIndex("Value\nA"));
+
+                XSSFRow formulaRow = wb2Sheet.createRow(3);
+                XSSFCell formulaCell = formulaRow.createCell(0, CellType.FORMULA);
+                formulaCell.setCellFormula("SUM(Table1[Value\nA])");
+
+                FormulaEvaluator evaluator = wb2.getCreationHelper().createFormulaEvaluator();
+                CellValue value = evaluator.evaluate(formulaCell);
+                assertEquals(300.0, value.getNumberValue(), 0.001);
             }
         }
     }
