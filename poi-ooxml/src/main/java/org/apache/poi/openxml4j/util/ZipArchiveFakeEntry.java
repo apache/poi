@@ -22,6 +22,7 @@ import java.nio.file.Files;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.crypt.temp.EncryptedTempData;
@@ -82,17 +83,42 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
         if (threshold >= 0 && (entrySize >= threshold || entrySize == -1)) {
             boolean success = false;
             try {
-                if (ZipInputStreamZipEntrySource.shouldEncryptTempFiles()) {
-                    encryptedTempData = new EncryptedTempData();
-                    try (OutputStream os = encryptedTempData.getOutputStream()) {
-                        numberOfBytes = IOUtils.copy(inp, os);
+                final long bytes;
+                if (entrySize == -1) {
+                    // The entry does not declare its uncompressed size (e.g. it was written
+                    // with a data descriptor by a streaming zip writer). Most such entries
+                    // are small, so buffer in memory up to the temp-file threshold and only
+                    // spill to a temp file if the entry really is that large - an entry that
+                    // hides its size cannot force more than the threshold onto the heap, and
+                    // small entries no longer cost a temp file each.
+                    try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                        final long bytesInMemory = IOUtils.copy(inp, baos, threshold);
+                        final int nextByte = bytesInMemory < threshold ? -1 : inp.read();
+                        if (nextByte == -1) {
+                            data = baos.toByteArray();
+                            bytes = data.length;
+                        } else {
+                            try (OutputStream os = createTempDataOutputStream()) {
+                                LOG.atWarn().log("Zip entry {} does not declare its uncompressed size and is larger " +
+                                                "than the temp-file threshold of {} bytes - spilling it to {}",
+                                        entry.getName(), threshold,
+                                        tempFile != null ? tempFile.getAbsolutePath() : "encrypted temp data");
+                                baos.writeTo(os);
+                                os.write(nextByte);
+                                bytes = bytesInMemory + 1 + IOUtils.copy(inp, os);
+                            }
+                        }
                     }
                 } else {
-                    tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
-                    LOG.atInfo().log("Creating temp file {} for zip entry {} of size {} bytes",
-                            tempFile.getAbsolutePath(), entry.getName(), entrySize);
-                    numberOfBytes = IOUtils.copy(inp, tempFile);
+                    try (OutputStream os = createTempDataOutputStream()) {
+                        if (tempFile != null) {
+                            LOG.atInfo().log("Creating temp file {} for zip entry {} of size {} bytes",
+                                    tempFile.getAbsolutePath(), entry.getName(), entrySize);
+                        }
+                        bytes = IOUtils.copy(inp, os);
+                    }
                 }
+                numberOfBytes = bytes;
                 success = true;
             } finally {
                 if (!success) {
@@ -129,6 +155,21 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
             }
             numberOfBytes = data.length;
         }
+    }
+
+    /**
+     * Opens the output to buffer this entry's data outside the heap: encrypted temp data if
+     * {@link ZipInputStreamZipEntrySource#setEncryptTempFiles(boolean)} is enabled, a plain
+     * temp file otherwise. Sets the corresponding field so {@link #getInputStream()} and
+     * {@link #close()} can find it.
+     */
+    private OutputStream createTempDataOutputStream() throws IOException {
+        if (ZipInputStreamZipEntrySource.shouldEncryptTempFiles()) {
+            encryptedTempData = new EncryptedTempData();
+            return encryptedTempData.getOutputStream();
+        }
+        tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
+        return Files.newOutputStream(tempFile.toPath());
     }
 
     @Override
