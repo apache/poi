@@ -877,10 +877,15 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             }
         }
         // Table column names with special characters need a single quote escape
-        // but the escape is not present in the column definition
+        // but the escape is not present in the column definition.
+        // Also replace newline and carriage return characters with their _x000a_
+        // and _x000d_ escape sequences to match the encoding applied by
+        // updateHeaders(), which uses the OOXML _xXXXX_ escape convention.
         String unescapedString = columnHeader
                 .replace("''", "'")
-                .replace("'#", "#");
+                .replace("'#", "#")
+                .replace("\n", "_x000a_")
+                .replace("\r", "_x000d_");
         Integer idx = columnMap.get(unescapedString);
         return idx == null ? -1 : idx;
     }
