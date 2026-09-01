@@ -619,13 +619,15 @@ class TestDataFormatter {
 
         assertEquals("    0.10 ", dfUS.formatRawCellContents( 0.1, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
         assertEquals("-   0.10 ", dfUS.formatRawCellContents(-0.1, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
-        // TODO Fix this, we are randomly adding a 0 at the end that shouldn't be there
-        //assertEquals("     -   ", dfUS.formatRawCellContents(0.0, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
+        // Repeating fill character `* ` doesn't really fill because we do not know the cell's width.
+        // We just repeat it 3 times.
+        assertEquals("    -   ", dfUS.formatRawCellContents(0.0, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
 
         assertEquals(" $   1.10 ", dfUS.formatRawCellContents( 1.1, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
         assertEquals("-$   1.10 ", dfUS.formatRawCellContents(-1.1, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
-        // TODO Fix this, we are randomly adding a 0 at the end that shouldn't be there
-        //assertEquals(" $    -   ", dfUS.formatRawCellContents( 0.0, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
+        // Repeating fill character `* ` doesn't really fill because we do not know the cell's width.
+        // We just repeat it 3 times.
+        assertEquals(" $   -   ", dfUS.formatRawCellContents( 0.0, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
     }
 
     @Test
