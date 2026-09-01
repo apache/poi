@@ -24,12 +24,14 @@ import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated // changes static values, so other tests should not run at the same time
 public class TestZipArchiveFakeEntry {
@@ -61,21 +63,17 @@ public class TestZipArchiveFakeEntry {
     }
 
     @Test
-    void testEntrySizeLargerThanData() throws IOException {
-        // A malicious zip local file header can declare a huge uncompressed size while the entry
-        // actually contains only a few bytes. We must not trust that declared size to size the
-        // read buffer (that would allow a tiny input to trigger a large eager allocation).
-        // Instead the actual bytes present are read, bounded by getMaxEntrySize().
-        final long fakeLen = 99_000_000;
+    void testKnownEntrySize() throws IOException {
+        // an entry whose declared size matches the data reads with a single exactly-sized buffer
         final String fakeValue = "fakeValue";
+        final byte[] data = fakeValue.getBytes(StandardCharsets.UTF_8);
         ZipArchiveEntry entry = new ZipArchiveEntry("hack123") {
             @Override
             public long getSize() {
-                return fakeLen;
+                return data.length;
             }
         };
         UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
-        final byte[] data = fakeValue.getBytes(StandardCharsets.UTF_8);
         baos.write(data);
         try (ZipArchiveFakeEntry zipArchiveFakeEntry = new ZipArchiveFakeEntry(entry, baos.toInputStream())) {
             assertEquals(data.length, zipArchiveFakeEntry.getSize());
@@ -85,6 +83,40 @@ public class TestZipArchiveFakeEntry {
             }
             assertEquals(fakeValue, baos2.toString(StandardCharsets.UTF_8.name()));
         }
+    }
+
+    @Test
+    void testEntrySizeLargerThanData() {
+        // A malicious zip local file header can declare a huge uncompressed size while the entry
+        // actually contains only a few bytes. The declared size must not be trusted to size the
+        // read buffer (the initial allocation is capped well below getMaxEntrySize()), and an
+        // entry holding fewer bytes than declared is rejected.
+        final long fakeLen = 99_000_000;
+        ZipArchiveEntry entry = new ZipArchiveEntry("hack123") {
+            @Override
+            public long getSize() {
+                return fakeLen;
+            }
+        };
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
+        baos.write("fakeValue".getBytes(StandardCharsets.UTF_8), 0, 9);
+        assertThrows(EOFException.class, () -> new ZipArchiveFakeEntry(entry, baos.toInputStream()));
+    }
+
+    @Test
+    void testEntrySizeSmallerThanData() {
+        // an entry holding more bytes than its declared size is rejected rather than read past
+        // the declared size
+        ZipArchiveEntry entry = new ZipArchiveEntry("hack123") {
+            @Override
+            public long getSize() {
+                return 4;
+            }
+        };
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
+        baos.write("fakeValue".getBytes(StandardCharsets.UTF_8), 0, 9);
+        IOException ex = assertThrows(IOException.class, () -> new ZipArchiveFakeEntry(entry, baos.toInputStream()));
+        assertTrue(ex.getMessage().contains("more data than its declared size"), ex.getMessage());
     }
 
     @Test

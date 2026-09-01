@@ -43,6 +43,13 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
     private static final int DEFAULT_MAX_ENTRY_SIZE = 100_000_000;
     private static int MAX_ENTRY_SIZE = DEFAULT_MAX_ENTRY_SIZE;
 
+    // cap on the initial read-buffer allocation for entries with a known size. The declared
+    // entry size comes from the (untrusted) zip local file header, so we do not eagerly
+    // allocate more than this from it - the buffer grows beyond it only as real data arrives.
+    // Deliberately well below DEFAULT_MAX_ENTRY_SIZE; entries up to this size (the vast
+    // majority) are still read with a single exactly-sized allocation.
+    private static final int MAX_INIT_BUFFER_SIZE = 2_000_000;
+
     /**
      * Set the maximum size of a single entry in a zip-file.
      * @param maxEntrySize number of bytes at which a zip entry is regarded as too large for holding in memory
@@ -102,12 +109,24 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
             }
 
             // Grab the de-compressed contents for later.
-            // Note: we deliberately do not use the declared entrySize to size the read buffer.
-            // entrySize comes from the (untrusted) zip local file header, so a tiny entry can
-            // claim a huge uncompressed size and force a large eager allocation before any data
-            // is read. Instead read what is actually present, growing as needed and bounded by
-            // getMaxEntrySize() (a stream longer than that fails with a RecordFormatException).
-            data = IOUtils.toByteArrayWithMaxLength(inp, getMaxEntrySize());
+            if (entrySize == -1) {
+                // size unknown: read what is present, bounded by getMaxEntrySize()
+                // (a stream longer than that fails with a RecordFormatException)
+                data = IOUtils.toByteArrayWithMaxLength(inp, getMaxEntrySize());
+            } else {
+                // size known: read exactly entrySize bytes (EOFException if the entry holds
+                // fewer). The initial buffer is sized from entrySize but capped at
+                // MAX_INIT_BUFFER_SIZE - entrySize comes from the (untrusted) zip local file
+                // header, so a tiny entry claiming a huge uncompressed size must not be able
+                // to force a large eager allocation before any data is read.
+                data = IOUtils.toByteArray(inp, Math.toIntExact(entrySize), getMaxEntrySize(),
+                        MAX_INIT_BUFFER_SIZE, "ZipArchiveFakeEntry.setMaxEntrySize()");
+                // the entry must not hold more bytes than it declared
+                if (inp.read() >= 0) {
+                    throw new IOException("Zip entry " + entry.getName()
+                            + " has more data than its declared size of " + entrySize + " bytes");
+                }
+            }
             numberOfBytes = data.length;
         }
     }
