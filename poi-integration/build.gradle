@@ -144,7 +144,21 @@ test {
 
     dependsOn { testJar }
 
-    systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+    if (Boolean.valueOf(System.getenv("CI_BUILD"))) {
+        // On CI, cap the parallelism and give the test JVM more heap: the default dynamic
+        // strategy runs one thread per processor, and several tests materialising large
+        // XSSF workbooks concurrently (the XSSF additional tests load each workbook twice
+        // via ExcelComparator) drove the 2GB test JVM into OutOfMemoryError on the Jenkins
+        // nodes, with tests slowing down progressively as the heap filled.
+        // Note: these systemProperties deliberately override the strictly-serial CI
+        // settings from the root build.gradle for this module.
+        systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+        systemProperties['junit.jupiter.execution.parallel.config.strategy'] = 'fixed'
+        systemProperties['junit.jupiter.execution.parallel.config.fixed.parallelism'] = '2'
+        maxHeapSize = '3g'
+    } else {
+        systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+    }
 
     doFirst {
         jvmArgs += [
