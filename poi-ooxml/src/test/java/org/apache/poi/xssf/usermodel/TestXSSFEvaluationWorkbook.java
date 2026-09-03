@@ -19,12 +19,19 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+
+import org.apache.poi.ss.formula.NameIdentifier;
+import org.apache.poi.ss.formula.SheetIdentifier;
+import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
 class TestXSSFEvaluationWorkbook {
@@ -75,6 +82,52 @@ class TestXSSFEvaluationWorkbook {
         assertEquals("1", cellA3.getStringCellValue());
         assertEquals(0,cellB3.getNumericCellValue(), 0.00001);
         assertEquals("3",cellC3.getStringCellValue());
+    }
+
+    @Test
+    void testResolveBookIndexWithBracketedName() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx")) {
+            XSSFEvaluationWorkbook ewb = XSSFEvaluationWorkbook.create(wb);
+            SheetIdentifier sheet = new SheetIdentifier("[56737.xlsx]", new NameIdentifier("Uses", false));
+
+            Ref3DPxg ptg = (Ref3DPxg) ewb.get3DReferencePtg(new CellReference("A1"), sheet);
+            // 1 based results, 0 = current workbook
+            assertEquals(1, ptg.getExternalWorkbookNumber());
+        }
+    }
+
+    @Test
+    void testResolveBookIndexForQuotedFileReference() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFEvaluationWorkbook ewb = XSSFEvaluationWorkbook.create(wb);
+            SheetIdentifier sheet = new SheetIdentifier("'file:///C:/temp/Book1.xlsx'",
+                    new NameIdentifier("Sheet1", false));
+
+            // no link table for this file yet, so a placeholder one is added
+            Ref3DPxg ptg = (Ref3DPxg) ewb.get3DReferencePtg(new CellReference("A1"), sheet);
+            assertEquals(1, ptg.getExternalWorkbookNumber());
+            assertEquals(1, wb.getExternalLinksTables().size());
+            assertEquals("Book1.xlsx", wb.getExternalLinksTable(0).getLinkedFileName());
+
+            // asking again finds the placeholder rather than adding a second one
+            ptg = (Ref3DPxg) ewb.get3DReferencePtg(new CellReference("A1"), sheet);
+            assertEquals(1, ptg.getExternalWorkbookNumber());
+            assertEquals(1, wb.getExternalLinksTables().size());
+        }
+    }
+
+    @Test
+    void testResolveBookIndexForUnquotedFileReference() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFEvaluationWorkbook ewb = XSSFEvaluationWorkbook.create(wb);
+            // the formula parser leaves the quotes in place, but we shouldn't depend on that
+            SheetIdentifier sheet = new SheetIdentifier("file:///C:/temp/Book1.xlsx",
+                    new NameIdentifier("Sheet1", false));
+
+            Ref3DPxg ptg = (Ref3DPxg) ewb.get3DReferencePtg(new CellReference("A1"), sheet);
+            assertEquals(1, ptg.getExternalWorkbookNumber());
+            assertEquals("Book1.xlsx", wb.getExternalLinksTable(0).getLinkedFileName());
+        }
     }
 
 }

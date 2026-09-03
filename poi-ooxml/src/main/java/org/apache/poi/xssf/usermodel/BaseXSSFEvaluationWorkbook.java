@@ -101,7 +101,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
     private int resolveBookIndex(String bookName) {
         // Strip the [] wrapper, if still present
         if (bookName.startsWith("[") && bookName.endsWith("]")) {
-            bookName = bookName.substring(1, bookName.length()-2);
+            bookName = bookName.substring(1, bookName.length()-1);
         }
 
         // Is it already in numeric form?
@@ -115,9 +115,9 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         if (index != -1) return index;
 
         // Is it an absolute file reference?
-        if (bookName.startsWith("'file:///") && bookName.endsWith("'")) {
-            String relBookName = bookName.substring(bookName.lastIndexOf('/')+1);
-            relBookName = relBookName.substring(0, relBookName.length()-1); // Trailing '
+        String fileRef = asFileReference(bookName);
+        if (fileRef != null) {
+            String relBookName = fileRef.substring(fileRef.lastIndexOf('/')+1);
 
             // Try with this name
             index = findExternalLinkIndex(relBookName, tables);
@@ -128,14 +128,33 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
             // Note - this is really rather nasty...
             ExternalLinksTable fakeLinkTable = new FakeExternalLinksTable(relBookName);
             _uBook.addExternalLinksTable(fakeLinkTable);
-            return tables.size(); // 1 based results, 0 = current workbook
+            // 1 based results, 0 = current workbook. Re-fetch rather than trusting the
+            // list we looked up above to be the live one (it may also have been null)
+            return _uBook.getExternalLinksTables().size();
         }
 
         // Not properly referenced
         throw new IllegalStateException("Book not linked for filename " + bookName);
     }
+    /**
+     * The formula parser leaves the single quotes around a quoted book name in place, but
+     * don't rely on them being there - callers may hand us an unquoted name just as easily.
+     *
+     * @return the file reference with any surrounding quotes removed, or {@code null} if
+     *  {@code bookName} isn't an absolute file reference
+     */
+    private static String asFileReference(String bookName) {
+        String name = bookName;
+        if (name.length() > 1 && name.startsWith("'") && name.endsWith("'")) {
+            name = name.substring(1, name.length()-1);
+        }
+        return name.startsWith("file:///") ? name : null;
+    }
     /* This is case-sensitive. Is that correct? */
     private int findExternalLinkIndex(String bookName, List<ExternalLinksTable> tables) {
+        if (tables == null) {
+            return -1;
+        }
         int i = 0;
         for (ExternalLinksTable table : tables) {
             if (table.getLinkedFileName().equals(bookName)) {
