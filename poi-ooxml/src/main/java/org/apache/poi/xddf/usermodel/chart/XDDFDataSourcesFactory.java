@@ -29,7 +29,9 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrVal;
 
 /**
  * Class {@code XDDFDataSourcesFactory} is a factory for {@link XDDFDataSource}
@@ -48,6 +50,9 @@ public class XDDFDataSourcesFactory {
         if (categoryDS.getNumRef() != null && categoryDS.getNumRef().getNumCache() != null) {
             return new XDDFCategoryDataSource() {
                 private final CTNumData category = (CTNumData) categoryDS.getNumRef().getNumCache().copy();
+                // the points are read once, as the indexed accessor of XmlBeans walks
+                // the list of elements from the start on every call
+                private final CTNumVal[] points = category.getPtArray();
                 private final String formatCode = category.isSetFormatCode() ? category.getFormatCode() : null;
 
                 @Override
@@ -72,11 +77,11 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public String getPointAt(int index) {
-                    if (category.sizeOfPtArray() <= index) {
+                    if (points.length <= index) {
                         throw new IllegalArgumentException("Cannot access 0-based index " + index +
-                                " in point-array with " + category.sizeOfPtArray() + " items");
+                                " in point-array with " + points.length + " items");
                     }
-                    return category.getPtArray(index).getV();
+                    return points[index].getV();
                 }
 
                 @Override
@@ -85,6 +90,9 @@ public class XDDFDataSourcesFactory {
         } else if (categoryDS.getStrRef() != null && categoryDS.getStrRef().getStrCache() != null) {
             return new XDDFCategoryDataSource() {
                 private final CTStrData category = (CTStrData) categoryDS.getStrRef().getStrCache().copy();
+                // the points are read once, as the indexed accessor of XmlBeans walks
+                // the list of elements from the start on every call
+                private final CTStrVal[] points = category.getPtArray();
 
                 @Override
                 public boolean isCellRange() {
@@ -103,7 +111,7 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public String getPointAt(int index) {
-                    return category.getPtArray(index).getV();
+                    return points[index].getV();
                 }
 
                 @Override
@@ -112,6 +120,9 @@ public class XDDFDataSourcesFactory {
         } else if (categoryDS.getNumLit() != null) {
             return new XDDFCategoryDataSource() {
                 private final CTNumData category = (CTNumData) categoryDS.getNumLit().copy();
+                // the points are read once, as the indexed accessor of XmlBeans walks
+                // the list of elements from the start on every call
+                private final CTNumVal[] points = category.getPtArray();
                 private final String formatCode = category.isSetFormatCode() ? category.getFormatCode() : null;
 
                 @Override
@@ -146,7 +157,7 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public String getPointAt(int index) {
-                    return category.getPtArray(index).getV();
+                    return points[index].getV();
                 }
 
                 @Override
@@ -155,6 +166,9 @@ public class XDDFDataSourcesFactory {
         } else if (categoryDS.getStrLit() != null) {
             return new XDDFCategoryDataSource() {
                 private final CTStrData category = (CTStrData) categoryDS.getStrLit().copy();
+                // the points are read once, as the indexed accessor of XmlBeans walks
+                // the list of elements from the start on every call
+                private final CTStrVal[] points = category.getPtArray();
 
                 @Override
                 public boolean isCellRange() {
@@ -183,7 +197,7 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public String getPointAt(int index) {
-                    return category.getPtArray(index).getV();
+                    return points[index].getV();
                 }
 
                 @Override
@@ -201,6 +215,9 @@ public class XDDFDataSourcesFactory {
         if (valuesDS.getNumRef() != null && valuesDS.getNumRef().getNumCache() != null) {
             return new XDDFNumericalDataSource<Double>() {
                 private final CTNumData values = (CTNumData) valuesDS.getNumRef().getNumCache().copy();
+                // the points are read once, as the indexed accessor of XmlBeans walks
+                // the list of elements from the start on every call
+                private final CTNumVal[] points = values.getPtArray();
                 private String formatCode = values.isSetFormatCode() ? values.getFormatCode() : null;
 
                 @Override
@@ -235,7 +252,7 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public Double getPointAt(int index) {
-                    return Double.valueOf(values.getPtArray(index).getV());
+                    return Double.valueOf(points[index].getV());
                 }
 
                 @Override
@@ -251,6 +268,9 @@ public class XDDFDataSourcesFactory {
         } else if (valuesDS.getNumLit() != null) {
             return new XDDFNumericalDataSource<Double>() {
                 private final CTNumData values = (CTNumData) valuesDS.getNumLit().copy();
+                // the points are read once, as the indexed accessor of XmlBeans walks
+                // the list of elements from the start on every call
+                private final CTNumVal[] points = values.getPtArray();
                 private String formatCode = values.isSetFormatCode() ? values.getFormatCode() : null;
 
                 @Override
@@ -290,7 +310,7 @@ public class XDDFDataSourcesFactory {
 
                 @Override
                 public Double getPointAt(int index) {
-                    return Double.valueOf(values.getPtArray(index).getV());
+                    return Double.valueOf(points[index].getV());
                 }
 
                 @Override
