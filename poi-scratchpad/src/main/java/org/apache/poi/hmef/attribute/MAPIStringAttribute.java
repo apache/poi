@@ -70,11 +70,11 @@ public final class MAPIStringAttribute extends MAPIAttribute {
       if(attr == null) {
          return null;
       }
-      if(attr instanceof MAPIStringAttribute) {
-         return ((MAPIStringAttribute)attr).getDataString();
+      if(attr instanceof MAPIStringAttribute stringAttr) {
+         return stringAttr.getDataString();
       }
-      if(attr instanceof MAPIRtfAttribute) {
-         return ((MAPIRtfAttribute)attr).getDataString();
+      if(attr instanceof MAPIRtfAttribute rtfAttr) {
+         return rtfAttr.getDataString();
       }
 
       LOG.atWarn().log("Warning, non string property found: {}", attr);

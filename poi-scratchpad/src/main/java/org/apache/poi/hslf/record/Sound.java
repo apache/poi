@@ -64,23 +64,23 @@ public final class Sound extends RecordContainer {
     private void findInterestingChildren() {
         // First child should be the ExHyperlinkAtom
         Record child = _children[0];
-        if(child instanceof CString) {
-            _name = (CString) child;
+        if(child instanceof CString cs) {
+            _name = cs;
         } else {
             LOG.atError().log("First child record wasn't a CString, was of type {}", box(child.getRecordType()));
         }
 
         // Second child should be the ExOleObjAtom
         child = _children[1];
-        if (child instanceof CString) {
-            _type = (CString) child;
+        if (child instanceof CString cs) {
+            _type = cs;
         } else {
             LOG.atError().log("Second child record wasn't a CString, was of type {}", box(child.getRecordType()));
         }
 
         for (int i = 2; i < _children.length; i++) {
-            if(_children[i] instanceof SoundData){
-                _data = (SoundData)_children[i];
+            if(_children[i] instanceof SoundData sd){
+                _data = sd;
                 break;
             }
         }

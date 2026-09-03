@@ -352,11 +352,10 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
         while (iter.hasNext()) {
             org.apache.poi.hslf.record.Record r = iter.next();
             // see if we have InteractiveInfo in the textrun's records
-            if (!(r instanceof InteractiveInfo)) {
+            if (!(r instanceof InteractiveInfo hldr)) {
                 continue;
             }
 
-            InteractiveInfo hldr = (InteractiveInfo)r;
             InteractiveInfoAtom info = hldr.getInteractiveInfoAtom();
             if (info == null) {
                 continue;
@@ -372,11 +371,11 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
 
             if (iter.hasNext()) {
                 r = iter.next();
-                if (!(r instanceof TxInteractiveInfoAtom)) {
+                if (!(r instanceof TxInteractiveInfoAtom txiia)) {
                     iter.previous();
                     continue;
                 }
-                link.setTextRunInfo((TxInteractiveInfoAtom)r);
+                link.setTextRunInfo(txiia);
             }
         }
     }

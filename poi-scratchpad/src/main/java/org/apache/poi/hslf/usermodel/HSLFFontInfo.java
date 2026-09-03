@@ -109,8 +109,7 @@ public class HSLFFontInfo implements FontInfo {
         setCharset(fontInfo.getCharset());
         setFamily(fontInfo.getFamily());
         setPitch(fontInfo.getPitch());
-        if (fontInfo instanceof HSLFFontInfo) {
-            HSLFFontInfo hFontInfo = (HSLFFontInfo)fontInfo;
+        if (fontInfo instanceof HSLFFontInfo hFontInfo) {
             setRenderType(hFontInfo.getRenderType());
             setEmbedSubsetted(hFontInfo.isEmbedSubsetted());
             setFontSubstitutable(hFontInfo.isFontSubstitutable());

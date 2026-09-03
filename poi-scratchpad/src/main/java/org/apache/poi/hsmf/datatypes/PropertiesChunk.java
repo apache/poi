@@ -183,8 +183,7 @@ public abstract class PropertiesChunk extends Chunk {
 
         // Loop over our values, looking for chunk based ones
         for (PropertyValue val : properties.values()) {
-            if (val instanceof ChunkBasedPropertyValue) {
-                ChunkBasedPropertyValue cVal = (ChunkBasedPropertyValue) val;
+            if (val instanceof ChunkBasedPropertyValue cVal) {
                 Chunk chunk = chunks.get(cVal.getProperty().id);
                 // System.err.println(cVal.getProperty() + " = " + cVal + " -> "
                 // + HexDump.toHex(cVal.data));

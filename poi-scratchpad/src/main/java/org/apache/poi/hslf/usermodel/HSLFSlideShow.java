@@ -148,8 +148,8 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
         // Handle Parent-aware Records
         for (Record record : _hslfSlideShow.getRecords()) {
-            if(record instanceof RecordContainer){
-                RecordContainer.handleParentAwareRecords((RecordContainer)record);
+            if(record instanceof RecordContainer container){
+                RecordContainer.handleParentAwareRecords(container);
             }
         }
 
@@ -255,8 +255,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         // To start with, find the most recent in the byte offset domain
         Map<Integer,Integer> mostRecentByBytes = new HashMap<>();
         for (Record record : _hslfSlideShow.getRecords()) {
-            if (record instanceof PersistPtrHolder) {
-                PersistPtrHolder pph = (PersistPtrHolder) record;
+            if (record instanceof PersistPtrHolder pph) {
 
                 // If we've already seen any of the "slide" IDs for this
                 // PersistPtr, remove their old positions
@@ -293,11 +292,10 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
         // Now convert the byte offsets back into record offsets
         for (Record record : _hslfSlideShow.getRecords()) {
-            if (!(record instanceof PositionDependentRecord)) {
+            if (!(record instanceof PositionDependentRecord pdr)) {
                 continue;
             }
 
-            PositionDependentRecord pdr = (PositionDependentRecord) record;
             int recordAt = pdr.getLastOnDiskOffset();
 
             Integer thisID = mostRecentByBytesRev.get(recordAt);
@@ -310,8 +308,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
             int storeAt = _sheetIdToCoreRecordsLookup.get(thisID);
 
             // Tell it its Sheet ID, if it cares
-            if (pdr instanceof PositionDependentRecordContainer) {
-                PositionDependentRecordContainer pdrc = (PositionDependentRecordContainer) record;
+            if (pdr instanceof PositionDependentRecordContainer pdrc) {
                 pdrc.setSheetId(thisID);
             }
 
@@ -419,12 +416,12 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         for (SlideAtomsSet sas : masterSLWT.getSlideAtomsSets()) {
             Record r = getCoreRecordForSAS(sas);
             int sheetNo = sas.getSlidePersistAtom().getSlideIdentifier();
-            if (r instanceof Slide) {
-                HSLFTitleMaster master = new HSLFTitleMaster((Slide)r, sheetNo);
+            if (r instanceof Slide slide) {
+                HSLFTitleMaster master = new HSLFTitleMaster(slide, sheetNo);
                 master.setSlideShow(this);
                 _titleMasters.add(master);
-            } else if (r instanceof MainMaster) {
-                HSLFSlideMaster master = new HSLFSlideMaster((MainMaster)r, sheetNo);
+            } else if (r instanceof MainMaster mainMaster) {
+                HSLFSlideMaster master = new HSLFSlideMaster(mainMaster, sheetNo);
                 master.setSlideShow(this);
                 _masters.add(master);
             }
@@ -455,12 +452,10 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
             }
 
             // Ensure it really is a notes record
-            if (!(r instanceof Notes)) {
+            if (!(r instanceof Notes notesRecord)) {
                 LOG.atError().log("{}, but that was actually a {}", loggerLoc, r);
                 continue;
             }
-
-            Notes notesRecord = (Notes) r;
 
             // Record the match between slide id and these notes
             int slideId = spa.getSlideIdentifier();
@@ -491,13 +486,12 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
             Record r = getCoreRecordForSAS(sas);
 
             // Ensure it really is a slide record
-            if (!(r instanceof Slide)) {
+            if (!(r instanceof Slide slide)) {
                 LOG.atError().log("A Slide SlideAtomSet at {} said its record was at refID {}, but that was actually a {}",
                         box(idx), box(spa.getRefID()), r);
                 continue;
             }
 
-            Slide slide = (Slide)r;
             if (slide.getSlideAtom() == null) {
                 LOG.atError().log("SlideAtomSet at {} at refID {} is null", box(idx), box(spa.getRefID()));
                 continue;
@@ -554,10 +548,9 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
     private void writeDirtyParagraphs(HSLFShapeContainer container) {
         for (HSLFShape sh : container.getShapes()) {
-            if (sh instanceof HSLFShapeContainer) {
-                writeDirtyParagraphs((HSLFShapeContainer)sh);
-            } else if (sh instanceof HSLFTextShape) {
-                HSLFTextShape hts = (HSLFTextShape)sh;
+            if (sh instanceof HSLFShapeContainer shapeContainer) {
+                writeDirtyParagraphs(shapeContainer);
+            } else if (sh instanceof HSLFTextShape hts) {
                 boolean isDirty = false;
                 for (HSLFTextParagraph p : hts.getTextParagraphs()) {
                     isDirty |= p.isDirty();
@@ -1021,17 +1014,11 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
      * @return 0-based index of the movie
      */
     public int addMovie(String path, int type) {
-        ExMCIMovie mci;
-        switch (type) {
-            case MovieShape.MOVIE_MPEG:
-                mci = new ExMCIMovie();
-                break;
-            case MovieShape.MOVIE_AVI:
-                mci = new ExAviMovie();
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported Movie: " + type);
-        }
+        ExMCIMovie mci = switch (type) {
+            case MovieShape.MOVIE_MPEG -> new ExMCIMovie();
+            case MovieShape.MOVIE_AVI -> new ExAviMovie();
+            default -> throw new IllegalArgumentException("Unsupported Movie: " + type);
+        };
 
         ExVideoContainer exVideo = mci.getExVideo();
         exVideo.getExMediaAtom().setMask(0xE80000);

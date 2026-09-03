@@ -179,9 +179,9 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
             //} else if(ext instanceof PowerPointExtractor) {
             // Tricky, not stored directly in poifs
             // TODO
-        } else if (ext instanceof OutlookTextExtractor) {
+        } else if (ext instanceof OutlookTextExtractor outlookExtractor) {
             // Stored in the Attachment blocks
-            MAPIMessage msg = ((OutlookTextExtractor)ext).getMAPIMessage();
+            MAPIMessage msg = outlookExtractor.getMAPIMessage();
             for (AttachmentChunks attachment : msg.getAttachmentFiles()) {
                 if (attachment.getAttachData() != null) {
                     byte[] data = attachment.getAttachData().getValue();

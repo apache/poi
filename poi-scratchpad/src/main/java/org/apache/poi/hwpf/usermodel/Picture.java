@@ -273,15 +273,11 @@ public final class Picture {
         // trying to extract width and height from pictures content:
         switch ( pictureType )
         {
-        case JPEG:
-            fillJPGWidthHeight();
-            break;
-        case PNG:
-            fillPNGWidthHeight();
-            break;
-        default:
+        case JPEG -> fillJPGWidthHeight();
+        case PNG -> fillPNGWidthHeight();
+        default -> {
             // unsupported;
-            break;
+        }
         }
     }
 
@@ -387,8 +383,7 @@ public final class Picture {
             EscherOptRecord optRecord = shape.getChildById(EscherRecordTypes.OPT.typeID);
             if (optRecord != null) {
                 EscherProperty property = optRecord.lookup(propType);
-                if (property instanceof EscherSimpleProperty) {
-                    EscherSimpleProperty simpleProperty = (EscherSimpleProperty) property;
+                if (property instanceof EscherSimpleProperty simpleProperty) {
                     return Units.fixedPointToDouble(simpleProperty.getPropertyValue());
                 }
             }
@@ -453,14 +448,14 @@ public final class Picture {
         }
 
         EscherRecord escherRecord = _blipRecords.get( 0 );
-        if ( escherRecord instanceof EscherBlipRecord )
+        if ( escherRecord instanceof EscherBlipRecord blipRecord )
         {
-            return ( (EscherBlipRecord) escherRecord ).getPicturedata();
+            return blipRecord.getPicturedata();
         }
 
-        if ( escherRecord instanceof EscherBSERecord )
+        if ( escherRecord instanceof EscherBSERecord bseRecord )
         {
-            EscherBlipRecord blip = ( (EscherBSERecord) escherRecord ).getBlipRecord();
+            EscherBlipRecord blip = bseRecord.getBlipRecord();
             if (blip != null) {
                 return blip.getPicturedata();
 
@@ -516,8 +511,7 @@ public final class Picture {
     public String getDescription()
     {
        for(EscherRecord escherRecord : _picfAndOfficeArtData.getShape()){
-          if(escherRecord instanceof EscherOptRecord){
-             EscherOptRecord escherOptRecord = (EscherOptRecord) escherRecord;
+          if(escherRecord instanceof EscherOptRecord escherOptRecord){
              for(EscherProperty property : escherOptRecord.getEscherProperties()){
                 if (EscherPropertyTypes.GROUPSHAPE__DESCRIPTION.propNumber == property.getPropertyNumber()){
                    byte[] complexData = ((EscherComplexProperty)property).getComplexData();
@@ -561,56 +555,36 @@ public final class Picture {
         }
 
         EscherRecord escherRecord = _blipRecords.get( 0 );
-        if (escherRecord instanceof EscherBSERecord) {
-            EscherBSERecord bseRecord = (EscherBSERecord) escherRecord;
-            switch ( bseRecord.getBlipTypeWin32() ) {
-                case 0x00:
-                    return PictureType.UNKNOWN;
-                case 0x01:
-                    return PictureType.UNKNOWN;
-                case 0x02:
-                    return PictureType.EMF;
-                case 0x03:
-                    return PictureType.WMF;
-                case 0x04:
-                    return PictureType.PICT;
-                case 0x05:
-                    return PictureType.JPEG;
-                case 0x06:
-                    return PictureType.PNG;
-                case 0x07:
-                    return PictureType.BMP;
-                case 0x11:
-                    return PictureType.TIFF;
-                case 0x12:
-                    return PictureType.JPEG;
-                default:
-                    return PictureType.UNKNOWN;
-            }
+        if (escherRecord instanceof EscherBSERecord bseRecord) {
+            return switch ( bseRecord.getBlipTypeWin32() ) {
+                case 0x00 -> PictureType.UNKNOWN;
+                case 0x01 -> PictureType.UNKNOWN;
+                case 0x02 -> PictureType.EMF;
+                case 0x03 -> PictureType.WMF;
+                case 0x04 -> PictureType.PICT;
+                case 0x05 -> PictureType.JPEG;
+                case 0x06 -> PictureType.PNG;
+                case 0x07 -> PictureType.BMP;
+                case 0x11 -> PictureType.TIFF;
+                case 0x12 -> PictureType.JPEG;
+                default -> PictureType.UNKNOWN;
+            };
         }
 
         Enum<?> recordType = escherRecord.getGenericRecordType();
         if (!(recordType instanceof EscherRecordTypes escherRecordType)) {
             throw new AssertionError("Expected EscherRecordTypes");
         }
-        switch (escherRecordType) {
-            case BLIP_EMF:
-                return PictureType.EMF;
-            case BLIP_WMF:
-                return PictureType.WMF;
-            case BLIP_PICT:
-                return PictureType.PICT;
-            case BLIP_JPEG:
-                return PictureType.JPEG;
-            case BLIP_PNG:
-                return PictureType.PNG;
-            case BLIP_DIB:
-                return PictureType.BMP;
-            case BLIP_TIFF:
-                return PictureType.TIFF;
-            default:
-                return PictureType.UNKNOWN;
-        }
+        return switch (escherRecordType) {
+            case BLIP_EMF -> PictureType.EMF;
+            case BLIP_WMF -> PictureType.WMF;
+            case BLIP_PICT -> PictureType.PICT;
+            case BLIP_JPEG -> PictureType.JPEG;
+            case BLIP_PNG -> PictureType.PNG;
+            case BLIP_DIB -> PictureType.BMP;
+            case BLIP_TIFF -> PictureType.TIFF;
+            default -> PictureType.UNKNOWN;
+        };
     }
 
     /**

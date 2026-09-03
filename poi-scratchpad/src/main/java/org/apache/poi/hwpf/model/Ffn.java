@@ -173,8 +173,7 @@ public final class Ffn {
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof Ffn)) return false;
-        Ffn o = (Ffn) other;
+        if (!(other instanceof Ffn o)) return false;
 
         return (
                 o._cbFfnM1 == this._cbFfnM1

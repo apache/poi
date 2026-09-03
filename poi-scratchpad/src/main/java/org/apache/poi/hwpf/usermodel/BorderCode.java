@@ -76,8 +76,7 @@ public final class BorderCode implements Duplicatable {
   @Override
   public boolean equals(Object o)
   {
-    if (!(o instanceof BorderCode)) return false;
-    BorderCode brc = (BorderCode)o;
+    if (!(o instanceof BorderCode brc)) return false;
     return _info == brc._info && _info2 == brc._info2;
   }
 

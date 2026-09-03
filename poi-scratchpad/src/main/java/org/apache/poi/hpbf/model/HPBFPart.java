@@ -59,10 +59,10 @@ public abstract class HPBFPart {
         for(int i=0; i<path.length-1; i++) {
             try {
                 Entry entry = dir.getEntry(path[i]);
-                if (!(entry instanceof DirectoryNode)) {
+                if (!(entry instanceof DirectoryNode node)) {
                     throw new IllegalArgumentException("Had unexpected type of entry for path: " + path[i] + ": " + entry);
                 }
-                dir = (DirectoryNode) entry;
+                dir = node;
             } catch (FileNotFoundException e) {
                 throw new IllegalArgumentException("File invalid - failed to find directory entry '"
                         + path[i] + "': " + e);

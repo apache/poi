@@ -176,17 +176,17 @@ public class MAPIMessage extends POIReadOnlyDocument {
         ArrayList<RecipientChunks> recipients = new ArrayList<>();
         for (ChunkGroup group : chunkGroups) {
             // Should only ever be one of each of these
-            if (group instanceof Chunks) {
-                mainChunks = (Chunks) group;
-            } else if (group instanceof NameIdChunks) {
-                nameIdChunks = (NameIdChunks) group;
-            } else if (group instanceof RecipientChunks) {
-                recipients.add((RecipientChunks) group);
+            if (group instanceof Chunks chunks) {
+                mainChunks = chunks;
+            } else if (group instanceof NameIdChunks idChunks) {
+                nameIdChunks = idChunks;
+            } else if (group instanceof RecipientChunks rc) {
+                recipients.add(rc);
             }
 
             // Can be multiple of these - add to list(s)
-            if (group instanceof AttachmentChunks) {
-                attachments.add((AttachmentChunks) group);
+            if (group instanceof AttachmentChunks ac) {
+                attachments.add(ac);
             }
         }
         attachmentChunks = attachments.toArray(new AttachmentChunks[0]);

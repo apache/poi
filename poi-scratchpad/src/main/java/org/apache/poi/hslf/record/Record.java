@@ -198,8 +198,7 @@ public abstract class Record implements GenericRecord
         // Handling for special kinds of records follow
 
         // If it's a position aware record, tell it where it is
-        if(toReturn instanceof PositionDependentRecord) {
-            PositionDependentRecord pdr = (PositionDependentRecord)toReturn;
+        if(toReturn instanceof PositionDependentRecord pdr) {
             pdr.setLastOnDiskOffset(start);
         }
 

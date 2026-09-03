@@ -56,7 +56,7 @@ public final class EscherTextboxWrapper extends RecordContainer {
         byte[] data = _escherRecord.getData();
         _children = Record.findChildRecords(data,0,data.length);
         for (org.apache.poi.hslf.record.Record r : this._children) {
-            if (r instanceof StyleTextPropAtom) { this.styleTextPropAtom = (StyleTextPropAtom) r; }
+            if (r instanceof StyleTextPropAtom stpa) { this.styleTextPropAtom = stpa; }
         }
     }
 

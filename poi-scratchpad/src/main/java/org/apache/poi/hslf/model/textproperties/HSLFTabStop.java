@@ -100,10 +100,9 @@ public class HSLFTabStop implements TabStop, Duplicatable, GenericRecord {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof HSLFTabStop)) {
+        if (!(obj instanceof HSLFTabStop other)) {
             return false;
         }
-        HSLFTabStop other = (HSLFTabStop) obj;
         if (position != other.position) {
             return false;
         }

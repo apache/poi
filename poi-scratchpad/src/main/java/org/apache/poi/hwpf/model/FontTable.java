@@ -137,8 +137,7 @@ public final class FontTable
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof FontTable)) return false;
-        FontTable o = (FontTable)other;
+        if (!(other instanceof FontTable o)) return false;
 
         if (o._stringCount != this._stringCount
                 || o._extraDataSz != this._extraDataSz

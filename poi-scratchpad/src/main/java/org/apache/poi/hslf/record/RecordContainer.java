@@ -260,12 +260,12 @@ public abstract class RecordContainer extends Record
         // Loop over child records, looking for interesting ones
         for (org.apache.poi.hslf.record.Record record : br.getChildRecords()) {
             // Tell parent aware records of their parent
-            if (record instanceof ParentAwareRecord) {
-                ((ParentAwareRecord) record).setParentRecord(br);
+            if (record instanceof ParentAwareRecord par) {
+                par.setParentRecord(br);
             }
             // Walk on down for the case of container records
-            if (record instanceof RecordContainer) {
-                handleParentAwareRecords((RecordContainer)record);
+            if (record instanceof RecordContainer rc) {
+                handleParentAwareRecords(rc);
             }
         }
     }
