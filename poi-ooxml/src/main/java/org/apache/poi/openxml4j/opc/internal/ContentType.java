@@ -20,8 +20,8 @@ package org.apache.poi.openxml4j.opc.internal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -206,13 +206,14 @@ public final class ContentType {
 
     @Override
     public boolean equals(Object obj) {
-        return (!(obj instanceof ContentType))
-                || (StringUtil.equalsIgnoreCase(this.toString(), obj.toString()));
+        return (obj instanceof ContentType)
+                && StringUtil.equalsIgnoreCase(this.toString(), obj.toString());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type,subType,parameters);
+        // must be consistent with the case-insensitive comparison in equals()
+        return this.toString().toLowerCase(Locale.ROOT).hashCode();
     }
 
     /* Getters */

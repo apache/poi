@@ -20,6 +20,7 @@ package org.apache.poi.openxml4j.opc;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -111,6 +112,27 @@ public final class TestContentType {
     void testContentTypeParameterFailure(String contentType) {
         assertThrows(InvalidFormatException.class, () -> new ContentType(contentType),
             "Must have fail for content type: '" + contentType + "' !");
+    }
+
+    /**
+     * A content type is only ever equal to another content type, and the
+     * comparison ignores case (RFC 2616 media types are case-insensitive).
+     */
+    @Test
+    void testEqualsAndHashCode() throws InvalidFormatException {
+        ContentType type = new ContentType("text/xml");
+
+        assertEquals(type, new ContentType("text/xml"));
+        assertEquals(type, new ContentType("TEXT/XML"));
+        assertEquals(type.hashCode(), new ContentType("TEXT/XML").hashCode(),
+            "equal content types must have equal hash codes");
+
+        assertNotEquals(type, new ContentType("text/plain"));
+
+        // must not claim equality with unrelated types
+        assertNotEquals(type, "text/xml");
+        assertNotEquals(type, new Object());
+        assertNotEquals(null, type);
     }
 
     /**

@@ -529,6 +529,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         for (CTCell ctCell : _row.getCArray()) {
             if(ctCell == removed.getCTCell()) {
                 _row.removeC(i);
+                break;
             }
             i++;
         }
