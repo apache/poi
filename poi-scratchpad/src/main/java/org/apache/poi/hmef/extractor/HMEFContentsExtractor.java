@@ -97,9 +97,9 @@ public final class HMEFContentsExtractor {
         }
 
         try (OutputStream fout = Files.newOutputStream(dest.toPath())) {
-            if (body instanceof MAPIStringAttribute) {
+            if (body instanceof MAPIStringAttribute stringAttribute) {
                 // Save in a predictable encoding, not raw bytes
-                String text = ((MAPIStringAttribute) body).getDataString();
+                String text = stringAttribute.getDataString();
                 fout.write(text.getBytes(StringUtil.UTF8));
             } else {
                 // Save the raw bytes, should be raw RTF

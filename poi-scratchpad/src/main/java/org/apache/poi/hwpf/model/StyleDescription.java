@@ -218,9 +218,8 @@ public final class StyleDescription {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!(obj instanceof StyleDescription))
+        if (!(obj instanceof StyleDescription other))
             return false;
-        StyleDescription other = (StyleDescription) obj;
         if (!Objects.equals(_name, other._name)) {
             return false;
         }

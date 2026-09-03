@@ -73,24 +73,15 @@ public final class HeadersFootersContainer extends RecordContainer {
      */
     private void findInterestingChildren() {
         for (Record child : _children) {
-            if (child instanceof HeadersFootersAtom) {
-                hdAtom = (HeadersFootersAtom) child;
-            } else if (child instanceof CString) {
-                CString cs = (CString) child;
+            if (child instanceof HeadersFootersAtom atom) {
+                hdAtom = atom;
+            } else if (child instanceof CString cs) {
                 int opts = cs.getOptions() >> 4;
                 switch (opts) {
-                    case USERDATEATOM:
-                        csDate = cs;
-                        break;
-                    case HEADERATOM:
-                        csHeader = cs;
-                        break;
-                    case FOOTERATOM:
-                        csFooter = cs;
-                        break;
-                    default:
-                        LOG.atWarn().log("Unexpected CString.Options in HeadersFootersContainer: {}", box(opts));
-                        break;
+                    case USERDATEATOM -> csDate = cs;
+                    case HEADERATOM -> csHeader = cs;
+                    case FOOTERATOM -> csFooter = cs;
+                    default -> LOG.atWarn().log("Unexpected CString.Options in HeadersFootersContainer: {}", box(opts));
                 }
             } else {
                 LOG.atWarn().log("Unexpected record in HeadersFootersContainer: {}", child);

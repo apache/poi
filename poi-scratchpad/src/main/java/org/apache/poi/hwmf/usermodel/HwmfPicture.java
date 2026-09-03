@@ -136,8 +136,8 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                     }
                 }
 
-                if (wr instanceof HwmfCharsetAware) {
-                    ((HwmfCharsetAware)wr).setCharsetProvider(this::getDefaultCharset);
+                if (wr instanceof HwmfCharsetAware charsetAware) {
+                    charsetAware.setCharsetProvider(this::getDefaultCharset);
                 }
             }
         }
@@ -220,10 +220,10 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
         WmfSetWindowOrg wOrg = null;
         WmfSetWindowExt wExt = null;
         for (HwmfRecord r : getRecords()) {
-            if (r instanceof WmfSetWindowOrg) {
-                wOrg = (WmfSetWindowOrg)r;
-            } else if (r instanceof WmfSetWindowExt) {
-                wExt = (WmfSetWindowExt)r;
+            if (r instanceof WmfSetWindowOrg org) {
+                wOrg = org;
+            } else if (r instanceof WmfSetWindowExt ext) {
+                wExt = ext;
             }
             if (wOrg != null && wExt != null) {
                 return new Rectangle2D.Double(wOrg.getX(), wOrg.getY(), wExt.getSize().getWidth(), wExt.getSize().getHeight());

@@ -57,14 +57,14 @@ public final class ExVideoContainer extends RecordContainer {
 
         // First child should be the ExMediaAtom
         Record child = _children[0];
-        if(child instanceof ExMediaAtom) {
-            mediaAtom = (ExMediaAtom) child;
+        if(child instanceof ExMediaAtom atom) {
+            mediaAtom = atom;
         } else {
             LOG.atError().log("First child record wasn't a ExMediaAtom, was of type {}", box(child.getRecordType()));
         }
         child = _children[1];
-        if(child instanceof CString) {
-            pathAtom = (CString) child;
+        if(child instanceof CString cs) {
+            pathAtom = cs;
         } else {
             LOG.atError().log("Second child record wasn't a CString, was of type {}", box(child.getRecordType()));
         }

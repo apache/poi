@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
@@ -667,7 +666,7 @@ public class HemfPlusBrush {
             if (positions == null) {
                 setter.accept(null);
             } else {
-                setter.accept(IntStream.range(0, positions.length).boxed().map(sup).collect(Collectors.toList()));
+                setter.accept(IntStream.range(0, positions.length).boxed().map(sup).toList());
             }
         }
 

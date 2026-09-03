@@ -122,10 +122,9 @@ public class HSLFTabStopPropCollection extends TextProp {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof HSLFTabStopPropCollection)) {
+        if (!(obj instanceof HSLFTabStopPropCollection other)) {
             return false;
         }
-        HSLFTabStopPropCollection other = (HSLFTabStopPropCollection) obj;
         if (!super.equals(other)) {
             return false;
         }

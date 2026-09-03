@@ -65,9 +65,9 @@ public final class HeadersFooters {
 
         if (hdd == null) {
             for (Record ch : doc.getChildRecords()) {
-                if (ch instanceof HeadersFootersContainer
-                    && ((HeadersFootersContainer) ch).getOptions() == headerFooterType) {
-                    hdd = (HeadersFootersContainer) ch;
+                if (ch instanceof HeadersFootersContainer hfc
+                    && hfc.getOptions() == headerFooterType) {
+                    hdd = hfc;
                     break;
                 }
             }
@@ -275,7 +275,7 @@ public final class HeadersFooters {
         boolean visible;
         if(_ppt2007){
             HSLFSimpleShape ss = _sheet.getPlaceholder(placeholderId);
-            visible = ss instanceof HSLFTextShape && ((HSLFTextShape)ss).getText() != null;
+            visible = ss instanceof HSLFTextShape textShape && textShape.getText() != null;
         } else {
             visible = _container.getHeadersFootersAtom().getFlag(flag);
         }
@@ -286,7 +286,7 @@ public final class HeadersFooters {
         String text;
         if (_ppt2007) {
             HSLFSimpleShape ss = _sheet.getPlaceholder(ph);
-            text = (ss instanceof HSLFTextShape) ? ((HSLFTextShape)ss).getText() : null;
+            text = (ss instanceof HSLFTextShape textShape) ? textShape.getText() : null;
 
             // default text in master placeholders is not visible
             if("*".equals(text)) {

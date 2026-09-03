@@ -63,8 +63,8 @@ public class HwmfEmbeddedIterator implements Iterator<HwmfEmbedded> {
                     current = obj;
                     return true;
                 }
-                if (obj instanceof HwmfEscape && ((HwmfEscape)obj).getEscapeFunction() == EscapeFunction.META_ESCAPE_ENHANCED_METAFILE) {
-                    WmfEscapeEMF emfData = ((HwmfEscape)obj).getEscapeData();
+                if (obj instanceof HwmfEscape esc && esc.getEscapeFunction() == EscapeFunction.META_ESCAPE_ENHANCED_METAFILE) {
+                    WmfEscapeEMF emfData = esc.getEscapeData();
                     if (emfData.isValid()) {
                         current = obj;
                         return true;
@@ -91,11 +91,10 @@ public class HwmfEmbeddedIterator implements Iterator<HwmfEmbedded> {
     }
 
     private HwmfEmbedded checkHwmfImageRecord() {
-        if (!(current instanceof HwmfImageRecord)) {
+        if (!(current instanceof HwmfImageRecord hir)) {
             return null;
         }
 
-        HwmfImageRecord hir = (HwmfImageRecord)current;
         current = null;
 
         HwmfEmbedded emb = new HwmfEmbedded();

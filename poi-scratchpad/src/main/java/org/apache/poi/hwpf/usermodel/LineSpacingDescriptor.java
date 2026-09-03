@@ -75,8 +75,7 @@ public final class LineSpacingDescriptor implements Duplicatable {
   @Override
   public boolean equals(Object o)
   {
-    if (!(o instanceof LineSpacingDescriptor)) return false;
-    LineSpacingDescriptor lspd = (LineSpacingDescriptor)o;
+    if (!(o instanceof LineSpacingDescriptor lspd)) return false;
 
     return _dyaLine == lspd._dyaLine && _fMultiLinespace == lspd._fMultiLinespace;
   }

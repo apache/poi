@@ -159,8 +159,7 @@ public final class PicturesTable {
      */
     private void searchForPictures(List<EscherRecord> escherRecords, List<Picture> pictures) {
         for (EscherRecord escherRecord : escherRecords) {
-            if (escherRecord instanceof EscherBSERecord) {
-                EscherBSERecord bse = (EscherBSERecord) escherRecord;
+            if (escherRecord instanceof EscherBSERecord bse) {
                 EscherBlipRecord blip = bse.getBlipRecord();
                 if (blip != null) {
                     pictures.add(new Picture(blip));
@@ -172,10 +171,10 @@ public final class PicturesTable {
                         EscherRecord record = recordFactory.createRecord(
                             _mainStream, bse.getOffset());
 
-                        if (record instanceof EscherBlipRecord) {
+                        if (record instanceof EscherBlipRecord blipRecord) {
                             record.fillFields(_mainStream, bse.getOffset(),
                                 recordFactory);
-                            blip = (EscherBlipRecord) record;
+                            blip = blipRecord;
                             pictures.add(new Picture(blip));
                         }
                     } catch (Exception exc) {

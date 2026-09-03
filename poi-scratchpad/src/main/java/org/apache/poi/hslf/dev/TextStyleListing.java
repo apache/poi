@@ -103,8 +103,7 @@ public final class TextStyleListing {
             System.out.println("          = " + tp.getValue());
             System.out.println("          @ " + tp.getMask());
 
-            if(tp instanceof BitMaskTextProp) {
-                BitMaskTextProp bmtp = (BitMaskTextProp)tp;
+            if(tp instanceof BitMaskTextProp bmtp) {
                 String[] subPropNames = bmtp.getSubPropNames();
                 boolean[] subPropMatches = bmtp.getSubPropMatches();
                 for(int j=0; j<subPropNames.length; j++) {

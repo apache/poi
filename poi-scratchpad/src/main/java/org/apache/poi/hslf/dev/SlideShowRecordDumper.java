@@ -165,10 +165,10 @@ public final class SlideShowRecordDumper {
     }
 
     public void printEscherRecord(EscherRecord er, int indent) {
-        if (er instanceof EscherContainerRecord) {
-            printEscherContainerRecord( (EscherContainerRecord)er, indent );
-        } else if (er instanceof EscherTextboxRecord) {
-            printEscherTextBox( (EscherTextboxRecord)er, indent );
+        if (er instanceof EscherContainerRecord ecr) {
+            printEscherContainerRecord( ecr, indent );
+        } else if (er instanceof EscherTextboxRecord etr) {
+            printEscherTextBox( etr, indent );
         } else {
             ps.print( tabs.substring(0, indent) );
             ps.println(er);
@@ -182,19 +182,18 @@ public final class SlideShowRecordDumper {
         EscherTextboxWrapper etw = new EscherTextboxWrapper(tbRecord);
         Record prevChild = null;
         for (Record child : etw.getChildRecords()) {
-            if (child instanceof StyleTextPropAtom) {
+            if (child instanceof StyleTextPropAtom tsp) {
                 // need preceding Text[Chars|Bytes]Atom to initialize the data structure
                 String text;
-                if (prevChild instanceof TextCharsAtom) {
-                    text = ((TextCharsAtom)prevChild).getText();
-                } else if (prevChild instanceof TextBytesAtom) {
-                    text = ((TextBytesAtom)prevChild).getText();
+                if (prevChild instanceof TextCharsAtom tca) {
+                    text = tca.getText();
+                } else if (prevChild instanceof TextBytesAtom tba) {
+                    text = tba.getText();
                 } else {
                     ps.println(ind+"Error! Couldn't find preceding TextAtom for style");
                     continue;
                 }
 
-                StyleTextPropAtom tsp = (StyleTextPropAtom)child;
                 tsp.setParentTextSize(text.length());
             }
             ps.println(ind+ child);

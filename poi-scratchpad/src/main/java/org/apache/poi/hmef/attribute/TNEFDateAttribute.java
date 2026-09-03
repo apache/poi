@@ -91,8 +91,8 @@ public final class TNEFDateAttribute extends TNEFAttribute {
       if(attr == null) {
          return null;
       }
-      if(attr instanceof TNEFDateAttribute) {
-         return ((TNEFDateAttribute)attr).getDate();
+      if(attr instanceof TNEFDateAttribute dateAttribute) {
+         return dateAttribute.getDate();
       }
 
       LOG.atWarn().log("Warning, non date property found: {}", attr);

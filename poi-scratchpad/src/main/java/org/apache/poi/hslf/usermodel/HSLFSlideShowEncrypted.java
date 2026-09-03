@@ -101,10 +101,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
         UserEditAtom userEditAtomWithEncryption = null;
         for (Map.Entry<Integer, Record> me : recordMap.descendingMap().entrySet()) {
             org.apache.poi.hslf.record.Record r = me.getValue();
-            if (!(r instanceof UserEditAtom)) {
+            if (!(r instanceof UserEditAtom uea)) {
                 continue;
             }
-            UserEditAtom uea = (UserEditAtom)r;
             if (uea.getEncryptSessionPersistIdRef() != -1) {
                 userEditAtomWithEncryption = uea;
                 break;
@@ -117,10 +116,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
         }
 
         org.apache.poi.hslf.record.Record r = recordMap.get(userEditAtomWithEncryption.getPersistPointersOffset());
-        if (!(r instanceof PersistPtrHolder)) {
+        if (!(r instanceof PersistPtrHolder ptr)) {
             throw new RecordFormatException("Encountered an unexpected record-type: " + r);
         }
-        PersistPtrHolder ptr = (PersistPtrHolder)r;
 
         Integer encOffset = ptr.getSlideLocationsLookup().get(userEditAtomWithEncryption.getEncryptSessionPersistIdRef());
         if (encOffset == null) {
@@ -136,10 +134,10 @@ public class HSLFSlideShowEncrypted implements Closeable {
             recordMap.put(encOffset, r);
         }
 
-        if (!(r instanceof DocumentEncryptionAtom)) {
+        if (!(r instanceof DocumentEncryptionAtom atom)) {
             throw new EncryptedPowerPointFileException("Did not have a DocumentEncryptionAtom: " + r);
         }
-        this.dea = (DocumentEncryptionAtom)r;
+        this.dea = atom;
 
         final String pass = password == null ? Biff8EncryptionKey.getCurrentUserPassword() : password;
         EncryptionInfo ei = getEncryptionInfo();
@@ -461,16 +459,16 @@ public class HSLFSlideShowEncrypted implements Closeable {
             if (!(r instanceof PositionDependentRecord pdr)) {
                 throw new AssertionError("Expected PositionDependentRecord");
             }
-            if (pdr instanceof UserEditAtom) {
-                uea = (UserEditAtom)pdr;
+            if (pdr instanceof UserEditAtom atom) {
+                uea = atom;
                 continue;
             }
 
-            if (pdr instanceof PersistPtrHolder) {
+            if (pdr instanceof PersistPtrHolder holder) {
                 if (pph != null) {
                     duplicatedCount++;
                 }
-                pph = (PersistPtrHolder)pdr;
+                pph = holder;
                 for (Map.Entry<Integer,Integer> me : pph.getSlideLocationsLookup().entrySet()) {
                     Integer oldOffset = slideLocations.put(me.getKey(), me.getValue());
                     if (oldOffset != null) {
@@ -515,15 +513,15 @@ public class HSLFSlideShowEncrypted implements Closeable {
         UserEditAtom uea = null;
         List<org.apache.poi.hslf.record.Record> recordList = new ArrayList<>();
         for (org.apache.poi.hslf.record.Record r : records) {
-            if (r instanceof DocumentEncryptionAtom) {
-                deaOffset = ((DocumentEncryptionAtom)r).getLastOnDiskOffset();
+            if (r instanceof DocumentEncryptionAtom dea) {
+                deaOffset = dea.getLastOnDiskOffset();
                 continue;
-            } else if (r instanceof UserEditAtom) {
-                uea = (UserEditAtom)r;
+            } else if (r instanceof UserEditAtom atom) {
+                uea = atom;
                 deaSlideId = uea.getEncryptSessionPersistIdRef();
                 uea.setEncryptSessionPersistIdRef(-1);
-            } else if (r instanceof PersistPtrHolder) {
-                ptr = (PersistPtrHolder)r;
+            } else if (r instanceof PersistPtrHolder holder) {
+                ptr = holder;
             }
             recordList.add(r);
         }

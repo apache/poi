@@ -166,18 +166,14 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
         dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);
 
         for (EscherContainerRecord c : dgContainer.getChildContainers()) {
-            EscherSpRecord spr = null;
-            switch(EscherRecordTypes.forTypeID(c.getRecordId())){
-                case SPGR_CONTAINER:
+            EscherSpRecord spr = switch(EscherRecordTypes.forTypeID(c.getRecordId())){
+                case SPGR_CONTAINER -> {
                     EscherContainerRecord dc = (EscherContainerRecord)c.getChild(0);
-                    spr = dc.getChildById(EscherSpRecord.RECORD_ID);
-                    break;
-                case SP_CONTAINER:
-                    spr = c.getChildById(EscherSpRecord.RECORD_ID);
-                    break;
-                default:
-                    break;
-            }
+                    yield dc.getChildById(EscherSpRecord.RECORD_ID);
+                }
+                case SP_CONTAINER -> c.getChildById(EscherSpRecord.RECORD_ID);
+                default -> null;
+            };
             if(spr != null) {
                 spr.setShapeId(allocateShapeId());
             }
@@ -411,8 +407,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 
         if (binaryTags != null) {
             for (final org.apache.poi.hslf.record.Record record : binaryTags.getChildRecords()) {
-                if (record instanceof Comment2000) {
-                    comments.add(new HSLFComment((Comment2000)record));
+                if (record instanceof Comment2000 comment) {
+                    comments.add(new HSLFComment(comment));
                 }
             }
         }
