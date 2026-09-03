@@ -52,8 +52,8 @@ final class ArgumentsEvaluator {
     public double evaluateDateArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
         ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, (short) srcCellCol);
 
-        if (ve instanceof StringEval) {
-            String strVal = ((StringEval) ve).getStringValue();
+        if (ve instanceof StringEval se) {
+            String strVal = se.getStringValue();
             Double dVal = OperandResolver.parseDouble(strVal);
             if (dVal != null) {
                 return dVal.doubleValue();
@@ -80,9 +80,8 @@ final class ArgumentsEvaluator {
 
         if (arg instanceof StringEval) {
             return new double[]{ evaluateDateArg(arg, srcCellRow, srcCellCol) };
-        } else if (arg instanceof AreaEvalBase) {
+        } else if (arg instanceof AreaEvalBase area) {
             List<Double> valuesList = new ArrayList<>();
-            AreaEvalBase area = (AreaEvalBase) arg;
             for (int i = area.getFirstRow(); i <= area.getLastRow(); i++) {
                 for (int j = area.getFirstColumn(); j <= area.getLastColumn(); j++) {
                     // getValue() is replaced with getAbsoluteValue() because loop variables i, j are

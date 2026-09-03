@@ -67,8 +67,7 @@ final class SheetRefEvaluator {
         if(cell != null && cell.getCellType() == CellType.FORMULA){
             EvaluationWorkbook wb = _bookEvaluator.getWorkbook();
             for(Ptg ptg : wb.getFormulaTokens(cell)){
-                if(ptg instanceof FuncVarPtg){
-                    FuncVarPtg f = (FuncVarPtg)ptg;
+                if(ptg instanceof FuncVarPtg f){
                     if("SUBTOTAL".equals(f.getName())) {
                         subtotal = true;
                         break;

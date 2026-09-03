@@ -411,8 +411,8 @@ public abstract class HSSFShape implements Shape {
             return null;
         }
         EscherProperty ep = eor.lookup(EscherPropertyTypes.GROUPSHAPE__SHAPENAME);
-        if (ep instanceof EscherComplexProperty) {
-            return StringUtil.getFromUnicodeLE(((EscherComplexProperty)ep).getComplexData());
+        if (ep instanceof EscherComplexProperty complexProp) {
+            return StringUtil.getFromUnicodeLE(complexProp.getComplexData());
         }
         return null;
     }

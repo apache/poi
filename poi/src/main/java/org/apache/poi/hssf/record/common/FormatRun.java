@@ -54,10 +54,9 @@ public class FormatRun implements Comparable<FormatRun>, GenericRecord {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof FormatRun)) {
+        if (!(o instanceof FormatRun other)) {
             return false;
         }
-        FormatRun other = (FormatRun) o;
 
         return _character == other._character && _fontIndex == other._fontIndex;
     }

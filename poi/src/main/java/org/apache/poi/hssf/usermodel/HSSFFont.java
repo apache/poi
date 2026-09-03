@@ -357,8 +357,7 @@ public final class HSSFFont implements Font {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null) return false;
-        if (obj instanceof HSSFFont) {
-            final HSSFFont other = (HSSFFont) obj;
+        if (obj instanceof HSSFFont other) {
             if (font == null) {
                 if (other.font != null) {
                     return false;

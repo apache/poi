@@ -967,20 +967,11 @@ public final class HSSFChart {
         /* package */ void insertData(LinkedDataRecord data){
             switch(data.getLinkType()){
 
-                case LinkedDataRecord.LINK_TYPE_TITLE_OR_TEXT:
-                    dataName = data;
-                    break;
-                case LinkedDataRecord.LINK_TYPE_VALUES:
-                    dataValues = data;
-                    break;
-                case LinkedDataRecord.LINK_TYPE_CATEGORIES:
-                    dataCategoryLabels = data;
-                    break;
-                case LinkedDataRecord.LINK_TYPE_SECONDARY_CATEGORIES:
-                    dataSecondaryCategoryLabels = data;
-                    break;
-                default:
-                    throw new IllegalStateException("Invalid link type: " + data.getLinkType());
+                case LinkedDataRecord.LINK_TYPE_TITLE_OR_TEXT -> dataName = data;
+                case LinkedDataRecord.LINK_TYPE_VALUES -> dataValues = data;
+                case LinkedDataRecord.LINK_TYPE_CATEGORIES -> dataCategoryLabels = data;
+                case LinkedDataRecord.LINK_TYPE_SECONDARY_CATEGORIES -> dataSecondaryCategoryLabels = data;
+                default -> throw new IllegalStateException("Invalid link type: " + data.getLinkType());
             }
         }
 
@@ -1309,9 +1300,8 @@ public final class HSSFChart {
                         seriesIdx++;
                     }
                 }
-            } else if (record instanceof DataFormatRecord) {
+            } else if (record instanceof DataFormatRecord dataFormatRecord) {
                 if (chartEntered && !removeSeries) {
-                    DataFormatRecord dataFormatRecord = (DataFormatRecord) record;
                     dataFormatRecord.setSeriesIndex((short) seriesIdx);
                     dataFormatRecord.setSeriesNumber((short) seriesIdx);
                 }

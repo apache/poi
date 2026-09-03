@@ -197,14 +197,14 @@ public final class ArrayPtg extends Ptg {
         if (o instanceof String) {
             return "\"" + o + "\"";
         }
-        if (o instanceof Double) {
-            return NumberToTextConverter.toText((Double) o);
+        if (o instanceof Double d) {
+            return NumberToTextConverter.toText(d);
         }
-        if (o instanceof Boolean) {
-            return (Boolean) o ? "TRUE" : "FALSE";
+        if (o instanceof Boolean b) {
+            return b ? "TRUE" : "FALSE";
         }
-        if (o instanceof ErrorConstant) {
-            return ((ErrorConstant)o).getText();
+        if (o instanceof ErrorConstant ec) {
+            return ec.getText();
         }
         throw new IllegalArgumentException("Unexpected constant class (" + o.getClass().getName() + ")");
     }

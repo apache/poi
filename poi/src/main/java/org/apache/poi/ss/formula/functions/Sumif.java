@@ -100,10 +100,10 @@ public final class Sumif extends Var2or3ArgFunction {
             return 0.0D;
         } else {
             ValueEval addend = aeSum.getRelativeValue(relRowIndex, relColIndex);
-            if (addend instanceof NumberEval) {
-                return ((NumberEval) addend).getNumberValue();
-            } else if (addend instanceof ErrorEval) {
-                throw new EvaluationException((ErrorEval)addend);
+            if (addend instanceof NumberEval ne) {
+                return ne.getNumberValue();
+            } else if (addend instanceof ErrorEval ee) {
+                throw new EvaluationException(ee);
             } else {
                 // everything else (including string and boolean values) counts as zero
                 return 0.0;
@@ -116,21 +116,21 @@ public final class Sumif extends Var2or3ArgFunction {
      * @throws EvaluationException if eval is not a reference
      */
     private static AreaEval createSumRange(ValueEval eval, AreaEval aeRange) throws EvaluationException {
-        if (eval instanceof AreaEval) {
-            return ((AreaEval) eval).offset(0, aeRange.getHeight()-1, 0, aeRange.getWidth()-1);
+        if (eval instanceof AreaEval ae) {
+            return ae.offset(0, aeRange.getHeight()-1, 0, aeRange.getWidth()-1);
         }
-        if (eval instanceof RefEval) {
-            return ((RefEval)eval).offset(0, aeRange.getHeight()-1, 0, aeRange.getWidth()-1);
+        if (eval instanceof RefEval re) {
+            return re.offset(0, aeRange.getHeight()-1, 0, aeRange.getWidth()-1);
         }
         throw new EvaluationException(ErrorEval.VALUE_INVALID);
     }
 
     private static AreaEval convertRangeArg(ValueEval eval) throws EvaluationException {
-        if (eval instanceof AreaEval) {
-            return (AreaEval) eval;
+        if (eval instanceof AreaEval ae) {
+            return ae;
         }
-        if (eval instanceof RefEval) {
-            return ((RefEval)eval).offset(0, 0, 0, 0);
+        if (eval instanceof RefEval re) {
+            return re.offset(0, 0, 0, 0);
         }
         throw new EvaluationException(ErrorEval.VALUE_INVALID);
     }

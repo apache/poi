@@ -44,8 +44,7 @@ public final class ConcatEval  extends Fixed2ArgFunction {
     }
 
     private Object getText(ValueEval ve) {
-        if (ve instanceof StringValueEval) {
-            StringValueEval sve = (StringValueEval) ve;
+        if (ve instanceof StringValueEval sve) {
             return sve.getStringValue();
         }
         if (ve == BlankEval.instance) {

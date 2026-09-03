@@ -171,14 +171,14 @@ public class EventWorkbookBuilder {
          * @param record the record to be processed
          */
         public void processRecordInternally(org.apache.poi.hssf.record.Record record) {
-            if(record instanceof BoundSheetRecord) {
-                boundSheetRecords.add((BoundSheetRecord)record);
+            if(record instanceof BoundSheetRecord bsr) {
+                boundSheetRecords.add(bsr);
             }
-            else if(record instanceof ExternSheetRecord) {
-                externSheetRecords.add((ExternSheetRecord)record);
+            else if(record instanceof ExternSheetRecord esr) {
+                externSheetRecords.add(esr);
             }
-            else if(record instanceof SSTRecord) {
-                sstRecord = (SSTRecord)record;
+            else if(record instanceof SSTRecord sst) {
+                sstRecord = sst;
             }
         }
     }

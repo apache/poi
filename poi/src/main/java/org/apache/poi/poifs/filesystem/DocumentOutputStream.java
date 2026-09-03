@@ -93,10 +93,10 @@ public final class DocumentOutputStream extends OutputStream {
     }
 
     private static POIFSDocument getDocument(DocumentEntry document) throws IOException {
-        if (!(document instanceof DocumentNode)) {
+        if (!(document instanceof DocumentNode node)) {
             throw new IOException("Cannot open internal document storage, " + document + " not a Document Node");
         }
-        return new POIFSDocument((DocumentNode)document);
+        return new POIFSDocument(node);
     }
 
     private static DocumentEntry createDocument(DirectoryEntry parent, String name) throws IOException {

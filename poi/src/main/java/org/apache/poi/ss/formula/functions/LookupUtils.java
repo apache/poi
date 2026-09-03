@@ -631,20 +631,15 @@ public final class LookupUtils {
 
     public static int xlookupIndexOfValue(ValueEval lookupValue, ValueVector vector, MatchMode matchMode, SearchMode searchMode) throws EvaluationException {
         ValueEval modifiedLookup = lookupValue;
-        if (lookupValue instanceof StringEval &&
+        if (lookupValue instanceof StringEval se &&
                 (matchMode == MatchMode.ExactMatchFallbackToLargerValue || matchMode == MatchMode.ExactMatchFallbackToSmallerValue)) {
-            String lookupText = ((StringEval)lookupValue).getStringValue();
+            String lookupText = se.getStringValue();
             StringBuilder sb = new StringBuilder(lookupText.length());
             boolean containsWildcard = false;
             for (char c : lookupText.toCharArray()) {
                 switch (c) {
-                    case '~':
-                    case '?':
-                    case '*':
-                        containsWildcard = true;
-                        break;
-                    default:
-                        sb.append(c);
+                    case '~', '?', '*' -> containsWildcard = true;
+                    default -> sb.append(c);
                 }
                 if (containsWildcard)
                     break;
@@ -709,7 +704,7 @@ public final class LookupUtils {
                 return i;
             }
             switch (matchMode) {
-                case ExactMatchFallbackToLargerValue:
+                case ExactMatchFallbackToLargerValue -> {
                     if (result.isLessThan()) {
                         if (bestMatchEval == null) {
                             bestMatchIdx = i;
@@ -722,8 +717,8 @@ public final class LookupUtils {
                             }
                         }
                     }
-                    break;
-                case ExactMatchFallbackToSmallerValue:
+                }
+                case ExactMatchFallbackToSmallerValue -> {
                     if (result.isGreaterThan()) {
                         if (bestMatchEval == null) {
                             bestMatchIdx = i;
@@ -736,7 +731,7 @@ public final class LookupUtils {
                             }
                         }
                     }
-                    break;
+                }
             }
         }
         return bestMatchIdx;
@@ -760,7 +755,7 @@ public final class LookupUtils {
                 return i;
             }
             switch (matchMode) {
-                case ExactMatchFallbackToLargerValue:
+                case ExactMatchFallbackToLargerValue -> {
                     if (result.isLessThan()) {
                         if (bestMatchEval == null) {
                             bestMatchIdx = i;
@@ -773,8 +768,8 @@ public final class LookupUtils {
                             }
                         }
                     }
-                    break;
-                case ExactMatchFallbackToSmallerValue:
+                }
+                case ExactMatchFallbackToSmallerValue -> {
                     if (result.isGreaterThan()) {
                         if (bestMatchEval == null) {
                             bestMatchIdx = i;
@@ -787,7 +782,7 @@ public final class LookupUtils {
                             }
                         }
                     }
-                    break;
+                }
             }
             if (result.isTypeMismatch()) {
                 int newIdx = handleMidValueTypeMismatch(lookupComparer, vector, bsi, i, reverse);
@@ -945,15 +940,15 @@ public final class LookupUtils {
             // empty string in the lookup column/row can only be matched by explicit empty string
             return new NumberLookupComparer(NumberEval.ZERO);
         }
-        if (lookupValue instanceof StringEval) {
+        if (lookupValue instanceof StringEval stringEval) {
             //TODO eventually here return a WildcardStringLookupComparer
-            return new StringLookupComparer((StringEval) lookupValue, matchExact, isMatchFunction);
+            return new StringLookupComparer(stringEval, matchExact, isMatchFunction);
         }
-        if (lookupValue instanceof NumberEval) {
-            return new NumberLookupComparer((NumberEval) lookupValue);
+        if (lookupValue instanceof NumberEval numberEval) {
+            return new NumberLookupComparer(numberEval);
         }
-        if (lookupValue instanceof BoolEval) {
-            return new BooleanLookupComparer((BoolEval) lookupValue);
+        if (lookupValue instanceof BoolEval boolEval) {
+            return new BooleanLookupComparer(boolEval);
         }
         throw new IllegalArgumentException("Bad lookup value type (" + lookupValue.getClass().getName() + ")");
     }
@@ -962,11 +957,11 @@ public final class LookupUtils {
         if (lookupValue == BlankEval.instance) {
             return new TolerantStringLookupComparer(new StringEval(""), matchExact, isMatchFunction);
         }
-        if (lookupValue instanceof BoolEval) {
-            return new BooleanLookupComparer((BoolEval) lookupValue);
+        if (lookupValue instanceof BoolEval boolEval) {
+            return new BooleanLookupComparer(boolEval);
         }
-        if (matchExact && lookupValue instanceof NumberEval) {
-            return new NumberLookupComparer((NumberEval) lookupValue);
+        if (matchExact && lookupValue instanceof NumberEval numberEval) {
+            return new NumberLookupComparer(numberEval);
         }
         return new TolerantStringLookupComparer(lookupValue, matchExact, isMatchFunction);
     }

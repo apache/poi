@@ -120,8 +120,8 @@ final class OperandClassTransformer {
             }
             return;
         }
-        if (token instanceof AbstractFunctionPtg) {
-            transformFunctionNode((AbstractFunctionPtg) token, children, desiredOperandClass, callerForceArrayFlag);
+        if (token instanceof AbstractFunctionPtg afp) {
+            transformFunctionNode(afp, children, desiredOperandClass, callerForceArrayFlag);
             return;
         }
         if (children.length > 0) {
@@ -140,16 +140,14 @@ final class OperandClassTransformer {
     }
 
     private static boolean isSingleArgSum(Ptg token) {
-        if (token instanceof AttrPtg) {
-            AttrPtg attrPtg = (AttrPtg) token;
+        if (token instanceof AttrPtg attrPtg) {
             return attrPtg.isSum();
         }
         return false;
     }
 
     private static boolean isSimpleValueFunction(Ptg token) {
-        if (token instanceof AbstractFunctionPtg) {
-            AbstractFunctionPtg aptg = (AbstractFunctionPtg) token;
+        if (token instanceof AbstractFunctionPtg aptg) {
             if (aptg.getDefaultOperandClass() != Ptg.CLASS_VALUE) {
                 return false;
             }

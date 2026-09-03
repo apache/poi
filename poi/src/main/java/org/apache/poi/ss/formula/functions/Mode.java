@@ -88,8 +88,7 @@ public final class Mode implements Function {
     }
 
     private static void collectValues(ValueEval arg, List<Double> temp) throws EvaluationException {
-        if (arg instanceof TwoDEval) {
-            TwoDEval ae = (TwoDEval) arg;
+        if (arg instanceof TwoDEval ae) {
             int width = ae.getWidth();
             int height = ae.getHeight();
             for (int rrIx = 0; rrIx < height; rrIx++) {
@@ -100,8 +99,7 @@ public final class Mode implements Function {
             }
             return;
         }
-        if (arg instanceof RefEval) {
-            RefEval re = (RefEval) arg;
+        if (arg instanceof RefEval re) {
             final int firstSheetIndex = re.getFirstSheetIndex();
             final int lastSheetIndex = re.getLastSheetIndex();
             for (int sIx = firstSheetIndex; sIx <= lastSheetIndex; sIx++) {
@@ -115,8 +113,8 @@ public final class Mode implements Function {
 
     private static void collectValue(ValueEval arg, List<Double> temp, boolean mustBeNumber)
             throws EvaluationException {
-        if (arg instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval) arg);
+        if (arg instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
         if (arg == BlankEval.instance || arg instanceof BoolEval || arg instanceof StringEval) {
             if (mustBeNumber) {
@@ -124,8 +122,8 @@ public final class Mode implements Function {
             }
             return;
         }
-        if (arg instanceof NumberEval) {
-            temp.add(Double.valueOf(((NumberEval) arg).getNumberValue()));
+        if (arg instanceof NumberEval ne) {
+            temp.add(Double.valueOf(ne.getNumberValue()));
             return;
         }
         throw new IllegalStateException("Unexpected value type (" + arg.getClass().getName() + ")");

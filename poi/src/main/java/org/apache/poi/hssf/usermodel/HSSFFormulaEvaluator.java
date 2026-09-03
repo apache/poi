@@ -199,20 +199,17 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
     @Override
     protected CellValue evaluateFormulaCellValue(Cell cell) {
         ValueEval eval = _bookEvaluator.evaluate(new HSSFEvaluationCell((HSSFCell)cell));
-        if (eval instanceof BoolEval) {
-            BoolEval be = (BoolEval) eval;
+        if (eval instanceof BoolEval be) {
             return CellValue.valueOf(be.getBooleanValue());
         }
-        if (eval instanceof NumericValueEval) {
-            NumericValueEval ne = (NumericValueEval) eval;
+        if (eval instanceof NumericValueEval ne) {
             return new CellValue(ne.getNumberValue());
         }
-        if (eval instanceof StringValueEval) {
-            StringValueEval ne = (StringValueEval) eval;
+        if (eval instanceof StringValueEval ne) {
             return new CellValue(ne.getStringValue());
         }
-        if (eval instanceof ErrorEval) {
-            return CellValue.getError(((ErrorEval)eval).getErrorCode());
+        if (eval instanceof ErrorEval ee) {
+            return CellValue.getError(ee.getErrorCode());
         }
         throw new IllegalStateException("Unexpected eval class (" + eval.getClass().getName() + ")");
     }

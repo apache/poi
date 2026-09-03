@@ -291,8 +291,7 @@ public abstract class TextFunction implements Function {
         StringBuilder sb = new StringBuilder();
         for (ValueEval arg : args) {
             try {
-                if (arg instanceof AreaEval) {
-                    AreaEval area = (AreaEval)arg;
+                if (arg instanceof AreaEval area) {
                     for (int rn=0; rn<area.getHeight(); rn++) {
                         for (int cn=0; cn<area.getWidth(); cn++) {
                             ValueEval ve = area.getRelativeValue(rn, cn);
@@ -363,12 +362,12 @@ public abstract class TextFunction implements Function {
 
                     if (valueVe == BlankEval.instance) {
                         valueDouble = 0.0;
-                    } else if (valueVe instanceof BoolEval) {
-                        evaluated = ((BoolEval) valueVe).getStringValue();
-                    } else if (valueVe instanceof NumericValueEval) {
-                        valueDouble = ((NumericValueEval) valueVe).getNumberValue();
-                    } else if (valueVe instanceof StringEval) {
-                        evaluated = ((StringEval) valueVe).getStringValue();
+                    } else if (valueVe instanceof BoolEval be) {
+                        evaluated = be.getStringValue();
+                    } else if (valueVe instanceof NumericValueEval ne) {
+                        valueDouble = ne.getNumberValue();
+                    } else if (valueVe instanceof StringEval se) {
+                        evaluated = se.getStringValue();
                         valueDouble = OperandResolver.parseDouble(evaluated);
                         if (valueDouble == null) {
                             try {
@@ -398,8 +397,7 @@ public abstract class TextFunction implements Function {
          */
         private String formatPatternValueEval2String(ValueEval ve) {
             final String format;
-            if (!(ve instanceof BoolEval) && (ve instanceof StringValueEval)) {
-                StringValueEval sve = (StringValueEval) ve;
+            if (!(ve instanceof BoolEval) && (ve instanceof StringValueEval sve)) {
                 format = sve.getStringValue();
             } else if (ve == BlankEval.instance) {
                 format = "";

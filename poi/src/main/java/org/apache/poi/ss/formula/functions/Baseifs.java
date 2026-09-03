@@ -82,8 +82,7 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
             // yield the wrong single value or produce an ERROR when the formula cell
             // lies outside the array's row/column bounds (Bug 70005).
             for (int k = 0; k < numPairs; k++) {
-                if (criteriaArgs[k] instanceof AreaEval) {
-                    AreaEval arrayCrit = (AreaEval) criteriaArgs[k];
+                if (criteriaArgs[k] instanceof AreaEval arrayCrit) {
                     if (arrayCrit.getHeight() * arrayCrit.getWidth() > 1) {
                         double total = 0.0;
                         for (int r = 0; r < arrayCrit.getHeight(); r++) {
@@ -98,8 +97,8 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
                                 validateCriteria(mp);
                                 ValueEval partial = aggregateMatchingCells(createAggregator(), sumRange, ae, mp);
                                 if (partial instanceof ErrorEval) return partial;
-                                if (partial instanceof NumberEval) {
-                                    total += ((NumberEval) partial).getNumberValue();
+                                if (partial instanceof NumberEval ne) {
+                                    total += ne.getNumberValue();
                                 }
                             }
                         }
@@ -155,8 +154,8 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
         for(I_MatchPredicate predicate : criteria) {
 
             // check for errors in predicate and return immediately using this error code
-            if(predicate instanceof ErrorMatcher) {
-                throw new EvaluationException(ErrorEval.valueOf(((ErrorMatcher)predicate).getValue()));
+            if(predicate instanceof ErrorMatcher errorMatcher) {
+                throw new EvaluationException(ErrorEval.valueOf(errorMatcher.getValue()));
             }
         }
     }
@@ -192,8 +191,8 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
                 if(matches) { // aggregate only if all of the corresponding criteria specified are true for that cell.
                     if(sumRange != null) {
                         ValueEval value = sumRange.getRelativeValue(r, c);
-                        if (value instanceof ErrorEval) {
-                            throw new EvaluationException((ErrorEval)value);
+                        if (value instanceof ErrorEval errorEval) {
+                            throw new EvaluationException(errorEval);
                         }
                         aggregator.addValue(value);
                     } else {
@@ -206,11 +205,11 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
     }
 
     protected static AreaEval convertRangeArg(ValueEval eval) throws EvaluationException {
-        if (eval instanceof AreaEval) {
-            return (AreaEval) eval;
+        if (eval instanceof AreaEval areaEval) {
+            return areaEval;
         }
-        if (eval instanceof RefEval) {
-            return ((RefEval)eval).offset(0, 0, 0, 0);
+        if (eval instanceof RefEval refEval) {
+            return refEval.offset(0, 0, 0, 0);
         }
         throw new EvaluationException(ErrorEval.VALUE_INVALID);
     }

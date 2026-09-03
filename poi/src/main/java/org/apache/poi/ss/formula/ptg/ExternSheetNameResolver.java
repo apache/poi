@@ -40,8 +40,7 @@ final class ExternSheetNameResolver {
                 sb = new StringBuilder(sheetName.length() + cellRefText.length() + 4);
                 SheetNameFormatter.appendFormat(sb, sheetName);
             }
-            if (externalSheet instanceof ExternalSheetRange) {
-                ExternalSheetRange r = (ExternalSheetRange)externalSheet;
+            if (externalSheet instanceof ExternalSheetRange r) {
                 if (! r.getFirstSheetName().equals(r.getLastSheetName())) {
                     sb.append(':');
                     // quote should appear at the beginning and end.

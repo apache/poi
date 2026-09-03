@@ -98,8 +98,7 @@ public final class Trend implements Function {
         if (arg instanceof MissingArgEval) {
             return new double[0][0];
         }
-        if (arg instanceof RefEval) {
-            RefEval re = (RefEval) arg;
+        if (arg instanceof RefEval re) {
             if (re.getNumberOfSheets() > 1) {
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
             }
@@ -111,23 +110,22 @@ public final class Trend implements Function {
             throw new IllegalStateException("Parameter may not be null.");
         }
 
-        if (eval instanceof AreaEval) {
-            AreaEval ae = (AreaEval) eval;
+        if (eval instanceof AreaEval ae) {
             int w = ae.getWidth();
             int h = ae.getHeight();
             ar = new double[h][w];
             for (int i = 0; i < h; i++) {
                 for (int j = 0; j < w; j++) {
                     ValueEval ve = ae.getRelativeValue(i, j);
-                    if (!(ve instanceof NumericValueEval)) {
+                    if (!(ve instanceof NumericValueEval nve)) {
                         throw new EvaluationException(ErrorEval.VALUE_INVALID);
                     }
-                    ar[i][j] = ((NumericValueEval)ve).getNumberValue();
+                    ar[i][j] = nve.getNumberValue();
                 }
             }
-        } else if (eval instanceof NumericValueEval) {
+        } else if (eval instanceof NumericValueEval nve) {
             ar = new double[1][1];
-            ar[0][0] = ((NumericValueEval)eval).getNumberValue();
+            ar[0][0] = nve.getNumberValue();
         } else {
             throw new EvaluationException(ErrorEval.VALUE_INVALID);
         }
@@ -239,11 +237,11 @@ public final class Trend implements Function {
             yOrig = evalToArray(args[0]);
             xOrig = evalToArray(args[1]);
             newXOrig = evalToArray(args[2]);
-            if (!(args[3] instanceof BoolEval)) {
+            if (!(args[3] instanceof BoolEval be)) {
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
             }
             // The argument in Excel is false when it *should* pass through the origin.
-            passThroughOrigin = !((BoolEval)args[3]).getBooleanValue();
+            passThroughOrigin = !be.getBooleanValue();
             break;
         default:
             throw new EvaluationException(ErrorEval.VALUE_INVALID);

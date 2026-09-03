@@ -151,8 +151,8 @@ public abstract class AbstractEscherHolderRecord extends Record {
      */
     public EscherContainerRecord getEscherContainer() {
         for (EscherRecord er : escherRecords) {
-            if(er instanceof EscherContainerRecord) {
-                return (EscherContainerRecord)er;
+            if(er instanceof EscherContainerRecord container) {
+                return container;
             }
         }
         return null;

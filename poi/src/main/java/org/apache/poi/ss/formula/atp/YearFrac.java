@@ -88,8 +88,8 @@ final class YearFrac implements FreeRefFunction {
     private static double evaluateDateArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
         ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, (short) srcCellCol);
 
-        if (ve instanceof StringEval) {
-            String strVal = ((StringEval) ve).getStringValue();
+        if (ve instanceof StringEval se) {
+            String strVal = se.getStringValue();
             Double dVal = OperandResolver.parseDouble(strVal);
             if (dVal != null) {
                 return dVal;

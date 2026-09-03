@@ -232,8 +232,8 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
     public List<EscherContainerRecord> getChildContainers() {
         List<EscherContainerRecord> containers = new ArrayList<>();
         for (EscherRecord r : this) {
-            if(r instanceof EscherContainerRecord) {
-                containers.add((EscherContainerRecord) r);
+            if(r instanceof EscherContainerRecord c) {
+                containers.add(c);
             }
         }
         return containers;
@@ -305,8 +305,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
      */
     public void getRecordsById(short recordId, List<EscherRecord> out){
         for (EscherRecord r : this) {
-            if(r instanceof EscherContainerRecord) {
-                EscherContainerRecord c = (EscherContainerRecord)r;
+            if(r instanceof EscherContainerRecord c) {
                 c.getRecordsById(recordId, out );
             } else if (r.getRecordId() == recordId){
                 out.add(r);

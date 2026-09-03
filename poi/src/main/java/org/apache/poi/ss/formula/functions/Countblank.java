@@ -36,10 +36,10 @@ public final class Countblank extends Fixed1ArgFunction {
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 
         double result;
-        if (arg0 instanceof RefEval) {
-            result = CountUtils.countMatchingCellsInRef((RefEval) arg0, predicate);
-        } else if (arg0 instanceof ThreeDEval) {
-            result = CountUtils.countMatchingCellsInArea((ThreeDEval) arg0, predicate);
+        if (arg0 instanceof RefEval refEval) {
+            result = CountUtils.countMatchingCellsInRef(refEval, predicate);
+        } else if (arg0 instanceof ThreeDEval threeDEval) {
+            result = CountUtils.countMatchingCellsInArea(threeDEval, predicate);
         } else {
             throw new IllegalArgumentException("Bad range arg type (" + arg0.getClass().getName() + ")");
         }
@@ -51,6 +51,6 @@ public final class Countblank extends Fixed1ArgFunction {
         return valueEval == BlankEval.instance ||
                 // see https://support.office.com/en-us/article/COUNTBLANK-function-6a92d772-675c-4bee-b346-24af6bd3ac22
                 // "Cells with formulas that return "" (empty text) are also counted."
-                (valueEval instanceof StringEval && ((StringEval)valueEval).getStringValue().isEmpty());
+                (valueEval instanceof StringEval stringEval && stringEval.getStringValue().isEmpty());
     };
 }

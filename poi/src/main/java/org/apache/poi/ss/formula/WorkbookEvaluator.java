@@ -724,8 +724,8 @@ public final class WorkbookEvaluator {
     }
 
     private ValueEval processNameEval(ValueEval eval, OperationEvaluationContext ec) {
-        if (eval instanceof ExternalNameEval) {
-            EvaluationName name = ((ExternalNameEval) eval).getName();
+        if (eval instanceof ExternalNameEval ene) {
+            EvaluationName name = ene.getName();
             return getEvalForNameRecord(name, ec);
         }
         return eval;
@@ -871,8 +871,7 @@ public final class WorkbookEvaluator {
         boolean shifted = false;
         for (Ptg ptg : ptgs) {
             // base class for cell reference "things"
-            if (ptg instanceof RefPtgBase) {
-                RefPtgBase ref = (RefPtgBase) ptg;
+            if (ptg instanceof RefPtgBase ref) {
                 // re-calculate cell references
                 final SpreadsheetVersion version = _workbook.getSpreadsheetVersion();
                 if (ref.isRowRelative() && deltaRow > 0) {

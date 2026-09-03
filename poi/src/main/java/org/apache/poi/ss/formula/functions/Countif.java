@@ -290,16 +290,11 @@ public final class Countif extends Fixed2ArgFunction {
         public StringMatcher(String value, CmpOp operator) {
             super(operator);
             _value = value;
-            switch(operator.getCode()) {
-                case CmpOp.NONE:
-                case CmpOp.EQ:
-                case CmpOp.NE:
-                    _pattern = getWildCardPattern(value);
-                    break;
-                default:
-                    // pattern matching is never used for < > <= =>
-                    _pattern = null;
-            }
+            _pattern = switch (operator.getCode()) {
+                case CmpOp.NONE, CmpOp.EQ, CmpOp.NE -> getWildCardPattern(value);
+                // pattern matching is never used for < > <= =>
+                default -> null;
+            };
         }
         @Override
         protected String getValueText() {
@@ -446,8 +441,8 @@ public final class Countif extends Fixed2ArgFunction {
         if(evaluatedCriteriaArg instanceof StringEval stringEval) {
             return createGeneralMatchPredicate(stringEval);
         }
-        if(evaluatedCriteriaArg instanceof ErrorEval) {
-            return new ErrorMatcher(((ErrorEval)evaluatedCriteriaArg).getErrorCode(), CmpOp.OP_NONE);
+        if(evaluatedCriteriaArg instanceof ErrorEval errorEval) {
+            return new ErrorMatcher(errorEval.getErrorCode(), CmpOp.OP_NONE);
         }
         if(evaluatedCriteriaArg == BlankEval.instance) {
             return null;
@@ -529,18 +524,16 @@ public final class Countif extends Fixed2ArgFunction {
             return null;
         }
         switch(strRep.charAt(0)) {
-            case 't':
-            case 'T':
+            case 't', 'T' -> {
                 if(StringUtil.equalsIgnoreCase("TRUE", strRep)) {
                     return Boolean.TRUE;
                 }
-                break;
-            case 'f':
-            case 'F':
+            }
+            case 'f', 'F' -> {
                 if(StringUtil.equalsIgnoreCase("FALSE", strRep)) {
                     return Boolean.FALSE;
                 }
-                break;
+            }
         }
         return null;
     }

@@ -94,12 +94,12 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg, Ar
     }
 
     private static TwoDEval convertFirstArg(ValueEval arg0) {
-        if (arg0 instanceof RefEval) {
+        if (arg0 instanceof RefEval refEval) {
             // convert to area ref for simpler code in getValueFromArea()
-            return ((RefEval) arg0).offset(0, 0, 0, 0);
+            return refEval.offset(0, 0, 0, 0);
         }
-        if((arg0 instanceof TwoDEval)) {
-            return (TwoDEval) arg0;
+        if((arg0 instanceof TwoDEval twoDEval)) {
+            return twoDEval;
         }
         // else the other variation of this function takes an array as the first argument
         // it seems like interface 'ArrayEval' does not even exist yet
@@ -110,15 +110,12 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg, Ar
 
     @Override
     public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-        switch (args.length) {
-            case 2:
-                return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
-            case 3:
-                return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2]);
-            case 4:
-                return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3]);
-        }
-        return ErrorEval.VALUE_INVALID;
+        return switch (args.length) {
+            case 2 -> evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
+            case 3 -> evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2]);
+            case 4 -> evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3]);
+            default -> ErrorEval.VALUE_INVALID;
+        };
     }
 
     private static ValueEval getValueFromArea(TwoDEval ae, int pRowIx, int pColumnIx)

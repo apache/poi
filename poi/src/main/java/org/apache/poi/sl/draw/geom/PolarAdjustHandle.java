@@ -264,8 +264,7 @@ public final class PolarAdjustHandle implements AdjustHandle {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PolarAdjustHandle)) return false;
-        PolarAdjustHandle that = (PolarAdjustHandle) o;
+        if (!(o instanceof PolarAdjustHandle that)) return false;
         return Objects.equals(pos, that.pos) &&
                 Objects.equals(gdRefR, that.gdRefR) &&
                 Objects.equals(minR, that.minR) &&

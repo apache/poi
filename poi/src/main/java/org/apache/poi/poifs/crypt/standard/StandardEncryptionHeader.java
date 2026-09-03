@@ -60,14 +60,14 @@ public class StandardEncryptionHeader extends EncryptionHeader implements Encryp
 
         // CSPName may not always be specified
         // In some cases, the salt value of the EncryptionVerifier is the next chunk of data
-        if (is instanceof RecordInputStream) {
-            ((RecordInputStream)is).mark(LittleEndianConsts.INT_SIZE+1);
+        if (is instanceof RecordInputStream ris) {
+            ris.mark(LittleEndianConsts.INT_SIZE+1);
         } else {
             ((InputStream)is).mark(LittleEndianConsts.INT_SIZE+1);
         }
         int checkForSalt = is.readInt();
-        if (is instanceof RecordInputStream) {
-            ((RecordInputStream)is).reset();
+        if (is instanceof RecordInputStream ris) {
+            ris.reset();
         } else {
             ((InputStream)is).reset();
         }

@@ -61,8 +61,7 @@ public abstract class BooleanFunction implements Function,ArrayFunction {
          */
         for (final ValueEval arg : args) {
             Boolean tempVe;
-            if (arg instanceof TwoDEval) {
-                TwoDEval ae = (TwoDEval) arg;
+            if (arg instanceof TwoDEval ae) {
                 int height = ae.getHeight();
                 int width = ae.getWidth();
                 for (int rrIx=0; rrIx<height; rrIx++) {
@@ -77,8 +76,7 @@ public abstract class BooleanFunction implements Function,ArrayFunction {
                 }
                 continue;
             }
-            if (arg instanceof RefEval) {
-                RefEval re = (RefEval) arg;
+            if (arg instanceof RefEval re) {
                 final int firstSheetIndex = re.getFirstSheetIndex();
                 final int lastSheetIndex = re.getLastSheetIndex();
                 for (int sIx = firstSheetIndex; sIx <= lastSheetIndex; sIx++) {

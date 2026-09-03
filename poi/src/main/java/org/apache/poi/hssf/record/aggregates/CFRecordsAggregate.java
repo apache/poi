@@ -126,10 +126,10 @@ public final class CFRecordsAggregate extends RecordAggregate implements Generic
         CFRuleBase[] rules = new CFRuleBase[nRules];
         for (int i = 0; i < rules.length; i++) {
             Record record = rs.getNext();
-            if (!(record instanceof CFRuleBase)) {
+            if (!(record instanceof CFRuleBase cfRule)) {
                 throw new IllegalArgumentException("Did not have a CFRuleBase: " + record);
             }
-            rules[i] = (CFRuleBase) record;
+            rules[i] = cfRule;
         }
 
         return new CFRecordsAggregate(header, rules);
@@ -263,8 +263,7 @@ public final class CFRecordsAggregate extends RecordAggregate implements Generic
             if (ptgs != null && shifter.adjustFormula(ptgs, currentExternSheetIx)) {
                 rule.setParsedExpression2(ptgs);
             }
-            if (rule instanceof CFRule12Record) {
-                CFRule12Record rule12 = (CFRule12Record)rule;
+            if (rule instanceof CFRule12Record rule12) {
                 ptgs = rule12.getParsedExpressionScale();
                 if (ptgs != null && shifter.adjustFormula(ptgs, currentExternSheetIx)) {
                     rule12.setParsedExpressionScale(ptgs);

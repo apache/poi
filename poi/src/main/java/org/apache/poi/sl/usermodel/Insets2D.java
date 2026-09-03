@@ -95,8 +95,7 @@ public final class Insets2D implements Duplicatable {
      * @since      JDK1.1
      */
     public boolean equals(Object obj) {
-    if (obj instanceof Insets2D) {
-        Insets2D insets = (Insets2D)obj;
+    if (obj instanceof Insets2D insets) {
         return ((top == insets.top) && (left == insets.left) &&
             (bottom == insets.bottom) && (right == insets.right));
     }

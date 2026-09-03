@@ -111,8 +111,8 @@ public final class PropertyTable implements BATManaged {
 
         Property property = _properties.get(0);
         if (property != null) {
-            if (property instanceof DirectoryProperty) {
-                populatePropertyTree((DirectoryProperty) property, 0);
+            if (property instanceof DirectoryProperty dp) {
+                populatePropertyTree(dp, 0);
             } else {
                 throw new IOException("Invalid format, cannot convert property " + property + " to DirectoryProperty");
             }
@@ -145,8 +145,8 @@ public final class PropertyTable implements BATManaged {
     public RootProperty getRoot() {
         // it's always the first element in the List
         Property property = _properties.get(0);
-        if (property instanceof RootProperty) {
-            return (RootProperty) property;
+        if (property instanceof RootProperty rp) {
+            return rp;
         } else {
             throw new IllegalStateException("Invalid format, cannot convert property " +
                     property + " to RootProperty");

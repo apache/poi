@@ -132,14 +132,14 @@ public final class PercentRank implements Function {
         } else {
             int intermediateSignificance = significance < 5 ? 8 : significance + 3;
             ValueEval belowRank = calculateRank(numbers, closestMatchBelow, intermediateSignificance, false);
-            if (!(belowRank instanceof NumberEval)) {
+            if (!(belowRank instanceof NumberEval belowNum)) {
                 return belowRank;
             }
             ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, intermediateSignificance, false);
-            if (!(aboveRank instanceof NumberEval)) {
+            if (!(aboveRank instanceof NumberEval aboveNum)) {
                 return aboveRank;
             }
-            return interpolate(x, closestMatchBelow, closestMatchAbove, (NumberEval)belowRank, (NumberEval)aboveRank, significance);
+            return interpolate(x, closestMatchBelow, closestMatchAbove, belowNum, aboveNum, significance);
         }
     }
 
@@ -163,8 +163,7 @@ public final class PercentRank implements Function {
 
     @Internal
     public static List<ValueEval> getValues(ValueEval eval, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
-        if (eval instanceof AreaEval) {
-            AreaEval ae = (AreaEval)eval;
+        if (eval instanceof AreaEval ae) {
             List<ValueEval> list = new ArrayList<>();
             for (int r = ae.getFirstRow(); r <= ae.getLastRow(); r++) {
                 for (int c = ae.getFirstColumn(); c <= ae.getLastColumn(); c++) {

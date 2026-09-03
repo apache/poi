@@ -60,8 +60,7 @@ public class FormulaRenderer {
                 stack.push ("(" + contents + ")");
                 continue;
             }
-            if (ptg instanceof AttrPtg) {
-                AttrPtg attrPtg = ((AttrPtg) ptg);
+            if (ptg instanceof AttrPtg attrPtg) {
                 if (attrPtg.isOptimizedIf() || attrPtg.isOptimizedChoose() || attrPtg.isSkip()) {
                     continue;
                 }
@@ -84,17 +83,15 @@ public class FormulaRenderer {
                 throw new IllegalStateException("Unexpected tAttr: " + attrPtg);
             }
 
-            if (ptg instanceof WorkbookDependentFormula) {
-                WorkbookDependentFormula optg = (WorkbookDependentFormula) ptg;
+            if (ptg instanceof WorkbookDependentFormula optg) {
                 stack.push(optg.toFormulaString(book));
                 continue;
             }
-            if (! (ptg instanceof OperationPtg)) {
+            if (! (ptg instanceof OperationPtg o)) {
                 stack.push(ptg.toFormulaString());
                 continue;
             }
 
-            OperationPtg o = (OperationPtg) ptg;
             String[] operands = getOperands(stack, o.getNumberOfOperands());
             stack.push(o.toFormulaString(operands));
         }

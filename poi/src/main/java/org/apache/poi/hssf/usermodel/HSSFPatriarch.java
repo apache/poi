@@ -94,11 +94,10 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
 
         EscherRecord child = _mainSpgrContainer.getChild(0);
 
-        if (!(child instanceof EscherContainerRecord)) {
+        if (!(child instanceof EscherContainerRecord spContainer)) {
             throw new IllegalArgumentException("Did not have a EscherContainerRecord: " + child);
         }
 
-        EscherContainerRecord spContainer = (EscherContainerRecord) child;
         _spgrRecord = spContainer.getChildById(EscherSpgrRecord.RECORD_ID);
         buildShapeTree();
     }
@@ -116,8 +115,8 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
         newPatriarch.afterCreate();
         for (HSSFShape shape: patriarch.getChildren()){
             HSSFShape newShape;
-            if (shape instanceof HSSFShapeGroup){
-                newShape = ((HSSFShapeGroup)shape).cloneShape(newPatriarch);
+            if (shape instanceof HSSFShapeGroup group){
+                newShape = group.cloneShape(newPatriarch);
             } else {
                 newShape = shape.cloneShape();
             }
@@ -255,18 +254,13 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
         FtCfSubRecord ftCf = new FtCfSubRecord();
         HSSFPictureData pictData = getSheet().getWorkbook().getAllPictures().get(pictureIndex-1);
         switch (pictData.getFormat()) {
-            case Workbook.PICTURE_TYPE_WMF:
-            case Workbook.PICTURE_TYPE_EMF:
+            case Workbook.PICTURE_TYPE_WMF, Workbook.PICTURE_TYPE_EMF ->
                 // this needs patch #49658 to be applied to actually work
                 ftCf.setFlags(FtCfSubRecord.METAFILE_BIT);
-                break;
-            case Workbook.PICTURE_TYPE_DIB:
-            case Workbook.PICTURE_TYPE_PNG:
-            case Workbook.PICTURE_TYPE_JPEG:
-            case Workbook.PICTURE_TYPE_PICT:
+            case Workbook.PICTURE_TYPE_DIB, Workbook.PICTURE_TYPE_PNG, Workbook.PICTURE_TYPE_JPEG,
+                 Workbook.PICTURE_TYPE_PICT ->
                 ftCf.setFlags(FtCfSubRecord.BITMAP_BIT);
-                break;
-            default:
+            default ->
                 throw new IllegalStateException("Invalid picture type: " + pictData.getFormat());
         }
         obj.addSubRecord(ftCf);

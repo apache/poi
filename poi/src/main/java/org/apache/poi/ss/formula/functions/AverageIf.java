@@ -48,8 +48,8 @@ public class AverageIf extends Baseifs {
             AreaEval ae = convertRangeArg(args[0]);
             I_MatchPredicate mp = Countif.createCriteriaPredicate(args[1], ec.getRowIndex(), ec.getColumnIndex());
 
-            if (mp instanceof Countif.ErrorMatcher) {
-                throw new EvaluationException(ErrorEval.valueOf(((Countif.ErrorMatcher) mp).getValue()));
+            if (mp instanceof Countif.ErrorMatcher errorMatcher) {
+                throw new EvaluationException(ErrorEval.valueOf(errorMatcher.getValue()));
             }
 
             return aggregateMatchingCells(createAggregator(), sumRange, ae, mp);
@@ -72,8 +72,8 @@ public class AverageIf extends Baseifs {
 
                 if (mp != null && mp.matches(_testValue)) {
                     // aggregate only if all of the corresponding criteria specified are true for that cell.
-                    if (_testValue instanceof ErrorEval) {
-                        throw new EvaluationException((ErrorEval) _testValue);
+                    if (_testValue instanceof ErrorEval errorEval) {
+                        throw new EvaluationException(errorEval);
                     }
                     aggregator.addValue(_sumValue);
                 }
@@ -96,9 +96,9 @@ public class AverageIf extends Baseifs {
             @Override
             public void addValue(ValueEval value) {
 
-                if (!(value instanceof NumberEval)) return;
+                if (!(value instanceof NumberEval ne)) return;
 
-                final double d = ((NumberEval) value).getNumberValue();
+                final double d = ne.getNumberValue();
                 sum += d;
                 count++;
 

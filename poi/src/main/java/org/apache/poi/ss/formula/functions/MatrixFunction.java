@@ -92,14 +92,14 @@ public abstract class MatrixFunction implements Function{
 
         @Override
         public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
-            if (arg0 instanceof AreaEval) {
+            if (arg0 instanceof AreaEval ae) {
                 double[] result;
                 double[][] resultArray;
                 int width, height;
 
                 try {
                     double[] values = collectValues(arg0);
-                    double[][] array = fillDoubleArray(values, ((AreaEval) arg0).getHeight(), ((AreaEval) arg0).getWidth());
+                    double[][] array = fillDoubleArray(values, ae.getHeight(), ae.getWidth());
                     resultArray = evaluate(array);
                     width = resultArray[0].length;
                     height = resultArray.length;
@@ -122,9 +122,9 @@ public abstract class MatrixFunction implements Function{
                 }
                 else {
                     /* find a better solution */
-                    return new CacheAreaEval(((AreaEval) arg0).getFirstRow(), ((AreaEval) arg0).getFirstColumn(),
-                                            ((AreaEval) arg0).getFirstRow() + height - 1,
-                                            ((AreaEval) arg0).getFirstColumn() + width - 1, vals);
+                    return new CacheAreaEval(ae.getFirstRow(), ae.getFirstColumn(),
+                                            ae.getFirstRow() + height - 1,
+                                            ae.getFirstColumn() + width - 1, vals);
                 }
             }
             else {
@@ -162,10 +162,10 @@ public abstract class MatrixFunction implements Function{
                 double[][] array1;
                 double[][] resultArray;
 
-                if (arg0 instanceof AreaEval) {
+                if (arg0 instanceof AreaEval ae) {
                     try {
                         double[] values = collectValues(arg0);
-                        array0 = fillDoubleArray(values, ((AreaEval) arg0).getHeight(), ((AreaEval) arg0).getWidth());
+                        array0 = fillDoubleArray(values, ae.getHeight(), ae.getWidth());
                     }
                     catch(EvaluationException e) {
                         return e.getErrorEval();
@@ -181,10 +181,10 @@ public abstract class MatrixFunction implements Function{
                     }
                 }
 
-                if (arg1 instanceof AreaEval) {
+                if (arg1 instanceof AreaEval ae) {
                    try {
                        double[] values = collectValues(arg1);
-                      array1 = fillDoubleArray(values, ((AreaEval) arg1).getHeight(),((AreaEval) arg1).getWidth());
+                      array1 = fillDoubleArray(values, ae.getHeight(), ae.getWidth());
                    }
                    catch (EvaluationException e) {
                       return e.getErrorEval();

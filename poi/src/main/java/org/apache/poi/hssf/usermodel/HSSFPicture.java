@@ -279,7 +279,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     @Override
     public HSSFClientAnchor getClientAnchor() {
         HSSFAnchor a = getAnchor();
-        return (a instanceof HSSFClientAnchor) ? (HSSFClientAnchor)a : null;
+        return (a instanceof HSSFClientAnchor anchor) ? anchor : null;
     }
 
 

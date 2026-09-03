@@ -191,11 +191,9 @@ public class EscherComplexProperty extends EscherProperty {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof EscherComplexProperty)) {
+        if (!(o instanceof EscherComplexProperty escherComplexProperty)) {
             return false;
         }
-
-        EscherComplexProperty escherComplexProperty = (EscherComplexProperty) o;
 
         // not equal if size differs
         if (complexSize != escherComplexProperty.complexSize) {
