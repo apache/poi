@@ -53,7 +53,10 @@ public class ColumnHelper {
         int i;
         for (i = 0; i < colsArray.length; i++) {
             CTCols cols = colsArray[i];
-            for (CTCol col : cols.getColList()) {
+            // fetching the array is much quicker than iterating the list, as the
+            // list resolves each element via the indexed getter, which walks the
+            // list of elements from the start on every call
+            for (CTCol col : cols.getColArray()) {
                 addCleanColIntoCols(newCols, col, trackedCols);
             }
         }
@@ -73,7 +76,7 @@ public class ColumnHelper {
         // read above.
         TreeSet<CTCol> trackedCols = new TreeSet<>(
                 CTColComparator.BY_MIN_MAX);
-        trackedCols.addAll(cols.getColList());
+        trackedCols.addAll(Arrays.asList(cols.getColArray()));
         addCleanColIntoCols(cols, newCol, trackedCols);
         cols.setColArray(trackedCols.toArray(new CTCol[0]));
         return cols;
@@ -317,7 +320,7 @@ public class ColumnHelper {
     }
 
     private boolean columnExists(CTCols cols, long min, long max) {
-        for (CTCol col : cols.getColList()) {
+        for (CTCol col : cols.getColArray()) {
             if (col.getMin() == min && col.getMax() == max) {
                 return true;
             }
@@ -328,7 +331,7 @@ public class ColumnHelper {
     public int getIndexOfColumn(CTCols cols, CTCol searchCol) {
         if (cols == null || searchCol == null) return -1;
         int i = 0;
-        for (CTCol col : cols.getColList()) {
+        for (CTCol col : cols.getColArray()) {
             if (col.getMin() == searchCol.getMin() && col.getMax() == searchCol.getMax()) {
                 return i;
             }

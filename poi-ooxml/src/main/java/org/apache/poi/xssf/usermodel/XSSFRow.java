@@ -41,6 +41,7 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
+import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
@@ -582,33 +583,67 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     }
 
     private void fixupCTCells(CTCell[] cArrayOrig) {
-        // copy all values to 2nd array and a map for lookup of index
-        CTCell[] cArrayCopy = new CTCell[cArrayOrig.length];
-        IdentityHashMap<CTCell, Integer> map = new IdentityHashMap<>(_cells.size());
+        // build a map for lookup of the index of a CTCell in the row
+        IdentityHashMap<CTCell, Integer> map = new IdentityHashMap<>(cArrayOrig.length);
         int i = 0;
         for (CTCell ctCell : cArrayOrig) {
-            cArrayCopy[i] = (CTCell) ctCell.copy();
             map.put(ctCell, i);
             i++;
         }
 
-        // populate _row.cArray correctly
+        // collect the CTCells in the order in which they need to appear in the XML
+        CTCell[] cArrayNew = new CTCell[_cells.size()];
+        boolean[] stillUsed = new boolean[cArrayOrig.length];
         i = 0;
         for (XSSFCell cell : _cells.values()) {
-            // no need to change anything if position is correct
             Integer correctPosition = map.get(cell.getCTCell());
             Objects.requireNonNull(correctPosition, "Should find CTCell in _row");
-            if(correctPosition != i) {
-                // we need to re-populate this CTCell
-                _row.setCArray(i, cArrayCopy[correctPosition]);
-                cell.setCTCell(_row.getCArray(i));
-            }
+            stillUsed[correctPosition] = true;
+            cArrayNew[i] = cArrayOrig[correctPosition];
             i++;
         }
 
-        // remove any remaining illegal references in _rows.cArray
-        while(_row.sizeOfCArray() > _cells.size()) {
-            _row.removeC(_cells.size());
+        // remove any remaining illegal references in _row.cArray
+        for (i = 0; i < cArrayOrig.length; i++) {
+            if (!stillUsed[i]) {
+                try (XmlCursor cursor = cArrayOrig[i].newCursor()) {
+                    cursor.removeXml();
+                }
+            }
+        }
+
+        // the CTCells at the start which are already in the correct order do not need to be moved
+        int matching = 0;
+        for (i = 0; i < cArrayOrig.length; i++) {
+            if (stillUsed[i]) {
+                if (matching < cArrayNew.length && cArrayNew[matching] == cArrayOrig[i]) {
+                    matching++;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        // move the remaining CTCells in front of the last one, in the order in which
+        // they need to appear - moving the XML via cursors avoids the indexed XmlBeans
+        // accessors, which walk the list of elements from the start on every call
+        if (matching < cArrayNew.length - 1) {
+            try (XmlCursor dest = cArrayNew[cArrayNew.length - 1].newCursor()) {
+                for (int j = matching; j < cArrayNew.length - 1; j++) {
+                    try (XmlCursor src = cArrayNew[j].newCursor()) {
+                        src.moveXml(dest);
+                    }
+                }
+            }
+        }
+
+        // moving the XML replaces the CTCell instances, so the cells need to be
+        // re-attached to the CTCells which are now stored in the row
+        CTCell[] cArrayUpdated = _row.getCArray();
+        i = 0;
+        for (XSSFCell cell : _cells.values()) {
+            cell.setCTCell(cArrayUpdated[i]);
+            i++;
         }
     }
 
