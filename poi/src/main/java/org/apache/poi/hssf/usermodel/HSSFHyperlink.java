@@ -51,18 +51,10 @@ public class HSSFHyperlink implements Hyperlink, Duplicatable {
         this.link_type = type;
         record = new HyperlinkRecord();
         switch(type){
-            case URL:
-            case EMAIL:
-                record.newUrlLink();
-                break;
-            case FILE:
-                record.newFileLink();
-                break;
-            case DOCUMENT:
-                record.newDocumentLink();
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid type: " + type);
+            case URL, EMAIL -> record.newUrlLink();
+            case FILE -> record.newFileLink();
+            case DOCUMENT -> record.newDocumentLink();
+            default -> throw new IllegalArgumentException("Invalid type: " + type);
         }
     }
 
@@ -94,8 +86,7 @@ public class HSSFHyperlink implements Hyperlink, Duplicatable {
     }
 
     protected HSSFHyperlink(Hyperlink other) {
-        if (other instanceof HSSFHyperlink) {
-            HSSFHyperlink hlink = (HSSFHyperlink) other;
+        if (other instanceof HSSFHyperlink hlink) {
             record = hlink.record.copy();
             link_type = getType(record);
         }
@@ -277,8 +268,7 @@ public class HSSFHyperlink implements Hyperlink, Duplicatable {
     @Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        if (!(other instanceof HSSFHyperlink)) return false;
-        HSSFHyperlink otherLink = (HSSFHyperlink) other;
+        if (!(other instanceof HSSFHyperlink otherLink)) return false;
         return record == otherLink.record;
     }
 

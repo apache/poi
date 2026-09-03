@@ -127,8 +127,7 @@ public class Subtotal implements Function {
         // For array references it is handled in other evaluation steps, but we need to handle this here for references to subtotal-functions
         while(it.hasNext()) {
             ValueEval eval = it.next();
-            if(eval instanceof LazyRefEval) {
-                LazyRefEval lazyRefEval = (LazyRefEval) eval;
+            if(eval instanceof LazyRefEval lazyRefEval) {
                 if(lazyRefEval.isSubTotal()) {
                     it.remove();
                 }

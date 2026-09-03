@@ -258,8 +258,8 @@ public abstract class NumericFunction implements Function {
                 double d1 = singleOperandEvaluate(args[0], srcCellRow, srcCellCol);
                 double d2 = singleOperandEvaluate(args[1], srcCellRow, srcCellCol);
                 Object res = doubleFun.apply(d1, d2);
-                if (res instanceof ErrorEval) {
-                    return (ErrorEval)res;
+                if (res instanceof ErrorEval ee) {
+                    return ee;
                 }
                 if (!(res instanceof Double d)) {
                     throw new AssertionError("Expected Double");

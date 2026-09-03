@@ -59,22 +59,21 @@ public class EDate implements FreeRefFunction {
     }
 
     private double getValue(ValueEval arg) throws EvaluationException {
-        if (arg instanceof NumberEval) {
-            return ((NumberEval) arg).getNumberValue();
+        if (arg instanceof NumberEval ne) {
+            return ne.getNumberValue();
         }
         if(arg instanceof BlankEval) {
             return 0;
         }
-        if (arg instanceof RefEval) {
-            RefEval refEval = (RefEval)arg;
+        if (arg instanceof RefEval refEval) {
             if (refEval.getNumberOfSheets() > 1) {
                 // Multi-Sheet references are not supported
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
             }
             
             ValueEval innerValueEval = refEval.getInnerValueEval(refEval.getFirstSheetIndex());
-            if(innerValueEval instanceof NumberEval) {
-                return ((NumberEval) innerValueEval).getNumberValue();
+            if(innerValueEval instanceof NumberEval innerNumber) {
+                return innerNumber.getNumberValue();
             }
             if(innerValueEval instanceof BlankEval) {
                 return 0;

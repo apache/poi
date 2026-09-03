@@ -36,10 +36,10 @@ public final class NumberEval implements NumericValueEval, StringValueEval {
         if (ptg == null) {
             throw new IllegalArgumentException("ptg must not be null");
         }
-        if (ptg instanceof IntPtg) {
-            _value = ((IntPtg) ptg).getValue();
-        } else if (ptg instanceof NumberPtg) {
-            _value = ((NumberPtg) ptg).getValue();
+        if (ptg instanceof IntPtg ip) {
+            _value = ip.getValue();
+        } else if (ptg instanceof NumberPtg np) {
+            _value = np.getValue();
         } else {
             throw new IllegalArgumentException("bad argument type (" + ptg.getClass().getName() + ")");
         }

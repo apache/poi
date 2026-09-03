@@ -95,8 +95,8 @@ public final class UnknownEscherRecord extends EscherRecord {
                 EscherRecord child = recordFactory.createRecord( data, offset );
                 final int childBytesWritten;
 
-                if (child instanceof EscherContainerRecord) {
-                    childBytesWritten = ((EscherContainerRecord)child).fillFields(data, offset, recordFactory, nesting + 1);
+                if (child instanceof EscherContainerRecord ecr) {
+                    childBytesWritten = ecr.fillFields(data, offset, recordFactory, nesting + 1);
                 } else {
                     childBytesWritten = child.fillFields(data, offset, recordFactory, nesting + 1);
                 }

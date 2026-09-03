@@ -138,15 +138,15 @@ final class PercentRankExcFunction implements FreeRefFunction {
         } else {
             int intermediateSignificance = significance < 5 ? 8 : significance + 3;
             ValueEval belowRank = calculateRank(numbers, closestMatchBelow, intermediateSignificance, false);
-            if (!(belowRank instanceof NumberEval)) {
+            if (!(belowRank instanceof NumberEval belowNum)) {
                 return belowRank;
             }
             ValueEval aboveRank = calculateRank(numbers, closestMatchAbove, intermediateSignificance, false);
-            if (!(aboveRank instanceof NumberEval)) {
+            if (!(aboveRank instanceof NumberEval aboveNum)) {
                 return aboveRank;
             }
             return PercentRank.interpolate(x, closestMatchBelow, closestMatchAbove,
-                    (NumberEval)belowRank, (NumberEval)aboveRank, significance);
+                    belowNum, aboveNum, significance);
         }
     }
 }

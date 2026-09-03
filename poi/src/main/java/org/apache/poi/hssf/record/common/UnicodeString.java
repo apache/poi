@@ -123,10 +123,9 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
      */
     public boolean equals(Object o)
     {
-        if (!(o instanceof UnicodeString)) {
+        if (!(o instanceof UnicodeString other)) {
             return false;
         }
-        UnicodeString other = (UnicodeString) o;
 
         //OK lets do this in stages to return quickly, first check the actual string
         if (field_1_charCount != other.field_1_charCount

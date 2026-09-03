@@ -55,8 +55,8 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg3D {
         super(arearef);
         this.externalWorkbookNumber = externalWorkbookNumber;
         this.firstSheetName = sheetName.getSheetIdentifier().getName();
-        if (sheetName instanceof SheetRangeIdentifier) {
-            this.lastSheetName = ((SheetRangeIdentifier)sheetName).getLastSheetIdentifier().getName();
+        if (sheetName instanceof SheetRangeIdentifier sri) {
+            this.lastSheetName = sri.getLastSheetIdentifier().getName();
         } else {
             this.lastSheetName = null;
         }

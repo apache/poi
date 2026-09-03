@@ -386,8 +386,7 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof CellRangeAddressBase) {
-            CellRangeAddressBase o = (CellRangeAddressBase) other;
+        if (other instanceof CellRangeAddressBase o) {
             return ((getMinRow() == o.getMinRow()) &&
                     (getMaxRow() == o.getMaxRow()) &&
                     (getMinColumn() == o.getMinColumn()) &&

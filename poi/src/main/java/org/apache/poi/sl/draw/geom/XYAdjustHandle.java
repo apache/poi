@@ -254,8 +254,7 @@ public final class XYAdjustHandle implements AdjustHandle {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof XYAdjustHandle)) return false;
-        XYAdjustHandle that = (XYAdjustHandle) o;
+        if (!(o instanceof XYAdjustHandle that)) return false;
         return Objects.equals(pos, that.pos) &&
                 Objects.equals(gdRefX, that.gdRefX) &&
                 Objects.equals(minX, that.minX) &&

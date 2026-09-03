@@ -54,8 +54,7 @@ final class ArrayFunctionUtils {
 
     private static DoubleList collectValuesWithBlanks(ValueEval operand) throws EvaluationException {
         DoubleList doubleList = new DoubleList();
-        if (operand instanceof ThreeDEval) {
-            ThreeDEval ae = (ThreeDEval) operand;
+        if (operand instanceof ThreeDEval ae) {
             for (int sIx = ae.getFirstSheetIndex(); sIx <= ae.getLastSheetIndex(); sIx++) {
                 int width = ae.getWidth();
                 int height = ae.getHeight();
@@ -73,8 +72,7 @@ final class ArrayFunctionUtils {
             }
             return doubleList;
         }
-        if (operand instanceof TwoDEval) {
-            TwoDEval ae = (TwoDEval) operand;
+        if (operand instanceof TwoDEval ae) {
             int width = ae.getWidth();
             int height = ae.getHeight();
             for (int rrIx = 0; rrIx < height; rrIx++) {
@@ -90,8 +88,7 @@ final class ArrayFunctionUtils {
             }
             return doubleList;
         }
-        if (operand instanceof RefEval) {
-            RefEval re = (RefEval) operand;
+        if (operand instanceof RefEval re) {
             for (int sIx = re.getFirstSheetIndex(); sIx <= re.getLastSheetIndex(); sIx++) {
                 Double d = collectValue(re.getInnerValueEval(sIx));
                 if (d == null) {
@@ -115,16 +112,15 @@ final class ArrayFunctionUtils {
         if (ve == null) {
             throw new IllegalArgumentException("ve must not be null");
         }
-        if (ve instanceof NumericValueEval) {
-            NumericValueEval ne = (NumericValueEval) ve;
+        if (ve instanceof NumericValueEval ne) {
             return ne.getNumberValue();
         }
-        if (ve instanceof StringValueEval) {
-            String s = ((StringValueEval) ve).getStringValue().trim();
+        if (ve instanceof StringValueEval sve) {
+            String s = sve.getStringValue().trim();
             return OperandResolver.parseDouble(s);
         }
-        if (ve instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval) ve);
+        if (ve instanceof ErrorEval errorEval) {
+            throw new EvaluationException(errorEval);
         }
         if (ve == BlankEval.instance) {
             return null;

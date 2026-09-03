@@ -170,10 +170,9 @@ public class ExtRst implements Comparable<ExtRst>, GenericRecord {
     }
 
     public boolean equals(Object obj) {
-        if(! (obj instanceof ExtRst)) {
+        if(! (obj instanceof ExtRst other)) {
             return false;
         }
-        ExtRst other = (ExtRst)obj;
         return (compareTo(other) == 0);
     }
     public int compareTo(ExtRst o) {

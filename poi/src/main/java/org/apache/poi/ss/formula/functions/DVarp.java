@@ -34,8 +34,8 @@ public final class DVarp implements IDStarAlgorithm {
 
     @Override
     public boolean processMatch(ValueEval eval) {
-        if (eval instanceof NumericValueEval) {
-            values.add((NumericValueEval) eval);
+        if (eval instanceof NumericValueEval num) {
+            values.add(num);
         }
         return true;
     }

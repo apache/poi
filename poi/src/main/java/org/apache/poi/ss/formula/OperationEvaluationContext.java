@@ -124,8 +124,8 @@ public final class OperationEvaluationContext {
                 otherFirstSheetIndex = _workbook.getSheetIndex(externalSheet.getSheetName());
             }
 
-            if (externalSheet instanceof ExternalSheetRange) {
-                String lastSheetName = ((ExternalSheetRange) externalSheet).getLastSheetName();
+            if (externalSheet instanceof ExternalSheetRange esr) {
+                String lastSheetName = esr.getLastSheetName();
                 otherLastSheetIndex = _workbook.getSheetIndex(lastSheetName);
             }
         } else {
@@ -138,8 +138,8 @@ public final class OperationEvaluationContext {
             }
 
             otherFirstSheetIndex = targetEvaluator.getSheetIndex(externalSheet.getSheetName());
-            if (externalSheet instanceof ExternalSheetRange) {
-                String lastSheetName = ((ExternalSheetRange) externalSheet).getLastSheetName();
+            if (externalSheet instanceof ExternalSheetRange esr) {
+                String lastSheetName = esr.getLastSheetName();
                 otherLastSheetIndex = targetEvaluator.getSheetIndex(lastSheetName);
             }
 
@@ -419,17 +419,17 @@ public final class OperationEvaluationContext {
         if (token == null) {
             throw new IllegalStateException("Array item cannot be null");
         }
-        if (token instanceof String) {
-            return new StringEval((String) token);
+        if (token instanceof String s) {
+            return new StringEval(s);
         }
-        if (token instanceof Double) {
-            return new NumberEval((Double) token);
+        if (token instanceof Double d) {
+            return new NumberEval(d);
         }
-        if (token instanceof Boolean) {
-            return BoolEval.valueOf((Boolean) token);
+        if (token instanceof Boolean b) {
+            return BoolEval.valueOf(b);
         }
-        if (token instanceof ErrorConstant) {
-            return ErrorEval.valueOf(((ErrorConstant) token).getErrorCode());
+        if (token instanceof ErrorConstant ec) {
+            return ErrorEval.valueOf(ec.getErrorCode());
         }
         throw new IllegalArgumentException("Unexpected constant class (" + token.getClass().getName() + ")");
     }
@@ -541,17 +541,13 @@ public final class OperationEvaluationContext {
                         refWorkbookEvaluator, refWorkbookEvaluator.getWorkbook(), -1, -1, -1, _tracker);
 
                 Ptg ptg = evaluationName.getNameDefinition()[0];
-                if (ptg instanceof Ref3DPtg) {
-                    Ref3DPtg ref3D = (Ref3DPtg) ptg;
+                if (ptg instanceof Ref3DPtg ref3D) {
                     return refWorkbookContext.getRef3DEval(ref3D);
-                } else if (ptg instanceof Ref3DPxg) {
-                    Ref3DPxg ref3D = (Ref3DPxg) ptg;
+                } else if (ptg instanceof Ref3DPxg ref3D) {
                     return refWorkbookContext.getRef3DEval(ref3D);
-                } else if (ptg instanceof Area3DPtg) {
-                    Area3DPtg area3D = (Area3DPtg) ptg;
+                } else if (ptg instanceof Area3DPtg area3D) {
                     return refWorkbookContext.getArea3DEval(area3D);
-                } else if (ptg instanceof Area3DPxg) {
-                    Area3DPxg area3D = (Area3DPxg) ptg;
+                } else if (ptg instanceof Area3DPxg area3D) {
                     return refWorkbookContext.getArea3DEval(area3D);
                 }
             }

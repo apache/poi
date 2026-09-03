@@ -103,14 +103,14 @@ public final class RowRecordsAggregate extends RecordAggregate {
                 }
                 continue;
             }
-            if (rec instanceof MulBlankRecord) {
-                _valuesAgg.addMultipleBlanks((MulBlankRecord) rec);
+            if (rec instanceof MulBlankRecord mbr) {
+                _valuesAgg.addMultipleBlanks(mbr);
                 continue;
             }
-            if (!(rec instanceof CellValueRecordInterface)) {
+            if (!(rec instanceof CellValueRecordInterface cvRec)) {
                 throw new IllegalArgumentException("Unexpected record type (" + rec.getClass().getName() + ")");
             }
-            _valuesAgg.construct((CellValueRecordInterface)rec, rs, svm);
+            _valuesAgg.construct(cvRec, rs, svm);
         }
     }
 
@@ -520,8 +520,8 @@ public final class RowRecordsAggregate extends RecordAggregate {
         _valuesAgg.insertCell(cvRec);
     }
     public void removeCell(CellValueRecordInterface cvRec) {
-        if (cvRec instanceof FormulaRecordAggregate) {
-            ((FormulaRecordAggregate)cvRec).notifyFormulaChanging();
+        if (cvRec instanceof FormulaRecordAggregate fra) {
+            fra.notifyFormulaChanging();
         }
         _valuesAgg.removeCell(cvRec);
     }

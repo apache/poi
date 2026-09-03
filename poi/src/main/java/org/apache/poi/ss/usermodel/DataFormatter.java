@@ -364,8 +364,8 @@ public class DataFormatter {
     }
 
     private boolean isDate1904(Cell cell) {
-        if ( cell != null && cell.getSheet().getWorkbook() instanceof Date1904Support) {
-            return ((Date1904Support)cell.getSheet().getWorkbook()).isDate1904();
+        if ( cell != null && cell.getSheet().getWorkbook() instanceof Date1904Support date1904Support) {
+            return date1904Support.isDate1904();
 
         }
         return false;
@@ -1006,9 +1006,9 @@ public class DataFormatter {
         if(DateUtil.isADateFormat(formatIndex,formatString)) {
             if(DateUtil.isValidExcelDate(value)) {
                 Format dateFormat = getFormat(value, formatIndex, formatString, use1904Windowing);
-                if(dateFormat instanceof ExcelStyleDateFormatter) {
+                if(dateFormat instanceof ExcelStyleDateFormatter formatter) {
                     // Hint about the raw excel value
-                    ((ExcelStyleDateFormatter)dateFormat).setDateToBeFormatted(value);
+                    formatter.setDateToBeFormatted(value);
                 }
                 Date d = DateUtil.getJavaDate(value, use1904Windowing);
                 return performDateFormatting(d, dateFormat);

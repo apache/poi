@@ -468,10 +468,10 @@ public final class InternalWorkbook {
         }
 
         Record record = records.get((records.getFontpos() - (numfonts - 1)) + index);
-        if (!(record instanceof FontRecord)) {
+        if (!(record instanceof FontRecord fontRecord)) {
             throw new IllegalStateException("Did not have the expected record-type FontRecord: " + record.getClass());
         }
-        return ( FontRecord ) record;
+        return fontRecord;
     }
 
     /**
@@ -849,10 +849,10 @@ public final class InternalWorkbook {
         xfptr += index;
 
         Record record = records.get(xfptr);
-        if (!(record instanceof ExtendedFormatRecord)) {
+        if (!(record instanceof ExtendedFormatRecord xfr)) {
             throw new IllegalStateException("Did not have a ExtendedFormatRecord: " + record);
         }
-        return (ExtendedFormatRecord) record;
+        return xfr;
     }
 
     /**
@@ -912,8 +912,7 @@ public final class InternalWorkbook {
         //  the ExtendedFormat records
         for(int i=records.getXfpos(); i<records.size(); i++) {
             Record r = records.get(i);
-            if (r instanceof StyleRecord) {
-                StyleRecord sr = (StyleRecord)r;
+            if (r instanceof StyleRecord sr) {
                 if (sr.getXFIndex() == xfIndex) {
                     return sr;
                 }
@@ -934,8 +933,7 @@ public final class InternalWorkbook {
         //  the ExtendedFormat records
         for(int i=records.getXfpos(); i<records.size(); i++) {
             Record r = records.get(i);
-            if (r instanceof StyleRecord) {
-                StyleRecord sr = (StyleRecord)r;
+            if (r instanceof StyleRecord sr) {
                 if (sr.getXFIndex() == oldXf) {
                     sr.setXFIndex(newXf);
                 }
@@ -1043,8 +1041,8 @@ public final class InternalWorkbook {
         boolean wroteBoundSheets = false;
         for ( Record record : records.getRecords() ) {
             int len = 0;
-            if (record instanceof SSTRecord) {
-                lSST = (SSTRecord)record;
+            if (record instanceof SSTRecord sstRec) {
+                lSST = sstRec;
                 sstPos = pos;
             }
             if (record.getSid() == ExtSSTRecord.sid && lSST != null) {
@@ -1077,8 +1075,7 @@ public final class InternalWorkbook {
         // Can be a few short if new sheets were added
         if (records.getTabpos() > 0) {
             Record rec = records.get(records.getTabpos());
-            if (rec instanceof TabIdRecord) {
-                TabIdRecord tir = ( TabIdRecord ) rec;
+            if (rec instanceof TabIdRecord tir) {
                 if(tir.getTabIdSize() < boundsheets.size()) {
                     fixTabIdRecord();
                 }
@@ -1091,8 +1088,8 @@ public final class InternalWorkbook {
 
         SSTRecord lSST = null;
         for ( Record record : records.getRecords() ) {
-            if (record instanceof SSTRecord) {
-                lSST = (SSTRecord)record;
+            if (record instanceof SSTRecord sstRec) {
+                lSST = sstRec;
             }
 
             if (record.getSid() == ExtSSTRecord.sid && lSST != null) {
@@ -1823,8 +1820,8 @@ public final class InternalWorkbook {
         int palettePos = records.getPalettepos();
         if (palettePos != -1) {
             Record rec = records.get(palettePos);
-            if (rec instanceof PaletteRecord) {
-                palette = (PaletteRecord) rec;
+            if (rec instanceof PaletteRecord paletteRecord) {
+                palette = paletteRecord;
             } else {
                 throw new IllegalStateException("InternalError: Expected PaletteRecord but got a '"+rec+"'");
             }
@@ -1850,10 +1847,9 @@ public final class InternalWorkbook {
 
         // Need to find a DrawingGroupRecord that contains a EscherDggRecord
         for(Record r : records.getRecords() ) {
-            if (!(r instanceof DrawingGroupRecord)) {
+            if (!(r instanceof DrawingGroupRecord dg)) {
                 continue;
             }
-            DrawingGroupRecord dg = (DrawingGroupRecord)r;
             dg.decode();
             drawingManager = findDrawingManager(dg, escherBSERecords);
             if (drawingManager != null) {
@@ -1881,8 +1877,8 @@ public final class InternalWorkbook {
         EscherDggRecord dgg = null;
         EscherContainerRecord bStore = null;
         for(EscherRecord er : cr) {
-            if (er instanceof EscherDggRecord) {
-                dgg = (EscherDggRecord) er;
+            if (er instanceof EscherDggRecord dggRecord) {
+                dgg = dggRecord;
             } else if (er.getRecordId() == EscherContainerRecord.BSTORE_CONTAINER) {
                 bStore = (EscherContainerRecord) er;
             }
@@ -1895,8 +1891,8 @@ public final class InternalWorkbook {
         DrawingManager2 dm = new DrawingManager2(dgg);
         if(bStore != null){
             for (EscherRecord bs : bStore) {
-                if(bs instanceof EscherBSERecord) {
-                    escherBSERecords.add((EscherBSERecord)bs);
+                if(bs instanceof EscherBSERecord bse) {
+                    escherBSERecords.add(bse);
                 }
             }
         }
@@ -2143,13 +2139,13 @@ public final class InternalWorkbook {
 
         EscherDgRecord dg = null;
         for(EscherRecord er : escherContainer) {
-            if(er instanceof EscherDgRecord) {
-                dg = (EscherDgRecord)er;
+            if(er instanceof EscherDgRecord dgRecord) {
+                dg = dgRecord;
                 //update id of the drawing in the cloned sheet
                 dg.setOptions( (short) ( dgId << 4 ) );
-            } else if (er instanceof EscherContainerRecord){
+            } else if (er instanceof EscherContainerRecord container){
                 // iterate over shapes and re-generate shapeId
-                for(EscherRecord er2 : (EscherContainerRecord)er) {
+                for(EscherRecord er2 : container) {
                     for(EscherRecord shapeChildRecord : (EscherContainerRecord)er2) {
                         int recordId = shapeChildRecord.getRecordId();
                         if (recordId == EscherSpRecord.RECORD_ID){

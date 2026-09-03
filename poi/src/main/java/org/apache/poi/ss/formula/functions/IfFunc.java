@@ -99,14 +99,12 @@ public final class IfFunc extends Var2or3ArgFunction implements ArrayFunction {
     ValueEval evaluateArrayArgs(ValueEval arg0, ValueEval arg1, ValueEval arg2, int srcRowIndex, int srcColumnIndex) {
         int w1, w2, h1, h2;
         int a1FirstCol = 0, a1FirstRow = 0;
-        if (arg0 instanceof AreaEval) {
-            AreaEval ae = (AreaEval)arg0;
+        if (arg0 instanceof AreaEval ae) {
             w1 = ae.getWidth();
             h1 = ae.getHeight();
             a1FirstCol = ae.getFirstColumn();
             a1FirstRow = ae.getFirstRow();
-        } else if (arg0 instanceof RefEval){
-            RefEval ref = (RefEval)arg0;
+        } else if (arg0 instanceof RefEval ref){
             w1 = 1;
             h1 = 1;
             a1FirstCol = ref.getColumn();
@@ -116,14 +114,12 @@ public final class IfFunc extends Var2or3ArgFunction implements ArrayFunction {
             h1 = 1;
         }
         int a2FirstCol = 0, a2FirstRow = 0;
-        if (arg1 instanceof AreaEval) {
-            AreaEval ae = (AreaEval)arg1;
+        if (arg1 instanceof AreaEval ae) {
             w2 = ae.getWidth();
             h2 = ae.getHeight();
             a2FirstCol = ae.getFirstColumn();
             a2FirstRow = ae.getFirstRow();
-        } else if (arg1 instanceof RefEval){
-            RefEval ref = (RefEval)arg1;
+        } else if (arg1 instanceof RefEval ref){
             w2 = 1;
             h2 = 1;
             a2FirstCol = ref.getColumn();
@@ -134,12 +130,10 @@ public final class IfFunc extends Var2or3ArgFunction implements ArrayFunction {
         }
 
         int a3FirstCol = 0, a3FirstRow = 0;
-        if (arg2 instanceof AreaEval) {
-            AreaEval ae = (AreaEval)arg2;
+        if (arg2 instanceof AreaEval ae) {
             a3FirstCol = ae.getFirstColumn();
             a3FirstRow = ae.getFirstRow();
-        } else if (arg2 instanceof RefEval){
-            RefEval ref = (RefEval)arg2;
+        } else if (arg2 instanceof RefEval ref){
             a3FirstCol = ref.getColumn();
             a3FirstRow = ref.getRow();
         }

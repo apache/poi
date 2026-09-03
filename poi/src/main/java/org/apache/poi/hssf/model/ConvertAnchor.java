@@ -31,10 +31,8 @@ public class ConvertAnchor
 {
     public static EscherRecord createAnchor( HSSFAnchor userAnchor )
     {
-        if (userAnchor instanceof HSSFClientAnchor)
+        if (userAnchor instanceof HSSFClientAnchor a)
         {
-            HSSFClientAnchor a = (HSSFClientAnchor) userAnchor;
-
             EscherClientAnchorRecord anchor = new EscherClientAnchorRecord();
             anchor.setRecordId( EscherClientAnchorRecord.RECORD_ID );
             anchor.setOptions( (short) 0x0000 );

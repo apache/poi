@@ -63,15 +63,15 @@ public final class OperandResolver {
     public static ValueEval getSingleValue(ValueEval arg, int srcCellRow, int srcCellCol)
             throws EvaluationException {
         final ValueEval result;
-        if (arg instanceof RefEval) {
-            result = chooseSingleElementFromRef((RefEval) arg);
-        } else if (arg instanceof AreaEval) {
-            result = chooseSingleElementFromArea((AreaEval) arg, srcCellRow, srcCellCol);
+        if (arg instanceof RefEval re) {
+            result = chooseSingleElementFromRef(re);
+        } else if (arg instanceof AreaEval ae) {
+            result = chooseSingleElementFromArea(ae, srcCellRow, srcCellCol);
         } else {
             result = arg;
         }
-        if (result instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval) result);
+        if (result instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
         return result;
     }
@@ -158,8 +158,8 @@ public final class OperandResolver {
     public static ValueEval chooseSingleElementFromArea(AreaEval ae,
             int srcCellRow, int srcCellCol) throws EvaluationException {
         ValueEval result = chooseSingleElementFromAreaInternal(ae, srcCellRow, srcCellCol);
-        if (result instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval) result);
+        if (result instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
         return result;
     }

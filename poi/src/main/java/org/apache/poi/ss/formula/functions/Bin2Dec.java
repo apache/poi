@@ -47,8 +47,7 @@ public class Bin2Dec extends Fixed1ArgFunction implements FreeRefFunction {
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
         final String number;
-        if (numberVE instanceof RefEval) {
-            RefEval re = (RefEval) numberVE;
+        if (numberVE instanceof RefEval re) {
             number = OperandResolver.coerceValueToString(re.getInnerValueEval(re.getFirstSheetIndex()));
         } else {
             number = OperandResolver.coerceValueToString(numberVE);

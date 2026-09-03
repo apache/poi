@@ -166,8 +166,7 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
      * @param sfh used to resolve any shared-formulas/arrays/tables for the current sheet
      */
     public void construct(CellValueRecordInterface rec, RecordStream rs, SharedValueManager sfh) {
-        if (rec instanceof FormulaRecord) {
-            FormulaRecord formulaRec = (FormulaRecord)rec;
+        if (rec instanceof FormulaRecord formulaRec) {
             // read optional cached text value
             StringRecord cachedText;
             Class<? extends Record> nextClass = rs.peekNextClass();
@@ -245,8 +244,7 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
             if (nBlank > 1) {
                 rv.visitRecord(createMBR(rowCells, i, nBlank));
                 i+=nBlank-1;
-            } else if (cvr instanceof RecordAggregate) {
-                RecordAggregate agg = (RecordAggregate) cvr;
+            } else if (cvr instanceof RecordAggregate agg) {
                 agg.visitContainedRecords(rv);
             } else {
                 rv.visitRecord((org.apache.poi.hssf.record.Record) cvr);
@@ -286,10 +284,9 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
                 continue;
             }
             for (CellValueRecordInterface cell : rowCells) {
-                if (cell instanceof FormulaRecordAggregate) {
-                    FormulaRecordAggregate fra = (FormulaRecordAggregate) cell;
+                if (cell instanceof FormulaRecordAggregate fra) {
                     Ptg[] ptgs = fra.getFormulaTokens(); // needs clone() inside this getter?
-                    Ptg[] ptgs2 = ((FormulaRecordAggregate) cell).getFormulaRecord().getParsedExpression(); // needs
+                    Ptg[] ptgs2 = fra.getFormulaRecord().getParsedExpression(); // needs
                     // clone() inside this getter?
 
                     if (shifter.adjustFormula(ptgs, currentExternSheetIndex)) {

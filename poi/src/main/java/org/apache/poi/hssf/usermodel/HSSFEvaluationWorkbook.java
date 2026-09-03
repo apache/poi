@@ -285,8 +285,8 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
             String firstSheetName = sheetIdentifier.getName();
             String lastSheetName = firstSheetName;
 
-            if (sheetIden instanceof SheetRangeIdentifier) {
-                lastSheetName = ((SheetRangeIdentifier)sheetIden).getLastSheetIdentifier().getName();
+            if (sheetIden instanceof SheetRangeIdentifier sheetRange) {
+                lastSheetName = sheetRange.getLastSheetIdentifier().getName();
             }
 
             if (workbookName == null) {

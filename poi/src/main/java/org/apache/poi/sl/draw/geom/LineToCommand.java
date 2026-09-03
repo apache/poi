@@ -64,8 +64,7 @@ public final class LineToCommand implements LineToCommandIf {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LineToCommand)) return false;
-        LineToCommand that = (LineToCommand) o;
+        if (!(o instanceof LineToCommand that)) return false;
         return Objects.equals(pt, that.pt);
     }
 

@@ -35,10 +35,10 @@ public final class RowFunc {
         int rnum;
         if (args.length == 0) {
             rnum = srcRowIndex;
-        } else if (args[0] instanceof AreaEval) {
-            rnum = ((AreaEval) args[0]).getFirstRow();
-        } else if (args[0] instanceof RefEval) {
-            rnum = ((RefEval) args[0]).getRow();
+        } else if (args[0] instanceof AreaEval ae) {
+            rnum = ae.getFirstRow();
+        } else if (args[0] instanceof RefEval re) {
+            rnum = re.getRow();
         } else {
             // anything else is not valid argument
             return ErrorEval.VALUE_INVALID;

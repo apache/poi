@@ -211,10 +211,10 @@ public class CryptoAPIDecryptor extends Decryptor {
             }
         } catch (Exception e) {
             IOUtils.closeQuietly(fsOut);
-            if (e instanceof GeneralSecurityException) {
-                throw (GeneralSecurityException)e;
-            } else if (e instanceof IOException) {
-                throw (IOException)e;
+            if (e instanceof GeneralSecurityException gse) {
+                throw gse;
+            } else if (e instanceof IOException ioe) {
+                throw ioe;
             } else {
                 throw new IOException("summary entries can't be read", e);
             }

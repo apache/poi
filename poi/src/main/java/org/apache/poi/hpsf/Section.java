@@ -658,10 +658,9 @@ public class Section {
      */
     @Override
     public boolean equals(final Object o) {
-        if (!(o instanceof Section)) {
+        if (!(o instanceof Section s)) {
             return false;
         }
-        final Section s = (Section) o;
         if (!s.getFormatID().equals(getFormatID())) {
             return false;
         }

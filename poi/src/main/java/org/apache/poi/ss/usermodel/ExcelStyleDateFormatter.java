@@ -188,11 +188,10 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ExcelStyleDateFormatter)) {
+        if (!(o instanceof ExcelStyleDateFormatter other)) {
             return false;
         }
 
-        ExcelStyleDateFormatter other = (ExcelStyleDateFormatter) o;
         return dateToBeFormatted == other.dateToBeFormatted;
     }
 

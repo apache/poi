@@ -259,8 +259,8 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     @Override
     public ClientAnchor getClientAnchor() {
         HSSFAnchor ha = super.getAnchor();
-        if (ha instanceof ClientAnchor) {
-            return (ClientAnchor) ha;
+        if (ha instanceof ClientAnchor anchor) {
+            return anchor;
         }
 
         throw new IllegalStateException("Anchor can not be changed in "
@@ -327,10 +327,9 @@ public class HSSFComment extends HSSFTextbox implements Comment {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof HSSFComment)) {
+        if (!(obj instanceof HSSFComment other)) {
             return false;
         }
-        HSSFComment other = (HSSFComment) obj;
         return getNoteRecord().equals(other.getNoteRecord());
     }
 

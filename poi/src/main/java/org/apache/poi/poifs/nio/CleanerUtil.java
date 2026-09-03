@@ -78,8 +78,8 @@ public final class CleanerUtil {
     static {
         final Object hack = AccessController.doPrivileged(
                 (PrivilegedAction<Object>) CleanerUtil::unmapHackImpl);
-        if (hack instanceof BufferCleaner) {
-            CLEANER = (BufferCleaner) hack;
+        if (hack instanceof BufferCleaner bc) {
+            CLEANER = bc;
             UNMAP_SUPPORTED = true;
             UNMAP_NOT_SUPPORTED_REASON = null;
         } else {

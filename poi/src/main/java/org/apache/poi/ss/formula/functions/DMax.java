@@ -33,11 +33,11 @@ public final class DMax implements IDStarAlgorithm {
 
     @Override
     public boolean processMatch(ValueEval eval) {
-        if(eval instanceof NumericValueEval) {
+        if(eval instanceof NumericValueEval num) {
             if(maximumValue == null) { // First match, just set the value.
                 maximumValue = eval;
             } else { // There was a previous match, find the new minimum.
-                double currentValue = ((NumericValueEval)eval).getNumberValue();
+                double currentValue = num.getNumberValue();
                 double oldValue = ((NumericValueEval)maximumValue).getNumberValue();
                 if(currentValue > oldValue) {
                     maximumValue = eval;

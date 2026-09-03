@@ -49,15 +49,13 @@ public class SharedFormula {
             if (!ptg.isBaseToken()) {
                 originalOperandClass = ptg.getPtgClass();
             }
-            if (ptg instanceof RefPtgBase) {
-                RefPtgBase refNPtg = (RefPtgBase)ptg;
+            if (ptg instanceof RefPtgBase refNPtg) {
                 ptg = new RefPtg(fixupRelativeRow(formulaRow,refNPtg.getRow(),refNPtg.isRowRelative()),
                                      fixupRelativeColumn(formulaColumn,refNPtg.getColumn(),refNPtg.isColRelative()),
                                      refNPtg.isRowRelative(),
                                      refNPtg.isColRelative());
                 ptg.setClass(originalOperandClass);
-            } else if (ptg instanceof AreaPtgBase) {
-                AreaPtgBase areaNPtg = (AreaPtgBase)ptg;
+            } else if (ptg instanceof AreaPtgBase areaNPtg) {
                 ptg = new AreaPtg(fixupRelativeRow(formulaRow,areaNPtg.getFirstRow(),areaNPtg.isFirstRowRelative()),
                                 fixupRelativeRow(formulaRow,areaNPtg.getLastRow(),areaNPtg.isLastRowRelative()),
                                 fixupRelativeColumn(formulaColumn,areaNPtg.getFirstColumn(),areaNPtg.isFirstColRelative()),
@@ -67,9 +65,9 @@ public class SharedFormula {
                                 areaNPtg.isFirstColRelative(),
                                 areaNPtg.isLastColRelative());
                 ptg.setClass(originalOperandClass);
-            } else if (ptg instanceof OperandPtg) {
+            } else if (ptg instanceof OperandPtg optg) {
                 // Any subclass of OperandPtg is mutable, so it's safest to not share these instances.
-                ptg = ((OperandPtg) ptg).copy();
+                ptg = optg.copy();
             }
             // all other Ptgs are immutable and can be shared
             newPtgStack[k] = ptg;

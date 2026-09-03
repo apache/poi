@@ -80,8 +80,8 @@ public final class RecordFactoryInputStream {
                     }
                     
                     // If it's a FILEPASS, track it specifically
-                    if (rec instanceof FilePassRecord) {
-                        fpr = (FilePassRecord) rec;
+                    if (rec instanceof FilePassRecord filePass) {
+                        fpr = filePass;
                     }
 
                     // workbook not encrypted (typical case)
@@ -338,12 +338,12 @@ public final class RecordFactoryInputStream {
             return null;
         }
 
-        if (record instanceof RKRecord) {
-            return RecordFactory.convertToNumberRecord((RKRecord) record);
+        if (record instanceof RKRecord rk) {
+            return RecordFactory.convertToNumberRecord(rk);
         }
 
-        if (record instanceof MulRKRecord) {
-            Record[] records = RecordFactory.convertRKRecords((MulRKRecord) record);
+        if (record instanceof MulRKRecord mrk) {
+            Record[] records = RecordFactory.convertRKRecords(mrk);
 
             _unreadRecordBuffer = records;
             _unreadRecordIndex = 1;
@@ -351,8 +351,7 @@ public final class RecordFactoryInputStream {
         }
 
         if (record.getSid() == DrawingGroupRecord.sid
-                && _lastRecord instanceof DrawingGroupRecord) {
-            DrawingGroupRecord lastDGRecord = (DrawingGroupRecord) _lastRecord;
+                && _lastRecord instanceof DrawingGroupRecord lastDGRecord) {
             lastDGRecord.join((AbstractEscherHolderRecord) record);
             return null;
         }
@@ -370,8 +369,8 @@ public final class RecordFactoryInputStream {
                 }
                 return null;
             }
-            if (_lastRecord instanceof DrawingGroupRecord) {
-                ((DrawingGroupRecord) _lastRecord).processContinueRecord(contRec.getData());
+            if (_lastRecord instanceof DrawingGroupRecord dgRecord) {
+                dgRecord.processContinueRecord(contRec.getData());
                 return null;
             }
             if (_lastRecord instanceof DrawingRecord) {
@@ -391,8 +390,8 @@ public final class RecordFactoryInputStream {
             throw new RecordFormatException("Unhandled Continue Record followining " + _lastRecord.getClass());
         }
         _lastRecord = record;
-        if (record instanceof DrawingRecord) {
-            _lastDrawingRecord = (DrawingRecord) record;
+        if (record instanceof DrawingRecord drawingRecord) {
+            _lastDrawingRecord = drawingRecord;
         }
         return record;
     }

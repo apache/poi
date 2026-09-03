@@ -78,8 +78,7 @@ public final class Sumproduct implements Function, ArrayMode {
             if(firstArg instanceof RefEval) {
                 return evaluateSingleProduct(args);
             }
-            if (firstArg instanceof TwoDEval) {
-                TwoDEval ae = (TwoDEval) firstArg;
+            if (firstArg instanceof TwoDEval ae) {
                 if(ae.isRow() && ae.isColumn()) {
                     return evaluateSingleProduct(args);
                 }
@@ -105,8 +104,7 @@ public final class Sumproduct implements Function, ArrayMode {
     private static double getScalarValue(ValueEval arg) throws EvaluationException {
 
         ValueEval eval;
-        if (arg instanceof RefEval) {
-            RefEval re = (RefEval) arg;
+        if (arg instanceof RefEval re) {
             if (re.getNumberOfSheets() > 1) {
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
             }
@@ -118,8 +116,7 @@ public final class Sumproduct implements Function, ArrayMode {
         if (eval == null) {
             throw new IllegalStateException("parameter may not be null");
         }
-        if (eval instanceof AreaEval) {
-            AreaEval ae = (AreaEval) eval;
+        if (eval instanceof AreaEval ae) {
             // an area ref can work as a scalar value if it is 1x1
             if(!ae.isColumn() || !ae.isRow()) {
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
@@ -178,8 +175,8 @@ public final class Sumproduct implements Function, ArrayMode {
         for (int rrIx=0; rrIx<height; rrIx++) {
             for (int rcIx=0; rcIx<width; rcIx++) {
                 ValueEval ve = areaEval.getValue(rrIx, rcIx);
-                if (ve instanceof ErrorEval) {
-                    throw new EvaluationException((ErrorEval) ve);
+                if (ve instanceof ErrorEval ee) {
+                    throw new EvaluationException(ee);
                 }
             }
         }
@@ -220,8 +217,8 @@ public final class Sumproduct implements Function, ArrayMode {
             return 0;
         }
 
-        if(ve instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval)ve);
+        if(ve instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
         if(ve instanceof StringEval) {
             if(isScalarProduct) {
@@ -231,8 +228,7 @@ public final class Sumproduct implements Function, ArrayMode {
             // even if they would parse as valid numeric values
             return 0;
         }
-        if(ve instanceof NumericValueEval) {
-            NumericValueEval nve = (NumericValueEval) ve;
+        if(ve instanceof NumericValueEval nve) {
             return nve.getNumberValue();
         }
         throw new IllegalStateException("Unexpected value eval class ("

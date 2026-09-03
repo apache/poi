@@ -32,10 +32,10 @@ public final class Column {
         int rnum;
         if (args.length == 0) {
             rnum = srcColumnIndex;
-        } else if (args[0] instanceof AreaEval) {
-            rnum = ((AreaEval) args[0]).getFirstColumn();
-        } else if (args[0] instanceof RefEval) {
-            rnum = ((RefEval) args[0]).getColumn();
+        } else if (args[0] instanceof AreaEval ae) {
+            rnum = ae.getFirstColumn();
+        } else if (args[0] instanceof RefEval re) {
+            rnum = re.getColumn();
         } else {
             // anything else is not valid argument
             return ErrorEval.VALUE_INVALID;

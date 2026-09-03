@@ -238,8 +238,8 @@ public final class HSSFSheet implements Sheet {
                 }
             }
             LOGGER.atTrace().log(() -> {
-                if (cval instanceof Record) {
-                    return new SimpleMessage("record id = " + Integer.toHexString(((Record) cval).getSid()));
+                if (cval instanceof Record record) {
+                    return new SimpleMessage("record id = " + Integer.toHexString(record.getSid()));
                 } else {
                     return new SimpleMessage("record = " + cval);
                 }
@@ -441,10 +441,9 @@ public final class HSSFSheet implements Sheet {
 
             @Override
             public void visitRecord(Record r) {
-                if (!(r instanceof DVRecord)) {
+                if (!(r instanceof DVRecord dvRecord)) {
                     return;
                 }
-                DVRecord dvRecord = (DVRecord) r;
                 CellRangeAddressList regions = dvRecord.getCellRangeAddress().copy();
                 DVConstraint constraint = DVConstraint.createDVConstraint(dvRecord, book);
                 HSSFDataValidation hssfDataValidation = new HSSFDataValidation(regions, constraint);
@@ -1370,14 +1369,9 @@ public final class HSSFSheet implements Sheet {
     @Override
     public void setMargin(PageMargin margin, double size) {
         switch (margin) {
-            case FOOTER:
-                _sheet.getPageSettings().getPrintSetup().setFooterMargin(size);
-                break;
-            case HEADER:
-                _sheet.getPageSettings().getPrintSetup().setHeaderMargin(size);
-                break;
-            default:
-                _sheet.getPageSettings().setMargin(margin.getLegacyApiValue(), size);
+            case FOOTER -> _sheet.getPageSettings().getPrintSetup().setFooterMargin(size);
+            case HEADER -> _sheet.getPageSettings().getPrintSetup().setHeaderMargin(size);
+            default -> _sheet.getPageSettings().setMargin(margin.getLegacyApiValue(), size);
         }
     }
 
@@ -1781,10 +1775,9 @@ public final class HSSFSheet implements Sheet {
     private void moveCommentsForRowShift(int startRow, int endRow, int n) {
         final HSSFPatriarch patriarch = createDrawingPatriarch();
         for (final HSSFShape shape : patriarch.getChildren()) {
-            if (!(shape instanceof HSSFComment)) {
+            if (!(shape instanceof HSSFComment comment)) {
                 continue;
             }
-            final HSSFComment comment = (HSSFComment) shape;
             final int r = comment.getRow();
             if (startRow <= r && r <= endRow) {
                 comment.setRow(clip(r + n));
@@ -2315,8 +2308,7 @@ public final class HSSFSheet implements Sheet {
     @Override
     public HSSFHyperlink getHyperlink(int row, int column) {
         for (RecordBase rec : _sheet.getRecords()) {
-            if (rec instanceof HyperlinkRecord) {
-                HyperlinkRecord link = (HyperlinkRecord) rec;
+            if (rec instanceof HyperlinkRecord link) {
                 if (link.getFirstColumn() == column && link.getFirstRow() == row) {
                     return new HSSFHyperlink(link);
                 }
@@ -2346,8 +2338,7 @@ public final class HSSFSheet implements Sheet {
     public List<HSSFHyperlink> getHyperlinkList() {
         final List<HSSFHyperlink> hyperlinkList = new ArrayList<>();
         for (RecordBase rec : _sheet.getRecords()) {
-            if (rec instanceof HyperlinkRecord) {
-                HyperlinkRecord link = (HyperlinkRecord) rec;
+            if (rec instanceof HyperlinkRecord link) {
                 hyperlinkList.add(new HSSFHyperlink(link));
             }
         }
@@ -2372,8 +2363,7 @@ public final class HSSFSheet implements Sheet {
     protected void removeHyperlink(HyperlinkRecord link) {
         for (Iterator<RecordBase> it = _sheet.getRecords().iterator(); it.hasNext();) {
             RecordBase rec = it.next();
-            if (rec instanceof HyperlinkRecord) {
-                HyperlinkRecord recLink = (HyperlinkRecord) rec;
+            if (rec instanceof HyperlinkRecord recLink) {
                 if (link == recLink) {
                     it.remove();
                     // if multiple HSSFHyperlinks refer to the same record
@@ -2450,11 +2440,10 @@ public final class HSSFSheet implements Sheet {
             throw new IllegalArgumentException("Specified cell does not belong to this sheet.");
         }
         CellValueRecordInterface rec = ((HSSFCell) cell).getCellValueRecord();
-        if (!(rec instanceof FormulaRecordAggregate)) {
+        if (!(rec instanceof FormulaRecordAggregate fra)) {
             String ref = new CellReference(cell).formatAsString();
             throw new IllegalArgumentException("Cell " + ref + " is not part of an array formula.");
         }
-        FormulaRecordAggregate fra = (FormulaRecordAggregate) rec;
         CellRangeAddress range = fra.removeArrayFormula(cell.getRowIndex(), cell.getColumnIndex());
 
         CellRange<HSSFCell> result = getCellRange(range);
@@ -2528,8 +2517,7 @@ public final class HSSFSheet implements Sheet {
                 }
                 continue;
             }
-            if (shape instanceof HSSFComment) {
-                HSSFComment comment = (HSSFComment) shape;
+            if (shape instanceof HSSFComment comment) {
                 if (comment.hasPosition() && comment.getColumn() == column && comment.getRow() == row) {
                     return comment;
                 }
@@ -2563,12 +2551,11 @@ public final class HSSFSheet implements Sheet {
     private void findCellCommentLocations(HSSFShapeContainer container, Map<CellAddress, HSSFComment> locations) {
         for (Object object : container.getChildren()) {
             HSSFShape shape = (HSSFShape) object;
-            if (shape instanceof HSSFShapeGroup) {
-                findCellCommentLocations((HSSFShapeGroup) shape, locations);
+            if (shape instanceof HSSFShapeGroup group) {
+                findCellCommentLocations(group, locations);
                 continue;
             }
-            if (shape instanceof HSSFComment) {
-                HSSFComment comment = (HSSFComment) shape;
+            if (shape instanceof HSSFComment comment) {
                 if (comment.hasPosition()) {
                     locations.put(new CellAddress(comment.getRow(), comment.getColumn()), comment);
                 }
@@ -2693,8 +2680,7 @@ public final class HSSFSheet implements Sheet {
 
         for (Ptg ptg : nameDefinition) {
 
-            if (ptg instanceof Area3DPtg) {
-                Area3DPtg areaPtg = (Area3DPtg) ptg;
+            if (ptg instanceof Area3DPtg areaPtg) {
 
                 if (areaPtg.getFirstColumn() == 0
                         && areaPtg.getLastColumn() == maxColIndex) {

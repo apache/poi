@@ -77,15 +77,15 @@ enum OperatorEnum {
 
     private static <C extends Comparable<C>> boolean between(C cellValue, C v1, C v2) {
         if (v1 == null) {
-            if (cellValue instanceof Number) {
+            if (cellValue instanceof Number num) {
                 // use zero for null
                 double n1 = 0;
                 double n2 = v2 == null ? 0 : ((Number) v2).doubleValue();
-                return Double.compare( ((Number) cellValue).doubleValue(), n1) >= 0 && Double.compare(((Number) cellValue).doubleValue(), n2) <= 0;
-            } else if (cellValue instanceof String) {
+                return Double.compare( num.doubleValue(), n1) >= 0 && Double.compare(num.doubleValue(), n2) <= 0;
+            } else if (cellValue instanceof String str) {
                 String n1 = "";
                 String n2 = v2 == null ? "" : (String) v2;
-                return ((String) cellValue).compareToIgnoreCase(n1) >= 0 && ((String) cellValue).compareToIgnoreCase(n2) <= 0;
+                return str.compareToIgnoreCase(n1) >= 0 && str.compareToIgnoreCase(n2) <= 0;
             } else if (cellValue instanceof Boolean) return false;
             return false; // just in case - not a typical possibility
         }
@@ -94,15 +94,15 @@ enum OperatorEnum {
 
     private static <C extends Comparable<C>> boolean notBetween(C cellValue, C v1, C v2) {
         if (v1 == null) {
-            if (cellValue instanceof Number) {
+            if (cellValue instanceof Number num) {
                 // use zero for null
                 double n1 = 0;
                 double n2 = v2 == null ? 0 : ((Number) v2).doubleValue();
-                return Double.compare( ((Number) cellValue).doubleValue(), n1) < 0 || Double.compare(((Number) cellValue).doubleValue(), n2) > 0;
-            } else if (cellValue instanceof String) {
+                return Double.compare( num.doubleValue(), n1) < 0 || Double.compare(num.doubleValue(), n2) > 0;
+            } else if (cellValue instanceof String str) {
                 String n1 = "";
                 String n2 = v2 == null ? "" : (String) v2;
-                return ((String) cellValue).compareToIgnoreCase(n1) < 0 || ((String) cellValue).compareToIgnoreCase(n2) > 0;
+                return str.compareToIgnoreCase(n1) < 0 || str.compareToIgnoreCase(n2) > 0;
             } else {
                 // just in case - not a typical possibility
                 return cellValue instanceof Boolean;
@@ -113,9 +113,9 @@ enum OperatorEnum {
 
     private static <C extends Comparable<C>> boolean equalCheck(C cellValue, C v1, C v2) {
         if (v1 == null) {
-            if (cellValue instanceof Number) {
+            if (cellValue instanceof Number num) {
                 // use zero for null
-                return Double.compare( ((Number) cellValue).doubleValue(), 0) == 0;
+                return Double.compare( num.doubleValue(), 0) == 0;
             } else if (cellValue instanceof String) {
                 return false; // even an empty string is not equal the empty cell, only another empty cell is, handled higher up
             } else if (cellValue instanceof Boolean) return false;
@@ -139,9 +139,9 @@ enum OperatorEnum {
 
     private static <C extends Comparable<C>> boolean greaterThan(C cellValue, C v1, C v2) {
         if (v1 == null) {
-            if (cellValue instanceof Number) {
+            if (cellValue instanceof Number num) {
                 // use zero for null
-                return Double.compare( ((Number) cellValue).doubleValue(), 0) > 0;
+                return Double.compare( num.doubleValue(), 0) > 0;
             } else if (cellValue instanceof String) {
                 return true; // non-null string greater than empty cell
             } else {
@@ -154,9 +154,9 @@ enum OperatorEnum {
 
     private static <C extends Comparable<C>> boolean lessThan(C cellValue, C v1, C v2) {
         if (v1 == null) {
-            if (cellValue instanceof Number) {
+            if (cellValue instanceof Number num) {
                 // use zero for null
-                return Double.compare( ((Number) cellValue).doubleValue(), 0) < 0;
+                return Double.compare( num.doubleValue(), 0) < 0;
             } else if (cellValue instanceof String) {
                 return false; // non-null string greater than empty cell
             } else if (cellValue instanceof Boolean) return false;
@@ -167,9 +167,9 @@ enum OperatorEnum {
 
     private static <C extends Comparable<C>> boolean greaterOrEqual(C cellValue, C v1, C v2) {
         if (v1 == null) {
-            if (cellValue instanceof Number) {
+            if (cellValue instanceof Number num) {
                 // use zero for null
-                return Double.compare( ((Number) cellValue).doubleValue(), 0) >= 0;
+                return Double.compare( num.doubleValue(), 0) >= 0;
             } else if (cellValue instanceof String) {
                 return true; // non-null string greater than empty cell
             } else {
@@ -182,9 +182,9 @@ enum OperatorEnum {
 
     private static <C extends Comparable<C>> boolean lessOrEqual(C cellValue, C v1, C v2) {
         if (v1 == null) {
-            if (cellValue instanceof Number) {
+            if (cellValue instanceof Number num) {
                 // use zero for null
-                return Double.compare( ((Number) cellValue).doubleValue(), 0) <= 0;
+                return Double.compare( num.doubleValue(), 0) <= 0;
             } else if (cellValue instanceof String) {
                 return false; // non-null string not less than empty cell
             } else if (cellValue instanceof Boolean) return false; // for completeness

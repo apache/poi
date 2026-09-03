@@ -207,14 +207,14 @@ public final class Offset implements Function {
 
     private static BaseRef evaluateBaseRef(ValueEval eval) throws EvaluationException {
 
-        if(eval instanceof RefEval) {
-            return new BaseRef((RefEval)eval);
+        if(eval instanceof RefEval re) {
+            return new BaseRef(re);
         }
-        if(eval instanceof AreaEval) {
-            return new BaseRef((AreaEval)eval);
+        if(eval instanceof AreaEval ae) {
+            return new BaseRef(ae);
         }
-        if (eval instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval) eval);
+        if (eval instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
         throw new EvaluationException(ErrorEval.VALUE_INVALID);
     }

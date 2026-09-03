@@ -76,8 +76,8 @@ public abstract class Ptg implements Duplicatable, GenericRecord {
         if (hasArrayPtgs) {
             Ptg[] result = toPtgArray(temp);
             for (int i=0;i<result.length;i++) {
-                if (result[i] instanceof ArrayInitialPtg) {
-                    result[i] = ((ArrayInitialPtg) result[i]).finishReading(in);
+                if (result[i] instanceof ArrayInitialPtg aip) {
+                    result[i] = aip.finishReading(in);
                 }
             }
             return result;

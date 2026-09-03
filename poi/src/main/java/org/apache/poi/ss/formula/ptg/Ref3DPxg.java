@@ -54,8 +54,8 @@ public final class Ref3DPxg extends RefPtgBase implements Pxg3D {
         this.externalWorkbookNumber = externalWorkbookNumber;
 
         this.firstSheetName = sheetName.getSheetIdentifier().getName();
-        if (sheetName instanceof SheetRangeIdentifier) {
-            this.lastSheetName = ((SheetRangeIdentifier)sheetName).getLastSheetIdentifier().getName();
+        if (sheetName instanceof SheetRangeIdentifier sri) {
+            this.lastSheetName = sri.getLastSheetIdentifier().getName();
         } else {
             this.lastSheetName = null;
         }

@@ -139,62 +139,60 @@ public final class PageSettingsBlock extends RecordAggregate {
 
     private boolean readARecord(RecordStream rs) {
         switch (rs.peekNextSid()) {
-            case HorizontalPageBreakRecord.sid:
+            case HorizontalPageBreakRecord.sid -> {
                 checkNotPresent(_rowBreaksRecord);
                 _rowBreaksRecord = (PageBreakRecord) rs.getNext();
-                break;
-            case VerticalPageBreakRecord.sid:
+            }
+            case VerticalPageBreakRecord.sid -> {
                 checkNotPresent(_columnBreaksRecord);
                 _columnBreaksRecord = (PageBreakRecord) rs.getNext();
-                break;
-            case HeaderRecord.sid:
+            }
+            case HeaderRecord.sid -> {
                 checkNotPresent(_header);
                 _header = (HeaderRecord) rs.getNext();
-                break;
-            case FooterRecord.sid:
+            }
+            case FooterRecord.sid -> {
                 checkNotPresent(_footer);
                 _footer = (FooterRecord) rs.getNext();
-                break;
-            case HCenterRecord.sid:
+            }
+            case HCenterRecord.sid -> {
                 checkNotPresent(_hCenter);
                 _hCenter = (HCenterRecord) rs.getNext();
-                break;
-            case VCenterRecord.sid:
+            }
+            case VCenterRecord.sid -> {
                 checkNotPresent(_vCenter);
                 _vCenter = (VCenterRecord) rs.getNext();
-                break;
-            case LeftMarginRecord.sid:
+            }
+            case LeftMarginRecord.sid -> {
                 checkNotPresent(_leftMargin);
                 _leftMargin = (LeftMarginRecord) rs.getNext();
-                break;
-            case RightMarginRecord.sid:
+            }
+            case RightMarginRecord.sid -> {
                 checkNotPresent(_rightMargin);
                 _rightMargin = (RightMarginRecord) rs.getNext();
-                break;
-            case TopMarginRecord.sid:
+            }
+            case TopMarginRecord.sid -> {
                 checkNotPresent(_topMargin);
                 _topMargin = (TopMarginRecord) rs.getNext();
-                break;
-            case BottomMarginRecord.sid:
+            }
+            case BottomMarginRecord.sid -> {
                 checkNotPresent(_bottomMargin);
                 _bottomMargin = (BottomMarginRecord) rs.getNext();
-                break;
-            case UnknownRecord.PLS_004D:
-                _plsRecords.add(new PLSAggregate(rs));
-                break;
-            case PrintSetupRecord.sid:
+            }
+            case UnknownRecord.PLS_004D -> _plsRecords.add(new PLSAggregate(rs));
+            case PrintSetupRecord.sid -> {
                 checkNotPresent(_printSetup);
                 _printSetup = (PrintSetupRecord)rs.getNext();
-                break;
-            case UnknownRecord.BITMAP_00E9:
+            }
+            case UnknownRecord.BITMAP_00E9 -> {
                 checkNotPresent(_bitmap);
                 _bitmap = rs.getNext();
-                break;
-            case UnknownRecord.PRINTSIZE_0033:
+            }
+            case UnknownRecord.PRINTSIZE_0033 -> {
                 checkNotPresent(_printSize);
                 _printSize = rs.getNext();
-                break;
-            case HeaderFooterRecord.sid:
+            }
+            case HeaderFooterRecord.sid -> {
                 //there can be multiple HeaderFooterRecord records belonging to different sheet views
                 HeaderFooterRecord hf = (HeaderFooterRecord)rs.getNext();
                 if(hf.isCurrentSheet()) {
@@ -202,10 +200,11 @@ public final class PageSettingsBlock extends RecordAggregate {
                 } else {
                     _sviewHeaderFooters.add(hf);
                 }
-                break;
-            default:
+            }
+            default -> {
                 // all other record types are not part of the PageSettingsBlock
                 return false;
+            }
         }
         return true;
     }
@@ -672,8 +671,7 @@ public final class PageSettingsBlock extends RecordAggregate {
         // loop through HeaderFooterRecord records having not-empty GUID and match them with
         // CustomViewSettingsRecordAggregate blocks having UserSViewBegin with the same GUID
         for (RecordBase rb : sheetRecords) {
-            if (rb instanceof CustomViewSettingsRecordAggregate) {
-                final CustomViewSettingsRecordAggregate cv = (CustomViewSettingsRecordAggregate) rb;
+            if (rb instanceof CustomViewSettingsRecordAggregate cv) {
                 cv.visitContainedRecords(r -> {
                     if (r.getSid() == UserSViewBegin.sid) {
                         String guid = HexDump.toHex(((UserSViewBegin) r).getGuid());

@@ -34,9 +34,9 @@ public final class DAverage implements IDStarAlgorithm {
 
     @Override
     public boolean processMatch(ValueEval eval) {
-        if (eval instanceof NumericValueEval) {
+        if (eval instanceof NumericValueEval num) {
             count++;
-            total += ((NumericValueEval)eval).getNumberValue();
+            total += num.getNumberValue();
         }
         return true;
     }

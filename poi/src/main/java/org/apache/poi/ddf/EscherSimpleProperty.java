@@ -121,11 +121,9 @@ public class EscherSimpleProperty extends EscherProperty {
         if ( this == o ) {
             return true;
         }
-        if ( !( o instanceof EscherSimpleProperty ) ) {
+        if ( !( o instanceof EscherSimpleProperty escherSimpleProperty ) ) {
             return false;
         }
-
-        final EscherSimpleProperty escherSimpleProperty = (EscherSimpleProperty) o;
 
         if ( propertyValue != escherSimpleProperty.propertyValue ) {
             return false;
