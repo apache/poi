@@ -88,6 +88,9 @@ public final class XMLHelper {
 
     private static final SAXParserFactory saxFactory = getSaxParserFactory();
 
+    // TransformerFactory is not thread-safe, so access to it is synchronized in newTransformer
+    private static final TransformerFactory transformerFactory = getTransformerFactory();
+
     @FunctionalInterface
     private interface SecurityFeature {
         void accept(String name, boolean value) throws ParserConfigurationException, SAXException, TransformerException;
@@ -237,7 +240,10 @@ public final class XMLHelper {
     }
 
     public static Transformer newTransformer() throws TransformerConfigurationException {
-        Transformer serializer = getTransformerFactory().newTransformer();
+        final Transformer serializer;
+        synchronized (transformerFactory) {
+            serializer = transformerFactory.newTransformer();
+        }
         // TODO set encoding from a command argument
         serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         serializer.setOutputProperty(OutputKeys.INDENT, "no");
