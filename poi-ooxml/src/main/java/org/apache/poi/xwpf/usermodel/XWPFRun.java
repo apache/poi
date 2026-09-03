@@ -75,6 +75,21 @@ import org.xml.sax.SAXException;
  * XWPFRun object defines a region of text with a common set of properties
  */
 public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
+    /**
+     * XPath selecting the {@code w:drawing} elements held in an {@code mc:AlternateContent} choice.
+     * Hoisted out of the constructor so that it is not rebuilt for every run of every document.
+     */
+    private static final String ALTERNATE_CONTENT_DRAWING_PATH =
+            "declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' " +
+            "declare namespace mc='" + PackageNamespaces.MARKUP_COMPATIBILITY + "' " +
+            "./mc:AlternateContent/mc:Choice/w:drawing";
+
+    /**
+     * XPath selecting all the {@code w:t} elements below a picture or drawing.
+     */
+    private static final String PICTURE_TEXT_PATH =
+            "declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' .//w:t";
+
     private final CTR run;
     private final String pictureText;
     private final IRunBody parent;
@@ -93,17 +108,29 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
          * reserve already occupied drawing ids, so reserving new ids later will
          * not corrupt the document
          */
-        for (CTDrawing ctDrawing : r.getDrawingArray()) {
-            for (CTAnchor anchor : ctDrawing.getAnchorArray()) {
-                if (anchor.getDocPr() != null) {
-                    getDocument().getDrawingIdManager().reserve(anchor.getDocPr().getId());
+        if (r.sizeOfDrawingArray() > 0) {
+            for (CTDrawing ctDrawing : r.getDrawingArray()) {
+                for (CTAnchor anchor : ctDrawing.getAnchorArray()) {
+                    if (anchor.getDocPr() != null) {
+                        getDocument().getDrawingIdManager().reserve(anchor.getDocPr().getId());
+                    }
+                }
+                for (CTInline inline : ctDrawing.getInlineArray()) {
+                    if (inline.getDocPr() != null) {
+                        getDocument().getDrawingIdManager().reserve(inline.getDocPr().getId());
+                    }
                 }
             }
-            for (CTInline inline : ctDrawing.getInlineArray()) {
-                if (inline.getDocPr() != null) {
-                    getDocument().getDrawingIdManager().reserve(inline.getDocPr().getId());
-                }
-            }
+        }
+
+        pictures = new ArrayList<>();
+        charts = new ArrayList<>();
+
+        // The vast majority of runs are plain text and hold neither a picture nor a drawing,
+        // so check for that cheaply first and skip the XPath queries altogether if we can.
+        if (!mayHavePictureContent(r)) {
+            pictureText = "";
+            return;
         }
 
         // Look for any text in any of our pictures or drawings
@@ -111,12 +138,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         List<XmlObject> pictTextObjs = new ArrayList<>();
         pictTextObjs.addAll(Arrays.asList(r.getPictArray()));
         pictTextObjs.addAll(Arrays.asList(r.getDrawingArray()));
-        pictTextObjs.addAll(Arrays.asList(r.selectPath(
-                "declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' " +
-                "declare namespace mc='" + PackageNamespaces.MARKUP_COMPATIBILITY + "' " +
-                "./mc:AlternateContent/mc:Choice/w:drawing")));
+        pictTextObjs.addAll(Arrays.asList(r.selectPath(ALTERNATE_CONTENT_DRAWING_PATH)));
         for (XmlObject o : pictTextObjs) {
-            XmlObject[] ts = o.selectPath("declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' .//w:t");
+            XmlObject[] ts = o.selectPath(PICTURE_TEXT_PATH);
             for (XmlObject t : ts) {
                 NodeList kids = t.getDomNode().getChildNodes();
                 for (int n = 0; n < kids.getLength(); n++) {
@@ -134,8 +158,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         // Do we have any embedded pictures or charts?
         // Pictures are a different CTPicture, under the drawingml namespace.
         // Charts are relations and use the CTRelId type.
-        pictures = new ArrayList<>();
-        charts = new ArrayList<>();
         for (XmlObject o : pictTextObjs) {
             for (CTPicture pict : getCTPictures(o)) {
                 XWPFPicture picture = new XWPFPicture(pict, this);
@@ -151,6 +173,30 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                 }
             }
         }
+    }
+
+    /**
+     * Cheap test for whether the run could possibly hold a picture, a drawing or an
+     * {@code mc:AlternateContent} element (which in turn may hold a {@code w:drawing}
+     * in one of its choices). Only if this returns {@code true} is it worth running the
+     * XPath queries that collect the picture text, pictures and charts.
+     *
+     * @param r the run to inspect
+     * @return {@code true} if the run may hold picture/drawing content
+     */
+    private static boolean mayHavePictureContent(CTR r) {
+        if (r.sizeOfPictArray() > 0 || r.sizeOfDrawingArray() > 0) {
+            return true;
+        }
+        // ./mc:AlternateContent - direct children only, matching the XPath below
+        for (Node node = r.getDomNode().getFirstChild(); node != null; node = node.getNextSibling()) {
+            if (node.getNodeType() == Node.ELEMENT_NODE
+                    && "AlternateContent".equals(node.getLocalName())
+                    && PackageNamespaces.MARKUP_COMPATIBILITY.equals(node.getNamespaceURI())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

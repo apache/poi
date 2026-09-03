@@ -35,7 +35,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJcTable;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
@@ -45,7 +44,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblCellMar;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJcTable;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
@@ -196,9 +194,13 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         StringBuilder rowText = new StringBuilder();
         XWPFTableRow tableRow = new XWPFTableRow(row, this);
         tableRows.add(tableRow);
-        for (CTTc cell : row.getTcList()) {
-            for (CTP ctp : cell.getPList()) {
-                XWPFParagraph p = new XWPFParagraph(ctp, part);
+        // Reuse the paragraphs that XWPFTableRow has just built for the cells of this row,
+        // rather than parsing every cell a second time into throw-away XWPFParagraph/XWPFRun
+        // objects. The cells are the same CTTc elements in the same order (XWPFTableRow uses
+        // ctRow.getTcArray()) and each cell's paragraphs are its direct w:p children in
+        // document order, so the resulting text is identical.
+        for (XWPFTableCell cell : tableRow.getTableCells()) {
+            for (XWPFParagraph p : cell.getParagraphs()) {
                 if (!rowText.isEmpty()) {
                     rowText.append('\t');
                 }
