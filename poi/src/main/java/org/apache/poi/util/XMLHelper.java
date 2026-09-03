@@ -83,12 +83,18 @@ public final class XMLHelper {
     private static final Logger LOG = PoiLogManager.getLogger(XMLHelper.class);
     private static long lastLog;
 
-    // DocumentBuilderFactory.newDocumentBuilder is thread-safe
+    // JAXP does not state whether these two factories may be used by several threads at once, but
+    // the JDK implementations only read their feature/attribute state when creating a parser, and
+    // both are configured here once and never mutated afterwards, so they are shared unguarded.
+    // Guarding them would serialize the much hotter parser-creation paths.
     private static final DocumentBuilderFactory documentBuilderFactory = getDocumentBuilderFactory();
 
     private static final SAXParserFactory saxFactory = getSaxParserFactory();
 
-    // TransformerFactory is not thread-safe, so access to it is synchronized in newTransformer
+    // TransformerFactory differs: its javadoc says "Different TransformerFactories can be used
+    // concurrently by different Threads", i.e. one factory is not meant to be shared, so
+    // newTransformer synchronizes on it. Only the (cheap) transformer creation is guarded -
+    // the transformation itself runs outside the lock.
     private static final TransformerFactory transformerFactory = getTransformerFactory();
 
     @FunctionalInterface
