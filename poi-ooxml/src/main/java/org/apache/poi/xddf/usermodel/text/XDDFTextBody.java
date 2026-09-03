@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
@@ -102,7 +101,7 @@ public class XDDFTextBody {
 
     public List<XDDFTextParagraph> getParagraphs() {
         return Collections.unmodifiableList(
-            _body.getPList().stream().map(ds -> new XDDFTextParagraph(ds, this)).collect(Collectors.toList()));
+            _body.getPList().stream().map(ds -> new XDDFTextParagraph(ds, this)).toList());
     }
 
     public XDDFBodyProperties getBodyProperties() {

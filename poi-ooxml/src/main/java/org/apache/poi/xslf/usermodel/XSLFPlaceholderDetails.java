@@ -117,20 +117,13 @@ public class XSLFPlaceholderDetails implements PlaceholderDetails {
         }
         final Function<CTHeaderFooter,Consumer<Boolean>> fun;
         switch (ph) {
-            case DATETIME:
-                fun = (hf) -> hf::setDt;
-                break;
-            case FOOTER:
-                fun = (hf) -> hf::setFtr;
-                break;
-            case HEADER:
-                fun = (hf) -> hf::setHdr;
-                break;
-            case SLIDE_NUMBER:
-                fun = (hf) -> hf::setSldNum;
-                break;
-            default:
+            case DATETIME -> fun = (hf) -> hf::setDt;
+            case FOOTER -> fun = (hf) -> hf::setFtr;
+            case HEADER -> fun = (hf) -> hf::setHdr;
+            case SLIDE_NUMBER -> fun = (hf) -> hf::setSldNum;
+            default -> {
                 return;
+            }
         }
         // only create a header, if we need to, i.e. the placeholder type is eligible
         final CTHeaderFooter hf = getHeaderFooter(true);
@@ -165,15 +158,9 @@ public class XSLFPlaceholderDetails implements PlaceholderDetails {
             return;
         }
         switch (size) {
-            case full:
-                ph.setSz(STPlaceholderSize.FULL);
-                break;
-            case half:
-                ph.setSz(STPlaceholderSize.HALF);
-                break;
-            case quarter:
-                ph.setSz(STPlaceholderSize.QUARTER);
-                break;
+            case full -> ph.setSz(STPlaceholderSize.FULL);
+            case half -> ph.setSz(STPlaceholderSize.HALF);
+            case quarter -> ph.setSz(STPlaceholderSize.QUARTER);
         }
     }
 
@@ -221,11 +208,11 @@ public class XSLFPlaceholderDetails implements PlaceholderDetails {
     private CTHeaderFooter getHeaderFooter(final boolean create) {
         final XSLFSheet sheet = shape.getSheet();
         final XSLFSheet master = (sheet instanceof MasterSheet && !(sheet instanceof XSLFSlideLayout)) ? sheet : (XSLFSheet)sheet.getMasterSheet();
-        if (master instanceof XSLFSlideMaster) {
-            final CTSlideMaster ct = ((XSLFSlideMaster) master).getXmlObject();
+        if (master instanceof XSLFSlideMaster slideMaster) {
+            final CTSlideMaster ct = slideMaster.getXmlObject();
             return (ct.isSetHf() || !create) ? ct.getHf() : ct.addNewHf();
-        } else if (master instanceof  XSLFNotesMaster) {
-            final CTNotesMaster ct = ((XSLFNotesMaster) master).getXmlObject();
+        } else if (master instanceof  XSLFNotesMaster notesMaster) {
+            final CTNotesMaster ct = notesMaster.getXmlObject();
             return (ct.isSetHf() || !create) ? ct.getHf() : ct.addNewHf();
         } else {
             return null;

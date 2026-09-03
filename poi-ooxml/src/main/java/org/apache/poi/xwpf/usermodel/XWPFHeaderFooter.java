@@ -73,17 +73,16 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     public XWPFHeaderFooter(POIXMLDocumentPart parent, PackagePart part) {
         super(parent, part);
         final POIXMLDocumentPart p = getParent();
-        if (!(p instanceof XWPFDocument)) {
+        if (!(p instanceof XWPFDocument doc)) {
             throw new IllegalArgumentException("Had unexpected type of parent: " + (p == null ? "<null>" : p.getClass()));
         }
-        this.document = (XWPFDocument) p;
+        this.document = doc;
     }
 
     @Override
     protected void onDocumentRead() throws IOException {
         for (POIXMLDocumentPart poixmlDocumentPart : getRelations()) {
-            if (poixmlDocumentPart instanceof XWPFPictureData) {
-                XWPFPictureData xwpfPicData = (XWPFPictureData) poixmlDocumentPart;
+            if (poixmlDocumentPart instanceof XWPFPictureData xwpfPicData) {
                 pictures.add(xwpfPicData);
                 document.registerPackagePictureData(xwpfPicData);
             }
@@ -153,8 +152,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         }
 
         for (IBodyElement bodyElement : getBodyElements()) {
-            if (bodyElement instanceof XWPFSDT) {
-                t.append(((XWPFSDT) bodyElement).getContent().getText()).append('\n');
+            if (bodyElement instanceof XWPFSDT sdt) {
+                t.append(sdt.getContent().getText()).append('\n');
             }
         }
         return t.toString();
@@ -328,8 +327,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      */
     public XWPFPictureData getPictureDataByID(String blipID) {
         POIXMLDocumentPart relatedPart = getRelationById(blipID);
-        if (relatedPart instanceof XWPFPictureData) {
-            return (XWPFPictureData) relatedPart;
+        if (relatedPart instanceof XWPFPictureData pictureData) {
+            return pictureData;
         }
         return null;
     }
@@ -422,10 +421,10 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             while (!(o instanceof CTP) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
             }
-            if ((!(o instanceof CTP)) || o == p) {
+            if ((!(o instanceof CTP ctp)) || o == p) {
                 paragraphs.add(0, newP);
             } else {
-                int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;
+                int pos = paragraphs.indexOf(getParagraph(ctp)) + 1;
                 paragraphs.add(pos, newP);
             }
             int i = 0;
@@ -465,10 +464,10 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
             }
-            if (!(o instanceof CTTbl)) {
+            if (!(o instanceof CTTbl tbl)) {
                 tables.add(0, newT);
             } else {
-                int pos = tables.indexOf(getTable((CTTbl) o)) + 1;
+                int pos = tables.indexOf(getTable(tbl)) + 1;
                 tables.add(pos, newT);
             }
             int i = 0;
@@ -567,17 +566,16 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         try (XmlCursor cursor = cell.newCursor()) {
             cursor.toParent();
             o = cursor.getObject();
-            if (!(o instanceof CTRow)) {
+            if (!(o instanceof CTRow ctRow)) {
                 return null;
             }
-            row = (CTRow) o;
+            row = ctRow;
             cursor.toParent();
             o = cursor.getObject();
         }
-        if (!(o instanceof CTTbl)) {
+        if (!(o instanceof CTTbl tbl)) {
             return null;
         }
-        CTTbl tbl = (CTTbl) o;
         XWPFTable table = getTable(tbl);
         if (table == null) {
             return null;

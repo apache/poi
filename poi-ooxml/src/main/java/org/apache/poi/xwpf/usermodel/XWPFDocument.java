@@ -326,12 +326,12 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         for (RelationPart rp : getRelationParts()) {
             POIXMLDocumentPart p = rp.getDocumentPart();
             String relation = rp.getRelationship().getRelationshipType();
-            if (relation.equals(XWPFRelation.FOOTNOTE.getRelation()) && p instanceof XWPFFootnotes) {
-                this.footnotes = (XWPFFootnotes) p;
+            if (relation.equals(XWPFRelation.FOOTNOTE.getRelation()) && p instanceof XWPFFootnotes xwpfFootnotes) {
+                this.footnotes = xwpfFootnotes;
                 this.footnotes.onDocumentRead();
                 this.footnotes.setIdManager(footnoteIdManager);
-            } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation()) && p instanceof XWPFEndnotes) {
-                this.endnotes = (XWPFEndnotes) p;
+            } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation()) && p instanceof XWPFEndnotes xwpfEndnotes) {
+                this.endnotes = xwpfEndnotes;
                 this.endnotes.onDocumentRead();
                 this.endnotes.setIdManager(footnoteIdManager);
             }
@@ -802,10 +802,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
              * in the body. Otherwise, take the previous paragraph and calculate
              * the new index for the new paragraph.
              */
-            if ((!(o instanceof CTP)) || o == p) {
+            if ((!(o instanceof CTP ctp)) || o == p) {
                 paragraphs.add(0, newP);
             } else {
-                int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;
+                int pos = paragraphs.indexOf(getParagraph(ctp)) + 1;
                 paragraphs.add(pos, newP);
             }
         }
@@ -835,10 +835,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
              * in the body. Otherwise, take the previous paragraph and calculate
              * the new index for the new paragraph.
              */
-            if (!(o instanceof CTTbl)) {
+            if (!(o instanceof CTTbl tbl)) {
                 tables.add(0, newT);
             } else {
-                int pos = tables.indexOf(getTable((CTTbl) o)) + 1;
+                int pos = tables.indexOf(getTable(tbl)) + 1;
                 tables.add(pos, newT);
             }
         }
@@ -1763,8 +1763,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     public XWPFPictureData getPictureDataByID(String blipID) {
         POIXMLDocumentPart relatedPart = getRelationById(blipID);
-        if (relatedPart instanceof XWPFPictureData) {
-            return (XWPFPictureData) relatedPart;
+        if (relatedPart instanceof XWPFPictureData pictureData) {
+            return pictureData;
         }
         return null;
     }
@@ -1875,17 +1875,16 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         try (final XmlCursor cursor = cell.newCursor()) {
             cursor.toParent();
             o = cursor.getObject();
-            if (!(o instanceof CTRow)) {
+            if (!(o instanceof CTRow ctRow)) {
                 return null;
             }
-            row = (CTRow) o;
+            row = ctRow;
             cursor.toParent();
             o = cursor.getObject();
         }
-        if (!(o instanceof CTTbl)) {
+        if (!(o instanceof CTTbl tbl)) {
             return null;
         }
-        CTTbl tbl = (CTTbl) o;
         XWPFTable table = getTable(tbl);
         if (table == null) {
             return null;

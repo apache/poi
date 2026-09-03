@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -422,7 +421,7 @@ public final class ZipPackage extends OPCPackage {
                         .map(zae -> new EntryTriple(zae, contentTypeManager))
                         .filter(mm -> mm.partName != null)
                         .sorted()
-                        .collect(Collectors.toList());
+                        .toList();
 
         for (final EntryTriple et : entries) {
             et.register(newPartList);
@@ -644,8 +643,8 @@ public final class ZipPackage extends OPCPackage {
         // Check that the document was open in write mode
         throwExceptionIfReadOnly();
 
-        final ZipArchiveOutputStream zos = (outputStream instanceof ZipArchiveOutputStream)
-            ? (ZipArchiveOutputStream) outputStream : new ZipArchiveOutputStream(outputStream);
+        final ZipArchiveOutputStream zos = (outputStream instanceof ZipArchiveOutputStream zaos)
+            ? zaos : new ZipArchiveOutputStream(outputStream);
 
         try {
             // If the core properties part does not exist in the part list,

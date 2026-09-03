@@ -213,8 +213,8 @@ public class SXSSFCell extends CellBase {
     protected void setCellValueImpl(RichTextString value) {
         ensureRichTextStringType();
 
-        if(_value instanceof RichTextStringFormulaValue) {
-            ((RichTextStringFormulaValue) _value).setPreEvaluatedValue(value);
+        if(_value instanceof RichTextStringFormulaValue richTextFormulaValue) {
+            richTextFormulaValue.setPreEvaluatedValue(value);
         } else {
             ((RichTextValue) _value).setValue(value);
         }
@@ -251,11 +251,8 @@ public class SXSSFCell extends CellBase {
             ((FormulaValue)_value).setValue(formula);
         } else {
             switch (getCellType()) {
-                case BLANK:
-                case NUMERIC:
-                    _value = new NumericFormulaValue(formula, getNumericCellValue());
-                    break;
-                case STRING:
+                case BLANK, NUMERIC -> _value = new NumericFormulaValue(formula, getNumericCellValue());
+                case STRING -> {
                     if (_value instanceof PlainStringValue) {
                         _value = new StringFormulaValue(formula, getStringCellValue());
                     } else {
@@ -264,15 +261,10 @@ public class SXSSFCell extends CellBase {
                         }
                         _value = new RichTextStringFormulaValue(formula, richTextValue.getValue());
                     }
-                    break;
-                case BOOLEAN:
-                    _value = new BooleanFormulaValue(formula, getBooleanCellValue());
-                    break;
-                case ERROR:
-                    _value = new ErrorFormulaValue(formula, getErrorCellValue());
-                    break;
-                default:
-                    throw new FormulaParseException("Cannot set a formula for a cell of type " + getCellType());
+                }
+                case BOOLEAN -> _value = new BooleanFormulaValue(formula, getBooleanCellValue());
+                case ERROR -> _value = new ErrorFormulaValue(formula, getErrorCellValue());
+                default -> throw new FormulaParseException("Cannot set a formula for a cell of type " + getCellType());
             }
         }
     }
@@ -281,28 +273,27 @@ public class SXSSFCell extends CellBase {
     protected void removeFormulaImpl() {
         assert getCellType() == CellType.FORMULA;
         switch (getCachedFormulaResultType()) {
-            case NUMERIC:
+            case NUMERIC -> {
                 double numericValue = ((NumericFormulaValue)_value).getPreEvaluatedValue();
                 _value = new NumericValue();
                 ((NumericValue) _value).setValue(numericValue);
-                break;
-            case STRING:
+            }
+            case STRING -> {
                 String stringValue = ((StringFormulaValue)_value).getPreEvaluatedValue();
                 _value = new PlainStringValue();
                 ((PlainStringValue) _value).setValue(stringValue);
-                break;
-            case BOOLEAN:
+            }
+            case BOOLEAN -> {
                 boolean booleanValue = ((BooleanFormulaValue)_value).getPreEvaluatedValue();
                 _value = new BooleanValue();
                 ((BooleanValue) _value).setValue(booleanValue);
-                break;
-            case ERROR:
+            }
+            case ERROR -> {
                 byte errorValue = ((ErrorFormulaValue)_value).getPreEvaluatedValue();
                 _value = new ErrorValue();
                 ((ErrorValue) _value).setValue(errorValue);
-                break;
-            default:
-                throw new AssertionError();
+            }
+            default -> throw new AssertionError();
         }
     }
 
@@ -335,22 +326,17 @@ public class SXSSFCell extends CellBase {
     public double getNumericCellValue()
     {
         CellType cellType = getCellType();
-        switch(cellType)
-        {
-            case BLANK:
-                return 0.0;
-            case FORMULA:
-            {
+        return switch (cellType) {
+            case BLANK -> 0.0;
+            case FORMULA -> {
                 FormulaValue fv=(FormulaValue)_value;
                 if(fv.getFormulaType()!=CellType.NUMERIC)
                       throw typeMismatch(CellType.NUMERIC, CellType.FORMULA, false);
-                return ((NumericFormulaValue)_value).getPreEvaluatedValue();
+                yield ((NumericFormulaValue)_value).getPreEvaluatedValue();
             }
-            case NUMERIC:
-                return ((NumericValue)_value).getValue();
-            default:
-                throw typeMismatch(CellType.NUMERIC, cellType, false);
-        }
+            case NUMERIC -> ((NumericValue)_value).getValue();
+            default -> throw typeMismatch(CellType.NUMERIC, cellType, false);
+        };
     }
 
     /**
@@ -437,31 +423,26 @@ public class SXSSFCell extends CellBase {
     public String getStringCellValue()
     {
         CellType cellType = getCellType();
-        switch(cellType)
-        {
-            case BLANK:
-                return "";
-            case FORMULA:
-            {
+        return switch (cellType) {
+            case BLANK -> "";
+            case FORMULA -> {
                 FormulaValue fv=(FormulaValue)_value;
                 if(fv.getFormulaType()!=CellType.STRING)
                       throw typeMismatch(CellType.STRING, CellType.FORMULA, false);
-                if(_value instanceof RichTextStringFormulaValue) {
-                    return ((RichTextStringFormulaValue) _value).getPreEvaluatedValue().getString();
+                if(_value instanceof RichTextStringFormulaValue richTextFormulaValue) {
+                    yield richTextFormulaValue.getPreEvaluatedValue().getString();
                 } else {
-                    return ((StringFormulaValue) _value).getPreEvaluatedValue();
+                    yield ((StringFormulaValue) _value).getPreEvaluatedValue();
                 }
             }
-            case STRING:
-            {
+            case STRING -> {
                 if(((StringValue)_value).isRichText())
-                    return ((RichTextValue)_value).getValue().getString();
+                    yield ((RichTextValue)_value).getValue().getString();
                 else
-                    return ((PlainStringValue)_value).getValue();
+                    yield ((PlainStringValue)_value).getValue();
             }
-            default:
-                throw typeMismatch(CellType.STRING, cellType, false);
-        }
+            default -> throw typeMismatch(CellType.STRING, cellType, false);
+        };
     }
 
     /**
@@ -513,24 +494,17 @@ public class SXSSFCell extends CellBase {
     public boolean getBooleanCellValue()
     {
         CellType cellType = getCellType();
-        switch(cellType)
-        {
-            case BLANK:
-                return false;
-            case FORMULA:
-            {
+        return switch (cellType) {
+            case BLANK -> false;
+            case FORMULA -> {
                 FormulaValue fv=(FormulaValue)_value;
                 if(fv.getFormulaType()!=CellType.BOOLEAN)
                       throw typeMismatch(CellType.BOOLEAN, CellType.FORMULA, false);
-                return ((BooleanFormulaValue)_value).getPreEvaluatedValue();
+                yield ((BooleanFormulaValue)_value).getPreEvaluatedValue();
             }
-            case BOOLEAN:
-            {
-                return ((BooleanValue)_value).getValue();
-            }
-            default:
-                throw typeMismatch(CellType.BOOLEAN, cellType, false);
-        }
+            case BOOLEAN -> ((BooleanValue)_value).getValue();
+            default -> throw typeMismatch(CellType.BOOLEAN, cellType, false);
+        };
     }
 
     /**
@@ -548,24 +522,17 @@ public class SXSSFCell extends CellBase {
     public byte getErrorCellValue()
     {
         CellType cellType = getCellType();
-        switch(cellType)
-        {
-            case BLANK:
-                return 0;
-            case FORMULA:
-            {
+        return switch (cellType) {
+            case BLANK -> 0;
+            case FORMULA -> {
                 FormulaValue fv=(FormulaValue)_value;
                 if(fv.getFormulaType()!=CellType.ERROR)
                       throw typeMismatch(CellType.ERROR, CellType.FORMULA, false);
-                return ((ErrorFormulaValue)_value).getPreEvaluatedValue();
+                yield ((ErrorFormulaValue)_value).getPreEvaluatedValue();
             }
-            case ERROR:
-            {
-                return ((ErrorValue)_value).getValue();
-            }
-            default:
-                throw typeMismatch(CellType.ERROR, cellType, false);
-        }
+            case ERROR -> ((ErrorValue)_value).getValue();
+            default -> throw typeMismatch(CellType.ERROR, cellType, false);
+        };
     }
 
     /**
@@ -803,23 +770,11 @@ public class SXSSFCell extends CellBase {
         }
         else
         {
-            switch(type)
-            {
-                case Property.COMMENT:
-                {
-                    current=new CommentProperty(value);
-                    break;
-                }
-                case Property.HYPERLINK:
-                {
-                    current=new HyperlinkProperty(value);
-                    break;
-                }
-                default:
-                {
-                    throw new IllegalArgumentException("Invalid type: " + type);
-                }
-            }
+            current = switch (type) {
+                case Property.COMMENT -> new CommentProperty(value);
+                case Property.HYPERLINK -> new HyperlinkProperty(value);
+                default -> throw new IllegalArgumentException("Invalid type: " + type);
+            };
             if(previous!=null)
             {
                 previous._next=current;
@@ -878,22 +833,13 @@ public class SXSSFCell extends CellBase {
         {
             if(((FormulaValue)_value).getFormulaType()==type)
                 return;
-            switch (type) {
-                case BOOLEAN:
-                    _value = new BooleanFormulaValue(getCellFormula(), false);
-                    break;
-                case NUMERIC:
-                    _value = new NumericFormulaValue(getCellFormula(), 0);
-                    break;
-                case STRING:
-                    _value = new StringFormulaValue(getCellFormula(), "");
-                    break;
-                case ERROR:
-                    _value = new ErrorFormulaValue(getCellFormula(), FormulaError._NO_ERROR.getCode());
-                    break;
-                default:
-                    throw new AssertionError();
-            }
+            _value = switch (type) {
+                case BOOLEAN -> new BooleanFormulaValue(getCellFormula(), false);
+                case NUMERIC -> new NumericFormulaValue(getCellFormula(), 0);
+                case STRING -> new StringFormulaValue(getCellFormula(), "");
+                case ERROR -> new ErrorFormulaValue(getCellFormula(), FormulaError._NO_ERROR.getCode());
+                default -> throw new AssertionError();
+            };
             return;
         }
         setType(type);
@@ -907,15 +853,9 @@ public class SXSSFCell extends CellBase {
      */
     /*package*/ void setType(CellType type)
     {
-        switch(type)
-        {
-            case NUMERIC:
-            {
-                _value = new NumericValue();
-                break;
-            }
-            case STRING:
-            {
+        switch (type) {
+            case NUMERIC -> _value = new NumericValue();
+            case STRING -> {
                 PlainStringValue sval = new PlainStringValue();
                 if(_value != null){
                     // if a cell is not blank then convert the old value to string
@@ -923,22 +863,14 @@ public class SXSSFCell extends CellBase {
                     sval.setValue(str);
                 }
                 _value = sval;
-                break;
             }
-            case FORMULA:
-            {
+            case FORMULA -> {
                 if (getCellType() == CellType.BLANK) {
                     _value = new NumericFormulaValue("", 0);
                 }
-                break;
             }
-            case BLANK:
-            {
-                _value = new BlankValue();
-                break;
-            }
-            case BOOLEAN:
-            {
+            case BLANK -> _value = new BlankValue();
+            case BOOLEAN -> {
                 BooleanValue bval = new BooleanValue();
                 if(_value != null){
                     // if a cell is not blank then convert the old value to string
@@ -946,17 +878,9 @@ public class SXSSFCell extends CellBase {
                     bval.setValue(val);
                 }
                 _value = bval;
-                break;
             }
-            case ERROR:
-            {
-                _value = new ErrorValue();
-                break;
-            }
-            default:
-            {
-                throw new IllegalArgumentException("Illegal type " + type);
-            }
+            case ERROR -> _value = new ErrorValue();
+            default -> throw new IllegalArgumentException("Illegal type " + type);
         }
     }
 

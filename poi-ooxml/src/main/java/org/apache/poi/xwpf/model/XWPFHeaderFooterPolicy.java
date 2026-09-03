@@ -110,8 +110,8 @@ public class XWPFHeaderFooterPolicy {
             CTHdrFtrRef ref = sectPr.getHeaderReferenceArray(i);
             POIXMLDocumentPart relatedPart = doc.getRelationById(ref.getId());
             XWPFHeader hdr = null;
-            if (relatedPart instanceof XWPFHeader) {
-                hdr = (XWPFHeader) relatedPart;
+            if (relatedPart instanceof XWPFHeader header) {
+                hdr = header;
             }
             // Assign it; treat invalid options as "default" POI-60293
             Enum type;
@@ -128,8 +128,8 @@ public class XWPFHeaderFooterPolicy {
             CTHdrFtrRef ref = sectPr.getFooterReferenceArray(i);
             POIXMLDocumentPart relatedPart = doc.getRelationById(ref.getId());
             XWPFFooter ftr = null;
-            if (relatedPart instanceof XWPFFooter) {
-                ftr = (XWPFFooter) relatedPart;
+            if (relatedPart instanceof XWPFFooter footer) {
+                ftr = footer;
             }
             // Assign it; treat invalid options as "default" POI-60293
             Enum type;

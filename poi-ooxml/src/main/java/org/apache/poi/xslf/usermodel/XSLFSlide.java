@@ -148,8 +148,8 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public XSLFSlideLayout getSlideLayout(){
         if(_layout == null){
             for (POIXMLDocumentPart p : getRelations()) {
-                if (p instanceof XSLFSlideLayout){
-                    _layout = (XSLFSlideLayout)p;
+                if (p instanceof XSLFSlideLayout layout){
+                    _layout = layout;
                 }
             }
         }
@@ -171,8 +171,8 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public XSLFComments getCommentsPart() {
         if(_comments == null) {
             for (POIXMLDocumentPart p : getRelations()) {
-                if (p instanceof XSLFComments) {
-                    _comments = (XSLFComments)p;
+                if (p instanceof XSLFComments comments) {
+                    _comments = comments;
                     break;
                 }
             }
@@ -190,15 +190,15 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         if(_commentAuthors == null) {
             // first scan the slide relations
             for (POIXMLDocumentPart p : getRelations()) {
-                if (p instanceof XSLFCommentAuthors) {
-                    _commentAuthors = (XSLFCommentAuthors)p;
+                if (p instanceof XSLFCommentAuthors authors) {
+                    _commentAuthors = authors;
                     return _commentAuthors;
                 }
             }
             // then scan the presentation relations
             for (POIXMLDocumentPart p : getSlideShow().getRelations()) {
-                if (p instanceof XSLFCommentAuthors) {
-                    _commentAuthors = (XSLFCommentAuthors)p;
+                if (p instanceof XSLFCommentAuthors authors) {
+                    _commentAuthors = authors;
                     return _commentAuthors;
                 }
             }
@@ -226,8 +226,8 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public XSLFNotes getNotes() {
         if(_notes == null) {
             for (POIXMLDocumentPart p : getRelations()) {
-                if (p instanceof XSLFNotes){
-                    _notes = (XSLFNotes)p;
+                if (p instanceof XSLFNotes notes){
+                    _notes = notes;
                 }
             }
         }
@@ -307,17 +307,17 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     @Override
     public XSLFSlide importContent(XSLFSheet src){
         super.importContent(src);
-        if (!(src instanceof XSLFSlide)) {
+        if (!(src instanceof XSLFSlide srcSlide)) {
             return this;
         }
 
-        XSLFNotes srcNotes = ((XSLFSlide)src).getNotes();
+        XSLFNotes srcNotes = srcSlide.getNotes();
         if (srcNotes != null) {
             getSlideShow().getNotesSlide(this).importContent(srcNotes);
         }
 
         // only copy direct backgrounds - not backgrounds of master sheet
-        CTBackground bgOther = ((XSLFSlide)src)._slide.getCSld().getBg();
+        CTBackground bgOther = srcSlide._slide.getCSld().getBg();
         if (bgOther == null) {
             return this;
         }

@@ -65,8 +65,8 @@ public final class PackageHelper {
             return OPCPackage.open(stream, closeStream);
         } catch (InvalidFormatException e) {
             final Throwable cause = e.getCause();
-            if (cause instanceof InvalidZipException) {
-                throw (InvalidZipException) cause;
+            if (cause instanceof InvalidZipException ize) {
+                throw ize;
             }
             throw new POIXMLException(e);
         } finally {

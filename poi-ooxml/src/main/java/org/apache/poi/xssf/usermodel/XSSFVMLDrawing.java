@@ -159,10 +159,9 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         try (XmlCursor cur = root.getXml().newCursor()) {
             for (boolean found = cur.toFirstChild(); found; found = cur.toNextSibling()) {
                 XmlObject xo = cur.getObject();
-                if (xo instanceof CTShapetype) {
-                    _shapeTypeId = ((CTShapetype)xo).getId();
-                } else if (xo instanceof CTShape) {
-                    CTShape shape = (CTShape)xo;
+                if (xo instanceof CTShapetype shapetype) {
+                    _shapeTypeId = shapetype.getId();
+                } else if (xo instanceof CTShape shape) {
                     String id = shape.getId();
                     if(id != null) {
                         Matcher m = ptrn_shapeId.matcher(id);
@@ -297,11 +296,10 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
     }
 
     private boolean matchCommentShape(XmlObject itm, int row, int col) {
-        if (!(itm instanceof CTShape)) {
+        if (!(itm instanceof CTShape sh)) {
             return false;
         }
 
-        CTShape sh = (CTShape)itm;
         if (sh.sizeOfClientDataArray() == 0) {
             return false;
         }

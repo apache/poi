@@ -143,9 +143,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      */
     @Override
     public void cloneStyleFrom(CellStyle source) {
-        if(source instanceof XSSFCellStyle) {
-            XSSFCellStyle src = (XSSFCellStyle)source;
-
+        if(source instanceof XSSFCellStyle src) {
             // Is it on our Workbook?
             if(src._stylesSource == _stylesSource) {
                // Nice and easy
@@ -1250,19 +1248,11 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * @param color - the color to use
      */
     public void setBorderColor(BorderSide side, XSSFColor color) {
-        switch(side){
-            case BOTTOM:
-                setBottomBorderColor(color);
-                break;
-            case RIGHT:
-                setRightBorderColor(color);
-                break;
-            case TOP:
-                setTopBorderColor(color);
-                break;
-            case LEFT:
-                setLeftBorderColor(color);
-                break;
+        switch (side) {
+            case BOTTOM -> setBottomBorderColor(color);
+            case RIGHT -> setRightBorderColor(color);
+            case TOP -> setTopBorderColor(color);
+            case LEFT -> setLeftBorderColor(color);
         }
     }
 
@@ -1337,9 +1327,8 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      */
     @Override
     public boolean equals(Object o){
-        if(!(o instanceof XSSFCellStyle)) return false;
+        if(!(o instanceof XSSFCellStyle cf)) return false;
 
-        XSSFCellStyle cf = (XSSFCellStyle)o;
         return _cellXf.toString().equals(cf.getCoreXf().toString());
     }
 

@@ -449,8 +449,8 @@ public final class PackagePartName implements Comparable<PackagePartName> {
      */
     @Override
     public boolean equals(Object other) {
-        return (other instanceof PackagePartName) &&
-            compare(this.getName(), ((PackagePartName)other).getName()) == 0;
+        return (other instanceof PackagePartName otherName) &&
+            compare(this.getName(), otherName.getName()) == 0;
     }
 
     @Override

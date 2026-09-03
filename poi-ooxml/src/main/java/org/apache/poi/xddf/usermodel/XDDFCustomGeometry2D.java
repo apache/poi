@@ -19,7 +19,6 @@ package org.apache.poi.xddf.usermodel;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
@@ -91,7 +90,7 @@ public class XDDFCustomGeometry2D {
                 .getAhPolarList()
                 .stream()
                 .map(guide -> new XDDFAdjustHandlePolar(guide))
-                .collect(Collectors.toList()));
+                .toList());
         } else {
             return Collections.emptyList();
         }
@@ -132,7 +131,7 @@ public class XDDFCustomGeometry2D {
                 .getAhXYList()
                 .stream()
                 .map(guide -> new XDDFAdjustHandleXY(guide))
-                .collect(Collectors.toList()));
+                .toList());
         } else {
             return Collections.emptyList();
         }
@@ -173,7 +172,7 @@ public class XDDFCustomGeometry2D {
                 .getGdList()
                 .stream()
                 .map(guide -> new XDDFGeometryGuide(guide))
-                .collect(Collectors.toList()));
+                .toList());
         } else {
             return Collections.emptyList();
         }
@@ -214,7 +213,7 @@ public class XDDFCustomGeometry2D {
                 .getCxnList()
                 .stream()
                 .map(guide -> new XDDFConnectionSite(guide))
-                .collect(Collectors.toList()));
+                .toList());
         } else {
             return Collections.emptyList();
         }
@@ -255,7 +254,7 @@ public class XDDFCustomGeometry2D {
                 .getGdList()
                 .stream()
                 .map(guide -> new XDDFGeometryGuide(guide))
-                .collect(Collectors.toList()));
+                .toList());
         } else {
             return Collections.emptyList();
         }
@@ -283,6 +282,6 @@ public class XDDFCustomGeometry2D {
             .getPathList()
             .stream()
             .map(ds -> new XDDFPath(ds))
-            .collect(Collectors.toList()));
+            .toList());
     }
 }
