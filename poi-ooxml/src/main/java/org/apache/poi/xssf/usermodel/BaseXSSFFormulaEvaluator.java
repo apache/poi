@@ -61,8 +61,8 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
         try {
             EvaluationCell evalCell = toEvaluationCell(cell);
             eval = _bookEvaluator.evaluate(evalCell);
-            if (evalCell instanceof XSSFEvaluationCell)
-                cacheExternalWorkbookCells((XSSFEvaluationCell) evalCell);
+            if (evalCell instanceof XSSFEvaluationCell xssfEvalCell)
+                cacheExternalWorkbookCells(xssfEvalCell);
         } catch (IllegalStateException e) {
             // enhance IllegalStateException which can be
             // thrown somewhere deep down the evaluation
@@ -79,20 +79,17 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
             }
         }
 
-        if (eval instanceof NumberEval) {
-            NumberEval ne = (NumberEval) eval;
+        if (eval instanceof NumberEval ne) {
             return new CellValue(ne.getNumberValue());
         }
-        if (eval instanceof BoolEval) {
-            BoolEval be = (BoolEval) eval;
+        if (eval instanceof BoolEval be) {
             return CellValue.valueOf(be.getBooleanValue());
         }
-        if (eval instanceof StringEval) {
-            StringEval ne = (StringEval) eval;
+        if (eval instanceof StringEval ne) {
             return new CellValue(ne.getStringValue());
         }
-        if (eval instanceof ErrorEval) {
-            return CellValue.getError(((ErrorEval)eval).getErrorCode());
+        if (eval instanceof ErrorEval ee) {
+            return CellValue.getError(ee.getErrorCode());
         }
         throw new IllegalStateException("Unexpected eval class (" + eval.getClass().getName() + "): " + eval + ", cell: " +
                 new CellReference(cell.getSheet().getSheetName(), cell.getRowIndex(), cell.getColumnIndex(),
@@ -108,8 +105,7 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
         //
         Ptg[] formulaTokens = getEvaluationWorkbook().getFormulaTokens(evalCell);
         for (Ptg ptg : formulaTokens) {
-            if (ptg instanceof Area3DPxg) {
-                Area3DPxg area3DPxg = (Area3DPxg) ptg;
+            if (ptg instanceof Area3DPxg area3DPxg) {
                 if (area3DPxg.getExternalWorkbookNumber() > 0) {
                     EvaluationWorkbook.ExternalSheet externalSheet = getEvaluationWorkbook().getExternalSheet(area3DPxg.getSheetName(), area3DPxg.getLastSheetName(), area3DPxg.getExternalWorkbookNumber());
                     if (externalSheet != null) {

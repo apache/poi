@@ -159,12 +159,12 @@ public class XDDFParagraphBulletProperties {
             props.unsetBuSzTx();
         }
         if (size != null) {
-            if (size instanceof XDDFBulletSizeFollowText) {
-                props.setBuSzTx(((XDDFBulletSizeFollowText) size).getXmlObject());
-            } else if (size instanceof XDDFBulletSizePercent) {
-                props.setBuSzPct(((XDDFBulletSizePercent) size).getXmlObject());
-            } else if (size instanceof XDDFBulletSizePoints) {
-                props.setBuSzPts(((XDDFBulletSizePoints) size).getXmlObject());
+            if (size instanceof XDDFBulletSizeFollowText xsize) {
+                props.setBuSzTx(xsize.getXmlObject());
+            } else if (size instanceof XDDFBulletSizePercent xsize) {
+                props.setBuSzPct(xsize.getXmlObject());
+            } else if (size instanceof XDDFBulletSizePoints xsize) {
+                props.setBuSzPts(xsize.getXmlObject());
             }
         }
     }

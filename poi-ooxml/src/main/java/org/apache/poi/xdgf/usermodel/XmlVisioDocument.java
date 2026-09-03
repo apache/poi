@@ -110,10 +110,10 @@ public class XmlVisioDocument extends POIXMLDocument {
 
         for (POIXMLDocumentPart part : getRelations()) {
             // organize the document pieces
-            if (part instanceof XDGFPages) {
-                _pages = (XDGFPages) part;
-            } else if (part instanceof XDGFMasters) {
-                _masters = (XDGFMasters) part;
+            if (part instanceof XDGFPages pages) {
+                _pages = pages;
+            } else if (part instanceof XDGFMasters masters) {
+                _masters = masters;
             }
         }
 

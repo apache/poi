@@ -96,8 +96,8 @@ public abstract class XSLFSimpleShape extends XSLFShape
             @Override
             public boolean fetch(XSLFShape shape) {
                 XmlObject xo = shape.getShapeProperties();
-                if (xo instanceof CTShapeProperties && ((CTShapeProperties)xo).isSetXfrm()) {
-                    setValue(((CTShapeProperties)xo).getXfrm());
+                if (xo instanceof CTShapeProperties spr && spr.isSetXfrm()) {
+                    setValue(spr.getXfrm());
                     return true;
                 }
                 return false;
@@ -110,8 +110,8 @@ public abstract class XSLFSimpleShape extends XSLFShape
             return xfrm;
         } else {
             XmlObject xo = getShapeProperties();
-            if (xo instanceof CTShapeProperties) {
-                return ((CTShapeProperties)xo).addNewXfrm();
+            if (xo instanceof CTShapeProperties spr) {
+                return spr.addNewXfrm();
             } else {
                 // ... group shapes have their own getXfrm()
                 LOG.atWarn().log("{} doesn't have xfrm element.", getClass());
@@ -278,8 +278,8 @@ public abstract class XSLFSimpleShape extends XSLFShape
     @SuppressWarnings("WeakerAccess")
     public Color getLineColor() {
         PaintStyle ps = getLinePaint();
-        if (ps instanceof SolidPaint) {
-            return ((SolidPaint)ps).getSolidColor().getColor();
+        if (ps instanceof SolidPaint sp) {
+            return sp.getSolidColor().getColor();
         }
         return null;
     }
@@ -628,8 +628,8 @@ public abstract class XSLFSimpleShape extends XSLFShape
     @Override
     public Color getFillColor() {
         PaintStyle ps = getFillPaint();
-        if (ps instanceof SolidPaint) {
-            return DrawPaint.applyColorTransform(((SolidPaint)ps).getSolidColor());
+        if (ps instanceof SolidPaint sp) {
+            return DrawPaint.applyColorTransform(sp.getSolidColor());
         }
         return null;
     }
@@ -1056,16 +1056,16 @@ public abstract class XSLFSimpleShape extends XSLFShape
 
         // TODO: handle PaintStyle
         for (Object st : styles) {
-            if (st instanceof Number) {
-                setLineWidth(((Number)st).doubleValue());
-            } else if (st instanceof LineCap) {
-                setLineCap((LineCap)st);
-            } else if (st instanceof LineDash) {
-                setLineDash((LineDash)st);
-            } else if (st instanceof LineCompound) {
-                setLineCompound((LineCompound)st);
-            } else if (st instanceof Color) {
-                setLineColor((Color)st);
+            if (st instanceof Number number) {
+                setLineWidth(number.doubleValue());
+            } else if (st instanceof LineCap cap) {
+                setLineCap(cap);
+            } else if (st instanceof LineDash dash) {
+                setLineDash(dash);
+            } else if (st instanceof LineCompound compound) {
+                setLineCompound(compound);
+            } else if (st instanceof Color color) {
+                setLineColor(color);
             }
         }
     }
@@ -1091,12 +1091,11 @@ public abstract class XSLFSimpleShape extends XSLFShape
 
     private static CTLineProperties getLn(XSLFShape shape, boolean create) {
         XmlObject pr = shape.getShapeProperties();
-        if (!(pr instanceof CTShapeProperties)) {
+        if (!(pr instanceof CTShapeProperties spr)) {
             LOG.atWarn().log("{} doesn't have line properties", shape.getClass());
             return null;
         }
 
-        CTShapeProperties spr = (CTShapeProperties)pr;
         return (spr.isSetLn() || !create) ? spr.getLn() : spr.addNewLn();
     }
 }

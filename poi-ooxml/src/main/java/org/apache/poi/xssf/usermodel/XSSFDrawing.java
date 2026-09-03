@@ -515,8 +515,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
     public List<XSSFChart> getCharts() {
         List<XSSFChart> charts = new ArrayList<>();
         for (POIXMLDocumentPart part : getRelations()) {
-            if (part instanceof XSSFChart) {
-                charts.add((XSSFChart) part);
+            if (part instanceof XSSFChart chart) {
+                charts.add(chart);
             }
         }
         return charts;
@@ -609,17 +609,17 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
                     if (obj instanceof CTMarker) {
                         // ignore anchor elements
                         continue;
-                    } else if (obj instanceof CTPicture) {
-                        shape = new XSSFPicture(this, (CTPicture) obj);
-                    } else if (obj instanceof CTConnector) {
-                        shape = new XSSFConnector(this, (CTConnector) obj);
-                    } else if (obj instanceof CTShape) {
-                        shape = hasOleLink(obj) ? new XSSFObjectData(this, (CTShape) obj)
-                            : new XSSFSimpleShape(this, (CTShape) obj);
-                    } else if (obj instanceof CTGraphicalObjectFrame) {
-                        shape = new XSSFGraphicFrame(this, (CTGraphicalObjectFrame) obj);
-                    } else if (obj instanceof CTGroupShape) {
-                        shape = new XSSFShapeGroup(this, (CTGroupShape) obj);
+                    } else if (obj instanceof CTPicture ctPicture) {
+                        shape = new XSSFPicture(this, ctPicture);
+                    } else if (obj instanceof CTConnector ctConnector) {
+                        shape = new XSSFConnector(this, ctConnector);
+                    } else if (obj instanceof CTShape ctShape) {
+                        shape = hasOleLink(obj) ? new XSSFObjectData(this, ctShape)
+                            : new XSSFSimpleShape(this, ctShape);
+                    } else if (obj instanceof CTGraphicalObjectFrame ctFrame) {
+                        shape = new XSSFGraphicFrame(this, ctFrame);
+                    } else if (obj instanceof CTGroupShape ctGroup) {
+                        shape = new XSSFShapeGroup(this, ctGroup);
                     } else if (obj instanceof XmlAnyTypeImpl) {
                         LOG.atWarn().log("trying to parse AlternateContent, this unlinks the returned Shapes from the underlying xml content, so those shapes can't be used to modify the drawing, i.e. modifications will be ignored!");
 
@@ -683,14 +683,11 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
             }
         }
         if (parentXbean != null) {
-            if (parentXbean instanceof CTTwoCellAnchor) {
-                CTTwoCellAnchor ct = (CTTwoCellAnchor) parentXbean;
+            if (parentXbean instanceof CTTwoCellAnchor ct) {
                 anchor = new XSSFClientAnchor(ct.getFrom(), ct.getTo());
-            } else if (parentXbean instanceof CTOneCellAnchor) {
-                CTOneCellAnchor ct = (CTOneCellAnchor) parentXbean;
+            } else if (parentXbean instanceof CTOneCellAnchor ct) {
                 anchor = new XSSFClientAnchor(getSheet(), ct.getFrom(), ct.getExt());
-            } else if (parentXbean instanceof CTAbsoluteAnchor) {
-                CTAbsoluteAnchor ct = (CTAbsoluteAnchor) parentXbean;
+            } else if (parentXbean instanceof CTAbsoluteAnchor ct) {
                 anchor = new XSSFClientAnchor(getSheet(), ct.getPos(), ct.getExt());
             }
         }

@@ -73,8 +73,8 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             if (c.toFirstChild()) {
                 do {
                     XmlObject r = c.getObject();
-                    if (r instanceof CTTextLineBreak) {
-                        _runs.add(new XSLFLineBreak((CTTextLineBreak)r, this));
+                    if (r instanceof CTTextLineBreak br) {
+                        _runs.add(new XSLFLineBreak(br, this));
                     } else if (r instanceof CTRegularTextRun || r instanceof CTTextField) {
                         _runs.add(newTextRun(r));
                     }
@@ -310,12 +310,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      */
     @SuppressWarnings("WeakerAccess")
     public void setBulletFontColor(PaintStyle color) {
-        if (!(color instanceof SolidPaint)) {
+        if (!(color instanceof SolidPaint sp)) {
             throw new IllegalArgumentException("Currently XSLF only supports SolidPaint");
         }
 
         // TODO: implement setting bullet color to null
-        SolidPaint sp = (SolidPaint)color;
         Color col = DrawPaint.applyColorTransform(sp.getSolidColor());
 
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
@@ -934,16 +933,16 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         } else {
             setBullet(true);
             for (Object ostyle : styles) {
-                if (ostyle instanceof Number) {
-                    setBulletFontSize(((Number)ostyle).doubleValue());
-                } else if (ostyle instanceof Color) {
-                    setBulletFontColor((Color)ostyle);
+                if (ostyle instanceof Number number) {
+                    setBulletFontSize(number.doubleValue());
+                } else if (ostyle instanceof Color color) {
+                    setBulletFontColor(color);
                 } else if (ostyle instanceof Character) {
                     setBulletCharacter(ostyle.toString());
-                } else if (ostyle instanceof String) {
-                    setBulletFont((String)ostyle);
-                } else if (ostyle instanceof AutoNumberingScheme) {
-                    setBulletAutoNumber((AutoNumberingScheme)ostyle, 1);
+                } else if (ostyle instanceof String str) {
+                    setBulletFont(str);
+                } else if (ostyle instanceof AutoNumberingScheme scheme) {
+                    setBulletAutoNumber(scheme, 1);
                 }
             }
         }

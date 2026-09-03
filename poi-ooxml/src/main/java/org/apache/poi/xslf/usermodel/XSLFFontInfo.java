@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.poi.common.usermodel.fonts.FontCharset;
@@ -270,7 +269,7 @@ public class XSLFFontInfo implements FontInfo {
 
         return pres.isSetEmbeddedFontLst()
             ? Stream.of(pres.getEmbeddedFontLst().getEmbeddedFontArray())
-                .map(fe -> new XSLFFontInfo(ppt, fe)).collect(Collectors.toList())
+                .map(fe -> new XSLFFontInfo(ppt, fe)).toList()
             : Collections.emptyList();
     }
 

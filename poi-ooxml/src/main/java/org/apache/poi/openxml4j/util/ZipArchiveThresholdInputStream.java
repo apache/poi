@@ -149,12 +149,12 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
     }
 
     public ZipArchiveEntry getNextEntry() throws IOException {
-        if (!(in instanceof ZipArchiveInputStream)) {
+        if (!(in instanceof ZipArchiveInputStream zis)) {
             throw new IllegalStateException("getNextEntry() is only allowed for stream based zip processing.");
         }
 
         try {
-            entry = ((ZipArchiveInputStream) in).getNextEntry();
+            entry = zis.getNextEntry();
             if (guardState && entry != null) {
                 if (++entryCount > MAX_FILE_COUNT) {
                     throw new IOException(String.format(Locale.ROOT, MAX_FILE_COUNT_MSG, MAX_FILE_COUNT));

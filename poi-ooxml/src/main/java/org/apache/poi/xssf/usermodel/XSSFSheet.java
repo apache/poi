@@ -165,15 +165,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         // Look for bits we're interested in
         for(RelationPart rp : getRelationParts()){
             POIXMLDocumentPart p = rp.getDocumentPart();
-            if(p instanceof Comments) {
-                sheetComments = (Comments)p;
+            if(p instanceof Comments comments) {
+                sheetComments = comments;
                 sheetComments.setSheet(this);
             }
-            if(p instanceof XSSFTable) {
-                tables.put( rp.getRelationship().getId(), (XSSFTable)p );
+            if(p instanceof XSSFTable table) {
+                tables.put( rp.getRelationship().getId(), table );
             }
-            if(p instanceof XSSFPivotTable) {
-                getWorkbook().addPivotTable((XSSFPivotTable) p);
+            if(p instanceof XSSFPivotTable pivotTable) {
+                getWorkbook().addPivotTable(pivotTable);
             }
         }
 
@@ -1304,26 +1304,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         CTPageMargins pageMargins = worksheet.isSetPageMargins() ?
                 worksheet.getPageMargins() : worksheet.addNewPageMargins();
         switch (margin) {
-            case LEFT:
-                pageMargins.setLeft(size);
-                break;
-            case RIGHT:
-                pageMargins.setRight(size);
-                break;
-            case TOP:
-                pageMargins.setTop(size);
-                break;
-            case BOTTOM:
-                pageMargins.setBottom(size);
-                break;
-            case HEADER:
-                pageMargins.setHeader(size);
-                break;
-            case FOOTER:
-                pageMargins.setFooter(size);
-                break;
-            default:
-                throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
+            case LEFT -> pageMargins.setLeft(size);
+            case RIGHT -> pageMargins.setRight(size);
+            case TOP -> pageMargins.setTop(size);
+            case BOTTOM -> pageMargins.setBottom(size);
+            case HEADER -> pageMargins.setHeader(size);
+            case FOOTER -> pageMargins.setFooter(size);
+            default -> throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
         }
     }
 
@@ -4912,9 +4899,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      */
     protected void onSheetDelete() {
         for (RelationPart part : getRelationParts()) {
-            if (part.getDocumentPart() instanceof XSSFTable) {
+            if (part.getDocumentPart() instanceof XSSFTable table) {
                 // call table delete
-                removeTable(part.getDocumentPart());
+                removeTable(table);
                 continue;
             }
             removeRelation(part.getDocumentPart(), true);
@@ -4983,9 +4970,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                 }
 
                 XmlObject xObj = cur.getObject();
-                if (xObj instanceof CTOleObject) {
+                if (xObj instanceof CTOleObject oleObject) {
                     // the unusual case ...
-                    coo = (CTOleObject)xObj;
+                    coo = oleObject;
                 } else {
                     XMLStreamReader reader = cur.newXMLStreamReader();
                     try {

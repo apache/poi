@@ -143,8 +143,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             }
             XmlObject[] chartRels = o.selectPath("declare namespace c='" + CTChart.type.getName().getNamespaceURI() + "' .//*/c:chart");
             for (XmlObject chartRel : chartRels) {
-                if (chartRel instanceof CTRelId) {
-                    POIXMLDocumentPart chart = getDocument().getRelationById(((CTRelId) chartRel).getId());
+                if (chartRel instanceof CTRelId relId) {
+                    POIXMLDocumentPart chart = getDocument().getRelationById(relId.getId());
                     if (chart instanceof XWPFChart xwpfChart) {
                         charts.add(xwpfChart);
                     }
@@ -926,18 +926,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             }
         } else {
             switch (fcr) {
-                case ascii:
-                    fonts.setAscii(fontFamily);
-                    break;
-                case cs:
-                    fonts.setCs(fontFamily);
-                    break;
-                case eastAsia:
-                    fonts.setEastAsia(fontFamily);
-                    break;
-                case hAnsi:
-                    fonts.setHAnsi(fontFamily);
-                    break;
+                case ascii -> fonts.setAscii(fontFamily);
+                case cs -> fonts.setCs(fontFamily);
+                case eastAsia -> fonts.setEastAsia(fontFamily);
+                case hAnsi -> fonts.setHAnsi(fontFamily);
             }
         }
     }
@@ -1374,8 +1366,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public CTInline addChart(String chartRelId) throws InvalidFormatException, IOException {
         try {
             POIXMLDocumentPart chart = getDocument().getRelationById(chartRelId);
-            if (chart instanceof XWPFChart) {
-                charts.add((XWPFChart) chart);
+            if (chart instanceof XWPFChart xwpfChart) {
+                charts.add(xwpfChart);
             }
 
             CTInline inline = run.addNewDrawing().addNewInline();
@@ -1559,13 +1551,13 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     private void _getText(XmlObject o, StringBuilder text) {
 
-        if (o instanceof CTText) {
+        if (o instanceof CTText ctText) {
             final Node node = o.getDomNode();
             // Field Codes (w:instrText, defined in spec sec. 17.16.23 and w:delInstrText, defined in spec sec. 17.16.13)
             //  come up as instances of CTText, but we don't want them
             //  in the normal text output
             if (!(("instrText".equals(node.getLocalName()) || "delInstrText".equals(node.getLocalName())) && XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI()))) {
-                String textValue = ((CTText) o).getStringValue();
+                String textValue = ctText.getStringValue();
                 if (textValue != null) {
                     if (isCapitalized() || isSmallCaps()) {
                         textValue = textValue.toUpperCase(LocaleUtil.getUserLocale());
@@ -1576,8 +1568,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
 
         // Complex type evaluation (currently only for extraction of check boxes)
-        if (o instanceof CTFldChar) {
-            CTFldChar ctfldChar = ((CTFldChar) o);
+        if (o instanceof CTFldChar ctfldChar) {
             if (ctfldChar.getFldCharType() == STFldCharType.BEGIN) {
                 if (ctfldChar.getFfData() != null) {
                     for (CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxList()) {
@@ -1604,16 +1595,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             final Node node = o.getDomNode();
             if (XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI())) {
                 switch (node.getLocalName()) {
-                    case "noBreakHyphen":
-                        text.append('‑');
-                        break;
-                    case "tab":
-                        text.append('\t');
-                        break;
-                    case "br":
-                    case "cr":
-                        text.append('\n');
-                        break;
+                    case "noBreakHyphen" -> text.append('‑');
+                    case "tab" -> text.append('\t');
+                    case "br", "cr" -> text.append('\n');
                 }
             }
         }

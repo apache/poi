@@ -19,7 +19,6 @@ package org.apache.poi.xddf.usermodel;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
@@ -143,7 +142,7 @@ public class XDDFLineProperties {
                 .getDsList()
                 .stream()
                 .map(ds -> new XDDFDashStop(ds))
-                .collect(Collectors.toList()));
+                .toList());
         } else {
             return Collections.emptyList();
         }

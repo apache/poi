@@ -252,17 +252,16 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
         try (final XmlCursor cursor = cell.newCursor()) {
             cursor.toParent();
             o = cursor.getObject();
-            if (!(o instanceof CTRow)) {
+            if (!(o instanceof CTRow ctRow)) {
                 return null;
             }
-            row = (CTRow) o;
+            row = ctRow;
             cursor.toParent();
             o = cursor.getObject();
         }
-        if (!(o instanceof CTTbl)) {
+        if (!(o instanceof CTTbl tbl)) {
             return null;
         }
-        CTTbl tbl = (CTTbl) o;
         XWPFTable table = getTable(tbl);
         if (table == null) {
             return null;
@@ -313,10 +312,10 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
             while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
             }
-            if (!(o instanceof CTTbl)) {
+            if (!(o instanceof CTTbl tbl)) {
                 tables.add(0, newT);
             } else {
-                int pos = tables.indexOf(getTable((CTTbl) o)) + 1;
+                int pos = tables.indexOf(getTable(tbl)) + 1;
                 tables.add(pos, newT);
             }
             int i = 0;
@@ -355,10 +354,10 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
             while (!(o instanceof CTP) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
             }
-            if ((!(o instanceof CTP)) || o == p) {
+            if ((!(o instanceof CTP ctp)) || o == p) {
                 paragraphs.add(0, newP);
             } else {
-                int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;
+                int pos = paragraphs.indexOf(getParagraph(ctp)) + 1;
                 paragraphs.add(pos, newP);
             }
             int i = 0;

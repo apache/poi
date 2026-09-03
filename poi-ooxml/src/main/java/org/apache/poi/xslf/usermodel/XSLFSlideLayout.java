@@ -76,8 +76,8 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
     public XSLFSlideMaster getSlideMaster() {
         if (_master == null) {
             for (POIXMLDocumentPart p : getRelations()) {
-                if (p instanceof XSLFSlideMaster) {
-                    _master = (XSLFSlideMaster) p;
+                if (p instanceof XSLFSlideMaster master) {
+                    _master = master;
                 }
             }
         }
@@ -121,19 +121,14 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
     @SuppressWarnings("WeakerAccess")
     public void copyLayout(XSLFSlide slide) {
         for (XSLFShape sh : getShapes()) {
-            if (sh instanceof XSLFTextShape) {
-                XSLFTextShape tsh = (XSLFTextShape) sh;
+            if (sh instanceof XSLFTextShape tsh) {
                 Placeholder ph = tsh.getTextType();
                 if (ph == null) continue;
 
                 switch (ph) {
                     // these are special and not copied by default
-                    case DATETIME:
-                    case SLIDE_NUMBER:
-                    case FOOTER:
-                        break;
-                    default:
-                        slide.getSpTree().addNewSp().set(tsh.getXmlObject().copy());
+                    case DATETIME, SLIDE_NUMBER, FOOTER -> {}
+                    default -> slide.getSpTree().addNewSp().set(tsh.getXmlObject().copy());
                 }
             }
         }
