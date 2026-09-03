@@ -71,6 +71,13 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         for (XWPFRun run : runs) {
             CTR r = run.getCTR();
 
+            // Footnote/endnote references are rare - only pay for the cursor walk below
+            // when the run actually holds at least one of them. CTFtnEdnRef can only occur
+            // as a w:footnoteReference or a w:endnoteReference child of the run.
+            if (r.sizeOfFootnoteReferenceArray() == 0 && r.sizeOfEndnoteReferenceArray() == 0) {
+                continue;
+            }
+
             // Check for bits that only apply when attached to a core document
             // TODO Make this nicer by tracking the XWPFFootnotes directly
             try (XmlCursor c = r.newCursor()) {
