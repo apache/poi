@@ -263,7 +263,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
                     "A segment shall not end with a dot ('.') character [M1.9]: " + partUri.getPath());
             }
 
-            if (seg.replaceAll("\\\\.", "").isEmpty()) {
+            if (isAllDots(seg)) {
                 // Normally will never been invoked with the previous
                 // implementation rule [M1.9]
                 throw new InvalidFormatException(
@@ -273,6 +273,22 @@ public final class PackagePartName implements Comparable<PackagePartName> {
             // Check for rule M1.6, M1.7, M1.8
             checkPCharCompliance(seg);
         }
+    }
+
+    /**
+     * Checks if a segment consists of dot ('.') characters only.
+     *
+     * @param segment
+     *            The non-empty segment to check.
+     * @return <code>true</code> if the segment holds nothing but dots.
+     */
+    private static boolean isAllDots(String segment) {
+        for (int i = 0; i < segment.length(); i++) {
+            if (segment.charAt(i) != '.') {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
