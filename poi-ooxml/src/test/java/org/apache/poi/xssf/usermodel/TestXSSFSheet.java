@@ -1057,7 +1057,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             //  <col min="5" max="5" customWidth="true" width="30.0" />
             //</cols>
 
-            //now the span is splitted into 5 individual columns
+            //now the span is split into 5 individual columns
             assertEquals(5, cols.sizeOfColArray());
             for (int i = 0; i < 5; i++) {
                 assertEquals(cw[i] * 256L, sheet.getColumnWidth(i));
@@ -1115,7 +1115,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
             //the check below failed prior to fix of Bug #47804
             ColumnHelper.sortColumns(cols);
-            //the span is now splitted into three parts
+            //the span is now split into three parts
             //<cols>
             //  <col min="2" max="2" customWidth="true" width="12.0" />
             //  <col min="3" max="3" customWidth="true" width="12.0" hidden="true"/>
