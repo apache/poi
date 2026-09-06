@@ -26,7 +26,7 @@ public interface CellHandler {
 
     /**
      * @param cell current cell
-     * @param ctx information about invokation context
+     * @param ctx information about invocation context
      */
     void onCell(Cell cell, CellWalkContext ctx);
 

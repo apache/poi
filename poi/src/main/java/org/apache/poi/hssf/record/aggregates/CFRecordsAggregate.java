@@ -52,7 +52,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  *  not a file format one.</p>
  */
 public final class CFRecordsAggregate extends RecordAggregate implements GenericRecord {
-    /** Excel 97-2003 allows up to 3 conditional formating rules */
+    /** Excel 97-2003 allows up to 3 conditional formatting rules */
     private static final int MAX_97_2003_CONDTIONAL_FORMAT_RULES = 3;
     private static final Logger LOG = PoiLogManager.getLogger(CFRecordsAggregate.class);
 
