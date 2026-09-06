@@ -68,7 +68,7 @@ public final class DateFunc extends Fixed3ArgFunction {
         // Negative days are handled by the Java Calendar
         
         // Excel has bugs around leap years in 1900, handle them
-        // Special case for the non-existant 1900 leap year
+        // Special case for the non-existent 1900 leap year
         if (year == 1900 && month == Calendar.FEBRUARY && pDay == 29) {
             return 60.0;
         }
