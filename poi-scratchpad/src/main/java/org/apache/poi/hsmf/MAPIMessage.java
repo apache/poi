@@ -52,6 +52,7 @@ import org.apache.poi.hsmf.parsers.POIFSChunkParser;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
 
@@ -153,7 +154,17 @@ public class MAPIMessage extends POIReadOnlyDocument {
      *                          input format
      */
     public MAPIMessage(POIFSFileSystem fs) throws IOException {
-        this(fs.getRoot());
+        super(fs.getRoot());
+
+        // this instance takes ownership of fs - close() closes it via the directory - so
+        // close it here too if parsing fails, otherwise the file handle behind a
+        // MAPIMessage(File) or MAPIMessage(String) would leak on a malformed message
+        try {
+            parseChunks(fs.getRoot());
+        } catch (IOException | RuntimeException e) {
+            IOUtils.closeQuietly(fs);
+            throw e;
+        }
     }
 
     /**
@@ -167,7 +178,18 @@ public class MAPIMessage extends POIReadOnlyDocument {
      */
     public MAPIMessage(DirectoryNode poifsDir) throws IOException {
         super(poifsDir);
+        parseChunks(poifsDir);
+    }
 
+    /**
+     * Reads the chunks out of the given directory and populates this message.
+     *
+     * <p>Split out of {@link #MAPIMessage(DirectoryNode)} so that
+     * {@link #MAPIMessage(POIFSFileSystem)} can close the filesystem it owns if parsing
+     * fails. Note that the {@link DirectoryNode} constructor deliberately does not do
+     * that - it is used for messages embedded in a filesystem owned by someone else.</p>
+     */
+    private void parseChunks(DirectoryNode poifsDir) throws IOException {
         // Grab all the chunks
         ChunkGroup[] chunkGroups = POIFSChunkParser.parse(poifsDir);
 
