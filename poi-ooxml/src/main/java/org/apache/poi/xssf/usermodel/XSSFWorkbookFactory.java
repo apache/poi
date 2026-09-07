@@ -116,7 +116,7 @@ public class XSSFWorkbookFactory implements WorkbookProvider {
     public static XSSFWorkbook createWorkbook(OPCPackage pkg) throws IOException {
         try {
             return new XSSFWorkbook(pkg);
-        } catch (RuntimeException ioe) {
+        } catch (IOException | RuntimeException ioe) {
             // ensure that file handles are closed (use revert() to not re-write the file)
             pkg.revert();
             //pkg.close();
