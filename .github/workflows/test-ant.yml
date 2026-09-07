@@ -30,12 +30,9 @@ jobs:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
 
-    - name: Set up Ant
-      id: setup-ant
-      run: |
-        wget https://dist.apache.org/repos/dist/release/ant//binaries/apache-ant-1.10.17-bin.tar.gz
-        tar --exclude=apache-ant-1.10.17/manual -xzvf apache-ant-1.10.17-bin.tar.gz
-        ANT_HOME=`pwd`/apache-ant-1.10.17 apache-ant-1.10.17/bin/ant -version
+    # this is more robust than wget of the tar.gz
+    - name: Install Ant
+      run: sudo apt-get update && sudo apt-get install -y ant
 
     - name: Cache downloaded third-party libraries
       uses: actions/cache@v6
