@@ -89,8 +89,11 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
 
     @Override
     public InputStream getInputStream(ZipArchiveEntry entry) throws IOException {
+        // build the cipher before opening the entry - getCipher can throw
+        // EncryptedDocumentException, which would otherwise leak the open stream
+        Cipher ciDec = getCipher(Cipher.DECRYPT_MODE);
         InputStream is = zipFile.getInputStream(entry);
-        return new CipherInputStream(is, getCipher(Cipher.DECRYPT_MODE));
+        return new CipherInputStream(is, ciDec);
     }
 
     @Override
