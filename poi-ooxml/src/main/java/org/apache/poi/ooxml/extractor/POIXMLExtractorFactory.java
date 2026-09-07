@@ -157,7 +157,7 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
             return ex;
         } catch (InvalidFormatException ife) {
             throw new IOException(ife);
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             if (pkg != null) {
                 pkg.revert();
             }

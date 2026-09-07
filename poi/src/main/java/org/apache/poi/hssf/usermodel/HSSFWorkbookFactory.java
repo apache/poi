@@ -91,7 +91,7 @@ public class HSSFWorkbookFactory implements WorkbookProvider {
         try {
             final char[] passwordChars = password == null ? null : password.toCharArray();
             return new HSSFWorkbook(fs, true, passwordChars);
-        } catch (RuntimeException e) {
+        } catch (IOException | RuntimeException e) {
             // we need to close the filesystem if we encounter an exception to not leak file handles
             fs.close();
             throw e;
