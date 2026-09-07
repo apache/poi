@@ -273,7 +273,16 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         if (!dir.hasEntryCaseInsensitive(PP97_DOCUMENT)) {
             return dir;
         }
-        return (DirectoryNode) dir.getEntryCaseInsensitive(PP97_DOCUMENT);
+        try {
+            return (DirectoryNode) dir.getEntryCaseInsensitive(PP97_DOCUMENT);
+        } catch (IOException | RuntimeException e) {
+            // this runs in the super(...) argument of the constructor below, so the
+            // constructor's own catch block cannot clean up after it. A malformed file whose
+            // PP97_DUALSTORAGE entry is a document rather than a directory fails the cast
+            // here, and without this the file handle would leak.
+            IOUtils.closeQuietly(dir.getFileSystem());
+            throw e;
+        }
     }
 
     /**
