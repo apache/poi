@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: [ trunk ]
 
+env:
+  ANT_VERSION: 1.10.18
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -17,7 +20,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        # for now verify JDK 8 and 11
         java: [ 17, 21 ]
 
     name: Java ${{ matrix.java }} build
@@ -30,9 +32,12 @@ jobs:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
 
-    # this is more robust than wget of the tar.gz
-    - name: Install Ant
-      run: sudo apt-get update && sudo apt-get install -y ant
+    - name: Set up Ant
+      id: setup-ant
+      run: |
+        wget https://archive.apache.org/dist/ant/binaries/apache-ant-${{ env.ANT_VERSION }}-bin.tar.gz
+        tar --exclude=apache-ant-${{ env.ANT_VERSION }}/manual -xzvf apache-ant-${{ env.ANT_VERSION }}-bin.tar.gz
+        ANT_HOME=`pwd`/apache-ant-${{ env.ANT_VERSION }} apache-ant-${{ env.ANT_VERSION }}/bin/ant -version
 
     - name: Cache downloaded third-party libraries
       uses: actions/cache@v6
@@ -43,4 +48,4 @@ jobs:
         key: poi-third-party-libs
 
     - name: Build with Ant
-      run: ANT_HOME=`pwd`/apache-ant-1.10.17 apache-ant-1.10.17/bin/ant clean jenkins
+      run: ANT_HOME=`pwd`/apache-ant-${{ env.ANT_VERSION }} apache-ant-${{ env.ANT_VERSION }}/bin/ant clean jenkins
