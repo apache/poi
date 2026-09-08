@@ -212,9 +212,10 @@ public class DataFormatter {
     private boolean use4DigitYearsInAllDateFormats = false;
 
     /**
-     * if set to true, avoid recalculating the values if there is a cached value available (default is false)
+     * if set to true, avoid recalculating the values if there is a cached value available
+     * (default is true since POI 6.0.0, was false in earlier releases)
      */
-    private boolean useCachedValuesForFormulaCells = false;
+    private boolean useCachedValuesForFormulaCells = true;
 
     /** stores the locale set by updateLocale method */
     private Locale locale;
@@ -297,7 +298,9 @@ public class DataFormatter {
      * @param useCachedValuesForFormulaCells if set to true, when you do not provide a {@link FormulaEvaluator},
      *                                       for cells with formulas, we will return the cached value for the cell (if available),
      *                                       otherwise - we return the formula itself.
-     *                                       The default is false and this means we return the formula itself.
+     *                                       Since POI 6.0.0, the default is true, so the cached value is used when it is
+     *                                       available. In POI 5.x, the default was false and the formula itself was returned.
+     *                                       Set this to false to restore the POI 5.x behaviour.
      * @since 5.2.0
      */
     public void setUseCachedValuesForFormulaCells(boolean useCachedValuesForFormulaCells) {
@@ -308,7 +311,8 @@ public class DataFormatter {
      * @return useCachedValuesForFormulaCells if set to true, when you do not provide a {@link FormulaEvaluator},
      *                                        for cells with formulas, we will return the cached value for the cell (if available),
      *                                        otherwise - we return the formula itself.
-     *                                        The default is false and this means we return the formula itself.
+     *                                        Since POI 6.0.0, the default is true, so the cached value is used when it is
+     *                                        available. In POI 5.x, the default was false and the formula itself was returned.
      * @since 5.2.0
      */
     public boolean useCachedValuesForFormulaCells() {
@@ -1058,6 +1062,8 @@ public class DataFormatter {
      * <p>When passed a null or blank cell, this method will return an empty
      * String (""). Formulas in formula type cells will not be evaluated.
      * {@link #setUseCachedValuesForFormulaCells} controls how these cells are evaluated.
+     * Since POI 6.0.0, that setting defaults to true, so the cached value of a formula cell is
+     * returned when one is available (POI 5.x returned the formula itself by default).
      * </p>
      *
      * @param cell The cell

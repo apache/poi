@@ -73,6 +73,7 @@
     <release version="6.0.0" date="TBD">
         <summary>
             <summary-item>Minimum Java version is now JDK 17 (was JDK 8 in POI 5.x)</summary-item>
+            <summary-item>DataFormatter now uses cached values for formula cells by default (see setUseCachedValuesForFormulaCells)</summary-item>
             <summary-item>Upgrade bouncycastle dependency to 1.85</summary-item>
             <summary-item>Upgrade commons-codec dependency to 1.22.1</summary-item>
             <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
@@ -175,6 +176,7 @@
             <action type="add" fixes-bug="github-1174" context="XSLF">Support theme colors as highlight color in pptx</action>
             <action type="fix" fixes-bug="github-1179" context="XSLF">Prevent rendering a bitmap when its effective size is 0</action>
             <action type="fix" fixes-bug="github-1187" context="XSLF">Adjust XSLFDrawing's slide shape tree scan in constructor to prevent shape ID warnings</action>
+            <action type="update" breaks-compatibility="true" context="SS_Common">DataFormatter: setUseCachedValuesForFormulaCells(boolean) now defaults to true (was false in POI 5.x)</action>
         </actions>
     </release>
 
