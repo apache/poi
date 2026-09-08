@@ -106,11 +106,12 @@ class TestDataFormatter {
     @Test
     void useCachedValuesForFormulaCells() {
         DataFormatter dataFormatter = new DataFormatter();
-        assertFalse(dataFormatter.useCachedValuesForFormulaCells());
-        dataFormatter.setUseCachedValuesForFormulaCells(true);
+        // the default changed to true in POI 6.0.0
         assertTrue(dataFormatter.useCachedValuesForFormulaCells());
         dataFormatter.setUseCachedValuesForFormulaCells(false);
         assertFalse(dataFormatter.useCachedValuesForFormulaCells());
+        dataFormatter.setUseCachedValuesForFormulaCells(true);
+        assertTrue(dataFormatter.useCachedValuesForFormulaCells());
     }
 
     @Test
@@ -874,6 +875,9 @@ class TestDataFormatter {
             assertEquals(formula, cell.getCellFormula());
 
             DataFormatter formatter = new DataFormatter();
+            // the cached value is used by default since POI 6.0.0
+            assertEquals("5.6789", formatter.formatCellValue(cell));
+            formatter.setUseCachedValuesForFormulaCells(false);
             assertEquals(formula, formatter.formatCellValue(cell));
             formatter.setUseCachedValuesForFormulaCells(true);
             assertEquals("5.6789", formatter.formatCellValue(cell));
