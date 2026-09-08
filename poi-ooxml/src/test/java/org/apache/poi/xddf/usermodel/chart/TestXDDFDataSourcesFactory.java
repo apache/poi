@@ -23,8 +23,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetBuilder;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFDataFormat;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
@@ -184,6 +190,60 @@ class TestXDDFDataSourcesFactory {
         numLitDS.addNewNumLit().addNewPtCount().setVal(oversized);
         XDDFNumericalDataSource<Double> numLitSource = XDDFDataSourcesFactory.fromDataSource(numLitDS);
         assertThrows(ArithmeticException.class, numLitSource::getPointCount);
+    }
+
+    @Test
+    void testNumericCellRangeFormatCodes() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDataFormat dataFormat = wb.createDataFormat();
+
+            XSSFCellStyle decimalStyle = wb.createCellStyle();
+            decimalStyle.setDataFormat(dataFormat.getFormat("#,##0.###"));
+            XSSFCellStyle intStyle = wb.createCellStyle();
+            intStyle.setDataFormat(dataFormat.getFormat("#,##0"));
+
+            XSSFRow row = sheet.createRow(0);
+            XSSFCell c0 = row.createCell(0);
+            c0.setCellValue(1000.5);
+            c0.setCellStyle(decimalStyle);
+            XSSFCell c1 = row.createCell(1);
+            c1.setCellValue(1200);
+            c1.setCellStyle(intStyle);
+            XSSFCell c2 = row.createCell(2);
+            c2.setCellValue(2000.034);
+            c2.setCellStyle(decimalStyle);
+
+            CellRangeAddress range = new CellRangeAddress(0, 0, 0, 2);
+            XDDFNumericalDataSource<Double> ds = XDDFDataSourcesFactory.fromNumericCellRange(sheet, range);
+
+            assertEquals("#,##0.###", ds.getFormatCode());
+            assertEquals("#,##0.###", ds.getPointFormatCode(0));
+            assertEquals("#,##0", ds.getPointFormatCode(1));
+            assertEquals("#,##0.###", ds.getPointFormatCode(2));
+
+            ds.setFormatCode("0.00");
+            assertEquals("0.00", ds.getFormatCode());
+            assertEquals("#,##0", ds.getPointFormatCode(1));
+
+            ds = XDDFDataSourcesFactory.fromNumericCellRange(sheet, range);
+            CTNumData cache = CTNumData.Factory.newInstance();
+            cache.setFormatCode("General");
+            ds.fillNumericalCache(cache);
+
+            assertEquals("#,##0.###", cache.getFormatCode());
+            assertEquals(3, cache.sizeOfPtArray());
+            assertFalse(cache.getPtArray(0).isSetFormatCode());
+            assertEquals("#,##0", cache.getPtArray(1).getFormatCode());
+            assertFalse(cache.getPtArray(2).isSetFormatCode());
+
+            ds.setFormatCode(null);
+            cache = CTNumData.Factory.newInstance();
+            cache.setFormatCode("General");
+            ds.fillNumericalCache(cache);
+            assertFalse(cache.isSetFormatCode());
+            assertEquals("#,##0.###", cache.getPtArray(0).getFormatCode());
+        }
     }
 
     private <T> void assertDataSourceIsEqualToArray(XDDFDataSource<T> ds, T[] array) {

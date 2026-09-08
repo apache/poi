@@ -57,6 +57,24 @@ public interface XDDFDataSource<T> {
     String getFormatCode();
 
     /**
+     * Optional number format for a single data point in the numerical cache.
+     * <p>
+     * Return {@code null} when this point has no point-specific format and should
+     * inherit the series format from {@link #getFormatCode()}. Implementations that
+     * never use per-point formats can keep the default ({@code null}).
+     * NumericalCellRangeDataSource is one class that implements this method.
+     * </p>
+     *
+     * @param index zero-based point index
+     * @return the data point's format code, or {@code null} if the underlying class
+     * does not support this method or if there is no format code set for this data point.
+     * @since 6.0.0
+     */
+    default String getPointFormatCode(int index) {
+        return null;
+    }
+
+    /**
      * @since 5.0.0
      */
     @Internal
@@ -78,6 +96,10 @@ public interface XDDFDataSource<T> {
                 CTNumVal ctNumVal = cache.addNewPt();
                 ctNumVal.setIdx(i);
                 ctNumVal.setV(value.toString());
+                String pointFormat = getPointFormatCode(i);
+                if (pointFormat != null && !pointFormat.equals(formatCode)) {
+                    ctNumVal.setFormatCode(pointFormat);
+                }
                 effectiveNumOfPoints++;
             }
         }
