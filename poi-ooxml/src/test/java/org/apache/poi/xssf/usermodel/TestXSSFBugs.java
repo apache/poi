@@ -3930,6 +3930,25 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
     }
 
+    @Test
+    void testInvalidCellRef() throws Exception {
+        // https://github.com/pjfanning/excel-streaming-reader/pull/390
+        try (XSSFWorkbook wb = openSampleWorkbook("invalid_cell_reference.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            String valueB1 = null;
+            for(Row row : sheet) {
+                for(Cell cell : row) {
+                    assertNotNull(cell);
+                    assertNotNull(cell.getAddress());
+                    if (cell.getAddress().formatAsString().equals("B1")) {
+                        valueB1 = cell.getStringCellValue();
+                    }
+                }
+            }
+            assertEquals("Second inline cell", valueB1);
+        }
+    }
+
     private static void readByCommonsCompress(File temp_excel_poi) throws IOException {
         /* read by commons-compress*/
         try (ZipFile zipFile = ZipFile.builder().setFile(temp_excel_poi).get()) {
