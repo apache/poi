@@ -19,15 +19,29 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.POIXMLFactory;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
+import org.apache.poi.xddf.usermodel.chart.XDDFDataSource;
+import org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory;
+import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
 
@@ -266,4 +280,34 @@ public class XWPFChart extends XDDFChart {
         this.setChartLeftMargin(left);
         this.setChartRightMargin(right);
     }
+    /**
+	 * Word keeps cached values that need be refreshed after the embedded workbook
+	 * has been updated.
+	 */
+	public void refreshCachedLabels() {
+
+		XSSFWorkbook wb;
+		try {
+			wb = getWorkbook();
+		} catch (InvalidFormatException | IOException e) {
+			return;
+		}
+		for (XDDFChartData chartData : getChartSeries()) {
+			for (int chartIndex = 0; chartIndex < chartData.getSeriesCount(); chartIndex++) {
+				XDDFChartData.Series series = chartData.getSeries(chartIndex);
+				XDDFDataSource<?> catData = series.getCategoryData();
+				if (catData == null)
+					continue;
+				if (catData.isReference()) {
+					String ref = catData.getDataRangeReference();
+					String sheet=ref.substring(0,ref.indexOf('!') );
+					XSSFSheet sheet2 = wb.getSheet(sheet);
+					//calling this function and asking it to replace its sheet with the same sheet will refresh the cache
+					replaceReferences(sheet2);
+				}
+			}
+
+		}
+	}
+
 }
