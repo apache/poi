@@ -29,6 +29,7 @@ import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,6 +57,9 @@ class TestOOXMLURIDereferencer {
      */
     @Test
     void absoluteUriIsNotResolved() throws Exception {
+        Assumptions.assumeFalse(System.getProperty("java.vendor").contains("IBM"),
+                "This fails on IBM JDK with 'NoSuchMechanismException: Mechanism DOM not available'");
+
         try (OPCPackage pkg = OPCPackage.create(UnsynchronizedByteArrayOutputStream.builder().get())) {
             SignatureInfo si = new SignatureInfo();
             si.setOpcPackage(pkg);
