@@ -18,6 +18,7 @@
 package org.apache.poi.openxml4j.opc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -32,5 +33,25 @@ public final class TestPackagePartName {
         PackagePartName name2 = PackagingURIHelper.createPartName("/root/document");
         assertEquals("xml", name1.getExtension());
         assertEquals("", name2.getExtension());
+    }
+
+    @Test
+    void testGetRelationshipPartName() throws Exception {
+        PackagePartName partName = PackagingURIHelper.createPartName("/word/document.xml");
+        PackagePartName relName = PackagingURIHelper.getRelationshipPartName(partName);
+        assertEquals("/word/_rels/document.xml.rels", relName.getName());
+    }
+
+    /**
+     * URI.getPath() decodes percent-encoding, so a part name with spaces
+     * (stored as %20) used to make createPartName throw and this method
+     * return null. Keep the raw path so the relationship part name is valid.
+     */
+    @Test
+    void testGetRelationshipPartNameWithPercentEncodedCharacters() throws Exception {
+        PackagePartName partName = PackagingURIHelper.createPartName("/aasx/test%20document.txt");
+        PackagePartName relName = PackagingURIHelper.getRelationshipPartName(partName);
+        assertNotNull(relName);
+        assertEquals("/aasx/_rels/test%20document.txt.rels", relName.getName());
     }
 }

@@ -642,8 +642,11 @@ public final class PackagingURIHelper {
         if (partName.isRelationshipPartURI())
             throw new InvalidOperationException("Can't be a relationship part");
 
-        String fullPath = partName.getURI().getPath();
-        String filename = getFilename(partName.getURI());
+        // Use the raw path so percent-encoded characters (e.g. %20) are not
+        // decoded into bytes that later fail URI syntax in createPartName.
+        String fullPath = partName.getURI().getRawPath();
+        int lastSlash = fullPath.lastIndexOf(FORWARD_SLASH_CHAR);
+        String filename = (lastSlash >= 0) ? fullPath.substring(lastSlash + 1) : fullPath;
         fullPath = fullPath.substring(0, fullPath.length() - filename.length());
         fullPath = combine(fullPath,
                 PackagingURIHelper.RELATIONSHIP_PART_SEGMENT_NAME);
