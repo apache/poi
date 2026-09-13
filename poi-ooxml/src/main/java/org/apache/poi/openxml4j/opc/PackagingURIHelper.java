@@ -455,15 +455,21 @@ public final class PackagingURIHelper {
         if (relationshipPartUri.compareTo(PACKAGE_RELATIONSHIPS_ROOT_URI) == 0)
             return PACKAGE_ROOT_URI;
 
-        String filename = relationshipPartUri.getPath();
-        String filenameWithoutExtension = getFilenameWithoutExtension(relationshipPartUri);
-        filename = filename
-                .substring(0, ((filename.length() - filenameWithoutExtension
-                        .length()) - RELATIONSHIP_PART_EXTENSION_NAME.length()));
-        filename = filename.substring(0, filename.length()
+        // Use the raw path so percent-encoded characters (e.g. %20) are not
+        // decoded into bytes that later fail URI syntax in getURIFromPath.
+        String fullPath = relationshipPartUri.getRawPath();
+        int lastSlash = fullPath.lastIndexOf(FORWARD_SLASH_CHAR);
+        String filename = (lastSlash >= 0) ? fullPath.substring(lastSlash + 1) : fullPath;
+        if (filename.endsWith(RELATIONSHIP_PART_EXTENSION_NAME)) {
+            filename = filename.substring(0, filename.length()
+                    - RELATIONSHIP_PART_EXTENSION_NAME.length());
+        }
+        fullPath = fullPath.substring(0, fullPath.length() - filename.length()
+                - RELATIONSHIP_PART_EXTENSION_NAME.length());
+        fullPath = fullPath.substring(0, fullPath.length()
                 - RELATIONSHIP_PART_SEGMENT_NAME.length() - 1);
-        filename = combine(filename, filenameWithoutExtension);
-        return getURIFromPath(filename);
+        fullPath = combine(fullPath, filename);
+        return getURIFromPath(fullPath);
     }
 
     /**
@@ -642,8 +648,11 @@ public final class PackagingURIHelper {
         if (partName.isRelationshipPartURI())
             throw new InvalidOperationException("Can't be a relationship part");
 
-        String fullPath = partName.getURI().getPath();
-        String filename = getFilename(partName.getURI());
+        // Use the raw path so percent-encoded characters (e.g. %20) are not
+        // decoded into bytes that later fail URI syntax in createPartName.
+        String fullPath = partName.getURI().getRawPath();
+        int lastSlash = fullPath.lastIndexOf(FORWARD_SLASH_CHAR);
+        String filename = (lastSlash >= 0) ? fullPath.substring(lastSlash + 1) : fullPath;
         fullPath = fullPath.substring(0, fullPath.length() - filename.length());
         fullPath = combine(fullPath,
                 PackagingURIHelper.RELATIONSHIP_PART_SEGMENT_NAME);
