@@ -53,5 +53,7 @@ public final class TestPackagePartName {
         PackagePartName relName = PackagingURIHelper.getRelationshipPartName(partName);
         assertNotNull(relName);
         assertEquals("/aasx/_rels/test%20document.txt.rels", relName.getName());
+        assertEquals(partName.getURI(),
+                PackagingURIHelper.getSourcePartUriFromRelationshipPartUri(relName.getURI()));
     }
 }
