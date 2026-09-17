@@ -1837,7 +1837,7 @@ under the License.
             <pathelement path="lib/ooxml-tests"/>
         </path>
 
-        <poiunit failureproperty="integration.test.failed" heap="1512" showoutput="true" jacocodest="build/jacoco-integration.exec"
+        <poiunit failureproperty="integration.test.failed" heap="2048" showoutput="true" jacocodest="build/jacoco-integration.exec"
                  modulepath-ref="test-integration.modules" module1="stress" outputDir="${integration.reports.test}">
             <zipfileset src="build/dist/maven/poi-integration/poi-integration-${version.id}.jar">
                 <include name="**/${testpattern}.class"/>
