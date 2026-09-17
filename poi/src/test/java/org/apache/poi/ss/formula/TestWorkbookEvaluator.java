@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,7 +39,9 @@ import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -642,6 +645,38 @@ class TestWorkbookEvaluator {
             assertEquals("1", cellA3.getStringCellValue());
             assertEquals(0, cellB3.getNumericCellValue(), 0.00001);
             assertEquals("3", cellC3.getStringCellValue());
+        }
+    }
+
+    @Test
+    void testOperationEvaluationContextWithoutTracker() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet("Sheet1");
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell a1 = row.createCell(0);
+            HSSFCell b1 = row.createCell(1);
+            a1.setCellValue(2);
+            b1.setCellValue(3);
+
+            HSSFEvaluationWorkbook ewb = HSSFEvaluationWorkbook.create(wb);
+            WorkbookEvaluator evaluator = new WorkbookEvaluator(ewb, null, null);
+            // the constructor available outside this package: no EvaluationTracker needed
+            OperationEvaluationContext ec = new OperationEvaluationContext(evaluator, ewb, 0, 0, 2);
+
+            // resolves references
+            ValueEval a1Value = ec.getRefEvaluatorForCurrentSheet().getSheetEvaluator(0).getEvalForCell(0, 0);
+            assertEquals(2.0, assertInstanceOf(NumberEval.class, a1Value).getNumberValue(), 0.0);
+
+            // usable with FreeRefFunctions
+            FreeRefFunction ifErrorFunc = evaluator.findUserDefinedFunction("IFERROR");
+            ValueEval ifError = ifErrorFunc.evaluate(new ValueEval[]{ErrorEval.DIV_ZERO, new StringEval("x")}, ec);
+            assertEquals("x", assertInstanceOf(StringEval.class, ifError).getStringValue());
+
+            // parse once, evaluate many times without a formula cell
+            Ptg[] ptgs = FormulaParser.parse("A1*B1", ewb, FormulaType.CELL, 0, 0);
+            assertEquals(6.0, assertInstanceOf(NumberEval.class, evaluator.evaluateFormula(ec, ptgs)).getNumberValue(), 0.0);
+            a1.setCellValue(5);
+            assertEquals(15.0, assertInstanceOf(NumberEval.class, evaluator.evaluateFormula(ec, ptgs)).getNumberValue(), 0.0);
         }
     }
 }

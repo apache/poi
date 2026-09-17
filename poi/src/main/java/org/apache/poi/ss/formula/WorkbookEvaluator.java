@@ -154,6 +154,14 @@ public final class WorkbookEvaluator {
         return _collaboratingWorkbookEnvironment.getWorkbookEvaluator(workbookName);
     }
 
+    /**
+     * @return a new tracker backed by this evaluator's cache, for building an
+     *         {@link OperationEvaluationContext}
+     */
+    /* package */ EvaluationTracker createEvaluationTracker() {
+        return new EvaluationTracker(_cache);
+    }
+
     /* package */ IEvaluationListener getEvaluationListener() {
         return _evaluationListener;
     }
