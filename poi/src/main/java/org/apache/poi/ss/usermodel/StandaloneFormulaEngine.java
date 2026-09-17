@@ -93,8 +93,17 @@ public interface StandaloneFormulaEngine {
          * Adds one named input. The first added input maps to virtual cell {@code A1},
          * the second to {@code B1}, and so on.
          *
+         * <p>Names must follow the Excel defined-name rules: at most 255 characters; first
+         * character a letter, underscore or backslash; remaining characters letters, digits,
+         * periods, underscores or backslashes; not the reserved shorthands {@code R} or
+         * {@code C}; not the literals {@code TRUE} or {@code FALSE}. Additionally, at
+         * {@link #build()} time, names that look like an A1-style cell reference of the
+         * configured {@link SpreadsheetVersion} (e.g. {@code Q1}) are rejected, as they
+         * would otherwise be parsed as a cell instead of resolving to the input.</p>
+         *
          * @param name the name of the input, used by {@link CompiledFormula#getInputIndex(String)}
          * @return this builder
+         * @throws IllegalArgumentException if the name is null, blank or violates the rules above
          */
         Builder input(String name);
 
@@ -103,6 +112,8 @@ public interface StandaloneFormulaEngine {
          *
          * @param names the names of the inputs
          * @return this builder
+         * @throws IllegalArgumentException if one of the names violates the rules
+         *         documented in {@link #input(String)}
          */
         Builder inputs(String... names);
 
@@ -111,6 +122,8 @@ public interface StandaloneFormulaEngine {
          *
          * @param names the names of the inputs
          * @return this builder
+         * @throws IllegalArgumentException if one of the names violates the rules
+         *         documented in {@link #input(String)}
          */
         Builder inputs(Collection<String> names);
 
@@ -134,7 +147,9 @@ public interface StandaloneFormulaEngine {
          * Validates the configuration and returns the engine.
          *
          * @return a thread-safe engine
-         * @throws IllegalArgumentException if an input name is null, empty or a
+         * @throws IllegalArgumentException if an input name is null, empty, violates the
+         *         rules documented in {@link #input(String)} or is an A1-style cell
+         *         reference of the configured spreadsheet version, if it is a
          *         case-insensitive duplicate, or if the number of inputs exceeds
          *         the column limit of the configured spreadsheet version
          */

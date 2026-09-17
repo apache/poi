@@ -279,9 +279,63 @@ class TestStandaloneFormulaEvaluator {
         StandaloneFormulaEngine.Builder tooMany = StandaloneFormulaEngine.newBuilder()
                 .spreadsheetVersion(SpreadsheetVersion.EXCEL97);
         for (int i = 0; i <= SpreadsheetVersion.EXCEL97.getMaxColumns(); i++) {
-            tooMany.input("c" + i);
+            tooMany.input("col" + i);
         }
         assertTrue(assertThrows(IllegalArgumentException.class, tooMany::build).getMessage().contains("Too many"));
+    }
+
+    @Test
+    void invalidInputNamesRejected() {
+        // names that would be parsed as cell references instead of resolving to the input
+        for (String name : new String[]{"Q1", "FY2024", "H2", "A1", "IV65536", "XFD1"}) {
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                    () -> StandaloneFormulaEngine.newBuilder().inputs("x", name).build(),
+                    () -> "name " + name);
+            assertTrue(e.getMessage().contains("'" + name + "'"), name + " not in: " + e.getMessage());
+        }
+        // names that would be parsed as literals or violate the defined-name rules
+        for (String name : new String[]{"true", "FALSE", "True", "R", "c", "2024", "1048576",
+                "My Name", "A$1", "a-b", "x*y", ".Data", ""}) {
+            assertThrows(IllegalArgumentException.class,
+                    () -> StandaloneFormulaEngine.newBuilder().inputs(name).build(),
+                    () -> "name " + name);
+        }
+        // eager rejection, before build()
+        StandaloneFormulaEngine.Builder builder = StandaloneFormulaEngine.newBuilder();
+        assertThrows(IllegalArgumentException.class, () -> builder.input("My Name"));
+        // 256 characters
+        StringBuilder longName = new StringBuilder("a");
+        for (int i = 0; i < 255; i++) {
+            longName.append('x');
+        }
+        assertThrows(IllegalArgumentException.class, () -> builder.input(longName.toString()));
+    }
+
+    @Test
+    void validInputNamesAccepted() {
+        StandaloneFormulaEngine engine = StandaloneFormulaEngine.newBuilder()
+                .inputs("Q1_2024", "Total2024", "XFD", "a", "true1", "caf\u00e9", "_priv", "\\abs")
+                .build();
+        CompiledFormula compiled = engine.compile("Q1_2024*Total2024+a");
+        StandaloneFormulaEvaluator evaluator = compiled.newEvaluator();
+        evaluator.setValues(2.0, 3.0, 0.0, 4.0);
+        assertEquals(10.0, evaluator.evaluate().getNumberValue());
+        assertEquals(2, compiled.getInputIndex("XFD"));
+        assertEquals(-1, compiled.getInputIndex("Nope"));
+    }
+
+    @Test
+    void cellReferenceNamesAreVersionDependent() {
+        // IW123 is a cell of EXCEL2007 (column IW exists) but a valid name under EXCEL97
+        assertThrows(IllegalArgumentException.class,
+                () -> StandaloneFormulaEngine.newBuilder().inputs("IW123").build());
+        StandaloneFormulaEngine ex97 = StandaloneFormulaEngine.newBuilder()
+                .inputs("IW123")
+                .spreadsheetVersion(SpreadsheetVersion.EXCEL97)
+                .build();
+        StandaloneFormulaEvaluator evaluator = ex97.compile("IW123+1").newEvaluator();
+        evaluator.setValues(41.0);
+        assertEquals(42.0, evaluator.evaluate().getNumberValue());
     }
 
     @Test

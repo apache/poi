@@ -174,9 +174,11 @@ public final class StandaloneFormulaEngineImpl implements StandaloneFormulaEngin
     /**
      * Validated at build time when the spreadsheet version is final: a name classified as an
      * A1-style cell reference (e.g. {@code Q1}) would be parsed as a reference to a virtual
-     * cell instead of resolving to the input. {@code NameType.COLUMN} bare-letter names
-     * (e.g. {@code x}) are deliberately accepted - they are legal Excel defined names and the
-     * formula parser resolves them through the name lookup.
+     * cell instead of resolving to the input. Everything else is accepted: bare-letter
+     * {@code NameType.COLUMN} names (e.g. {@code x}) are legal Excel defined names, and
+     * {@code NameType.ROW} or {@code NameType.BAD_CELL_OR_NAMED_RANGE} results are either
+     * already rejected by {@link #requireValidName(String)} (digits, invalid characters) or
+     * legal unicode names that its ASCII-only patterns cannot vouch for.
      */
     private static void requireReferenceFreeName(String name, SpreadsheetVersion version) {
         NameType type;
@@ -190,10 +192,6 @@ public final class StandaloneFormulaEngineImpl implements StandaloneFormulaEngin
         if (type == NameType.CELL) {
             throw new IllegalArgumentException("Invalid name: '" + name + "': looks like a cell reference and would"
                     + " be parsed as a cell instead of resolving to this input; choose another name");
-        }
-        if (type == NameType.ROW || type == NameType.BAD_CELL_OR_NAMED_RANGE) {
-            throw new IllegalArgumentException("Invalid name: '" + name + "': looks like a row or cell reference"
-                    + " instead of a valid input name");
         }
     }
 }
