@@ -60,6 +60,12 @@ public final class OperationEvaluationContext {
     private final WorkbookEvaluator _bookEvaluator;
     private final boolean _isSingleValue;
     private boolean _isInArrayContext;
+    /**
+     * Lazily created evaluator for the current sheet. It only depends on this
+     * context's final fields, so it can be shared by all reference evaluations
+     * of this context instead of being re-created on every access.
+     */
+    private SheetRangeEvaluator _currentSheetRefEvaluator;
 
     public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
                                       int srcColNum, EvaluationTracker tracker) {
@@ -187,8 +193,11 @@ public final class OperationEvaluationContext {
     }
 
     public SheetRangeEvaluator getRefEvaluatorForCurrentSheet() {
-        SheetRefEvaluator sre = new SheetRefEvaluator(_bookEvaluator, _tracker, _sheetIndex);
-        return new SheetRangeEvaluator(_sheetIndex, sre);
+        if (_currentSheetRefEvaluator == null) {
+            SheetRefEvaluator sre = new SheetRefEvaluator(_bookEvaluator, _tracker, _sheetIndex);
+            _currentSheetRefEvaluator = new SheetRangeEvaluator(_sheetIndex, sre);
+        }
+        return _currentSheetRefEvaluator;
     }
 
 
