@@ -231,7 +231,87 @@ for (Sheet sheet : wb) {
             HSSFFormulaEvaluator or XSSFFormulaEvaluator class.</p>
 			</section>
 		</section>
-		
+
+		<anchor id="Standalone"/>
+		<section><title>Standalone Formula Evaluation (without a Workbook)</title>
+			<p>Some applications only need the formula engine itself - evaluating an
+				expression against a row of in-memory values, without any Workbook,
+				Sheet, Row or Cell objects. Typical use cases are streaming pipelines
+				that compute one derived value per data row. The
+				<em>standalone formula engine</em> provides this: it uses the exact same
+				evaluation engine as workbook-backed evaluation, so results, coercions
+				and error values are identical, but it skips all file-format overhead.
+			</p>
+			<p>Inputs are declared once, in order; the first input maps to virtual cell
+				A1, the second to B1, and so on. A formula is then compiled once
+				(and can be cached), and evaluated once per row by binding values to
+				the declared inputs:
+			</p>
+			<source>
+// declare the inputs once (thread-safe engine)
+StandaloneFormulaEngine engine = StandaloneFormulaEngine.newBuilder()
+        .inputs("amount", "price", "label")
+        .build();
+
+// compile the formula once - CompiledFormula is thread-safe and shareable
+CompiledFormula formula = engine.compile("amount*price &amp; \" for \" &amp; label");
+
+// evaluators are cheap but NOT thread-safe: create one per thread and reuse it across rows
+StandaloneFormulaEvaluator evaluator = formula.newEvaluator();
+
+// per row: bind the input values, then evaluate
+evaluator.setNumber(0, 2.5)       // amount
+         .setNumber(1, 4.0)       // price
+         .setString(2, "widget"); // label
+LightCellValue result = evaluator.evaluate();
+
+switch (result.getCellType()) {
+    case NUMERIC:
+        System.out.println(result.getNumberValue());  // 10.0
+        break;
+    case STRING:
+        System.out.println(result.getStringValue());  // "10 for widget"
+        break;
+    case BOOLEAN:
+        System.out.println(result.getBooleanValue());
+        break;
+    case ERROR:
+        System.out.println("Excel error code " + result.getErrorValue());
+        break;
+}
+			</source>
+			<p>Details worth knowing:</p>
+			<ul>
+				<li>Inputs can be referenced in formulas by name (as in the example
+					above) or by their virtual cell reference (A1, B1, ...). Formula
+					text must be valid Excel syntax, so use the cell form for names
+					that are not plain identifiers.
+				</li>
+				<li>Typed setters exist for number, string, boolean, date and error
+					values, plus <em>setValue</em>/<em>setValues</em> dispatching on
+					Object and <em>reset()</em>. Values persist until overwritten,
+					matching how an Excel row stays in place between recalculations.
+				</li>
+				<li>Results are returned as <em>LightCellValue</em>, a lightweight
+					sealed interface with one implementation per result type. The
+					classic CellValue implements it too, so existing CellValue-based
+					code keeps working.
+				</li>
+				<li>Excel semantics are preserved: unset inputs behave like empty
+					cells (blank), 1/0 yields the #DIV/0! error value instead of an
+					exception, and an input can be set to a specific error such as
+					#N/A via <em>setError(index, FormulaError.NA)</em> to model
+					missing data. Functions POI does not implement throw
+					NotImplementedException.
+				</li>
+				<li>There are no defined names, no multiple sheets, no sheet-qualified
+					or external references, and INDIRECT only resolves the virtual
+					sheet. User-defined functions are supported through the
+					<em>udfFinder</em> builder option.
+				</li>
+			</ul>
+		</section>
+
 		<anchor id="recalculation"/>
 		<section><title>Recalculation of Formulas</title>
       <p>
