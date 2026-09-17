@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -664,18 +665,18 @@ class TestWorkbookEvaluator {
 
             // resolves references
             ValueEval a1Value = ec.getRefEvaluatorForCurrentSheet().getSheetEvaluator(0).getEvalForCell(0, 0);
-            assertEquals(2.0, ((NumberEval) a1Value).getNumberValue(), 0.0);
+            assertEquals(2.0, assertInstanceOf(NumberEval.class, a1Value).getNumberValue(), 0.0);
 
             // usable with FreeRefFunctions
             FreeRefFunction ifErrorFunc = evaluator.findUserDefinedFunction("IFERROR");
             ValueEval ifError = ifErrorFunc.evaluate(new ValueEval[]{ErrorEval.DIV_ZERO, new StringEval("x")}, ec);
-            assertEquals("x", ((StringEval) ifError).getStringValue());
+            assertEquals("x", assertInstanceOf(StringEval.class, ifError).getStringValue());
 
             // parse once, evaluate many times without a formula cell
             Ptg[] ptgs = FormulaParser.parse("A1*B1", ewb, FormulaType.CELL, 0, 0);
-            assertEquals(6.0, ((NumberEval) evaluator.evaluateFormula(ec, ptgs)).getNumberValue(), 0.0);
+            assertEquals(6.0, assertInstanceOf(NumberEval.class, evaluator.evaluateFormula(ec, ptgs)).getNumberValue(), 0.0);
             a1.setCellValue(5);
-            assertEquals(15.0, ((NumberEval) evaluator.evaluateFormula(ec, ptgs)).getNumberValue(), 0.0);
+            assertEquals(15.0, assertInstanceOf(NumberEval.class, evaluator.evaluateFormula(ec, ptgs)).getNumberValue(), 0.0);
         }
     }
 }
