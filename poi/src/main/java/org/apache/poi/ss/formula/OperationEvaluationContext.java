@@ -67,6 +67,26 @@ public final class OperationEvaluationContext {
      */
     private SheetRangeEvaluator _currentSheetRefEvaluator;
 
+    /**
+     * Creates a context for evaluating formula tokens at the given position, using the
+     * evaluation tracker of the given {@link WorkbookEvaluator}.
+     *
+     * <p>This constructor is intended for code outside this package - e.g. custom
+     * {@link EvaluationWorkbook} implementations or {@link org.apache.poi.ss.formula.functions.FreeRefFunction}
+     * callers - that needs a context but has no access to the internal evaluation tracker.</p>
+     *
+     * @param bookEvaluator the evaluator of the workbook the formula belongs to
+     * @param workbook      the workbook the formula belongs to
+     * @param sheetIndex    the index of the sheet the formula is evaluated on
+     * @param srcRowNum     the row index of the formula's position (base for relative references)
+     * @param srcColNum     the column index of the formula's position (base for relative references)
+     * @since 6.0.0
+     */
+    public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
+                                      int srcColNum) {
+        this(bookEvaluator, workbook, sheetIndex, srcRowNum, srcColNum, bookEvaluator.createEvaluationTracker(), true);
+    }
+
     public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
                                       int srcColNum, EvaluationTracker tracker) {
         this(bookEvaluator, workbook, sheetIndex, srcRowNum, srcColNum, tracker, true);
