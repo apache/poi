@@ -85,7 +85,7 @@ final class StandaloneFormulaEvaluatorImpl implements StandaloneFormulaEvaluator
     public StandaloneFormulaEvaluator setDate(int index, Date value) {
         Objects.requireNonNull(value, "value must not be null, use setBlank(int) instead");
         double excelDate = DateUtil.getExcelDate(value);
-        if (excelDate < 0.1) {
+        if (excelDate < 0) {
             throw new IllegalArgumentException("Invalid date: " + value);
         }
         return setNumber(index, excelDate);

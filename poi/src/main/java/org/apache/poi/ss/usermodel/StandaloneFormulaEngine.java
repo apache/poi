@@ -57,7 +57,7 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
  * no sheet-qualified ({@code Sheet2!A1}) or 3-D references, no external workbook
  * references, no tables, and {@code INDIRECT} only resolves the canonical sheet
  * name {@code Sheet1}. Functions not implemented by POI (e.g. {@code DATEDIF})
- * throw {@link org.apache.poi.ss.formula.NotImplementedException} at evaluation time.</p>
+ * throw {@link org.apache.poi.ss.formula.eval.NotImplementedException} at evaluation time.</p>
  */
 public interface StandaloneFormulaEngine {
 

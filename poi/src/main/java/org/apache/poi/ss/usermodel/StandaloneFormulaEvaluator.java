@@ -78,7 +78,7 @@ public interface StandaloneFormulaEvaluator {
      * @param value the value
      * @return this evaluator, for chaining
      * @throws IndexOutOfBoundsException if the index is out of range
-     * @throws IllegalArgumentException if the date cannot be represented as an Excel date
+     * @throws IllegalArgumentException if the date is before the Excel epoch (serial number 0)
      */
     StandaloneFormulaEvaluator setDate(int index, Date value);
 
@@ -137,7 +137,7 @@ public interface StandaloneFormulaEvaluator {
      * Evaluates the compiled formula with the currently bound inputs.
      *
      * @return the evaluation result, never {@code null}
-     * @throws org.apache.poi.ss.formula.NotImplementedException if the formula uses
+     * @throws org.apache.poi.ss.formula.eval.NotImplementedException if the formula uses
      *         a function that POI does not implement
      */
     LightCellValue evaluate();
