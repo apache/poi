@@ -351,9 +351,21 @@ public final class WorkbookEvaluator {
     }
 
 
-    // visibility raised for testing
+    /**
+     * Evaluates the given formula tokens in the given context.
+     *
+     * <p>This is the low-level interpreter entry point: it does not consult or
+     * update the result cache, nor does it record dependencies. It is public so
+     * that custom {@link EvaluationWorkbook} implementations can evaluate parsed
+     * formulas that are not attached to a cell (see
+     * {@link FormulaParser#parse(String, FormulaParsingWorkbook, FormulaType, int, int)}).</p>
+     *
+     * @param ec the evaluation context (identifies the workbook, sheet and source cell position)
+     * @param ptgs the parsed formula tokens
+     * @return the result of the evaluation, never {@code null}
+     */
     @Internal
-    /* package */ ValueEval evaluateFormula(OperationEvaluationContext ec, Ptg[] ptgs) {
+    public ValueEval evaluateFormula(OperationEvaluationContext ec, Ptg[] ptgs) {
 
         String dbgIndentStr = "";        // always init. to non-null just for defensive avoiding NPE
         if (dbgEvaluationOutputForNextEval) {
