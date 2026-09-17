@@ -22,14 +22,16 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -144,7 +146,7 @@ class TestStandaloneFormulaEvaluator {
         evaluator.setBoolean(2, true);
         assertEquals("1.5xTRUE", evaluator.evaluate().getStringValue());
 
-        Date date = new GregorianCalendar(2020, Calendar.MARCH, 15).getTime();
+        Date date = Date.from(LocalDate.of(2020, 3, 15).atStartOfDay(ZoneOffset.UTC).toInstant());
         StandaloneFormulaEvaluator dateEvaluator = engine("d").compile("d").newEvaluator();
         dateEvaluator.setDate(0, date);
         assertEquals(DateUtil.getExcelDate(date), dateEvaluator.evaluate().getNumberValue());
@@ -164,7 +166,7 @@ class TestStandaloneFormulaEvaluator {
         assertEquals(4.0, eval("A1*2", new String[]{"a"}, new Object[]{java.math.BigDecimal.valueOf(2)}).getNumberValue());
         assertEquals(Boolean.TRUE, eval("A1", new String[]{"a"}, new Object[]{Boolean.TRUE}).getBooleanValue());
         assertEquals(Boolean.TRUE, eval("ISBLANK(A1)", new String[]{"a"}, new Object[]{null}).getBooleanValue());
-        Date date = new GregorianCalendar(2021, Calendar.JANUARY, 1).getTime();
+        Date date = Date.from(LocalDate.of(2021, 1, 1).atStartOfDay(ZoneOffset.UTC).toInstant());
         assertEquals(DateUtil.getExcelDate(date), eval("A1", new String[]{"a"}, new Object[]{date}).getNumberValue());
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
                 () -> eval("A1", new String[]{"a"}, new Object[]{new Object()}));
@@ -320,7 +322,9 @@ class TestStandaloneFormulaEvaluator {
     void concurrentCompilationIsThreadSafe() throws Exception {
         StandaloneFormulaEngine standaloneEngine = engine("a", "b");
         int threads = 8;
-        ExecutorService executor = Executors.newFixedThreadPool(threads);
+        ThreadFactory threadFactory = r -> new Thread(r, "standalone-formula-compile-test");
+        ExecutorService executor = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>(), threadFactory);
         try {
             List<Future<Double>> results = new ArrayList<>();
             for (int i = 0; i < threads; i++) {
