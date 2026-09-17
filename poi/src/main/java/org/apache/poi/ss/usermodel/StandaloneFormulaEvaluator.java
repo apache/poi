@@ -37,6 +37,8 @@ import java.util.Date;
  * {@link #setError(int, FormulaError)} to model "not available" data.
  * {@link CellValue} implements {@link LightCellValue}, so code written against the
  * result of {@link FormulaEvaluator#evaluate(Cell)} keeps working.</p>
+ *
+ * @since 6.0.0
  */
 public interface StandaloneFormulaEvaluator {
 

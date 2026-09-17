@@ -28,6 +28,8 @@ import java.util.List;
  * to be confined to a single thread and reused across rows.</p>
  *
  * @see StandaloneFormulaEngine#compile(String)
+ *
+ * @since 6.0.0
  */
 public interface CompiledFormula {
 

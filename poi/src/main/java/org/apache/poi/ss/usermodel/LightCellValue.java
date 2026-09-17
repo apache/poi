@@ -44,6 +44,8 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
  *     handle(result);
  * }
  * }</pre>
+ *
+ * @since 6.0.0
  */
 public sealed interface LightCellValue permits LightCellValue.NumberValue, LightCellValue.TextValue,
         LightCellValue.BooleanValue, LightCellValue.ErrorValue, CellValue {
@@ -138,6 +140,8 @@ public sealed interface LightCellValue permits LightCellValue.NumberValue, Light
 
     /**
      * A numeric (floating point) value.
+     *
+     * @since 6.0.0
      */
     record NumberValue(double value) implements LightCellValue {
 
@@ -164,6 +168,8 @@ public sealed interface LightCellValue permits LightCellValue.NumberValue, Light
 
     /**
      * A text value.
+     *
+     * @since 6.0.0
      */
     record TextValue(String value) implements LightCellValue {
 
@@ -188,8 +194,10 @@ public sealed interface LightCellValue permits LightCellValue.NumberValue, Light
         }
     }
 
-    /**
-     * A boolean value. Use {@link #TRUE} and {@link #FALSE} to avoid allocations.
+/**
+     * A boolean value.
+     *
+     * @since 6.0.0
      */
     record BooleanValue(boolean value) implements LightCellValue {
 
@@ -237,6 +245,8 @@ public sealed interface LightCellValue permits LightCellValue.NumberValue, Light
     /**
      * An Excel error value, e.g. {@code #DIV/0!}. Instances for the standard error
      * codes are cached; use {@link LightCellValue#error(int)} to benefit from it.
+     *
+     * @since 6.0.0
      */
     record ErrorValue(int code) implements LightCellValue {
 
