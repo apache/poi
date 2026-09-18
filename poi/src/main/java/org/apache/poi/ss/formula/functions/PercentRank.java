@@ -153,10 +153,17 @@ public final class PercentRank implements Function {
         return new NumberEval(round(result, significance));
     }
 
+    /**
+     * A double has at most 17 significant digits, so rounding to more places than this changes
+     * nothing (and a huge count would make setScale build a number with billions of digits).
+     */
+    private static final int MAX_SIGNIFICANCE = 20;
+
     @Internal
     public static double round(BigDecimal bd, int significance) {
         //the rounding in https://support.microsoft.com/en-us/office/percentrank-function-f1b5836c-9619-4847-9fc9-080ec9024442
         //is very inconsistent, this hodge podge of rounding modes is the only way to match Excel results
+        significance = Math.min(significance, MAX_SIGNIFICANCE);
         BigDecimal bd2 = bd.setScale(significance + 3, RoundingMode.HALF_UP);
         return bd2.setScale(significance, RoundingMode.DOWN).doubleValue();
     }

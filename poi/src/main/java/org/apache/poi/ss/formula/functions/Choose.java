@@ -49,6 +49,11 @@ public final class Choose implements Function {
     public static int evaluateFirstArg(ValueEval arg0, int srcRowIndex, int srcColumnIndex)
             throws EvaluationException {
         ValueEval ev = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
-        return OperandResolver.coerceValueToInt(ev);
+        try {
+            return OperandResolver.coerceValueToInt(ev);
+        } catch (EvaluationException e) {
+            // an index beyond the int range is out of range of the choices: #VALUE!
+            throw EvaluationException.invalidValue();
+        }
     }
 }

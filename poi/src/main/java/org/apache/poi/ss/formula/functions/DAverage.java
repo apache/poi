@@ -21,9 +21,6 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-
 /**
  * Implementation of the DAverage function:
  * Gets the average value of a column in an area with given conditions.
@@ -47,12 +44,6 @@ public final class DAverage implements IDStarAlgorithm {
     }
 
     private double getAverage() {
-        return divide(total, count);
-    }
-
-    private static double divide(final double total, final long count) {
-        return BigDecimal.valueOf(total)
-                .divide(BigDecimal.valueOf(count), MathContext.DECIMAL128)
-                .doubleValue();
+        return total / count;
     }
 }

@@ -144,18 +144,25 @@ test {
 
     dependsOn { testJar }
 
-    if (Boolean.valueOf(System.getenv("CI_BUILD"))) {
-        // On CI, cap the parallelism and give the test JVM more heap: the default dynamic
-        // strategy runs one thread per processor, and several tests materialising large
-        // XSSF workbooks concurrently (the XSSF additional tests load each workbook twice
-        // via ExcelComparator) drove the 2GB test JVM into OutOfMemoryError on the Jenkins
-        // nodes, with tests slowing down progressively as the heap filled.
+    // TestAllFiles materialises several large workbooks at once (the XSSF handlers hold every
+    // decompressed part of a stream-opened workbook on the heap, and load each file two or
+    // three times over), so it needs more heap than the 2g the root build.gradle gives the
+    // other modules: under heap pressure the JVM first stalls in "Retried waiting for GCLocker
+    // too often" and then kills the JUnit engine with an OutOfMemoryError.
+    maxHeapSize = '3g'
+
+    // CI_BUILD is what the Jenkins nodes set; GitHub Actions sets CI=true.
+    if (Boolean.valueOf(System.getenv("CI_BUILD")) || Boolean.valueOf(System.getenv("CI"))) {
+        // On CI, also cap the parallelism: the default dynamic strategy runs one thread per
+        // processor, and several tests materialising large XSSF workbooks concurrently (the
+        // XSSF additional tests load each workbook twice via ExcelComparator) drove the test
+        // JVM into OutOfMemoryError on the Jenkins nodes, with tests slowing down
+        // progressively as the heap filled.
         // Note: these systemProperties deliberately override the strictly-serial CI
         // settings from the root build.gradle for this module.
         systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
         systemProperties['junit.jupiter.execution.parallel.config.strategy'] = 'fixed'
         systemProperties['junit.jupiter.execution.parallel.config.fixed.parallelism'] = '2'
-        maxHeapSize = '3g'
     } else {
         systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
     }

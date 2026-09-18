@@ -41,7 +41,8 @@ public final class Countblank extends Fixed1ArgFunction {
         } else if (arg0 instanceof ThreeDEval threeDEval) {
             result = CountUtils.countMatchingCellsInArea(threeDEval, predicate);
         } else {
-            throw new IllegalArgumentException("Bad range arg type (" + arg0.getClass().getName() + ")");
+            // the range argument must be a reference or an array
+            return ErrorEval.VALUE_INVALID;
         }
         return new NumberEval(result);
     }

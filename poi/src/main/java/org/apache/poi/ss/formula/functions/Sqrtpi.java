@@ -22,7 +22,6 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.util.NumberToTextConverter;
 
 /**
  * Implementation for Excel SQRTPI() function.
@@ -55,10 +54,9 @@ public class Sqrtpi implements FreeRefFunction {
             if (isInvalidInput(d)) {
                 return ErrorEval.NUM_ERROR;
             }
-            final double result = Math.sqrt(Math.PI * d);
-            //NumberToTextConverter reduces the precision to what Excel uses internally
-            //without this conversion, `result` is too precise
-            return new NumberEval(Double.parseDouble(NumberToTextConverter.toText(result)));
+            double result = Math.sqrt(Math.PI * d);
+            NumericFunction.checkValue(result);
+            return new NumberEval(result);
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }

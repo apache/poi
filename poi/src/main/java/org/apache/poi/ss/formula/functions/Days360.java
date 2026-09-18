@@ -23,7 +23,6 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 
 /**
@@ -72,7 +71,7 @@ public class Days360 extends Var2or3ArgFunction {
         try {
             LocalDate d0 = Days.getDate(arg0, srcRowIndex, srcColumnIndex);
             LocalDate d1 = Days.getDate(arg1, srcRowIndex, srcColumnIndex);
-            return new NumberEval(evaluate(DateUtil.getExcelDate(d0), DateUtil.getExcelDate(d1), false));
+            return new NumberEval(evaluate(d0, d1, false));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
@@ -85,14 +84,13 @@ public class Days360 extends Var2or3ArgFunction {
             LocalDate d1 = Days.getDate(arg1, srcRowIndex, srcColumnIndex);
             ValueEval ve = OperandResolver.getSingleValue(arg2, srcRowIndex, srcColumnIndex);
             Boolean method = OperandResolver.coerceValueToBoolean(ve, false);
-            return new NumberEval(evaluate(DateUtil.getExcelDate(d0), DateUtil.getExcelDate(d1),
-                    method != null && method.booleanValue()));
+            return new NumberEval(evaluate(d0, d1, method != null && method.booleanValue()));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
     }
 
-    private static double evaluate(double d0, double d1, boolean method) {
+    private static double evaluate(LocalDate d0, LocalDate d1, boolean method) {
         Calendar realStart = getDate(d0);
         Calendar realEnd = getDate(d1);
         int[] startingDate = getStartingDate(realStart, method);
@@ -102,9 +100,10 @@ public class Days360 extends Var2or3ArgFunction {
             (startingDate[0]*360.0+startingDate[1]*30.0+startingDate[2]);
     }
 
-    private static Calendar getDate(double date) {
+    private static Calendar getDate(LocalDate date) {
         Calendar processedDate = LocaleUtil.getLocaleCalendar();
-        processedDate.setTime(DateUtil.getJavaDate(date, false));
+        processedDate.clear();
+        processedDate.set(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
         return processedDate;
     }
 

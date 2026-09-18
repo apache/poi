@@ -69,7 +69,7 @@ public final class WeekdayFunc implements Function {
             // extract first parameter
             ValueEval serialDateVE = OperandResolver.getSingleValue(args[0], srcRowIndex, srcColumnIndex);
             double serialDate = OperandResolver.coerceValueToDouble(serialDateVE);
-            if (!DateUtil.isValidExcelDate(serialDate)) {
+            if (!DateUtil.isValidExcelDate(serialDate) || serialDate >= DateUtil.MAX_EXCEL_DATE_SERIAL + 1) {
                 return ErrorEval.NUM_ERROR;                     // EXCEL uses this and no VALUE_ERROR
             }
             Calendar date = DateUtil.getJavaCalendar(serialDate, false);        // (XXX 1904-windowing not respected)

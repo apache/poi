@@ -20,13 +20,12 @@ package org.apache.poi.ss.formula.functions;
 import static org.apache.poi.ss.formula.eval.ErrorEval.VALUE_INVALID;
 
 import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.util.ExcelArithmetic;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.StringUtil;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.concurrent.ThreadLocalRandom;
@@ -36,7 +35,17 @@ public abstract class NumericFunction implements Function {
     private static final double ZERO = 0.0;
     private static final double TEN = 10.0;
     private static final double LOG_10_TO_BASE_e = Math.log(TEN);
-    private static final long PARITY_MASK = 0xFFFFFFFFFFFFFFFEL;
+
+    /**
+     * Excel refuses more than 127 decimal places in DOLLAR and FIXED (#VALUE!)
+     */
+    static final int MAX_FORMATTED_DECIMALS = 127;
+    /**
+     * Rounding to fewer than this many places (i.e. to a multiple of 10^400) can only give 0 for
+     * any double, so smaller counts are clamped: they would otherwise make BigDecimal build a
+     * power of ten with billions of digits.
+     */
+    static final int MIN_FORMATTED_DECIMALS = -400;
 
 
     protected static double singleOperandEvaluate(ValueEval arg, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
@@ -92,19 +101,17 @@ public abstract class NumericFunction implements Function {
             double val = singleOperandEvaluate(args[0], srcRowIndex, srcColumnIndex);
             double d1 = args.length == 1 ? 2.0 : singleOperandEvaluate(args[1], srcRowIndex, srcColumnIndex);
 
-            // second arg converts to int by truncating toward zero
-            int nPlaces = MathUtil.safeDoubleToInt(d1);
-
-            if (nPlaces > 127) {
+            if (d1 > MAX_FORMATTED_DECIMALS) {
                 return VALUE_INVALID;
             }
+            // second arg converts to int by truncating toward zero
+            int nPlaces = OperandResolver.coerceDoubleToInt(d1);
 
-            if (nPlaces < 0) {
-                BigDecimal divisor = BigDecimal.valueOf(Math.pow(10, -nPlaces));
-                BigInteger bigInt = BigDecimal.valueOf(val).divide(divisor, MathContext.DECIMAL128)
-                        .toBigInteger().multiply(divisor.toBigInteger());
-                val = bigInt.doubleValue();
-            }
+            // Excel rounds half away from zero on its 15-digit view: DOLLAR(2.675,2) is $2.68 and
+            // DOLLAR(1550,-2) is $1,600. Rounded as a decimal, and formatted as one, so that the
+            // binary value never shows through.
+            BigDecimal rounded = ExcelArithmetic.toBigDecimal(val)
+                    .setScale(Math.max(nPlaces, MIN_FORMATTED_DECIMALS), RoundingMode.HALF_UP);
 
             DecimalFormat nf = (DecimalFormat) NumberFormat.getCurrencyInstance(LocaleUtil.getUserLocale());
             int decimalPlaces = Math.max(nPlaces, 0);
@@ -119,7 +126,7 @@ public abstract class NumericFunction implements Function {
             nf.setMinimumFractionDigits(decimalPlaces);
             nf.setMaximumFractionDigits(decimalPlaces);
 
-            return new StringEval(nf.format(val).replace("\u00a0"," "));
+            return new StringEval(nf.format(rounded).replace("\u00a0"," "));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
@@ -128,7 +135,7 @@ public abstract class NumericFunction implements Function {
     public static final Function EXP = oneDouble(d -> Math.pow(Math.E, d));
     public static final Function FACT = oneDouble(MathX::factorial);
     //https://support.microsoft.com/en-us/office/int-function-a6c4af9e-356d-4369-ab6a-cb1fd9d343ef
-    public static final Function INT = oneDouble(d -> Math.round(d-0.5));
+    public static final Function INT = oneDouble(d -> Math.floor(ExcelArithmetic.approxValue(d)));
     public static final Function LN = oneDouble(Math::log);
     public static final Function LOG10 = oneDouble(d -> Math.log(d) / LOG_10_TO_BASE_e);
     public static final Function RADIANS = oneDouble(Math::toRadians);
@@ -147,12 +154,15 @@ public abstract class NumericFunction implements Function {
 
     public static final Function CEILING = twoDouble(MathX::ceiling);
 
-    public static final Function COMBIN = twoDouble((d0, d1) ->
-        (d0 > Integer.MAX_VALUE || d1 > Integer.MAX_VALUE) ?
-                ErrorEval.NUM_ERROR :
-                MathX.nChooseK(
-                        MathUtil.safeDoubleToInt(d0),
-                        MathUtil.safeDoubleToInt(d1)));
+    public static final Function COMBIN = twoDouble((d0, d1) -> {
+        // Excel truncates both arguments, on its 15-digit view
+        double n = ExcelArithmetic.truncate(d0);
+        double k = ExcelArithmetic.truncate(d1);
+        if (Math.abs(n) > Integer.MAX_VALUE || Math.abs(k) > Integer.MAX_VALUE) {
+            return ErrorEval.NUM_ERROR;
+        }
+        return MathX.nChooseK((int) n, (int) k);
+    });
 
     public static final Function FLOOR = twoDouble((d0, d1) ->
         (d1 == ZERO) ? (d0 == ZERO ? ZERO : ErrorEval.DIV_ZERO) : MathX.floor(d0, d1));
@@ -160,7 +170,18 @@ public abstract class NumericFunction implements Function {
     public static final Function MOD = twoDouble((d0, d1) ->
         (d1 == ZERO) ? ErrorEval.DIV_ZERO : MathX.mod(d0, d1));
 
-    public static final Function POWER = twoDouble(Math::pow);
+    public static final Function POWER = twoDouble((d0, d1) -> {
+        if (d0 == ZERO) {
+            // Excel: POWER(0,0) is #NUM! and POWER(0,negative) is #DIV/0! (Math.pow gives 1 and Infinity)
+            if (d1 == ZERO) {
+                return ErrorEval.NUM_ERROR;
+            }
+            if (d1 < ZERO) {
+                return ErrorEval.DIV_ZERO;
+            }
+        }
+        return Math.pow(d0, d1);
+    });
 
     public static final Function ROUND = twoDouble(MathX::round);
     public static final Function ROUNDDOWN = twoDouble(MathX::roundDown);
@@ -201,28 +222,31 @@ public abstract class NumericFunction implements Function {
 
     public static final Function POISSON = Poisson::evaluate;
 
+    //https://support.microsoft.com/en-us/office/odd-function-deae64eb-e08a-4c88-8b40-6d0b42575c98
     public static final Function ODD = oneDouble(NumericFunction::evaluateOdd);
 
     private static double evaluateOdd(double d) {
-        if (d==0) {
-            return 1;
-        }
-        double dpm = Math.abs(d)+1;
-        long x = ((long) dpm) & PARITY_MASK;
-        return (double) MathX.sign(d) * ((Double.compare(x, dpm) == 0) ? x-1 : x+1);
+        return roundAwayFromZero(d, 1);
     }
 
-
+    //https://support.microsoft.com/en-us/office/even-function-197b5f06-c795-4c1e-8696-3c3b8a646cf9
     public static final Function EVEN = oneDouble(NumericFunction::evaluateEven);
 
     private static double evaluateEven(double d) {
-        if (d==0) {
-            return 0;
-        }
+        return roundAwayFromZero(d, 0);
+    }
 
-        double dpm = Math.abs(d);
-        long x = ((long) dpm) & PARITY_MASK;
-        return (double) MathX.sign(d) * ((Double.compare(x, dpm) == 0) ? x : (x + 2));
+    /**
+     * Rounds away from zero to the nearest integer with the given parity, e.g. 1.5 to 3 (odd) or 2 (even)
+     * and -1.5 to -3 or -2. Like INT and CEILING this acts on the 15 significant digits Excel exposes, so
+     * 2.0000000000000004 is treated as 2. Computed in doubles so that magnitudes beyond the long range work.
+     */
+    private static double roundAwayFromZero(double d, int parity) {
+        double m = Math.ceil(Math.abs(ExcelArithmetic.approxValue(d)));
+        if (m % 2 != parity) {
+            m += 1;
+        }
+        return d < 0 ? -m : m;
     }
 
 

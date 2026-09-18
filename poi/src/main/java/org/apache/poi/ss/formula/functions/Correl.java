@@ -50,9 +50,16 @@ public class Correl extends Fixed2ArgFunction {
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
         try {
             final List<DoubleList> arrays = getNumberArrays(arg0, arg1);
+            if (arrays.get(0).getLength() < 2) {
+                return ErrorEval.DIV_ZERO;
+            }
             final PearsonsCorrelation pc = new PearsonsCorrelation();
             final double correl = pc.correlation(
                     arrays.get(0).toArray(), arrays.get(1).toArray());
+            if (Double.isNaN(correl)) {
+                // one of the arrays has zero variance: #DIV/0! as in Excel, rather than NaN in the cell
+                return ErrorEval.DIV_ZERO;
+            }
             return new NumberEval(correl);
         } catch (EvaluationException e) {
             return e.getErrorEval();

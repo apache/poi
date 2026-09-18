@@ -27,7 +27,9 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.SingularMatrixException;
 
 public abstract class MatrixFunction implements Function{
 
@@ -223,9 +225,11 @@ public abstract class MatrixFunction implements Function{
             if (result.length == 1)
                 return vals[0];
             else {
-                return new CacheAreaEval(((AreaEval) arg0).getFirstRow(), ((AreaEval) arg0).getFirstColumn(),
-                        ((AreaEval) arg0).getFirstRow() + height - 1,
-                        ((AreaEval) arg0).getFirstColumn() + width - 1, vals);
+                // more than one result, so at least one argument was an area: anchor the result on it
+                AreaEval anchor = arg0 instanceof AreaEval ae0 ? ae0 : (AreaEval) arg1;
+                return new CacheAreaEval(anchor.getFirstRow(), anchor.getFirstColumn(),
+                        anchor.getFirstRow() + height - 1,
+                        anchor.getFirstColumn() + width - 1, vals);
             }
 
         }
@@ -266,7 +270,14 @@ public abstract class MatrixFunction implements Function{
             }
 
             Array2DRowRealMatrix temp = new Array2DRowRealMatrix(d1);
-            return MatrixUtils.inverse(temp).getData();
+            try {
+                // LU rather than MatrixUtils.inverse (QR with a zero threshold), so that a singular
+                // matrix such as {1,2;2,4} is detected instead of inverted into rounding noise
+                return new LUDecomposition(temp).getSolver().getInverse().getData();
+            } catch (SingularMatrixException e) {
+                // Excel reports a singular matrix as #NUM!
+                throw new EvaluationException(ErrorEval.NUM_ERROR);
+            }
         }
     };
 

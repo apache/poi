@@ -115,6 +115,10 @@ final class TestValue {
         confirmValueError("0.233,4");
         confirmValueError("1e2.5");
         confirmValueError("");
+        // beyond the double range: Excel has no infinite numbers
+        confirmValueError("1E400");
+        confirmValueError("-1E400");
+        confirmValueError("$1E400");
     }
 
     @Test

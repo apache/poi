@@ -54,6 +54,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.apache.poi.ss.usermodel.FormulaError;
+import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.apache.poi.ss.util.Utils.assertError;
 
 /**
  * Tests {@link WorkbookEvaluator}.
@@ -677,6 +680,31 @@ class TestWorkbookEvaluator {
             assertEquals(6.0, assertInstanceOf(NumberEval.class, evaluator.evaluateFormula(ec, ptgs)).getNumberValue(), 0.0);
             a1.setCellValue(5);
             assertEquals(15.0, assertInstanceOf(NumberEval.class, evaluator.evaluateFormula(ec, ptgs)).getNumberValue(), 0.0);
+        }
+    }
+
+    /**
+     * Excel has no infinite numbers: it refuses to enter a formula with a number literal beyond
+     * the double range, and treats such text as non-numeric (#VALUE!)
+     */
+    @Test
+    void testNumberLiteralBeyondDoubleRange() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            for (String formula : new String[]{"1E400", "-1E400", "1E400/10", "1.5E999", "SQRTPI(1E400)"}) {
+                assertThrows(FormulaParseException.class, () -> cell.setCellFormula(formula), formula);
+            }
+            // a NumberPtg built with an infinite value evaluates to #NUM! rather than storing Infinity
+            HSSFEvaluationWorkbook ewb = HSSFEvaluationWorkbook.create(wb);
+            WorkbookEvaluator evaluator = new WorkbookEvaluator(ewb, null, null);
+            OperationEvaluationContext ec = new OperationEvaluationContext(evaluator, ewb, 0, 0, 0);
+            ValueEval result = evaluator.evaluateFormula(ec, new Ptg[]{new NumberPtg(Double.POSITIVE_INFINITY)});
+            assertEquals(ErrorEval.NUM_ERROR, result);
+            assertError(fe, cell, "VALUE(\"1E400\")", FormulaError.VALUE);
+            assertError(fe, cell, "\"1E400\"+0", FormulaError.VALUE);
+            assertError(fe, cell, "SQRTPI(\"1E400\")", FormulaError.VALUE);
+            assertDouble(fe, cell, "1.7976931348623157E308", Double.MAX_VALUE, 0);
         }
     }
 }

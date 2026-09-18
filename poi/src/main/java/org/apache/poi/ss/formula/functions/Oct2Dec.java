@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
@@ -46,7 +47,12 @@ public class Oct2Dec extends Fixed1ArgFunction implements FreeRefFunction {
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
-        String octal = OperandResolver.coerceValueToString(numberVE);
+        final String octal;
+        try {
+            octal = OperandResolver.coerceValueToString(OperandResolver.getSingleValue(numberVE, srcRowIndex, srcColumnIndex));
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
         try {
            return new NumberEval(BaseNumberUtils.convertToDecimal(octal, OCTAL_BASE, MAX_NUMBER_OF_PLACES));
         }  catch (IllegalArgumentException e) {

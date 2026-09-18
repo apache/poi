@@ -43,10 +43,10 @@ public class Hex2Dec extends Fixed1ArgFunction implements FreeRefFunction {
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
         final String hex;
-        if (numberVE instanceof RefEval re) {
-            hex = OperandResolver.coerceValueToString(re.getInnerValueEval(re.getFirstSheetIndex()));
-        } else {
-            hex = OperandResolver.coerceValueToString(numberVE);
+        try {
+            hex = OperandResolver.coerceValueToString(OperandResolver.getSingleValue(numberVE, srcRowIndex, srcColumnIndex));
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
         }
         try {
             return new NumberEval(BaseNumberUtils.convertToDecimal(hex, HEXADECIMAL_BASE, MAX_NUMBER_OF_PLACES));

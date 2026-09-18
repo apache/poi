@@ -99,6 +99,21 @@ final class TestSumproduct {
     }
 
     @Test
+    void testOverflowIsNumError() {
+        // used to put Infinity in the cell
+        ValueEval[] args = { new NumberEval(1E200), new NumberEval(1E200) };
+        assertEquals(ErrorEval.NUM_ERROR, invokeSumproduct(args));
+
+        AreaEval aeA = EvalFactory.createAreaEval("A1:A2", new ValueEval[] { new NumberEval(1E200), new NumberEval(1) });
+        AreaEval aeB = EvalFactory.createAreaEval("B1:B2", new ValueEval[] { new NumberEval(1E200), new NumberEval(1) });
+        assertEquals(ErrorEval.NUM_ERROR, invokeSumproduct(new ValueEval[] { aeA, aeB }));
+
+        aeA = EvalFactory.createAreaEval("A1:A2", new ValueEval[] { new NumberEval(1E200), new NumberEval(-1E200) });
+        aeB = EvalFactory.createAreaEval("B1:B2", new ValueEval[] { new NumberEval(1E200), new NumberEval(1E200) });
+        assertEquals(ErrorEval.NUM_ERROR, invokeSumproduct(new ValueEval[] { aeA, aeB }));
+    }
+
+    @Test
     void testMismatchAreaDimensions() {
 
         AreaEval aeA = EvalFactory.createAreaEval("A1:A3", new ValueEval[3]);

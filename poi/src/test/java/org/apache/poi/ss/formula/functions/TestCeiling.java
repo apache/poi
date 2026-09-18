@@ -75,4 +75,34 @@ final class TestCeiling {
             assertError(fe, cell, "CEILING(\"abc\", \"def\")", FormulaError.VALUE);
         }
     }
+
+    @Test
+    void testCeilingActsOnExcelsFifteenDigitView() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            // just above an integer in binary, but the integer at 15 significant digits
+            assertDouble(fe, cell, "CEILING(2490400.0000000005,1)", 2490400.0, 0);
+            assertDouble(fe, cell, "CEILING(2490400.0000000005,100)", 2490400.0, 0);
+            assertDouble(fe, cell, "CEILING(-2490400.0000000005,-1)", -2490400.0, 0);
+            assertDouble(fe, cell, "CEILING(3.0000000000000004,1)", 3.0, 0);
+            assertDouble(fe, cell, "CEILING(0.1*3,0.1)", 0.3, 0);
+            assertDouble(fe, cell, "CEILING(0.1+0.2,0.1)", 0.3, 0);
+            assertDouble(fe, cell, "CEILING(1.1/0.1,1)", 11.0, 0);
+            // and just below, likewise
+            assertDouble(fe, cell, "CEILING(2490399.9999999995,1)", 2490400.0, 0);
+            assertDouble(fe, cell, "CEILING(0.7/0.1,1)", 7.0, 0);
+            // values that differ within 15 significant digits are rounded up normally
+            assertDouble(fe, cell, "CEILING(2490400.00000001,1)", 2490401.0, 0);
+            assertDouble(fe, cell, "CEILING(3.00000000000001,1)", 4.0, 0);
+            // exact binary fractions are never approximated
+            assertDouble(fe, cell, "CEILING(2.5,1)", 3.0, 0);
+            assertDouble(fe, cell, "CEILING(2.5,0.5)", 2.5, 0);
+            assertDouble(fe, cell, "CEILING(1E15+0.5,1)", 1E15 + 1, 0);
+            // the significance is seen the same way: 0.1*3 is 0.3, not 0.30000000000000004
+            assertDouble(fe, cell, "CEILING(0.9,0.1*3)", 0.9, 0);
+            assertDouble(fe, cell, "CEILING(1.6,0.7+0.1)", 1.6, 0);
+            assertDouble(fe, cell, "CEILING(-0.9,-(0.1*3))", -0.9, 0);
+        }
+    }
 }

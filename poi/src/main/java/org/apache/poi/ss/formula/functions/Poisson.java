@@ -19,12 +19,11 @@ package org.apache.poi.ss.formula.functions;
 
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.util.MathUtil;
 
 public class Poisson implements FreeRefFunction {
 
@@ -86,11 +85,13 @@ public class Poisson implements FreeRefFunction {
             checkArgument(mean);
 
             // truncate x : as per excel function def
-            boolean cumulative = ((BoolEval)arg2).getBooleanValue();
+            ValueEval cumulativeVE = OperandResolver.getSingleValue(arg2, srcRowIndex, srcColumnIndex);
+            Boolean cumulativeArg = OperandResolver.coerceValueToBoolean(cumulativeVE, false);
+            boolean cumulative = cumulativeArg != null && cumulativeArg;
             PoissonDistribution poissonDistribution = new PoissonDistribution(mean);
             double result = cumulative ?
-                    poissonDistribution.cumulativeProbability( MathUtil.safeDoubleToInt(x)) :
-                    poissonDistribution.probability(MathUtil.safeDoubleToInt(x));
+                    poissonDistribution.cumulativeProbability( OperandResolver.coerceDoubleToInt(x)) :
+                    poissonDistribution.probability(OperandResolver.coerceDoubleToInt(x));
 
             // check the result
             NumericFunction.checkValue(result);

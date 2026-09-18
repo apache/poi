@@ -1567,7 +1567,9 @@ public final class FormulaParser {
     private ParseNode parseUnary(boolean isPlus) {
 
         boolean numberFollows = isDigit(look) || look=='.';
-        ParseNode factor = powerFactor();
+        // Excel gives negation higher precedence than '^': -2^2 is (-2)^2 = 4, not -(2^2).
+        // So the operand of a unary sign is a factor without '^'; the enclosing powerFactor() applies any '^'.
+        ParseNode factor = percentFactor();
 
         if (numberFollows) {
             // + or - directly next to a number is parsed with the number
@@ -1723,7 +1725,12 @@ public final class FormulaParser {
             throw expected("Integer");
         }
 
-        return getNumberPtgFromString(number1, number2, exponent);
+        Ptg ptg = getNumberPtgFromString(number1, number2, exponent);
+        if (ptg instanceof NumberPtg np && Double.isInfinite(np.getValue())) {
+            // Excel refuses to enter a formula whose literal is beyond the double range, e.g. 1E400
+            throw new FormulaParseException("Number literal is too large: " + number1 + (number2 == null ? "" : "." + number2) + "E" + exponent);
+        }
+        return ptg;
     }
 
 

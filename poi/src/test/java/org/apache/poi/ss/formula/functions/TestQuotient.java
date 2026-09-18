@@ -65,6 +65,28 @@ class TestQuotient {
     }
 
     @Test
+    void testQuotientOutsideIntRange() {
+        // used to escape as an IllegalArgumentException from MathUtil.safeDoubleToInt
+        confirmValue("Integer portion of 5E9/2", "5000000000", "2", "2500000000");
+        confirmValue("Integer portion of -5E9/2", "-5000000000", "2", "-2500000000");
+        confirmValue("Integer portion of 1E20/3", "1E20", "3", "33333333333333300000");
+        confirmValue("Integer portion of 2^53/1", "9007199254740992", "1", "9007199254740990");
+        confirmValueError("quotient overflows a double", "1E308", "1E-10", ErrorEval.NUM_ERROR);
+    }
+
+    @Test
+    void testQuotientTruncatesOnExcelsFifteenDigitView() {
+        // 7471200/3 is 2490399.9999999995 in binary, 2490400 to Excel (compare INT(880000000*0.00849/3))
+        confirmValue("just below an integer", "7471199.999999999", "3", "2490400");
+        confirmValue("just below an integer, negative", "-7471199.999999999", "3", "-2490400");
+        confirmValue("0.7/0.1 is 6.999999999999999", "0.7", "0.1", "7");
+        confirmValue("just above an integer", "3.0000000000000004", "1", "3");
+        // differences within 15 digits are still truncated
+        confirmValue("2.99999999999999", "2.99999999999999", "1", "2");
+        confirmValue("-2.99999999999999", "-2.99999999999999", "1", "-2");
+    }
+
+    @Test
     void testErrors() {
         confirmValueError("numerator is nonnumeric", "ABCD", "", ErrorEval.VALUE_INVALID);
         confirmValueError("denominator is nonnumeric", "", "ABCD", ErrorEval.VALUE_INVALID);

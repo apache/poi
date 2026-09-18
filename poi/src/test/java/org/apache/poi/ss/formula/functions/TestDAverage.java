@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.apache.poi.ss.util.Utils.assertDoubleAndDisplay;
 
 /**
  * Testcase for function DAVERAGE()
@@ -41,8 +42,11 @@ public class TestDAverage {
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "DAVERAGE(A4:E10, \"Yield\", A1:B2)", 12);
             assertDouble(fe, cell, "DAVERAGE(A4:E10, 3, A4:E10)", 13);
-            assertDouble(fe, cell, "DAVERAGE(A4:E10, \"Profit\", A12:A13)", 92.6);
+            // (96+105+76.8)/3 is 92.60000000000001 in IEEE 754 - the same value AVERAGE gives - displayed as 92.6
+            assertDoubleAndDisplay(fe, cell, "DAVERAGE(A4:E10, \"Profit\", A12:A13)", 277.8 / 3, "92.6");
+            assertDoubleAndDisplay(fe, cell, "AVERAGE(96,105,76.8)", 277.8 / 3, "92.6");
             assertDouble(fe, cell, "DAVERAGE(A4:E10, \"Profit\", B12:C13)", 82.5);
+            assertDoubleAndDisplay(fe, cell, "DAVERAGE(A4:E10, \"Yield\", A12:A13)", 9.0, "9");
         }
     }
 

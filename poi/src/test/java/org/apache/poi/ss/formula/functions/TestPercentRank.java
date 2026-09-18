@@ -49,6 +49,9 @@ public class TestPercentRank {
             assertDouble(fe, cell, "PERCENTRANK(A2:A11,5)", 0.583);
             assertDouble(fe, cell, "PERCENTRANK(A2:A11,1)", 0);
             assertDouble(fe, cell, "PERCENTRANK(A2:A11,13)", 1);
+            // a huge significance changes nothing (and must not build a number with 1E9 digits)
+            assertDouble(fe, cell, "PERCENTRANK(A2:A11,8,1000000000)", 0.6666666666666666, 1E-15);
+            assertDouble(fe, cell, "PERCENTRANK(A2:A11,5,1000000000)", 0.5833333333333334, 1E-15);
         }
     }
 

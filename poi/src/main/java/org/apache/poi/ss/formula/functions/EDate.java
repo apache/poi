@@ -24,12 +24,12 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.MathUtil;
 
 /**
  * Implementation for Excel EDATE () function.
@@ -43,16 +43,20 @@ public class EDate implements FreeRefFunction {
         }
         try {
             double startDateAsNumber = getValue(args[0]);
-            int offsetInMonthAsNumber = MathUtil.safeDoubleToInt(getValue(args[1]));
+            int offsetInMonthAsNumber = OperandResolver.coerceDoubleToInt(getValue(args[1]));
 
-            Date startDate = DateUtil.getJavaDate(startDateAsNumber);
-            if (startDate == null) {
-                return ErrorEval.VALUE_INVALID;
+            if (startDateAsNumber < 0 || startDateAsNumber >= DateUtil.MAX_EXCEL_DATE_SERIAL + 1) {
+                return ErrorEval.NUM_ERROR;
             }
+            Date startDate = DateUtil.getJavaDate(startDateAsNumber);
             Calendar calendar = LocaleUtil.getLocaleCalendar();
             calendar.setTime(startDate);
             calendar.add(Calendar.MONTH, offsetInMonthAsNumber);
-            return new NumberEval(DateUtil.getExcelDate(calendar.getTime()));
+            double result = DateUtil.getExcelDate(calendar.getTime());
+            if (result < 0 || result >= DateUtil.MAX_EXCEL_DATE_SERIAL + 1) {
+                return ErrorEval.NUM_ERROR;
+            }
+            return new NumberEval(result);
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }

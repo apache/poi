@@ -230,6 +230,7 @@ public final class OperandResolver {
      * <b>not</b>:<br>
      * &nbsp;&nbsp;{@code return (int)d; // wrong - rounds toward zero}
      *
+     * @throws EvaluationException (#NUM!) if the value does not fit an int
      */
     public static int coerceValueToInt(ValueEval ev) throws EvaluationException {
         if (ev == BlankEval.instance) {
@@ -238,7 +239,22 @@ public final class OperandResolver {
         double d = coerceValueToDouble(ev);
         // Note - the standard java type conversion from double to int truncates toward zero.
         // but Math.floor() truncates toward negative infinity
-        return MathUtil.safeDoubleToInt(Math.floor(d));
+        return coerceDoubleToInt(Math.floor(d));
+    }
+
+    /**
+     * Converts a double to an int, truncating toward zero, for use as an integer argument of a function.
+     * Unlike {@link MathUtil#safeDoubleToInt(double)} a value that does not fit an int is reported the
+     * way Excel reports an unusable argument, as an error value rather than an exception.
+     *
+     * @throws EvaluationException (#NUM!) if the value is NaN, infinite or outside the int range
+     * @since 6.0.0
+     */
+    public static int coerceDoubleToInt(double d) throws EvaluationException {
+        if (Double.isNaN(d) || d > Integer.MAX_VALUE || d < Integer.MIN_VALUE) {
+            throw new EvaluationException(ErrorEval.NUM_ERROR);
+        }
+        return (int) d;
     }
 
     /**
@@ -291,6 +307,7 @@ public final class OperandResolver {
      *  ".123" -&gt; 0.123<br>
      *  "1E4" -&gt; 1000<br>
      *  "-123" -&gt; -123.0<br>
+     *  "1E400" -&gt; {@code null} (beyond the range of a double; Excel has no infinite numbers)<br>
      *  These not supported yet:<br>
      *  " $ 1,000.00 " -&gt; 1000.0<br>
      *  "$1.25E4" -&gt; 12500.0<br>
@@ -301,13 +318,15 @@ public final class OperandResolver {
      */
     public static Double parseDouble(String pText) {
 
-        if (fpPattern.matcher(pText).matches())
+        if (fpPattern.matcher(pText).matches()) {
             try {
-                return Double.parseDouble(pText);
+                double d = Double.parseDouble(pText);
+                // Excel has no infinite numbers: text like "1E400" is not a number to it
+                return Double.isInfinite(d) ? null : Double.valueOf(d);
             } catch (NumberFormatException e) {
                 return null;
             }
-        else {
+        } else {
             return null;
         }
 
