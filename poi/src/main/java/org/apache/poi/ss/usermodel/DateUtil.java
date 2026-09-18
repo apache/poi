@@ -815,14 +815,16 @@ public class DateUtil {
     public static final int MAX_EXCEL_DATE_SERIAL = 2958465;
 
     /**
-     * Given a double, checks if it is a valid Excel date.
+     * Given a double, checks if it is a valid Excel date: from 0 (which Excel shows as
+     * 1900-01-00) up to the end of {@link #MAX_EXCEL_DATE_SERIAL 9999-12-31}. Excel displays
+     * a date-formatted cell outside that range as "########".
      *
      * @return true if valid
      * @param  value the double value
      */
     public static boolean isValidExcelDate(double value)
     {
-        return (value > -Double.MIN_VALUE);
+        return value > -Double.MIN_VALUE && value < MAX_EXCEL_DATE_SERIAL + 1;
     }
 
     /**
