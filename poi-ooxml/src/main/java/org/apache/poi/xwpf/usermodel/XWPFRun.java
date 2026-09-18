@@ -1736,11 +1736,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public STHighlightColor.Enum getTextHighlightColor() {
         CTRPr pr = getRunProperties(false);
-        if (pr == null) {
+        if (pr == null || pr.sizeOfHighlightArray() == 0) {
             return STHighlightColor.NONE;
         }
-        CTHighlight highlight = pr.sizeOfHighlightArray() > 0 ? pr.getHighlightArray(0) : pr.addNewHighlight();
-        STHighlightColor color = highlight.xgetVal();
+        STHighlightColor color = pr.getHighlightArray(0).xgetVal();
         if (color == null) {
             color = STHighlightColor.Factory.newInstance();
             color.setEnumValue(STHighlightColor.NONE);
@@ -1780,11 +1779,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public STVerticalAlignRun.Enum getVerticalAlignment() {
         CTRPr pr = getRunProperties(false);
-        if (pr == null) {
+        if (pr == null || pr.sizeOfVertAlignArray() == 0) {
             return STVerticalAlignRun.BASELINE;
         }
-        CTVerticalAlignRun vertAlign = pr.sizeOfVertAlignArray() > 0 ? pr.getVertAlignArray(0) : pr.addNewVertAlign();
-        STVerticalAlignRun.Enum val = vertAlign.getVal();
+        STVerticalAlignRun.Enum val = pr.getVertAlignArray(0).getVal();
         if (val == null) {
             val = STVerticalAlignRun.BASELINE;
         }
@@ -1822,12 +1820,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public STEm.Enum getEmphasisMark() {
         CTRPr pr = getRunProperties(false);
-        if (pr == null) {
+        if (pr == null || pr.sizeOfEmArray() == 0) {
             return STEm.NONE;
         }
-        CTEm emphasis = pr.sizeOfEmArray() > 0 ? pr.getEmArray(0) : pr.addNewEm();
-
-        STEm.Enum val = emphasis.getVal();
+        STEm.Enum val = pr.getEmArray(0).getVal();
         if (val == null) {
             val = STEm.NONE;
         }
