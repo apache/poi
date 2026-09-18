@@ -90,6 +90,10 @@ final class TestFloor {
             assertDouble(fe, cell, "FLOOR(0.3-0.1-0.1,0.1)", 0.1, 0);
             assertDouble(fe, cell, "FLOOR(0.1+0.2,0.1)", 0.3, 0);
             assertDouble(fe, cell, "FLOOR(4.35*100,1)", 435.0, 0);
+            // the significance is seen the same way: 0.1*3 is 0.3, not 0.30000000000000004
+            assertDouble(fe, cell, "FLOOR(0.9,0.1*3)", 0.9, 0);
+            assertDouble(fe, cell, "FLOOR(1.6,0.7+0.1)", 1.6, 0);
+            assertDouble(fe, cell, "FLOOR(-0.9,-(0.1*3))", -0.9, 0);
             // values that differ within 15 significant digits are floored normally
             assertDouble(fe, cell, "FLOOR(2490399.99999999,1)", 2490399.0, 0);
             assertDouble(fe, cell, "FLOOR(2.99999999999999,1)", 2.0, 0);

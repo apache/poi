@@ -130,4 +130,15 @@ final class TestCeilingPrecise {
             assertError(fe, cell, "CEILING.PRECISE(1.7E308,1E308)", FormulaError.NUM);
         }
     }
+
+    @Test
+    void testSignificanceOnExcelsFifteenDigitView() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            // 0.1*3 is 0.3 to Excel, not 0.30000000000000004
+            assertDouble(fe, cell, "CEILING.PRECISE(0.9,0.1*3)", 0.9, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(1.6,0.7+0.1)", 1.6, 0);
+        }
+    }
 }

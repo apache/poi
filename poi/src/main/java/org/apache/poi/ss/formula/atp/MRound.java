@@ -62,9 +62,9 @@ final class MRound implements FreeRefFunction {
                 }
                 // like FLOOR and CEILING, round on Excel's 15-digit view of the number:
                 // MROUND(0.7+0.1,1.6) is 1.6, although 0.7999999999999999/1.6 is just under 0.5
-                number = ExcelArithmetic.approxValue(number);
-                BigDecimal bdMultiple = BigDecimal.valueOf(multiple);
-                result = bdMultiple.multiply(BigDecimal.valueOf(number).divide(bdMultiple, 0, RoundingMode.HALF_UP))
+                // (and of the multiple: MROUND(0.45, 0.1*3) is 0.6, not 0.3)
+                BigDecimal bdMultiple = ExcelArithmetic.toBigDecimal(multiple);
+                result = bdMultiple.multiply(ExcelArithmetic.toBigDecimal(number).divide(bdMultiple, 0, RoundingMode.HALF_UP))
                         .doubleValue();
 
             }

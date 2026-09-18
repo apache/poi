@@ -20,6 +20,7 @@ package org.apache.poi.ss.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import java.math.BigDecimal;
 
 final class TestExcelArithmetic {
 
@@ -167,5 +168,20 @@ final class TestExcelArithmetic {
         assertEquals(0.0, ExcelArithmetic.approxSub(1e300 / 3 * 3, 1e300));
         // subnormals are compared exactly, never approximated
         assertEquals(Double.MIN_VALUE, ExcelArithmetic.approxSub(2 * Double.MIN_VALUE, Double.MIN_VALUE));
+    }
+
+    @Test
+    void testToBigDecimal() {
+        assertEquals(new BigDecimal("0.3"), ExcelArithmetic.toBigDecimal(0.1 * 3));
+        assertEquals(new BigDecimal("0.8"), ExcelArithmetic.toBigDecimal(0.7 + 0.1));
+        assertEquals(new BigDecimal("2.675"), ExcelArithmetic.toBigDecimal(2.675));
+        assertEquals(new BigDecimal("-2.675"), ExcelArithmetic.toBigDecimal(-2.675));
+        assertEquals(new BigDecimal("1"), ExcelArithmetic.toBigDecimal(1 + Math.ulp(1.0)));
+        assertEquals(0, new BigDecimal("1E+308").compareTo(ExcelArithmetic.toBigDecimal(1E308)));
+        assertEquals(0, BigDecimal.ZERO.compareTo(ExcelArithmetic.toBigDecimal(0.0)));
+        assertEquals(0, BigDecimal.ZERO.compareTo(ExcelArithmetic.toBigDecimal(-0.0)));
+        // exactly representable values are unchanged
+        assertEquals(new BigDecimal("0.5"), ExcelArithmetic.toBigDecimal(0.5));
+        assertEquals(new BigDecimal("123456789012345"), ExcelArithmetic.toBigDecimal(123456789012345.0));
     }
 }

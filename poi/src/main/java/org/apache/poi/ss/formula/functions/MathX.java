@@ -294,8 +294,9 @@ final class MathX {
 
     @Internal
     public static double scaledRoundUsingBigDecimal(double xval, double multiplier, RoundingMode mode) {
-        BigDecimal multiplierDecimal = BigDecimal.valueOf(multiplier);
-        BigDecimal bd = BigDecimal.valueOf(xval).divide(multiplierDecimal, MathContext.DECIMAL128)
+        // both on Excel's 15-digit view: FLOOR(0.9, 0.1*3) is 0.9, not 0.6 (0.9/0.30000000000000004 < 3)
+        BigDecimal multiplierDecimal = ExcelArithmetic.toBigDecimal(multiplier);
+        BigDecimal bd = ExcelArithmetic.toBigDecimal(xval).divide(multiplierDecimal, MathContext.DECIMAL128)
                 .setScale(0, mode)
                 .multiply(multiplierDecimal);
         return bd.doubleValue();

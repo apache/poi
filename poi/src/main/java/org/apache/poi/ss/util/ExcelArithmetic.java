@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.util;
 
+import java.math.BigDecimal;
+
 /**
  * Arithmetic helpers that reproduce how Excel computes with IEEE 754 doubles.
  * <p>
@@ -50,6 +52,21 @@ public final class ExcelArithmetic {
             return d;
         }
         return Double.parseDouble(NumberToTextConverter.toText(d));
+    }
+
+    /**
+     * Returns the value as Excel sees it, as an exact decimal: the 15 significant digits of
+     * {@link #approxValue(double)}, so that decimal arithmetic on it (rounding to a number of
+     * places, or to a multiple of a step) gives the answer Excel gives. {@code 0.1*3} is
+     * {@code 0.3} rather than {@code 0.30000000000000004}, and {@code 2.675} is exactly
+     * that rather than {@code 2.67499999999999982236431605997495353221893310546875}.
+     *
+     * @param d a finite double
+     * @throws NumberFormatException if d is NaN or infinite
+     * @since 6.0.0
+     */
+    public static BigDecimal toBigDecimal(double d) {
+        return new BigDecimal(NumberToTextConverter.toText(d));
     }
 
     /**
