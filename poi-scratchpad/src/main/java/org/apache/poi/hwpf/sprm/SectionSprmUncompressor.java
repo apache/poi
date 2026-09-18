@@ -46,7 +46,14 @@ public final class SectionSprmUncompressor extends SprmUncompressor {
     while (sprmIt.hasNext())
     {
       SprmOperation sprm = sprmIt.next();
-      unCompressSEPOperation(newProperties, sprm);
+      try
+      {
+        unCompressSEPOperation(newProperties, sprm);
+      }
+      catch (Exception exc)
+      {
+        LOG.atError().withThrowable(exc).log("Unable to apply SPRM operation '{}'", box(sprm.getOperation()));
+      }
     }
 
     return newProperties;

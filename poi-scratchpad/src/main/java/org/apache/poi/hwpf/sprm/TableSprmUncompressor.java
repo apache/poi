@@ -41,10 +41,9 @@ public final class TableSprmUncompressor extends SprmUncompressor {
         }
 
         SprmOperation sprmOperation = sprmBuffer.findSprm( (short) 0xd608 );
-        if ( sprmOperation != null ) {
-            byte[] grpprl = sprmOperation.getGrpprl();
-            int offset = sprmOperation.getGrpprlOffset();
-            short itcMac = grpprl[offset];
+        byte[] grpprl = sprmOperation == null ? null : sprmOperation.getGrpprl();
+        if ( grpprl != null && sprmOperation.getGrpprlOffset() < grpprl.length ) {
+            short itcMac = grpprl[sprmOperation.getGrpprlOffset()];
             tableProperties = new TableProperties( itcMac );
         } else {
             LOG.atWarn().log("Some table rows didn't specify number of columns in SPRMs");
