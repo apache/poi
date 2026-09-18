@@ -406,7 +406,8 @@ public class DataFormatter {
                 CellFormat cfmt = CellFormat.getInstance(locale, formatStr);
                 // CellFormat requires callers to identify date vs not, so do so
                 // don't try to handle Date value 0, let a 3 or 4-part format take care of it
-                Object cellValueO = (cellValue != 0.0 && DateUtil.isADateFormat(formatIndex, formatStr))
+                Object cellValueO = (cellValue != 0.0 && DateUtil.isADateFormat(formatIndex, formatStr)
+                        && DateUtil.isValidExcelDate(cellValue))
                     ? DateUtil.getJavaDate(cellValue, use1904Windowing)
                     : cellValue;
                 // Wrap and return (non-cacheable - CellFormat does that)
@@ -420,6 +421,13 @@ public class DataFormatter {
        if (emulateCSV && cellValue == 0.0 && formatStr.contains("#") && !formatStr.contains("0")) {
            formatStr = formatStr.replace("#", "");
        }
+
+        // A value a date format cannot show (negative, or past 9999-12-31) is displayed by Excel as
+        // ########; show it as a plain number. Checked before the cache, so that neither the date
+        // format is applied to such a value nor a number format built from a date pattern gets cached.
+        if (DateUtil.isADateFormat(formatIndex, formatStr) && !DateUtil.isValidExcelDate(cellValue)) {
+            return getDefaultFormat(cellValue);
+        }
 
         // See if we already have it cached
         Format format = formats.get(formatStr);
@@ -1046,7 +1054,7 @@ public class DataFormatter {
         // If they requested a non-abbreviated Scientific format,
         //  and there's an E## (but not E-##), add the missing '+' for E+##
         String fslc = formatString.toLowerCase(Locale.ROOT);
-        if ((fslc.contains("general") || fslc.contains("e+0"))
+        if ((fslc.contains("general") || fslc.contains("e+0") || numberFormat == generalNumberFormat)
                 && result.contains("E") && !result.contains("E-")) {
             result = result.replaceFirst("E", "E+");
         }

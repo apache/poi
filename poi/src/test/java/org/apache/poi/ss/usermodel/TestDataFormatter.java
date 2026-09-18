@@ -46,6 +46,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests of {@link DataFormatter}
@@ -583,7 +585,8 @@ class TestDataFormatter {
     @Test
     void testInvalidDate() {
         DataFormatter df1 = new DataFormatter(Locale.US);
-        assertEquals("-1.0", df1.formatRawCellContents(-1, -1, "mm/dd/yyyy"));
+        // shown as a plain number, in Excel's General format
+        assertEquals("-1", df1.formatRawCellContents(-1, -1, "mm/dd/yyyy"));
 
         DataFormatter df2 = new DataFormatter(Locale.US, true);
         assertEquals("###############################################################################################################################################################################################################################################################",
@@ -1236,5 +1239,50 @@ class TestDataFormatter {
                 formatter.formatRawCellContents(12334567890123.0, 0, "#0"));
         assertEquals("12334567890123",
                 formatter.formatRawCellContents(12334567890123.0, 0, "0#"));
+    }
+
+    /**
+     * A date-formatted cell holding a value that is not a date - negative, or past 9999-12-31 -
+     * is shown by Excel as ########. It used to throw IllegalArgumentException (from the int
+     * conversion in DateUtil.getJavaCalendar) for anything beyond the int range, and otherwise
+     * push the raw double through the date format as milliseconds since 1970.
+     */
+    @Test
+    void testDateFormatWithValueOutsideExcelsDateRange() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            DataFormatter dfUS = new DataFormatter(Locale.US);
+            Sheet sheet = wb.createSheet();
+            Cell cell = sheet.createRow(0).createCell(0);
+            CellStyle style = wb.createCellStyle();
+            style.setDataFormat(wb.createDataFormat().getFormat("m/d/yyyy"));
+            cell.setCellStyle(style);
+
+            cell.setCellValue(2958465);
+            assertEquals("12/31/9999", dfUS.formatCellValue(cell));
+            assertNotNull(cell.getDateCellValue());
+
+            // each of these is shown as a plain number, and is not a date to the cell either
+            double[] notDates = {2958466, 1E10, 1E19, 1E308, -1, -1E300};
+            String[] expected = {"2958466", "10000000000", "1E+19", "1E+308", "-1", "-1E+300"};
+            for (int i = 0; i < notDates.length; i++) {
+                cell.setCellValue(notDates[i]);
+                assertEquals(expected[i], dfUS.formatCellValue(cell), Double.toString(notDates[i]));
+                assertEquals(expected[i], dfUS.formatRawCellContents(notDates[i], style.getDataFormat(), "m/d/yyyy"));
+                assertFalse(DateUtil.isCellDateFormatted(cell));
+                assertNull(cell.getDateCellValue());
+                assertNull(cell.getLocalDateTimeCellValue());
+            }
+
+            // a valid date formatted after an invalid one still gets the date format (the number
+            // format must not have been cached under the date pattern)
+            cell.setCellValue(45658);
+            assertEquals("1/1/2025", dfUS.formatCellValue(cell));
+
+            // the csv emulation keeps its 255 #s
+            DataFormatter csv = new DataFormatter(Locale.US, true);
+            String hashes = csv.formatRawCellContents(1E10, style.getDataFormat(), "m/d/yyyy");
+            assertEquals(255, hashes.length());
+            assertTrue(hashes.chars().allMatch(ch -> ch == '#'));
+        }
     }
 }
