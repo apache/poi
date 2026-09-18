@@ -22,6 +22,7 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Implementation for Excel DEC2BIN() function.
@@ -50,9 +51,9 @@ public class Dec2Bin extends Var1or2ArgFunction implements FreeRefFunction {
 
     public static final FreeRefFunction instance = new Dec2Bin();
 
-    private static final long MIN_VALUE = -512;
-    private static final long MAX_VALUE =  511;
-    private static final int DEFAULT_PLACES_VALUE = 10;
+    private static final int MIN_VALUE = -512;
+    private static final int MAX_VALUE =  511;
+    private static final int MAX_PLACES = 10;
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE, ValueEval placesVE) {
         ValueEval veText1;
@@ -69,47 +70,48 @@ public class Dec2Bin extends Var1or2ArgFunction implements FreeRefFunction {
             return ErrorEval.VALUE_INVALID;
         }
 
-        //If number < -512 or if number > 512, this function returns the #NUM! error value.
-        if (number.longValue() < MIN_VALUE || number.longValue() > MAX_VALUE) {
+        //If number < -512 or if number > 511, this function returns the #NUM! error value.
+        //A non-integer number is truncated
+        if (number <= MIN_VALUE - 1 || number >= MAX_VALUE + 1) {
             return ErrorEval.NUM_ERROR;
         }
+        int value = number.intValue();
 
-        int placesNumber;
-        if (number < 0 || placesVE == null) {
-            placesNumber = DEFAULT_PLACES_VALUE;
-        } else {
-            ValueEval placesValueEval;
-            try {
-                placesValueEval = OperandResolver.getSingleValue(placesVE, srcRowIndex, srcColumnIndex);
-            } catch (EvaluationException e) {
-                return e.getErrorEval();
-            }
-            String placesStr = OperandResolver.coerceValueToString(placesValueEval);
-            Double placesNumberDouble = OperandResolver.parseDouble(placesStr);
-
-            //non numeric value
-            if (placesNumberDouble == null) {
-                return ErrorEval.VALUE_INVALID;
-            }
-
-            //If this argument contains a decimal value, this function ignores the numbers to the right side of the decimal point.
-            placesNumber = placesNumberDouble.intValue();
-
-            if (placesNumber < 0 || placesNumber == 0) {
-                return ErrorEval.NUM_ERROR;
-            }
+        if (value < 0) {
+            //places is ignored: a 10-character (10-bit) two's-complement number
+            return new StringEval(Integer.toBinaryString(value & 0x3FF));
         }
-        String binary = Integer.toBinaryString(number.intValue());
 
-        if (binary.length() > DEFAULT_PLACES_VALUE) {
-            binary = binary.substring(binary.length() - DEFAULT_PLACES_VALUE);
+        String binary = Integer.toBinaryString(value);
+        if (placesVE == null) {
+            return new StringEval(binary);
         }
-        //If DEC2BIN requires more than places characters, it returns the #NUM! error value.
+
+        ValueEval placesValueEval;
+        try {
+            placesValueEval = OperandResolver.getSingleValue(placesVE, srcRowIndex, srcColumnIndex);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+        String placesStr = OperandResolver.coerceValueToString(placesValueEval);
+        Double placesNumberDouble = OperandResolver.parseDouble(placesStr);
+
+        //non numeric value
+        if (placesNumberDouble == null) {
+            return ErrorEval.VALUE_INVALID;
+        }
+
+        //If this argument contains a decimal value, this function ignores the numbers to the right side of the decimal point.
+        //Excel accepts 1 to 10 places (the width of the largest result); anything else is #NUM!,
+        //as is a result that needs more than places characters.
+        if (placesNumberDouble < 1 || placesNumberDouble >= MAX_PLACES + 1) {
+            return ErrorEval.NUM_ERROR;
+        }
+        int placesNumber = placesNumberDouble.intValue();
         if (binary.length() > placesNumber) {
             return ErrorEval.NUM_ERROR;
         }
-
-        return new StringEval(binary);
+        return new StringEval(StringUtil.repeat('0', placesNumber - binary.length()) + binary);
     }
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
