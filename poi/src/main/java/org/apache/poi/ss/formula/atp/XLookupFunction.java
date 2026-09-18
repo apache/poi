@@ -21,6 +21,7 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.functions.ArrayFunction;
+import org.apache.poi.ss.formula.functions.ArrayMode;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.LookupUtils;
 
@@ -34,7 +35,7 @@ import org.apache.poi.ss.formula.functions.LookupUtils;
  * 
  * @since 5.2.0
  */
-final class XLookupFunction implements FreeRefFunction, ArrayFunction {
+final class XLookupFunction implements FreeRefFunction, ArrayFunction, ArrayMode {
 
     public static final FreeRefFunction instance = new XLookupFunction(ArgumentsEvaluator.instance);
 
