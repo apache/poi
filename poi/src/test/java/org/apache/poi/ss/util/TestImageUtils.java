@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -86,5 +87,24 @@ final class TestImageUtils {
                     ImageUtils.setPreferredSize(picture, 1, Double.NaN)
             );
         }
+    }
+
+    /**
+     * The pixel size in an image's metadata is untrusted input: a zero, negative or garbage
+     * value must not throw (it used to give IllegalArgumentException from the int conversion)
+     */
+    @Test
+    void testDpiFromPixelSize() {
+        assertEquals(96, ImageUtils.dpiFromPixelSize("0.26458333"));
+        assertEquals(100, ImageUtils.dpiFromPixelSize("0.254"));
+        assertEquals(1, ImageUtils.dpiFromPixelSize("25.4"));
+        assertEquals(96, ImageUtils.dpiFromPixelSize("0"));
+        assertEquals(96, ImageUtils.dpiFromPixelSize("-0.1"));
+        assertEquals(96, ImageUtils.dpiFromPixelSize("1E-300"));
+        assertEquals(96, ImageUtils.dpiFromPixelSize("NaN"));
+        assertEquals(96, ImageUtils.dpiFromPixelSize("Infinity"));
+        assertEquals(96, ImageUtils.dpiFromPixelSize("abc"));
+        assertEquals(96, ImageUtils.dpiFromPixelSize(""));
+        assertEquals(96, ImageUtils.dpiFromPixelSize(null));
     }
 }
