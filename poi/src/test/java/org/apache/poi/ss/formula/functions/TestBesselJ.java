@@ -49,6 +49,13 @@ final class TestBesselJ {
     @Test
     void testNumError() {
         confirmNumError("22.5","-40");
+        // commons-math cannot compute these; they used to escape as MathIllegalArgumentException
+        // and NegativeArraySizeException respectively
+        confirmNumError("1E308", "1");
+        confirmNumError("1E5", "1");
+        confirmNumError("-1E308", "0");
+        confirmNumError("1", "1E10");
+        confirmNumError("1", "2147483647");
     }
 
     //https://support.microsoft.com/en-us/office/besselj-function-839cb181-48de-408b-9d80-bd02982d94f7
