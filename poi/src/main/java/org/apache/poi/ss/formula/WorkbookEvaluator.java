@@ -687,7 +687,10 @@ public final class WorkbookEvaluator {
             return new NumberEval(intPtg.getValue());
         }
         if (ptg instanceof NumberPtg numberPtg) {
-            return new NumberEval(numberPtg.getValue());
+            double value = numberPtg.getValue();
+            // the parser refuses a literal beyond the double range (e.g. 1E400), but a NumberPtg can be
+            // built with such a value: Excel has no infinite numbers, so it cannot be a result
+            return Double.isFinite(value) ? new NumberEval(value) : ErrorEval.NUM_ERROR;
         }
         if (ptg instanceof StringPtg stringPtg) {
             return new StringEval(stringPtg.getValue());

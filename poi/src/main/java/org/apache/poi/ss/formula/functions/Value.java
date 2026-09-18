@@ -210,6 +210,10 @@ public final class Value extends Fixed1ArgFunction implements ArrayFunction {
             // still a problem parsing the number - probably out of range
             return null;
         }
+        if (Double.isInfinite(d)) {
+            // beyond the double range, e.g. "1E400": Excel has no infinite numbers
+            return null;
+        }
         double result = foundUnaryMinus ? -d : d;
         return foundPercentage ? result / 100. : result;
     }

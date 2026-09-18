@@ -127,4 +127,16 @@ final class TestOperandResolver {
             assertEquals(OperandResolver.coerceValueToDouble(new StringEval(str)), values.get(str), 0.00001);
         }
     }
+
+    /**
+     * Excel has no infinite numbers: text beyond the double range is not numeric to it
+     */
+    @Test
+    void testParseDoubleBeyondDoubleRange() {
+        assertNull(OperandResolver.parseDouble("1E400"));
+        assertNull(OperandResolver.parseDouble("-1E400"));
+        assertNull(OperandResolver.parseDouble("1.5E999"));
+        // the largest finite double is still fine
+        assertEquals(Double.MAX_VALUE, OperandResolver.parseDouble("1.7976931348623157E308"), 0);
+    }
 }

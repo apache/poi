@@ -291,6 +291,7 @@ public final class OperandResolver {
      *  ".123" -&gt; 0.123<br>
      *  "1E4" -&gt; 1000<br>
      *  "-123" -&gt; -123.0<br>
+     *  "1E400" -&gt; {@code null} (beyond the range of a double; Excel has no infinite numbers)<br>
      *  These not supported yet:<br>
      *  " $ 1,000.00 " -&gt; 1000.0<br>
      *  "$1.25E4" -&gt; 12500.0<br>
@@ -301,13 +302,15 @@ public final class OperandResolver {
      */
     public static Double parseDouble(String pText) {
 
-        if (fpPattern.matcher(pText).matches())
+        if (fpPattern.matcher(pText).matches()) {
             try {
-                return Double.parseDouble(pText);
+                double d = Double.parseDouble(pText);
+                // Excel has no infinite numbers: text like "1E400" is not a number to it
+                return Double.isInfinite(d) ? null : Double.valueOf(d);
             } catch (NumberFormatException e) {
                 return null;
             }
-        else {
+        } else {
             return null;
         }
 

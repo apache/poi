@@ -57,10 +57,14 @@ public final class FloorPrecise implements FreeRefFunction {
                 Double arg1Val = evaluateValue(args[1], ec.getRowIndex(), ec.getColumnIndex());
                 multiplier = arg1Val != null ? Math.abs(arg1Val.doubleValue()) : 1.0;
             }
-            if (multiplier != 1.0) {
-                return new NumberEval(scaledRoundUsingBigDecimal(xval, multiplier, RoundingMode.FLOOR));
+            if (multiplier == 0.0) {
+                // Excel returns 0 for a significance of 0, whatever the number
+                return new NumberEval(0);
             }
-            return new NumberEval(Math.floor(xval));
+            if (multiplier != 1.0) {
+                return result(scaledRoundUsingBigDecimal(xval, multiplier, RoundingMode.FLOOR));
+            }
+            return result(Math.floor(xval));
         } catch (EvaluationException evaluationException) {
             return evaluationException.getErrorEval();
         }
@@ -68,6 +72,13 @@ public final class FloorPrecise implements FreeRefFunction {
 
     private static Double evaluateValue(ValueEval arg, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
         ValueEval ve = OperandResolver.getSingleValue(arg, srcRowIndex, srcColumnIndex);
-        return OperandResolver.coerceValueToDouble(ve);
+        double d = OperandResolver.coerceValueToDouble(ve);
+        NumericFunction.checkValue(d);
+        return d;
+    }
+
+    private static ValueEval result(double d) throws EvaluationException {
+        NumericFunction.checkValue(d);
+        return new NumberEval(d);
     }
 }

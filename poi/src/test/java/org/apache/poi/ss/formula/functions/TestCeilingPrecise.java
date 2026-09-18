@@ -106,4 +106,28 @@ final class TestCeilingPrecise {
             assertDouble(fe, cell, "CEILING.PRECISE(D1)", 0.0, 0);
         }
     }
+
+    @Test
+    void testZeroSignificance() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            // Excel returns 0 for a significance of 0, whatever the number
+            assertDouble(fe, cell, "CEILING.PRECISE(7.3,0)", 0.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(-7.3,0)", 0.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(0,0)", 0.0, 0);
+        }
+    }
+
+    @Test
+    void testBeyondDoubleRange() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertError(fe, cell, "CEILING.PRECISE(\"1E400\")", FormulaError.VALUE);
+            assertError(fe, cell, "CEILING.PRECISE(5,\"1E400\")", FormulaError.VALUE);
+            // a result that would overflow a double
+            assertError(fe, cell, "CEILING.PRECISE(1.7E308,1E308)", FormulaError.NUM);
+        }
+    }
 }
