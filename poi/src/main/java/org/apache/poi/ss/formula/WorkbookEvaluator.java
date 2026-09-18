@@ -514,22 +514,7 @@ public final class WorkbookEvaluator {
                     }
                 }
 
-                boolean arrayMode = false;
-                if (areaArg) for (int ii = i; ii < iSize; ii++) {
-                    if (ptgs[ii] instanceof FuncVarPtg f) {
-                        try {
-                            Function func = FunctionEval.getBasicFunction(f.getFunctionIndex());
-                            if (func instanceof ArrayMode) {
-                                arrayMode = true;
-                            }
-                        } catch (NotImplementedException ne) {
-                            //FunctionEval.getBasicFunction can throw NotImplementedException
-                            // if the function is not yet supported.
-                        }
-                        break;
-                    }
-                }
-                ec.setArrayMode(arrayMode);
+                ec.setArrayMode(areaArg && isConsumedByArrayModeFunction(ptgs, i, stack, ec));
 
 //                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
                 opResult = OperationEvaluatorFactory.evaluate(optg, ops, ec);
@@ -572,6 +557,78 @@ public final class WorkbookEvaluator {
         } // if
         return result;
 
+    }
+
+    /**
+     * Decides whether the result of the operation at {@code opIndex} ends up (possibly via further
+     * enclosing operators or functions) as an argument of a function that evaluates its arguments
+     * in array mode (an {@link ArrayMode} function such as SUMPRODUCT, INDEX or XLOOKUP).
+     * <p>
+     * Walks the remaining RPN tokens tracking the position of the operation's result on the
+     * evaluation stack, so nested function calls are matched to the right operation. User-defined
+     * (and "future") functions are called through {@link FuncVarPtg}s with the external function
+     * index, so their name is looked up from the {@link FunctionNameEval} already on the stack.
+     *
+     * @param ptgs    the tokens of the formula being evaluated
+     * @param opIndex the index of the operation whose operands have just been popped from {@code stack}
+     * @param stack   the evaluation stack, holding the values pushed before the operation's operands
+     */
+    private static boolean isConsumedByArrayModeFunction(Ptg[] ptgs, int opIndex, Stack<ValueEval> stack,
+            OperationEvaluationContext ec) {
+        // position of the tracked result counted from the top of the stack (1 = on top)
+        int depth = 1;
+        // number of values below the tracked result that have been consumed since opIndex
+        int consumedBelow = 0;
+        for (int k = opIndex + 1; k < ptgs.length; k++) {
+            Ptg ptg = ptgs[k];
+            if (ptg instanceof AttrPtg attrPtg) {
+                if (!attrPtg.isSum()) {
+                    continue;
+                }
+                ptg = FuncVarPtg.SUM;
+            }
+            if (ptg instanceof ControlPtg || ptg instanceof MemFuncPtg || ptg instanceof MemAreaPtg
+                    || ptg instanceof MemErrPtg) {
+                continue;
+            }
+            if (!(ptg instanceof OperationPtg optg)) {
+                depth++;
+                continue;
+            }
+            int numops = optg.getNumberOfOperands();
+            if (depth > numops) {
+                // this operation only consumes values pushed after the tracked result
+                depth -= numops - 1;
+                continue;
+            }
+            if (optg instanceof AbstractFunctionPtg fptg) {
+                Object func = null;
+                int functionIndex = fptg.getFunctionIndex();
+                if (functionIndex == FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL) {
+                    // the function name is the first operand, i.e. the deepest one
+                    int nameIndex = stack.size() - consumedBelow - (numops - depth);
+                    if (nameIndex >= 0 && nameIndex < stack.size()
+                            && stack.get(nameIndex) instanceof FunctionNameEval fne) {
+                        func = ec.findUserDefinedFunction(fne.getFunctionName());
+                    }
+                } else {
+                    try {
+                        func = FunctionEval.getBasicFunction(functionIndex);
+                    } catch (NotImplementedException ne) {
+                        //FunctionEval.getBasicFunction can throw NotImplementedException
+                        // if the function is not yet supported.
+                    }
+                }
+                if (func instanceof ArrayMode) {
+                    return true;
+                }
+            }
+            // the tracked result was consumed by an operator or a non-array function:
+            // keep tracking the result of that operation instead
+            consumedBelow += numops - depth;
+            depth = 1;
+        }
+        return false;
     }
 
     /**
