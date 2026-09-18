@@ -48,6 +48,32 @@ final class TestExcelArithmetic {
     }
 
     @Test
+    void testTruncate() {
+        // towards zero on the 15-digit view
+        assertEquals(3.0, ExcelArithmetic.truncate(2.9999999999999996));
+        assertEquals(-3.0, ExcelArithmetic.truncate(-2.9999999999999996));
+        assertEquals(2490400.0, ExcelArithmetic.truncate(2490399.9999999995));
+        assertEquals(3.0, ExcelArithmetic.truncate(3.0000000000000004));
+        assertEquals(-3.0, ExcelArithmetic.truncate(-3.0000000000000004));
+        assertEquals(5.0, ExcelArithmetic.truncate(5 - 0.0000000000000009));
+        // values that differ from an integer within 15 digits truncate normally, towards zero
+        assertEquals(2.0, ExcelArithmetic.truncate(2.99999999999999));
+        assertEquals(-2.0, ExcelArithmetic.truncate(-2.99999999999999));
+        assertEquals(2.0, ExcelArithmetic.truncate(2.5));
+        assertEquals(-2.0, ExcelArithmetic.truncate(-2.5));
+        assertEquals(0.0, ExcelArithmetic.truncate(0.999999999999999));
+        assertEquals(-0.0, ExcelArithmetic.truncate(-0.999999999999999));
+        assertEquals(0.0, ExcelArithmetic.truncate(0.0));
+        // integers of any magnitude pass through
+        assertEquals(1e20, ExcelArithmetic.truncate(1e20));
+        assertEquals(-1e20, ExcelArithmetic.truncate(-1e20));
+        assertEquals(1e308, ExcelArithmetic.truncate(1e308));
+        assertEquals(Math.pow(2, 53), ExcelArithmetic.truncate(Math.pow(2, 53)));
+        assertEquals(Double.NaN, ExcelArithmetic.truncate(Double.NaN));
+        assertEquals(Double.POSITIVE_INFINITY, ExcelArithmetic.truncate(Double.POSITIVE_INFINITY));
+    }
+
+    @Test
     void testApproxAddAndSub() {
         // Excel 97+: an addition/subtraction that lands very close to zero gives exactly zero
         assertEquals(0.0, ExcelArithmetic.approxSub(0.5 - 0.4, 0.1));

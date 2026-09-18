@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 
 import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.util.ExcelArithmetic;
 
 /**
  * <p>Implementation for Excel QUOTIENT () function.
@@ -67,8 +68,9 @@ public class Quotient extends Fixed2ArgFunction implements FreeRefFunction {
         if (Double.isNaN(quotient) || Double.isInfinite(quotient)) {
             return ErrorEval.NUM_ERROR;
         }
-        // truncate towards zero; the result is kept as a double so that quotients beyond the int range work
-        return new NumberEval(quotient < 0 ? Math.ceil(quotient) : Math.floor(quotient));
+        // truncate towards zero on Excel's 15-digit view (QUOTIENT(880000000*0.00849,3) is 2490400, as INT);
+        // the result is kept as a double so that quotients beyond the int range work
+        return new NumberEval(ExcelArithmetic.truncate(quotient));
     }
 
     @Override

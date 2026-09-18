@@ -46,6 +46,16 @@ final class TestLcm {
     }
 
     @Test
+    void testTruncatesOnExcelsFifteenDigitView() {
+        // 4.999999999999999 is 5 to Excel, so it is truncated to 5 rather than 4
+        confirmValue(Arrays.asList(4.999999999999999, 10), 10.0);
+        confirmValue(Arrays.asList(4.999999999999999), 5.0);
+        confirmValue(Arrays.asList(2490399.9999999995, 2), 2490400.0);
+        confirmValue(Arrays.asList(5.00000000000001, 10), 10.0);
+        confirmValue(Arrays.asList(4.99999999999999, 10), 20.0);
+    }
+
+    @Test
     void testNumError() {
         confirmNumError(Arrays.asList(-1));
         confirmNumError(Arrays.asList(10, -1));

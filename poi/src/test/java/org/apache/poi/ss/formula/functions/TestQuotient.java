@@ -75,6 +75,18 @@ class TestQuotient {
     }
 
     @Test
+    void testQuotientTruncatesOnExcelsFifteenDigitView() {
+        // 7471200/3 is 2490399.9999999995 in binary, 2490400 to Excel (compare INT(880000000*0.00849/3))
+        confirmValue("just below an integer", "7471199.999999999", "3", "2490400");
+        confirmValue("just below an integer, negative", "-7471199.999999999", "3", "-2490400");
+        confirmValue("0.7/0.1 is 6.999999999999999", "0.7", "0.1", "7");
+        confirmValue("just above an integer", "3.0000000000000004", "1", "3");
+        // differences within 15 digits are still truncated
+        confirmValue("2.99999999999999", "2.99999999999999", "1", "2");
+        confirmValue("-2.99999999999999", "-2.99999999999999", "1", "-2");
+    }
+
+    @Test
     void testErrors() {
         confirmValueError("numerator is nonnumeric", "ABCD", "", ErrorEval.VALUE_INVALID);
         confirmValueError("denominator is nonnumeric", "", "ABCD", ErrorEval.VALUE_INVALID);

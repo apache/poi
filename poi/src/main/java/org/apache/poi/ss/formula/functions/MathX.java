@@ -334,14 +334,16 @@ final class MathX {
         if (Double.isNaN(d)) {
             return Double.NaN;
         }
-        if (d >= 171) {
+        // Excel truncates a non-integer argument, on its 15-digit view
+        double n = ExcelArithmetic.truncate(d);
+        if (n >= 171) {
             // beyond Double.MAX_VALUE (and possibly beyond the int range)
             return Double.POSITIVE_INFINITY;
         }
-        if (d <= -1) {
+        if (n < 0) {
             return Double.NaN;
         }
-        return factorial((int) d);
+        return factorial((int) n);
     }
 
 

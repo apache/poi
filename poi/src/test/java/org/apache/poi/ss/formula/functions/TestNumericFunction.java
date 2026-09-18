@@ -262,4 +262,107 @@ final class TestNumericFunction {
         assertDouble(fe, cell, "ROUND(1.5E308,-307)", 1.5E308, 0);
         assertDouble(fe, cell, "ROUND(1.5E308,-309)", 0.0, 0);
     }
+
+    @Test
+    void testEVEN() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        //https://support.microsoft.com/en-us/office/even-function-197b5f06-c795-4c1e-8696-3c3b8a646cf9
+        assertDouble(fe, cell, "EVEN(1.5)", 2.0, 0);
+        assertDouble(fe, cell, "EVEN(3)", 4.0, 0);
+        assertDouble(fe, cell, "EVEN(2)", 2.0, 0);
+        assertDouble(fe, cell, "EVEN(-1)", -2.0, 0);
+        assertDouble(fe, cell, "EVEN(0)", 0.0, 0);
+        assertDouble(fe, cell, "EVEN(0.1)", 2.0, 0);
+        assertDouble(fe, cell, "EVEN(-0.1)", -2.0, 0);
+        assertDouble(fe, cell, "EVEN(-2.5)", -4.0, 0);
+        assertDouble(fe, cell, "EVEN(TRUE)", 2.0, 0);
+        assertDouble(fe, cell, "EVEN(\"3.7\")", 4.0, 0);
+        assertError(fe, cell, "EVEN(\"abc\")", FormulaError.VALUE);
+        // the long cast used to overflow beyond 2^63 (EVEN(1E19) gave -9.22E18)
+        assertDouble(fe, cell, "EVEN(1E19)", 1E19, 0);
+        assertDouble(fe, cell, "EVEN(-1E19)", -1E19, 0);
+        assertDouble(fe, cell, "EVEN(1E308)", 1E308, 0);
+        assertDouble(fe, cell, "EVEN(2^53)", Math.pow(2, 53), 0);
+        assertDouble(fe, cell, "EVEN(2^53+2)", Math.pow(2, 53) + 2, 0);
+        // acts on Excel's 15-digit view, like INT and CEILING
+        assertDouble(fe, cell, "EVEN(2.0000000000000004)", 2.0, 0);
+        assertDouble(fe, cell, "EVEN(-2.0000000000000004)", -2.0, 0);
+        assertDouble(fe, cell, "EVEN(1.9999999999999998)", 2.0, 0);
+        assertDouble(fe, cell, "EVEN(2.00000000000001)", 4.0, 0);
+    }
+
+    @Test
+    void testODD() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        //https://support.microsoft.com/en-us/office/odd-function-deae64eb-e08a-4c88-8b40-6d0b42575c98
+        assertDouble(fe, cell, "ODD(1.5)", 3.0, 0);
+        assertDouble(fe, cell, "ODD(3)", 3.0, 0);
+        assertDouble(fe, cell, "ODD(2)", 3.0, 0);
+        assertDouble(fe, cell, "ODD(-1)", -1.0, 0);
+        assertDouble(fe, cell, "ODD(-2)", -3.0, 0);
+        assertDouble(fe, cell, "ODD(0)", 1.0, 0);
+        assertDouble(fe, cell, "ODD(0.1)", 1.0, 0);
+        assertDouble(fe, cell, "ODD(-0.1)", -1.0, 0);
+        assertDouble(fe, cell, "ODD(-1.5)", -3.0, 0);
+        assertDouble(fe, cell, "ODD(TRUE)", 1.0, 0);
+        assertDouble(fe, cell, "ODD(\"3.7\")", 5.0, 0);
+        assertError(fe, cell, "ODD(\"abc\")", FormulaError.VALUE);
+        // the long cast used to overflow beyond 2^63
+        assertDouble(fe, cell, "ODD(1E19)", 1E19, 0);
+        assertDouble(fe, cell, "ODD(-1E19)", -1E19, 0);
+        assertDouble(fe, cell, "ODD(1E308)", 1E308, 0);
+        assertDouble(fe, cell, "ODD(2^53-1)", Math.pow(2, 53) - 1, 0);
+        // acts on Excel's 15-digit view, like INT and CEILING
+        assertDouble(fe, cell, "ODD(1.0000000000000002)", 1.0, 0);
+        assertDouble(fe, cell, "ODD(-1.0000000000000002)", -1.0, 0);
+        assertDouble(fe, cell, "ODD(2.9999999999999996)", 3.0, 0);
+        assertDouble(fe, cell, "ODD(1.00000000000001)", 3.0, 0);
+    }
+
+    @Test
+    void testFACTTruncatesOnExcelsFifteenDigitView() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        //https://support.microsoft.com/en-us/office/fact-function-ca8588c2-15f2-41c0-8e8c-c11bd471a4f3
+        assertDouble(fe, cell, "FACT(5)", 120.0, 0);
+        assertDouble(fe, cell, "FACT(1.9)", 1.0, 0);
+        assertDouble(fe, cell, "FACT(0)", 1.0, 0);
+        assertError(fe, cell, "FACT(-1)", FormulaError.NUM);
+        assertDouble(fe, cell, "FACT(1)", 1.0, 0);
+        // 4.999999999999999 is 5 to Excel
+        assertDouble(fe, cell, "FACT(5-0.0000000000000009)", 120.0, 0);
+        assertDouble(fe, cell, "FACT(5.0000000000000004)", 120.0, 0);
+        assertDouble(fe, cell, "FACT(4.99999999999999)", 24.0, 0);
+        assertDouble(fe, cell, "FACT(170.99999999999)", 7.257415615307994E306, 0);
+        assertError(fe, cell, "FACT(171-0.00000000000002)", FormulaError.NUM);
+        assertError(fe, cell, "FACT(-0.9999999999999996)", FormulaError.NUM);
+        assertDouble(fe, cell, "FACT(-0.5)", 1.0, 0);
+    }
+
+    @Test
+    void testCOMBIN() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        //https://support.microsoft.com/en-us/office/combin-function-12a3f276-0a21-423a-8de6-06990aaf638a
+        assertDouble(fe, cell, "COMBIN(8,2)", 28.0, 0);
+        assertDouble(fe, cell, "COMBIN(8.9,2.9)", 28.0, 0);
+        assertDouble(fe, cell, "COMBIN(0,0)", 1.0, 0);
+        assertError(fe, cell, "COMBIN(-1,2)", FormulaError.NUM);
+        assertError(fe, cell, "COMBIN(8,-2)", FormulaError.NUM);
+        assertError(fe, cell, "COMBIN(2,8)", FormulaError.NUM);
+        // 4.999999999999999 is 5 to Excel
+        assertDouble(fe, cell, "COMBIN(5-0.0000000000000009,2)", 10.0, 0);
+        assertDouble(fe, cell, "COMBIN(5,2-0.0000000000000004)", 10.0, 0);
+        assertDouble(fe, cell, "COMBIN(4.99999999999999,2)", 6.0, 0);
+        // out of the int range used to escape as an IllegalArgumentException for negative values
+        assertError(fe, cell, "COMBIN(5E9,2)", FormulaError.NUM);
+        assertError(fe, cell, "COMBIN(-5E9,2)", FormulaError.NUM);
+        assertError(fe, cell, "COMBIN(5,-5E9)", FormulaError.NUM);
+    }
 }
