@@ -67,8 +67,7 @@ public final class CeilingPrecise implements FreeRefFunction {
     }
 
     private static Double evaluateValue(ValueEval arg, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
-        ValueEval veText = OperandResolver.getSingleValue(arg, srcRowIndex, srcColumnIndex);
-        String strText1 = OperandResolver.coerceValueToString(veText);
-        return OperandResolver.parseDouble(strText1);
+        ValueEval ve = OperandResolver.getSingleValue(arg, srcRowIndex, srcColumnIndex);
+        return OperandResolver.coerceValueToDouble(ve);
     }
 }

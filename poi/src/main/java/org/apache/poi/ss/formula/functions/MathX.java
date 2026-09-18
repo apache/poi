@@ -344,11 +344,15 @@ final class MathX {
             return Double.NaN;
         }
         // Excel defines MOD(n, d) = n - d*INT(n/d), with INT acting on the 15-digit view
-        double r = ExcelArithmetic.approxSub(n, Math.floor(ExcelArithmetic.approxValue(n / d)) * d);
-        if (!Double.isInfinite(r) && !Double.isNaN(r)) {
-            return r;
+        double q = n / d;
+        if (Math.abs(q) < 0x1p52) {
+            double r = ExcelArithmetic.approxSub(n, Math.floor(ExcelArithmetic.approxValue(q)) * d);
+            if (!Double.isInfinite(r) && !Double.isNaN(r)) {
+                return r;
+            }
         }
-        // n/d is too large for the Excel formula (Excel itself gives #NUM! here) - fall back to the exact remainder
+        // the quotient is beyond the integer precision of a double, so Excel's formula cannot
+        // produce a meaningful remainder (Excel itself gives #NUM! here) - use the exact one
         if (sign(n) == sign(d)) {
             return n % d;
         }

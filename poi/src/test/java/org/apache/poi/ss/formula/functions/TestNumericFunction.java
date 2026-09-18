@@ -31,6 +31,8 @@ import java.util.Locale;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.apache.poi.ss.util.Utils.assertString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.apache.poi.ss.usermodel.FormulaError;
+import static org.apache.poi.ss.util.Utils.assertError;
 
 @Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 final class TestNumericFunction {
@@ -159,5 +161,65 @@ final class TestNumericFunction {
         } finally {
             LocaleUtil.setUserLocale(defaultLocale);
         }
+    }
+
+    @Test
+    void testINTMicrosoftExamples() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        //https://support.microsoft.com/en-us/office/int-function-a6c4af9e-356d-4369-ab6a-cb1fd9d343ef
+        assertDouble(fe, cell, "INT(8.9)", 8.0, 0);
+        assertDouble(fe, cell, "INT(-8.9)", -9.0, 0);
+        assertDouble(fe, cell, "19.5-INT(19.5)", 0.5, 0);
+    }
+
+    @Test
+    void testINTActsOnExcelsFifteenDigitView() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        // just below an integer in binary, but the integer at 15 significant digits
+        assertDouble(fe, cell, "INT(2.9999999999999996)", 3.0, 0);
+        assertDouble(fe, cell, "INT(-2.9999999999999996)", -3.0, 0);
+        assertDouble(fe, cell, "INT(9.999999999999999)", 10.0, 0);
+        assertDouble(fe, cell, "INT(0.7/0.1)", 7.0, 0);
+        assertDouble(fe, cell, "INT(0.1*3*10)", 3.0, 0);
+        assertDouble(fe, cell, "INT(4.35*100)", 435.0, 0);
+        assertDouble(fe, cell, "INT(1.005*1000)", 1005.0, 0);
+        // just above an integer stays that integer
+        assertDouble(fe, cell, "INT(3.0000000000000004)", 3.0, 0);
+        assertDouble(fe, cell, "INT(-3.0000000000000004)", -3.0, 0);
+        // values that differ from an integer within 15 significant digits are truncated normally
+        assertDouble(fe, cell, "INT(2.99999999999999)", 2.0, 0);
+        assertDouble(fe, cell, "INT(-2.99999999999999)", -3.0, 0);
+        assertDouble(fe, cell, "INT(0.999999999999999)", 0.0, 0);
+        // exact binary fractions are never approximated
+        assertDouble(fe, cell, "INT(2.5)", 2.0, 0);
+        assertDouble(fe, cell, "INT(-2.5)", -3.0, 0);
+        assertDouble(fe, cell, "INT(0.0625)", 0.0, 0);
+        assertDouble(fe, cell, "INT(1E15+0.5)", 1E15, 0);
+        assertDouble(fe, cell, "INT(-1E15-0.5)", -1E15 - 1, 0);
+    }
+
+    @Test
+    void testINTLargeAndSpecialValues() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        // integers beyond the precision of a double pass through unchanged (no clamping at 2^63)
+        assertDouble(fe, cell, "INT(1E20)", 1E20, 0);
+        assertDouble(fe, cell, "INT(-1E20)", -1E20, 0);
+        assertDouble(fe, cell, "INT(1E308)", 1E308, 0);
+        assertDouble(fe, cell, "INT(2^53)", Math.pow(2, 53), 0);
+        assertDouble(fe, cell, "INT(0)", 0.0, 0);
+        assertDouble(fe, cell, "INT(-0.5)", -1.0, 0);
+        assertDouble(fe, cell, "INT(1E-300)", 0.0, 0);
+        assertDouble(fe, cell, "INT(-1E-300)", -1.0, 0);
+        // coercion follows the usual rules
+        assertDouble(fe, cell, "INT(TRUE)", 1.0, 0);
+        assertDouble(fe, cell, "INT(\"3.7\")", 3.0, 0);
+        assertError(fe, cell, "INT(\"abc\")", FormulaError.VALUE);
+        assertError(fe, cell, "INT(1/0)", FormulaError.DIV0);
     }
 }

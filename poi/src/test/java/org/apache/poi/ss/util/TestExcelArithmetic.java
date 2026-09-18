@@ -68,4 +68,78 @@ final class TestExcelArithmetic {
         assertEquals(Double.NaN, ExcelArithmetic.approxSub(Double.NaN, 1.0));
         assertEquals(Double.NaN, ExcelArithmetic.approxSub(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
     }
+
+    @Test
+    void testApproxValueBoundaries() {
+        // 15 significant digits round-trip, the 16th is rounded away
+        assertEquals(12345678.9012345, ExcelArithmetic.approxValue(12345678.9012345));
+        assertEquals(12345678.9012346, ExcelArithmetic.approxValue(12345678.90123456));
+        assertEquals(0.123456789012346, ExcelArithmetic.approxValue(0.1234567890123456));
+        assertEquals(1.23456789012346E-10, ExcelArithmetic.approxValue(1.234567890123456E-10));
+        assertEquals(1.23456789012346, ExcelArithmetic.approxValue(1.2345678901234567));
+        // huge values are integers in binary and therefore untouched
+        assertEquals(1.234567890123456E+100, ExcelArithmetic.approxValue(1.234567890123456E+100));
+        // rounding carries across the integer boundary
+        assertEquals(10.0, ExcelArithmetic.approxValue(9.999999999999998));
+        assertEquals(1.0, ExcelArithmetic.approxValue(0.9999999999999999));
+        assertEquals(100.0, ExcelArithmetic.approxValue(99.99999999999999));
+        // sign-symmetric
+        for (double d : new double[] { 2490399.9999999995, 0.1 + 0.2, 9.999999999999998, 1.2345678901234567, 0.375 }) {
+            assertEquals(-ExcelArithmetic.approxValue(d), ExcelArithmetic.approxValue(-d));
+        }
+        // the largest and smallest magnitudes are handled (MAX_VALUE is an integer and so untouched)
+        assertEquals(Double.MAX_VALUE, ExcelArithmetic.approxValue(Double.MAX_VALUE));
+        assertEquals(2.2250738585072E-308, ExcelArithmetic.approxValue(Double.MIN_NORMAL));
+        // subnormals do not exist in Excel and render as 0
+        assertEquals(0.0, ExcelArithmetic.approxValue(Double.MIN_VALUE));
+        // idempotent
+        for (double d : new double[] { 2490399.9999999995, 0.1 + 0.2, 1.2345678901234567, 4.35 * 100, 1e-10 / 3 }) {
+            double once = ExcelArithmetic.approxValue(d);
+            assertEquals(once, ExcelArithmetic.approxValue(once));
+        }
+    }
+
+    @Test
+    void testApproxValueLeavesShortBinaryFractionsAlone() {
+        // up to 11 fractional bits are exact; these are neither rounded nor re-parsed
+        double[] exact = { 0.5, 0.25, 0.125, 0.0625, 1.0 / 1024, 1.0 / 2048, 3.0 / 2048,
+                4398046511104.5, 123456789012345.5, 1000000000000000.5, -0.75, 1e15 + 0.25 };
+        for (double d : exact) {
+            assertEquals(d, ExcelArithmetic.approxValue(d));
+        }
+        // 12 fractional bits and a long decimal expansion is approximated
+        assertEquals(2.44140625E-4, ExcelArithmetic.approxValue(1.0 / 4096));
+        assertEquals(0.000244140625, ExcelArithmetic.approxValue(1.0 / 4096));
+        assertEquals(1.0 / 4096, ExcelArithmetic.approxValue(1.0 / 4096)); // still exact: only 12 digits
+        assertEquals(1.19209289550781E-7, ExcelArithmetic.approxValue(1.0 / 8388608)); // 2^-23 has 23 digits
+    }
+
+    @Test
+    void testApproxAddSubSigns() {
+        // both directions and both signs cancel
+        assertEquals(0.0, ExcelArithmetic.approxSub(0.1, 0.5 - 0.4));
+        assertEquals(0.0, ExcelArithmetic.approxSub(-(0.5 - 0.4), -0.1));
+        assertEquals(0.0, ExcelArithmetic.approxSub(-0.1, -(0.5 - 0.4)));
+        assertEquals(0.0, ExcelArithmetic.approxAdd(-(0.5 - 0.4), 0.1));
+        assertEquals(0.0, ExcelArithmetic.approxAdd(0.1, -(0.5 - 0.4)));
+        // same-sign addition and opposite-sign subtraction never cancel, however close
+        assertEquals(0.2, ExcelArithmetic.approxAdd(0.1, 0.1));
+        assertEquals(0.1 + (0.5 - 0.4), ExcelArithmetic.approxAdd(0.1, 0.5 - 0.4));
+        assertEquals(0.1 - (-(0.5 - 0.4)), ExcelArithmetic.approxSub(0.1, -(0.5 - 0.4)));
+        assertEquals(2.0, ExcelArithmetic.approxSub(1.0, -1.0));
+        // a zero operand is a plain IEEE operation
+        assertEquals(0.5 - 0.4, ExcelArithmetic.approxAdd(0.5 - 0.4, 0.0));
+        assertEquals(0.5 - 0.4, ExcelArithmetic.approxSub(0.5 - 0.4, 0.0));
+        assertEquals(-(0.5 - 0.4), ExcelArithmetic.approxSub(0.0, 0.5 - 0.4));
+        assertEquals(0.0, ExcelArithmetic.approxAdd(0.0, 0.0));
+        // equal operands cancel exactly, as in IEEE
+        assertEquals(0.0, ExcelArithmetic.approxSub(Math.PI, Math.PI));
+        assertEquals(0.0, ExcelArithmetic.approxAdd(Math.PI, -Math.PI));
+        // huge and tiny magnitudes
+        assertEquals(0.0, ExcelArithmetic.approxSub(1e300 * 3, 3e300));
+        assertEquals(0.0, ExcelArithmetic.approxSub(1e-300 * 3, 3e-300));
+        assertEquals(0.0, ExcelArithmetic.approxSub(1e300 / 3 * 3, 1e300));
+        // subnormals are compared exactly, never approximated
+        assertEquals(Double.MIN_VALUE, ExcelArithmetic.approxSub(2 * Double.MIN_VALUE, Double.MIN_VALUE));
+    }
 }

@@ -73,4 +73,37 @@ final class TestCeilingPrecise {
             assertError(fe, cell, "CEILING.PRECISE(\"abc\")", FormulaError.VALUE);
         }
     }
+
+    @Test
+    void testActsOnExcelsFifteenDigitView() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            // values a hair off an integer in binary are that integer at 15 significant digits
+            assertDouble(fe, cell, "CEILING.PRECISE(2490399.9999999995)", 2490400.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(2490400.0000000005)", 2490400.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(-2490399.9999999995)", -2490400.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(-2490400.0000000005)", -2490400.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(880000000*0.00849/3)", 2490400.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(0.7/0.1)", 7.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(1.1/0.1)", 11.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(0.1*3,0.1)", 0.3, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(0.3-0.1-0.1,0.1)", 0.1, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(2490399.9999999995,100)", 2490400.0, 0);
+            // values that differ within 15 significant digits are rounded normally
+            assertDouble(fe, cell, "CEILING.PRECISE(2490399.99999999)", 2490400.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(2490400.00000001)", 2490401.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(-2490399.99999999)", -2490399.0, 0);
+            // exact binary fractions are never approximated
+            assertDouble(fe, cell, "CEILING.PRECISE(2.5)", 3.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(-2.5)", -2.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(2.5,0.5)", 2.5, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(1E15+0.5)", 1E15 + 1, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(1E20)", 1E20, 0);
+            // arguments are coerced as numbers, not via their text
+            assertDouble(fe, cell, "CEILING.PRECISE(TRUE)", 1.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(\"2.5\")", 3.0, 0);
+            assertDouble(fe, cell, "CEILING.PRECISE(D1)", 0.0, 0);
+        }
+    }
 }
