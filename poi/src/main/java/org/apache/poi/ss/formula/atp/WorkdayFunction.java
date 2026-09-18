@@ -69,9 +69,13 @@ final class WorkdayFunction implements FreeRefFunction {
                     Math.floor(this.evaluator.evaluateNumberArg(args[1], srcCellRow, srcCellCol)));
             ValueEval holidaysCell = args.length == 3 ? args[2] : null;
             holidays = this.evaluator.evaluateDatesArg(holidaysCell, srcCellRow, srcCellCol);
-            return new NumberEval(DateUtil.getExcelDate(WorkdayCalculator.instance.calculateWorkdays(start, days, holidays)));
+            double result = DateUtil.getExcelDate(WorkdayCalculator.instance.calculateWorkdays(start, days, holidays));
+            if (result >= DateUtil.MAX_EXCEL_DATE_SERIAL + 1) {
+                return ErrorEval.NUM_ERROR;
+            }
+            return new NumberEval(result);
         } catch (EvaluationException e) {
-            return ErrorEval.VALUE_INVALID;
+            return e.getErrorEval();
         }
     }
 

@@ -806,6 +806,15 @@ public class DateUtil {
 
 
     /**
+     * The serial number of the last date Excel supports, 9999-12-31, in the 1900 date system
+     * (in the 1904 date system that day is 1462 less). Excel's date functions report a date
+     * serial beyond it, or below 0, as #NUM!.
+     *
+     * @since 6.0.0
+     */
+    public static final int MAX_EXCEL_DATE_SERIAL = 2958465;
+
+    /**
      * Given a double, checks if it is a valid Excel date.
      *
      * @return true if valid

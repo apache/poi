@@ -57,8 +57,11 @@ public class EOMonth implements FreeRefFunction {
             int months = MathUtil.safeDoubleToInt(
                     NumericFunction.singleOperandEvaluate(args[1], ec.getRowIndex(), ec.getColumnIndex()));
 
+            if (startDateAsNumber < 0 || startDateAsNumber >= DateUtil.MAX_EXCEL_DATE_SERIAL + 1) {
+                return ErrorEval.NUM_ERROR;
+            }
             // Excel treats date 0 as 1900-01-00; EOMONTH results in 1900-01-31
-            if (startDateAsNumber >= 0.0 && startDateAsNumber < 1.0) {
+            if (startDateAsNumber < 1.0) {
                 startDateAsNumber = 1.0;
             }
 
@@ -76,7 +79,15 @@ public class EOMonth implements FreeRefFunction {
             cal.set(Calendar.DAY_OF_MONTH, 1);
             cal.add(Calendar.DAY_OF_MONTH, -1);
 
-            return new NumberEval(DateUtil.getExcelDate(cal.getTime()));
+            double result = DateUtil.getExcelDate(cal.getTime());
+
+            if (result >= DateUtil.MAX_EXCEL_DATE_SERIAL + 1) {
+
+                return ErrorEval.NUM_ERROR;
+
+            }
+
+            return new NumberEval(result);
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }

@@ -54,7 +54,7 @@ public final class CalendarFieldFunction extends Fixed1ArgFunction {
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
-        if (val < 0) {
+        if (val < 0 || val >= DateUtil.MAX_EXCEL_DATE_SERIAL + 1) {
             return ErrorEval.NUM_ERROR;
         }
         return new NumberEval(getCalField(val));

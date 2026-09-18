@@ -95,9 +95,16 @@ final class YearFrac implements FreeRefFunction {
                 return dVal;
             }
             LocalDate date = DateParser.parseLocalDate(strVal);
-            return DateUtil.getExcelDate(date, false);
+            return checkDate(DateUtil.getExcelDate(date, false));
         }
-        return OperandResolver.coerceValueToDouble(ve);
+        return checkDate(OperandResolver.coerceValueToDouble(ve));
+    }
+
+    private static double checkDate(double serial) throws EvaluationException {
+        if (serial < 0 || serial >= DateUtil.MAX_EXCEL_DATE_SERIAL + 1) {
+            throw new EvaluationException(ErrorEval.NUM_ERROR);
+        }
+        return serial;
     }
 
     private static int evaluateIntArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
