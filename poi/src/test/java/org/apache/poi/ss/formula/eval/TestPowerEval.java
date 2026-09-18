@@ -75,6 +75,38 @@ final class TestPowerEval {
     }
 
     @Test
+    void testZeroBase() {
+        // as in Excel: 0^0 is #NUM! (Math.pow says 1) and 0^negative is #DIV/0! (Math.pow says Infinity)
+        assertEquals(ErrorEval.NUM_ERROR, evaluate(0, 0));
+        assertEquals(ErrorEval.DIV_ZERO, evaluate(0, -1));
+        assertEquals(ErrorEval.DIV_ZERO, evaluate(0, -0.5));
+        confirm(0, 0, 1);
+        confirm(0, 0, 0.5);
+        confirm(1, 1, 0);
+        confirm(1, -1, 0);
+        confirm(1, 1E300, 0);
+    }
+
+    @Test
+    void testInSpreadSheetZeroBase() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        assertError(fe, cell, "0^0", FormulaError.NUM);
+        assertError(fe, cell, "POWER(0,0)", FormulaError.NUM);
+        assertError(fe, cell, "0^-1", FormulaError.DIV0);
+        assertError(fe, cell, "POWER(0,-1)", FormulaError.DIV0);
+        assertDouble(fe, cell, "0^1", 0);
+        assertDouble(fe, cell, "2^0", 1);
+        assertDouble(fe, cell, "POWER(0,2)", 0);
+        assertDouble(fe, cell, "POWER(2,0)", 1);
+        // array evaluation goes through the same checks (used to return Infinity / NaN elements)
+        assertError(fe, cell, "SUM({1E200}*{1E200})", FormulaError.NUM);
+        assertError(fe, cell, "SUM({0}^{0})", FormulaError.NUM);
+        assertError(fe, cell, "SUM({0}^{-1})", FormulaError.DIV0);
+    }
+
+    @Test
     void testInSpreadSheet() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");

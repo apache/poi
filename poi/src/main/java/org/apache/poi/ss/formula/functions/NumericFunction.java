@@ -163,7 +163,18 @@ public abstract class NumericFunction implements Function {
     public static final Function MOD = twoDouble((d0, d1) ->
         (d1 == ZERO) ? ErrorEval.DIV_ZERO : MathX.mod(d0, d1));
 
-    public static final Function POWER = twoDouble(Math::pow);
+    public static final Function POWER = twoDouble((d0, d1) -> {
+        if (d0 == ZERO) {
+            // Excel: POWER(0,0) is #NUM! and POWER(0,negative) is #DIV/0! (Math.pow gives 1 and Infinity)
+            if (d1 == ZERO) {
+                return ErrorEval.NUM_ERROR;
+            }
+            if (d1 < ZERO) {
+                return ErrorEval.DIV_ZERO;
+            }
+        }
+        return Math.pow(d0, d1);
+    });
 
     public static final Function ROUND = twoDouble(MathX::round);
     public static final Function ROUNDDOWN = twoDouble(MathX::roundDown);
