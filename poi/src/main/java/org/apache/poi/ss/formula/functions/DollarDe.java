@@ -24,9 +24,6 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-
 /**
  * Implementation for Excel DOLLARDE() function.
  * <p>
@@ -68,15 +65,8 @@ public final class DollarDe extends Fixed2ArgFunction implements FreeRefFunction
                 return new NumberEval(valueLong);
             }
 
-            BigDecimal inflated = BigDecimal.valueOf(valueFractional).multiply(BigDecimal.valueOf(Math.pow(10, fractionLength)));
-
-            BigDecimal calc = inflated.divide(BigDecimal.valueOf(fraction), MathContext.DECIMAL128);
-            BigDecimal result = calc.add(BigDecimal.valueOf(valueLong));
-            if (negative) {
-                result = result.multiply(BigDecimal.valueOf(-1));
-            }
-
-            return new NumberEval(result.doubleValue());
+            double result = valueLong + valueFractional * Math.pow(10, fractionLength) / fraction;
+            return new NumberEval(negative ? -result : result);
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }

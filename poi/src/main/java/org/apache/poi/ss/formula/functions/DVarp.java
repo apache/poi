@@ -17,12 +17,11 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.util.NumberToTextConverter;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -42,12 +41,19 @@ public final class DVarp implements IDStarAlgorithm {
 
     @Override
     public ValueEval getResult() {
+        if (values.isEmpty()) {
+            return ErrorEval.DIV_ZERO;
+        }
+        if (values.size() == 1) {
+            // the population variance of a single value is 0, as in Excel
+            return NumberEval.ZERO;
+        }
         final double[] array = new double[values.size()];
         int pos = 0;
         for (NumericValueEval d : values) {
             array[pos++] = d.getNumberValue();
         }
         final double var = StatsLib.varp(array);
-        return new NumberEval(new BigDecimal(NumberToTextConverter.toText(var)).doubleValue());
+        return new NumberEval(var);
     }
 }
