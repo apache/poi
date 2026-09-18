@@ -25,8 +25,7 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.concurrent.ThreadLocalRandom;
@@ -36,6 +35,17 @@ public abstract class NumericFunction implements Function {
     private static final double ZERO = 0.0;
     private static final double TEN = 10.0;
     private static final double LOG_10_TO_BASE_e = Math.log(TEN);
+
+    /**
+     * Excel refuses more than 127 decimal places in DOLLAR and FIXED (#VALUE!)
+     */
+    static final int MAX_FORMATTED_DECIMALS = 127;
+    /**
+     * Rounding to fewer than this many places (i.e. to a multiple of 10^400) can only give 0 for
+     * any double, so smaller counts are clamped: they would otherwise make BigDecimal build a
+     * power of ten with billions of digits.
+     */
+    static final int MIN_FORMATTED_DECIMALS = -400;
 
 
     protected static double singleOperandEvaluate(ValueEval arg, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
@@ -91,18 +101,17 @@ public abstract class NumericFunction implements Function {
             double val = singleOperandEvaluate(args[0], srcRowIndex, srcColumnIndex);
             double d1 = args.length == 1 ? 2.0 : singleOperandEvaluate(args[1], srcRowIndex, srcColumnIndex);
 
-            if (d1 > 127) {
+            if (d1 > MAX_FORMATTED_DECIMALS) {
                 return VALUE_INVALID;
             }
             // second arg converts to int by truncating toward zero
             int nPlaces = OperandResolver.coerceDoubleToInt(d1);
 
-            if (nPlaces < 0) {
-                BigDecimal divisor = BigDecimal.valueOf(Math.pow(10, -nPlaces));
-                BigInteger bigInt = BigDecimal.valueOf(val).divide(divisor, MathContext.DECIMAL128)
-                        .toBigInteger().multiply(divisor.toBigInteger());
-                val = bigInt.doubleValue();
-            }
+            // Excel rounds half away from zero on its 15-digit view: DOLLAR(2.675,2) is $2.68 and
+            // DOLLAR(1550,-2) is $1,600. Rounded as a decimal, and formatted as one, so that the
+            // binary value never shows through.
+            BigDecimal rounded = ExcelArithmetic.toBigDecimal(val)
+                    .setScale(Math.max(nPlaces, MIN_FORMATTED_DECIMALS), RoundingMode.HALF_UP);
 
             DecimalFormat nf = (DecimalFormat) NumberFormat.getCurrencyInstance(LocaleUtil.getUserLocale());
             int decimalPlaces = Math.max(nPlaces, 0);
@@ -117,7 +126,7 @@ public abstract class NumericFunction implements Function {
             nf.setMinimumFractionDigits(decimalPlaces);
             nf.setMaximumFractionDigits(decimalPlaces);
 
-            return new StringEval(nf.format(val).replace("\u00a0"," "));
+            return new StringEval(nf.format(rounded).replace("\u00a0"," "));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }

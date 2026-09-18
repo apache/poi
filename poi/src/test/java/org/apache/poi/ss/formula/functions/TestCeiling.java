@@ -99,6 +99,10 @@ final class TestCeiling {
             assertDouble(fe, cell, "CEILING(2.5,1)", 3.0, 0);
             assertDouble(fe, cell, "CEILING(2.5,0.5)", 2.5, 0);
             assertDouble(fe, cell, "CEILING(1E15+0.5,1)", 1E15 + 1, 0);
+            // the significance is seen the same way: 0.1*3 is 0.3, not 0.30000000000000004
+            assertDouble(fe, cell, "CEILING(0.9,0.1*3)", 0.9, 0);
+            assertDouble(fe, cell, "CEILING(1.6,0.7+0.1)", 1.6, 0);
+            assertDouble(fe, cell, "CEILING(-0.9,-(0.1*3))", -0.9, 0);
         }
     }
 }

@@ -91,6 +91,9 @@ class TestMRound {
             confirm(evaluator, cell, "MROUND(-2.5, -1)", -3);
             confirm(evaluator, cell, "MROUND(2.4999999999999996, 1)", 3);
             confirm(evaluator, cell, "MROUND(2.49999999999999, 1)", 2);
+            // and on the 15-digit view of the multiple: 0.1*3 is 0.3, so 0.45/0.3 is exactly 1.5
+            confirm(evaluator, cell, "MROUND(0.45, 0.1*3)", 0.6);
+            confirm(evaluator, cell, "MROUND(1.2, 0.7+0.1)", 1.6);
         }
     }
 

@@ -97,6 +97,19 @@ final class TestNumericFunction {
             assertString(fe, cell, "DOLLAR(-0.123,4)", "($0.1230)");
             assertString(fe, cell, "DOLLAR(99.888)", "$99.89");
             assertString(fe, cell, "DOLLAR(123456789.567,2)", "$123,456,789.57");
+            // rounds half away from zero on Excel's 15-digit view, as Excel does (2.675 is
+            // 2.67499999999999982 in binary; 1550/100 is exactly 15.5)
+            assertString(fe, cell, "DOLLAR(2.675,2)", "$2.68");
+            assertString(fe, cell, "DOLLAR(-2.675,2)", "($2.68)");
+            assertString(fe, cell, "DOLLAR(1.005,2)", "$1.01");
+            assertString(fe, cell, "DOLLAR(1550,-2)", "$1,600");
+            assertString(fe, cell, "DOLLAR(-1550,-2)", "($1,600)");
+            assertString(fe, cell, "DOLLAR(0.1,20)", "$0.10000000000000000000");
+            assertString(fe, cell, "DOLLAR(1,127)", "$1." + "0".repeat(127));
+            // places are bounded: over 127 is #VALUE!, a hugely negative count gives 0
+            assertError(fe, cell, "DOLLAR(1,128)", FormulaError.VALUE);
+            assertString(fe, cell, "DOLLAR(1,-400)", "$0");
+            assertString(fe, cell, "DOLLAR(1E300,-1000000000)", "$0");
         } finally {
             LocaleUtil.setUserLocale(defaultLocale);
         }
