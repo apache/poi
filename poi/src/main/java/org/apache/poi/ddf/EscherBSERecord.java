@@ -107,7 +107,11 @@ public final class EscherBSERecord extends EscherRecord {
         field_9_name = data[pos + 33];
         field_10_unused2 = data[pos + 34];
         field_11_unused3 = data[pos + 35];
-        bytesRemaining = Math.max(0, bytesRemaining - 36);
+        if (bytesRemaining < 36) {
+            throw new RecordFormatException("EscherBSERecord declares " + bytesRemaining
+                    + " bytes but needs at least 36 for its fixed fields");
+        }
+        bytesRemaining -= 36;
 
         int bytesRead = 0;
         if (bytesRemaining > 0) {
