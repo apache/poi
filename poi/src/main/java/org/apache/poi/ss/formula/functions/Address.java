@@ -40,6 +40,9 @@ public class Address implements Function {
 
             int row = MathUtil.safeDoubleToInt(NumericFunction.singleOperandEvaluate(args[0], srcRowIndex, srcColumnIndex));
             int col = MathUtil.safeDoubleToInt(NumericFunction.singleOperandEvaluate(args[1], srcRowIndex, srcColumnIndex));
+            if (row < 1 || col < 1) {
+                return ErrorEval.VALUE_INVALID;
+            }
 
             int refType;
             if (args.length > 2  &&  args[2] != MissingArgEval.instance) {
