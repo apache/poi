@@ -90,7 +90,16 @@ final class OperandClassTransformer {
         if (isSimpleValueFunc) {
             boolean localForceArray = desiredOperandClass == Ptg.CLASS_ARRAY;
             for (ParseNode child : children) {
-                transformNode(child, desiredOperandClass, localForceArray);
+                byte childOperandClass = desiredOperandClass;
+                if (desiredOperandClass == Ptg.CLASS_REF && !(child.getToken() instanceof AbstractFunctionPtg)) {
+                    // The function's own parameters are all 'V' class, so a 'R' request from the
+                    // caller (e.g. the 2nd/3rd argument of IF) must not leak through to a plain
+                    // reference operand - Excel shows #VALUE! for IF(A1<>"",MID(A1,1,2),"X")
+                    // if A1 is left as 'R' (bugs 55324 and 55747). Nested functions keep the
+                    // caller's class, e.g. FREQUENCY stays 'A' in COUNT(ABS(FREQUENCY(...))).
+                    childOperandClass = Ptg.CLASS_VALUE;
+                }
+                transformNode(child, childOperandClass, localForceArray);
             }
             setSimpleValueFuncClass((AbstractFunctionPtg) token, desiredOperandClass, callerForceArrayFlag);
             return;
