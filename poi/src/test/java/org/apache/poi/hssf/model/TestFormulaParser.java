@@ -623,6 +623,18 @@ final class TestFormulaParser {
 
         //  2^200% -> 2 not 1.6E58
         confirmTokenClasses("2^200%", IntPtg.class, IntPtg.class, PercentPtg.class, PowerPtg.class);
+
+        // negation binds tighter than '^': -2^2 is (-2)^2 = 4, not -(2^2)
+        Ptg[] ptgs = confirmTokenClasses("-2^2", NumberPtg.class, IntPtg.class, PowerPtg.class);
+        assertEquals(-2, ((NumberPtg) ptgs[0]).getValue(), 0.0);
+        confirmTokenClasses("-A1^2", RefPtg.class, UnaryMinusPtg.class, IntPtg.class, PowerPtg.class);
+        confirmTokenClasses("-(2^2)", IntPtg.class, IntPtg.class, PowerPtg.class, ParenthesisPtg.class, UnaryMinusPtg.class);
+        confirmTokenClasses("-2^2^3", NumberPtg.class, IntPtg.class, PowerPtg.class, IntPtg.class, PowerPtg.class);
+        // '%' binds tighter than '^' (and the sign is applied outside the percent, as before)
+        confirmTokenClasses("-2%^2", IntPtg.class, PercentPtg.class, UnaryMinusPtg.class, IntPtg.class, PowerPtg.class);
+        // a sign in the exponent is part of the exponent
+        ptgs = confirmTokenClasses("2^-2", IntPtg.class, NumberPtg.class, PowerPtg.class);
+        assertEquals(-2, ((NumberPtg) ptgs[1]).getValue(), 0.0);
     }
 
     /* package */ static Ptg[] confirmTokenClasses(String formula, Class<?>...expectedClasses) {
