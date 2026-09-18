@@ -52,9 +52,10 @@ public class FactDouble extends Fixed1ArgFunction implements FreeRefFunction {
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
         double number;
         try {
-            number = ExcelArithmetic.truncate(OperandResolver.coerceValueToDouble(numberVE));
+            ValueEval ve = OperandResolver.getSingleValue(numberVE, srcRowIndex, srcColumnIndex);
+            number = ExcelArithmetic.truncate(OperandResolver.coerceValueToDouble(ve));
         } catch (EvaluationException e) {
-            return ErrorEval.VALUE_INVALID;
+            return e.getErrorEval();
         }
 
         // 300!! is about 8.2E307; 301!! and 302!! overflow a double

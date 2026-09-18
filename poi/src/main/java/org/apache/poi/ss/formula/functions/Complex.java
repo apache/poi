@@ -90,7 +90,12 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
             return ErrorEval.VALUE_INVALID;
         }
 
-        String suffixValue = OperandResolver.coerceValueToString(suffix);
+        String suffixValue;
+        try {
+            suffixValue = OperandResolver.coerceValueToString(OperandResolver.getSingleValue(suffix, srcRowIndex, srcColumnIndex));
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
         if (suffixValue.isEmpty()) {
             suffixValue = DEFAULT_SUFFIX;
         }

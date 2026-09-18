@@ -406,20 +406,24 @@ public final class Countif extends Fixed2ArgFunction {
             // If the criteria arg is a reference to a blank cell, countif always returns zero.
             return NumberEval.ZERO;
         }
-        double result = countMatchingCellsInArea(arg0, mp);
-        return new NumberEval(result);
+        try {
+            return new NumberEval(countMatchingCellsInArea(arg0, mp));
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
     }
     /**
      * @return the number of evaluated cells in the range that match the specified criteria
      */
-    private double countMatchingCellsInArea(ValueEval rangeArg, I_MatchPredicate criteriaPredicate) {
+    private double countMatchingCellsInArea(ValueEval rangeArg, I_MatchPredicate criteriaPredicate) throws EvaluationException {
 
         if (rangeArg instanceof RefEval refEval) {
             return CountUtils.countMatchingCellsInRef(refEval, criteriaPredicate);
         } else if (rangeArg instanceof ThreeDEval threeDEval) {
             return CountUtils.countMatchingCellsInArea(threeDEval, criteriaPredicate);
         } else {
-            throw new IllegalArgumentException("Bad range arg type (" + rangeArg.getClass().getName() + ")");
+            // the range argument must be a reference or an array
+            throw new EvaluationException(ErrorEval.VALUE_INVALID);
         }
     }
 

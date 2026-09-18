@@ -223,9 +223,11 @@ public abstract class MatrixFunction implements Function{
             if (result.length == 1)
                 return vals[0];
             else {
-                return new CacheAreaEval(((AreaEval) arg0).getFirstRow(), ((AreaEval) arg0).getFirstColumn(),
-                        ((AreaEval) arg0).getFirstRow() + height - 1,
-                        ((AreaEval) arg0).getFirstColumn() + width - 1, vals);
+                // more than one result, so at least one argument was an area: anchor the result on it
+                AreaEval anchor = arg0 instanceof AreaEval ae0 ? ae0 : (AreaEval) arg1;
+                return new CacheAreaEval(anchor.getFirstRow(), anchor.getFirstColumn(),
+                        anchor.getFirstRow() + height - 1,
+                        anchor.getFirstColumn() + width - 1, vals);
             }
 
         }
