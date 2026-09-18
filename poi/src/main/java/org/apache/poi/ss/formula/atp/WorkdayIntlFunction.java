@@ -21,11 +21,11 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.util.MathUtil;
 
 /**
  * Implementation of Excel 'Analysis ToolPak' function WORKDAY.INTL()<br>
@@ -69,11 +69,11 @@ final class WorkdayIntlFunction implements FreeRefFunction {
         double[] holidays;
         try {
             start = this.evaluator.evaluateDateArg(args[0], srcCellRow, srcCellCol);
-            days = MathUtil.safeDoubleToInt(
+            days = OperandResolver.coerceDoubleToInt(
                     Math.floor(this.evaluator.evaluateNumberArg(args[1], srcCellRow, srcCellCol)));
             if (args.length >= 3) {
                 if (args[2] != BlankEval.instance) {
-                    weekendType = MathUtil.safeDoubleToInt(
+                    weekendType = OperandResolver.coerceDoubleToInt(
                             this.evaluator.evaluateNumberArg(args[2], srcCellRow, srcCellCol));
                 }
                 if (!WorkdayCalculator.instance.getValidWeekendTypes().contains(weekendType)) {

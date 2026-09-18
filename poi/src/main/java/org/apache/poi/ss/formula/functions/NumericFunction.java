@@ -22,7 +22,6 @@ import static org.apache.poi.ss.formula.eval.ErrorEval.VALUE_INVALID;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.util.ExcelArithmetic;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.StringUtil;
 
 import java.math.BigDecimal;
@@ -92,12 +91,11 @@ public abstract class NumericFunction implements Function {
             double val = singleOperandEvaluate(args[0], srcRowIndex, srcColumnIndex);
             double d1 = args.length == 1 ? 2.0 : singleOperandEvaluate(args[1], srcRowIndex, srcColumnIndex);
 
-            // second arg converts to int by truncating toward zero
-            int nPlaces = MathUtil.safeDoubleToInt(d1);
-
-            if (nPlaces > 127) {
+            if (d1 > 127) {
                 return VALUE_INVALID;
             }
+            // second arg converts to int by truncating toward zero
+            int nPlaces = OperandResolver.coerceDoubleToInt(d1);
 
             if (nPlaces < 0) {
                 BigDecimal divisor = BigDecimal.valueOf(Math.pow(10, -nPlaces));

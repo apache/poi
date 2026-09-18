@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula.eval;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.LinkedHashMap;
@@ -138,5 +139,20 @@ final class TestOperandResolver {
         assertNull(OperandResolver.parseDouble("1.5E999"));
         // the largest finite double is still fine
         assertEquals(Double.MAX_VALUE, OperandResolver.parseDouble("1.7976931348623157E308"), 0);
+    }
+
+    @Test
+    void testCoerceDoubleToInt() throws EvaluationException {
+        assertEquals(2, OperandResolver.coerceDoubleToInt(2.9));
+        assertEquals(-2, OperandResolver.coerceDoubleToInt(-2.9));
+        assertEquals(Integer.MAX_VALUE, OperandResolver.coerceDoubleToInt(Integer.MAX_VALUE));
+        assertEquals(Integer.MIN_VALUE, OperandResolver.coerceDoubleToInt(Integer.MIN_VALUE));
+        for (double d : new double[]{1E10, -1E10, 2147483648.0, -2147483649.0,
+                Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NaN}) {
+            EvaluationException e = assertThrows(EvaluationException.class, () -> OperandResolver.coerceDoubleToInt(d));
+            assertEquals(ErrorEval.NUM_ERROR, e.getErrorEval());
+        }
+        EvaluationException e = assertThrows(EvaluationException.class, () -> OperandResolver.coerceValueToInt(new NumberEval(1E10)));
+        assertEquals(ErrorEval.NUM_ERROR, e.getErrorEval());
     }
 }
