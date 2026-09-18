@@ -1028,4 +1028,30 @@ public class TestMathX extends BaseTestNumeric {
         s = 10;
         assertDouble("floor ", -130, MathX.floor(d, s));
     }
+
+    @Test
+    void testModIsExcelsDefinition() {
+        // MOD(n, d) = n - d*INT(n/d)
+        assertDouble(1.5, MathX.mod(5.5, 2));
+        assertDouble(0.5, MathX.mod(-5.5, 2));
+        assertDouble(-0.5, MathX.mod(5.5, -2));
+        assertDouble(-1.5, MathX.mod(-5.5, -2));
+        assertDouble(0.0, MathX.mod(6, 3));
+        assertDouble(0.0, MathX.mod(-6, 3));
+        assertDouble(0.0, MathX.mod(1, 0.1));
+        assertDouble(10 - 3 * 3.3, MathX.mod(10, 3.3));
+        // INT acts on the 15-digit view: 0.7/0.1 is 6.999999999999999 in binary, 7 to Excel
+        assertDouble(0.0, MathX.mod(0.7, 0.1));
+        assertDouble(0.0, MathX.mod(880000000 * 0.00849, 3));
+        assertDouble(0.0, MathX.mod(0.3 - 0.1 - 0.1, 0.1));
+        // and the subtraction cancels to exactly zero like Excel
+        assertDouble(0.0, MathX.mod(0.1 + 0.2, 0.3));
+        assertDouble(0.0, MathX.mod(0.1 * 3, 0.1));
+        // very large quotients overflow Excel's formula: fall back to the exact remainder
+        assertDouble(1.0, MathX.mod(1e300, 7));
+        assertDouble(6.0, MathX.mod(-1e300, 7));
+        assertDouble(-6.0, MathX.mod(1e300, -7));
+        assertDouble(-1.0, MathX.mod(-1e300, -7));
+        assertDouble(0.0, MathX.mod(Double.MAX_VALUE, 1));
+    }
 }

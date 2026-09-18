@@ -20,10 +20,7 @@ package org.apache.poi.ss.formula.eval;
 import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.Fixed2ArgFunction;
 import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.util.NumberToTextConverter;
-
-import java.math.BigDecimal;
-import java.math.MathContext;
+import org.apache.poi.ss.util.ExcelArithmetic;
 
 public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction implements ArrayFunction {
 
@@ -65,6 +62,9 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
                 if (!(this instanceof SubtractEvalClass)) {
                     return NumberEval.ZERO;
                 }
+            } else if (Math.abs(result) < Double.MIN_NORMAL) {
+                // Excel does not support subnormal numbers: underflow gives 0
+                return NumberEval.ZERO;
             }
             if (Double.isNaN(result) || Double.isInfinite(result)) {
                 return ErrorEval.NUM_ERROR;
@@ -80,7 +80,7 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
     public static final Function AddEval = new TwoOperandNumericOperation() {
         @Override
         protected double evaluate(double d0, double d1) {
-            return d0+d1;
+            return ExcelArithmetic.approxAdd(d0, d1);
         }
     };
     public static final Function DivideEval = new TwoOperandNumericOperation() {
@@ -89,17 +89,13 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
             if (d1 == 0.0) {
                 throw new EvaluationException(ErrorEval.DIV_ZERO);
             }
-            BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
-            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
-            return bd0.divide(bd1, MathContext.DECIMAL128).doubleValue();
+            return d0 / d1;
         }
     };
     public static final Function MultiplyEval = new TwoOperandNumericOperation() {
         @Override
         protected double evaluate(double d0, double d1) {
-            BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
-            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
-            return bd0.multiply(bd1).doubleValue();
+            return d0 * d1;
         }
     };
     public static final Function PowerEval = new TwoOperandNumericOperation() {
@@ -117,7 +113,7 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
         }
         @Override
         protected double evaluate(double d0, double d1) {
-            return d0-d1;
+            return ExcelArithmetic.approxSub(d0, d1);
         }
     }
     public static final Function SubtractEval = new SubtractEvalClass();
