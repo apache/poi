@@ -810,6 +810,33 @@ class TestXWPFRun {
     }
 
     @Test
+    void testGettersDoNotAddEmptyRunProperties() throws IOException {
+        // https://bz.apache.org/bugzilla/show_bug.cgi?id=69554
+        // the getters used to add empty <w:highlight/>, <w:vertAlign/> and <w:em/> elements when
+        // the run already had run properties - Word reports such documents as invalid
+        try (XWPFDocument document = new XWPFDocument()) {
+            XWPFRun run = document.createParagraph().createRun();
+            run.setText("Hello");
+            run.setBold(true);
+
+            assertSame(STHighlightColor.NONE, run.getTextHighlightColor());
+            assertFalse(run.isHighlighted());
+            assertSame(STVerticalAlignRun.BASELINE, run.getVerticalAlignment());
+            assertSame(STEm.NONE, run.getEmphasisMark());
+            assertEquals(UnderlinePatterns.NONE, run.getUnderline());
+            assertEquals("auto", run.getUnderlineColor());
+            assertSame(STThemeColor.NONE, run.getUnderlineThemeColor());
+
+            CTRPr rpr = run.getCTR().getRPr();
+            assertEquals(0, rpr.sizeOfHighlightArray());
+            assertEquals(0, rpr.sizeOfVertAlignArray());
+            assertEquals(0, rpr.sizeOfEmArray());
+            assertEquals(0, rpr.sizeOfUArray());
+            assertTrue(rpr.validate(), "run properties should be schema valid");
+        }
+    }
+
+    @Test
     void testSetGetUnderlineColor() throws IOException {
         try (XWPFDocument document = new XWPFDocument()) {
             XWPFRun run = document.createParagraph().createRun();
