@@ -37,7 +37,6 @@ public abstract class NumericFunction implements Function {
     private static final double ZERO = 0.0;
     private static final double TEN = 10.0;
     private static final double LOG_10_TO_BASE_e = Math.log(TEN);
-    private static final long PARITY_MASK = 0xFFFFFFFFFFFFFFFEL;
 
 
     protected static double singleOperandEvaluate(ValueEval arg, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
@@ -202,28 +201,31 @@ public abstract class NumericFunction implements Function {
 
     public static final Function POISSON = Poisson::evaluate;
 
+    //https://support.microsoft.com/en-us/office/odd-function-deae64eb-e08a-4c88-8b40-6d0b42575c98
     public static final Function ODD = oneDouble(NumericFunction::evaluateOdd);
 
     private static double evaluateOdd(double d) {
-        if (d==0) {
-            return 1;
-        }
-        double dpm = Math.abs(d)+1;
-        long x = ((long) dpm) & PARITY_MASK;
-        return (double) MathX.sign(d) * ((Double.compare(x, dpm) == 0) ? x-1 : x+1);
+        return roundAwayFromZero(d, 1);
     }
 
-
+    //https://support.microsoft.com/en-us/office/even-function-197b5f06-c795-4c1e-8696-3c3b8a646cf9
     public static final Function EVEN = oneDouble(NumericFunction::evaluateEven);
 
     private static double evaluateEven(double d) {
-        if (d==0) {
-            return 0;
-        }
+        return roundAwayFromZero(d, 0);
+    }
 
-        double dpm = Math.abs(d);
-        long x = ((long) dpm) & PARITY_MASK;
-        return (double) MathX.sign(d) * ((Double.compare(x, dpm) == 0) ? x : (x + 2));
+    /**
+     * Rounds away from zero to the nearest integer with the given parity, e.g. 1.5 to 3 (odd) or 2 (even)
+     * and -1.5 to -3 or -2. Like INT and CEILING this acts on the 15 significant digits Excel exposes, so
+     * 2.0000000000000004 is treated as 2. Computed in doubles so that magnitudes beyond the long range work.
+     */
+    private static double roundAwayFromZero(double d, int parity) {
+        double m = Math.ceil(Math.abs(ExcelArithmetic.approxValue(d)));
+        if (m % 2 != parity) {
+            m += 1;
+        }
+        return d < 0 ? -m : m;
     }
 
 
