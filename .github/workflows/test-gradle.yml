@@ -36,5 +36,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    # SpotBugs is left to the nightly Jenkins jobs (the 'jenkins' task runs 'check' in full):
+    # it cannot fail this build (ignoreFailures = true) and only adds time and memory pressure here
     - name: Build with Gradle
-      run: ./gradlew check -PjdkVersion=17 --no-daemon --refresh-dependencies
+      run: ./gradlew check -PjdkVersion=17 -x spotbugsMain -x spotbugsTest --no-daemon --refresh-dependencies
