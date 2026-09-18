@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
@@ -40,6 +41,10 @@ public final class DVar implements IDStarAlgorithm {
 
     @Override
     public ValueEval getResult() {
+        if (values.size() < 2) {
+            // a sample needs at least two values, as in Excel
+            return ErrorEval.DIV_ZERO;
+        }
         final double[] array = new double[values.size()];
         int pos = 0;
         for (NumericValueEval d : values) {
