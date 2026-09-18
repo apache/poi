@@ -107,7 +107,7 @@ public final class EscherBSERecord extends EscherRecord {
         field_9_name = data[pos + 33];
         field_10_unused2 = data[pos + 34];
         field_11_unused3 = data[pos + 35];
-        bytesRemaining -= 36;
+        bytesRemaining = Math.max(0, bytesRemaining - 36);
 
         int bytesRead = 0;
         if (bytesRemaining > 0) {
@@ -121,7 +121,7 @@ public final class EscherBSERecord extends EscherRecord {
             bytesRead = field_12_blipRecord.fillFields( data, pos + 36, recordFactory );
         }
         pos += 36 + bytesRead;
-        bytesRemaining -= bytesRead;
+        bytesRemaining = Math.max(0, bytesRemaining - bytesRead);
 
         _remainingData = IOUtils.safelyClone(data, pos, bytesRemaining, MAX_RECORD_LENGTH,
                 "EscherBSERecord.setMaxRecordLength()");
