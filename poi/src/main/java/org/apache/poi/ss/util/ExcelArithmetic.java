@@ -60,6 +60,7 @@ public final class ExcelArithmetic {
      *
      * @return the truncated value as a double, so that magnitudes beyond the long range work
      * @see #approxValue(double)
+     * @since 6.0.0
      */
     public static double truncate(double d) {
         double a = approxValue(d);
