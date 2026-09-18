@@ -54,7 +54,9 @@ public class Sqrtpi implements FreeRefFunction {
             if (isInvalidInput(d)) {
                 return ErrorEval.NUM_ERROR;
             }
-            return new NumberEval(Math.sqrt(Math.PI * d));
+            double result = Math.sqrt(Math.PI * d);
+            NumericFunction.checkValue(result);
+            return new NumberEval(result);
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
