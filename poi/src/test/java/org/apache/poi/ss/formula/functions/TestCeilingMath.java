@@ -123,4 +123,31 @@ final class TestCeilingMath {
             assertDouble(fe, cell, "CEILING.MATH(-0.1*3,0.1,-1)", -0.3, 0);
         }
     }
+
+    @Test
+    void testZeroSignificance() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            // Excel returns 0 for a significance of 0, whatever the number
+            assertDouble(fe, cell, "CEILING.MATH(7.3,0)", 0.0, 0);
+            assertDouble(fe, cell, "CEILING.MATH(-7.3,0)", 0.0, 0);
+            assertDouble(fe, cell, "CEILING.MATH(0,0)", 0.0, 0);
+            assertDouble(fe, cell, "CEILING.MATH(-7.3,0,-1)", 0.0, 0);
+        }
+    }
+
+    @Test
+    void testBeyondDoubleRange() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertError(fe, cell, "CEILING.MATH(1E400)", FormulaError.NUM);
+            assertError(fe, cell, "CEILING.MATH(5,1E400)", FormulaError.NUM);
+            assertError(fe, cell, "CEILING.MATH(\"1E400\")", FormulaError.VALUE);
+            assertError(fe, cell, "CEILING.MATH(5,\"1E400\")", FormulaError.VALUE);
+            // a result that would overflow a double
+            assertError(fe, cell, "CEILING.MATH(1.7E308,1E308)", FormulaError.NUM);
+        }
+    }
 }

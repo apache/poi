@@ -54,6 +54,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.apache.poi.ss.usermodel.FormulaError;
+import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.apache.poi.ss.util.Utils.assertError;
 
 /**
  * Tests {@link WorkbookEvaluator}.
@@ -677,6 +680,27 @@ class TestWorkbookEvaluator {
             assertEquals(6.0, assertInstanceOf(NumberEval.class, evaluator.evaluateFormula(ec, ptgs)).getNumberValue(), 0.0);
             a1.setCellValue(5);
             assertEquals(15.0, assertInstanceOf(NumberEval.class, evaluator.evaluateFormula(ec, ptgs)).getNumberValue(), 0.0);
+        }
+    }
+
+    /**
+     * A number literal beyond the double range parses to Infinity; Excel evaluates it to #NUM!,
+     * and treats such text as non-numeric (#VALUE!)
+     */
+    @Test
+    void testNumberLiteralBeyondDoubleRange() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertError(fe, cell, "1E400", FormulaError.NUM);
+            assertError(fe, cell, "-1E400", FormulaError.NUM);
+            assertError(fe, cell, "1E400+1", FormulaError.NUM);
+            assertError(fe, cell, "1E400*0", FormulaError.NUM);
+            assertError(fe, cell, "SQRTPI(1E400)", FormulaError.NUM);
+            assertError(fe, cell, "VALUE(\"1E400\")", FormulaError.VALUE);
+            assertError(fe, cell, "\"1E400\"+0", FormulaError.VALUE);
+            assertError(fe, cell, "SQRTPI(\"1E400\")", FormulaError.VALUE);
+            assertDouble(fe, cell, "1.7976931348623157E308", Double.MAX_VALUE, 0);
         }
     }
 }
