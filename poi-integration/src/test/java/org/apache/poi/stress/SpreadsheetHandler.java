@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ss.extractor.EmbeddedData;
 import org.apache.poi.ss.extractor.EmbeddedExtractor;
@@ -39,17 +40,19 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 
         extractEmbedded(wb);
 
-        // write out the file
-        writeToArray(wb);
+        // write out the file - the output is not needed, so do not buffer it on the heap
+        wb.write(NullOutputStream.INSTANCE);
 
         // access some more content (we had cases where writing corrupts the data in memory)
         readContent(wb);
 
-        // write once more
-        UnsynchronizedByteArrayOutputStream out = writeToArray(wb);
-
-        // read in the written file
-        Workbook read = WorkbookFactory.create(out.toInputStream());
+        // write once more and read in the written file. The serialized bytes are only needed
+        // to open the second workbook, so keep them out of scope while it is processed - the
+        // second workbook holds its own (decompressed) copy of the parts.
+        final Workbook read;
+        try (UnsynchronizedByteArrayOutputStream out = writeToArray(wb)) {
+            read = WorkbookFactory.create(out.toInputStream());
+        }
 
         assertNotNull(read);
 

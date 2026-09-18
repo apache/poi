@@ -26,6 +26,7 @@ import java.io.PushbackInputStream;
 import java.nio.file.Files;
 import java.util.Set;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -44,8 +45,12 @@ public class OPCFileHandler extends AbstractFileHandler {
 
         if (StressTestUtils.excludeFile(path, EXPECTED_FAILURES)) return;
 
-        OPCPackage p = OPCPackage.open(stream);
+        try (OPCPackage p = OPCPackage.open(stream)) {
+            checkParts(p);
+        }
+    }
 
+    private static void checkParts(OPCPackage p) throws InvalidFormatException {
         for (PackagePart part : p.getParts()) {
             if (part.getPartName().toString().equals("/docProps/core.xml")) {
                 assertEquals(ContentTypes.CORE_PROPERTIES_PART, part.getContentType());

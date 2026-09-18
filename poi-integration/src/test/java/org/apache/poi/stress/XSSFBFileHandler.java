@@ -45,7 +45,9 @@ public class XSSFBFileHandler extends AbstractFileHandler {
             testOne(opcPackage);
         }
 
-        testNotHandledByWorkbookException(OPCPackage.open(UnsynchronizedByteArrayInputStream.builder().setByteArray(bytes).get()));
+        try (OPCPackage opcPackage = OPCPackage.open(UnsynchronizedByteArrayInputStream.builder().setByteArray(bytes).get())) {
+            testNotHandledByWorkbookException(opcPackage);
+        }
     }
 
     private void testNotHandledByWorkbookException(OPCPackage pkg) throws IOException {

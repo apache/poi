@@ -348,6 +348,21 @@ public final class IOUtils {
 
         final int derivedLen = isLengthKnown && length >= 0 ? Math.min(length, derivedMaxLength) : derivedMaxLength;
         final int byteArrayInitLen = calculateByteArrayInitLength(isLengthKnown, length, derivedMaxLength, maxInitBufferSize);
+        if (isLengthKnown && length >= 0 && byteArrayInitLen == derivedLen) {
+            // The whole payload fits the initial allocation, so read it straight into the result
+            // array. Going through a ByteArrayOutputStream would hold a second full copy of the
+            // data while toByteArray() copies it out, doubling the transient memory of every
+            // sized read (zip entries, records, ...).
+            final byte[] result = new byte[derivedLen];
+            final int totalBytes = Math.max(readFully(stream, result), 0);
+            if (totalBytes == derivedLen) {
+                return result;
+            }
+            if (checkEOFException) {
+                throw new EOFException("unexpected EOF - expected len: " + derivedLen + " - actual len: " + totalBytes);
+            }
+            return Arrays.copyOf(result, totalBytes);
+        }
         final int internalBufferLen = DEFAULT_BUFFER_SIZE;
         try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(byteArrayInitLen).get()) {
             byte[] buffer = new byte[internalBufferLen];
