@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.apache.poi.ss.util.Utils.assertDoubleAndDisplay;
 
 /**
  * Testcase for function DSTDEV() and DSTDEVP()
@@ -53,6 +54,19 @@ public class TestDStdev {
             assertDouble(fe, cell, "DSTDEVP(A5:E11, \"Yield\", A1:A3)", 2.65329983228432, 0.0000000001);
             assertDouble(fe, cell, "DSTDEVP(A5:E11, \"Yield\", A12:A13)", 0.816496580927726, 0.0000000001);
             assertDouble(fe, cell, "DSTDEVP(A5:E11, \"Yield\", B12:C14)", 2.43241991988774, 0.0000000001);
+        }
+    }
+
+    @Test
+    void testResultIsNotRoundedToFifteenDigits() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
+            // the full IEEE 754 results, which Excel displays with 15 significant digits
+            assertDoubleAndDisplay(fe, cell, "DSTDEV(A5:E11, \"Yield\", A1:A3)", 2.9664793948382653, "2.96647939483827");
+            assertDoubleAndDisplay(fe, cell, "DSTDEV(A5:E11, \"Yield\", B12:C14)", 2.6645825188948455, "2.66458251889485");
+            assertDoubleAndDisplay(fe, cell, "DSTDEVP(A5:E11, \"Yield\", A1:A3)", 2.65329983228432, "2.65329983228432");
+            assertDoubleAndDisplay(fe, cell, "DSTDEVP(A5:E11, \"Yield\", A12:A13)", 0.816496580927726, "0.816496580927726");
         }
     }
 

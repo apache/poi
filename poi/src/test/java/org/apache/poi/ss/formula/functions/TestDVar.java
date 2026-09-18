@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.apache.poi.ss.util.Utils.assertDoubleAndDisplay;
 
 /**
  * Testcase for function DVAR() and DVARP()
@@ -54,6 +55,18 @@ public class TestDVar {
             assertDouble(fe, cell, "DVARP(A4:E10, \"Yield\", A1:A3)", 7.04, 0.0000000001);
             assertDouble(fe, cell, "DVARP(A4:E10, \"Yield\", A12:A13)", 0.666666666666667, 0.0000000001);
             assertDouble(fe, cell, "DVARP(A4:E10, \"Yield\", B12:C13)", 8.1875, 0.0000000001);
+        }
+    }
+
+    @Test
+    void testResultIsNotRoundedToFifteenDigits() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
+            // yields 14, 9, 10, 6: the full IEEE 754 result, which Excel displays as 10.9166666666667
+            assertDoubleAndDisplay(fe, cell, "DVAR(A4:E10, \"Yield\", B12:C13)", 10.916666666666666, "10.9166666666667");
+            assertDoubleAndDisplay(fe, cell, "DVARP(A4:E10, \"Yield\", B12:C13)", 8.1875, "8.1875");
+            assertDoubleAndDisplay(fe, cell, "DVARP(A4:E10, \"Yield\", A12:A13)", 2.0 / 3, "0.666666666666667");
         }
     }
 

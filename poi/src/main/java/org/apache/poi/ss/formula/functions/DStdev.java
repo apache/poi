@@ -20,9 +20,7 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.util.NumberToTextConverter;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -48,6 +46,6 @@ public final class DStdev implements IDStarAlgorithm {
             array[pos++] = d.getNumberValue();
         }
         final double stdev = StatsLib.stdev(array);
-        return new NumberEval(new BigDecimal(NumberToTextConverter.toText(stdev)).doubleValue());
+        return new NumberEval(stdev);
     }
 }
