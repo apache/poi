@@ -353,8 +353,15 @@ public final class IOUtils {
             // array. Going through a ByteArrayOutputStream would hold a second full copy of the
             // data while toByteArray() copies it out, doubling the transient memory of every
             // sized read (zip entries, records, ...).
+            // Keep reading in DEFAULT_BUFFER_SIZE chunks as the buffered path does, so that
+            // streams which enforce limits per read (e.g. the zip-bomb ratio check) report
+            // the same byte counts as before.
             final byte[] result = new byte[derivedLen];
-            final int totalBytes = Math.max(readFully(stream, result), 0);
+            int totalBytes = 0, readBytes;
+            do {
+                readBytes = stream.read(result, totalBytes, Math.min(DEFAULT_BUFFER_SIZE, derivedLen - totalBytes));
+                totalBytes += Math.max(readBytes, 0);
+            } while (totalBytes < derivedLen && readBytes > -1);
             if (totalBytes == derivedLen) {
                 return result;
             }
