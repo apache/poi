@@ -53,6 +53,20 @@ public final class ExcelArithmetic {
     }
 
     /**
+     * Truncates towards zero on the 15-digit view of the value, which is what Excel does with
+     * the non-integer arguments of QUOTIENT, GCD, LCM, FACT, FACTDOUBLE, COMBIN, ISEVEN, ISODD
+     * and friends ("if number is not an integer, it is truncated"): {@code 2.9999999999999996}
+     * and {@code -2.9999999999999996} become 3 and -3, {@code 2.5} becomes 2.
+     *
+     * @return the truncated value as a double, so that magnitudes beyond the long range work
+     * @see #approxValue(double)
+     */
+    public static double truncate(double d) {
+        double a = approxValue(d);
+        return a < 0 ? Math.ceil(a) : Math.floor(a);
+    }
+
+    /**
      * Excel 97 and later compensate for the error introduced by converting decimal
      * operands to binary when an addition or subtraction lands at or very close to
      * zero: if the two magnitudes are equal to Excel (same 15 significant digits,

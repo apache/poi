@@ -322,4 +322,47 @@ final class TestNumericFunction {
         assertDouble(fe, cell, "ODD(2.9999999999999996)", 3.0, 0);
         assertDouble(fe, cell, "ODD(1.00000000000001)", 3.0, 0);
     }
+
+    @Test
+    void testFACTTruncatesOnExcelsFifteenDigitView() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        //https://support.microsoft.com/en-us/office/fact-function-ca8588c2-15f2-41c0-8e8c-c11bd471a4f3
+        assertDouble(fe, cell, "FACT(5)", 120.0, 0);
+        assertDouble(fe, cell, "FACT(1.9)", 1.0, 0);
+        assertDouble(fe, cell, "FACT(0)", 1.0, 0);
+        assertError(fe, cell, "FACT(-1)", FormulaError.NUM);
+        assertDouble(fe, cell, "FACT(1)", 1.0, 0);
+        // 4.999999999999999 is 5 to Excel
+        assertDouble(fe, cell, "FACT(5-0.0000000000000009)", 120.0, 0);
+        assertDouble(fe, cell, "FACT(5.0000000000000004)", 120.0, 0);
+        assertDouble(fe, cell, "FACT(4.99999999999999)", 24.0, 0);
+        assertDouble(fe, cell, "FACT(170.99999999999)", 7.257415615307994E306, 0);
+        assertError(fe, cell, "FACT(171-0.00000000000002)", FormulaError.NUM);
+        assertError(fe, cell, "FACT(-0.9999999999999996)", FormulaError.NUM);
+        assertDouble(fe, cell, "FACT(-0.5)", 1.0, 0);
+    }
+
+    @Test
+    void testCOMBIN() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        //https://support.microsoft.com/en-us/office/combin-function-12a3f276-0a21-423a-8de6-06990aaf638a
+        assertDouble(fe, cell, "COMBIN(8,2)", 28.0, 0);
+        assertDouble(fe, cell, "COMBIN(8.9,2.9)", 28.0, 0);
+        assertDouble(fe, cell, "COMBIN(0,0)", 1.0, 0);
+        assertError(fe, cell, "COMBIN(-1,2)", FormulaError.NUM);
+        assertError(fe, cell, "COMBIN(8,-2)", FormulaError.NUM);
+        assertError(fe, cell, "COMBIN(2,8)", FormulaError.NUM);
+        // 4.999999999999999 is 5 to Excel
+        assertDouble(fe, cell, "COMBIN(5-0.0000000000000009,2)", 10.0, 0);
+        assertDouble(fe, cell, "COMBIN(5,2-0.0000000000000004)", 10.0, 0);
+        assertDouble(fe, cell, "COMBIN(4.99999999999999,2)", 6.0, 0);
+        // out of the int range used to escape as an IllegalArgumentException for negative values
+        assertError(fe, cell, "COMBIN(5E9,2)", FormulaError.NUM);
+        assertError(fe, cell, "COMBIN(-5E9,2)", FormulaError.NUM);
+        assertError(fe, cell, "COMBIN(5,-5E9)", FormulaError.NUM);
+    }
 }

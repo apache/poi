@@ -147,12 +147,15 @@ public abstract class NumericFunction implements Function {
 
     public static final Function CEILING = twoDouble(MathX::ceiling);
 
-    public static final Function COMBIN = twoDouble((d0, d1) ->
-        (d0 > Integer.MAX_VALUE || d1 > Integer.MAX_VALUE) ?
-                ErrorEval.NUM_ERROR :
-                MathX.nChooseK(
-                        MathUtil.safeDoubleToInt(d0),
-                        MathUtil.safeDoubleToInt(d1)));
+    public static final Function COMBIN = twoDouble((d0, d1) -> {
+        // Excel truncates both arguments, on its 15-digit view
+        double n = ExcelArithmetic.truncate(d0);
+        double k = ExcelArithmetic.truncate(d1);
+        if (Math.abs(n) > Integer.MAX_VALUE || Math.abs(k) > Integer.MAX_VALUE) {
+            return ErrorEval.NUM_ERROR;
+        }
+        return MathX.nChooseK((int) n, (int) k);
+    });
 
     public static final Function FLOOR = twoDouble((d0, d1) ->
         (d1 == ZERO) ? (d0 == ZERO ? ZERO : ErrorEval.DIV_ZERO) : MathX.floor(d0, d1));

@@ -21,6 +21,7 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.NumericFunction;
+import org.apache.poi.ss.util.ExcelArithmetic;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -59,6 +60,9 @@ final class MRound implements FreeRefFunction {
                     // Returns #NUM! because the number and the multiple have different signs
                     throw new EvaluationException(ErrorEval.NUM_ERROR);
                 }
+                // like FLOOR and CEILING, round on Excel's 15-digit view of the number:
+                // MROUND(0.7+0.1,1.6) is 1.6, although 0.7999999999999999/1.6 is just under 0.5
+                number = ExcelArithmetic.approxValue(number);
                 BigDecimal bdMultiple = BigDecimal.valueOf(multiple);
                 result = bdMultiple.multiply(BigDecimal.valueOf(number).divide(bdMultiple, 0, RoundingMode.HALF_UP))
                         .doubleValue();
