@@ -98,6 +98,7 @@ public final class Sumproduct implements Function, ArrayMode {
             double val = getScalarValue(evalArg);
             term *= val;
         }
+        NumericFunction.checkValue(term);
         return new NumberEval(term);
     }
 
@@ -166,6 +167,8 @@ public final class Sumproduct implements Function, ArrayMode {
             }
         }
 
+        // overflow is #NUM!, as for SUM and PRODUCT
+        NumericFunction.checkValue(acc);
         return new NumberEval(acc);
     }
 
