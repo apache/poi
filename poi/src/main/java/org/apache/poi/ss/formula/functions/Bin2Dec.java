@@ -20,7 +20,7 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.RefEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.StringUtil;
@@ -47,10 +47,10 @@ public class Bin2Dec extends Fixed1ArgFunction implements FreeRefFunction {
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
         final String number;
-        if (numberVE instanceof RefEval re) {
-            number = OperandResolver.coerceValueToString(re.getInnerValueEval(re.getFirstSheetIndex()));
-        } else {
-            number = OperandResolver.coerceValueToString(numberVE);
+        try {
+            number = OperandResolver.coerceValueToString(OperandResolver.getSingleValue(numberVE, srcRowIndex, srcColumnIndex));
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
         }
         if (number.length() > 10) {
             return ErrorEval.NUM_ERROR;

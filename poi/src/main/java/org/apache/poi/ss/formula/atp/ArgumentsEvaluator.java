@@ -112,6 +112,6 @@ final class ArgumentsEvaluator {
             return 0f;
         }
 
-        return OperandResolver.coerceValueToDouble(arg);
+        return OperandResolver.coerceValueToDouble(OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol));
     }
 }
