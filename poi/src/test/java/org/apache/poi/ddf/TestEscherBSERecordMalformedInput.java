@@ -18,8 +18,11 @@
 package org.apache.poi.ddf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 
 class TestEscherBSERecordMalformedInput {
