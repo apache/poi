@@ -20,6 +20,7 @@
  */
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.formula.functions.XYNumericFunction.Accumulator;
@@ -551,6 +552,24 @@ public class TestMathX extends BaseTestNumeric {
         n = Integer.MAX_VALUE;
         s = MathX.factorial(n);
         assertDouble("Factorial ", Double.POSITIVE_INFINITY, s);
+    }
+
+    @Test
+    void testFactorialDouble() {
+        // assertEquals rather than assertDouble: the latter does not really check NaN
+        assertEquals(1, MathX.factorial(0.0));
+        assertEquals(1, MathX.factorial(0.9));
+        assertEquals(1, MathX.factorial(-0.9));
+        assertEquals(120, MathX.factorial(5.5));
+        assertEquals(7.257415615307994E306, MathX.factorial(170.9));
+        assertEquals(Double.NaN, MathX.factorial(-1.0));
+        assertEquals(Double.NaN, MathX.factorial(Double.NaN));
+        assertEquals(Double.POSITIVE_INFINITY, MathX.factorial(171.0));
+        // beyond the int range: no IllegalArgumentException
+        assertEquals(Double.POSITIVE_INFINITY, MathX.factorial(1E10));
+        assertEquals(Double.POSITIVE_INFINITY, MathX.factorial(Double.POSITIVE_INFINITY));
+        assertEquals(Double.NaN, MathX.factorial(-1E10));
+        assertEquals(Double.NaN, MathX.factorial(Double.NEGATIVE_INFINITY));
     }
 
     @Test

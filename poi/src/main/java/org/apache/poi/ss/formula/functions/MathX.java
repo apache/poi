@@ -20,7 +20,6 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.util.ExcelArithmetic;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.MathUtil;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -58,7 +57,7 @@ final class MathX {
     }
 
     public static double round(double n, double p) {
-        return round(n, MathUtil.safeDoubleToInt(p));
+        return round(n, clampDigits(p));
     }
 
 
@@ -83,7 +82,7 @@ final class MathX {
     }
 
     public static double roundUp(double n, double p) {
-        return roundUp(n, MathUtil.safeDoubleToInt(p));
+        return roundUp(n, clampDigits(p));
     }
 
 
@@ -107,7 +106,19 @@ final class MathX {
     }
 
     public static double roundDown(double n, double p) {
-        return roundDown(n, MathUtil.safeDoubleToInt(p));
+        return roundDown(n, clampDigits(p));
+    }
+
+    /**
+     * A double has at most 15 significant digits and a decimal exponent within +/-324, so rounding
+     * to more than this many digits either side of the decimal point can never change the value.
+     * Larger digit counts are clamped to it: they would make {@link java.math.BigDecimal#setScale}
+     * build a number with billions of digits.
+     */
+    private static final int MAX_ROUNDING_DIGITS = 400;
+
+    private static int clampDigits(double p) {
+        return (int) Math.max(-MAX_ROUNDING_DIGITS, Math.min(MAX_ROUNDING_DIGITS, p));
     }
 
     private static double round(double n, int p, java.math.RoundingMode rounding) {
@@ -116,7 +127,7 @@ final class MathX {
         }
         else {
             final String excelNumber = NumberToTextConverter.toText(n);
-            return new java.math.BigDecimal(excelNumber).setScale(p, rounding).doubleValue();
+            return new java.math.BigDecimal(excelNumber).setScale(clampDigits(p), rounding).doubleValue();
         }
     }
 
@@ -320,7 +331,17 @@ final class MathX {
     }
 
     public static double factorial(double d) {
-        return factorial(MathUtil.safeDoubleToInt(d));
+        if (Double.isNaN(d)) {
+            return Double.NaN;
+        }
+        if (d >= 171) {
+            // beyond Double.MAX_VALUE (and possibly beyond the int range)
+            return Double.POSITIVE_INFINITY;
+        }
+        if (d <= -1) {
+            return Double.NaN;
+        }
+        return factorial((int) d);
     }
 
 

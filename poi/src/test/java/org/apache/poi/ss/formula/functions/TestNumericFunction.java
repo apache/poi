@@ -222,4 +222,44 @@ final class TestNumericFunction {
         assertError(fe, cell, "INT(\"abc\")", FormulaError.VALUE);
         assertError(fe, cell, "INT(1/0)", FormulaError.DIV0);
     }
+
+    @Test
+    void testFACTOutOfIntRange() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        assertDouble(fe, cell, "FACT(170)", 7.257415615307994E306, 0);
+        assertDouble(fe, cell, "FACT(170.9)", 7.257415615307994E306, 0);
+        assertDouble(fe, cell, "FACT(-0.5)", 1.0, 0);
+        assertError(fe, cell, "FACT(171)", FormulaError.NUM);
+        assertError(fe, cell, "FACT(-1)", FormulaError.NUM);
+        // used to escape as an IllegalArgumentException from MathUtil.safeDoubleToInt
+        assertError(fe, cell, "FACT(1E10)", FormulaError.NUM);
+        assertError(fe, cell, "FACT(1E308)", FormulaError.NUM);
+        assertError(fe, cell, "FACT(-1E10)", FormulaError.NUM);
+    }
+
+    @Test
+    void testROUNDWithHugeDigitCount() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        // digit counts beyond the int range used to escape as an IllegalArgumentException,
+        // and counts within it but in the hundreds of millions made BigDecimal.setScale run for minutes
+        for (String digits : new String[] {"400", "1000", "100000000", "2147483647", "1E10", "1E308"}) {
+            assertDouble(fe, cell, "ROUND(1.5," + digits + ")", 1.5, 0);
+            assertDouble(fe, cell, "ROUNDUP(1.5," + digits + ")", 1.5, 0);
+            assertDouble(fe, cell, "ROUNDDOWN(1.5," + digits + ")", 1.5, 0);
+            assertDouble(fe, cell, "TRUNC(1.5," + digits + ")", 1.5, 0);
+            assertDouble(fe, cell, "ROUND(1.5,-" + digits + ")", 0.0, 0);
+            assertDouble(fe, cell, "ROUNDDOWN(1.5,-" + digits + ")", 0.0, 0);
+            assertDouble(fe, cell, "TRUNC(1.5,-" + digits + ")", 0.0, 0);
+            assertError(fe, cell, "ROUNDUP(1.5,-" + digits + ")", FormulaError.NUM);
+        }
+        // the extremes of Excel's number range are still rounded correctly (Excel has no subnormals)
+        assertDouble(fe, cell, "ROUND(2.3E-308,400)", 2.3E-308, 0);
+        assertDouble(fe, cell, "ROUND(2.3E-308,307)", 0.0, 0);
+        assertDouble(fe, cell, "ROUND(1.5E308,-307)", 1.5E308, 0);
+        assertDouble(fe, cell, "ROUND(1.5E308,-309)", 0.0, 0);
+    }
 }

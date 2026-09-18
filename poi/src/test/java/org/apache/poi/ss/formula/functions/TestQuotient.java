@@ -65,6 +65,16 @@ class TestQuotient {
     }
 
     @Test
+    void testQuotientOutsideIntRange() {
+        // used to escape as an IllegalArgumentException from MathUtil.safeDoubleToInt
+        confirmValue("Integer portion of 5E9/2", "5000000000", "2", "2500000000");
+        confirmValue("Integer portion of -5E9/2", "-5000000000", "2", "-2500000000");
+        confirmValue("Integer portion of 1E20/3", "1E20", "3", "33333333333333300000");
+        confirmValue("Integer portion of 2^53/1", "9007199254740992", "1", "9007199254740990");
+        confirmValueError("quotient overflows a double", "1E308", "1E-10", ErrorEval.NUM_ERROR);
+    }
+
+    @Test
     void testErrors() {
         confirmValueError("numerator is nonnumeric", "ABCD", "", ErrorEval.VALUE_INVALID);
         confirmValueError("denominator is nonnumeric", "", "ABCD", ErrorEval.VALUE_INVALID);
