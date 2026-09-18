@@ -425,7 +425,9 @@ public class DataFormatter {
         // A value a date format cannot show (negative, or past 9999-12-31) is displayed by Excel as
         // ########; show it as a plain number. Checked before the cache, so that neither the date
         // format is applied to such a value nor a number format built from a date pattern gets cached.
-        if (DateUtil.isADateFormat(formatIndex, formatStr) && !DateUtil.isValidExcelDate(cellValue)) {
+        // Decided on the format string alone: a conditional format can carry a built-in date index
+        // with a number pattern such as "0.00E+00", which must keep formatting as a number.
+        if (!DateUtil.isValidExcelDate(cellValue) && DateUtil.isADateFormat(-1, formatStr)) {
             return getDefaultFormat(cellValue);
         }
 
