@@ -69,6 +69,9 @@ final class TestTwoOperandNumericOperation {
         assertSame(ErrorEval.NUM_ERROR, TwoOperandNumericOperation.MultiplyEval.evaluate(
                 new ValueEval[] { new NumberEval(1e200), new NumberEval(1e200) }, 0, 0));
         assertSame(ErrorEval.NUM_ERROR, TwoOperandNumericOperation.DivideEval.evaluate(
+                new ValueEval[] { new NumberEval(1e200), new NumberEval(1e-200) }, 0, 0));
+        // a subnormal operand is already zero (NumberEval flushes it), so dividing by it is #DIV/0!
+        assertSame(ErrorEval.DIV_ZERO, TwoOperandNumericOperation.DivideEval.evaluate(
                 new ValueEval[] { new NumberEval(1), new NumberEval(Double.MIN_VALUE) }, 0, 0));
     }
 
@@ -217,7 +220,9 @@ final class TestTwoOperandNumericOperation {
             Utils.assertError(fe, cell, "1E308*10", FormulaError.NUM);
             Utils.assertError(fe, cell, "1E308+1E308", FormulaError.NUM);
             Utils.assertError(fe, cell, "-1E308-1E308", FormulaError.NUM);
-            Utils.assertError(fe, cell, "1/1E-308/1E-10", FormulaError.NUM);
+            Utils.assertError(fe, cell, "1E300/1E-300/1E-10", FormulaError.NUM);
+            // the literal 1E-308 is below the smallest normal double, so it is 0 and dividing by it is #DIV/0!
+            Utils.assertError(fe, cell, "1/1E-308", FormulaError.DIV0);
             Utils.assertError(fe, cell, "1/0", FormulaError.DIV0);
             Utils.assertError(fe, cell, "0/0", FormulaError.DIV0);
             // results below the smallest normal double are 0, as Excel has no subnormals
