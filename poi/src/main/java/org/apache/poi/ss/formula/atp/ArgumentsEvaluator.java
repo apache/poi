@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.formula.eval.AreaEvalBase;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
@@ -52,16 +53,24 @@ final class ArgumentsEvaluator {
     public double evaluateDateArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
         ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, (short) srcCellCol);
 
+        double result;
         if (ve instanceof StringEval se) {
             String strVal = se.getStringValue();
             Double dVal = OperandResolver.parseDouble(strVal);
             if (dVal != null) {
-                return dVal.doubleValue();
+                result = dVal;
+            } else {
+                LocalDate date = DateParser.parseLocalDate(strVal);
+                result = DateUtil.getExcelDate(date, false);
             }
-            LocalDate date = DateParser.parseLocalDate(strVal);
-            return DateUtil.getExcelDate(date, false);
+        } else {
+            result = OperandResolver.coerceValueToDouble(ve);
         }
-        return OperandResolver.coerceValueToDouble(ve);
+        if (result < 0 || result >= DateUtil.MAX_EXCEL_DATE_SERIAL + 1) {
+            // not a date Excel can work with
+            throw new EvaluationException(ErrorEval.NUM_ERROR);
+        }
+        return result;
     }
 
     /**
