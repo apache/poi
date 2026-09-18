@@ -39,14 +39,24 @@ public final class NumberEval implements NumericValueEval, StringValueEval {
         if (ptg instanceof IntPtg ip) {
             _value = ip.getValue();
         } else if (ptg instanceof NumberPtg np) {
-            _value = np.getValue();
+            _value = flushSubnormal(np.getValue());
         } else {
             throw new IllegalArgumentException("bad argument type (" + ptg.getClass().getName() + ")");
         }
     }
 
     public NumberEval(double value) {
-        _value = value;
+        _value = flushSubnormal(value);
+    }
+
+    /**
+     * Excel has no subnormal numbers: anything closer to zero than {@link Double#MIN_NORMAL}
+     * (about 2.2E-308) is zero to it, whether typed in, read from a cell or produced by a
+     * function. Doing this here covers every path that puts a number into a formula result.
+     * The sign of zero is kept as it is.
+     */
+    private static double flushSubnormal(double value) {
+        return value != 0.0 && Math.abs(value) < Double.MIN_NORMAL ? 0.0 : value;
     }
 
     public double getNumberValue() {
