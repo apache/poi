@@ -18,26 +18,33 @@
 package org.apache.poi.ss.formula.eval;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.Random;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.util.Utils;
-import org.junit.jupiter.api.Test;
-import java.util.Random;
 import org.apache.poi.ss.util.NumberToTextConverter;
+import org.apache.poi.ss.util.Utils;
 import org.apache.poi.ss.usermodel.FormulaError;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the arithmetic operators behave as in Excel: plain IEEE 754 double
  * precision, no subnormal numbers, and an addition/subtraction that lands very close
  * to zero gives exactly zero.
+ *
+ * Also tests the {@link TwoOperandNumericOperation#isExactShortDecimal(double)}
+ * fast path: whenever both operands pass the predicate the evaluator must produce
+ * a result bit-identical to the BigDecimal-based reference implementation.
  *
  * @see <a href="https://learn.microsoft.com/en-us/office/troubleshoot/excel/floating-point-arithmetic-inaccurate-result">Floating-point arithmetic may give inaccurate result in Excel</a>
  */
@@ -257,5 +264,159 @@ final class TestTwoOperandNumericOperation {
                 assertEquals(c[1], NumberToTextConverter.toText(cell.getNumericCellValue()), c[0]);
             }
         }
+    }
+
+    // ===== Tests for isExactShortDecimal fast path =====
+
+    @Test
+    void testIsExactShortDecimal() {
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(0.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(1.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(-1.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(2.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(0.5));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(-0.5));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(0.25));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(0.75));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(0.125));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(2.5));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(-2.5));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(3.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(35.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(60.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(1024.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(65536.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(Math.pow(2, 20)));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(999_999_999_999_999.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(123_456_789_012_345.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(1_000_000_000_000_000.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(1e15));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(1e16));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(1_234_500_000_000_000.0));
+        assertTrue(TwoOperandNumericOperation.isExactShortDecimal(123450000000000.0));
+
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(-0.0));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(Double.NaN));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(Double.POSITIVE_INFINITY));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(Double.NEGATIVE_INFINITY));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(0.1));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(0.2));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(0.3));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(1.1));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(10.99));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(1.23456789012345));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(1.234567890123456));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(1.2345678901234567));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(Math.pow(2, 52)));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(Math.pow(2, 53)));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(Math.pow(2, 53) + 1));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(1e100));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(1e20));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(1_234_567_890_123_456.0));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(9.007199254740992E15));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(Double.MIN_VALUE));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(Double.MIN_NORMAL));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(Double.MAX_VALUE));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(1e-300));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(5e-324));
+        assertFalse(TwoOperandNumericOperation.isExactShortDecimal(1e-10));
+    }
+
+    @Test
+    void testFastPathBitIdenticalToBigDecimalReference() {
+        double[] special = {
+            0.0, -0.0, 1.0, -1.0, 2.0, -2.0, 0.5, -0.5, 0.25, 0.75, 0.125, 2.5, -2.5,
+            0.1, 0.2, 0.3, 1.1, 10.99, 1.5, 3.0, -3.0, 35.0, 60.0,
+            1.23456789012345, 1.234567890123456, 1.2345678901234567,
+            Math.pow(2, 20), Math.pow(2, 52), Math.pow(2, 53), Math.pow(2, 53) + 1,
+            999_999_999_999_999.0, 1_000_000_000_000_000.0, 1e15, 1e16, 1e20, 1e100,
+            1_234_500_000_000_000.0, 123_456_789_012_345.0,
+            Double.MIN_NORMAL, Math.pow(2, -1022) * 1.5,
+            Double.MAX_VALUE, 1e-300,
+            9_007_199_254_740_992.0, 1024.0, 65536.0, 1e-10
+        };
+
+        for (double d0 : special) {
+            for (double d1 : special) {
+                assertBitIdentical(d0, d1);
+            }
+        }
+
+        Random r = new Random(42);
+        for (int i = 0; i < 200_000; i++) {
+            double d0 = Double.longBitsToDouble(r.nextLong());
+            double d1 = Double.longBitsToDouble(r.nextLong());
+            assertBitIdentical(d0, d1);
+        }
+    }
+
+    @Test
+    void testZeroDividendShortCircuitsDenormalDivisor() {
+        // the legacy BigDecimal path cannot round-trip a subnormal divisor, so a
+        // zero dividend must short-circuit before it instead of blowing up
+        ValueEval result = EvalInstances.Divide.evaluate(new ValueEval[] {
+            new NumberEval(0.0), new NumberEval(Double.MIN_VALUE),
+        }, 0, (short) 0);
+        assertTrue(result instanceof NumberEval);
+        assertEquals(0.0, ((NumberEval) result).getNumberValue(), 0);
+    }
+
+    private static void assertBitIdentical(double d0, double d1) {
+        boolean both = TwoOperandNumericOperation.isExactShortDecimal(d0)
+                && TwoOperandNumericOperation.isExactShortDecimal(d1);
+        assertTrue(!both || isFinite(d0) && isFinite(d1),
+                "predicate must never accept NaN/Infinity: (" + d0 + ", " + d1 + ")");
+        if (!isFinite(d0) || !isFinite(d1)) {
+            // NaN and infinities are never produced by actual cell values; the
+            // legacy BigDecimal reference cannot round-trip them either
+            return;
+        }
+        double multiplyRef = normalizeZero(multiplyCurrent(d0, d1));
+        assertOpParity(EvalInstances.Multiply, d0, d1, multiplyRef, both, "multiply");
+        if (d1 != 0.0 && Math.abs(d1) >= Double.MIN_NORMAL) {
+            // divisors below MIN_NORMAL cannot be represented by the legacy
+            // BigDecimal fallback (rounded to zero), so only normal divisors compare
+            assertOpParity(EvalInstances.Divide, d0, d1, normalizeZero(divideCurrent(d0, d1)), both, "divide");
+        }
+    }
+
+    private static boolean isFinite(double d) {
+        return !Double.isNaN(d) && !Double.isInfinite(d);
+    }
+
+    private static void assertOpParity(Function function, double d0, double d1, double ref, boolean both, String op) {
+        ValueEval result = function.evaluate(new ValueEval[] {
+            new NumberEval(d0), new NumberEval(d1),
+        }, 0, (short) 0);
+        if (result instanceof ErrorEval) {
+            if (((ErrorEval) result).getErrorCode() == FormulaError.NUM.getCode() && !isFinite(ref)) {
+                return; // overflow of the exact result, signalled as #NUM! by the evaluator
+            }
+            throw new AssertionError(op + "(" + d0 + ", " + d1 + ") unexpectedly " + result
+                    + " (fast=" + both + ", ref=" + ref + ")");
+        }
+        if (!(result instanceof NumberEval)) {
+            throw new AssertionError(op + "(" + d0 + ", " + d1 + ") unexpectedly " + result
+                    + " (fast=" + both + ", ref=" + ref + ")");
+        }
+        double api = ((NumberEval) result).getNumberValue();
+        assertTrue(Double.doubleToRawLongBits(ref) == Double.doubleToRawLongBits(api),
+                op + "(" + d0 + ", " + d1 + ") fast=" + both);
+    }
+
+    private static double normalizeZero(double value) {
+        return value == 0.0 ? 0.0 : value;
+    }
+
+    private static double multiplyCurrent(double d0, double d1) {
+        BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
+        BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
+        return bd0.multiply(bd1).doubleValue();
+    }
+
+    private static double divideCurrent(double d0, double d1) {
+        BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
+        BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
+        return bd0.divide(bd1, MathContext.DECIMAL128).doubleValue();
     }
 }
