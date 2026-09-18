@@ -32,11 +32,11 @@ class TestEscherBSERecordMalformedInput {
         // A BSE record has 36 bytes of fixed fields after its 8-byte header.
         // This malformed record declares only 35 bytes of payload.
         LittleEndian.putInt(data, 4, 35);
-
         EscherBSERecord record = new EscherBSERecord();
-        int bytesRead = record.fillFields(data, 0, new DefaultEscherRecordFactory());
-
-        assertEquals(44, bytesRead);
+        DefaultEscherRecordFactory factory = new DefaultEscherRecordFactory();
+        RecordFormatException e = assertThrows(RecordFormatException.class,
+                () -> record.fillFields(data, 0, factory));
+        assertTrue(e.getMessage().contains("needs at least 36"), e.getMessage());
         assertEquals(0, record.getRemainingData().length);
     }
 }
