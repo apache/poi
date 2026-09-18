@@ -3109,6 +3109,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         rowShifter.updateHyperlinks(formulaShifter);
 
         rebuildRows();
+        rebuildFormulaBookkeeping();
 
         for (XSSFTable table : overlappingTables) {
             rebuildTableFormulas(table);
@@ -3147,6 +3148,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         columnShifter.updateNamedRanges(formulaShifter);
 
         rebuildRows();
+        rebuildFormulaBookkeeping();
 
         for (XSSFTable table : overlappingTables) {
             rebuildTableFormulas(table);
@@ -3178,7 +3180,49 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         }
     }
 
+    /**
+     * Brings the {@code _rows} map back in sync with the row numbers after rows were renumbered.
+     * <p>
+     * {@code _rows} is keyed by the row numbers the rows had before the shift, so it iterates the rows
+     * in the order of the CTRow elements in CTSheetData. Usually shifting keeps that order intact
+     * (rows are only renumbered), in which case only the keys of {@code _rows} need to be refreshed
+     * and the XSSFRow and XSSFCell instances stay valid. The XML only needs to be reordered (and the
+     * rows recreated) when rows jumped over other rows, see bug 64516.
+     */
     private void rebuildRows() {
+        XSSFRow[] rowArray = new XSSFRow[_rows.size()];
+        int[] rownums = new int[rowArray.length];
+        boolean renumbered = false;
+        boolean inOrder = true;
+        int i = 0;
+        for (Map.Entry<Integer, XSSFRow> entry : _rows.entrySet()) {
+            XSSFRow row = entry.getValue();
+            int rownum = row.getRowNum();
+            if (rownum != entry.getKey()) {
+                renumbered = true;
+            }
+            if (i > 0 && rownum <= rownums[i - 1]) {
+                inOrder = false;
+                break;
+            }
+            rowArray[i] = row;
+            rownums[i] = rownum;
+            i++;
+        }
+        if (!renumbered) {
+            return;
+        }
+        if (inOrder) {
+            _rows.clear();
+            for (i = 0; i < rowArray.length; i++) {
+                // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+                //noinspection UnnecessaryBoxing
+                final Integer rownumI = Integer.valueOf(rownums[i]); // NOSONAR
+                _rows.put(rownumI, rowArray[i]);
+            }
+            return;
+        }
+
         //rebuild the CTSheetData CTRow order
         SortedMap<Long, CTRow> ctRows = new TreeMap<>();
         CTSheetData sheetData = getCTWorksheet().getSheetData();
@@ -3197,6 +3241,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             XSSFRow row = new XSSFRow(ctRow, this);
             Integer rownumI = Math.toIntExact(row.getRowNum());
             _rows.put(rownumI, row);
+        }
+    }
+
+    /**
+     * The shared and array formula bookkeeping refers to cell addresses and formula ranges,
+     * so it is refreshed from the cells once they and their formulas were shifted.
+     */
+    private void rebuildFormulaBookkeeping() {
+        for (XSSFRow row : _rows.values()) {
+            for (Cell cell : row) {
+                onReadCell((XSSFCell) cell);
+            }
         }
     }
 

@@ -20,7 +20,9 @@ package org.apache.poi.xssf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.stream.IntStream;
@@ -38,6 +40,7 @@ import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
@@ -523,6 +526,125 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         }*/
 
         wb.close();
+    }
+
+    // bug 70139: shifting rows rebuilt every row and cell from the XML, which was slow and
+    // invalidated the XSSFRow/XSSFCell instances the caller holds
+    @Test
+    void testShiftRowsKeepsRowAndCellInstances() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            for (int r = 0; r < 10; r++) {
+                XSSFRow row = sheet.createRow(r);
+                row.createCell(0).setCellValue("r" + r);
+                row.setHeightInPoints(12 + r);
+            }
+            XSSFRow row3 = sheet.getRow(3);
+            XSSFCell cell3 = row3.getCell(0);
+            XSSFRow row9 = sheet.getRow(9);
+
+            sheet.shiftRows(3, 9, 2);
+
+            assertNull(sheet.getRow(3));
+            assertNull(sheet.getRow(4));
+            assertSame(row3, sheet.getRow(5));
+            assertSame(cell3, sheet.getRow(5).getCell(0));
+            assertEquals("r3", cell3.getStringCellValue());
+            assertEquals(5, cell3.getRowIndex());
+            assertEquals(15, row3.getHeightInPoints(), 0);
+            assertSame(row9, sheet.getRow(11));
+            assertEquals(11, sheet.getLastRowNum());
+            assertRowsInOrder(sheet);
+
+            // the shifted row can be used further
+            row3.createCell(1).setCellValue("added");
+            XSSFRow inserted = sheet.createRow(3);
+            inserted.createCell(0).setCellValue("inserted");
+            assertRowsInOrder(sheet);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertEquals("inserted", sheet2.getRow(3).getCell(0).getStringCellValue());
+                assertNull(sheet2.getRow(4));
+                assertEquals("r3", sheet2.getRow(5).getCell(0).getStringCellValue());
+                assertEquals("added", sheet2.getRow(5).getCell(1).getStringCellValue());
+                assertEquals(15, sheet2.getRow(5).getHeightInPoints(), 0);
+                assertEquals("r9", sheet2.getRow(11).getCell(0).getStringCellValue());
+                assertRowsInOrder(sheet2);
+            }
+        }
+    }
+
+    // rows jumping over other rows (bug 64516) still need the XML rows to be reordered
+    @Test
+    void testShiftRowsOverOtherRowsKeepsSheetDataInOrder() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            for (int r = 0; r < 6; r++) {
+                sheet.createRow(r).createCell(0).setCellValue("r" + r);
+            }
+
+            // move row 5 on top of row 0, rows 1-4 are jumped over
+            sheet.shiftRows(5, 5, -5);
+
+            assertRowsInOrder(sheet);
+            assertEquals("r5", sheet.getRow(0).getCell(0).getStringCellValue());
+            assertEquals("r1", sheet.getRow(1).getCell(0).getStringCellValue());
+            assertNull(sheet.getRow(5));
+            sheet.removeRow(sheet.getRow(0));
+            assertEquals("r1", sheet.getRow(1).getCell(0).getStringCellValue());
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertNull(sheet2.getRow(0));
+                assertEquals("r1", sheet2.getRow(1).getCell(0).getStringCellValue());
+                assertEquals("r4", sheet2.getRow(4).getCell(0).getStringCellValue());
+                assertRowsInOrder(sheet2);
+            }
+        }
+    }
+
+    @Test
+    void testShiftSharedFormulasTwice() throws Exception {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFRow row5 = sheet.getRow(4);
+
+            sheet.shiftRows(3, sheet.getLastRowNum(), 1);
+            assertSame(row5, sheet.getRow(5));
+            assertEquals("SUM(C2:C5)", getCellFormula(sheet, "C6"));
+            assertEquals("SUM(E3:E6)", getCellFormula(sheet, "E7"));
+
+            sheet.shiftRows(3, sheet.getLastRowNum(), 2);
+            assertSame(row5, sheet.getRow(7));
+            assertEquals("SUM(C2:C7)", getCellFormula(sheet, "C8"));
+            assertEquals("SUM(D2:D7)", getCellFormula(sheet, "D8"));
+            assertEquals("SUM(E3:E8)", getCellFormula(sheet, "E9"));
+            assertRowsInOrder(sheet);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertEquals("SUM(C2:C7)", getCellFormula(sheet2, "C8"));
+                assertEquals("SUM(E3:E8)", getCellFormula(sheet2, "E9"));
+            }
+        }
+    }
+
+    private static void assertRowsInOrder(XSSFSheet sheet) {
+        long prev = 0;
+        int count = 0;
+        for (CTRow ctRow : sheet.getCTWorksheet().getSheetData().getRowList()) {
+            assertTrue(ctRow.getR() > prev, "row " + ctRow.getR() + " after row " + prev);
+            prev = ctRow.getR();
+            count++;
+        }
+        assertEquals(sheet.getPhysicalNumberOfRows(), count);
+        int i = 0;
+        for (Row row : sheet) {
+            assertSame(sheet.getRow(row.getRowNum()), row);
+            i++;
+        }
+        assertEquals(count, i);
     }
 
     @Test
