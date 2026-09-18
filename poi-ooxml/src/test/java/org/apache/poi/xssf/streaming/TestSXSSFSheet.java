@@ -30,6 +30,7 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ss.tests.usermodel.BaseTestXSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -163,6 +164,77 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
 
                 sheet.createRow(2);
             }
+        }
+    }
+
+    @Test
+    void appendRowsToTemplate() throws IOException {
+        // https://bz.apache.org/bugzilla/show_bug.cgi?id=67646
+        try (XSSFWorkbook template = new XSSFWorkbook()) {
+            XSSFSheet templateSheet = template.createSheet();
+            templateSheet.createRow(1).createCell(1).setCellValue("template 1");
+            templateSheet.createRow(2).createCell(1).setCellValue("template 2");
+
+            try (SXSSFWorkbook wb = new SXSSFWorkbook(template, 2)) {
+                SXSSFSheet sheet = wb.getSheetAt(0);
+                assertEquals(1, sheet.getFirstRowNum());
+                assertEquals(2, sheet.getLastRowNum());
+                assertEquals(2, sheet.getPhysicalNumberOfRows());
+
+                for (int i = 0; i < 5; i++) {
+                    int rowNum = sheet.getLastRowNum() + 1;
+                    assertEquals(3 + i, rowNum);
+                    sheet.createRow(rowNum).createCell(2).setCellValue("appended " + rowNum);
+                    assertEquals(rowNum, sheet.getLastRowNum());
+                }
+                assertEquals(1, sheet.getFirstRowNum());
+                assertEquals(7, sheet.getLastRowNum());
+                assertEquals(7, sheet.getPhysicalNumberOfRows());
+
+                // the last row number must survive all rows being flushed to disk
+                sheet.flushRows();
+                assertEquals(1, sheet.getFirstRowNum());
+                assertEquals(7, sheet.getLastRowNum());
+                assertEquals(7, sheet.getPhysicalNumberOfRows());
+
+                try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                    wb.write(bos);
+                    try (XSSFWorkbook result = new XSSFWorkbook(bos.toInputStream())) {
+                        XSSFSheet resultSheet = result.getSheetAt(0);
+                        assertEquals(1, resultSheet.getFirstRowNum());
+                        assertEquals(7, resultSheet.getLastRowNum());
+                        assertEquals(7, resultSheet.getPhysicalNumberOfRows());
+                        assertEquals("template 1", resultSheet.getRow(1).getCell(1).getStringCellValue());
+                        assertEquals("template 2", resultSheet.getRow(2).getCell(1).getStringCellValue());
+                        for (int rowNum = 3; rowNum <= 7; rowNum++) {
+                            assertEquals("appended " + rowNum, resultSheet.getRow(rowNum).getCell(2).getStringCellValue());
+                        }
+                        assertEquals(CellRangeAddress.valueOf("B2:C8"), resultSheet.getDimension());
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void lastRowNumAfterFlush() throws IOException {
+        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
+            SXSSFSheet sheet = wb.createSheet();
+            assertEquals(-1, sheet.getFirstRowNum());
+            assertEquals(-1, sheet.getLastRowNum());
+            assertEquals(0, sheet.getPhysicalNumberOfRows());
+
+            sheet.createRow(3);
+            sheet.createRow(5);
+            sheet.flushRows();
+            assertEquals(3, sheet.getFirstRowNum());
+            assertEquals(5, sheet.getLastRowNum());
+            assertEquals(2, sheet.getPhysicalNumberOfRows());
+
+            sheet.createRow(9);
+            assertEquals(3, sheet.getFirstRowNum());
+            assertEquals(9, sheet.getLastRowNum());
+            assertEquals(3, sheet.getPhysicalNumberOfRows());
         }
     }
 

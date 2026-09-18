@@ -161,7 +161,8 @@ public class SXSSFWorkbook implements Workbook {
      *   </li>
      *   <li>
      *       Append rows to existing sheets. The row number MUST be greater
-     *       than {@code max(rownum)} in the template sheet.
+     *       than {@code max(rownum)} in the template sheet, so use
+     *       {@code sheet.createRow(sheet.getLastRowNum() + 1)}.
      *   </li>
      *   <li>
      *       Use existing workbook as a template and re-use global objects such
