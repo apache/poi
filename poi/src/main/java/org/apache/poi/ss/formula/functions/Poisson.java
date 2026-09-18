@@ -24,7 +24,6 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.util.MathUtil;
 
 public class Poisson implements FreeRefFunction {
 
@@ -91,8 +90,8 @@ public class Poisson implements FreeRefFunction {
             boolean cumulative = cumulativeArg != null && cumulativeArg;
             PoissonDistribution poissonDistribution = new PoissonDistribution(mean);
             double result = cumulative ?
-                    poissonDistribution.cumulativeProbability( MathUtil.safeDoubleToInt(x)) :
-                    poissonDistribution.probability(MathUtil.safeDoubleToInt(x));
+                    poissonDistribution.cumulativeProbability( OperandResolver.coerceDoubleToInt(x)) :
+                    poissonDistribution.probability(OperandResolver.coerceDoubleToInt(x));
 
             // check the result
             NumericFunction.checkValue(result);

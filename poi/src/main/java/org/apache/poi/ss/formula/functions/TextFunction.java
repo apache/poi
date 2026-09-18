@@ -43,7 +43,12 @@ public abstract class TextFunction implements Function {
 
     protected static int evaluateIntArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
         ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
-        return OperandResolver.coerceValueToInt(ve);
+        try {
+            return OperandResolver.coerceValueToInt(ve);
+        } catch (EvaluationException e) {
+            // a count or position beyond the int range is #VALUE! in the text functions
+            throw EvaluationException.invalidValue();
+        }
     }
 
     protected static double evaluateDoubleArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {

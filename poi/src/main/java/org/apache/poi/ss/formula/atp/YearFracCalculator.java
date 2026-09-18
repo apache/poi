@@ -21,6 +21,7 @@ import java.util.Calendar;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
@@ -61,8 +62,8 @@ final class YearFracCalculator {
         // common logic for all bases
 
         // truncate day values
-        int startDateVal = MathUtil.safeDoubleToInt(Math.floor(pStartDateVal));
-        int endDateVal = MathUtil.safeDoubleToInt(Math.floor(pEndDateVal));
+        int startDateVal = OperandResolver.coerceDoubleToInt(Math.floor(pStartDateVal));
+        int endDateVal = OperandResolver.coerceDoubleToInt(Math.floor(pEndDateVal));
         if (startDateVal == endDateVal) {
             // when dates are equal, result is zero
             return 0;

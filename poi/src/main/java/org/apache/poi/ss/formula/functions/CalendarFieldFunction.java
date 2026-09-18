@@ -25,7 +25,6 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.util.MathUtil;
 
 /**
  * Implementation of Excel functions Date parsing functions:
@@ -63,7 +62,7 @@ public final class CalendarFieldFunction extends Fixed1ArgFunction {
     private int getCalField(double serialDate) {
        // For some reason, a date of 0 in Excel gets shown
        //  as the non-existent 1900-01-00
-        if (MathUtil.safeDoubleToInt(serialDate) == 0) {
+        if ((int) serialDate == 0) {
             switch (_dateFieldId) {
                 case Calendar.YEAR -> { return 1900; }
                 case Calendar.MONTH -> { return 1; }
