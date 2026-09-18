@@ -30,8 +30,8 @@ import org.apache.poi.ss.formula.ptg.RefPtg;
  *  when serialised into {@link Ptg}s in a HSSF file. While most cases are
  *  pretty chilled about the R vs V state of {@link RefPtg} arguments,
  *  for IF special care is needed to avoid Excel showing #VALUE.
- * See bug numbers #55324 and #55747 for the full details on this.
- * TODO Fix this...
+ * See bug numbers #55324 and #55747 for the full details on this, and
+ *  {@code OperandClassTransformer} for where the operand classes are chosen.
  */
 public final class IfFunc extends Var2or3ArgFunction implements ArrayFunction {
 
