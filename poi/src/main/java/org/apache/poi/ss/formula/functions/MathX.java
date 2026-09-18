@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.util.ExcelArithmetic;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.MathUtil;
@@ -234,6 +235,7 @@ final class MathX {
      * @param s
      */
     public static double floor(double n, double s) {
+        n = ExcelArithmetic.approxValue(n);
         if (s==0 && n!=0) {
             return Double.NaN;
         } else {
@@ -265,6 +267,7 @@ final class MathX {
      * @param s
      */
     public static double ceiling(double n, double s) {
+        n = ExcelArithmetic.approxValue(n);
         if (n>0 && s<0) {
             return Double.NaN;
         } else {
@@ -340,12 +343,16 @@ final class MathX {
         if (d == 0) {
             return Double.NaN;
         }
-        else if (sign(n) == sign(d)) {
+        // Excel defines MOD(n, d) = n - d*INT(n/d), with INT acting on the 15-digit view
+        double r = ExcelArithmetic.approxSub(n, Math.floor(ExcelArithmetic.approxValue(n / d)) * d);
+        if (!Double.isInfinite(r) && !Double.isNaN(r)) {
+            return r;
+        }
+        // n/d is too large for the Excel formula (Excel itself gives #NUM! here) - fall back to the exact remainder
+        if (sign(n) == sign(d)) {
             return n % d;
         }
-        else {
-            return ((n % d) + d) % d;
-        }
+        return ((n % d) + d) % d;
     }
 
     /**

@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ import java.util.Locale;
 
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.apache.poi.ss.util.Utils.assertString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Isolated // modifies the default locale and we don't want to affect other tests running in parallel
 final class TestNumericFunction {
@@ -42,9 +44,18 @@ final class TestNumericFunction {
         //the following INT(-880000000.0001) resulting in -880000001.0 has been observed in excel
         //see also https://support.microsoft.com/en-us/office/int-function-a6c4af9e-356d-4369-ab6a-cb1fd9d343ef
         assertDouble(fe, cell, "INT(-880000000.0001)", -880000001.0, 0);
-        assertDouble(fe, cell, "880000000*0.00849", 7471200.0, 0);
-        assertDouble(fe, cell, "880000000*0.00849/3", 2490400.0, 0);
+        // bug 65792: Excel calculates in IEEE 754 double precision (880000000*0.00849 is
+        // 7471199.999999999) and displays 15 significant digits, so the product shows as
+        // 7471200 and INT acts on that 15-digit view
+        assertDouble(fe, cell, "880000000*0.00849", 7471199.999999999, 0);
+        assertEquals("7471200", NumberToTextConverter.toText(7471199.999999999));
+        assertDouble(fe, cell, "880000000*0.00849/3", 2490399.9999999995, 0);
+        assertEquals("2490400", NumberToTextConverter.toText(2490399.9999999995));
         assertDouble(fe, cell, "INT(880000000*0.00849/3)", 2490400.0, 0);
+        assertDouble(fe, cell, "INT(2490399.9999999995)", 2490400.0, 0);
+        // but values that are exactly representable are not approximated
+        assertDouble(fe, cell, "INT(2490399.5)", 2490399.0, 0);
+        assertDouble(fe, cell, "INT(1E+20)", 1E+20, 0);
     }
 
     @Test
@@ -52,7 +63,9 @@ final class TestNumericFunction {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertDouble(fe, cell, "1.2*SQRT(5.678)", 2.85942651592938, 0);
+            // plain IEEE 754 multiplication, as in Excel; Excel displays the 15-digit view
+            assertDouble(fe, cell, "1.2*SQRT(5.678)", 2.859426515929374, 0);
+            assertEquals("2.85942651592937", NumberToTextConverter.toText(2.859426515929374));
         }
     }
 

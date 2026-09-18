@@ -23,6 +23,7 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.util.ExcelArithmetic;
 
 import java.math.RoundingMode;
 
@@ -50,6 +51,7 @@ public final class FloorPrecise implements FreeRefFunction {
             if (xval == null) {
                 return ErrorEval.VALUE_INVALID;
             }
+            xval = ExcelArithmetic.approxValue(xval);
             double multiplier = 1.0;
             if (args.length > 1) {
                 Double arg1Val = evaluateValue(args[1], ec.getRowIndex(), ec.getColumnIndex());
