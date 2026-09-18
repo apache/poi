@@ -1725,7 +1725,12 @@ public final class FormulaParser {
             throw expected("Integer");
         }
 
-        return getNumberPtgFromString(number1, number2, exponent);
+        Ptg ptg = getNumberPtgFromString(number1, number2, exponent);
+        if (ptg instanceof NumberPtg np && Double.isInfinite(np.getValue())) {
+            // Excel refuses to enter a formula whose literal is beyond the double range, e.g. 1E400
+            throw new FormulaParseException("Number literal is too large: " + number1 + (number2 == null ? "" : "." + number2) + "E" + exponent);
+        }
+        return ptg;
     }
 
 

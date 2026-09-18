@@ -684,19 +684,23 @@ class TestWorkbookEvaluator {
     }
 
     /**
-     * A number literal beyond the double range parses to Infinity; Excel evaluates it to #NUM!,
-     * and treats such text as non-numeric (#VALUE!)
+     * Excel has no infinite numbers: it refuses to enter a formula with a number literal beyond
+     * the double range, and treats such text as non-numeric (#VALUE!)
      */
     @Test
     void testNumberLiteralBeyondDoubleRange() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertError(fe, cell, "1E400", FormulaError.NUM);
-            assertError(fe, cell, "-1E400", FormulaError.NUM);
-            assertError(fe, cell, "1E400+1", FormulaError.NUM);
-            assertError(fe, cell, "1E400*0", FormulaError.NUM);
-            assertError(fe, cell, "SQRTPI(1E400)", FormulaError.NUM);
+            for (String formula : new String[]{"1E400", "-1E400", "1E400/10", "1.5E999", "SQRTPI(1E400)"}) {
+                assertThrows(FormulaParseException.class, () -> cell.setCellFormula(formula), formula);
+            }
+            // a NumberPtg built with an infinite value evaluates to #NUM! rather than storing Infinity
+            HSSFEvaluationWorkbook ewb = HSSFEvaluationWorkbook.create(wb);
+            WorkbookEvaluator evaluator = new WorkbookEvaluator(ewb, null, null);
+            OperationEvaluationContext ec = new OperationEvaluationContext(evaluator, ewb, 0, 0, 0);
+            ValueEval result = evaluator.evaluateFormula(ec, new Ptg[]{new NumberPtg(Double.POSITIVE_INFINITY)});
+            assertEquals(ErrorEval.NUM_ERROR, result);
             assertError(fe, cell, "VALUE(\"1E400\")", FormulaError.VALUE);
             assertError(fe, cell, "\"1E400\"+0", FormulaError.VALUE);
             assertError(fe, cell, "SQRTPI(\"1E400\")", FormulaError.VALUE);

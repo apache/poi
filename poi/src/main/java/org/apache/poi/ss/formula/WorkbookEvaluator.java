@@ -688,7 +688,8 @@ public final class WorkbookEvaluator {
         }
         if (ptg instanceof NumberPtg numberPtg) {
             double value = numberPtg.getValue();
-            // a literal beyond the double range, e.g. 1E400, parses to Infinity; Excel evaluates it to #NUM!
+            // the parser refuses a literal beyond the double range (e.g. 1E400), but a NumberPtg can be
+            // built with such a value: Excel has no infinite numbers, so it cannot be a result
             return Double.isFinite(value) ? new NumberEval(value) : ErrorEval.NUM_ERROR;
         }
         if (ptg instanceof StringPtg stringPtg) {

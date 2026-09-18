@@ -142,8 +142,6 @@ final class TestCeilingMath {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertError(fe, cell, "CEILING.MATH(1E400)", FormulaError.NUM);
-            assertError(fe, cell, "CEILING.MATH(5,1E400)", FormulaError.NUM);
             assertError(fe, cell, "CEILING.MATH(\"1E400\")", FormulaError.VALUE);
             assertError(fe, cell, "CEILING.MATH(5,\"1E400\")", FormulaError.VALUE);
             // a result that would overflow a double
