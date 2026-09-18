@@ -121,7 +121,11 @@ public final class EscherBSERecord extends EscherRecord {
             bytesRead = field_12_blipRecord.fillFields( data, pos + 36, recordFactory );
         }
         pos += 36 + bytesRead;
-        bytesRemaining = Math.max(0, bytesRemaining - bytesRead);
+        if (bytesRead > bytesRemaining) {
+            throw new RecordFormatException("Embedded blip of EscherBSERecord consumed " + bytesRead
+                    + " bytes but only " + bytesRemaining + " were declared");
+        }
+        bytesRemaining -= bytesRead;
 
         _remainingData = IOUtils.safelyClone(data, pos, bytesRemaining, MAX_RECORD_LENGTH,
                 "EscherBSERecord.setMaxRecordLength()");
