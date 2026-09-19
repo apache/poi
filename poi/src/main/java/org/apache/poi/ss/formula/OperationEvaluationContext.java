@@ -48,9 +48,11 @@ import org.apache.poi.util.LocaleUtil;
  * Contains all the contextual information required to evaluate an operation
  * within a formula
  * <p>
- * For POI internal use only
+ * For POI internal use only. Not final so that an evaluator can subclass it to customise
+ * how references are resolved before passing it to
+ * {@link WorkbookEvaluator#evaluateFormula(OperationEvaluationContext, Ptg[])}.
  */
-public final class OperationEvaluationContext {
+public class OperationEvaluationContext {
     public static final FreeRefFunction UDF = UserDefinedFunction.instance;
     private final EvaluationWorkbook _workbook;
     private final int _sheetIndex;
