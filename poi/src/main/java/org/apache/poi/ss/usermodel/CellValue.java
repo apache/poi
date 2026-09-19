@@ -23,8 +23,11 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
  * Mimics the 'data view' of a cell. This allows formula evaluator
  * to return a CellValue instead of precasting the value to String
  * or Number or boolean type.
+ *
+ * Consider {@link LightCellValue} for new code: it is a sealed, memory-leaner
+ * counterpart of this class that CellValue itself implements.
  */
-public final class CellValue {
+public final class CellValue implements LightCellValue {
     public static final CellValue TRUE = new CellValue(CellType.BOOLEAN, 0.0, true,  null, 0);
     public static final CellValue FALSE = new CellValue(CellType.BOOLEAN, 0.0, false, null, 0);
 
