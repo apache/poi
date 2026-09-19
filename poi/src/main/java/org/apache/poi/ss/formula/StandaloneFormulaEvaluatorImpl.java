@@ -50,6 +50,7 @@ final class StandaloneFormulaEvaluatorImpl implements StandaloneFormulaEvaluator
     private final WorkbookEvaluator _evaluator;
     private final OperationEvaluationContext _context;
     private final int _inputCount;
+    private final ValueEvalStack _stack;
 
     StandaloneFormulaEvaluatorImpl(CompiledFormulaImpl formula) {
         StandaloneFormulaEngineImpl engine = formula.engine();
@@ -60,6 +61,7 @@ final class StandaloneFormulaEvaluatorImpl implements StandaloneFormulaEvaluator
         _evaluator = new WorkbookEvaluator(_workbook, IStabilityClassifier.TOTALLY_IMMUTABLE, null);
         _context = new OperationEvaluationContext(_evaluator, _workbook, 0, 0, _inputCount,
                 new EvaluationTracker(new EvaluationCache(null)));
+        _stack = new ValueEvalStack();
     }
 
     @Override
@@ -149,7 +151,7 @@ final class StandaloneFormulaEvaluatorImpl implements StandaloneFormulaEvaluator
 
     @Override
     public LightCellValue evaluate() {
-        ValueEval result = _evaluator.evaluateFormula(_context, _formula.tokens());
+        ValueEval result = _evaluator.evaluateFormula(_context, _formula.tokens(), _stack);
         return toLightCellValue(result);
     }
 

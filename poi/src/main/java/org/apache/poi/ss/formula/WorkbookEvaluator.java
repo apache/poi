@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.Stack;
 import java.util.TreeSet;
 
 import org.apache.logging.log4j.Logger;
@@ -374,7 +373,22 @@ public final class WorkbookEvaluator {
      */
     @Internal
     public ValueEval evaluateFormula(OperationEvaluationContext ec, Ptg[] ptgs) {
+        return evaluateFormula(ec, ptgs, new ValueEvalStack());
+    }
 
+    /**
+     * Evaluates a formula, allowing the caller to provide a reusable evaluation stack.
+     * The {@code reusableStack} is cleared and reused across calls; when it is already large
+     * enough no backing-array allocation happens. This is intended for single-threaded
+     * callers such as the {@link StandaloneFormulaEvaluatorImpl} that evaluate in a hot loop.
+     *
+     * @param ec            shared evaluation context
+     * @param ptgs          the tokenized formula
+     * @param reusableStack a stack to be cleared and filled during evaluation
+     */
+    ValueEval evaluateFormula(OperationEvaluationContext ec, Ptg[] ptgs, ValueEvalStack reusableStack) {
+
+        reusableStack.clear();
         String dbgIndentStr = "";        // always init. to non-null just for defensive avoiding NPE
         if (dbgEvaluationOutputForNextEval) {
             // first evaluation call when output is desired, so iit. this evaluator instance
@@ -399,7 +413,7 @@ public final class WorkbookEvaluator {
         EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
         EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
 
-        Stack<ValueEval> stack = new Stack<>();
+        ValueEvalStack stack = reusableStack;
         for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
             // since we don't know how to handle these yet :(
             Ptg ptg = ptgs[i];
@@ -573,7 +587,7 @@ public final class WorkbookEvaluator {
      * @param opIndex the index of the operation whose operands have just been popped from {@code stack}
      * @param stack   the evaluation stack, holding the values pushed before the operation's operands
      */
-    private static boolean isConsumedByArrayModeFunction(Ptg[] ptgs, int opIndex, Stack<ValueEval> stack,
+    private static boolean isConsumedByArrayModeFunction(Ptg[] ptgs, int opIndex, ValueEvalStack stack,
             OperationEvaluationContext ec) {
         // position of the tracked result counted from the top of the stack (1 = on top)
         int depth = 1;
