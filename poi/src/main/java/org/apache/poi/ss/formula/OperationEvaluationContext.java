@@ -396,7 +396,7 @@ public final class OperationEvaluationContext {
     public ValueEval getRefEval(int rowIndex, int columnIndex) {
         EvaluationSheet current = _workbook.getSheet(_sheetIndex);
         if (current instanceof VirtualEvaluationSheet vs) {
-            return new VirtualRefEval(vs, columnIndex);
+            return new VirtualRefEval(vs, rowIndex, columnIndex);
         }
         SheetRangeEvaluator sre = getRefEvaluatorForCurrentSheet();
         return new LazyRefEval(rowIndex, columnIndex, sre);

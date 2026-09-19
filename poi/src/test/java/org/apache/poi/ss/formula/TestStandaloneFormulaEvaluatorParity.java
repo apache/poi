@@ -53,6 +53,9 @@ class TestStandaloneFormulaEvaluatorParity {
     static Stream<Case> cases() {
         return Stream.of(
                 Case.of("A1+B1*C1", 1.0, 2.0, 3.0),
+                Case.of("A2*2", 5.0),
+                Case.of("A2+B1", 5.0, 7.0),
+                Case.of("SUM(A2:B2)", 1.0, 2.0),
                 Case.of("(A1+B1)*C1", 1.0, 2.0, 3.0),
                 Case.of("-A1", 5.0),
                 Case.of("2^10", new Object[0]),

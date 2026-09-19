@@ -34,16 +34,21 @@ import org.apache.poi.util.Internal;
 final class VirtualRefEval extends RefEvalBase {
 
     private final VirtualEvaluationSheet _sheet;
+    private final int _rowIndex;
     private final int _columnIndex;
 
-    VirtualRefEval(VirtualEvaluationSheet sheet, int columnIndex) {
-        super(0, 0, columnIndex);
+    VirtualRefEval(VirtualEvaluationSheet sheet, int rowIndex, int columnIndex) {
+        super(0, rowIndex, columnIndex);
         _sheet = sheet;
+        _rowIndex = rowIndex;
         _columnIndex = columnIndex;
     }
 
     @Override
     public ValueEval getInnerValueEval(int sheetIndex) {
+        if (_rowIndex != 0) {
+            return BlankEval.instance;
+        }
         ValueEval value = _sheet.valueAt(_columnIndex);
         return value == null ? BlankEval.instance : value;
     }
