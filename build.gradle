@@ -44,6 +44,7 @@ plugins {
     id 'org.sonarqube' version '7.5.0.8588'
     id 'org.cyclonedx.bom' version '3.4.1'
     id 'com.adarshr.test-logger' version '4.0.0'
+    id 'me.champeau.jmh' version '0.7.3' apply false
 }
 
 repositories {
@@ -123,7 +124,8 @@ abstract class VerifyModuleInfoIsPresent extends DefaultTask {
     @TaskAction
     void verifyModuleInfo() {
         def jar = verifiedJar.get().asFile
-        if (jar.getName().contains('poi-integration') || jar.getName().contains('poi-fuzz')) {
+        if (jar.getName().contains('poi-integration') || jar.getName().contains('poi-fuzz')
+                || jar.getName().contains('poi-benchmark')) {
             return
         }
 
