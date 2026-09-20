@@ -25,7 +25,7 @@ package org.apache.poi.ss.formula;
  * thousands of formula cells with multiple interdependencies, the savings can be very significant.
  */
 final class FormulaCellCacheEntrySet {
-    private static final FormulaCellCacheEntry[] EMPTY_ARRAY = { };
+    /* package */ static final FormulaCellCacheEntry[] EMPTY_ARRAY = { };
 
     private int _size;
     private FormulaCellCacheEntry[] _arr;
@@ -53,7 +53,10 @@ final class FormulaCellCacheEntrySet {
     }
 
 
-    public void add(CellCacheEntry cce) {
+    /**
+     * @return {@code false} if the entry was already present
+     */
+    public boolean add(CellCacheEntry cce) {
         if (_size * 3 >= _arr.length * 2) {
             // re-hash
             FormulaCellCacheEntry[] prevArr = _arr;
@@ -68,7 +71,9 @@ final class FormulaCellCacheEntrySet {
         }
         if (addInternal(_arr, cce)) {
             _size++;
+            return true;
         }
+        return false;
     }
 
 

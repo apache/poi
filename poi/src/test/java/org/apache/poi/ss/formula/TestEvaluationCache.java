@@ -554,6 +554,64 @@ class TestEvaluationCache {
     }
 
     @Test
+    void testCellReadMoreThanOnce() {
+        // a formula that reads the same cell several times (directly and through an area) records
+        // the dependency once; the change notification must still reach it, and clearing the
+        // entry must not fail on the duplicate
+        MySheet ms = new MySheet();
+
+        ms.setCellFormula("A1", "B1*B1+SUM(B1:C1)+B1");
+        ms.setCellValue("B1", 3);
+        ms.setCellValue("C1", 4);
+        ms.clearAllCachedResultValues();
+        ms.getAndClearLog();
+
+        confirmEvaluate(ms, "A1", 19);
+        confirmLog(ms, new String[] {
+            "start A1 B1*B1+SUM(B1:C1)+B1",
+            "value B1 3",
+            "hit B1 3",
+            "hit B1 3",
+            "value C1 4",
+            "hit B1 3",
+            "end A1 19",
+        });
+
+        ms.setCellValue("B1", 2);
+        ms.getAndClearLog();
+        confirmEvaluate(ms, "A1", 12);
+        confirmLog(ms, new String[] {
+            "start A1 B1*B1+SUM(B1:C1)+B1",
+            "hit B1 2",
+            "hit B1 2",
+            "hit B1 2",
+            "hit C1 4",
+            "hit B1 2",
+            "end A1 12",
+        });
+
+        // a formula cell read twice: A2 = A1 + A1
+        ms.setCellFormula("A2", "A1+A1");
+        ms.getAndClearLog();
+        confirmEvaluate(ms, "A2", 24);
+        ms.setCellValue("C1", 10);
+        ms.getAndClearLog();
+        confirmEvaluate(ms, "A2", 36);
+        confirmLog(ms, new String[] {
+            "start A2 A1+A1",
+            "start A1 B1*B1+SUM(B1:C1)+B1",
+            "hit B1 2",
+            "hit B1 2",
+            "hit B1 2",
+            "hit C1 10",
+            "hit B1 2",
+            "end A1 18",
+            "hit A1 18",
+            "end A2 36",
+        });
+    }
+
+    @Test
     void testBlankCells() {
         MySheet ms = new MySheet();
 
