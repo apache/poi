@@ -85,6 +85,14 @@ public class TestHwmfParsing {
     }
 
     @Test
+    void testInvalidHeaderTypeBug69924() throws Exception {
+        try (InputStream is = samples.openResourceAsStream("bug69924.wmf")) {
+            IOException ex = assertThrows(IOException.class, () -> new HwmfPicture(is));
+            assertEquals("Not a valid WMF header. Type: 0xf600", ex.getMessage());
+        }
+    }
+
+    @Test
     void testInvalid() throws Exception {
         try (InputStream is = samples.openResourceAsStream("santa.wmf")) {
             byte[] bytes = IOUtils.toByteArray(is);
