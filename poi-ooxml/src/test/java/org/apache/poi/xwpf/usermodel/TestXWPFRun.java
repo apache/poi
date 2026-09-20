@@ -18,6 +18,9 @@ package org.apache.poi.xwpf.usermodel;
 
 import static org.apache.poi.xwpf.XWPFTestDataSamples.openSampleDocument;
 import static org.apache.poi.xwpf.XWPFTestDataSamples.writeOutAndReadBack;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -92,11 +95,11 @@ class TestXWPFRun {
         final String craftedId = "rId1\"/><evil>";
         CTInline inline = assertDoesNotThrow(() -> run.addChart(craftedId));
         String xml = inline.getGraphic().xmlText();
-        assertFalse(xml.contains("<evil>"), "relationship id must not inject markup: " + xml);
+        assertThat("relationship id must not inject markup", xml, not(containsString("<evil>")));
 
         // a normal relationship id still round-trips
         CTInline ok = assertDoesNotThrow(() -> p.createRun().addChart("rId42"));
-        assertTrue(ok.getGraphic().xmlText().contains("rId42"));
+        assertThat(ok.getGraphic().xmlText(), containsString("rId42"));
     }
 
     @Test

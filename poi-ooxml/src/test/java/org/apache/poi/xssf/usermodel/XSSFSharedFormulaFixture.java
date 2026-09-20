@@ -17,6 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -109,7 +112,7 @@ final class XSSFSharedFormulaFixture {
                     assertEquals(si, f.getSi(), cell.getAddress() + " shared index");
                     if (cell.getAddress().formatAsString().equals(group[0])) {
                         assertTrue(f.isSetRef(), "master " + group[0] + " has the range");
-                        assertFalse(f.getStringValue().isEmpty(), "master " + group[0] + " has the text");
+                        assertThat("master " + group[0] + " has the text", f.getStringValue(), not(emptyString()));
                     } else {
                         assertFalse(f.isSetRef(), cell.getAddress() + " is a dependent");
                     }
