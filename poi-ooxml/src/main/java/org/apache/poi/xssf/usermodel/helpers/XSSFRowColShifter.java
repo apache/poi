@@ -113,9 +113,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
                         if(f.getT() == STCellFormulaType.SHARED){
                             int si = Math.toIntExact(f.getSi());
                             CTCellFormula sf = sheet.getSharedFormula(si);
-                            // the sheet usually holds a detached copy of the master formula, but after
-                            // the master cell was deleted it holds the live formula of the new master,
-                            // which is this very formula and must not be shifted a second time
+                            // the sheet holds a detached copy of the master formula
                             if (sf != null && sf != f) {
                                 sf.setStringValue(shiftedFormula);
                                 updateRefInCTCellFormula(row, formulaShifter, sf);
