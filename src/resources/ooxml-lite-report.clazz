@@ -2558,3 +2558,4 @@ org/openxmlformats/schemas/drawingml/x2006/chart/impl/STDepthPercentUShortImpl
 org/openxmlformats/schemas/drawingml/x2006/chart/impl/STHPercentUShortImpl
 org/openxmlformats/schemas/drawingml/x2006/chart/impl/STDepthPercentWithSymbolImpl
 org/openxmlformats/schemas/drawingml/x2006/chart/impl/STHPercentWithSymbolImpl
+org/openxmlformats/schemas/drawingml/x2006/main/impl/CTPath2DQuadBezierToImpl
