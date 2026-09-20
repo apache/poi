@@ -20,6 +20,8 @@ package org.apache.poi.ss.formula.functions;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.formula.ThreeDEval;
+import org.apache.poi.ss.formula.CacheAreaEval;
+import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -43,7 +45,7 @@ import org.apache.poi.util.StringUtil;
  *      <tr><th>criteria</th><td>is used to determine which cells to count</td></tr>
  *    </table>
  */
-public final class Countif extends Fixed2ArgFunction {
+public final class Countif extends Fixed2ArgFunction implements ArrayFunction {
 
     private static final class CmpOp {
         public static final int NONE = 0;
@@ -400,7 +402,10 @@ public final class Countif extends Fixed2ArgFunction {
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
-
+        if (isArrayCriteria(arg1, false)) {
+            return evaluateForEachCriterion((AreaEval) arg1,
+                    criterion -> evaluate(srcRowIndex, srcColumnIndex, arg0, criterion));
+        }
         I_MatchPredicate mp = createCriteriaPredicate(arg1, srcRowIndex, srcColumnIndex);
         if(mp == null) {
             // If the criteria arg is a reference to a blank cell, countif always returns zero.
@@ -411,6 +416,76 @@ public final class Countif extends Fixed2ArgFunction {
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
+    }
+
+    /**
+     * Evaluated in array context (the result feeds an array-mode function such as SUMPRODUCT, or
+     * the cell is part of an array formula): a multi-cell range as criteria means one count per
+     * criterion.
+     * @since 6.0.0
+     */
+    @Override
+    public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        if (args.length != 2) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        if (isArrayCriteria(args[1], true)) {
+            return evaluateForEachCriterion((AreaEval) args[1],
+                    criterion -> evaluate(srcRowIndex, srcColumnIndex, args[0], criterion));
+        }
+        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
+    }
+
+    /**
+     * Decides whether a criteria argument stands for several criteria, so that the function is
+     * evaluated once per element and returns an array of the results (what
+     * {@code SUMPRODUCT(SUMIF(range,criteria_range,sum_range))} and
+     * {@code SUM(COUNTIF(range,{"a","b"}))} rely on), the way Excel does it:
+     * <ul>
+     * <li>an array constant or a computed array ({@code {"a","b"}}, {@code IF(...)}) always is;</li>
+     * <li>a multi-cell range is only in array context - inside an array-mode function such as
+     * SUMPRODUCT, or in an array formula. In an ordinary cell a range criteria is reduced to the
+     * cell on the formula's own row or column (implicit intersection), as Excel does there.</li>
+     * </ul>
+     *
+     * @param arrayContext whether the function is being evaluated in array context
+     * @since 6.0.0
+     */
+    /* package */ static boolean isArrayCriteria(ValueEval criteria, boolean arrayContext) {
+        if (!(criteria instanceof AreaEval ae) || ae.getHeight() * ae.getWidth() <= 1) {
+            return false;
+        }
+        return arrayContext || criteria instanceof CacheAreaEval;
+    }
+
+    /**
+     * The evaluation of a conditional aggregate for one criterion, used to evaluate it for each
+     * element of an array of criteria.
+     * @since 6.0.0
+     */
+    /* package */ interface CriterionEvaluation {
+        ValueEval evaluate(ValueEval criterion);
+    }
+
+    /**
+     * Evaluates a conditional aggregate once per element of an array of criteria and returns the
+     * results as an array of the same shape (and, for a range, the same position, so that a plain
+     * formula cell picks the element on its own row the way Excel's implicit intersection does).
+     * This is what makes {@code SUMPRODUCT(SUMIF(range,criteria_range,sum_range))},
+     * {@code SUM(COUNTIF(range,{"a","b"}))} and the like work.
+     * @since 6.0.0
+     */
+    /* package */ static ValueEval evaluateForEachCriterion(AreaEval criteria, CriterionEvaluation evaluation) {
+        int height = criteria.getHeight();
+        int width = criteria.getWidth();
+        ValueEval[] results = new ValueEval[height * width];
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                results[r * width + c] = evaluation.evaluate(criteria.getRelativeValue(r, c));
+            }
+        }
+        return new CacheAreaEval(criteria.getFirstRow(), criteria.getFirstColumn(),
+                criteria.getLastRow(), criteria.getLastColumn(), results);
     }
     /**
      * @return the number of evaluated cells in the range that match the specified criteria
