@@ -9,6 +9,12 @@ on:
   pull_request:
     branches: [ trunk, 5.5.x ]
 
+# one run per PR: a new commit cancels the run still in flight for the previous one;
+# pushes to the protected branches are never cancelled, so every commit there gets its result
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions: {}
 
 jobs:
