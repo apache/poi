@@ -703,6 +703,10 @@ public final class CellUtil {
         return index instanceof Number n ? n.shortValue() : IndexedColors.AUTOMATIC.getIndex();
     }
 
+    private static boolean hasBorder(Map<CellPropertyType, Object> properties, CellPropertyType border) {
+        return getBorderStyle(properties, border) != BorderStyle.NONE;
+    }
+
     /**
      * <p>This method attempts to find an existing CellStyle that matches the {@code cell}'s
      * current style plus a single style property {@code propertyName} with value
@@ -859,7 +863,14 @@ public final class CellUtil {
         style.setBorderLeft(getBorderStyle(properties, CellPropertyType.BORDER_LEFT));
         style.setBorderRight(getBorderStyle(properties, CellPropertyType.BORDER_RIGHT));
         style.setBorderTop(getBorderStyle(properties, CellPropertyType.BORDER_TOP));
-        style.setBottomBorderColor(getShort(properties, CellPropertyType.BOTTOM_BORDER_COLOR));
+        // A style reports a default color for a side that has no border and no color. Writing that default
+        // back would turn the workbook's default border into a new one with a color on every side
+        // (bug 60895), so a color is only set when the side has a border or the color is not that default.
+        // A color on a side without a border is kept, it is used once the border is added (RegionUtil).
+        short bottomBorderColor = getShort(properties, CellPropertyType.BOTTOM_BORDER_COLOR);
+        if (hasBorder(properties, CellPropertyType.BORDER_BOTTOM) || bottomBorderColor != style.getBottomBorderColor()) {
+            style.setBottomBorderColor(bottomBorderColor);
+        }
         style.setDataFormat(getShort(properties, CellPropertyType.DATA_FORMAT));
         style.setFillPattern(getFillPattern(properties, CellPropertyType.FILL_PATTERN));
 
@@ -898,11 +909,20 @@ public final class CellUtil {
         }
         style.setHidden(getBoolean(properties, CellPropertyType.HIDDEN));
         style.setIndention(getShort(properties, CellPropertyType.INDENTION));
-        style.setLeftBorderColor(getShort(properties, CellPropertyType.LEFT_BORDER_COLOR));
+        short leftBorderColor = getShort(properties, CellPropertyType.LEFT_BORDER_COLOR);
+        if (hasBorder(properties, CellPropertyType.BORDER_LEFT) || leftBorderColor != style.getLeftBorderColor()) {
+            style.setLeftBorderColor(leftBorderColor);
+        }
         style.setLocked(getBoolean(properties, CellPropertyType.LOCKED));
-        style.setRightBorderColor(getShort(properties, CellPropertyType.RIGHT_BORDER_COLOR));
+        short rightBorderColor = getShort(properties, CellPropertyType.RIGHT_BORDER_COLOR);
+        if (hasBorder(properties, CellPropertyType.BORDER_RIGHT) || rightBorderColor != style.getRightBorderColor()) {
+            style.setRightBorderColor(rightBorderColor);
+        }
         style.setRotation(getShort(properties, CellPropertyType.ROTATION));
-        style.setTopBorderColor(getShort(properties, CellPropertyType.TOP_BORDER_COLOR));
+        short topBorderColor = getShort(properties, CellPropertyType.TOP_BORDER_COLOR);
+        if (hasBorder(properties, CellPropertyType.BORDER_TOP) || topBorderColor != style.getTopBorderColor()) {
+            style.setTopBorderColor(topBorderColor);
+        }
         style.setWrapText(getBoolean(properties, CellPropertyType.WRAP_TEXT));
         style.setShrinkToFit(getBoolean(properties, CellPropertyType.SHRINK_TO_FIT));
         style.setQuotePrefixed(getBoolean(properties, CellPropertyType.QUOTE_PREFIXED));

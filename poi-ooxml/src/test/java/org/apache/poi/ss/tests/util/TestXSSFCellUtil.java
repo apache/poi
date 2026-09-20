@@ -34,6 +34,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 
@@ -457,6 +458,58 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
             CellUtil.setCellStylePropertiesEnum(cell3, properties);
             assertEquals(numStyles + 1, workbook.getNumCellStyles());
             assertEquals(other, cell3.getCellStyle().getFillForegroundColorColor());
+        }
+    }
+
+    /**
+     * Bug 60895: changing one property of a cell with the default style must not add a fill and a border
+     * to the workbook; the new style keeps using the default fill and border of the workbook
+     */
+    @Test
+    void testDefaultFillAndBorderAreReusedBug60895() throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            final Cell cell = workbook.createSheet("Sheet").createRow(1).createCell(0);
+            cell.setCellValue(2.0);
+            final int fills = workbook.getStylesSource().getFills().size();
+            final int borders = workbook.getStylesSource().getBorders().size();
+
+            CellUtil.setCellStyleProperty(cell, CellPropertyType.DATA_FORMAT,
+                    workbook.createDataFormat().getFormat("0"));
+
+            XSSFCellStyle style = (XSSFCellStyle) cell.getCellStyle();
+            assertEquals("0", style.getDataFormatString());
+            assertEquals(0, style.getCoreXf().getFillId());
+            assertEquals(0, style.getCoreXf().getBorderId());
+            assertEquals(fills, workbook.getStylesSource().getFills().size());
+            assertEquals(borders, workbook.getStylesSource().getBorders().size());
+            assertEquals(FillPatternType.NO_FILL, style.getFillPattern());
+            assertNull(style.getBorderColor(XSSFCellBorder.BorderSide.BOTTOM));
+        }
+    }
+
+    /**
+     * Bug 60895: the color of a side that has a border is still applied
+     */
+    @Test
+    void testBorderColorIsKeptBug60895() throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            final Row row = workbook.createSheet("Sheet").createRow(1);
+            final Cell cell1 = row.createCell(0);
+            final Cell cell2 = row.createCell(1);
+            Map<CellPropertyType, Object> properties = new LinkedHashMap<>();
+            properties.put(CellPropertyType.BORDER_BOTTOM, BorderStyle.THIN);
+            properties.put(CellPropertyType.BOTTOM_BORDER_COLOR, IndexedColors.RED.getIndex());
+
+            CellUtil.setCellStylePropertiesEnum(cell1, properties);
+            assertEquals(BorderStyle.THIN, cell1.getCellStyle().getBorderBottom());
+            assertEquals(IndexedColors.RED.getIndex(), cell1.getCellStyle().getBottomBorderColor());
+            assertEquals(BorderStyle.NONE, cell1.getCellStyle().getBorderTop());
+            assertNull(((XSSFCellStyle) cell1.getCellStyle()).getBorderColor(XSSFCellBorder.BorderSide.TOP));
+
+            int numStyles = workbook.getNumCellStyles();
+            CellUtil.setCellStylePropertiesEnum(cell2, properties);
+            assertEquals(numStyles, workbook.getNumCellStyles());
+            assertEquals(cell1.getCellStyle().getIndex(), cell2.getCellStyle().getIndex());
         }
     }
 }
