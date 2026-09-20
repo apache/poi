@@ -29,6 +29,8 @@ final class FormulaCellCacheEntrySet {
 
     private int _size;
     private FormulaCellCacheEntry[] _arr;
+    /** where {@link #peekAny()} found its last entry, so that draining the set stays linear */
+    private int _scanHint;
 
     public FormulaCellCacheEntrySet() {
         _arr = EMPTY_ARRAY;
@@ -52,6 +54,42 @@ final class FormulaCellCacheEntrySet {
         return result;
     }
 
+
+    /**
+     * Returns some entry of the set without removing it. Meant for draining the set with
+     * operations that remove the entry as a side effect (see
+     * {@link CellCacheEntry#recurseClearCachedFormulaResults()}): successive calls carry on from
+     * where the previous entry was found, so removing each entry in turn costs no more than one
+     * pass over the set.
+     *
+     * @return any entry, or {@code null} if the set is empty
+     * @since 6.0.0
+     */
+    public FormulaCellCacheEntry peekAny() {
+        if (_size < 1) {
+            return null;
+        }
+        FormulaCellCacheEntry[] arr = _arr;
+        int len = arr.length;
+        int i = _scanHint < len ? _scanHint : 0; // a shrink in remove() may have moved the array
+        for (int n = 0; n < len; n++) {
+            FormulaCellCacheEntry entry = arr[i];
+            if (entry != null) {
+                _scanHint = i;
+                return entry;
+            }
+            i = i + 1 < len ? i + 1 : 0;
+        }
+        throw new IllegalStateException("size mismatch");
+    }
+
+    /**
+     * @return whether the entry {@link #peekAny()} last returned is still in the set
+     * @since 6.0.0
+     */
+    public boolean containsPeeked(FormulaCellCacheEntry entry) {
+        return _scanHint < _arr.length && _arr[_scanHint] == entry;
+    }
 
     /**
      * @return {@code false} if the entry was already present

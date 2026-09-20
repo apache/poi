@@ -116,10 +116,20 @@ abstract class CellCacheEntry implements ICacheEntry {
      * cleared along the way.
      */
     protected final void recurseClearCachedFormulaResults() {
-        FormulaCellCacheEntry[] formulaCells = getConsumingCells();
-
-        for (FormulaCellCacheEntry fc : formulaCells) {
+        FormulaCellCacheEntrySet consumers = _consumingCells;
+        if (consumers == null) {
+            return;
+        }
+        // Clearing a consumer unregisters it from all its inputs, this cell included, so the set
+        // is drained rather than iterated - no snapshot copy needed. A consumer that a deeper
+        // recursion already cleared has left the set by the time it would be reached here.
+        FormulaCellCacheEntry fc;
+        while ((fc = consumers.peekAny()) != null) {
             fc.clearFormulaEntry();
+            if (consumers.containsPeeked(fc)) {
+                // would loop forever: the consumer did not list this cell among its inputs
+                throw new IllegalStateException("Specified formula cell does not consume this cell");
+            }
             if (fc != this) {
                 fc.recurseClearCachedFormulaResults();
             }
