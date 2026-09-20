@@ -18,6 +18,7 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.ITestDataProvider;
@@ -225,6 +226,13 @@ public abstract class BaseTestFormulaEvaluatorHiddenRows extends BaseTestFormula
         afterVisibilityChange();
         assertEquals(30, num("E6"), DELTA);
         assertEquals(60, num("E7"), DELTA);
+
+        // expanding it shows them again
+        data.setRowGroupCollapsed(1, false);
+        assertFalse(data.getRow(1).getZeroHeight());
+        assertFalse(data.getRow(2).getZeroHeight());
+        afterVisibilityChange();
+        assertEquals(60, num("E6"), DELTA);
     }
 
     @Test

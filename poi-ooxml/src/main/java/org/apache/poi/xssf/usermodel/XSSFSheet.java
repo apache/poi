@@ -2837,19 +2837,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             endHidden = getRow(endOfOutlineGroupIdx).getCTRow().getHidden();
         }
 
-        // Look out outline details of start
+        // Look out outline details of start: the row *before* the group is the one that tells
+        // whether an enclosing group hides this one (the group's own first row is hidden whenever
+        // the group itself is collapsed, so it says nothing about a parent)
         int startLevel;
         boolean startHidden;
-        int startOfOutlineGroupIdx = findStartOfRowOutlineGroup(row);
-        if (startOfOutlineGroupIdx < 0
-                || getRow(startOfOutlineGroupIdx) == null) {
+        int rowBeforeGroupIdx = findStartOfRowOutlineGroup(row) - 1;
+        if (rowBeforeGroupIdx < 0 || getRow(rowBeforeGroupIdx) == null) {
             startLevel = 0;
             startHidden = false;
         } else {
-            startLevel = getRow(startOfOutlineGroupIdx).getCTRow()
-                    .getOutlineLevel();
-            startHidden = getRow(startOfOutlineGroupIdx).getCTRow()
-                    .getHidden();
+            startLevel = getRow(rowBeforeGroupIdx).getCTRow().getOutlineLevel();
+            startHidden = getRow(rowBeforeGroupIdx).getCTRow().getHidden();
         }
         if (endLevel > startLevel) {
             return endHidden;
