@@ -4324,7 +4324,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         XSSFCell mainArrayFormulaCell = cr.getTopLeftCell();
         mainArrayFormulaCell.setCellArrayFormula(formula, range);
-        arrayFormulas.add(range);
+        // re-entering an array formula over its range replaces it, so don't record the range twice
+        if (!arrayFormulas.contains(range)) {
+            arrayFormulas.add(range);
+        }
         return cr;
     }
 
