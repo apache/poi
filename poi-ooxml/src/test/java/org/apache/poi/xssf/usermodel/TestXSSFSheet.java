@@ -891,10 +891,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     /**
-     * TODO - while this is internally consistent, I'm not
-     *  completely clear in all cases what it's supposed to
-     *  be doing... Someone who understands the goals a little
-     *  better should really review this!
+     * Collapsing the inner group (rows 7-14) hides its rows and marks the row after it as
+     * collapsed; expanding it again shows them, as the enclosing group (rows 5-14) is not
+     * collapsed. The outer rows 5-6 and the separate group at 16-19 are never affected.
      */
     @Test
     void setRowGroupCollapsed() throws IOException {
@@ -922,6 +921,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             //collapsed
             sheet1.setRowGroupCollapsed(7, true);
 
+            assertTrue(sheet1.getRow(15).getCTRow().getCollapsed());
             assertFalse(sheet1.getRow(6).getCTRow().isSetCollapsed());
             assertFalse(sheet1.getRow(6).getCTRow().isSetHidden());
             assertFalse(sheet1.getRow(7).getCTRow().isSetCollapsed());
@@ -941,11 +941,12 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertFalse(sheet1.getRow(6).getCTRow().isSetCollapsed());
             assertFalse(sheet1.getRow(6).getCTRow().isSetHidden());
             assertFalse(sheet1.getRow(7).getCTRow().isSetCollapsed());
-            assertTrue(sheet1.getRow(7).getCTRow().isSetHidden());
+            assertFalse(sheet1.getRow(7).getCTRow().isSetHidden());
             assertFalse(sheet1.getRow(9).getCTRow().isSetCollapsed());
-            assertTrue(sheet1.getRow(9).getCTRow().isSetHidden());
+            assertFalse(sheet1.getRow(9).getCTRow().isSetHidden());
             assertFalse(sheet1.getRow(14).getCTRow().isSetCollapsed());
-            assertTrue(sheet1.getRow(14).getCTRow().isSetHidden());
+            assertFalse(sheet1.getRow(14).getCTRow().isSetHidden());
+            assertFalse(sheet1.getRow(15).getCTRow().isSetCollapsed());
             assertFalse(sheet1.getRow(16).getCTRow().isSetCollapsed());
             assertFalse(sheet1.getRow(16).getCTRow().isSetHidden());
             assertFalse(sheet1.getRow(18).getCTRow().isSetCollapsed());
@@ -959,11 +960,11 @@ public final class TestXSSFSheet extends BaseTestXSheet {
                 assertFalse(sheet1.getRow(6).getCTRow().isSetCollapsed());
                 assertFalse(sheet1.getRow(6).getCTRow().isSetHidden());
                 assertFalse(sheet1.getRow(7).getCTRow().isSetCollapsed());
-                assertTrue(sheet1.getRow(7).getCTRow().isSetHidden());
+                assertFalse(sheet1.getRow(7).getCTRow().isSetHidden());
                 assertFalse(sheet1.getRow(9).getCTRow().isSetCollapsed());
-                assertTrue(sheet1.getRow(9).getCTRow().isSetHidden());
+                assertFalse(sheet1.getRow(9).getCTRow().isSetHidden());
                 assertFalse(sheet1.getRow(14).getCTRow().isSetCollapsed());
-                assertTrue(sheet1.getRow(14).getCTRow().isSetHidden());
+                assertFalse(sheet1.getRow(14).getCTRow().isSetHidden());
                 assertFalse(sheet1.getRow(16).getCTRow().isSetCollapsed());
                 assertFalse(sheet1.getRow(16).getCTRow().isSetHidden());
                 assertFalse(sheet1.getRow(18).getCTRow().isSetCollapsed());

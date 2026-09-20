@@ -17,10 +17,16 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.in;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -167,22 +173,25 @@ public abstract class BaseTestFormulaEvaluatorStabilityClassifier extends BaseTe
 
         int d = dataIndex();
         int p = pricesIndex();
-        // plain inputs on the data sheet
-        assertTrue(asked.contains(d + ":1:0"), "A2");
-        assertTrue(asked.contains(d + ":3:2"), "C4");
-        // the lookup table, read through a cross-sheet area reference
-        assertTrue(asked.contains(p + ":1:0"), "Prices!A2");
-        assertTrue(asked.contains(p + ":3:1"), "Prices!B4");
-        // formula cells are classified too, both when evaluated directly and via the defined name
-        assertTrue(asked.contains(d + ":5:0"), "A6");
-        assertTrue(asked.contains(d + ":7:1"), "B8");
+        assertThat(asked, hasItems(
+                // plain inputs on the data sheet
+                d + ":1:0", // A2
+                d + ":3:2", // C4
+                // the lookup table, read through a cross-sheet area reference
+                p + ":1:0", // Prices!A2
+                p + ":3:1", // Prices!B4
+                // formula cells are classified too, both when evaluated directly and via the defined name
+                d + ":5:0", // A6
+                d + ":7:1"  // B8
+        ));
         // cells nothing refers to are never asked about
-        assertFalse(asked.contains(d + ":0:0"), "Data header");
-        assertFalse(asked.contains(p + ":0:0"), "Prices header");
-        assertFalse(asked.contains(d + ":4:0"), "spare row");
+        assertThat("Data header", asked, not(hasItem(d + ":0:0")));
+        assertThat("Prices header", asked, not(hasItem(p + ":0:0")));
+        assertThat("spare row", asked, not(hasItem(d + ":4:0")));
+        Set<String> sheets = new HashSet<>();
         for (String key : asked) {
-            int sheet = Integer.parseInt(key.substring(0, key.indexOf(':')));
-            assertTrue(sheet == d || sheet == p, "unexpected sheet index in " + key);
+            sheets.add(key.substring(0, key.indexOf(':')));
         }
+        assertThat(sheets, everyItem(is(in(Arrays.asList(String.valueOf(d), String.valueOf(p))))));
     }
 }
