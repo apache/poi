@@ -193,6 +193,9 @@ public final class WorkbookEvaluator {
     public void notifyDeleteCell(EvaluationCell cell) {
         int sheetIndex = getSheetIndex(cell.getSheet());
         _cache.notifyDeleteCell(_workbookIx, sheetIndex, cell);
+        // cell.getSheet() may be a throw-away wrapper created just for this call, so tell the
+        // sheet instance the evaluator actually reads from to drop any cached wrapper as well
+        _workbook.getSheet(sheetIndex).notifyDeleteCell(cell.getRowIndex(), cell.getColumnIndex());
     }
 
     private int getSheetIndex(EvaluationSheet sheet) {
