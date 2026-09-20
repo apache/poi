@@ -38,12 +38,9 @@ dependencies {
 jmh {
     jmhVersion = '1.37'
 
-    // benchmarks operate on one workbook each, which is not thread-safe
-    threads = 1
-    fork = 1
-    warmupIterations = 3
-    iterations = 5
-    // the class annotations carry the defaults; only override from the command line
+    // threads, forks, warmup and measurement are set by the annotations on each benchmark class
+    // (values set here would override them); only the selection of benchmarks is taken from the
+    // command line
     if (project.hasProperty('jmh.includes')) {
         includes = [project.property('jmh.includes')]
     }
