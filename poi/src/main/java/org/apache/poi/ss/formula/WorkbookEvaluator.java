@@ -461,7 +461,13 @@ public final class WorkbookEvaluator {
                     continue;
                 }
                 if (attrPtg.isOptimizedIf()) {
-                    if (!evalCell.isPartOfArrayFormulaGroup()) {
+                    if (arrayModeOperands == null) {
+                        arrayModeOperands = findArrayModeOperands(ptgs);
+                    }
+                    // the shortcut evaluates the condition as a single value and only one branch;
+                    // an IF whose result feeds an ArrayMode function (as in an array formula) is
+                    // evaluated element-wise by IfFunc instead, with all its arguments
+                    if (!evalCell.isPartOfArrayFormulaGroup() && !arrayModeOperands[i]) {
                         ValueEval arg0 = stack.pop();
                         boolean evaluatedPredicate;
 
@@ -495,7 +501,8 @@ public final class WorkbookEvaluator {
                     }
                     continue;
                 }
-                if (attrPtg.isSkip() && !evalCell.isPartOfArrayFormulaGroup()) {
+                if (attrPtg.isSkip() && !evalCell.isPartOfArrayFormulaGroup()
+                        && !(arrayModeOperands != null && arrayModeOperands[i])) {
                     int dist = attrPtg.getData() + 1;
                     i += countTokensToBeSkipped(ptgs, i, dist);
                     if (stack.peek() == MissingArgEval.instance) {
@@ -602,12 +609,18 @@ public final class WorkbookEvaluator {
      * index; their name is the first operand, a name token that is resolved without evaluating
      * anything.
      *
-     * @return one flag per token; only the flags of {@link OperationPtg}s are used
+     * The flag of a {@code tAttrIf}/{@code tAttrSkip} token is that of the {@code IF} it belongs
+     * to: set when the IF's result feeds an ArrayMode function, in which case the evaluator must
+     * not take the single-value shortcut but evaluate the IF element-wise with all its arguments.
+     *
+     * @return one flag per token; only the flags of {@link OperationPtg}s and IF attribute tokens are used
      */
     /* package */ boolean[] findArrayModeOperands(Ptg[] ptgs) {
         int n = ptgs.length;
         int[] consumer = new int[n];
         Arrays.fill(consumer, -1);
+        int[] attrOperand = new int[n]; // for tAttrIf/tAttrSkip: the IF operand just pushed
+        Arrays.fill(attrOperand, -1);
         boolean[] arrayModeFunction = new boolean[n];
         int[] producers = new int[n]; // stack of the tokens whose values are on the evaluation stack
         int sp = 0;
@@ -616,6 +629,9 @@ public final class WorkbookEvaluator {
             int numops;
             boolean function = false;
             if (ptg instanceof AttrPtg attrPtg) {
+                if ((attrPtg.isOptimizedIf() || attrPtg.isSkip()) && sp > 0) {
+                    attrOperand[k] = producers[sp - 1];
+                }
                 if (!attrPtg.isSum()) {
                     continue;
                 }
@@ -647,6 +663,13 @@ public final class WorkbookEvaluator {
             int c = consumer[k];
             if (c >= 0) {
                 result[k] = arrayModeFunction[c] || result[c];
+            }
+            if (attrOperand[k] >= 0) {
+                // the attribute belongs to the function consuming that operand - an IF, unless the
+                // skip is part of a CHOOSE, whose jumps must stay as they are
+                int fn = consumer[attrOperand[k]];
+                result[k] = fn >= 0 && result[fn] && ptgs[fn] instanceof FuncVarPtg fvp
+                        && fvp.getFunctionIndex() == FunctionMetadataRegistry.FUNCTION_INDEX_IF;
             }
         }
         return result;

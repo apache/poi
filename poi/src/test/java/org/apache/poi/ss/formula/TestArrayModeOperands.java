@@ -99,6 +99,27 @@ class TestArrayModeOperands {
     }
 
     @Test
+    void ifFeedingAnArrayModeFunctionIsEvaluatedElementWise() {
+        // IF is normally short-circuited on the single value of its condition; inside an
+        // ArrayMode function it works element-wise, as it does in an array formula and in Excel
+        assertNumber(20 + 30, "SUMPRODUCT(IF(A1:A3>1,B1:B3,0))");
+        assertNumber(20 + 30, "SUMPRODUCT(IF(A1:A3>1,B1:B3))");
+        assertNumber(20 + 30, "SUMPRODUCT(IF(A1:A3>1,1,0)*B1:B3)");
+        assertNumber(100, "INDEX(IF(A1:A3>1,B1:B3,C1:C3),1)");
+        assertNumber(200 + 300, "SUMPRODUCT(IF(A1:A3>1,IF(B1:B3>10,C1:C3,0),0))");
+        // a scalar condition picks the whole branch
+        assertNumber(10 + 20 + 30, "SUMPRODUCT(IF(A2>1,B1:B3,0))");
+        assertNumber(0, "SUMPRODUCT(IF(A2>5,B1:B3,0))");
+
+        // outside an ArrayMode function IF keeps its shortcut: the condition is the formula row's
+        assertNumber(20, "IF(A1:A3>1,B2,0)");
+        assertNumber(2 * 20, "IF(A1:A3>1,B1:B3,0)*2");
+        // CHOOSE's jumps are not touched, whether next to or inside an array-mode IF
+        assertNumber(7 * 2, "SUMPRODUCT(CHOOSE(2,5,7)*IF(A1:A3>1,1,0))");
+        assertNumber(7 * 2, "SUMPRODUCT(IF(A1:A3>1,CHOOSE(2,5,7),0))");
+    }
+
+    @Test
     void operatorOutsideAnArrayModeFunctionUsesTheFormulaRow() {
         // the formula is on row 2, so A1:A3 reduces to A2
         assertNumber(2 * 2, "A1:A3*2");
