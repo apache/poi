@@ -26,6 +26,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.util.Removal;
 
 /**
  * Performance optimisation for {@link org.apache.poi.ss.usermodel.FormulaEvaluator}.
@@ -118,6 +119,50 @@ final class EvaluationCache {
         _formulaCellCache.applyOperation(entry -> entry.notifyUpdatedBlankCell(bsk, rowIndex, columnIndex, _evaluationListener));
     }
 
+    /**
+     * @return the cached entry for the plain (non-formula) cell at the given location, or
+     * {@code null} if the cell has not been read yet (or is blank, which is never cached here)
+     * @since 6.0.0
+     */
+    public PlainValueCellCacheEntry getPlainValueEntry(int bookIndex, int sheetIndex,
+            int rowIndex, int columnIndex) {
+        PlainValueCellCacheEntry result = _plainCellCache.get(new Loc(bookIndex, sheetIndex, rowIndex, columnIndex));
+        if (result != null && _evaluationListener != null) {
+            _evaluationListener.onCacheHit(sheetIndex, rowIndex, columnIndex, result.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Caches the value just read from the plain (non-formula) cell at the given location.
+     * Readers consult {@link #getPlainValueEntry(int, int, int, int)} first, so normally nothing
+     * is cached yet; an existing entry is kept, as formulas may already be registered on it.
+     *
+     * @since 6.0.0
+     */
+    public PlainValueCellCacheEntry getOrCreatePlainValueEntry(int bookIndex, int sheetIndex,
+            int rowIndex, int columnIndex, ValueEval value) {
+        Loc loc = new Loc(bookIndex, sheetIndex, rowIndex, columnIndex);
+        PlainValueCellCacheEntry result = _plainCellCache.get(loc);
+        if (result == null) {
+            result = new PlainValueCellCacheEntry(value);
+            _plainCellCache.put(loc, result);
+            if (_evaluationListener != null) {
+                _evaluationListener.onReadPlainValue(sheetIndex, rowIndex, columnIndex, result);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Looks up or creates the entry for the plain (non-formula) cell at the given location.
+     *
+     * @deprecated the evaluator now consults {@link #getPlainValueEntry(int, int, int, int)}
+     * before reading a cell and {@link #getOrCreatePlainValueEntry(int, int, int, int, ValueEval)}
+     * after, so the cached value is served instead of checked against a fresh read
+     */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public PlainValueCellCacheEntry getPlainValueEntry(int bookIndex, int sheetIndex,
             int rowIndex, int columnIndex, ValueEval value) {
 
@@ -130,7 +175,6 @@ final class EvaluationCache {
                 _evaluationListener.onReadPlainValue(sheetIndex, rowIndex, columnIndex, result);
             }
         } else {
-            // TODO - if we are confident that this sanity check is not required, we can remove 'value' from plain value cache entry
             if (!areValuesEqual(result.getValue(), value)) {
                 throw new IllegalStateException("value changed");
             }
@@ -205,6 +249,8 @@ final class EvaluationCache {
                 // cache entry doesn't exist. nothing to do
             } else {
                 pcce.recurseClearCachedFormulaResults(_evaluationListener);
+                // the deleted cell reads as blank from now on, which is never cached here
+                _plainCellCache.remove(loc);
             }
         }
     }

@@ -44,6 +44,10 @@ jmh {
     if (project.hasProperty('jmh.includes')) {
         includes = [project.property('jmh.includes')]
     }
+    // e.g. -Pjmh.profilers=gc for allocation rates alongside the timings
+    if (project.hasProperty('jmh.profilers')) {
+        profilers = [project.property('jmh.profilers')]
+    }
     resultFormat = 'JSON'
     resultsFile = project.file("${project.buildDir}/reports/jmh/results.json")
     humanOutputFile = project.file("${project.buildDir}/reports/jmh/human.txt")
