@@ -43,6 +43,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -3654,6 +3655,40 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             addRow(sheet, 2, null, "b", "a");
             XSSFCell cell = sheet.getRow(0).createCell(0);
             assertDouble(fe, cell, "SUMPRODUCT(COUNTIF(B1:B3, C1:C3))", 5);
+        }
+    }
+
+    @Test
+    void testBug64369() throws IOException {
+        // "*" matches any text, so COUNTIF(range,"<>*") counts the cells that are not text
+        // (the reporter's ISNONTEXT idiom): numbers and dates yes, texts no, even ones that look
+        // like criteria themselves (fixed with bug 69853)
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
+            XSSFSheet sheet = wb.createSheet("Countif");
+            addRow(sheet, 0, null, 1);
+            addRow(sheet, 1, null, 1.0);
+            addRow(sheet, 2, null, "Testdata");
+            addRow(sheet, 3, null, "aaa");
+            addRow(sheet, 4, null, "<>*");
+            addRow(sheet, 5, null, "*");
+            addRow(sheet, 6, null, ">*");
+            addRow(sheet, 7, null, LocalDate.of(2020, 4, 21));
+            XSSFCell cell = sheet.getRow(0).createCell(0);
+
+            double[] isText = {0, 0, 1, 1, 1, 1, 1, 0};
+            for (int r = 0; r < isText.length; r++) {
+                String range = "B" + (r + 1) + ":B" + (r + 1);
+                assertDouble(fe, cell, "COUNTIF(" + range + ", \"*\")", isText[r]);
+                assertDouble(fe, cell, "COUNTIF(" + range + ", \"<>*\")", 1 - isText[r]);
+            }
+            assertDouble(fe, cell, "COUNTIF(B1:B8, \"*\")", 5);
+            assertDouble(fe, cell, "COUNTIF(B1:B8, \"<>*\")", 3);
+            assertDouble(fe, cell, "COUNTIF(B1:B8, \"*a*\")", 2);
+            assertDouble(fe, cell, "COUNTIF(B1:B8, \"*aa*\")", 1);
+            assertDouble(fe, cell, "COUNTIF(B1:B8, \"=1\")", 2);
+            // a blank cell is not text either
+            assertDouble(fe, cell, "COUNTIF(B1:B9, \"<>*\")", 4);
         }
     }
 
