@@ -19,8 +19,10 @@ package org.apache.poi.ss.tests.util;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellPropertyType;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
@@ -29,15 +31,18 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.BaseTestCellUtil;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -307,8 +312,8 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
             }
 
             assertEquals(color, cell.getCellStyle().getFillForegroundColorColor());
-            assertEquals(IndexedColors.AUTOMATIC.getIndex(),
-                    ((XSSFColor) cell.getCellStyle().getFillBackgroundColorColor()).getIndex());
+            // no background color was set, so none is written (bug 69463)
+            assertNull(cell.getCellStyle().getFillBackgroundColorColor());
 
             {
                 Map<CellPropertyType, Object> properties = new LinkedHashMap<>();
@@ -320,8 +325,8 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
             }
 
             assertNull(cell.getCellStyle().getFillForegroundColorColor());
-            assertEquals(IndexedColors.AUTOMATIC.getIndex(),
-                    ((XSSFColor) cell.getCellStyle().getFillBackgroundColorColor()).getIndex());
+            // no background color was set, so none is written (bug 69463)
+            assertNull(cell.getCellStyle().getFillBackgroundColorColor());
         }
     }
 
@@ -348,8 +353,8 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
             }
 
             assertEquals(color, cell.getCellStyle().getFillForegroundColorColor());
-            assertEquals(IndexedColors.AUTOMATIC.getIndex(),
-                    ((XSSFColor) cell.getCellStyle().getFillBackgroundColorColor()).getIndex());
+            // no background color was set, so none is written (bug 69463)
+            assertNull(cell.getCellStyle().getFillBackgroundColorColor());
 
             {
                 Map<String, Object> properties = new LinkedHashMap<>();
@@ -361,8 +366,63 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
             }
 
             assertNull(cell.getCellStyle().getFillForegroundColorColor());
-            assertEquals(IndexedColors.AUTOMATIC.getIndex(),
-                    ((XSSFColor) cell.getCellStyle().getFillBackgroundColorColor()).getIndex());
+            // no background color was set, so none is written (bug 69463)
+            assertNull(cell.getCellStyle().getFillBackgroundColorColor());
+        }
+    }
+
+    /**
+     * Bug 69463: a cell without a fill got a fill with automatic fore- and background colors but no
+     * pattern, which Excel renders as a black cell while it is being edited
+     */
+    @Test
+    void testNoFillCellStaysWithoutFillColorsBug69463() throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            final Sheet sheet = workbook.createSheet("Sheet");
+            final Cell cell = sheet.createRow(1).createCell(1);
+            final CellStyle original = workbook.createCellStyle();
+            original.setBorderTop(BorderStyle.THIN);
+            cell.setCellStyle(original);
+
+            CellUtil.setCellStyleProperties(cell, Map.of(CellUtil.LOCKED, false));
+
+            XSSFCellStyle style = (XSSFCellStyle) cell.getCellStyle();
+            assertFalse(style.getLocked());
+            assertEquals(BorderStyle.THIN, style.getBorderTop());
+            assertEquals(FillPatternType.NO_FILL, style.getFillPattern());
+            assertNull(style.getFillForegroundColorColor());
+            assertNull(style.getFillBackgroundColorColor());
+            CTPatternFill patternFill = workbook.getStylesSource()
+                    .getFillAt((int) style.getCoreXf().getFillId()).getCTFill().getPatternFill();
+            assertFalse(patternFill.isSetFgColor());
+            assertFalse(patternFill.isSetBgColor());
+        }
+    }
+
+    /**
+     * Bug 69463: the fill of a cell with a solid theme color, as Excel writes it, is kept as is
+     */
+    @Test
+    void testSolidThemeFillIsKeptBug69463() throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            final Sheet sheet = workbook.createSheet("Sheet");
+            final Cell cell = sheet.createRow(1).createCell(0);
+            final XSSFCellStyle original = workbook.createCellStyle();
+            original.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            final XSSFColor themeColor = new XSSFColor(workbook.getStylesSource().getIndexedColors());
+            themeColor.setTheme(0);
+            original.setFillForegroundColor(themeColor);
+            original.setFillBackgroundColor(IndexedColors.AUTOMATIC.getIndex());
+            cell.setCellStyle(original);
+
+            CellUtil.setCellStyleProperties(cell, Map.of(CellUtil.LOCKED, false));
+
+            XSSFCellStyle style = (XSSFCellStyle) cell.getCellStyle();
+            assertNotEquals(original, style);
+            assertFalse(style.getLocked());
+            assertEquals(FillPatternType.SOLID_FOREGROUND, style.getFillPattern());
+            assertEquals(themeColor, style.getFillForegroundColorColor());
+            assertEquals(IndexedColors.AUTOMATIC.getIndex(), style.getFillBackgroundColorColor().getIndex());
         }
     }
 }
