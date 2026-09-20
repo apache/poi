@@ -128,8 +128,11 @@ public class XDDFView3D {
         }
     }
 
+    /**
+     * @return the depth of the 3D chart as a percentage of its width (20 to 2000), or null if not set
+     */
     public Integer getDepthPercent() {
-        return (view3D.isSetDepthPercent()) ? POIXMLUnits.parsePercent(view3D.getDepthPercent().xgetVal()) : null;
+        return (view3D.isSetDepthPercent()) ? POIXMLUnits.parsePercent(view3D.getDepthPercent().xgetVal()) / 1000 : null;
     }
 
     public void setDepthPercent(Integer percent) {
@@ -149,8 +152,11 @@ public class XDDFView3D {
         }
     }
 
+    /**
+     * @return the height of the 3D chart as a percentage of its width (5 to 500), or null if not set
+     */
     public Integer getHPercent() {
-        return (view3D.isSetHPercent()) ? POIXMLUnits.parsePercent(view3D.getHPercent().xgetVal()) : null;
+        return (view3D.isSetHPercent()) ? POIXMLUnits.parsePercent(view3D.getHPercent().xgetVal()) / 1000 : null;
     }
 
     public void setHPercent(Integer percent) {
