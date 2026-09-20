@@ -69,6 +69,8 @@ final class EvaluationCache {
             } else {
                 fcce.recurseClearCachedFormulaResults(_evaluationListener);
                 fcce.clearFormulaEntry();
+                // the formula itself may have changed
+                fcce.setSubTotal(null);
             }
             if (pcce == null) {
                 // was formula cell before - no change of type
