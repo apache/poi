@@ -31,9 +31,11 @@ import org.apache.poi.util.NotImplemented;
 // non-Javadoc: When possible, code should be implemented in the RowShifter abstract class to avoid duplication with
 // {@link org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter}
 public final class HSSFRowShifter extends RowShifter {
+    private final HSSFSheet hssfSheet;
 
     public HSSFRowShifter(HSSFSheet sh) {
         super(sh);
+        hssfSheet = sh;
     }
 
     @Override
@@ -69,6 +71,20 @@ public final class HSSFRowShifter extends RowShifter {
     @Internal(since="5.1.0")
     public void updateRowFormulas(HSSFRow row, FormulaShifter formulaShifter) {
         HSSFRowColShifter.updateRowFormulas(row, formulaShifter);
+    }
+
+    /**
+     * Shift the anchors of the shapes (pictures, charts, ...) in the sheet's drawing along with the rows
+     * they are anchored to. A shape is moved when its top-left anchor row is within {@code [startRow, endRow]};
+     * the whole shape is moved so it keeps its size. Comments are not moved by this method.
+     *
+     * @param startRow the row to start shifting
+     * @param endRow the row to end shifting
+     * @param n the number of rows to shift
+     * @since 6.0.0
+     */
+    public void shiftDrawingAnchors(int startRow, int endRow, int n) {
+        HSSFRowColShifter.shiftDrawingAnchorRows(hssfSheet, startRow, endRow, n);
     }
 
 }

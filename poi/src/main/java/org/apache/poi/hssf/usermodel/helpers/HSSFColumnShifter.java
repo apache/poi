@@ -33,9 +33,11 @@ import org.apache.poi.util.NotImplemented;
 // {@link org.apache.poi.hssf.usermodel.helpers.HSSFColumnShifter}
 @Beta
 public final class HSSFColumnShifter extends ColumnShifter {
+    private final HSSFSheet hssfSheet;
 
     public HSSFColumnShifter(HSSFSheet sh) {
         super(sh);
+        hssfSheet = sh;
     }
 
     @Override
@@ -60,6 +62,21 @@ public final class HSSFColumnShifter extends ColumnShifter {
     @NotImplemented
     public void updateHyperlinks(FormulaShifter formulaShifter) {
         throw new NotImplementedException("updateHyperlinks");
+    }
+
+    /**
+     * Shift the anchors of the shapes (pictures, charts, ...) in the sheet's drawing along with the columns
+     * they are anchored to. A shape is moved when its top-left anchor column is within
+     * {@code [startColumn, endColumn]}; the whole shape is moved so it keeps its size.
+     * Comments are not moved by this method.
+     *
+     * @param startColumn the column to start shifting
+     * @param endColumn the column to end shifting
+     * @param n the number of columns to shift
+     * @since 6.0.0
+     */
+    public void shiftDrawingAnchors(int startColumn, int endColumn, int n) {
+        HSSFRowColShifter.shiftDrawingAnchorColumns(hssfSheet, startColumn, endColumn, n);
     }
 
 }

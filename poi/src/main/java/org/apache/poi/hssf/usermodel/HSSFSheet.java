@@ -1591,6 +1591,9 @@ public final class HSSFSheet implements Sheet {
      * Additionally shifts merged regions that are completely defined in these
      * rows (ie. merged 2 cells on a row to be shifted).<p>
      *
+     * Shapes in the sheet's drawing (pictures, charts, ...) whose top-left anchor is in one of the
+     * shifted rows are moved along with it, keeping their size.<p>
+     *
      * TODO Might want to add bounds checking here
      *
      * @param startRow               the row to start shifting
@@ -1617,7 +1620,7 @@ public final class HSSFSheet implements Sheet {
             return;
         }
 
-        final RowShifter rowShifter = new HSSFRowShifter(this);
+        final HSSFRowShifter rowShifter = new HSSFRowShifter(this);
 
         // Move comments from the source row to the
         //  destination row. Note that comments can
@@ -1632,6 +1635,9 @@ public final class HSSFSheet implements Sheet {
 
         // Shift Merged Regions
         rowShifter.shiftMergedRegions(startRow, endRow, n);
+
+        // Shift the shapes (pictures, charts, ...) anchored to the shifted rows
+        rowShifter.shiftDrawingAnchors(startRow, endRow, n);
 
         // Shift Row Breaks
         _sheet.getPageSettings().shiftRowBreaks(startRow, endRow, n);
@@ -1788,7 +1794,8 @@ public final class HSSFSheet implements Sheet {
     /**
      * Shifts columns in range [startColumn, endColumn] for n places to the right.
      * For n &lt; 0, it will shift columns left.
-     * Additionally adjusts formulas.
+     * Additionally adjusts formulas and moves the shapes in the sheet's drawing (pictures, charts, ...)
+     * whose top-left anchor is in one of the shifted columns.
      * Probably should also process other features (hyperlinks, comments...) in the way analog to shiftRows method
      * @param startColumn   the column to start shifting
      * @param endColumn     the column to end shifting
@@ -1799,6 +1806,7 @@ public final class HSSFSheet implements Sheet {
     public void shiftColumns(int startColumn, int endColumn, int n){
         HSSFColumnShifter columnShifter = new HSSFColumnShifter(this);
         columnShifter.shiftColumns(startColumn, endColumn, n);
+        columnShifter.shiftDrawingAnchors(startColumn, endColumn, n);
 
         int sheetIndex = _workbook.getSheetIndex(this);
         short externSheetIndex = _book.checkExternSheet(sheetIndex);
