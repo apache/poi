@@ -992,11 +992,9 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     public void setFillPattern(FillPatternType pattern) {
         CTFill ct = getCTFill();
         CTPatternFill ctptrn = ct.isSetPatternFill() ? ct.getPatternFill() : ct.addNewPatternFill();
-        if (pattern == FillPatternType.NO_FILL && ctptrn.isSetPatternType()) {
-            ctptrn.unsetPatternType();
-        } else {
-            ctptrn.setPatternType(STPatternType.Enum.forInt(pattern.getCode() + 1));
-        }
+        // NO_FILL is written as patternType="none", as Excel does for its default fill, so that
+        // the fill is recognised as that default fill instead of being added as a new one (bug 60895)
+        ctptrn.setPatternType(STPatternType.Enum.forInt(pattern.getCode() + 1));
 
         addFill(ct);
         invalidateCachedProperties();
