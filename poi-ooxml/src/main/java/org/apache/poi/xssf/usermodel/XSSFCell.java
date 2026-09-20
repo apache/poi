@@ -487,8 +487,9 @@ public final class XSSFCell extends CellBase {
             return;
         }
 
+        XSSFEvaluationWorkbook fpb = null;
         if (wb.getCellFormulaValidation()) {
-            XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+            fpb = XSSFEvaluationWorkbook.create(wb);
             //validate through the FormulaParser
             FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
         }
@@ -496,10 +497,18 @@ public final class XSSFCell extends CellBase {
         CTCellFormula f;
         if (_cell.isSetF()) {
             f = _cell.getF();
-            f.setStringValue(formula);
-            if(f.getT() == STCellFormulaType.SHARED){
-                getRow().getSheet().onReadCell(this);
+            if (f.getT() == STCellFormulaType.SHARED) {
+                // As in Excel, a cell that gets its own formula leaves its shared formula group;
+                // the other cells of the group keep the formula they had. If this cell was the
+                // master, the next cell of the group takes over that role (with the old formula).
+                if (f.isSetRef()) {
+                    getRow().getSheet().onDeleteFormula(this, fpb);
+                    f.unsetRef();
+                }
+                f.unsetT();
+                f.unsetSi();
             }
+            f.setStringValue(formula);
         } else {
             f = CTCellFormula.Factory.newInstance();
             f.setStringValue(formula);
