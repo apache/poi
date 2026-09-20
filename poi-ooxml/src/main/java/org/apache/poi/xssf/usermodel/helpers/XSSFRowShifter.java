@@ -66,4 +66,18 @@ public final class XSSFRowShifter extends RowShifter {
     public void updateHyperlinks(FormulaShifter formulaShifter) {
         XSSFRowColShifter.updateHyperlinks(xssfSheet, formulaShifter);
     }
+
+    /**
+     * Shift the anchors of the shapes (charts, pictures, ...) in the sheet's drawing along with the rows
+     * they are anchored to. A shape is moved when its top-left anchor row is within {@code [startRow, endRow]};
+     * the whole shape is moved so it keeps its size. Shapes with an absolute anchor are not moved.
+     *
+     * @param startRow the row to start shifting
+     * @param endRow the row to end shifting
+     * @param n the number of rows to shift
+     * @since 6.0.0
+     */
+    public void shiftDrawingAnchors(int startRow, int endRow, int n) {
+        XSSFRowColShifter.shiftDrawingAnchorRows(xssfSheet, startRow, endRow, n);
+    }
 }

@@ -57,4 +57,19 @@ public final class XSSFColumnShifter extends ColumnShifter {
     public void updateHyperlinks(FormulaShifter formulaShifter) {
         XSSFRowColShifter.updateHyperlinks(xssfSheet, formulaShifter);
     }
+
+    /**
+     * Shift the anchors of the shapes (charts, pictures, ...) in the sheet's drawing along with the columns
+     * they are anchored to. A shape is moved when its top-left anchor column is within
+     * {@code [startColumn, endColumn]}; the whole shape is moved so it keeps its size.
+     * Shapes with an absolute anchor are not moved.
+     *
+     * @param startColumn the column to start shifting
+     * @param endColumn the column to end shifting
+     * @param n the number of columns to shift
+     * @since 6.0.0
+     */
+    public void shiftDrawingAnchors(int startColumn, int endColumn, int n) {
+        XSSFRowColShifter.shiftDrawingAnchorColumns(xssfSheet, startColumn, endColumn, n);
+    }
 }
