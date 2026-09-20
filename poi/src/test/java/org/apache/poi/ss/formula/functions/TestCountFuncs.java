@@ -309,6 +309,84 @@ final class TestCountFuncs {
     }
 
     @Test
+    void testNotEqualCountsValuesOfOtherTypes_Bug69853() {
+        // "<>" means "not equal to the empty text", which every non-blank cell is: Excel's own
+        // COUNTIF documentation gives COUNTIF(range,"<>") as the way to count non-empty cells
+        I_MatchPredicate mp = createCriteriaPredicate(new StringEval("<>"));
+        assertTrue(mp.matches(new NumberEval(42)));
+        assertTrue(mp.matches(new NumberEval(0)));
+        assertTrue(mp.matches(BoolEval.FALSE));
+        assertTrue(mp.matches(ErrorEval.NA));
+        assertTrue(mp.matches(new StringEval("abc")));
+        assertFalse(mp.matches(BlankEval.instance));
+
+        // and "<>abc" counts everything that is not the text "abc", blanks included
+        mp = createCriteriaPredicate(new StringEval("<>abc"));
+        assertTrue(mp.matches(new NumberEval(42)));
+        assertTrue(mp.matches(BoolEval.TRUE));
+        assertTrue(mp.matches(ErrorEval.DIV_ZERO));
+        assertTrue(mp.matches(BlankEval.instance));
+        assertTrue(mp.matches(new StringEval("abd")));
+        assertFalse(mp.matches(new StringEval("abc")));
+        assertFalse(mp.matches(new StringEval("ABC")));
+
+        // whereas "=" and "abc" only ever match text (a number never equals a text)
+        mp = createCriteriaPredicate(new StringEval("abc"));
+        assertFalse(mp.matches(new NumberEval(42)));
+        assertFalse(mp.matches(BoolEval.TRUE));
+        assertFalse(mp.matches(ErrorEval.NA));
+
+        // the same for the other criteria types
+        mp = createCriteriaPredicate(new StringEval("<>5"));
+        assertTrue(mp.matches(BoolEval.TRUE));
+        assertTrue(mp.matches(ErrorEval.NA));
+        assertTrue(mp.matches(new StringEval("abc")));
+        assertTrue(mp.matches(new NumberEval(6)));
+        assertFalse(mp.matches(new NumberEval(5)));
+
+        mp = createCriteriaPredicate(new StringEval("<>TRUE"));
+        assertTrue(mp.matches(new NumberEval(1)));
+        assertTrue(mp.matches(ErrorEval.NA));
+        assertTrue(mp.matches(new StringEval("abc")));
+        assertTrue(mp.matches(BoolEval.FALSE));
+        assertFalse(mp.matches(BoolEval.TRUE));
+
+        mp = createCriteriaPredicate(new StringEval("<>#N/A"));
+        assertTrue(mp.matches(new NumberEval(1)));
+        assertTrue(mp.matches(new StringEval("abc")));
+        assertTrue(mp.matches(BoolEval.TRUE));
+        assertTrue(mp.matches(BlankEval.instance));
+        assertTrue(mp.matches(ErrorEval.DIV_ZERO));
+        assertFalse(mp.matches(ErrorEval.NA));
+        mp = createCriteriaPredicate(new StringEval("#N/A"));
+        assertFalse(mp.matches(new NumberEval(1)));
+        assertFalse(mp.matches(BlankEval.instance));
+    }
+
+    @Test
+    void testCountifNotEmptyInWorkbook_Bug69853() throws IOException {
+        // the reporter's spreadsheet: a number and a text, COUNTIF(A1:A2,"<>") is 2 in Excel
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet("Sheet1");
+            sheet.createRow(0).createCell(0).setCellValue(1);
+            sheet.createRow(1).createCell(0).setCellValue("a");
+            sheet.createRow(2).createCell(0).setCellValue(true);
+            sheet.createRow(3).createCell(0).setCellFormula("1/0");
+            sheet.createRow(4).createCell(0);
+            HSSFCell cell = sheet.createRow(5).createCell(1);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertDouble(fe, cell, "COUNTIF(A1:A2,\"<>\")", 2);
+            assertDouble(fe, cell, "COUNTIF(A1:A6,\"<>\")", 4);
+            assertDouble(fe, cell, "COUNTIF(A1:A6,\"<>a\")", 5);
+            assertDouble(fe, cell, "COUNTIF(A1:A6,\"<>1\")", 5);
+            assertDouble(fe, cell, "COUNTIFS(A1:A6,\"<>\")", 4);
+            // (the error in A4 would propagate into the sum, as it does in Excel)
+            assertDouble(fe, cell, "SUMIF(A1:A3,\"<>\",A1:A3)", 1);
+            assertDouble(fe, cell, "SUMIFS(A1:A3,A1:A3,\"<>a\")", 1);
+        }
+    }
+
+    @Test
     void testCountifEmptyStringCriteria() {
         I_MatchPredicate mp;
 

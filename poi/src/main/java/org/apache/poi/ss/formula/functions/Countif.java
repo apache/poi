@@ -209,7 +209,8 @@ public final class Countif extends Fixed2ArgFunction implements ArrayFunction {
             } else if(x instanceof BlankEval) {
                 return getCode() == CmpOp.NE; // Excel counts blank values in range as not equal to any value. See Bugzilla 51498
             } else {
-                return false;
+                // a boolean or error is not equal to any number
+                return getCode() == CmpOp.NE;
             }
             return evaluate(Double.compare(testValue, _value));
         }
@@ -236,8 +237,8 @@ public final class Countif extends Fixed2ArgFunction implements ArrayFunction {
             int testValue;
             if(x instanceof StringEval) {
                 // Note - Unlike with numbers, it seems that COUNTIF never matches
-                // boolean values when the target(x) is a string
-                return false;
+                // boolean values when the target(x) is a string (so '<>TRUE' always does)
+                return getCode() == CmpOp.NE;
                 // uncomment to observe more intuitive behaviour
                 // StringEval se = (StringEval)x;
                 // Boolean val = parseBoolean(se.getStringValue());
@@ -250,10 +251,9 @@ public final class Countif extends Fixed2ArgFunction implements ArrayFunction {
                 testValue = boolToInt(be.getBooleanValue());
             } else if(x instanceof BlankEval) {
                 return getCode() == CmpOp.NE; // Excel counts blank values in range as not equal to any value. See Bugzilla 51498
-            } else if(x instanceof NumberEval) {
-                return getCode() == CmpOp.NE;// not-equals comparison of a number to boolean always returns false
             } else {
-                return false;
+                // a number or error is not equal to any boolean
+                return getCode() == CmpOp.NE;
             }
             return evaluate(testValue - _value);
         }
@@ -277,7 +277,8 @@ public final class Countif extends Fixed2ArgFunction implements ArrayFunction {
                 int testValue = errorEval.getErrorCode();
                 return evaluate(testValue - _value);
             }
-            return false;
+            // a blank, number, text or boolean is not equal to any error
+            return getCode() == CmpOp.NE;
         }
 
         public int getValue() {
@@ -324,7 +325,9 @@ public final class Countif extends Fixed2ArgFunction implements ArrayFunction {
                 // must always be string
                 // even if match str is wild, but contains only digits
                 // e.g. '4*7', NumberEval(4567) does not match
-                return false;
+                // - but a number, boolean or error is not equal to any text, so '<>' and '<>abc'
+                // do count it (bug 69853: COUNTIF(range,"<>") counts every non-blank cell)
+                return getCode() == CmpOp.NE;
             }
             String testedValue = stringEval.getStringValue();
             if (testedValue.isEmpty() && _value.isEmpty()) {
