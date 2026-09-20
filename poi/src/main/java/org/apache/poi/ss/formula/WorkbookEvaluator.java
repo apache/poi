@@ -261,8 +261,11 @@ public final class WorkbookEvaluator {
 
         if (srcCell == null || srcCell.getCellType() != CellType.FORMULA) {
             ValueEval result = getValueFromNonFormulaCell(srcCell);
-            if (shouldCellDependencyBeRecorded) {
-                tracker.acceptPlainValueDependency(_workbook, _workbookIx, sheetIndex, rowIndex, columnIndex, result);
+            if (tracker != null) {
+                // the value is cached for the next reader either way; whether the formulas reading
+                // it are registered for invalidation is what the stability classifier decides
+                tracker.acceptPlainValueDependency(_workbook, _workbookIx, sheetIndex, rowIndex, columnIndex, result,
+                        shouldCellDependencyBeRecorded);
             }
             return result;
         }
@@ -857,10 +860,11 @@ public final class WorkbookEvaluator {
             int columnIndex, EvaluationTracker tracker) {
 
         boolean shouldCellDependencyBeRecorded = shouldCellDependencyBeRecorded(sheetIndex, rowIndex, columnIndex);
-        if (shouldCellDependencyBeRecorded) {
+        if (tracker != null) {
             // a plain cell that some formula already read is served from the cache without
             // touching the workbook again (the cache is kept in step by the notify* methods)
-            ValueEval cached = tracker.getCachedPlainValue(_workbookIx, sheetIndex, rowIndex, columnIndex);
+            ValueEval cached = tracker.getCachedPlainValue(_workbookIx, sheetIndex, rowIndex, columnIndex,
+                    shouldCellDependencyBeRecorded);
             if (cached != null) {
                 return cached;
             }

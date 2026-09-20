@@ -130,14 +130,17 @@ final class EvaluationTracker {
     }
 
     /**
-     * Serves the value of a plain (non-formula) cell from the cache, if it has been read before,
-     * and records that the currently evaluating cell depends on it.
+     * Serves the value of a plain (non-formula) cell from the cache, if it has been read before.
      *
+     * @param recordDependency whether to record that the currently evaluating cell depends on it
+     *        (false for cells an {@link IStabilityClassifier} declared final: their value is still
+     *        cached, but no formula needs to be invalidated on their behalf)
      * @return the cached value, or {@code null} if the cell has to be read (nothing is cached for
      * it yet, or no cell is currently being evaluated)
      * @since 6.0.0
      */
-    public ValueEval getCachedPlainValue(int bookIndex, int sheetIndex, int rowIndex, int columnIndex) {
+    public ValueEval getCachedPlainValue(int bookIndex, int sheetIndex, int rowIndex, int columnIndex,
+            boolean recordDependency) {
         int prevFrameIndex = _evaluationFrames.size() - 1;
         if (prevFrameIndex < 0) {
             // Top level frame, there is no 'cell' above this frame that is using the current cell
@@ -147,7 +150,9 @@ final class EvaluationTracker {
         if (cce == null) {
             return null;
         }
-        _evaluationFrames.get(prevFrameIndex).addSensitiveInputCell(cce);
+        if (recordDependency) {
+            _evaluationFrames.get(prevFrameIndex).addSensitiveInputCell(cce);
+        }
         return cce.getValue();
     }
 
@@ -157,17 +162,35 @@ final class EvaluationTracker {
      */
     public void acceptPlainValueDependency(EvaluationWorkbook evalWorkbook, int bookIndex, int sheetIndex,
             int rowIndex, int columnIndex, ValueEval value) {
+        acceptPlainValueDependency(evalWorkbook, bookIndex, sheetIndex, rowIndex, columnIndex, value, true);
+    }
+
+    /**
+     * Caches the value just read from a plain (non-formula) cell for the next reader and, if
+     * asked to, records that the currently evaluating cell depends on it.
+     *
+     * @param recordDependency whether to record the dependency (false for cells an
+     *        {@link IStabilityClassifier} declared final; blank cells are then not recorded either,
+     *        as blanks are tracked only for the sake of invalidation)
+     * @since 6.0.0
+     */
+    public void acceptPlainValueDependency(EvaluationWorkbook evalWorkbook, int bookIndex, int sheetIndex,
+            int rowIndex, int columnIndex, ValueEval value, boolean recordDependency) {
         // Tell the currently evaluating cell frame that it has a dependency on the specified
         int prevFrameIndex = _evaluationFrames.size() - 1;
         if (prevFrameIndex < 0) {
             // Top level frame, there is no 'cell' above this frame that is using the current cell
-        } else {
-            CellEvaluationFrame consumingFrame = _evaluationFrames.get(prevFrameIndex);
-            if (value == BlankEval.instance) {
+            return;
+        }
+        CellEvaluationFrame consumingFrame = _evaluationFrames.get(prevFrameIndex);
+        if (value == BlankEval.instance) {
+            if (recordDependency) {
                 consumingFrame.addUsedBlankCell(evalWorkbook, bookIndex, sheetIndex, rowIndex, columnIndex);
-            } else {
-                PlainValueCellCacheEntry cce = _cache.getOrCreatePlainValueEntry(bookIndex, sheetIndex,
-                        rowIndex, columnIndex, value);
+            }
+        } else {
+            PlainValueCellCacheEntry cce = _cache.getOrCreatePlainValueEntry(bookIndex, sheetIndex,
+                    rowIndex, columnIndex, value);
+            if (recordDependency) {
                 consumingFrame.addSensitiveInputCell(cce);
             }
         }
