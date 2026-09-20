@@ -630,4 +630,82 @@ public abstract class BaseTestCellUtil {
         assertEquals(num1, num2);
         wb1.close();
     }
+
+    /**
+     * Bug 69366: a null indexed fill color means the automatic color, which is what an existing style
+     * without a fill color reports, so the same style must be found again
+     */
+    @Test
+    void setCellStylePropertiesNullFillColorReusesStyleBug69366() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Row row = wb.createSheet().createRow(0);
+            Cell cell1 = row.createCell(0);
+            Cell cell2 = row.createCell(1);
+            Map<CellPropertyType, Object> properties = new EnumMap<>(CellPropertyType.class);
+            properties.put(CellPropertyType.FILL_FOREGROUND_COLOR, null);
+            properties.put(CellPropertyType.FILL_BACKGROUND_COLOR, null);
+
+            CellUtil.setCellStylePropertiesEnum(cell1, properties);
+            int numStyles = wb.getNumCellStyles();
+
+            CellUtil.setCellStylePropertiesEnum(cell1, properties);
+            assertEquals(numStyles, wb.getNumCellStyles());
+            CellUtil.setCellStylePropertiesEnum(cell2, properties);
+            assertEquals(numStyles, wb.getNumCellStyles());
+            assertEquals(cell1.getCellStyle().getIndex(), cell2.getCellStyle().getIndex());
+        }
+    }
+
+    /**
+     * Bug 69366: clearing a fill color through the Color property behaves the same
+     */
+    @Test
+    void setCellStylePropertiesNullFillColorColorReusesStyleBug69366() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Row row = wb.createSheet().createRow(0);
+            Cell cell1 = row.createCell(0);
+            Cell cell2 = row.createCell(1);
+            Map<CellPropertyType, Object> properties = new EnumMap<>(CellPropertyType.class);
+            properties.put(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR, null);
+            properties.put(CellPropertyType.FILL_BACKGROUND_COLOR_COLOR, null);
+
+            CellUtil.setCellStylePropertiesEnum(cell1, properties);
+            int numStyles = wb.getNumCellStyles();
+
+            CellUtil.setCellStylePropertiesEnum(cell1, properties);
+            assertEquals(numStyles, wb.getNumCellStyles());
+            CellUtil.setCellStylePropertiesEnum(cell2, properties);
+            assertEquals(numStyles, wb.getNumCellStyles());
+            assertEquals(cell1.getCellStyle().getIndex(), cell2.getCellStyle().getIndex());
+        }
+    }
+
+    /**
+     * Bug 69366: an indexed fill color is still told apart from another one and from no color
+     */
+    @Test
+    void setCellStylePropertiesIndexedFillColorBug69366() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Row row = wb.createSheet().createRow(0);
+            Cell cell1 = row.createCell(0);
+            Cell cell2 = row.createCell(1);
+            Cell cell3 = row.createCell(2);
+            Map<CellPropertyType, Object> red = new EnumMap<>(CellPropertyType.class);
+            red.put(CellPropertyType.FILL_PATTERN, FillPatternType.SOLID_FOREGROUND);
+            red.put(CellPropertyType.FILL_FOREGROUND_COLOR, IndexedColors.RED.getIndex());
+            Map<CellPropertyType, Object> blue = new EnumMap<>(red);
+            blue.put(CellPropertyType.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.getIndex());
+
+            CellUtil.setCellStylePropertiesEnum(cell1, red);
+            int numStyles = wb.getNumCellStyles();
+            CellUtil.setCellStylePropertiesEnum(cell2, red);
+            assertEquals(numStyles, wb.getNumCellStyles());
+            assertEquals(cell1.getCellStyle().getIndex(), cell2.getCellStyle().getIndex());
+
+            CellUtil.setCellStylePropertiesEnum(cell3, blue);
+            assertEquals(numStyles + 1, wb.getNumCellStyles());
+            assertEquals(IndexedColors.BLUE.getIndex(), cell3.getCellStyle().getFillForegroundColor());
+            assertEquals(IndexedColors.RED.getIndex(), cell1.getCellStyle().getFillForegroundColor());
+        }
+    }
 }

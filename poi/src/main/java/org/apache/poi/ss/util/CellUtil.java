@@ -23,7 +23,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
@@ -661,22 +660,47 @@ public final class CellUtil {
         return props == null ? getFormatProperties(style) : props;
     }
 
-    private static boolean styleMapsMatch(final Map<CellPropertyType, Object> newProps,
-                                          final Map<CellPropertyType, Object> storedProps, final boolean disableNullColorCheck) {
-        final EnumMap<CellPropertyType, Object> map1Copy = new EnumMap<>(newProps);
-        final EnumMap<CellPropertyType, Object> map2Copy = new EnumMap<>(storedProps);
+    /**
+     * @param wbProps the properties of a style that exists in the workbook
+     * @param wantedProps the properties the cell should get
+     * @param disableNullColorCheck whether a null wanted fill color must be matched by a null color,
+     *                              rather than by the indexed colors
+     */
+    private static boolean styleMapsMatch(final Map<CellPropertyType, Object> wbProps,
+                                          final Map<CellPropertyType, Object> wantedProps, final boolean disableNullColorCheck) {
+        final EnumMap<CellPropertyType, Object> map1Copy = new EnumMap<>(wbProps);
+        final EnumMap<CellPropertyType, Object> map2Copy = new EnumMap<>(wantedProps);
         final Object backColor1 = map1Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR_COLOR);
         final Object backColor2 = map2Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR_COLOR);
         final Object foreColor1 = map1Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR);
         final Object foreColor2 = map2Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR);
-        if (map1Copy.equals(map2Copy)) {
-            final boolean backColorsMatch = (!disableNullColorCheck && backColor2 == null)
-                    || Objects.equals(backColor1, backColor2);
-            final boolean foreColorsMatch = (!disableNullColorCheck && foreColor2 == null)
-                    || Objects.equals(foreColor1, foreColor2);
-            return backColorsMatch && foreColorsMatch;
+        final Object backIndex1 = map1Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR);
+        final Object backIndex2 = map2Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR);
+        final Object foreIndex1 = map1Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR);
+        final Object foreIndex2 = map2Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR);
+        return map1Copy.equals(map2Copy)
+                && fillColorsMatch(backColor1, backIndex1, backColor2, backIndex2, disableNullColorCheck)
+                && fillColorsMatch(foreColor1, foreIndex1, foreColor2, foreIndex2, disableNullColorCheck);
+    }
+
+    /**
+     * A fill color is held twice in the properties, as a {@link Color} and as an indexed color. The indexed
+     * color is derived from the {@link Color} and is meaningless for an RGB or theme color, so it only counts
+     * when there is no wanted {@link Color}. A missing indexed color means the automatic color (bug 69366).
+     */
+    private static boolean fillColorsMatch(final Object wbColor, final Object wbIndex,
+                                           final Object wantedColor, final Object wantedIndex, final boolean disableNullColorCheck) {
+        if (wantedColor != null) {
+            return wantedColor.equals(wbColor);
         }
-        return false;
+        if (disableNullColorCheck && wbColor != null) {
+            return false;
+        }
+        return colorIndex(wbIndex) == colorIndex(wantedIndex);
+    }
+
+    private static short colorIndex(final Object index) {
+        return index instanceof Number n ? n.shortValue() : IndexedColors.AUTOMATIC.getIndex();
     }
 
     /**
