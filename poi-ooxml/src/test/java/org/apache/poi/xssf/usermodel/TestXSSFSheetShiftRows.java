@@ -39,7 +39,11 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTOneCellAnchor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
@@ -673,5 +677,68 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             CellRangeAddress expectedMR = new CellRangeAddress(3, 3, secondCol - 1, thirdCol - 1);
             assertEquals(expectedMR, mr);
         }
+    }
+
+    @Test
+    void bug60072ShiftRowsMovesDrawingAnchors() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            for (int i = 0; i < 30; i++) {
+                sheet.createRow(i).createCell(0).setCellValue(i);
+            }
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            int picIdx = wb.addPicture("test jpeg data".getBytes(LocaleUtil.CHARSET_1252), XSSFWorkbook.PICTURE_TYPE_JPEG);
+
+            // shape above the shifted area: rows 0-1
+            XSSFSimpleShape shape = drawing.createSimpleShape(new XSSFClientAnchor(0, 0, 0, 0, 0, 0, 3, 1));
+            // chart at the start of the shifted area: rows 2-10
+            XSSFChart chart = drawing.createChart(new XSSFClientAnchor(0, 0, 0, 0, 1, 2, 8, 10));
+            // picture further down: rows 12-15
+            XSSFPicture picture = drawing.createPicture(new XSSFClientAnchor(0, 0, 0, 0, 1, 12, 4, 15), picIdx);
+            // a one-cell anchor at row 20 and an absolute anchor, added on the XML level as the API only creates two-cell anchors
+            CTDrawing ctDrawing = drawing.getCTDrawing();
+            CTOneCellAnchor oneCell = ctDrawing.addNewOneCellAnchor();
+            oneCell.addNewFrom().setRow(20);
+            oneCell.getFrom().setCol(2);
+            oneCell.addNewExt().setCx(100);
+            oneCell.getExt().setCy(100);
+            oneCell.addNewClientData();
+            ctDrawing.addNewAbsoluteAnchor().addNewPos().setX(10);
+            ctDrawing.getAbsoluteAnchorArray(0).getPos().setY(10);
+            ctDrawing.getAbsoluteAnchorArray(0).addNewExt().setCx(100);
+            ctDrawing.getAbsoluteAnchorArray(0).getExt().setCy(100);
+            ctDrawing.getAbsoluteAnchorArray(0).addNewClientData();
+
+            // insert 3 rows at row 2
+            sheet.shiftRows(2, sheet.getLastRowNum(), 3);
+
+            assertAnchorRows(0, 1, shape.getAnchor());
+            assertAnchorRows(5, 13, chart.getGraphicFrame().getAnchor());
+            assertAnchorRows(15, 18, picture.getAnchor());
+            assertEquals(23, oneCell.getFrom().getRow());
+            assertEquals(10L, ctDrawing.getAbsoluteAnchorArray(0).getPos().getY());
+
+            // move rows 15-18 (the picture) up by 10; the chart's top-left row is not in the range and stays
+            sheet.shiftRows(15, 18, -10);
+
+            assertAnchorRows(5, 13, chart.getGraphicFrame().getAnchor());
+            assertAnchorRows(5, 8, picture.getAnchor());
+            assertEquals(23, oneCell.getFrom().getRow());
+
+            try (XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFDrawing drawingBack = wbBack.getSheetAt(0).getDrawingPatriarch();
+                assertNotNull(drawingBack);
+                assertAnchorRows(0, 1, drawingBack.getShapes().get(0).getAnchor());
+                assertAnchorRows(5, 13, drawingBack.getShapes().get(1).getAnchor());
+                assertAnchorRows(5, 8, drawingBack.getShapes().get(2).getAnchor());
+                assertEquals(23, drawingBack.getCTDrawing().getOneCellAnchorArray(0).getFrom().getRow());
+            }
+        }
+    }
+
+    private static void assertAnchorRows(int row1, int row2, XSSFAnchor anchor) {
+        ClientAnchor clientAnchor = (ClientAnchor) anchor;
+        assertEquals(row1, clientAnchor.getRow1(), "row1");
+        assertEquals(row2, clientAnchor.getRow2(), "row2");
     }
 }

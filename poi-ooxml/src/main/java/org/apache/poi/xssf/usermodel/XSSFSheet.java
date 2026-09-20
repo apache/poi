@@ -3075,6 +3075,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * Additionally, shifts merged regions that are completely defined in these
      * rows (i.e. merged 2 cells on a row to be shifted). All merged regions that are
      * completely overlaid by shifting will be deleted.
+     * <p>
+     * Shapes in the sheet's drawing (charts, pictures, ...) whose top-left anchor is in one of the
+     * shifted rows are moved along with it, keeping their size.
      *
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
@@ -3106,6 +3109,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         rowShifter.updateFormulas(formulaShifter);
         rowShifter.updateConditionalFormatting(formulaShifter);
         rowShifter.updateHyperlinks(formulaShifter);
+        rowShifter.shiftDrawingAnchors(startRow, endRow, n);
 
         rebuildRows();
         rebuildFormulaBookkeeping();
@@ -3119,6 +3123,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * Shifts columns between startColumn and endColumn n number of columns.
      * If you use a negative number, it will shift columns left.
      * Code ensures that columns don't wrap around
+     * <p>
+     * Shapes in the sheet's drawing (charts, pictures, ...) whose top-left anchor is in one of the
+     * shifted columns are moved along with it, keeping their size.
      *
      * @param startColumn the column to start shifting
      * @param endColumn the column to end shifting
@@ -3145,6 +3152,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         columnShifter.updateConditionalFormatting(formulaShifter);
         columnShifter.updateHyperlinks(formulaShifter);
         columnShifter.updateNamedRanges(formulaShifter);
+        columnShifter.shiftDrawingAnchors(startColumn, endColumn, n);
 
         rebuildRows();
         rebuildFormulaBookkeeping();
