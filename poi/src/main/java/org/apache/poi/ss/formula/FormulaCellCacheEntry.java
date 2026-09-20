@@ -40,8 +40,27 @@ final class FormulaCellCacheEntry extends CellCacheEntry {
 
     private FormulaUsedBlankCellSet _usedBlankCellGroup;
 
+    /** whether the formula calls SUBTOTAL: {@code null} until asked, forgotten when the formula changes */
+    private Boolean _isSubTotal;
+
     public FormulaCellCacheEntry() {
         // leave fields un-set
+    }
+
+    /**
+     * @return whether the formula of this cell calls SUBTOTAL, or {@code null} if that has not
+     * been determined since the entry was created or the formula last changed
+     * @since 6.0.0
+     */
+    public Boolean isSubTotal() {
+        return _isSubTotal;
+    }
+
+    /**
+     * @since 6.0.0
+     */
+    public void setSubTotal(Boolean isSubTotal) {
+        _isSubTotal = isSubTotal;
     }
     
     public boolean isInputSensitive() {

@@ -853,6 +853,32 @@ public final class WorkbookEvaluator {
     }
 
     /**
+     * Whether the formula of the given cell calls {@code SUBTOTAL}, so that an enclosing
+     * {@code SUBTOTAL} skips it. Working that out means looking at the cell's tokens, which for
+     * XSSF means parsing its formula, so the answer is kept with the cell's cache entry and
+     * forgotten when the cell is notified as changed.
+     *
+     * @param cell a formula cell
+     * @since 6.0.0
+     */
+    /* package */ boolean isSubTotal(EvaluationCell cell) {
+        FormulaCellCacheEntry cce = _cache.getOrCreateFormulaCellEntry(cell);
+        Boolean known = cce.isSubTotal();
+        if (known == null) {
+            boolean subtotal = false;
+            for (Ptg ptg : _workbook.getFormulaTokens(cell)) {
+                if (ptg instanceof FuncVarPtg f && "SUBTOTAL".equals(f.getName())) {
+                    subtotal = true;
+                    break;
+                }
+            }
+            known = subtotal;
+            cce.setSubTotal(known);
+        }
+        return known;
+    }
+
+    /**
      * Used by the lazy ref evals whenever they need to get the value of a contained cell.
      */
     /* package */ ValueEval evaluateReference(
