@@ -102,7 +102,10 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
      * @param evalCell sourceCell
      */
     private void cacheExternalWorkbookCells(XSSFEvaluationCell evalCell) {
-        //
+        if (evalCell.getXSSFCell().getSheet().getWorkbook().getExternalLinksTables().isEmpty()) {
+            // nothing in this workbook can refer to another one
+            return;
+        }
         Ptg[] formulaTokens = getEvaluationWorkbook().getFormulaTokens(evalCell);
         for (Ptg ptg : formulaTokens) {
             if (ptg instanceof Area3DPxg area3DPxg) {
