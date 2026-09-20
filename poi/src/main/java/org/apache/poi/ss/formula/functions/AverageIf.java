@@ -46,13 +46,28 @@ public class AverageIf extends Baseifs {
 
             // collect pairs of ranges and criteria
             AreaEval ae = convertRangeArg(args[0]);
-            I_MatchPredicate mp = Countif.createCriteriaPredicate(args[1], ec.getRowIndex(), ec.getColumnIndex());
+            if (args[1] instanceof AreaEval crit && crit.getHeight() * crit.getWidth() > 1
+                    && Countif.isArrayCriteria(crit, isArrayContext(ec))) {
+                // one result per criterion
+                AreaEval finalSumRange = sumRange;
+                return Countif.evaluateForEachCriterion((AreaEval) args[1],
+                        criterion -> averageIf(finalSumRange, ae, criterion, ec));
+            }
+            return averageIf(sumRange, ae, args[1], ec);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+    }
+
+    private ValueEval averageIf(AreaEval sumRange, AreaEval testRange, ValueEval criteria, OperationEvaluationContext ec) {
+        try {
+            I_MatchPredicate mp = Countif.createCriteriaPredicate(criteria, ec.getRowIndex(), ec.getColumnIndex());
 
             if (mp instanceof Countif.ErrorMatcher errorMatcher) {
                 throw new EvaluationException(ErrorEval.valueOf(errorMatcher.getValue()));
             }
 
-            return aggregateMatchingCells(createAggregator(), sumRange, ae, mp);
+            return aggregateMatchingCells(createAggregator(), sumRange, testRange, mp);
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
