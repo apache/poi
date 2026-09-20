@@ -47,7 +47,12 @@ public class HwmfHeader implements GenericRecord {
     public HwmfHeader(LittleEndianInputStream leis) throws IOException {
         // Type (2 bytes):  A 16-bit unsigned integer that defines the type of metafile
         // MEMORYMETAFILE = 0x0001, DISKMETAFILE = 0x0002
-        type = HwmfHeaderMetaType.values()[leis.readUShort()-1];
+        int typeId = leis.readUShort();
+        HwmfHeaderMetaType[] types = HwmfHeaderMetaType.values();
+        if (typeId < 1 || typeId > types.length) {
+            throw new IOException("Not a valid WMF header. Type: 0x" + Integer.toHexString(typeId));
+        }
+        type = types[typeId-1];
 
         // HeaderSize (2 bytes):  A 16-bit unsigned integer that defines the number
         // of 16-bit words in the header.
