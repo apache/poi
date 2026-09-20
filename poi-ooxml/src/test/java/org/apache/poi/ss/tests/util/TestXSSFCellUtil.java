@@ -425,4 +425,38 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
             assertEquals(IndexedColors.AUTOMATIC.getIndex(), style.getFillBackgroundColorColor().getIndex());
         }
     }
+
+    /**
+     * Bug 69366: the indexed color derived from an RGB color is 0, not the automatic color a cell
+     * without a fill reports, which must not stop the style with that RGB color from being found
+     */
+    @Test
+    void testRgbFillColorReusesStyleBug69366() throws IOException, DecoderException {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            final Row row = workbook.createSheet("Sheet").createRow(0);
+            final Cell cell1 = row.createCell(0);
+            final Cell cell2 = row.createCell(1);
+            final Cell cell3 = row.createCell(2);
+            final XSSFColor color = new XSSFColor(Hex.decodeHex("FFAAAA"));
+            final XSSFColor other = new XSSFColor(Hex.decodeHex("AAAAFF"));
+            Map<CellPropertyType, Object> properties = new LinkedHashMap<>();
+            properties.put(CellPropertyType.FILL_PATTERN, FillPatternType.SOLID_FOREGROUND);
+            properties.put(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR, color);
+
+            CellUtil.setCellStylePropertiesEnum(cell1, properties);
+            int numStyles = workbook.getNumCellStyles();
+
+            CellUtil.setCellStylePropertiesEnum(cell1, properties);
+            assertEquals(numStyles, workbook.getNumCellStyles());
+            CellUtil.setCellStylePropertiesEnum(cell2, properties);
+            assertEquals(numStyles, workbook.getNumCellStyles());
+            assertEquals(cell1.getCellStyle().getIndex(), cell2.getCellStyle().getIndex());
+            assertEquals(color, cell2.getCellStyle().getFillForegroundColorColor());
+
+            properties.put(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR, other);
+            CellUtil.setCellStylePropertiesEnum(cell3, properties);
+            assertEquals(numStyles + 1, workbook.getNumCellStyles());
+            assertEquals(other, cell3.getCellStyle().getFillForegroundColorColor());
+        }
+    }
 }
