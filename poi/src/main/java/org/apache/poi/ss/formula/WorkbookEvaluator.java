@@ -303,12 +303,12 @@ public final class WorkbookEvaluator {
             }
             return cce.getValue();
         }
-        final ValueEval resultForLogging = result;
-        LOG.atDebug().log(() -> {
+        if (LOG.isDebugEnabled()) {
+            // guarded so no capturing lambda is allocated per evaluated cell when debug is off
             String sheetName = getSheetName(sheetIndex);
             CellReference cr = new CellReference(rowIndex, columnIndex);
-            return new SimpleMessage("Evaluated " + sheetName + "!" + cr.formatAsString() + " to " + resultForLogging);
-        });
+            LOG.debug("Evaluated {}!{} to {}", sheetName, cr.formatAsString(), result);
+        }
         // Usually (result === cce.getValue())
         // But sometimes: (result==ErrorEval.CIRCULAR_REF_ERROR, cce.getValue()==null)
         // When circular references are detected, the cache entry is only updated for
