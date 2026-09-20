@@ -135,8 +135,14 @@ public class POIXMLUnits {
     }
 
 
+    /**
+     * Office will read percentages formatted with a trailing percent sign or formatted
+     * as a plain percent value without a trailing percent sign
+     *
+     * @return the percent scaled by 1000, so 100% = 100000
+     */
     public static int parsePercent(org.openxmlformats.schemas.drawingml.x2006.chart.STHoleSize pctUnion) {
-        return parsePercentInner(pctUnion, 1);
+        return parsePercentInner(pctUnion, 1000);
     }
 
 
