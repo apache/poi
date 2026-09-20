@@ -64,4 +64,17 @@ public interface EvaluationSheet {
     default void notifyDeleteCell(int rowIndex, int columnIndex) {
         // nothing cached by default
     }
+
+    /**
+     * Propagated from {@link WorkbookEvaluator#notifyUpdateCell(EvaluationCell)} so that an
+     * implementation which caches anything derived from a cell (such as its parsed formula
+     * tokens) can drop what it holds for the changed cell. The default implementation does nothing.
+     *
+     * @param rowIndex    zero-based row of the changed cell
+     * @param columnIndex zero-based column of the changed cell
+     * @since 6.0.0
+     */
+    default void notifyUpdateCell(int rowIndex, int columnIndex) {
+        // nothing cached by default
+    }
 }

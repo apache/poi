@@ -184,6 +184,9 @@ public final class WorkbookEvaluator {
     public void notifyUpdateCell(EvaluationCell cell) {
         int sheetIndex = getSheetIndex(cell.getSheet());
         _cache.notifyUpdateCell(_workbookIx, sheetIndex, cell);
+        // cell.getSheet() may be a throw-away wrapper created just for this call, so tell the
+        // sheet instance the evaluator actually reads from (it may cache the parsed formula)
+        _workbook.getSheet(sheetIndex).notifyUpdateCell(cell.getRowIndex(), cell.getColumnIndex());
     }
 
     /**

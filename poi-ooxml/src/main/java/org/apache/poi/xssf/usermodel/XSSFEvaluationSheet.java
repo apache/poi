@@ -18,13 +18,22 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.SharedFormula;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Internal;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 
 /**
  * XSSF wrapper for a sheet under evaluation
@@ -34,6 +43,13 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
 
     private final XSSFSheet _xs;
     private Map<CellKey, EvaluationCell> _cellCache;
+    /** parsed formula tokens by cell; a cell is parsed once per evaluator unless it is notified */
+    private Map<XSSFCell, Ptg[]> _formulaTokens;
+    /**
+     * parsed tokens of shared formula masters, keyed by the master {@link CTCellFormula} the sheet
+     * currently holds for the group (a new master object is installed when the group changes)
+     */
+    private Map<CTCellFormula, Ptg[]> _sharedFormulaTokens;
 
     public XSSFEvaluationSheet(XSSFSheet sheet) {
         _xs = sheet;
@@ -69,13 +85,99 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
     @Override
     public void clearAllCachedResultValues() {
         _cellCache = null;
+        _formulaTokens = null;
+        _sharedFormulaTokens = null;
     }
 
     @Override
     public void notifyDeleteCell(int rowIndex, int columnIndex) {
+        forgetFormulaTokens(rowIndex, columnIndex);
         if (_cellCache != null) {
             _cellCache.remove(new CellKey(rowIndex, columnIndex));
         }
+    }
+
+    /**
+     * @since 6.0.0
+     */
+    @Override
+    public void notifyUpdateCell(int rowIndex, int columnIndex) {
+        forgetFormulaTokens(rowIndex, columnIndex);
+    }
+
+    private void forgetFormulaTokens(int rowIndex, int columnIndex) {
+        if (_formulaTokens == null) {
+            return;
+        }
+        // prefer the wrapper: it still knows the cell after it was removed from the sheet
+        EvaluationCell wrapper = _cellCache == null ? null : _cellCache.get(new CellKey(rowIndex, columnIndex));
+        XSSFCell cell;
+        if (wrapper != null) {
+            cell = ((XSSFEvaluationCell) wrapper).getXSSFCell();
+        } else {
+            XSSFRow row = _xs.getRow(rowIndex);
+            cell = row == null ? null : row.getCell(columnIndex);
+        }
+        if (cell != null) {
+            _formulaTokens.remove(cell);
+        }
+    }
+
+    /**
+     * @return the parsed formula of the cell, from the cache when it was parsed before
+     * @since 6.0.0
+     */
+    /* package */ Ptg[] getFormulaTokens(XSSFCell cell, BaseXSSFEvaluationWorkbook fpb, int sheetIndex) {
+        if (_formulaTokens == null) {
+            _formulaTokens = new IdentityHashMap<>();
+        }
+        Ptg[] ptgs = _formulaTokens.get(cell);
+        if (ptgs == null) {
+            ptgs = parseFormulaTokens(cell, fpb, sheetIndex);
+            _formulaTokens.put(cell, ptgs);
+        }
+        return ptgs;
+    }
+
+    private Ptg[] parseFormulaTokens(XSSFCell cell, BaseXSSFEvaluationWorkbook fpb, int sheetIndex) {
+        CTCellFormula f = cell.getCTCell().getF();
+        if (f != null && f.getT() == STCellFormulaType.SHARED && !cell.isPartOfArrayFormulaGroup()) {
+            Ptg[] shared = sharedFormulaTokens(cell, Math.toIntExact(f.getSi()), fpb, sheetIndex);
+            if (shared != null) {
+                return shared;
+            }
+        }
+        return FormulaParser.parse(cell.getCellFormula(fpb), fpb, FormulaType.CELL, sheetIndex, cell.getRowIndex());
+    }
+
+    /**
+     * A cell of a shared formula group takes the master's tokens, shifted to its own position.
+     * Parsing the master once per group replaces the per-cell parse, shift, render and re-parse
+     * that {@link XSSFCell#getCellFormula()} has to do to produce the formula text.
+     *
+     * @return {@code null} when the group cannot be handled this way (no master, or a formula
+     * whose parse depends on the row, i.e. one with a structured table reference)
+     */
+    private Ptg[] sharedFormulaTokens(XSSFCell cell, int si, BaseXSSFEvaluationWorkbook fpb, int sheetIndex) {
+        CTCellFormula master = _xs.getSharedFormula(si);
+        if (master == null) {
+            return null;
+        }
+        String formula = master.getStringValue();
+        if (formula == null || formula.indexOf('[') >= 0) {
+            return null;
+        }
+        if (_sharedFormulaTokens == null) {
+            _sharedFormulaTokens = new IdentityHashMap<>();
+        }
+        Ptg[] masterPtgs = _sharedFormulaTokens.get(master);
+        if (masterPtgs == null) {
+            masterPtgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, cell.getRowIndex());
+            _sharedFormulaTokens.put(master, masterPtgs);
+        }
+        CellRangeAddress ref = CellRangeAddress.valueOf(master.getRef());
+        return new SharedFormula(SpreadsheetVersion.EXCEL2007).convertSharedFormulas(masterPtgs,
+                cell.getRowIndex() - ref.getFirstRow(), cell.getColumnIndex() - ref.getFirstColumn());
     }
 
     @Override
