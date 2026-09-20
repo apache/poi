@@ -126,6 +126,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
@@ -3593,6 +3594,91 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(10, count);
             assertEquals("2-1,2-1,1+2,2-1,2-1,3+3,3+3,3+3,2-1,2-1,", sb.toString());
         }
+    }
+
+    /**
+     * Shared formula H2:J17 (si=0) is interrupted by cells with their own formulas and by nested
+     * shared formula groups. Blanking every cell, row by row, repeatedly moves the master of the group.
+     */
+    @Test
+    void testSetBlankOnSharedFormulaRangeBug67442() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("testSharedFormulasRangeSetBlankBug.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            Map<String, String> formulas = formulasOf(sheet);
+            assertEquals(83, formulas.size());
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    String address = cell.getAddress().formatAsString();
+                    if (cell.getCellType() == CellType.FORMULA) {
+                        // blanking the cells before this one must not have changed its formula
+                        assertEquals(formulas.get(address), cell.getCellFormula(), address);
+                    }
+                    cell.setBlank();
+                }
+            }
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    assertEquals(CellType.BLANK, cell.getCellType(), cell.getAddress().formatAsString());
+                }
+            }
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                assertEquals(Collections.emptyMap(), formulasOf(wb2.getSheetAt(0)));
+            }
+        }
+    }
+
+    /**
+     * Blanking the first row of shared formula H2:J17 (si=0) moves the master to H3, the first cell of
+     * the next row. Like Excel, the new master keeps the ref of the whole remaining range.
+     */
+    @Test
+    void testSharedFormulaMasterMovesToNextRowBug67442() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("testSharedFormulasRangeSetBlankBug.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            Map<String, String> formulas = formulasOf(sheet);
+            Map<String, String> values = new HashMap<>();
+            for (String address : formulas.keySet()) {
+                values.put(address, sheet.getRow(new CellReference(address).getRow())
+                        .getCell(new CellReference(address).getCol()).getStringCellValue());
+            }
+
+            XSSFRow row2 = sheet.getRow(1);
+            assertEquals("H2:J17", row2.getCell(7).getCTCell().getF().getRef());
+            row2.getCell(7).setBlank();
+            row2.getCell(8).setBlank();
+            row2.getCell(9).setBlank();
+
+            CTCellFormula master = sheet.getRow(2).getCell(7).getCTCell().getF();
+            assertEquals(STCellFormulaType.SHARED, master.getT());
+            assertEquals(0, master.getSi());
+            assertEquals("H3:J17", master.getRef());
+            assertEquals("CONCATENATE(B3,$E3,\" \",$F$24)", master.getStringValue());
+            formulas.keySet().removeAll(Arrays.asList("H2", "I2", "J2"));
+            assertEquals(formulas, formulasOf(sheet));
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertEquals(formulas, formulasOf(sheet2));
+                wb2.getCreationHelper().createFormulaEvaluator().evaluateAll();
+                for (String address : formulas.keySet()) {
+                    CellReference ref = new CellReference(address);
+                    assertEquals(values.get(address),
+                            sheet2.getRow(ref.getRow()).getCell(ref.getCol()).getStringCellValue(), address);
+                }
+            }
+        }
+    }
+
+    private static Map<String, String> formulasOf(XSSFSheet sheet) {
+        Map<String, String> formulas = new HashMap<>();
+        for (Row row : sheet) {
+            for (Cell cell : row) {
+                if (cell.getCellType() == CellType.FORMULA) {
+                    formulas.put(cell.getAddress().formatAsString(), cell.getCellFormula());
+                }
+            }
+        }
+        return formulas;
     }
 
     @Test

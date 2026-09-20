@@ -3848,28 +3848,46 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         //collect cells holding shared formulas
         CTCell ct = cell.getCTCell();
         CTCellFormula f = ct.getF();
-        if (f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null) {
-            // save a detached  copy to avoid XmlValueDisconnectedException,
-            // this may happen when the master cell of a shared formula is changed
-            CTCellFormula sf = (CTCellFormula)f.copy();
-            CellRangeAddress sfRef = CellRangeAddress.valueOf(sf.getRef());
-            CellReference cellRef = new CellReference(cell);
-            // If the shared formula range precedes the master cell then the preceding  part is discarded, e.g.
-            // if the cell is E60 and the shared formula range is C60:M85 then the effective range is E60:M85
-            // see more details in https://issues.apache.org/bugzilla/show_bug.cgi?id=51710
-            if(cellRef.getCol() > sfRef.getFirstColumn() || cellRef.getRow() > sfRef.getFirstRow()){
-                String effectiveRef = new CellRangeAddress(
-                        Math.max(cellRef.getRow(), sfRef.getFirstRow()), Math.max(cellRef.getRow(), sfRef.getLastRow()),
-                        Math.max(cellRef.getCol(), sfRef.getFirstColumn()), Math.max(cellRef.getCol(), sfRef.getLastColumn()))
-                        .formatAsString();
-                sf.setRef(effectiveRef);
-            }
-
-            sharedFormulas.put(Math.toIntExact(f.getSi()), sf);
+        if (isSharedFormulaMaster(f)) {
+            registerSharedFormula(cell, f);
         }
         if (f != null && f.getT() == STCellFormulaType.ARRAY && f.getRef() != null) {
             arrayFormulas.add(CellRangeAddress.valueOf(f.getRef()));
         }
+    }
+
+    /**
+     * @return whether {@code f} is the master formula of a shared formula group, i.e. the one holding the
+     * formula text and the range of the group
+     */
+    private static boolean isSharedFormulaMaster(CTCellFormula f) {
+        return f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null;
+    }
+
+    /**
+     * Caches the master formula of a shared formula group, keyed by its {@code si}
+     *
+     * @param cell the master cell of the group
+     * @param f the master formula, as held by {@code cell}
+     */
+    private void registerSharedFormula(XSSFCell cell, CTCellFormula f) {
+        // save a detached  copy to avoid XmlValueDisconnectedException,
+        // this may happen when the master cell of a shared formula is changed
+        CTCellFormula sf = (CTCellFormula)f.copy();
+        CellRangeAddress sfRef = CellRangeAddress.valueOf(sf.getRef());
+        CellReference cellRef = new CellReference(cell);
+        // If the shared formula range precedes the master cell then the preceding  part is discarded, e.g.
+        // if the cell is E60 and the shared formula range is C60:M85 then the effective range is E60:M85
+        // see more details in https://issues.apache.org/bugzilla/show_bug.cgi?id=51710
+        if(cellRef.getCol() > sfRef.getFirstColumn() || cellRef.getRow() > sfRef.getFirstRow()){
+            String effectiveRef = new CellRangeAddress(
+                    Math.max(cellRef.getRow(), sfRef.getFirstRow()), Math.max(cellRef.getRow(), sfRef.getLastRow()),
+                    Math.max(cellRef.getCol(), sfRef.getFirstColumn()), Math.max(cellRef.getCol(), sfRef.getLastColumn()))
+                    .formatAsString();
+            sf.setRef(effectiveRef);
+        }
+
+        sharedFormulas.put(Math.toIntExact(f.getSi()), sf);
     }
 
     @Override
@@ -4967,42 +4985,53 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /**
-     *  when a cell with a 'master' shared formula is removed,  the next cell in the range becomes the master
+     * When the master cell of a shared formula group is removed, the next cell of the group (in row order) takes over
+     * as master: it gets the formula text, rewritten for its own position, and the {@code ref} of the remaining cells
+     * of the group. As in files written by Excel, that {@code ref} is the bounding box of the group's cells, so in the
+     * rows below the master it may extend to the left of the master cell (see bug 51710).
+     *
      * @param cell The cell that is removed
      * @param evalWb BaseXSSFEvaluationWorkbook in use, if one exists
      */
     protected void onDeleteFormula(final XSSFCell cell, final BaseXSSFEvaluationWorkbook evalWb) {
-        final int rowIndex = cell.getRowIndex();
-        final int columnIndex = cell.getColumnIndex();
         CTCellFormula f = cell.getCTCell().getF();
-        if (f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null) {
-
-            CellRangeAddress ref = CellRangeAddress.valueOf(f.getRef());
-            if(ref.getNumberOfCells() > 1){
-                DONE:
-                for(int i = rowIndex; i <= ref.getLastRow(); i++){
-                    XSSFRow row = getRow(i);
-                    if(row != null) {
-                        for(int j = columnIndex; j <= ref.getLastColumn(); j++){
-                            XSSFCell nextCell = row.getCell(j);
-                            if(nextCell != null && nextCell != cell && nextCell.getCellType() == CellType.FORMULA) {
-                                CTCellFormula nextF = nextCell.getCTCell().getF();
-                                if (nextF.getT() == STCellFormulaType.SHARED && nextF.getSi() == f.getSi()) {
-                                    nextF.setStringValue(nextCell.getCellFormula(evalWb));
-                                    CellRangeAddress nextRef = new CellRangeAddress(
-                                            nextCell.getRowIndex(), ref.getLastRow(),
-                                            nextCell.getColumnIndex(), ref.getLastColumn());
-                                    nextF.setRef(nextRef.formatAsString());
-
-                                    sharedFormulas.put(Math.toIntExact(nextF.getSi()), nextF);
-                                    break DONE;
-                                }
-                            }
-                        }
-                    }
+        if (!isSharedFormulaMaster(f)) {
+            return;
+        }
+        final long si = f.getSi();
+        final CellRangeAddress ref = CellRangeAddress.valueOf(f.getRef());
+        final int lastRow = ref.getLastRow();
+        final int lastColumn = ref.getLastColumn();
+        // the cells of the group after the master, in row order: the rest of the master's row,
+        // then the rows below it over the full width of the range
+        for (int i = cell.getRowIndex(); i <= lastRow; i++) {
+            XSSFRow row = getRow(i);
+            if (row == null) {
+                continue;
+            }
+            int firstColumn = i == cell.getRowIndex() ? cell.getColumnIndex() + 1 : ref.getFirstColumn();
+            for (int j = firstColumn; j <= lastColumn; j++) {
+                XSSFCell nextCell = row.getCell(j);
+                if (nextCell == null || nextCell.getCellType() != CellType.FORMULA) {
+                    continue;
                 }
+                CTCellFormula nextF = nextCell.getCTCell().getF();
+                if (nextF.getT() != STCellFormulaType.SHARED || nextF.getSi() != si) {
+                    continue;
+                }
+                // resolved against the cached copy of the old master, which is still in place
+                nextF.setStringValue(nextCell.getCellFormula(evalWb));
+                // the remaining cells of the group are in the rest of this row and, unless this is the
+                // last row of the range, anywhere in the rows below
+                CellRangeAddress nextRef = new CellRangeAddress(i, lastRow,
+                        i == lastRow ? j : ref.getFirstColumn(), lastColumn);
+                nextF.setRef(nextRef.formatAsString());
+                registerSharedFormula(nextCell, nextF);
+                return;
             }
         }
+        // no cell of the group is left: the cached copy of the master stays behind so that a stray cell
+        // still referring to the group (e.g. left outside the ref by an older POI version) keeps resolving
     }
 
     /**
