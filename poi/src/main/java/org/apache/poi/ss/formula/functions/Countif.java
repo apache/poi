@@ -344,6 +344,9 @@ public final class Countif extends Fixed2ArgFunction implements ArrayFunction {
             // for example, the string "apples" and the string "APPLES" will match the same cells.
             return evaluate(testedValue.compareToIgnoreCase(_value));
         }
+        /** the characters that have a special meaning in a regular expression (besides {@code ?} and {@code *}) */
+        private static final String REGEX_META_CHARS = "\\^$.|+()[]{}";
+
         /**
          * Translates Excel countif wildcard strings into java regex strings
          * @return {@code null} if the specified value contains no special wildcard characters.
@@ -371,25 +374,21 @@ public final class Countif extends Fixed2ArgFunction implements ArrayFunction {
                             switch (ch) {
                                 case '?':
                                 case '*':
+                                case '~':
+                                    // '~' escapes the wildcards and itself
                                     hasWildCard = true;
                                     sb.append('[').append(ch).append(']');
                                     i++; // Note - incrementing loop variable here
                                     continue;
                             }
                         }
-                        // else not '~?' or '~*'
+                        // else not '~?', '~*' or '~~'
                         sb.append('~'); // just plain '~'
                         continue;
-                    case '.':
-                    case '$':
-                    case '^':
-                    case '[':
-                    case ']':
-                    case '(':
-                    case ')':
-                        // escape literal characters that would have special meaning in regex
-                        sb.append("\\").append(ch);
-                        continue;
+                }
+                if (REGEX_META_CHARS.indexOf(ch) >= 0) {
+                    // escape literal characters that would have special meaning in regex (bug 69878)
+                    sb.append('\\');
                 }
                 sb.append(ch);
             }
