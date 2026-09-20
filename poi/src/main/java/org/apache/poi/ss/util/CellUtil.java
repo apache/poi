@@ -41,6 +41,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -838,12 +839,15 @@ public final class CellUtil {
         style.setDataFormat(getShort(properties, CellPropertyType.DATA_FORMAT));
         style.setFillPattern(getFillPattern(properties, CellPropertyType.FILL_PATTERN));
 
+        // An automatic fill color is what a new style has anyway. Setting it explicitly would put
+        // <fgColor indexed="64"/> and <bgColor indexed="64"/> into an XSSF fill that may have no pattern,
+        // which Excel renders as a black cell while it is being edited (bug 69463)
         Short fillForeColorShort = nullableShort(properties, CellPropertyType.FILL_FOREGROUND_COLOR);
-        if (fillForeColorShort != null) {
+        if (fillForeColorShort != null && fillForeColorShort != IndexedColors.AUTOMATIC.getIndex()) {
             style.setFillForegroundColor(fillForeColorShort);
         }
         Short fillBackColorShort = nullableShort(properties, CellPropertyType.FILL_BACKGROUND_COLOR);
-        if (fillBackColorShort != null) {
+        if (fillBackColorShort != null && fillBackColorShort != IndexedColors.AUTOMATIC.getIndex()) {
             style.setFillBackgroundColor(fillBackColorShort);
         }
 
