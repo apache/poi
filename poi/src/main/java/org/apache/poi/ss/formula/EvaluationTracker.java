@@ -129,6 +129,32 @@ final class EvaluationTracker {
         }
     }
 
+    /**
+     * Serves the value of a plain (non-formula) cell from the cache, if it has been read before,
+     * and records that the currently evaluating cell depends on it.
+     *
+     * @return the cached value, or {@code null} if the cell has to be read (nothing is cached for
+     * it yet, or no cell is currently being evaluated)
+     * @since 6.0.0
+     */
+    public ValueEval getCachedPlainValue(int bookIndex, int sheetIndex, int rowIndex, int columnIndex) {
+        int prevFrameIndex = _evaluationFrames.size() - 1;
+        if (prevFrameIndex < 0) {
+            // Top level frame, there is no 'cell' above this frame that is using the current cell
+            return null;
+        }
+        PlainValueCellCacheEntry cce = _cache.getPlainValueEntry(bookIndex, sheetIndex, rowIndex, columnIndex);
+        if (cce == null) {
+            return null;
+        }
+        _evaluationFrames.get(prevFrameIndex).addSensitiveInputCell(cce);
+        return cce.getValue();
+    }
+
+    /**
+     * Records that the currently evaluating cell depends on the plain (non-formula) cell whose
+     * value was just read, and caches that value for the next reader.
+     */
     public void acceptPlainValueDependency(EvaluationWorkbook evalWorkbook, int bookIndex, int sheetIndex,
             int rowIndex, int columnIndex, ValueEval value) {
         // Tell the currently evaluating cell frame that it has a dependency on the specified
@@ -140,7 +166,7 @@ final class EvaluationTracker {
             if (value == BlankEval.instance) {
                 consumingFrame.addUsedBlankCell(evalWorkbook, bookIndex, sheetIndex, rowIndex, columnIndex);
             } else {
-                PlainValueCellCacheEntry cce = _cache.getPlainValueEntry(bookIndex, sheetIndex,
+                PlainValueCellCacheEntry cce = _cache.getOrCreatePlainValueEntry(bookIndex, sheetIndex,
                         rowIndex, columnIndex, value);
                 consumingFrame.addSensitiveInputCell(cce);
             }

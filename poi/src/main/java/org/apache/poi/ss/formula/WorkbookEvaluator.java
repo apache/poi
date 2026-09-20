@@ -244,9 +244,21 @@ public final class WorkbookEvaluator {
      */
     private ValueEval evaluateAny(EvaluationCell srcCell, int sheetIndex,
                                   int rowIndex, int columnIndex, EvaluationTracker tracker) {
+        return evaluateAny(srcCell, sheetIndex, rowIndex, columnIndex, tracker,
+                shouldCellDependencyBeRecorded(sheetIndex, rowIndex, columnIndex));
+    }
 
-        // avoid tracking dependencies to cells that have constant definition
-        boolean shouldCellDependencyBeRecorded = _stabilityClassifier == null || !_stabilityClassifier.isCellFinal(sheetIndex, rowIndex, columnIndex);
+    /** avoid tracking dependencies to cells that have constant definition */
+    private boolean shouldCellDependencyBeRecorded(int sheetIndex, int rowIndex, int columnIndex) {
+        return _stabilityClassifier == null || !_stabilityClassifier.isCellFinal(sheetIndex, rowIndex, columnIndex);
+    }
+
+    /**
+     * @return never {@code null}, never {@link BlankEval}
+     */
+    private ValueEval evaluateAny(EvaluationCell srcCell, int sheetIndex, int rowIndex, int columnIndex,
+                                  EvaluationTracker tracker, boolean shouldCellDependencyBeRecorded) {
+
         if (srcCell == null || srcCell.getCellType() != CellType.FORMULA) {
             ValueEval result = getValueFromNonFormulaCell(srcCell);
             if (shouldCellDependencyBeRecorded) {
@@ -844,8 +856,17 @@ public final class WorkbookEvaluator {
             EvaluationSheet sheet, int sheetIndex, int rowIndex,
             int columnIndex, EvaluationTracker tracker) {
 
+        boolean shouldCellDependencyBeRecorded = shouldCellDependencyBeRecorded(sheetIndex, rowIndex, columnIndex);
+        if (shouldCellDependencyBeRecorded) {
+            // a plain cell that some formula already read is served from the cache without
+            // touching the workbook again (the cache is kept in step by the notify* methods)
+            ValueEval cached = tracker.getCachedPlainValue(_workbookIx, sheetIndex, rowIndex, columnIndex);
+            if (cached != null) {
+                return cached;
+            }
+        }
         EvaluationCell cell = sheet.getCell(rowIndex, columnIndex);
-        return evaluateAny(cell, sheetIndex, rowIndex, columnIndex, tracker);
+        return evaluateAny(cell, sheetIndex, rowIndex, columnIndex, tracker, shouldCellDependencyBeRecorded);
     }
 
     public FreeRefFunction findUserDefinedFunction(String functionName) {

@@ -246,6 +246,17 @@ class TestEvaluationCache {
             cell.setBlank();
             _evaluator.notifyUpdateCell(wrapCell(cell));
         }
+        /** changes the cell behind the evaluator's back */
+        public void setCellValueWithoutNotify(String cellRefText, double value) {
+            HSSFCell cell = getOrCreateCell(cellRefText);
+            cell.setBlank();
+            cell.setCellValue(value);
+        }
+        public void deleteCell(String cellRefText) {
+            HSSFCell cell = getOrCreateCell(cellRefText);
+            _evaluator.notifyDeleteCell(wrapCell(cell));
+            cell.getRow().removeCell(cell);
+        }
 
         public void setCellFormula(String cellRefText, String formulaText) {
             HSSFCell cell = getOrCreateCell(cellRefText);
@@ -667,6 +678,85 @@ class TestEvaluationCache {
     private static void confirmLog(MySheet ms, String[] expectedLog) {
         String[] actualLog = ms.getAndClearLog();
         assertArrayEquals(expectedLog, actualLog, "Log entry mismatch");
+    }
+
+    /**
+     * A plain cell is read from the workbook the first time a formula needs it; every later
+     * reader is served from the cache, and the cache follows the notify* calls.
+     */
+    @Test
+    void testPlainValueServedFromCache() {
+        MySheet ms = new MySheet();
+        ms.setCellValue("A1", 5);
+        ms.setCellFormula("B1", "A1*2");
+        ms.setCellFormula("B2", "A1*3");
+        ms.setCellFormula("B3", "SUM(A1:A2)");
+        ms.clearAllCachedResultValues();
+        ms.getAndClearLog();
+
+        confirmEvaluate(ms, "B1", 10);
+        confirmEvaluate(ms, "B2", 15);
+        confirmEvaluate(ms, "B3", 5);
+        confirmLog(ms, new String[] {
+            "start B1 A1*2",
+            "value A1 5",
+            "end B1 10",
+            "start B2 A1*3",
+            "hit A1 5",
+            "end B2 15",
+            "start B3 SUM(A1:A2)",
+            "hit A1 5",
+            "end B3 5",
+        });
+
+        // the cached value is what readers see, so a change the evaluator was not told about
+        // is invisible even to a formula that has to be evaluated afresh
+        ms.setCellValueWithoutNotify("A1", 7);
+        ms.setCellFormula("B4", "A1+1");
+        ms.getAndClearLog();
+        confirmEvaluate(ms, "B4", 6);
+        confirmLog(ms, new String[] {
+            "start B4 A1+1",
+            "hit A1 5",
+            "end B4 6",
+        });
+
+        // told about the change, the cache serves the new value and re-evaluates the readers
+        ms.setCellValue("A1", 7);
+        ms.getAndClearLog();
+        confirmEvaluate(ms, "B4", 8);
+        confirmEvaluate(ms, "B1", 14);
+        confirmLog(ms, new String[] {
+            "start B4 A1+1",
+            "hit A1 7",
+            "end B4 8",
+            "start B1 A1*2",
+            "hit A1 7",
+            "end B1 14",
+        });
+
+        // a deleted cell leaves the cache and reads as blank
+        ms.deleteCell("A1");
+        ms.getAndClearLog();
+        confirmEvaluate(ms, "B3", 0);
+        confirmEvaluate(ms, "B4", 1);
+        confirmLog(ms, new String[] {
+            "start B3 SUM(A1:A2)",
+            "end B3 0",
+            "start B4 A1+1",
+            "end B4 1",
+        });
+
+        // and a value put there afterwards is read from the workbook again
+        ms.setCellValueWithoutNotify("A1", 9);
+        ms.setCellFormula("B5", "A1");
+        ms.getAndClearLog();
+        confirmEvaluate(ms, "B5", 9);
+        confirmLog(ms, new String[] {
+            "start B5 A1",
+            "value A1 9",
+            "end B5 9",
+        });
     }
 
     @Test
