@@ -29,11 +29,17 @@ import org.junit.jupiter.api.Test;
  * <p>
  * Rows and columns can be added or removed in place (creating and removing cells, leaving every
  * other cell where it is) or with {@link Sheet#shiftRows(int, int, int)} and
- * {@link Sheet#shiftColumns(int, int, int)}. In-place changes are ordinary cell changes and are
- * reported with the per-cell {@code notify*} methods. A shift moves cells to new positions and
- * rewrites the formulas (and defined names) that refer to them, on every sheet, so the evaluator's
- * caches are wrong afterwards; the way the evaluator is told about a shift is centralised in
- * {@link #afterShift()} so that it can be replaced when finer-grained shift notification is added.
+ * {@link Sheet#shiftColumns(int, int, int)}.
+ * <p>
+ * The evaluator only supports updating its caches for individual cell changes, reported with
+ * {@link FormulaEvaluator#notifyUpdateCell(Cell)}, {@link FormulaEvaluator#notifySetFormula(Cell)}
+ * and {@link FormulaEvaluator#notifyDeleteCell(Cell)}. In-place changes are a series of such cell
+ * changes, so the tests report them cell by cell. A shift is a large operation: it moves cells to
+ * new positions and rewrites the formulas (and defined names) that refer to them, on every sheet,
+ * which leaves the caches wrong in ways the cell notifications cannot express. There is no
+ * notification for that, so after a shift the tests call
+ * {@link FormulaEvaluator#clearAllCachedResultValues()} (see {@link #afterShift()}) and every
+ * formula is evaluated afresh.
  *
  * @see BaseTestFormulaEvaluatorFixture for the workbook the tests run against
  */
@@ -44,8 +50,12 @@ public abstract class BaseTestFormulaEvaluatorRowsAndColumns extends BaseTestFor
     }
 
     /**
-     * Tells the evaluator that rows or columns have been shifted. Currently the only supported
-     * way is to discard every cached result.
+     * Called after {@link Sheet#shiftRows(int, int, int)} or {@link Sheet#shiftColumns(int, int, int)}.
+     * <p>
+     * The evaluator can update its caches for individual cell changes (the {@code notify*}
+     * methods) but not for a large operation like a shift, which moves cells and rewrites
+     * formulas across the whole workbook. The only correct thing to do is to discard every cached
+     * result and let the formulas be re-evaluated.
      */
     protected void afterShift() {
         fe.clearAllCachedResultValues();
@@ -86,6 +96,8 @@ public abstract class BaseTestFormulaEvaluatorRowsAndColumns extends BaseTestFor
     }
 
     // --------------------------------------- rows and columns changed in place (no shifting)
+    // Each of these is a series of individual cell changes, which the evaluator's cell-level
+    // notifications cover, so nothing more than notify* is needed for the results to be right.
 
     @Test
     void removeDataRowInPlace() {
@@ -236,6 +248,9 @@ public abstract class BaseTestFormulaEvaluatorRowsAndColumns extends BaseTestFor
     }
 
     // ------------------------------------------------------------------ rows shifted
+    // Shifting moves cells and rewrites formulas and names throughout the workbook. That is beyond
+    // what the cell-level notifications can describe, so these tests clear the whole cache
+    // (afterShift) and check that the fresh evaluation reflects the rewritten formulas.
 
     @Test
     void deleteHeaderRowShiftsEverythingUp() {
