@@ -396,6 +396,10 @@ public class OperationEvaluationContext {
     }
 
     public ValueEval getRefEval(int rowIndex, int columnIndex) {
+        EvaluationSheet current = _workbook.getSheet(_sheetIndex);
+        if (current instanceof VirtualEvaluationSheet vs) {
+            return new VirtualRefEval(vs, rowIndex, columnIndex);
+        }
         SheetRangeEvaluator sre = getRefEvaluatorForCurrentSheet();
         return new LazyRefEval(rowIndex, columnIndex, sre);
     }
@@ -413,6 +417,10 @@ public class OperationEvaluationContext {
 
     public ValueEval getAreaEval(int firstRowIndex, int firstColumnIndex,
                                  int lastRowIndex, int lastColumnIndex) {
+        EvaluationSheet current = _workbook.getSheet(_sheetIndex);
+        if (current instanceof VirtualEvaluationSheet vs) {
+            return new VirtualAreaEval(vs, firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex);
+        }
         SheetRangeEvaluator sre = getRefEvaluatorForCurrentSheet();
         return new LazyAreaEval(firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex, sre);
     }
