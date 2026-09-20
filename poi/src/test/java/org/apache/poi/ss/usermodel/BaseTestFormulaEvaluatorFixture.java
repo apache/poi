@@ -139,10 +139,22 @@ public abstract class BaseTestFormulaEvaluatorFixture {
         r9.createCell(0).setCellFormula("A8+A7");
         r9.createCell(1).setCellFormula("Total+C7");
 
+        wb = finishWorkbook(wb);
+        data = wb.getSheet("Data");
+        prices = wb.getSheet("Prices");
+
         fe = createEvaluator();
         // populate the evaluator's cache with every formula result
         fe.evaluateAll();
         assertInitialValues();
+    }
+
+    /**
+     * Lets a subclass alter the freshly built workbook, or replace it (e.g. by writing it out and
+     * reading it back), before the evaluator is created. The default returns it unchanged.
+     */
+    protected Workbook finishWorkbook(Workbook built) {
+        return built;
     }
 
     /** the evaluator the tests run against; the default is the workbook's own */
