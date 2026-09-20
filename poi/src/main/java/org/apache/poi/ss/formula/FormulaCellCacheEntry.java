@@ -18,9 +18,6 @@
 package org.apache.poi.ss.formula;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.FormulaUsedBlankCellSet.BookSheetKey;
@@ -72,54 +69,47 @@ final class FormulaCellCacheEntry extends CellCacheEntry {
         return _usedBlankCellGroup == null ? false : !_usedBlankCellGroup.isEmpty();
     }
 
+    /**
+     * Replaces the cells this formula depends on, registering the entry as a consumer of each of
+     * them and unregistering it from the ones it no longer reads.
+     *
+     * @param sensitiveInputCells the cells the formula read, or {@code null} for none. The array is
+     *        retained and compacted in place (a cell listed more than once is kept once), so the
+     *        caller must not use it afterwards.
+     */
     public void setSensitiveInputCells(CellCacheEntry[] sensitiveInputCells) {
-        // need to tell all cells that were previously used, but no longer are, 
-        // that they are not consumed by this cell any more
+        // need to tell all cells that were previously used, but no longer are,
+        // that they are not consumed by this cell any more. Unregistering from all of them and
+        // registering again with the new ones is set semantics either way, and the previous
+        // inputs are almost always null here (they are cleared together with the cached value).
+        clearConsumingCells();
         if (sensitiveInputCells == null) {
             _sensitiveInputCells = null;
-            changeConsumingCells(CellCacheEntry.EMPTY_ARRAY);
-        } else {
-            _sensitiveInputCells = sensitiveInputCells.clone();
-            changeConsumingCells(_sensitiveInputCells);
+            return;
         }
+        int nKept = 0;
+        for (CellCacheEntry usedCell : sensitiveInputCells) {
+            if (usedCell.addConsumingCell(this)) {
+                sensitiveInputCells[nKept++] = usedCell;
+            }
+            // else - already registered: the formula read this cell more than once
+        }
+        _sensitiveInputCells = nKept == sensitiveInputCells.length
+                ? sensitiveInputCells
+                : Arrays.copyOf(sensitiveInputCells, nKept);
     }
 
     public void clearFormulaEntry() {
+        clearConsumingCells();
+        _sensitiveInputCells = null;
+        clearValue();
+    }
+
+    private void clearConsumingCells() {
         CellCacheEntry[] usedCells = _sensitiveInputCells;
         if (usedCells != null) {
             for (int i = usedCells.length-1; i>=0; i--) {
                 usedCells[i].clearConsumingCell(this);
-            }
-        }
-        _sensitiveInputCells = null;
-        clearValue();
-    }
-    
-    private void changeConsumingCells(CellCacheEntry[] usedCells) {
-
-        CellCacheEntry[] prevUsedCells = _sensitiveInputCells;
-        int nUsed = usedCells.length;
-        for (CellCacheEntry usedCell : usedCells) {
-            usedCell.addConsumingCell(this);
-        }
-        if (prevUsedCells == null) {
-            return;
-        }
-        int nPrevUsed = prevUsedCells.length;
-        if (nPrevUsed < 1) {
-            return;
-        }
-        Set<CellCacheEntry> usedSet;
-        if (nUsed < 1) {
-            usedSet = Collections.emptySet();
-        } else {
-            usedSet = new HashSet<>(nUsed * 3 / 2);
-            usedSet.addAll(Arrays.asList(usedCells).subList(0, nUsed));
-        }
-        for (CellCacheEntry prevUsed : prevUsedCells) {
-            if (!usedSet.contains(prevUsed)) {
-                // previously was used by cellLoc, but not anymore
-                prevUsed.clearConsumingCell(this);
             }
         }
     }

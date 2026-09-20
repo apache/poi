@@ -31,12 +31,14 @@ import org.apache.poi.ss.formula.IEvaluationListener.ICacheEntry;
 abstract class CellCacheEntry implements ICacheEntry {
     public static final CellCacheEntry[] EMPTY_ARRAY = { };
 
-    private final FormulaCellCacheEntrySet _consumingCells;
+    /** the formula cells that read this cell; {@code null} until the first one registers */
+    private FormulaCellCacheEntrySet _consumingCells;
     private ValueEval _value;
 
 
     protected CellCacheEntry() {
-        _consumingCells = new FormulaCellCacheEntrySet();
+        // most plain cells are read by few formulas, and by none when the caller's
+        // IStabilityClassifier declares them final: the set is created on demand
     }
     protected final void clearValue() {
         _value = null;
@@ -81,16 +83,21 @@ abstract class CellCacheEntry implements ICacheEntry {
         throw new IllegalStateException("Unexpected value class (" + cls.getName() + ")");
     }
 
-    public final void addConsumingCell(FormulaCellCacheEntry cellLoc) {
-        _consumingCells.add(cellLoc);
-
+    /**
+     * @return {@code false} if the formula cell was already registered as a consumer of this cell
+     */
+    public final boolean addConsumingCell(FormulaCellCacheEntry cellLoc) {
+        if (_consumingCells == null) {
+            _consumingCells = new FormulaCellCacheEntrySet();
+        }
+        return _consumingCells.add(cellLoc);
     }
     public final FormulaCellCacheEntry[] getConsumingCells() {
-        return _consumingCells.toArray();
+        return _consumingCells == null ? FormulaCellCacheEntrySet.EMPTY_ARRAY : _consumingCells.toArray();
     }
 
     public final void clearConsumingCell(FormulaCellCacheEntry cce) {
-        if(!_consumingCells.remove(cce)) {
+        if(_consumingCells == null || !_consumingCells.remove(cce)) {
             throw new IllegalStateException("Specified formula cell is not consumed by this cell");
         }
     }
