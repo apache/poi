@@ -139,10 +139,15 @@ public abstract class BaseTestFormulaEvaluatorFixture {
         r9.createCell(0).setCellFormula("A8+A7");
         r9.createCell(1).setCellFormula("Total+C7");
 
-        fe = wb.getCreationHelper().createFormulaEvaluator();
+        fe = createEvaluator();
         // populate the evaluator's cache with every formula result
         fe.evaluateAll();
         assertInitialValues();
+    }
+
+    /** the evaluator the tests run against; the default is the workbook's own */
+    protected FormulaEvaluator createEvaluator() {
+        return wb.getCreationHelper().createFormulaEvaluator();
     }
 
     @AfterEach
