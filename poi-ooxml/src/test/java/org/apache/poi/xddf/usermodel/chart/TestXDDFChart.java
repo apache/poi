@@ -73,6 +73,23 @@ class TestXDDFChart {
     }
 
     @Test
+    void testDoughnutHoleSizeRoundTrip() {
+        XDDFChart chart = newXDDFChart();
+        XDDFDoughnutChartData data = (XDDFDoughnutChartData) chart.createData(ChartTypes.DOUGHNUT, null, null);
+        assertNull(data.getHoleSize());
+
+        data.setHoleSize(50);
+        assertEquals(50, data.getHoleSize());
+
+        // Office also writes this with a trailing percent sign
+        chart.getCTPlotArea().getDoughnutChartArray(0).getHoleSize().xgetVal().setStringValue("75%");
+        assertEquals(75, data.getHoleSize());
+
+        data.setHoleSize(null);
+        assertNull(data.getHoleSize());
+    }
+
+    @Test
     void testSetMajorUnit() {
         // minimal test to cause ooxml-lite to include all the classes in poi-ooxml-lite
         XDDFChart xddfChart = newXDDFChart();
