@@ -17,12 +17,12 @@
 
 package org.apache.poi.ss.formula;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.Stack;
 import java.util.TreeSet;
 
 import org.apache.logging.log4j.Logger;
@@ -421,7 +421,9 @@ public final class WorkbookEvaluator {
         EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
         EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
 
-        Stack<ValueEval> stack = new Stack<>();
+        // a plain deque rather than java.util.Stack: that one is a synchronized Vector, and every
+        // token of every formula pushes and pops here
+        ArrayDeque<ValueEval> stack = new ArrayDeque<>();
         // for each token, whether its value ends up in an ArrayMode function; worked out on the
         // first operation with an area operand, as most formulas never need it
         boolean[] arrayModeOperands = null;
