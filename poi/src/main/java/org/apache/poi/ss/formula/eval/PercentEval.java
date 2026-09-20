@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.Fixed1ArgFunction;
 import org.apache.poi.ss.formula.functions.Function;
 
@@ -24,7 +25,7 @@ import org.apache.poi.ss.formula.functions.Function;
 /**
  * Implementation of Excel formula token '%'.
  */
-public final class PercentEval extends Fixed1ArgFunction {
+public final class PercentEval extends Fixed1ArgFunction implements ArrayFunction {
 
     public static final Function instance = new PercentEval();
 
@@ -45,5 +46,15 @@ public final class PercentEval extends Fixed1ArgFunction {
             return NumberEval.ZERO;
         }
         return new NumberEval(d / 100);
+    }
+
+    @Override
+    public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        if (args.length != 1) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex, (valA) ->
+                evaluate(srcRowIndex, srcColumnIndex, valA)
+        );
     }
 }

@@ -3658,6 +3658,27 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
+    void testBug62271() throws IOException {
+        // the reporter's case: the classic "count distinct values" idiom. Inside SUMPRODUCT the
+        // & operator works element-wise, so A5:A10&"" is the array of texts, COUNTIF gives one
+        // count per text and 1/count sums to one per distinct value
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
+            XSSFSheet sheet = wb.createSheet("Sheet1");
+            String[] values = {"a", "b", "a", "c", "b", "a"};
+            for (int i = 0; i < values.length; i++) {
+                addRow(sheet, 4 + i, values[i]);
+            }
+            XSSFCell cell = sheet.createRow(0).createCell(1);
+            assertDouble(fe, cell, "SUMPRODUCT(1/COUNTIF(A5:A10,A5:A10&\"\"))", 3);
+            // the blank-tolerant variant of the same idiom
+            assertDouble(fe, cell, "SUMPRODUCT((A5:A10<>\"\")/COUNTIF(A5:A10,A5:A10&\"\"))", 3);
+            sheet.getRow(6).getCell(0).setBlank();
+            assertDouble(fe, cell, "SUMPRODUCT((A5:A10<>\"\")/COUNTIF(A5:A10,A5:A10&\"\"))", 3);
+        }
+    }
+
+    @Test
     void testBug51037() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFCellStyle blueStyle = wb.createCellStyle();
