@@ -372,6 +372,27 @@ public final class FunctionEval {
     }
 
     /**
+     * Like {@link #getBasicFunction(int)}, but answers {@code null} instead of throwing for a
+     * function that is not implemented (or for an unknown index), so callers that only want to
+     * inspect a function do not pay for an exception.
+     *
+     * @return the function, or {@code null} for the 'free ref' functions, unimplemented functions
+     * and out-of-range indexes
+     * @since 6.0.0
+     */
+    public static Function getBasicFunctionOrNull(int functionIndex) {
+        if (functionIndex < 0 || functionIndex >= functions.length) {
+            return null;
+        }
+        switch (functionIndex) {
+        case FunctionID.INDIRECT:
+        case FunctionID.EXTERNAL_FUNC:
+            return null;
+        }
+        return functions[functionIndex];
+    }
+
+    /**
      * Register a new function in runtime.
      *
      * @param name  the function name

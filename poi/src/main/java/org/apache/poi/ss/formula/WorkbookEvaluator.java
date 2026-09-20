@@ -30,6 +30,7 @@ import org.apache.poi.logging.PoiLogManager;
 import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
+import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.apache.poi.ss.formula.atp.AnalysisToolPak;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
@@ -418,6 +419,9 @@ public final class WorkbookEvaluator {
         EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
 
         Stack<ValueEval> stack = new Stack<>();
+        // for each token, whether its value ends up in an ArrayMode function; worked out on the
+        // first operation with an area operand, as most formulas never need it
+        boolean[] arrayModeOperands = null;
         for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
             // since we don't know how to handle these yet :(
             Ptg ptg = ptgs[i];
@@ -532,7 +536,12 @@ public final class WorkbookEvaluator {
                     }
                 }
 
-                ec.setArrayMode(areaArg && isConsumedByArrayModeFunction(ptgs, i, stack, ec));
+                if (areaArg) {
+                    if (arrayModeOperands == null) {
+                        arrayModeOperands = findArrayModeOperands(ptgs);
+                    }
+                    ec.setArrayMode(arrayModeOperands[i]);
+                }
 
 //                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
                 opResult = OperationEvaluatorFactory.evaluate(optg, ops, ec);
@@ -578,75 +587,112 @@ public final class WorkbookEvaluator {
     }
 
     /**
-     * Decides whether the result of the operation at {@code opIndex} ends up (possibly via further
+     * Works out, for every token of a formula, whether the value it produces ends up (possibly via
      * enclosing operators or functions) as an argument of a function that evaluates its arguments
-     * in array mode (an {@link ArrayMode} function such as SUMPRODUCT, INDEX or XLOOKUP).
+     * in array mode (an {@link ArrayMode} function such as SUMPRODUCT, INDEX or XLOOKUP). An
+     * operator with an area operand is then evaluated element-wise instead of being reduced to
+     * the single value for the formula's row.
      * <p>
-     * Walks the remaining RPN tokens tracking the position of the operation's result on the
-     * evaluation stack, so nested function calls are matched to the right operation. User-defined
-     * (and "future") functions are called through {@link FuncVarPtg}s with the external function
-     * index, so their name is looked up from the {@link FunctionNameEval} already on the stack.
+     * One pass over the RPN tokens replays the stack structurally to find the consumer of every
+     * value, then the answer flows from each consumer to its operands. User-defined (and
+     * "future") functions are called through {@link FuncVarPtg}s with the external function
+     * index; their name is the first operand, a name token that is resolved without evaluating
+     * anything.
      *
-     * @param ptgs    the tokens of the formula being evaluated
-     * @param opIndex the index of the operation whose operands have just been popped from {@code stack}
-     * @param stack   the evaluation stack, holding the values pushed before the operation's operands
+     * @return one flag per token; only the flags of {@link OperationPtg}s are used
      */
-    private static boolean isConsumedByArrayModeFunction(Ptg[] ptgs, int opIndex, Stack<ValueEval> stack,
-            OperationEvaluationContext ec) {
-        // position of the tracked result counted from the top of the stack (1 = on top)
-        int depth = 1;
-        // number of values below the tracked result that have been consumed since opIndex
-        int consumedBelow = 0;
-        for (int k = opIndex + 1; k < ptgs.length; k++) {
+    /* package */ boolean[] findArrayModeOperands(Ptg[] ptgs) {
+        int n = ptgs.length;
+        int[] consumer = new int[n];
+        Arrays.fill(consumer, -1);
+        boolean[] arrayModeFunction = new boolean[n];
+        int[] producers = new int[n]; // stack of the tokens whose values are on the evaluation stack
+        int sp = 0;
+        for (int k = 0; k < n; k++) {
             Ptg ptg = ptgs[k];
+            int numops;
+            boolean function = false;
             if (ptg instanceof AttrPtg attrPtg) {
                 if (!attrPtg.isSum()) {
                     continue;
                 }
-                ptg = FuncVarPtg.SUM;
-            }
-            if (ptg instanceof ControlPtg || ptg instanceof MemFuncPtg || ptg instanceof MemAreaPtg
+                numops = 1; // tAttrSum stands for SUM(), which is not an ArrayMode function
+            } else if (ptg instanceof ControlPtg || ptg instanceof MemFuncPtg || ptg instanceof MemAreaPtg
                     || ptg instanceof MemErrPtg) {
                 continue;
-            }
-            if (!(ptg instanceof OperationPtg optg)) {
-                depth++;
+            } else if (ptg instanceof OperationPtg optg) {
+                numops = optg.getNumberOfOperands();
+                function = optg instanceof AbstractFunctionPtg;
+            } else {
+                producers[sp++] = k;
                 continue;
             }
-            int numops = optg.getNumberOfOperands();
-            if (depth > numops) {
-                // this operation only consumes values pushed after the tracked result
-                depth -= numops - 1;
-                continue;
+            int first = Math.max(0, sp - numops);
+            for (int j = first; j < sp; j++) {
+                consumer[producers[j]] = k;
             }
-            if (optg instanceof AbstractFunctionPtg fptg) {
-                Object func = null;
-                int functionIndex = fptg.getFunctionIndex();
-                if (functionIndex == FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL) {
-                    // the function name is the first operand, i.e. the deepest one
-                    int nameIndex = stack.size() - consumedBelow - (numops - depth);
-                    if (nameIndex >= 0 && nameIndex < stack.size()
-                            && stack.get(nameIndex) instanceof FunctionNameEval fne) {
-                        func = ec.findUserDefinedFunction(fne.getFunctionName());
-                    }
-                } else {
-                    try {
-                        func = FunctionEval.getBasicFunction(functionIndex);
-                    } catch (NotImplementedException ne) {
-                        //FunctionEval.getBasicFunction can throw NotImplementedException
-                        // if the function is not yet supported.
-                    }
-                }
-                if (func instanceof ArrayMode) {
-                    return true;
-                }
+            if (function) {
+                Ptg firstOperand = first < sp ? ptgs[producers[first]] : null;
+                arrayModeFunction[k] = isArrayModeFunction((AbstractFunctionPtg) ptg, firstOperand);
             }
-            // the tracked result was consumed by an operator or a non-array function:
-            // keep tracking the result of that operation instead
-            consumedBelow += numops - depth;
-            depth = 1;
+            sp = first;
+            producers[sp++] = k;
         }
-        return false;
+        boolean[] result = new boolean[n];
+        // consumers come after their operands, so walking backwards has each consumer's flag ready
+        for (int k = n - 1; k >= 0; k--) {
+            int c = consumer[k];
+            if (c >= 0) {
+                result[k] = arrayModeFunction[c] || result[c];
+            }
+        }
+        return result;
+    }
+
+    private boolean isArrayModeFunction(AbstractFunctionPtg fptg, Ptg firstOperand) {
+        int functionIndex = fptg.getFunctionIndex();
+        Object func;
+        if (functionIndex == FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL) {
+            String name = localFunctionName(firstOperand);
+            func = name == null ? null : findUserDefinedFunction(name);
+        } else {
+            func = FunctionEval.getBasicFunctionOrNull(functionIndex);
+        }
+        return func instanceof ArrayMode;
+    }
+
+    /**
+     * @return the function name a name token of this workbook stands for (the way its evaluation
+     * would yield a {@link FunctionNameEval}), or {@code null} if it is a defined name, refers
+     * to another workbook, or is not a name token at all
+     */
+    private String localFunctionName(Ptg token) {
+        if (token instanceof NamePtg namePtg) {
+            EvaluationName name = _workbook.getName(namePtg);
+            return name != null && name.isFunctionName() ? name.getNameText() : null;
+        }
+        if (token instanceof NameXPxg nameXPxg) {
+            ExternalSheet externSheet = _workbook.getExternalSheet(nameXPxg.getSheetName(), null,
+                    nameXPxg.getExternalWorkbookNumber());
+            if (externSheet != null && externSheet.getWorkbookName() != null) {
+                return null;
+            }
+            int sheetIndex = nameXPxg.getSheetName() == null ? -1 : _workbook.getSheetIndex(nameXPxg.getSheetName());
+            return _workbook.getName(nameXPxg.getNameName(), sheetIndex) == null ? nameXPxg.getNameName() : null;
+        }
+        if (token instanceof NameXPtg nameXPtg) {
+            ExternalSheet externSheet = _workbook.getExternalSheet(nameXPtg.getSheetRefIndex());
+            if (externSheet != null && externSheet.getWorkbookName() != null) {
+                return null;
+            }
+            String name = _workbook.resolveNameXText(nameXPtg);
+            int sheetNameAt = name.indexOf('!');
+            EvaluationName evalName = sheetNameAt > -1
+                    ? _workbook.getName(name.substring(sheetNameAt + 1), _workbook.getSheetIndex(name.substring(0, sheetNameAt)))
+                    : _workbook.getName(name, -1);
+            return evalName == null ? name : null;
+        }
+        return null;
     }
 
     /**
