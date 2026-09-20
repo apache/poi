@@ -51,4 +51,17 @@ public interface EvaluationSheet {
      * @since 4.1.0
      */
     boolean isRowHidden(int rowIndex);
+
+    /**
+     * Propagated from {@link WorkbookEvaluator#notifyDeleteCell(EvaluationCell)} so that an
+     * implementation which caches {@link EvaluationCell} wrappers can drop the one for the
+     * deleted cell. The default implementation does nothing.
+     *
+     * @param rowIndex    zero-based row of the deleted cell
+     * @param columnIndex zero-based column of the deleted cell
+     * @since 6.0.0
+     */
+    default void notifyDeleteCell(int rowIndex, int columnIndex) {
+        // nothing cached by default
+    }
 }

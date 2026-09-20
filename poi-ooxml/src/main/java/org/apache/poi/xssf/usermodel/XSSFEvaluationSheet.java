@@ -72,6 +72,13 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
     }
 
     @Override
+    public void notifyDeleteCell(int rowIndex, int columnIndex) {
+        if (_cellCache != null) {
+            _cellCache.remove(new CellKey(rowIndex, columnIndex));
+        }
+    }
+
+    @Override
     public EvaluationCell getCell(int rowIndex, int columnIndex) {
         // shortcut evaluation if reference is outside the bounds of existing data
         // see issue #61841 for impact on VLOOKUP in particular
