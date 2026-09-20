@@ -113,26 +113,25 @@ final class TestXSSFFormulaTokenCache extends BaseTestFormulaEvaluatorFixture {
     }
 
     @Test
-    void aChangedSharedMasterIsParsedAgain() {
-        // POI keeps a shared group together when its master cell gets a new formula: the group is
-        // re-registered with the new text (a new master object), and the other cells of the
-        // group now report the new formula, shifted to their position
+    void aGroupWithANewMasterIsParsedAgain() {
+        // clearing the master D2 makes POI promote D3 to master of D3:D4 (a new master object for
+        // the group); cells parsed from then on are derived from it
         FormulaEvaluator fresh = wb.getCreationHelper().createFormulaEvaluator();
-        cell("D2").setCellFormula("A2*100");
-        fe.notifySetFormula(cell("D2"));
-        assertEquals("A3*100", cell("D3").getCellFormula());
+        cell("D2").setBlank();
+        fe.notifyUpdateCell(cell("D2"));
+        assertEquals("D3:D4", ((XSSFCell) cell("D3")).getCTCell().getF().getRef());
+        assertEquals("VLOOKUP(B4,Prices!$A$2:$B$4,2,FALSE)", cell("D4").getCellFormula());
 
-        // the notified cell is re-parsed
-        assertEquals(1000, num("D2"), DELTA);
-        // cells of the group that were not notified keep their cached results, as any formula
-        // cell does
+        // the notified cell is blank now, the others keep their cached results
         assertEquals(2.5, num("D3"), DELTA);
         assertEquals(3.5, num("D4"), DELTA);
+        assertEquals(2.5 * 20 + 3.5 * 30, num("D6"), DELTA);
 
         // an evaluator that parses the group afresh takes the tokens from the new master
-        assertEquals(2000, fresh.evaluate(cell("D3")).getNumberValue(), DELTA);
-        assertEquals(3000, fresh.evaluate(cell("D4")).getNumberValue(), DELTA);
+        assertEquals(2.5, fresh.evaluate(cell("D3")).getNumberValue(), DELTA);
+        assertEquals(3.5, fresh.evaluate(cell("D4")).getNumberValue(), DELTA);
         XSSFEvaluationWorkbook ew = evaluationWorkbook();
-        assertEquals("A4*100", FormulaRenderer.toFormulaString(ew, ew.getFormulaTokens(evalCell(ew, wb, cell("D4")))));
+        assertEquals("VLOOKUP(B4,Prices!$A$2:$B$4,2,FALSE)",
+                FormulaRenderer.toFormulaString(ew, ew.getFormulaTokens(evalCell(ew, wb, cell("D4")))));
     }
 }
