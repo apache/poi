@@ -1,0 +1,63 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+// JMH benchmarks for the OOXML modules. Kept apart from poi-benchmark because
+// building poi-ooxml (and poi-ooxml-full) is slow; the fixtures are shared via
+// a dependency on poi-benchmark.
+//
+// Run with: ./gradlew :poi-ooxml-benchmark:jmh
+// Restrict to some benchmarks with: ./gradlew :poi-ooxml-benchmark:jmh -Pjmh.includes=XSSFFormulaEvaluation
+
+apply plugin: 'me.champeau.jmh'
+
+dependencies {
+    implementation project(':poi-ooxml')
+    implementation project(':poi-benchmark')
+
+    jmhRuntimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    testRuntimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+}
+
+jmh {
+    jmhVersion = '1.37'
+
+    // threads, forks, warmup and measurement are set by the annotations on each benchmark class
+    // (values set here would override them); only the selection of benchmarks is taken from the
+    // command line
+    if (project.hasProperty('jmh.includes')) {
+        includes = [project.property('jmh.includes')]
+    }
+    resultFormat = 'JSON'
+    resultsFile = project.file("${project.buildDir}/reports/jmh/results.json")
+    humanOutputFile = project.file("${project.buildDir}/reports/jmh/human.txt")
+    duplicateClassesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// the root build treats every Jar as a distribution artifact (dist dir, checksums, clean-up of
+// jars with other names); the runnable benchmark jar is not one, so keep it in the module's build dir
+jmhJar {
+    destinationDirectory = layout.buildDirectory.dir('libs')
+}
+
+javadoc.enabled = false
+sourcesJar.enabled = false
+
+generateMetadataFileForPOIPublication.enabled = false
+publishPOIPublicationToMavenLocal.enabled = false

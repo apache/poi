@@ -125,7 +125,7 @@ abstract class VerifyModuleInfoIsPresent extends DefaultTask {
     void verifyModuleInfo() {
         def jar = verifiedJar.get().asFile
         if (jar.getName().contains('poi-integration') || jar.getName().contains('poi-fuzz')
-                || jar.getName().contains('poi-benchmark')) {
+                || jar.getName().contains('benchmark')) {
             return
         }
 
