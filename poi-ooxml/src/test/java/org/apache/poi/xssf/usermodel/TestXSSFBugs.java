@@ -3643,6 +3643,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
+    void testBug65231() throws IOException {
+        // the reporter's case: SUMPRODUCT forces COUNTIF to give one count per criteria cell,
+        // so B1:B3 = a,a,b against C1:C3 = a,b,a gives 2 + 1 + 2 (fixed with bug 65059)
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
+            XSSFSheet sheet = wb.createSheet("Sheet1");
+            addRow(sheet, 0, null, "a", "a");
+            addRow(sheet, 1, null, "a", "b");
+            addRow(sheet, 2, null, "b", "a");
+            XSSFCell cell = sheet.getRow(0).createCell(0);
+            assertDouble(fe, cell, "SUMPRODUCT(COUNTIF(B1:B3, C1:C3))", 5);
+        }
+    }
+
+    @Test
     void testBug51037() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFCellStyle blueStyle = wb.createCellStyle();
