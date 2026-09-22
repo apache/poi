@@ -131,8 +131,8 @@ public class Msg2txt {
           fileName = attachment.getAttachLongFileName().toString();
        }
 
-        // the attachment name comes from the message and is attacker controlled, so it must
-        // not be allowed to escape the directory the caller asked the attachments to go into
+        // the attachment name comes from the message and may have problematic characters, so we should use
+        // IOUtils which has some code to escape problematic chars
         File f = IOUtils.newFile(dir, fileName);
         try (OutputStream fileOut = new FileOutputStream(f)) {
             fileOut.write(attachment.getAttachData().getValue());
