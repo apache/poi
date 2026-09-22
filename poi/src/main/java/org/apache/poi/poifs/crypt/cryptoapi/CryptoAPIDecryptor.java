@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -48,6 +50,12 @@ import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.StringUtil;
 
 public class CryptoAPIDecryptor extends Decryptor {
+    /**
+     * The fixed part of a stream descriptor entry: streamOffset (4), streamSize (4), block (2),
+     * nameSize (1), flags (1), reserved2 (4) and the trailing terminator (2). The stream name
+     * adds 2 bytes per character on top of this, so this is the smallest an entry can be.
+     */
+    private static final int STREAM_DESCRIPTOR_MIN_SIZE = 18;
 
     private long length = -1L;
     private int chunkSize = -1;
@@ -172,9 +180,9 @@ public class CryptoAPIDecryptor extends Decryptor {
     public POIFSFileSystem getSummaryEntries(DirectoryNode root, String encryptedStream)
     throws IOException, GeneralSecurityException {
         POIFSFileSystem fsOut = null;
+        final byte[] summary = readEncryptedStream(root, encryptedStream);
         try (
-                DocumentInputStream dis = root.createDocumentInputStream(root.getEntryCaseInsensitive(encryptedStream));
-                CryptoAPIDocumentInputStream sbis = new CryptoAPIDocumentInputStream(this, IOUtils.toByteArray(dis));
+                CryptoAPIDocumentInputStream sbis = new CryptoAPIDocumentInputStream(this, summary);
                 LittleEndianInputStream leis = new LittleEndianInputStream(sbis)
         ) {
             int streamDescriptorArrayOffset = Math.toIntExact(leis.readUInt());
@@ -184,11 +192,24 @@ public class CryptoAPIDecryptor extends Decryptor {
                 throw new EOFException("buffer underrun");
             }
             sbis.setBlock(0);
-            int encryptedStreamDescriptorCount = Math.toIntExact(leis.readUInt());
-            StreamDescriptorEntry[] entries = new StreamDescriptorEntry[encryptedStreamDescriptorCount];
-            for (int i = 0; i < encryptedStreamDescriptorCount; i++) {
+            // The descriptor count is an unsigned 32-bit field. The stream is already fully read
+            // and every entry takes at least STREAM_DESCRIPTOR_MIN_SIZE bytes, so a count larger
+            // than the bytes left after it cannot be honest. Checking it up front fails fast with
+            // a useful message; the entries are then collected as they are parsed rather than
+            // pre-allocated, so memory stays proportional to the data present.
+            final long encryptedStreamDescriptorCount = leis.readUInt();
+            // the array starts at streamDescriptorArrayOffset and the count is its first 4 bytes
+            final long remaining = summary.length - (streamDescriptorArrayOffset + 4L);
+            final long maxDescriptorCount = remaining / STREAM_DESCRIPTOR_MIN_SIZE;
+            if (encryptedStreamDescriptorCount > maxDescriptorCount) {
+                throw new IOException("Declared stream descriptor count "
+                        + encryptedStreamDescriptorCount + " exceeds the " + maxDescriptorCount
+                        + " entries that the remaining " + remaining + " bytes can hold");
+            }
+            List<StreamDescriptorEntry> entries = new ArrayList<>();
+            for (long i = 0; i < encryptedStreamDescriptorCount; i++) {
                 StreamDescriptorEntry entry = new StreamDescriptorEntry();
-                entries[i] = entry;
+                entries.add(entry);
                 entry.streamOffset = Math.toIntExact(leis.readUInt());
                 entry.streamSize = Math.toIntExact(leis.readUInt());
                 entry.block = leis.readUShort();
@@ -220,6 +241,13 @@ public class CryptoAPIDecryptor extends Decryptor {
             }
         }
         return fsOut;
+    }
+
+    private static byte[] readEncryptedStream(DirectoryNode root, String encryptedStream) throws IOException {
+        try (DocumentInputStream dis =
+                     root.createDocumentInputStream(root.getEntryCaseInsensitive(encryptedStream))) {
+            return IOUtils.toByteArray(dis);
+        }
     }
 
     /**
