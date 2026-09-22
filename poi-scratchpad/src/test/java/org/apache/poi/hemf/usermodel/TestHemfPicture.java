@@ -51,6 +51,7 @@ import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
 import org.apache.poi.hwmf.usermodel.HwmfEmbeddedType;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
 import org.apache.poi.util.RecordFormatException;
@@ -274,6 +275,63 @@ public class TestHemfPicture {
         try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
             assertThrows(RecordFormatException.class,
                 () -> record.init(leis, data.length, HemfRecordType.polyDraw.id));
+        }
+    }
+
+    /**
+     * A Count field is an unsigned 32-bit value, so it has to be bounds checked while it is
+     * still a long. Narrowing it first made the conversion fail before the check could run.
+     */
+    @Test
+    void testEmfPolyDrawCountAboveIntMax() throws Exception {
+        HemfDraw.EmfPolyDraw record = new HemfDraw.EmfPolyDraw();
+        byte[] data = new byte[20];
+        LittleEndian.putUInt(data, 16, 0xFFFFFFFFL);
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
+            assertThrows(RecordFormatException.class,
+                () -> record.init(leis, data.length, HemfRecordType.polyDraw.id));
+        }
+    }
+
+    /**
+     * EMR_POLYGON and EMR_POLYBEZIER cap the point count at 16K and ignore the remainder, so a
+     * count above Integer.MAX_VALUE has to be clamped rather than rejected.
+     */
+    @Test
+    void testEmfPolygonCountAboveIntMaxIsClamped() throws Exception {
+        assertPointCountClamped(new HemfDraw.EmfPolygon(), HemfRecordType.polygon.id);
+        assertPointCountClamped(new HemfDraw.EmfPolyBezier(), HemfRecordType.polyBezier.id);
+    }
+
+    private static void assertPointCountClamped(HemfRecord record, long recordId) throws Exception {
+        // 16 bytes of bounds, a 4 byte count, then room for the 16K points the cap allows
+        byte[] data = new byte[16 + 4 + 16384 * 8];
+        LittleEndian.putUInt(data, 16, 0xFFFFFFFFL);
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
+            long size = record.init(leis, data.length, recordId);
+            assertTrue(size <= data.length, "read " + size + " bytes of a " + data.length + " byte record");
+        }
+    }
+
+    @Test
+    void testEmfCommentWmfSizeAboveIntMax() throws Exception {
+        HemfComment.EmfCommentDataWMF record = new HemfComment.EmfCommentDataWMF();
+        byte[] data = new byte[20];
+        LittleEndian.putUInt(data, 0, HemfComment.HemfCommentRecordType.emfWMF.id & 0xFFFFFFFFL);
+        LittleEndian.putUInt(data, 16, 0xFFFFFFFFL);
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
+            assertThrows(RecordFormatException.class, () -> record.init(leis, data.length));
+        }
+    }
+
+    @Test
+    void testEmfCommentBeginGroupDescriptionAboveIntMax() throws Exception {
+        HemfComment.EmfCommentDataBeginGroup record = new HemfComment.EmfCommentDataBeginGroup();
+        byte[] data = new byte[24];
+        LittleEndian.putUInt(data, 0, HemfComment.HemfCommentRecordType.emfBeginGroup.id & 0xFFFFFFFFL);
+        LittleEndian.putUInt(data, 20, 0xFFFFFFFFL);
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
+            assertThrows(RecordFormatException.class, () -> record.init(leis, data.length));
         }
     }
 

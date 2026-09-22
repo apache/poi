@@ -819,12 +819,13 @@ public class Section {
 
             /* Read the string - Strip 0x00 characters from the end of the string. */
             int cp = (codepage == -1) ? Property.DEFAULT_CODEPAGE : codepage;
-            int nrBytes = Math.toIntExact(((sLength-1) * (cp == CodePageUtil.CP_UNICODE ? 2 : 1)));
-            if (nrBytes > 0xFFFFFF) {
+            long nrBytesLong = (sLength-1) * (cp == CodePageUtil.CP_UNICODE ? 2 : 1);
+            if (nrBytesLong > 0xFFFFFF) {
                 LOG.atWarn().log(errMsg);
                 isCorrupted = true;
                 break;
             }
+            int nrBytes = (int)nrBytesLong;
 
             try {
                 byte[] buf = IOUtils.safelyAllocate(nrBytes, CodePageString.getMaxRecordLength(),
