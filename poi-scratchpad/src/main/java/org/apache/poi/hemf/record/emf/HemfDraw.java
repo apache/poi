@@ -160,8 +160,8 @@ public final class HemfDraw {
              *
              * Any extra points MUST be ignored.
              */
-            final int count = Math.toIntExact(leis.readUInt());
-            final int points = Math.min(count, 16384);
+            final long count = leis.readUInt();
+            final int points = (int)Math.min(count, 16384);
             size += LittleEndianConsts.INT_SIZE;
 
             poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, points+2);
@@ -292,8 +292,8 @@ public final class HemfDraw {
             long size = readRectL(leis, bounds);
 
             // see PolyBezier about limits
-            final int count = Math.toIntExact(leis.readUInt());
-            final int points = Math.min(count, 16384);
+            final long count = leis.readUInt();
+            final int points = (int)Math.min(count, 16384);
             size += LittleEndianConsts.INT_SIZE;
 
             poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, points);
@@ -962,9 +962,10 @@ public final class HemfDraw {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             long size = readRectL(leis, bounds);
-            int count = Math.toIntExact(leis.readUInt());
+            long countLong = leis.readUInt();
             size += LittleEndianConsts.INT_SIZE;
-            HemfPicture.safelyAllocateCheck(count);
+            HemfPicture.safelyAllocateCheck(countLong);
+            int count = (int)countLong;
             Point2D[] points = new Point2D[count];
             for (int i=0; i<count; i++) {
                 points[i] = new Point2D.Double();
