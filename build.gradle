@@ -588,7 +588,7 @@ subprojects {
                         }
                     }
 
-                    // metadata matches the POMs of the 5.5.1 release in Maven Central
+                    // license and organization metadata match the POMs of the 5.5.1 release in Maven Central
                     licenses {
                         license {
                             name = 'Apache License, Version 2.0'
@@ -600,6 +600,20 @@ subprojects {
                     organization {
                         name = 'Apache Software Foundation'
                         url = 'https://www.apache.org/'
+                    }
+
+                    issueManagement {
+                        system = 'bugzilla'
+                        url = 'https://bz.apache.org/bugzilla'
+                    }
+
+                    developers {
+                        developer {
+                            name = 'POI Team'
+                            id = 'poi'
+                            email = 'user@poi.apache.org'
+                            organization = 'Apache POI'
+                        }
                     }
 
                     withXml {
