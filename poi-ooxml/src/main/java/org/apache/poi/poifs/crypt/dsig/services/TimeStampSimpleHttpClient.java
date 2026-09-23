@@ -267,10 +267,9 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
     }
 
     protected void recklessConnection(HttpURLConnection conn) throws IOException {
-        if (!(conn instanceof HttpsURLConnection)) {
+        if (!(conn instanceof HttpsURLConnection conns)) {
             return;
         }
-        HttpsURLConnection conns = (HttpsURLConnection)conn;
 
         try {
             SSLContext sc = SSLContext.getInstance("TLS");

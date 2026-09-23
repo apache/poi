@@ -170,6 +170,37 @@ public final class TestPackage {
     }
 
     /**
+     * A part name containing percent-encoded characters must survive a save/open round-trip.
+     * The zip item name is written verbatim and re-read verbatim, so the marshaller has to use the
+     * ASCII part name (getName()) rather than the decoded URI path - otherwise the part is renamed
+     * (and here, being an invalid escape after decoding, silently dropped) on reload.
+     */
+    @Test
+    void percentEncodedPartNameRoundTrips() throws IOException, InvalidFormatException {
+        // "%40" is a valid percent-encoded part-name character (encodes '@', which is an authorized
+        // pchar, so it is neither a separator [M1.7] nor an unreserved character [M1.8]).
+        final PackagePartName partName = createPartName("/foo/a%40b.xml");
+        final String content = "hello";
+
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (OPCPackage pkg = OPCPackage.create(bos)) {
+            PackagePart part = pkg.createPart(partName, "application/xml");
+            try (OutputStream out = part.getOutputStream()) {
+                out.write(content.getBytes(StandardCharsets.UTF_8));
+            }
+        }
+
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
+            PackagePart part = pkg.getPart(partName);
+            assertNotNull(part, "part with a percent-encoded name should survive a save/open round-trip");
+            assertEquals("/foo/a%40b.xml", part.getPartName().getName());
+            try (InputStream in = part.getInputStream()) {
+                assertEquals(content, new String(IOUtils.toByteArray(in), StandardCharsets.UTF_8));
+            }
+        }
+    }
+
+    /**
      * Test package creation.
      */
     @Test

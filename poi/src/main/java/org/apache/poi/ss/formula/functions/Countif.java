@@ -20,6 +20,8 @@ package org.apache.poi.ss.formula.functions;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.formula.ThreeDEval;
+import org.apache.poi.ss.formula.CacheAreaEval;
+import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -43,7 +45,7 @@ import org.apache.poi.util.StringUtil;
  *      <tr><th>criteria</th><td>is used to determine which cells to count</td></tr>
  *    </table>
  */
-public final class Countif extends Fixed2ArgFunction {
+public final class Countif extends Fixed2ArgFunction implements ArrayFunction {
 
     private static final class CmpOp {
         public static final int NONE = 0;
@@ -207,7 +209,8 @@ public final class Countif extends Fixed2ArgFunction {
             } else if(x instanceof BlankEval) {
                 return getCode() == CmpOp.NE; // Excel counts blank values in range as not equal to any value. See Bugzilla 51498
             } else {
-                return false;
+                // a boolean or error is not equal to any number
+                return getCode() == CmpOp.NE;
             }
             return evaluate(Double.compare(testValue, _value));
         }
@@ -234,8 +237,8 @@ public final class Countif extends Fixed2ArgFunction {
             int testValue;
             if(x instanceof StringEval) {
                 // Note - Unlike with numbers, it seems that COUNTIF never matches
-                // boolean values when the target(x) is a string
-                return false;
+                // boolean values when the target(x) is a string (so '<>TRUE' always does)
+                return getCode() == CmpOp.NE;
                 // uncomment to observe more intuitive behaviour
                 // StringEval se = (StringEval)x;
                 // Boolean val = parseBoolean(se.getStringValue());
@@ -248,10 +251,9 @@ public final class Countif extends Fixed2ArgFunction {
                 testValue = boolToInt(be.getBooleanValue());
             } else if(x instanceof BlankEval) {
                 return getCode() == CmpOp.NE; // Excel counts blank values in range as not equal to any value. See Bugzilla 51498
-            } else if(x instanceof NumberEval) {
-                return getCode() == CmpOp.NE;// not-equals comparison of a number to boolean always returns false
             } else {
-                return false;
+                // a number or error is not equal to any boolean
+                return getCode() == CmpOp.NE;
             }
             return evaluate(testValue - _value);
         }
@@ -275,7 +277,8 @@ public final class Countif extends Fixed2ArgFunction {
                 int testValue = errorEval.getErrorCode();
                 return evaluate(testValue - _value);
             }
-            return false;
+            // a blank, number, text or boolean is not equal to any error
+            return getCode() == CmpOp.NE;
         }
 
         public int getValue() {
@@ -290,16 +293,11 @@ public final class Countif extends Fixed2ArgFunction {
         public StringMatcher(String value, CmpOp operator) {
             super(operator);
             _value = value;
-            switch(operator.getCode()) {
-                case CmpOp.NONE:
-                case CmpOp.EQ:
-                case CmpOp.NE:
-                    _pattern = getWildCardPattern(value);
-                    break;
-                default:
-                    // pattern matching is never used for < > <= =>
-                    _pattern = null;
-            }
+            _pattern = switch (operator.getCode()) {
+                case CmpOp.NONE, CmpOp.EQ, CmpOp.NE -> getWildCardPattern(value);
+                // pattern matching is never used for < > <= =>
+                default -> null;
+            };
         }
         @Override
         protected String getValueText() {
@@ -323,13 +321,15 @@ public final class Countif extends Fixed2ArgFunction {
                             false;
                 };
             }
-            if(!(x instanceof StringEval)) {
+            if(!(x instanceof StringEval stringEval)) {
                 // must always be string
                 // even if match str is wild, but contains only digits
                 // e.g. '4*7', NumberEval(4567) does not match
-                return false;
+                // - but a number, boolean or error is not equal to any text, so '<>' and '<>abc'
+                // do count it (bug 69853: COUNTIF(range,"<>") counts every non-blank cell)
+                return getCode() == CmpOp.NE;
             }
-            String testedValue = ((StringEval) x).getStringValue();
+            String testedValue = stringEval.getStringValue();
             if (testedValue.isEmpty() && _value.isEmpty()) {
                 // odd case: criteria '=' behaves differently to criteria ''
 
@@ -347,6 +347,9 @@ public final class Countif extends Fixed2ArgFunction {
             // for example, the string "apples" and the string "APPLES" will match the same cells.
             return evaluate(testedValue.compareToIgnoreCase(_value));
         }
+        /** the characters that have a special meaning in a regular expression (besides {@code ?} and {@code *}) */
+        private static final String REGEX_META_CHARS = "\\^$.|+()[]{}";
+
         /**
          * Translates Excel countif wildcard strings into java regex strings
          * @return {@code null} if the specified value contains no special wildcard characters.
@@ -374,25 +377,21 @@ public final class Countif extends Fixed2ArgFunction {
                             switch (ch) {
                                 case '?':
                                 case '*':
+                                case '~':
+                                    // '~' escapes the wildcards and itself
                                     hasWildCard = true;
                                     sb.append('[').append(ch).append(']');
                                     i++; // Note - incrementing loop variable here
                                     continue;
                             }
                         }
-                        // else not '~?' or '~*'
+                        // else not '~?', '~*' or '~~'
                         sb.append('~'); // just plain '~'
                         continue;
-                    case '.':
-                    case '$':
-                    case '^':
-                    case '[':
-                    case ']':
-                    case '(':
-                    case ')':
-                        // escape literal characters that would have special meaning in regex
-                        sb.append("\\").append(ch);
-                        continue;
+                }
+                if (REGEX_META_CHARS.indexOf(ch) >= 0) {
+                    // escape literal characters that would have special meaning in regex (bug 69878)
+                    sb.append('\\');
                 }
                 sb.append(ch);
             }
@@ -405,26 +404,103 @@ public final class Countif extends Fixed2ArgFunction {
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
-
+        if (isArrayCriteria(arg1, false)) {
+            return evaluateForEachCriterion((AreaEval) arg1,
+                    criterion -> evaluate(srcRowIndex, srcColumnIndex, arg0, criterion));
+        }
         I_MatchPredicate mp = createCriteriaPredicate(arg1, srcRowIndex, srcColumnIndex);
         if(mp == null) {
             // If the criteria arg is a reference to a blank cell, countif always returns zero.
             return NumberEval.ZERO;
         }
-        double result = countMatchingCellsInArea(arg0, mp);
-        return new NumberEval(result);
+        try {
+            return new NumberEval(countMatchingCellsInArea(arg0, mp));
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+    }
+
+    /**
+     * Evaluated in array context (the result feeds an array-mode function such as SUMPRODUCT, or
+     * the cell is part of an array formula): a multi-cell range as criteria means one count per
+     * criterion.
+     * @since 6.0.0
+     */
+    @Override
+    public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        if (args.length != 2) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        if (isArrayCriteria(args[1], true)) {
+            return evaluateForEachCriterion((AreaEval) args[1],
+                    criterion -> evaluate(srcRowIndex, srcColumnIndex, args[0], criterion));
+        }
+        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
+    }
+
+    /**
+     * Decides whether a criteria argument stands for several criteria, so that the function is
+     * evaluated once per element and returns an array of the results (what
+     * {@code SUMPRODUCT(SUMIF(range,criteria_range,sum_range))} and
+     * {@code SUM(COUNTIF(range,{"a","b"}))} rely on), the way Excel does it:
+     * <ul>
+     * <li>an array constant or a computed array ({@code {"a","b"}}, {@code IF(...)}) always is;</li>
+     * <li>a multi-cell range is only in array context - inside an array-mode function such as
+     * SUMPRODUCT, or in an array formula. In an ordinary cell a range criteria is reduced to the
+     * cell on the formula's own row or column (implicit intersection), as Excel does there.</li>
+     * </ul>
+     *
+     * @param arrayContext whether the function is being evaluated in array context
+     * @since 6.0.0
+     */
+    /* package */ static boolean isArrayCriteria(ValueEval criteria, boolean arrayContext) {
+        if (!(criteria instanceof AreaEval ae) || ae.getHeight() * ae.getWidth() <= 1) {
+            return false;
+        }
+        return arrayContext || criteria instanceof CacheAreaEval;
+    }
+
+    /**
+     * The evaluation of a conditional aggregate for one criterion, used to evaluate it for each
+     * element of an array of criteria.
+     * @since 6.0.0
+     */
+    /* package */ interface CriterionEvaluation {
+        ValueEval evaluate(ValueEval criterion);
+    }
+
+    /**
+     * Evaluates a conditional aggregate once per element of an array of criteria and returns the
+     * results as an array of the same shape (and, for a range, the same position, so that a plain
+     * formula cell picks the element on its own row the way Excel's implicit intersection does).
+     * This is what makes {@code SUMPRODUCT(SUMIF(range,criteria_range,sum_range))},
+     * {@code SUM(COUNTIF(range,{"a","b"}))} and the like work.
+     * @since 6.0.0
+     */
+    /* package */ static ValueEval evaluateForEachCriterion(AreaEval criteria, CriterionEvaluation evaluation) {
+        int height = criteria.getHeight();
+        int width = criteria.getWidth();
+        ValueEval[] results = new ValueEval[height * width];
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                results[r * width + c] = evaluation.evaluate(criteria.getRelativeValue(r, c));
+            }
+        }
+        return new CacheAreaEval(criteria.getFirstRow(), criteria.getFirstColumn(),
+                criteria.getLastRow(), criteria.getLastColumn(), results);
     }
     /**
      * @return the number of evaluated cells in the range that match the specified criteria
      */
-    private double countMatchingCellsInArea(ValueEval rangeArg, I_MatchPredicate criteriaPredicate) {
+    private double countMatchingCellsInArea(ValueEval rangeArg, I_MatchPredicate criteriaPredicate) throws EvaluationException {
 
-        if (rangeArg instanceof RefEval) {
-            return CountUtils.countMatchingCellsInRef((RefEval) rangeArg, criteriaPredicate);
-        } else if (rangeArg instanceof ThreeDEval) {
-            return CountUtils.countMatchingCellsInArea((ThreeDEval) rangeArg, criteriaPredicate);
+        if (rangeArg instanceof RefEval refEval) {
+            return CountUtils.countMatchingCellsInRef(refEval, criteriaPredicate);
+        } else if (rangeArg instanceof ThreeDEval threeDEval) {
+            return CountUtils.countMatchingCellsInArea(threeDEval, criteriaPredicate);
         } else {
-            throw new IllegalArgumentException("Bad range arg type (" + rangeArg.getClass().getName() + ")");
+            // the range argument must be a reference or an array
+            throw new EvaluationException(ErrorEval.VALUE_INVALID);
         }
     }
 
@@ -436,18 +512,18 @@ public final class Countif extends Fixed2ArgFunction {
 
         ValueEval evaluatedCriteriaArg = evaluateCriteriaArg(arg, srcRowIndex, srcColumnIndex);
 
-        if(evaluatedCriteriaArg instanceof NumberEval) {
-            return new NumberMatcher(((NumberEval)evaluatedCriteriaArg).getNumberValue(), CmpOp.OP_NONE);
+        if(evaluatedCriteriaArg instanceof NumberEval numberEval) {
+            return new NumberMatcher(numberEval.getNumberValue(), CmpOp.OP_NONE);
         }
-        if(evaluatedCriteriaArg instanceof BoolEval) {
-            return new BooleanMatcher(((BoolEval)evaluatedCriteriaArg).getBooleanValue(), CmpOp.OP_NONE);
+        if(evaluatedCriteriaArg instanceof BoolEval boolEval) {
+            return new BooleanMatcher(boolEval.getBooleanValue(), CmpOp.OP_NONE);
         }
 
-        if(evaluatedCriteriaArg instanceof StringEval) {
-            return createGeneralMatchPredicate((StringEval)evaluatedCriteriaArg);
+        if(evaluatedCriteriaArg instanceof StringEval stringEval) {
+            return createGeneralMatchPredicate(stringEval);
         }
-        if(evaluatedCriteriaArg instanceof ErrorEval) {
-            return new ErrorMatcher(((ErrorEval)evaluatedCriteriaArg).getErrorCode(), CmpOp.OP_NONE);
+        if(evaluatedCriteriaArg instanceof ErrorEval errorEval) {
+            return new ErrorMatcher(errorEval.getErrorCode(), CmpOp.OP_NONE);
         }
         if(evaluatedCriteriaArg == BlankEval.instance) {
             return null;
@@ -529,18 +605,16 @@ public final class Countif extends Fixed2ArgFunction {
             return null;
         }
         switch(strRep.charAt(0)) {
-            case 't':
-            case 'T':
+            case 't', 'T' -> {
                 if(StringUtil.equalsIgnoreCase("TRUE", strRep)) {
                     return Boolean.TRUE;
                 }
-                break;
-            case 'f':
-            case 'F':
+            }
+            case 'f', 'F' -> {
                 if(StringUtil.equalsIgnoreCase("FALSE", strRep)) {
                     return Boolean.FALSE;
                 }
-                break;
+            }
         }
         return null;
     }

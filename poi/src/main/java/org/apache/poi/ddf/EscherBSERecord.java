@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * The BSE record is related closely to the {@code EscherBlipRecord} and stores
@@ -96,6 +97,10 @@ public final class EscherBSERecord extends EscherRecord {
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos = offset + 8;
+        if (bytesRemaining < 36) {
+            throw new RecordFormatException("EscherBSERecord declares " + bytesRemaining
+                    + " bytes but needs at least 36 for its fixed fields");
+        }
         field_1_blipTypeWin32 = data[pos];
         field_2_blipTypeMacOS = data[pos + 1];
         System.arraycopy( data, pos + 2, field_3_uid, 0, 16 );
@@ -112,15 +117,19 @@ public final class EscherBSERecord extends EscherRecord {
         int bytesRead = 0;
         if (bytesRemaining > 0) {
             EscherRecord record = recordFactory.createRecord(data, pos + 36);
-            if (!(record instanceof EscherBlipRecord)) {
+            if (!(record instanceof EscherBlipRecord blip)) {
                 throw new IllegalArgumentException("Did not have a EscherBlipRecord: " + record);
             }
 
             // Some older escher formats skip this last record
-            field_12_blipRecord = (EscherBlipRecord) record;
+            field_12_blipRecord = blip;
             bytesRead = field_12_blipRecord.fillFields( data, pos + 36, recordFactory );
         }
         pos += 36 + bytesRead;
+        if (bytesRead > bytesRemaining) {
+            throw new RecordFormatException("Embedded blip of EscherBSERecord consumed " + bytesRead
+                    + " bytes but only " + bytesRemaining + " were declared");
+        }
         bytesRemaining -= bytesRead;
 
         _remainingData = IOUtils.safelyClone(data, pos, bytesRemaining, MAX_RECORD_LENGTH,

@@ -125,9 +125,9 @@ public final class RecordInputStream implements LittleEndianInput {
 
     public RecordInputStream(InputStream in, EncryptionInfo key, int initialOffset) throws RecordFormatException {
         if (key == null) {
-            _dataInput = (in instanceof LittleEndianInput)
+            _dataInput = (in instanceof LittleEndianInput lei)
                 // accessing directly is an optimisation
-                ? (LittleEndianInput)in
+                ? lei
                 // less optimal, but should work OK just the same. Often occurs in junit tests.
                 : new LittleEndianInputStream(in);
             _bhi = new SimpleHeaderInput(_dataInput);
@@ -516,10 +516,10 @@ public final class RecordInputStream implements LittleEndianInput {
      */
     @Internal
     public void mark(int readlimit) {
-        if (!(_dataInput instanceof InputStream)) {
+        if (!(_dataInput instanceof InputStream stream)) {
             throw new IllegalStateException("Cannot use mark for dataInput of type " + _dataInput.getClass() + ", need an InputStream");
         }
-        ((InputStream)_dataInput).mark(readlimit);
+        stream.mark(readlimit);
         _markedDataOffset = _currentDataOffset;
     }
 
@@ -539,6 +539,6 @@ public final class RecordInputStream implements LittleEndianInput {
 
     @Internal
     public boolean isEncrypted() {
-        return _dataInput instanceof Biff8DecryptingStream && ((Biff8DecryptingStream)_dataInput).isCurrentRecordEncrypted();
+        return _dataInput instanceof Biff8DecryptingStream bds && bds.isCurrentRecordEncrypted();
     }
 }

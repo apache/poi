@@ -83,10 +83,19 @@ public final class XMLHelper {
     private static final Logger LOG = PoiLogManager.getLogger(XMLHelper.class);
     private static long lastLog;
 
-    // DocumentBuilderFactory.newDocumentBuilder is thread-safe
+    // JAXP does not state whether these two factories may be used by several threads at once, but
+    // the JDK implementations only read their feature/attribute state when creating a parser, and
+    // both are configured here once and never mutated afterwards, so they are shared unguarded.
+    // Guarding them would serialize the much hotter parser-creation paths.
     private static final DocumentBuilderFactory documentBuilderFactory = getDocumentBuilderFactory();
 
     private static final SAXParserFactory saxFactory = getSaxParserFactory();
+
+    // TransformerFactory differs: its javadoc says "Different TransformerFactories can be used
+    // concurrently by different Threads", i.e. one factory is not meant to be shared, so
+    // newTransformer synchronizes on it. Only the (cheap) transformer creation is guarded -
+    // the transformation itself runs outside the lock.
+    private static final TransformerFactory transformerFactory = getTransformerFactory();
 
     @FunctionalInterface
     private interface SecurityFeature {
@@ -237,7 +246,10 @@ public final class XMLHelper {
     }
 
     public static Transformer newTransformer() throws TransformerConfigurationException {
-        Transformer serializer = getTransformerFactory().newTransformer();
+        final Transformer serializer;
+        synchronized (transformerFactory) {
+            serializer = transformerFactory.newTransformer();
+        }
         // TODO set encoding from a command argument
         serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         serializer.setOutputProperty(OutputKeys.INDENT, "no");
@@ -265,6 +277,48 @@ public final class XMLHelper {
      */
     public static int getDepthOfChildNodes(final Node node, final int maxSupportedDepth) throws POIException {
         return getDepthOfChildNodes(node, maxSupportedDepth, 0);
+    }
+
+    /**
+     * Escapes the five predefined XML entities ({@code & < > " '}) in the supplied string so it
+     * can be safely embedded as XML element text or as a single- or double-quoted attribute value.
+     * <p>
+     * This is intended for the rare cases where XML is assembled by hand; prefer building XML
+     * through a DOM/{@link javax.xml.stream.XMLStreamWriter} where practical.
+     *
+     * @param value the string to escape, may be {@code null}
+     * @return the escaped string, or {@code null} if {@code value} was {@code null}
+     * @since POI 6.0.0
+     */
+    public static String escapeXml(final String value) {
+        if (value == null) {
+            return null;
+        }
+        StringBuilder sb = null;
+        for (int i = 0; i < value.length(); i++) {
+            final char c = value.charAt(i);
+            final String replacement;
+            switch (c) {
+                case '&':  replacement = "&amp;";  break;
+                case '<':  replacement = "&lt;";   break;
+                case '>':  replacement = "&gt;";   break;
+                case '"':  replacement = "&quot;"; break;
+                case '\'': replacement = "&apos;"; break;
+                default:   replacement = null;     break;
+            }
+            if (replacement == null) {
+                if (sb != null) {
+                    sb.append(c);
+                }
+            } else {
+                if (sb == null) {
+                    sb = new StringBuilder(value.length() + 16);
+                    sb.append(value, 0, i);
+                }
+                sb.append(replacement);
+            }
+        }
+        return sb == null ? value : sb.toString();
     }
 
     private static int getDepthOfChildNodes(final Node node, final int maxSupportedDepth,

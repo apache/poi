@@ -158,8 +158,7 @@ public final class Path implements PathIf {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Path)) return false;
-        Path ctPath2D = (Path) o;
+        if (!(o instanceof Path ctPath2D)) return false;
         return Objects.equals(commands, ctPath2D.commands) &&
                 Objects.equals(w, ctPath2D.w) &&
                 Objects.equals(h, ctPath2D.h) &&

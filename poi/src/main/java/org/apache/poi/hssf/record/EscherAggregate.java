@@ -532,8 +532,8 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     private static short sid(RecordBase record) {
         // Aggregates don't have a sid
         // We could step into them, but for these needs we don't care
-        return (record instanceof org.apache.poi.hssf.record.Record)
-            ? ((org.apache.poi.hssf.record.Record)record).getSid()
+        return (record instanceof org.apache.poi.hssf.record.Record rec)
+            ? rec.getSid()
             : -1;
     }
 

@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import com.microsoft.schemas.office.visio.x2012.main.MasterContentsDocument;
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.POIXMLTypeLoader;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xdgf.exceptions.XDGFException;
 import org.apache.xmlbeans.XmlException;
@@ -46,7 +47,7 @@ public class XDGFMasterContents extends XDGFBaseContents {
         try {
 
             try (InputStream stream = getPackagePart().getInputStream()) {
-                _pageContents = MasterContentsDocument.Factory.parse(stream).getMasterContents();
+                _pageContents = MasterContentsDocument.Factory.parse(stream, POIXMLTypeLoader.DEFAULT_XML_OPTIONS).getMasterContents();
             } catch (XmlException | IOException e) {
                 throw new POIXMLException(e);
             }

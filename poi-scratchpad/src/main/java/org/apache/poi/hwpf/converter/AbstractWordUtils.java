@@ -153,8 +153,8 @@ public class AbstractWordUtils {
         childNodes = parentElement.getChildNodes();
         for ( int i = 0; i < childNodes.getLength() - 1; i++ ) {
             Node child = childNodes.item( i );
-            if ( child instanceof Element ) {
-                compactChildNodesR( (Element) child, childTagName );
+            if ( child instanceof Element element ) {
+                compactChildNodesR( element, childTagName );
             }
         }
     }

@@ -21,11 +21,11 @@ import java.util.Calendar;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.MathUtil;
 
 
 /**
@@ -44,7 +44,7 @@ public final class DateFunc extends Fixed3ArgFunction {
             double d0 = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
             double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
             double d2 = NumericFunction.singleOperandEvaluate(arg2, srcRowIndex, srcColumnIndex);
-            result = evaluate(getYear(d0), MathUtil.safeDoubleToInt(d1 - 1),  MathUtil.safeDoubleToInt(d2));
+            result = evaluate(getYear(d0), OperandResolver.coerceDoubleToInt(d1 - 1), OperandResolver.coerceDoubleToInt(d2));
             NumericFunction.checkValue(result);
         } catch (EvaluationException e) {
             return e.getErrorEval();
@@ -68,7 +68,7 @@ public final class DateFunc extends Fixed3ArgFunction {
         // Negative days are handled by the Java Calendar
         
         // Excel has bugs around leap years in 1900, handle them
-        // Special case for the non-existant 1900 leap year
+        // Special case for the non-existent 1900 leap year
         if (year == 1900 && month == Calendar.FEBRUARY && pDay == 29) {
             return 60.0;
         }
@@ -101,8 +101,8 @@ public final class DateFunc extends Fixed3ArgFunction {
         return DateUtil.getExcelDate(c.getTime(), use1904windowing);
     }
 
-    private static int getYear(double d) {
-        int year = MathUtil.safeDoubleToInt(d);
+    private static int getYear(double d) throws EvaluationException {
+        int year = OperandResolver.coerceDoubleToInt(d);
 
         if (year < 0) {
             return -1;

@@ -70,9 +70,19 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
     private final List<CTRst> strings = new ArrayList<>();
 
     /**
-     *  Maps strings and their indexes in the <code>strings</code> arrays
+     *  Maps the XML fragments of the rich strings and their indexes in the <code>strings</code> arrays
      */
     private final Map<String, Integer> stmap = new HashMap<>();
+
+    /**
+     *  Maps plain strings and their indexes in the <code>strings</code> arrays.
+     *  <p>
+     *  Entries that hold nothing but a piece of text (see {@link #plainText(CTRst)}) can be keyed
+     *  by that text, which saves serialising them to XML just to be able to look them up. This map
+     *  is kept separate from {@link #stmap} so that the raw text can never collide with the XML
+     *  fragment of a rich string.
+     */
+    private final Map<String, Integer> plainmap = new HashMap<>();
 
     /**
      * An integer representing the total count of strings in the workbook. This count does not
@@ -128,7 +138,12 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
             uniqueCount = Math.toIntExact(sst.getUniqueCount());
             //noinspection deprecation
             for (CTRst st : sst.getSiArray()) {
-                stmap.put(xmlText(st), cnt);
+                String plain = plainText(st);
+                if (plain != null) {
+                    plainmap.put(plain, cnt);
+                } else {
+                    stmap.put(xmlText(st), cnt);
+                }
                 strings.add(st);
                 cnt++;
             }
@@ -139,6 +154,32 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
 
     protected String xmlText(CTRst st) {
         return st.xmlText(options);
+    }
+
+    /**
+     * Returns the text of the given entry if the entry can safely be identified by its plain text
+     * alone, or <code>null</code> if it has to be identified by its serialised XML fragment.
+     * <p>
+     * Only entries that consist of nothing but a piece of text qualify, ie no formatting runs and
+     * no phonetic information. Text with leading or trailing whitespace is excluded too, because
+     * for such entries the <code>xml:space="preserve"</code> attribute is significant but is not
+     * part of the text itself.
+     *
+     * @param st the entry to check
+     * @return the text to key the entry by, or <code>null</code> if the XML fragment has to be used
+     */
+    private static String plainText(CTRst st) {
+        if (!st.isSetT() || st.sizeOfRArray() != 0 || st.sizeOfRPhArray() != 0 || st.isSetPhoneticPr()) {
+            return null;
+        }
+        String text = st.getT();
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        if (Character.isWhitespace(text.charAt(0)) || Character.isWhitespace(text.charAt(text.length() - 1))) {
+            return null;
+        }
+        return text;
     }
 
     /**
@@ -188,10 +229,14 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
      */
     @Internal
     int addEntry(CTRst st) {
-        String s = xmlText(st);
+        // plain strings can be keyed by their text, which avoids serialising them to XML
+        String plain = plainText(st);
+        Map<String, Integer> map = plain != null ? plainmap : stmap;
+        String s = plain != null ? plain : xmlText(st);
         count++;
-        if (stmap.containsKey(s)) {
-            return stmap.get(s);
+        Integer existing = map.get(s);
+        if (existing != null) {
+            return existing;
         }
 
         uniqueCount++;
@@ -199,7 +244,7 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
         CTRst newSt = _sstDoc.getSst().addNewSi();
         newSt.set(st);
         int idx = strings.size();
-        stmap.put(s, idx);
+        map.put(s, idx);
         strings.add(newSt);
         return idx;
     }

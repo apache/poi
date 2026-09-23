@@ -61,15 +61,13 @@ public class OfficeDrawingsImpl implements OfficeDrawings
 
         EscherRecord imageRecord = bContainer.getChild( bitmapIndex - 1 );
 
-        if ( imageRecord instanceof EscherBlipRecord )
+        if ( imageRecord instanceof EscherBlipRecord blipRecord )
         {
-            return (EscherBlipRecord) imageRecord;
+            return blipRecord;
         }
 
-        if ( imageRecord instanceof EscherBSERecord )
+        if ( imageRecord instanceof EscherBSERecord bseRecord )
         {
-            EscherBSERecord bseRecord = (EscherBSERecord) imageRecord;
-
             EscherBlipRecord blip = bseRecord.getBlipRecord();
             if ( blip != null )
             {
@@ -86,11 +84,11 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                 EscherRecord record = recordFactory.createRecord( _mainStream,
                         bseRecord.getOffset() );
 
-                if ( record instanceof EscherBlipRecord )
+                if ( record instanceof EscherBlipRecord blipRecord )
                 {
                     record.fillFields( _mainStream, bseRecord.getOffset(),
                             recordFactory );
-                    return (EscherBlipRecord) record;
+                    return blipRecord;
                 }
             }
         }
@@ -123,23 +121,16 @@ public class OfficeDrawingsImpl implements OfficeDrawings
             {
                 int value = getTertiaryPropertyValue(EscherPropertyTypes.GROUPSHAPE__POSH );
 
-                switch ( value )
+                return switch ( value )
                 {
-                case 0:
-                    return HorizontalPositioning.ABSOLUTE;
-                case 1:
-                    return HorizontalPositioning.LEFT;
-                case 2:
-                    return HorizontalPositioning.CENTER;
-                case 3:
-                    return HorizontalPositioning.RIGHT;
-                case 4:
-                    return HorizontalPositioning.INSIDE;
-                case 5:
-                    return HorizontalPositioning.OUTSIDE;
-                }
-
-                return HorizontalPositioning.ABSOLUTE;
+                case 0 -> HorizontalPositioning.ABSOLUTE;
+                case 1 -> HorizontalPositioning.LEFT;
+                case 2 -> HorizontalPositioning.CENTER;
+                case 3 -> HorizontalPositioning.RIGHT;
+                case 4 -> HorizontalPositioning.INSIDE;
+                case 5 -> HorizontalPositioning.OUTSIDE;
+                default -> HorizontalPositioning.ABSOLUTE;
+                };
             }
 
             @Override
@@ -147,19 +138,14 @@ public class OfficeDrawingsImpl implements OfficeDrawings
             {
                 int value = getTertiaryPropertyValue( EscherPropertyTypes.GROUPSHAPE__POSRELH );
 
-                switch ( value )
+                return switch ( value )
                 {
-                case 1:
-                    return HorizontalRelativeElement.MARGIN;
-                case 2:
-                    return HorizontalRelativeElement.PAGE;
-                case 3:
-                    return HorizontalRelativeElement.TEXT;
-                case 4:
-                    return HorizontalRelativeElement.CHAR;
-                }
-
-                return HorizontalRelativeElement.TEXT;
+                case 1 -> HorizontalRelativeElement.MARGIN;
+                case 2 -> HorizontalRelativeElement.PAGE;
+                case 3 -> HorizontalRelativeElement.TEXT;
+                case 4 -> HorizontalRelativeElement.CHAR;
+                default -> HorizontalRelativeElement.TEXT;
+                };
             }
 
             @Override
@@ -244,23 +230,16 @@ public class OfficeDrawingsImpl implements OfficeDrawings
             {
                 int value = getTertiaryPropertyValue( EscherPropertyTypes.GROUPSHAPE__POSV );
 
-                switch ( value )
+                return switch ( value )
                 {
-                case 0:
-                    return VerticalPositioning.ABSOLUTE;
-                case 1:
-                    return VerticalPositioning.TOP;
-                case 2:
-                    return VerticalPositioning.CENTER;
-                case 3:
-                    return VerticalPositioning.BOTTOM;
-                case 4:
-                    return VerticalPositioning.INSIDE;
-                case 5:
-                    return VerticalPositioning.OUTSIDE;
-                }
-
-                return VerticalPositioning.ABSOLUTE;
+                case 0 -> VerticalPositioning.ABSOLUTE;
+                case 1 -> VerticalPositioning.TOP;
+                case 2 -> VerticalPositioning.CENTER;
+                case 3 -> VerticalPositioning.BOTTOM;
+                case 4 -> VerticalPositioning.INSIDE;
+                case 5 -> VerticalPositioning.OUTSIDE;
+                default -> VerticalPositioning.ABSOLUTE;
+                };
             }
 
             @Override
@@ -268,19 +247,14 @@ public class OfficeDrawingsImpl implements OfficeDrawings
             {
                 int value = getTertiaryPropertyValue( EscherPropertyTypes.GROUPSHAPE__POSV );
 
-                switch ( value )
+                return switch ( value )
                 {
-                case 1:
-                    return VerticalRelativeElement.MARGIN;
-                case 2:
-                    return VerticalRelativeElement.PAGE;
-                case 3:
-                    return VerticalRelativeElement.TEXT;
-                case 4:
-                    return VerticalRelativeElement.LINE;
-                }
-
-                return VerticalRelativeElement.TEXT;
+                case 1 -> VerticalRelativeElement.MARGIN;
+                case 2 -> VerticalRelativeElement.PAGE;
+                case 3 -> VerticalRelativeElement.TEXT;
+                case 4 -> VerticalRelativeElement.LINE;
+                default -> VerticalRelativeElement.TEXT;
+                };
             }
 
             @Override

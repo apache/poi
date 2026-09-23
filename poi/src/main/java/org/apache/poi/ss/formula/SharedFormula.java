@@ -49,15 +49,24 @@ public class SharedFormula {
             if (!ptg.isBaseToken()) {
                 originalOperandClass = ptg.getPtgClass();
             }
-            if (ptg instanceof RefPtgBase) {
-                RefPtgBase refNPtg = (RefPtgBase)ptg;
+            if (ptg instanceof RefNPtg || ptg instanceof RefPtg) {
+                // becomes a plain RefPtg
+                RefPtgBase refNPtg = (RefPtgBase) ptg;
                 ptg = new RefPtg(fixupRelativeRow(formulaRow,refNPtg.getRow(),refNPtg.isRowRelative()),
                                      fixupRelativeColumn(formulaColumn,refNPtg.getColumn(),refNPtg.isColRelative()),
                                      refNPtg.isRowRelative(),
                                      refNPtg.isColRelative());
                 ptg.setClass(originalOperandClass);
-            } else if (ptg instanceof AreaPtgBase) {
-                AreaPtgBase areaNPtg = (AreaPtgBase)ptg;
+            } else if (ptg instanceof RefPtgBase ref3DPtg) {
+                // Ref3DPtg / Ref3DPxg - keep the sheet reference, only fix up the cell
+                RefPtgBase fixed = (RefPtgBase) ref3DPtg.copy();
+                fixed.setRow(fixupRelativeRow(formulaRow, ref3DPtg.getRow(), ref3DPtg.isRowRelative()));
+                fixed.setColumn(fixupRelativeColumn(formulaColumn, ref3DPtg.getColumn(), ref3DPtg.isColRelative()));
+                fixed.setClass(originalOperandClass);
+                ptg = fixed;
+            } else if (ptg instanceof AreaNPtg || ptg instanceof AreaPtg) {
+                // becomes a plain AreaPtg
+                AreaPtgBase areaNPtg = (AreaPtgBase) ptg;
                 ptg = new AreaPtg(fixupRelativeRow(formulaRow,areaNPtg.getFirstRow(),areaNPtg.isFirstRowRelative()),
                                 fixupRelativeRow(formulaRow,areaNPtg.getLastRow(),areaNPtg.isLastRowRelative()),
                                 fixupRelativeColumn(formulaColumn,areaNPtg.getFirstColumn(),areaNPtg.isFirstColRelative()),
@@ -67,9 +76,18 @@ public class SharedFormula {
                                 areaNPtg.isFirstColRelative(),
                                 areaNPtg.isLastColRelative());
                 ptg.setClass(originalOperandClass);
-            } else if (ptg instanceof OperandPtg) {
+            } else if (ptg instanceof AreaPtgBase area3DPtg) {
+                // Area3DPtg / Area3DPxg - keep the sheet reference, only fix up the area
+                AreaPtgBase fixed = (AreaPtgBase) area3DPtg.copy();
+                fixed.setFirstRow(fixupRelativeRow(formulaRow, area3DPtg.getFirstRow(), area3DPtg.isFirstRowRelative()));
+                fixed.setLastRow(fixupRelativeRow(formulaRow, area3DPtg.getLastRow(), area3DPtg.isLastRowRelative()));
+                fixed.setFirstColumn(fixupRelativeColumn(formulaColumn, area3DPtg.getFirstColumn(), area3DPtg.isFirstColRelative()));
+                fixed.setLastColumn(fixupRelativeColumn(formulaColumn, area3DPtg.getLastColumn(), area3DPtg.isLastColRelative()));
+                fixed.setClass(originalOperandClass);
+                ptg = fixed;
+            } else if (ptg instanceof OperandPtg optg) {
                 // Any subclass of OperandPtg is mutable, so it's safest to not share these instances.
-                ptg = ((OperandPtg) ptg).copy();
+                ptg = optg.copy();
             }
             // all other Ptgs are immutable and can be shared
             newPtgStack[k] = ptg;

@@ -148,8 +148,7 @@ final class ParseNode {
     }
 
     private static boolean isIf(Ptg token) {
-        if (token instanceof FuncVarPtg) {
-            FuncVarPtg func = (FuncVarPtg) token;
+        if (token instanceof FuncVarPtg func) {
             return FunctionMetadataRegistry.FUNCTION_NAME_IF.equals(func.getName());
         }
         return false;

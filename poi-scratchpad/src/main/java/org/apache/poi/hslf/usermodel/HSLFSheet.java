@@ -172,17 +172,16 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
                 continue;
             }
 
-            if (!(r instanceof EscherContainerRecord)) {
+            if (!(r instanceof EscherContainerRecord sp)) {
                 throw new IllegalArgumentException("Did not have a EscherContainerRecord: " + r);
             }
-            EscherContainerRecord sp = (EscherContainerRecord)r;
             HSLFShape sh = HSLFShapeFactory.createShape(sp, null);
             sh.setSheet(this);
 
-            if (sh instanceof HSLFSimpleShape) {
+            if (sh instanceof HSLFSimpleShape simpleShape) {
                 HSLFHyperlink link = HSLFHyperlink.find(sh);
                 if (link != null) {
-                    ((HSLFSimpleShape)sh).setHyperlink(link);
+                    simpleShape.setHyperlink(link);
                 }
             }
 
@@ -300,8 +299,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
      */
     public HSLFTextShape getPlaceholderByTextType(int type){
         for (HSLFShape shape : getShapes()) {
-            if(shape instanceof HSLFTextShape){
-                HSLFTextShape tx = (HSLFTextShape)shape;
+            if(shape instanceof HSLFTextShape tx){
                 if (tx.getRunType() == type) {
                     return tx;
                 }
@@ -318,8 +316,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
      */
     public HSLFSimpleShape getPlaceholder(Placeholder type){
         for (HSLFShape shape : getShapes()) {
-            if (shape instanceof HSLFSimpleShape) {
-                HSLFSimpleShape ss = (HSLFSimpleShape)shape;
+            if (shape instanceof HSLFSimpleShape ss) {
                 if (type == ss.getPlaceholder()) {
                     return ss;
                 }
@@ -428,10 +425,10 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
 
     @Override
     public HSLFPictureShape createPicture(PictureData pictureData) {
-        if (!(pictureData instanceof HSLFPictureData)) {
+        if (!(pictureData instanceof HSLFPictureData hslfPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type HSLFPictureData");
         }
-        HSLFPictureShape s = new HSLFPictureShape((HSLFPictureData)pictureData);
+        HSLFPictureShape s = new HSLFPictureShape(hslfPictureData);
         s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
@@ -450,10 +447,10 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
 
     @Override
     public HSLFObjectShape createOleShape(PictureData pictureData) {
-        if (!(pictureData instanceof HSLFPictureData)) {
+        if (!(pictureData instanceof HSLFPictureData hslfPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type HSLFPictureData");
         }
-        HSLFObjectShape s = new HSLFObjectShape((HSLFPictureData)pictureData);
+        HSLFObjectShape s = new HSLFObjectShape(hslfPictureData);
         s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;

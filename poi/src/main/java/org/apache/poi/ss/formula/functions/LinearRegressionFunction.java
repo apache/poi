@@ -143,21 +143,19 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
         for (int i = 0; i < size; i++) {
             ValueEval vx = x.getItem(i);
             ValueEval vy = y.getItem(i);
-            if (vx instanceof ErrorEval) {
-                throw new EvaluationException((ErrorEval) vx);
+            if (vx instanceof ErrorEval err) {
+                throw new EvaluationException(err);
             }
-            if (vy instanceof ErrorEval) {
+            if (vy instanceof ErrorEval err) {
                 if (firstYerr == null) {
-                    firstYerr = (ErrorEval) vy;
+                    firstYerr = err;
                     continue;
                 }
             }
             // only count pairs if both elements are numbers
             // all other combinations of value types are silently ignored
-            if (vx instanceof NumberEval && vy instanceof NumberEval) {
+            if (vx instanceof NumberEval nx && vy instanceof NumberEval ny) {
                 accumlatedSome = true;
-                NumberEval nx = (NumberEval) vx;
-                NumberEval ny = (NumberEval) vy;
                 sumx  += nx.getNumberValue();
                 sumy  += ny.getNumberValue();
             }
@@ -182,9 +180,7 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 
             // only count pairs if both elements are numbers
             // all other combinations of value types are silently ignored
-            if (vx instanceof NumberEval && vy instanceof NumberEval) {
-                NumberEval nx = (NumberEval) vx;
-                NumberEval ny = (NumberEval) vy;
+            if (vx instanceof NumberEval nx && vy instanceof NumberEval ny) {
                 xxbar += (nx.getNumberValue() - xbar) * (nx.getNumberValue() - xbar);
                 xybar += (nx.getNumberValue() - xbar) * (ny.getNumberValue() - ybar);
             }
@@ -201,14 +197,14 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
     }
 
     private static ValueVector createValueVector(ValueEval arg) throws EvaluationException {
-        if (arg instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval) arg);
+        if (arg instanceof ErrorEval errorEval) {
+            throw new EvaluationException(errorEval);
         }
-        if (arg instanceof TwoDEval) {
-            return new AreaValueArray((TwoDEval) arg);
+        if (arg instanceof TwoDEval twoDEval) {
+            return new AreaValueArray(twoDEval);
         }
-        if (arg instanceof RefEval) {
-            return new RefValueArray((RefEval) arg);
+        if (arg instanceof RefEval refEval) {
+            return new RefValueArray(refEval);
         }
         return new SingleCellValueArray(arg);
     }

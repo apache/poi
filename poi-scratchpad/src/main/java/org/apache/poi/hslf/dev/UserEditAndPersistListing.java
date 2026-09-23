@@ -89,8 +89,7 @@ public final class UserEditAndPersistListing {
             pos = 0;
             // Now look for UserEditAtoms
             for (org.apache.poi.hslf.record.Record r : ss.getRecords()) {
-                if (r instanceof UserEditAtom) {
-                    UserEditAtom uea = (UserEditAtom) r;
+                if (r instanceof UserEditAtom uea) {
                     System.out.println("Found UserEditAtom at " + pos + " (" + Integer.toHexString(pos) + ")");
                     System.out.println("  lastUserEditAtomOffset = " + uea.getLastUserEditAtomOffset());
                     System.out.println("  persistPointersOffset  = " + uea.getPersistPointersOffset());

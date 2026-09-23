@@ -1777,8 +1777,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
     }
 
     protected void applyStroke(SimpleShape<?,?> shape) {
-        if (_stroke instanceof BasicStroke){
-            BasicStroke bs = (BasicStroke)_stroke;
+        if (_stroke instanceof BasicStroke bs){
             shape.setStrokeStyle((double)bs.getLineWidth());
             float[] dash = bs.getDashArray();
             if (dash != null) {
@@ -1789,8 +1788,8 @@ public class SLGraphics extends Graphics2D implements Cloneable {
     }
 
     protected void applyPaint(SimpleShape<?,?> shape) {
-        if (_paint instanceof Color) {
-            shape.setFillColor((Color)_paint);
+        if (_paint instanceof Color c) {
+            shape.setFillColor(c);
         }
     }
 

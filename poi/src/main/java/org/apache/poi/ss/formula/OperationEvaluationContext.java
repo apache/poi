@@ -48,9 +48,11 @@ import org.apache.poi.util.LocaleUtil;
  * Contains all the contextual information required to evaluate an operation
  * within a formula
  * <p>
- * For POI internal use only
+ * For POI internal use only. Not final so that an evaluator can subclass it to customise
+ * how references are resolved before passing it to
+ * {@link WorkbookEvaluator#evaluateFormula(OperationEvaluationContext, Ptg[])}.
  */
-public final class OperationEvaluationContext {
+public class OperationEvaluationContext {
     public static final FreeRefFunction UDF = UserDefinedFunction.instance;
     private final EvaluationWorkbook _workbook;
     private final int _sheetIndex;
@@ -60,6 +62,32 @@ public final class OperationEvaluationContext {
     private final WorkbookEvaluator _bookEvaluator;
     private final boolean _isSingleValue;
     private boolean _isInArrayContext;
+    /**
+     * Lazily created evaluator for the current sheet. It only depends on this
+     * context's final fields, so it can be shared by all reference evaluations
+     * of this context instead of being re-created on every access.
+     */
+    private SheetRangeEvaluator _currentSheetRefEvaluator;
+
+    /**
+     * Creates a context for evaluating formula tokens at the given position, using the
+     * evaluation tracker of the given {@link WorkbookEvaluator}.
+     *
+     * <p>This constructor is intended for code outside this package - e.g. custom
+     * {@link EvaluationWorkbook} implementations or {@link org.apache.poi.ss.formula.functions.FreeRefFunction}
+     * callers - that needs a context but has no access to the internal evaluation tracker.</p>
+     *
+     * @param bookEvaluator the evaluator of the workbook the formula belongs to
+     * @param workbook      the workbook the formula belongs to
+     * @param sheetIndex    the index of the sheet the formula is evaluated on
+     * @param srcRowNum     the row index of the formula's position (base for relative references)
+     * @param srcColNum     the column index of the formula's position (base for relative references)
+     * @since 6.0.0
+     */
+    public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
+                                      int srcColNum) {
+        this(bookEvaluator, workbook, sheetIndex, srcRowNum, srcColNum, bookEvaluator.createEvaluationTracker(), true);
+    }
 
     public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
                                       int srcColNum, EvaluationTracker tracker) {
@@ -124,8 +152,8 @@ public final class OperationEvaluationContext {
                 otherFirstSheetIndex = _workbook.getSheetIndex(externalSheet.getSheetName());
             }
 
-            if (externalSheet instanceof ExternalSheetRange) {
-                String lastSheetName = ((ExternalSheetRange) externalSheet).getLastSheetName();
+            if (externalSheet instanceof ExternalSheetRange esr) {
+                String lastSheetName = esr.getLastSheetName();
                 otherLastSheetIndex = _workbook.getSheetIndex(lastSheetName);
             }
         } else {
@@ -138,8 +166,8 @@ public final class OperationEvaluationContext {
             }
 
             otherFirstSheetIndex = targetEvaluator.getSheetIndex(externalSheet.getSheetName());
-            if (externalSheet instanceof ExternalSheetRange) {
-                String lastSheetName = ((ExternalSheetRange) externalSheet).getLastSheetName();
+            if (externalSheet instanceof ExternalSheetRange esr) {
+                String lastSheetName = esr.getLastSheetName();
                 otherLastSheetIndex = targetEvaluator.getSheetIndex(lastSheetName);
             }
 
@@ -187,8 +215,11 @@ public final class OperationEvaluationContext {
     }
 
     public SheetRangeEvaluator getRefEvaluatorForCurrentSheet() {
-        SheetRefEvaluator sre = new SheetRefEvaluator(_bookEvaluator, _tracker, _sheetIndex);
-        return new SheetRangeEvaluator(_sheetIndex, sre);
+        if (_currentSheetRefEvaluator == null) {
+            SheetRefEvaluator sre = new SheetRefEvaluator(_bookEvaluator, _tracker, _sheetIndex);
+            _currentSheetRefEvaluator = new SheetRangeEvaluator(_sheetIndex, sre);
+        }
+        return _currentSheetRefEvaluator;
     }
 
 
@@ -419,17 +450,17 @@ public final class OperationEvaluationContext {
         if (token == null) {
             throw new IllegalStateException("Array item cannot be null");
         }
-        if (token instanceof String) {
-            return new StringEval((String) token);
+        if (token instanceof String s) {
+            return new StringEval(s);
         }
-        if (token instanceof Double) {
-            return new NumberEval((Double) token);
+        if (token instanceof Double d) {
+            return new NumberEval(d);
         }
-        if (token instanceof Boolean) {
-            return BoolEval.valueOf((Boolean) token);
+        if (token instanceof Boolean b) {
+            return BoolEval.valueOf(b);
         }
-        if (token instanceof ErrorConstant) {
-            return ErrorEval.valueOf(((ErrorConstant) token).getErrorCode());
+        if (token instanceof ErrorConstant ec) {
+            return ErrorEval.valueOf(ec.getErrorCode());
         }
         throw new IllegalArgumentException("Unexpected constant class (" + token.getClass().getName() + ")");
     }
@@ -541,17 +572,13 @@ public final class OperationEvaluationContext {
                         refWorkbookEvaluator, refWorkbookEvaluator.getWorkbook(), -1, -1, -1, _tracker);
 
                 Ptg ptg = evaluationName.getNameDefinition()[0];
-                if (ptg instanceof Ref3DPtg) {
-                    Ref3DPtg ref3D = (Ref3DPtg) ptg;
+                if (ptg instanceof Ref3DPtg ref3D) {
                     return refWorkbookContext.getRef3DEval(ref3D);
-                } else if (ptg instanceof Ref3DPxg) {
-                    Ref3DPxg ref3D = (Ref3DPxg) ptg;
+                } else if (ptg instanceof Ref3DPxg ref3D) {
                     return refWorkbookContext.getRef3DEval(ref3D);
-                } else if (ptg instanceof Area3DPtg) {
-                    Area3DPtg area3D = (Area3DPtg) ptg;
+                } else if (ptg instanceof Area3DPtg area3D) {
                     return refWorkbookContext.getArea3DEval(area3D);
-                } else if (ptg instanceof Area3DPxg) {
-                    Area3DPxg area3D = (Area3DPxg) ptg;
+                } else if (ptg instanceof Area3DPxg area3D) {
                     return refWorkbookContext.getArea3DEval(area3D);
                 }
             }

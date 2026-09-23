@@ -86,8 +86,8 @@ public class POIFSLister {
       for(Iterator<Entry> it = dir.getEntries(); it.hasNext();) {
          hadChildren = true;
          Entry entry = it.next();
-         if (entry instanceof DirectoryNode) {
-            displayDirectory((DirectoryNode) entry, newIndent, withSizes);
+         if (entry instanceof DirectoryNode dn) {
+            displayDirectory(dn, newIndent, withSizes);
          } else {
             DocumentNode doc = (DocumentNode) entry;
             String name = doc.getName();

@@ -36,8 +36,7 @@ public final class Areas implements Function {
         try {
             ValueEval valueEval = args[0];
             int result = 1;
-            if (valueEval instanceof RefListEval) {
-                RefListEval refListEval = (RefListEval) valueEval;
+            if (valueEval instanceof RefListEval refListEval) {
                 result = refListEval.getList().size();
             }
             return new NumberEval(new NumberPtg(result));

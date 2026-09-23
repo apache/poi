@@ -233,10 +233,10 @@ public class AttachmentChunks implements ChunkGroup {
 
         try {
             if (chunkId == ATTACH_DATA.id) {
-                if (chunk instanceof ByteChunk) {
-                    attachData = (ByteChunk) chunk;
-                } else if (chunk instanceof DirectoryChunk) {
-                    attachmentDirectory = (DirectoryChunk) chunk;
+                if (chunk instanceof ByteChunk byteChunk) {
+                    attachData = byteChunk;
+                } else if (chunk instanceof DirectoryChunk directoryChunk) {
+                    attachmentDirectory = directoryChunk;
                 } else {
                     LOG.atError().log("Unexpected data chunk of type {}", chunk.getEntryName());
                 }

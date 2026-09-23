@@ -301,8 +301,8 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
 
     @Override
     public boolean equals(Object o) {
-      if (o instanceof HSSFRichTextString) {
-        return _string.equals(((HSSFRichTextString)o)._string);
+      if (o instanceof HSSFRichTextString other) {
+        return _string.equals(other._string);
       }
       return false;
 

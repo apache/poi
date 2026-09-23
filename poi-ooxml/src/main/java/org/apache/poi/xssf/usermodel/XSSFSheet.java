@@ -165,15 +165,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         // Look for bits we're interested in
         for(RelationPart rp : getRelationParts()){
             POIXMLDocumentPart p = rp.getDocumentPart();
-            if(p instanceof Comments) {
-                sheetComments = (Comments)p;
+            if(p instanceof Comments comments) {
+                sheetComments = comments;
                 sheetComments.setSheet(this);
             }
-            if(p instanceof XSSFTable) {
-                tables.put( rp.getRelationship().getId(), (XSSFTable)p );
+            if(p instanceof XSSFTable table) {
+                tables.put( rp.getRelationship().getId(), table );
             }
-            if(p instanceof XSSFPivotTable) {
-                getWorkbook().addPivotTable((XSSFPivotTable) p);
+            if(p instanceof XSSFPivotTable pivotTable) {
+                getWorkbook().addPivotTable(pivotTable);
             }
         }
 
@@ -1304,26 +1304,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         CTPageMargins pageMargins = worksheet.isSetPageMargins() ?
                 worksheet.getPageMargins() : worksheet.addNewPageMargins();
         switch (margin) {
-            case LEFT:
-                pageMargins.setLeft(size);
-                break;
-            case RIGHT:
-                pageMargins.setRight(size);
-                break;
-            case TOP:
-                pageMargins.setTop(size);
-                break;
-            case BOTTOM:
-                pageMargins.setBottom(size);
-                break;
-            case HEADER:
-                pageMargins.setHeader(size);
-                break;
-            case FOOTER:
-                pageMargins.setFooter(size);
-                break;
-            default:
-                throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
+            case LEFT -> pageMargins.setLeft(size);
+            case RIGHT -> pageMargins.setRight(size);
+            case TOP -> pageMargins.setTop(size);
+            case BOTTOM -> pageMargins.setBottom(size);
+            case HEADER -> pageMargins.setHeader(size);
+            case FOOTER -> pageMargins.setFooter(size);
+            default -> throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
         }
     }
 
@@ -2850,19 +2837,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             endHidden = getRow(endOfOutlineGroupIdx).getCTRow().getHidden();
         }
 
-        // Look out outline details of start
+        // Look out outline details of start: the row *before* the group is the one that tells
+        // whether an enclosing group hides this one (the group's own first row is hidden whenever
+        // the group itself is collapsed, so it says nothing about a parent)
         int startLevel;
         boolean startHidden;
-        int startOfOutlineGroupIdx = findStartOfRowOutlineGroup(row);
-        if (startOfOutlineGroupIdx < 0
-                || getRow(startOfOutlineGroupIdx) == null) {
+        int rowBeforeGroupIdx = findStartOfRowOutlineGroup(row) - 1;
+        if (rowBeforeGroupIdx < 0 || getRow(rowBeforeGroupIdx) == null) {
             startLevel = 0;
             startHidden = false;
         } else {
-            startLevel = getRow(startOfOutlineGroupIdx).getCTRow()
-                    .getOutlineLevel();
-            startHidden = getRow(startOfOutlineGroupIdx).getCTRow()
-                    .getHidden();
+            startLevel = getRow(rowBeforeGroupIdx).getCTRow().getOutlineLevel();
+            startHidden = getRow(rowBeforeGroupIdx).getCTRow().getHidden();
         }
         if (endLevel > startLevel) {
             return endHidden;
@@ -3089,6 +3075,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * Additionally, shifts merged regions that are completely defined in these
      * rows (i.e. merged 2 cells on a row to be shifted). All merged regions that are
      * completely overlaid by shifting will be deleted.
+     * <p>
+     * Shapes in the sheet's drawing (charts, pictures, ...) whose top-left anchor is in one of the
+     * shifted rows are moved along with it, keeping their size.
      *
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
@@ -3120,8 +3109,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         rowShifter.updateFormulas(formulaShifter);
         rowShifter.updateConditionalFormatting(formulaShifter);
         rowShifter.updateHyperlinks(formulaShifter);
+        rowShifter.shiftDrawingAnchors(startRow, endRow, n);
 
         rebuildRows();
+        rebuildFormulaBookkeeping();
 
         for (XSSFTable table : overlappingTables) {
             rebuildTableFormulas(table);
@@ -3132,6 +3123,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * Shifts columns between startColumn and endColumn n number of columns.
      * If you use a negative number, it will shift columns left.
      * Code ensures that columns don't wrap around
+     * <p>
+     * Shapes in the sheet's drawing (charts, pictures, ...) whose top-left anchor is in one of the
+     * shifted columns are moved along with it, keeping their size.
      *
      * @param startColumn the column to start shifting
      * @param endColumn the column to end shifting
@@ -3158,8 +3152,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         columnShifter.updateConditionalFormatting(formulaShifter);
         columnShifter.updateHyperlinks(formulaShifter);
         columnShifter.updateNamedRanges(formulaShifter);
+        columnShifter.shiftDrawingAnchors(startColumn, endColumn, n);
 
         rebuildRows();
+        rebuildFormulaBookkeeping();
 
         for (XSSFTable table : overlappingTables) {
             rebuildTableFormulas(table);
@@ -3191,7 +3187,49 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         }
     }
 
+    /**
+     * Brings the {@code _rows} map back in sync with the row numbers after rows were renumbered.
+     * <p>
+     * {@code _rows} is keyed by the row numbers the rows had before the shift, so it iterates the rows
+     * in the order of the CTRow elements in CTSheetData. Usually shifting keeps that order intact
+     * (rows are only renumbered), in which case only the keys of {@code _rows} need to be refreshed
+     * and the XSSFRow and XSSFCell instances stay valid. The XML only needs to be reordered (and the
+     * rows recreated) when rows jumped over other rows, see bug 64516.
+     */
     private void rebuildRows() {
+        XSSFRow[] rowArray = new XSSFRow[_rows.size()];
+        int[] rownums = new int[rowArray.length];
+        boolean renumbered = false;
+        boolean inOrder = true;
+        int i = 0;
+        for (Map.Entry<Integer, XSSFRow> entry : _rows.entrySet()) {
+            XSSFRow row = entry.getValue();
+            int rownum = row.getRowNum();
+            if (rownum != entry.getKey()) {
+                renumbered = true;
+            }
+            if (i > 0 && rownum <= rownums[i - 1]) {
+                inOrder = false;
+                break;
+            }
+            rowArray[i] = row;
+            rownums[i] = rownum;
+            i++;
+        }
+        if (!renumbered) {
+            return;
+        }
+        if (inOrder) {
+            _rows.clear();
+            for (i = 0; i < rowArray.length; i++) {
+                // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+                //noinspection UnnecessaryBoxing
+                final Integer rownumI = Integer.valueOf(rownums[i]); // NOSONAR
+                _rows.put(rownumI, rowArray[i]);
+            }
+            return;
+        }
+
         //rebuild the CTSheetData CTRow order
         SortedMap<Long, CTRow> ctRows = new TreeMap<>();
         CTSheetData sheetData = getCTWorksheet().getSheetData();
@@ -3210,6 +3248,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             XSSFRow row = new XSSFRow(ctRow, this);
             Integer rownumI = Math.toIntExact(row.getRowNum());
             _rows.put(rownumI, row);
+        }
+    }
+
+    /**
+     * The shared and array formula bookkeeping refers to cell addresses and formula ranges,
+     * so it is refreshed from the cells once they and their formulas were shifted.
+     */
+    private void rebuildFormulaBookkeeping() {
+        for (XSSFRow row : _rows.values()) {
+            for (Cell cell : row) {
+                onReadCell((XSSFCell) cell);
+            }
         }
     }
 
@@ -3806,28 +3856,46 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         //collect cells holding shared formulas
         CTCell ct = cell.getCTCell();
         CTCellFormula f = ct.getF();
-        if (f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null) {
-            // save a detached  copy to avoid XmlValueDisconnectedException,
-            // this may happen when the master cell of a shared formula is changed
-            CTCellFormula sf = (CTCellFormula)f.copy();
-            CellRangeAddress sfRef = CellRangeAddress.valueOf(sf.getRef());
-            CellReference cellRef = new CellReference(cell);
-            // If the shared formula range precedes the master cell then the preceding  part is discarded, e.g.
-            // if the cell is E60 and the shared formula range is C60:M85 then the effective range is E60:M85
-            // see more details in https://issues.apache.org/bugzilla/show_bug.cgi?id=51710
-            if(cellRef.getCol() > sfRef.getFirstColumn() || cellRef.getRow() > sfRef.getFirstRow()){
-                String effectiveRef = new CellRangeAddress(
-                        Math.max(cellRef.getRow(), sfRef.getFirstRow()), Math.max(cellRef.getRow(), sfRef.getLastRow()),
-                        Math.max(cellRef.getCol(), sfRef.getFirstColumn()), Math.max(cellRef.getCol(), sfRef.getLastColumn()))
-                        .formatAsString();
-                sf.setRef(effectiveRef);
-            }
-
-            sharedFormulas.put(Math.toIntExact(f.getSi()), sf);
+        if (isSharedFormulaMaster(f)) {
+            registerSharedFormula(cell, f);
         }
         if (f != null && f.getT() == STCellFormulaType.ARRAY && f.getRef() != null) {
             arrayFormulas.add(CellRangeAddress.valueOf(f.getRef()));
         }
+    }
+
+    /**
+     * @return whether {@code f} is the master formula of a shared formula group, i.e. the one holding the
+     * formula text and the range of the group
+     */
+    private static boolean isSharedFormulaMaster(CTCellFormula f) {
+        return f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null;
+    }
+
+    /**
+     * Caches the master formula of a shared formula group, keyed by its {@code si}
+     *
+     * @param cell the master cell of the group
+     * @param f the master formula, as held by {@code cell}
+     */
+    private void registerSharedFormula(XSSFCell cell, CTCellFormula f) {
+        // save a detached  copy to avoid XmlValueDisconnectedException,
+        // this may happen when the master cell of a shared formula is changed
+        CTCellFormula sf = (CTCellFormula)f.copy();
+        CellRangeAddress sfRef = CellRangeAddress.valueOf(sf.getRef());
+        CellReference cellRef = new CellReference(cell);
+        // If the shared formula range precedes the master cell then the preceding  part is discarded, e.g.
+        // if the cell is E60 and the shared formula range is C60:M85 then the effective range is E60:M85
+        // see more details in https://issues.apache.org/bugzilla/show_bug.cgi?id=51710
+        if(cellRef.getCol() > sfRef.getFirstColumn() || cellRef.getRow() > sfRef.getFirstRow()){
+            String effectiveRef = new CellRangeAddress(
+                    Math.max(cellRef.getRow(), sfRef.getFirstRow()), Math.max(cellRef.getRow(), sfRef.getLastRow()),
+                    Math.max(cellRef.getCol(), sfRef.getFirstColumn()), Math.max(cellRef.getCol(), sfRef.getLastColumn()))
+                    .formatAsString();
+            sf.setRef(effectiveRef);
+        }
+
+        sharedFormulas.put(Math.toIntExact(f.getSi()), sf);
     }
 
     @Override
@@ -4282,7 +4350,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         XSSFCell mainArrayFormulaCell = cr.getTopLeftCell();
         mainArrayFormulaCell.setCellArrayFormula(formula, range);
-        arrayFormulas.add(range);
+        // re-entering an array formula over its range replaces it, so don't record the range twice
+        if (!arrayFormulas.contains(range)) {
+            arrayFormulas.add(range);
+        }
         return cr;
     }
 
@@ -4912,9 +4983,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      */
     protected void onSheetDelete() {
         for (RelationPart part : getRelationParts()) {
-            if (part.getDocumentPart() instanceof XSSFTable) {
+            if (part.getDocumentPart() instanceof XSSFTable table) {
                 // call table delete
-                removeTable(part.getDocumentPart());
+                removeTable(table);
                 continue;
             }
             removeRelation(part.getDocumentPart(), true);
@@ -4922,42 +4993,53 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /**
-     *  when a cell with a 'master' shared formula is removed,  the next cell in the range becomes the master
+     * When the master cell of a shared formula group is removed, the next cell of the group (in row order) takes over
+     * as master: it gets the formula text, rewritten for its own position, and the {@code ref} of the remaining cells
+     * of the group. As in files written by Excel, that {@code ref} is the bounding box of the group's cells, so in the
+     * rows below the master it may extend to the left of the master cell (see bug 51710).
+     *
      * @param cell The cell that is removed
      * @param evalWb BaseXSSFEvaluationWorkbook in use, if one exists
      */
     protected void onDeleteFormula(final XSSFCell cell, final BaseXSSFEvaluationWorkbook evalWb) {
-        final int rowIndex = cell.getRowIndex();
-        final int columnIndex = cell.getColumnIndex();
         CTCellFormula f = cell.getCTCell().getF();
-        if (f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null) {
-
-            CellRangeAddress ref = CellRangeAddress.valueOf(f.getRef());
-            if(ref.getNumberOfCells() > 1){
-                DONE:
-                for(int i = rowIndex; i <= ref.getLastRow(); i++){
-                    XSSFRow row = getRow(i);
-                    if(row != null) {
-                        for(int j = columnIndex; j <= ref.getLastColumn(); j++){
-                            XSSFCell nextCell = row.getCell(j);
-                            if(nextCell != null && nextCell != cell && nextCell.getCellType() == CellType.FORMULA) {
-                                CTCellFormula nextF = nextCell.getCTCell().getF();
-                                if (nextF.getT() == STCellFormulaType.SHARED && nextF.getSi() == f.getSi()) {
-                                    nextF.setStringValue(nextCell.getCellFormula(evalWb));
-                                    CellRangeAddress nextRef = new CellRangeAddress(
-                                            nextCell.getRowIndex(), ref.getLastRow(),
-                                            nextCell.getColumnIndex(), ref.getLastColumn());
-                                    nextF.setRef(nextRef.formatAsString());
-
-                                    sharedFormulas.put(Math.toIntExact(nextF.getSi()), nextF);
-                                    break DONE;
-                                }
-                            }
-                        }
-                    }
+        if (!isSharedFormulaMaster(f)) {
+            return;
+        }
+        final long si = f.getSi();
+        final CellRangeAddress ref = CellRangeAddress.valueOf(f.getRef());
+        final int lastRow = ref.getLastRow();
+        final int lastColumn = ref.getLastColumn();
+        // the cells of the group after the master, in row order: the rest of the master's row,
+        // then the rows below it over the full width of the range
+        for (int i = cell.getRowIndex(); i <= lastRow; i++) {
+            XSSFRow row = getRow(i);
+            if (row == null) {
+                continue;
+            }
+            int firstColumn = i == cell.getRowIndex() ? cell.getColumnIndex() + 1 : ref.getFirstColumn();
+            for (int j = firstColumn; j <= lastColumn; j++) {
+                XSSFCell nextCell = row.getCell(j);
+                if (nextCell == null || nextCell.getCellType() != CellType.FORMULA) {
+                    continue;
                 }
+                CTCellFormula nextF = nextCell.getCTCell().getF();
+                if (nextF.getT() != STCellFormulaType.SHARED || nextF.getSi() != si) {
+                    continue;
+                }
+                // resolved against the cached copy of the old master, which is still in place
+                nextF.setStringValue(nextCell.getCellFormula(evalWb));
+                // the remaining cells of the group are in the rest of this row and, unless this is the
+                // last row of the range, anywhere in the rows below
+                CellRangeAddress nextRef = new CellRangeAddress(i, lastRow,
+                        i == lastRow ? j : ref.getFirstColumn(), lastColumn);
+                nextF.setRef(nextRef.formatAsString());
+                registerSharedFormula(nextCell, nextF);
+                return;
             }
         }
+        // no cell of the group is left: the cached copy of the master stays behind so that a stray cell
+        // still referring to the group (e.g. left outside the ref by an older POI version) keeps resolving
     }
 
     /**
@@ -4983,9 +5065,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                 }
 
                 XmlObject xObj = cur.getObject();
-                if (xObj instanceof CTOleObject) {
+                if (xObj instanceof CTOleObject oleObject) {
                     // the unusual case ...
-                    coo = (CTOleObject)xObj;
+                    coo = oleObject;
                 } else {
                     XMLStreamReader reader = cur.newXMLStreamReader();
                     try {

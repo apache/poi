@@ -211,17 +211,14 @@ public class TextSpecInfoRun implements GenericRecord {
                 continue;
             }
             boolean valid;
-            if (valO instanceof byte[]) {
-                byte[] bufB = (byte[]) valO;
+            if (valO instanceof byte[] bufB) {
                 valid = bufB.length > 0;
                 out.write(bufB);
-            } else if (valO instanceof Integer) {
-                int valI = ((Integer)valO);
+            } else if (valO instanceof Integer valI) {
                 valid = (valI != -1);
                 LittleEndian.putInt(buf, 0, valI);
                 out.write(buf);
-            } else if (valO instanceof Short) {
-                short valS = ((Short)valO);
+            } else if (valO instanceof Short valS) {
                 valid = (valS != -1);
                 LittleEndian.putShort(buf, 0, valS);
                 out.write(buf, 0, 2);

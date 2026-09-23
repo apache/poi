@@ -58,12 +58,12 @@ public class InteractiveInfo extends RecordContainer {
      */
     private void findInterestingChildren() {
         // First child should be the InteractiveInfoAtom
-        if (_children == null || _children.length == 0 || !(_children[0] instanceof InteractiveInfoAtom)) {
+        if (_children == null || _children.length == 0 || !(_children[0] instanceof InteractiveInfoAtom atom)) {
             LOG.atWarn().log("First child record wasn't a InteractiveInfoAtom - leaving this atom in an invalid state...");
             return;
         }
 
-        infoAtom = (InteractiveInfoAtom)_children[0];
+        infoAtom = atom;
     }
 
     /**

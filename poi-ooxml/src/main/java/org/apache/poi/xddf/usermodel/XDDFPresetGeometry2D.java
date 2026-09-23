@@ -19,7 +19,6 @@ package org.apache.poi.xddf.usermodel;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
@@ -81,7 +80,7 @@ public class XDDFPresetGeometry2D {
                 .getGdList()
                 .stream()
                 .map(guide -> new XDDFGeometryGuide(guide))
-                .collect(Collectors.toList()));
+                .toList());
         } else {
             return Collections.emptyList();
         }

@@ -48,11 +48,11 @@ public class XWPFSDTContent implements ISDTContent {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
-                if (o instanceof CTR) {
-                    XWPFRun run = new XWPFRun((CTR) o, parent);
+                if (o instanceof CTR ctr) {
+                    XWPFRun run = new XWPFRun(ctr, parent);
                     bodyElements.add(run);
-                } else if (o instanceof CTSdtRun) {
-                    XWPFSDT c = new XWPFSDT(((CTSdtRun) o), part);
+                } else if (o instanceof CTSdtRun sdt) {
+                    XWPFSDT c = new XWPFSDT(sdt, part);
                     bodyElements.add(c);
                 }
             }
@@ -67,20 +67,20 @@ public class XWPFSDTContent implements ISDTContent {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
-                if (o instanceof CTP) {
-                    XWPFParagraph p = new XWPFParagraph((CTP) o, part);
+                if (o instanceof CTP ctp) {
+                    XWPFParagraph p = new XWPFParagraph(ctp, part);
                     bodyElements.add(p);
                     // paragraphs.add(p);
-                } else if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, part,false);
+                } else if (o instanceof CTTbl tbl) {
+                    XWPFTable t = new XWPFTable(tbl, part,false);
                     bodyElements.add(t);
                     // tables.add(t);
-                } else if (o instanceof CTSdtBlock) {
-                    XWPFSDT c = new XWPFSDT(((CTSdtBlock) o), part);
+                } else if (o instanceof CTSdtBlock sdtBlock) {
+                    XWPFSDT c = new XWPFSDT(sdtBlock, part);
                     bodyElements.add(c);
                     // contentControls.add(c);
-                } else if (o instanceof CTR) {
-                    XWPFRun run = new XWPFRun((CTR) o, parent);
+                } else if (o instanceof CTR ctr) {
+                    XWPFRun run = new XWPFRun(ctr, parent);
                     // runs.add(run);
                     bodyElements.add(run);
                 }
@@ -96,8 +96,8 @@ public class XWPFSDTContent implements ISDTContent {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
-                if (o instanceof CTSdtRow) {
-                    XWPFSDT c = new XWPFSDT(((CTSdtRow) o), part);
+                if (o instanceof CTSdtRow sdtRow) {
+                    XWPFSDT c = new XWPFSDT(sdtRow, part);
                     bodyElements.add(c);
                     // contentControls.add(c);
                 } else if (o instanceof CTRow) {
@@ -123,14 +123,14 @@ public class XWPFSDTContent implements ISDTContent {
         boolean addNewLine = false;
         for (int i = 0; i < bodyElements.size(); i++) {
             Object o = bodyElements.get(i);
-            if (o instanceof XWPFParagraph) {
-                appendParagraph((XWPFParagraph) o, text);
+            if (o instanceof XWPFParagraph paragraph) {
+                appendParagraph(paragraph, text);
                 addNewLine = true;
-            } else if (o instanceof XWPFTable) {
-                appendTable((XWPFTable) o, text);
+            } else if (o instanceof XWPFTable table) {
+                appendTable(table, text);
                 addNewLine = true;
-            } else if (o instanceof XWPFSDT) {
-                text.append(((XWPFSDT) o).getContent().getText());
+            } else if (o instanceof XWPFSDT sdt) {
+                text.append(sdt.getContent().getText());
                 addNewLine = true;
             } else if (o instanceof XWPFRun) {
                 text.append(o);
@@ -149,10 +149,10 @@ public class XWPFSDTContent implements ISDTContent {
             List<ICell> cells = row.getTableICells();
             for (int i = 0; i < cells.size(); i++) {
                 ICell cell = cells.get(i);
-                if (cell instanceof XWPFTableCell) {
-                    text.append(((XWPFTableCell) cell).getTextRecursively());
-                } else if (cell instanceof XWPFSDTCell) {
-                    text.append(((XWPFSDTCell) cell).getContent().getText());
+                if (cell instanceof XWPFTableCell tableCell) {
+                    text.append(tableCell.getTextRecursively());
+                } else if (cell instanceof XWPFSDTCell sdtCell) {
+                    text.append(sdtCell.getContent().getText());
                 }
                 if (i < cells.size() - 1) {
                     text.append("\t");

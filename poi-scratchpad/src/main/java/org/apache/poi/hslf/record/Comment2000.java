@@ -125,8 +125,8 @@ public final class Comment2000 extends RecordContainer {
                     case 2: authorInitialsRecord = cs; break;
                     default: break;
                 }
-            } else if (r instanceof Comment2000Atom){
-                commentAtom = (Comment2000Atom)r;
+            } else if (r instanceof Comment2000Atom atom){
+                commentAtom = atom;
             } else {
                 LOG.atWarn().log("Unexpected record with type={} in Comment2000: {}", box(r.getRecordType()),r.getClass().getName());
             }

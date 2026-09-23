@@ -190,11 +190,11 @@ public class FractionFormat extends Format {
 
     @Override
     public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-        if (!(obj instanceof Number)) {
+        if (!(obj instanceof Number number)) {
             throw new IllegalArgumentException("Cannot format object of " + obj.getClass() + " to number: " + obj);
         }
 
-        return toAppendTo.append(format((Number)obj));
+        return toAppendTo.append(format(number));
     }
 
     @Override

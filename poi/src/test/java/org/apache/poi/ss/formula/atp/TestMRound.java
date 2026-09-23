@@ -79,6 +79,33 @@ class TestMRound {
     }
 
     @Test
+    void testRoundsOnExcelsFifteenDigitView() throws IOException {
+        try (Workbook wb = new HSSFWorkbook()) {
+            Cell cell = wb.createSheet().createRow(0).createCell(0);
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            // 0.7+0.1 is 0.7999999999999999, whose quotient by 1.6 is just under 0.5; it is 0.8 to Excel
+            confirm(evaluator, cell, "MROUND(0.7+0.1, 1.6)", 1.6);
+            confirm(evaluator, cell, "MROUND(-0.7-0.1, -1.6)", -1.6);
+            confirm(evaluator, cell, "MROUND(880000000*0.00849/3, 1)", 2490400);
+            confirm(evaluator, cell, "MROUND(2.5, 1)", 3);
+            confirm(evaluator, cell, "MROUND(-2.5, -1)", -3);
+            confirm(evaluator, cell, "MROUND(2.4999999999999996, 1)", 3);
+            confirm(evaluator, cell, "MROUND(2.49999999999999, 1)", 2);
+            // and on the 15-digit view of the multiple: 0.1*3 is 0.3, so 0.45/0.3 is exactly 1.5
+            confirm(evaluator, cell, "MROUND(0.45, 0.1*3)", 0.6);
+            confirm(evaluator, cell, "MROUND(1.2, 0.7+0.1)", 1.6);
+        }
+    }
+
+    private static void confirm(FormulaEvaluator evaluator, Cell cell, String formula, double expected) {
+        cell.setCellFormula(formula);
+        evaluator.notifyUpdateCell(cell);
+        CellValue value = evaluator.evaluate(cell);
+        assertEquals(CellType.NUMERIC, value.getCellType(), formula);
+        assertEquals(expected, value.getNumberValue(), 0, formula);
+    }
+
+    @Test
     void testBug66189() throws IOException {
         try (Workbook wb = new HSSFWorkbook()) {
             Sheet sh = wb.createSheet();

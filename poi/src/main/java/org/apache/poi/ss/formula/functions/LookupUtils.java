@@ -428,8 +428,8 @@ public final class LookupUtils {
     private static final class TolerantStringLookupComparer extends StringLookupComparer {
 
         static StringEval convertToStringEval(ValueEval eval) {
-            if (eval instanceof StringEval) {
-                return (StringEval)eval;
+            if (eval instanceof StringEval se) {
+                return se;
             }
             String sv = OperandResolver.coerceValueToString(eval);
             return new StringEval(sv);
@@ -525,8 +525,7 @@ public final class LookupUtils {
             throw EvaluationException.invalidRef();
         }
         int oneBasedIndex;
-        if(veRowColIndexArg instanceof StringEval) {
-            StringEval se = (StringEval) veRowColIndexArg;
+        if(veRowColIndexArg instanceof StringEval se) {
             String strVal = se.getStringValue();
             Double dVal = OperandResolver.parseDouble(strVal);
             if(dVal == null) {
@@ -552,12 +551,11 @@ public final class LookupUtils {
      * which case it is interpreted as a 1x1 area ref.  Other scalar values cause #VALUE! error.
      */
     public static TwoDEval resolveTableArrayArg(ValueEval eval) throws EvaluationException {
-        if (eval instanceof TwoDEval) {
-            return (TwoDEval) eval;
+        if (eval instanceof TwoDEval twoDEval) {
+            return twoDEval;
         }
 
-        if(eval instanceof RefEval) {
-            RefEval refEval = (RefEval) eval;
+        if(eval instanceof RefEval refEval) {
             // Make this cell ref look like a 1x1 area ref.
 
             // It doesn't matter if eval is a 2D or 3D ref, because that detail is never asked of AreaEval.
@@ -585,14 +583,13 @@ public final class LookupUtils {
             // this does not get the default value
             return false;
         }
-        if(valEval instanceof BoolEval) {
+        if(valEval instanceof BoolEval boolEval) {
             // Happy day flow
-            BoolEval boolEval = (BoolEval) valEval;
             return boolEval.getBooleanValue();
         }
 
-        if (valEval instanceof StringEval) {
-            String stringValue = ((StringEval) valEval).getStringValue();
+        if (valEval instanceof StringEval stringEval) {
+            String stringValue = stringEval.getStringValue();
             if(stringValue.isEmpty()) {
                 // More trickiness:
                 // Empty string is not the same as BlankEval.  It causes #VALUE! error
@@ -611,8 +608,7 @@ public final class LookupUtils {
             // This is in contrast to the code below,, where NumberEvals values (for
             // example 0.01) *do* resolve to equivalent boolean values.
         }
-        if (valEval instanceof NumericValueEval) {
-            NumericValueEval nve = (NumericValueEval) valEval;
+        if (valEval instanceof NumericValueEval nve) {
             // zero is FALSE, everything else is TRUE
             return 0.0 != nve.getNumberValue();
         }
@@ -635,20 +631,15 @@ public final class LookupUtils {
 
     public static int xlookupIndexOfValue(ValueEval lookupValue, ValueVector vector, MatchMode matchMode, SearchMode searchMode) throws EvaluationException {
         ValueEval modifiedLookup = lookupValue;
-        if (lookupValue instanceof StringEval &&
+        if (lookupValue instanceof StringEval se &&
                 (matchMode == MatchMode.ExactMatchFallbackToLargerValue || matchMode == MatchMode.ExactMatchFallbackToSmallerValue)) {
-            String lookupText = ((StringEval)lookupValue).getStringValue();
+            String lookupText = se.getStringValue();
             StringBuilder sb = new StringBuilder(lookupText.length());
             boolean containsWildcard = false;
             for (char c : lookupText.toCharArray()) {
                 switch (c) {
-                    case '~':
-                    case '?':
-                    case '*':
-                        containsWildcard = true;
-                        break;
-                    default:
-                        sb.append(c);
+                    case '~', '?', '*' -> containsWildcard = true;
+                    default -> sb.append(c);
                 }
                 if (containsWildcard)
                     break;
@@ -713,7 +704,7 @@ public final class LookupUtils {
                 return i;
             }
             switch (matchMode) {
-                case ExactMatchFallbackToLargerValue:
+                case ExactMatchFallbackToLargerValue -> {
                     if (result.isLessThan()) {
                         if (bestMatchEval == null) {
                             bestMatchIdx = i;
@@ -726,8 +717,8 @@ public final class LookupUtils {
                             }
                         }
                     }
-                    break;
-                case ExactMatchFallbackToSmallerValue:
+                }
+                case ExactMatchFallbackToSmallerValue -> {
                     if (result.isGreaterThan()) {
                         if (bestMatchEval == null) {
                             bestMatchIdx = i;
@@ -740,7 +731,7 @@ public final class LookupUtils {
                             }
                         }
                     }
-                    break;
+                }
             }
         }
         return bestMatchIdx;
@@ -764,7 +755,7 @@ public final class LookupUtils {
                 return i;
             }
             switch (matchMode) {
-                case ExactMatchFallbackToLargerValue:
+                case ExactMatchFallbackToLargerValue -> {
                     if (result.isLessThan()) {
                         if (bestMatchEval == null) {
                             bestMatchIdx = i;
@@ -777,8 +768,8 @@ public final class LookupUtils {
                             }
                         }
                     }
-                    break;
-                case ExactMatchFallbackToSmallerValue:
+                }
+                case ExactMatchFallbackToSmallerValue -> {
                     if (result.isGreaterThan()) {
                         if (bestMatchEval == null) {
                             bestMatchIdx = i;
@@ -791,7 +782,7 @@ public final class LookupUtils {
                             }
                         }
                     }
-                    break;
+                }
             }
             if (result.isTypeMismatch()) {
                 int newIdx = handleMidValueTypeMismatch(lookupComparer, vector, bsi, i, reverse);
@@ -949,15 +940,15 @@ public final class LookupUtils {
             // empty string in the lookup column/row can only be matched by explicit empty string
             return new NumberLookupComparer(NumberEval.ZERO);
         }
-        if (lookupValue instanceof StringEval) {
+        if (lookupValue instanceof StringEval stringEval) {
             //TODO eventually here return a WildcardStringLookupComparer
-            return new StringLookupComparer((StringEval) lookupValue, matchExact, isMatchFunction);
+            return new StringLookupComparer(stringEval, matchExact, isMatchFunction);
         }
-        if (lookupValue instanceof NumberEval) {
-            return new NumberLookupComparer((NumberEval) lookupValue);
+        if (lookupValue instanceof NumberEval numberEval) {
+            return new NumberLookupComparer(numberEval);
         }
-        if (lookupValue instanceof BoolEval) {
-            return new BooleanLookupComparer((BoolEval) lookupValue);
+        if (lookupValue instanceof BoolEval boolEval) {
+            return new BooleanLookupComparer(boolEval);
         }
         throw new IllegalArgumentException("Bad lookup value type (" + lookupValue.getClass().getName() + ")");
     }
@@ -966,11 +957,11 @@ public final class LookupUtils {
         if (lookupValue == BlankEval.instance) {
             return new TolerantStringLookupComparer(new StringEval(""), matchExact, isMatchFunction);
         }
-        if (lookupValue instanceof BoolEval) {
-            return new BooleanLookupComparer((BoolEval) lookupValue);
+        if (lookupValue instanceof BoolEval boolEval) {
+            return new BooleanLookupComparer(boolEval);
         }
-        if (matchExact && lookupValue instanceof NumberEval) {
-            return new NumberLookupComparer((NumberEval) lookupValue);
+        if (matchExact && lookupValue instanceof NumberEval numberEval) {
+            return new NumberLookupComparer(numberEval);
         }
         return new TolerantStringLookupComparer(lookupValue, matchExact, isMatchFunction);
     }

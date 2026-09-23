@@ -132,8 +132,8 @@ public final class EntryUtils {
         try {
             return new DocumentDelegate(docA).equals(new DocumentDelegate(docB));
         } catch (RuntimeException e) {
-            if (e.getCause() instanceof IOException) {
-                throw (IOException)e.getCause();
+            if (e.getCause() instanceof IOException ioe) {
+                throw ioe;
             } else {
                 throw e;
             }
@@ -168,11 +168,9 @@ public final class EntryUtils {
 
         @Override
         public boolean equals(Object other) {
-            if (!(other instanceof DirectoryDelegate)) {
+            if (!(other instanceof DirectoryDelegate dd)) {
                 return false;
             }
-
-            DirectoryDelegate dd = (DirectoryDelegate)other;
 
             if (this == dd) {
                 return true;
@@ -210,11 +208,9 @@ public final class EntryUtils {
 
         @Override
         public boolean equals(Object other) {
-            if (!(other instanceof DocumentDelegate)) {
+            if (!(other instanceof DocumentDelegate dd)) {
                 return false;
             }
-
-            DocumentDelegate dd = (DocumentDelegate)other;
 
             if (this == dd) {
                 return true;

@@ -23,6 +23,7 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.util.ExcelArithmetic;
 
 import java.math.RoundingMode;
 
@@ -50,23 +51,34 @@ public final class FloorPrecise implements FreeRefFunction {
             if (xval == null) {
                 return ErrorEval.VALUE_INVALID;
             }
+            xval = ExcelArithmetic.approxValue(xval);
             double multiplier = 1.0;
             if (args.length > 1) {
                 Double arg1Val = evaluateValue(args[1], ec.getRowIndex(), ec.getColumnIndex());
                 multiplier = arg1Val != null ? Math.abs(arg1Val.doubleValue()) : 1.0;
             }
-            if (multiplier != 1.0) {
-                return new NumberEval(scaledRoundUsingBigDecimal(xval, multiplier, RoundingMode.FLOOR));
+            if (multiplier == 0.0) {
+                // Excel returns 0 for a significance of 0, whatever the number
+                return new NumberEval(0);
             }
-            return new NumberEval(Math.floor(xval));
+            if (multiplier != 1.0) {
+                return result(scaledRoundUsingBigDecimal(xval, multiplier, RoundingMode.FLOOR));
+            }
+            return result(Math.floor(xval));
         } catch (EvaluationException evaluationException) {
             return evaluationException.getErrorEval();
         }
     }
 
     private static Double evaluateValue(ValueEval arg, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
-        ValueEval veText = OperandResolver.getSingleValue(arg, srcRowIndex, srcColumnIndex);
-        String strText1 = OperandResolver.coerceValueToString(veText);
-        return OperandResolver.parseDouble(strText1);
+        ValueEval ve = OperandResolver.getSingleValue(arg, srcRowIndex, srcColumnIndex);
+        double d = OperandResolver.coerceValueToDouble(ve);
+        NumericFunction.checkValue(d);
+        return d;
+    }
+
+    private static ValueEval result(double d) throws EvaluationException {
+        NumericFunction.checkValue(d);
+        return new NumberEval(d);
     }
 }

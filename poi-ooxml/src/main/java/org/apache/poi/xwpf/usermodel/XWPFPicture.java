@@ -72,8 +72,8 @@ public class XWPFPicture {
         POIXMLDocumentPart part = run.getParent().getPart();
         if (part != null) {
             POIXMLDocumentPart relatedPart = part.getRelationById(blipId);
-            if (relatedPart instanceof XWPFPictureData) {
-                return (XWPFPictureData) relatedPart;
+            if (relatedPart instanceof XWPFPictureData pictureData) {
+                return pictureData;
             }
         }
         return null;

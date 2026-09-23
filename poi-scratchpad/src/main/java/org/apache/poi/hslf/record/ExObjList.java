@@ -44,8 +44,8 @@ public class ExObjList extends RecordContainer {
     public ExHyperlink[] getExHyperlinks() {
         ArrayList<ExHyperlink> links = new ArrayList<>();
         for (Record child : _children) {
-            if (child instanceof ExHyperlink) {
-                links.add((ExHyperlink) child);
+            if (child instanceof ExHyperlink link) {
+                links.add(link);
             }
         }
 
@@ -71,8 +71,8 @@ public class ExObjList extends RecordContainer {
      */
     private void findInterestingChildren() {
         // First child should be the atom
-        if(_children[0] instanceof ExObjListAtom) {
-            exObjListAtom = (ExObjListAtom)_children[0];
+        if(_children[0] instanceof ExObjListAtom atom) {
+            exObjListAtom = atom;
         } else {
             throw new IllegalStateException("First child record wasn't a ExObjListAtom, was of type " + _children[0].getRecordType());
         }
@@ -115,8 +115,7 @@ public class ExObjList extends RecordContainer {
      */
     public ExHyperlink get(int id){
         for (Record child : _children) {
-            if (child instanceof ExHyperlink) {
-                ExHyperlink rec = (ExHyperlink) child;
+            if (child instanceof ExHyperlink rec) {
                 if (rec.getExHyperlinkAtom() != null &&
                         rec.getExHyperlinkAtom().getNumber() == id) {
                     return rec;

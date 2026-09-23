@@ -81,8 +81,8 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
 
     @Override
     public String getRawText(){
-        if (_r instanceof CTTextField) {
-            return ((CTTextField)_r).getT();
+        if (_r instanceof CTTextField tf) {
+            return tf.getT();
         } else if (_r instanceof CTTextLineBreak) {
             return "\n";
         }
@@ -91,8 +91,8 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
 
     @Override
     public void setText(String text){
-        if (_r instanceof CTTextField) {
-            ((CTTextField)_r).setT(text);
+        if (_r instanceof CTTextField tf) {
+            tf.setT(text);
         } else if (!(_r instanceof CTTextLineBreak)) {
             ((CTRegularTextRun)_r).setT(text);
         }
@@ -117,11 +117,10 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
 
     @Override
     public void setFontColor(PaintStyle color) {
-        if (!(color instanceof SolidPaint)) {
+        if (!(color instanceof SolidPaint sp)) {
             LOG.atWarn().log("Currently only SolidPaint is supported!");
             return;
         }
-        SolidPaint sp = (SolidPaint)color;
         Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
 
         CTTextCharacterProperties rPr = getRPr(true);
@@ -231,11 +230,10 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
             return;
         }
 
-        if (!(color instanceof SolidPaint)) {
+        if (!(color instanceof SolidPaint sp)) {
             throw new IllegalArgumentException("Currently only SolidPaint is supported!");
         }
 
-        final SolidPaint sp = (SolidPaint)color;
         final Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
 
         final CTTextCharacterProperties rPr = getRPr(true);
@@ -505,15 +503,13 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
      */
     @Internal
     public CTTextCharacterProperties getRPr(boolean create) {
-        if (_r instanceof CTTextField) {
-            CTTextField tf = (CTTextField)_r;
+        if (_r instanceof CTTextField tf) {
             if (tf.isSetRPr()) {
                 return tf.getRPr();
             } else if (create) {
                 return tf.addNewRPr();
             }
-        } else if (_r instanceof CTTextLineBreak) {
-            CTTextLineBreak tlb = (CTTextLineBreak)_r;
+        } else if (_r instanceof CTTextLineBreak tlb) {
             if (tlb.isSetRPr()) {
                 return tlb.getRPr();
             } else if (create) {
@@ -617,8 +613,7 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
 
     @Override
     public FieldType getFieldType() {
-        if (_r instanceof CTTextField) {
-            CTTextField tf = (CTTextField)_r;
+        if (_r instanceof CTTextField tf) {
             if ("slidenum".equals(tf.getType())) {
                 return FieldType.SLIDE_NUMBER;
             }

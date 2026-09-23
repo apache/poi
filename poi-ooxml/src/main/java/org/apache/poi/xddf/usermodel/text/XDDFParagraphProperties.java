@@ -19,7 +19,6 @@ package org.apache.poi.xddf.usermodel.text;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
@@ -266,7 +265,7 @@ public class XDDFParagraphProperties {
                 .getTabList()
                 .stream()
                 .map(gs -> new XDDFTabStop(gs))
-                .collect(Collectors.toList()));
+                .toList());
         } else {
             return Collections.emptyList();
         }

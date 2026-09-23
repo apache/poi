@@ -58,14 +58,14 @@ public final class RangeEval extends Fixed2ArgFunction {
     }
 
     private static AreaEval evaluateRef(ValueEval arg) throws EvaluationException {
-        if (arg instanceof AreaEval) {
-            return (AreaEval) arg;
+        if (arg instanceof AreaEval ae) {
+            return ae;
         }
-        if (arg instanceof RefEval) {
-            return ((RefEval) arg).offset(0, 0, 0, 0);
+        if (arg instanceof RefEval re) {
+            return re.offset(0, 0, 0, 0);
         }
-        if (arg instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval)arg);
+        if (arg instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
         throw new IllegalArgumentException("Unexpected ref arg class (" + arg.getClass().getName() + ")");
     }

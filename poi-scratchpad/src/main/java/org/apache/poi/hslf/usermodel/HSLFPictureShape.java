@@ -93,7 +93,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
     }
 
     /**
-     * Create a new Picture and populate the inital structure of the <code>EscherSp</code> record which holds information about this picture.
+     * Create a new Picture and populate the initial structure of the <code>EscherSp</code> record which holds information about this picture.
 
      * @param idx the index of the picture which refers to <code>EscherBSE</code> container.
      * @return the create Picture object

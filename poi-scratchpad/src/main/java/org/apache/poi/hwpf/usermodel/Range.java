@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import static java.util.stream.Collectors.toList;
 import static org.apache.logging.log4j.util.Unbox.box;
 
 import java.util.List;
@@ -197,15 +196,15 @@ public class Range {
         _end = other._end;
         _doc = other._doc;
         _sectionRangeFound = other._sectionRangeFound;
-        _sections = (other._sections == null) ? null : other._sections.stream().map(SEPX::copy).collect(toList());
+        _sections = (other._sections == null) ? null : other._sections.stream().map(SEPX::copy).toList();
         _sectionStart = other._sectionStart;
         _sectionEnd = other._sectionEnd;
         _parRangeFound = other._parRangeFound;
-        _paragraphs = (other._paragraphs == null) ? null : other._paragraphs.stream().map(PAPX::copy).collect(toList());
+        _paragraphs = (other._paragraphs == null) ? null : other._paragraphs.stream().map(PAPX::copy).toList();
         _parStart = other._parStart;
         _parEnd = other._parEnd;
         _charRangeFound = other._charRangeFound;
-        _characters = (other._characters == null) ? null : other._characters.stream().map(CHPX::copy).collect(toList());
+        _characters = (other._characters == null) ? null : other._characters.stream().map(CHPX::copy).toList();
         _charStart = other._charStart;
         _charEnd = other._charEnd;
         _text = (other._text == null) ? null : new StringBuilder(other._text);
@@ -334,9 +333,9 @@ public class Range {
         _doc.getCharacterTable().adjustForInsert( _charStart, text.length() );
         _doc.getParagraphTable().adjustForInsert( _parStart, text.length() );
         _doc.getSectionTable().adjustForInsert( _sectionStart, text.length() );
-        if ( _doc instanceof HWPFDocument )
+        if ( _doc instanceof HWPFDocument document )
         {
-            ( (BookmarksImpl) ( (HWPFDocument) _doc ).getBookmarks() )
+            ( (BookmarksImpl) document.getBookmarks() )
                     .afterInsert( _start, text.length() );
         }
         adjustForInsert( text.length() );
@@ -365,9 +364,9 @@ public class Range {
         _doc.getCharacterTable().adjustForInsert( _charEnd - 1, text.length() );
         _doc.getParagraphTable().adjustForInsert( _parEnd - 1, text.length() );
         _doc.getSectionTable().adjustForInsert( _sectionEnd - 1, text.length() );
-        if ( _doc instanceof HWPFDocument )
+        if ( _doc instanceof HWPFDocument document )
         {
-            ( (BookmarksImpl) ( (HWPFDocument) _doc ).getBookmarks() )
+            ( (BookmarksImpl) document.getBookmarks() )
                     .afterInsert( _end, text.length() );
         }
         adjustForInsert( text.length() );
@@ -566,9 +565,9 @@ public class Range {
             // + " -> " + sepx.getEnd());
         }
 
-        if ( _doc instanceof HWPFDocument )
+        if ( _doc instanceof HWPFDocument document )
         {
-            ( (BookmarksImpl) ( (HWPFDocument) _doc ).getBookmarks() )
+            ( (BookmarksImpl) document.getBookmarks() )
                     .afterDelete( _start, ( _end - _start ) );
         }
 
@@ -718,9 +717,9 @@ public class Range {
         }
 
         short istd;
-        if ( this instanceof Paragraph )
+        if ( this instanceof Paragraph paragraph )
         {
-            istd = ((Paragraph) this)._istd;
+            istd = paragraph._istd;
         }
         else
         {

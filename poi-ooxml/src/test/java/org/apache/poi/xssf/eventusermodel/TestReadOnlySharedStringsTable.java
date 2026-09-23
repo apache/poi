@@ -130,19 +130,13 @@ public final class TestReadOnlySharedStringsTable {
     }
 
     @Test
-    void testNullPointerException() throws Exception {
-        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("clusterfuzz-testcase-minimized-XLSX2CSVFuzzer-5025401116950528.xlsx"))) {
-            assertEmptySST(pkg);
-        }
-
-        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("clusterfuzz-testcase-minimized-XLSX2CSVFuzzer-5025401116950528.xlsx"))) {
-            List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
-            assertEquals(1, parts.size());
-
-            //noinspection resource
-            assertThrows(IOException.class,
-                    () -> new SharedStringsTable(parts.get(0)));
-        }
+    void testNullPointerException() {
+        // this malformed package used to open (with a broken shared strings table) - the zip
+        // entry size validation now rejects it while reading (an entry holds more data than
+        // its declared size)
+        IOException ex = assertThrows(IOException.class, () ->
+                OPCPackage.open(_ssTests.openResourceAsStream("clusterfuzz-testcase-minimized-XLSX2CSVFuzzer-5025401116950528.xlsx")));
+        assertTrue(ex.getMessage().contains("more data than its declared size"), ex.getMessage());
     }
 
     private void assertEmptySST(OPCPackage pkg) throws IOException, SAXException {

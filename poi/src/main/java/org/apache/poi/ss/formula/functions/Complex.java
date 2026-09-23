@@ -23,9 +23,9 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.util.MathUtil;
 
 /**
  * Implementation for Excel COMPLEX () function.
@@ -90,7 +90,12 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
             return ErrorEval.VALUE_INVALID;
         }
 
-        String suffixValue = OperandResolver.coerceValueToString(suffix);
+        String suffixValue;
+        try {
+            suffixValue = OperandResolver.coerceValueToString(OperandResolver.getSingleValue(suffix, srcRowIndex, srcColumnIndex));
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
         if (suffixValue.isEmpty()) {
             suffixValue = DEFAULT_SUFFIX;
         }
@@ -104,11 +109,7 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
 
         StringBuilder strb = new StringBuilder();
         if (realNum != 0) {
-            if (isDoubleAnInt(realNum)) {
-                strb.append(MathUtil.safeDoubleToInt(realNum));
-            } else {
-                strb.append(realNum);
-            }
+            strb.append(NumberToTextConverter.toText(realNum));
         }
         if (realINum != 0) {
             if (strb.length() != 0) {
@@ -118,21 +119,13 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
             }
 
             if (realINum != 1 && realINum != -1) {
-                if (isDoubleAnInt(realINum)) {
-                    strb.append(MathUtil.safeDoubleToInt(realINum));
-                } else {
-                    strb.append(realINum);
-                }
+                strb.append(NumberToTextConverter.toText(realINum));
             }
 
             strb.append(suffixValue);
         }
 
         return new StringEval(strb.toString());
-    }
-
-    private boolean isDoubleAnInt(double number) {
-        return (number == Math.floor(number)) && !Double.isInfinite(number);
     }
 
     @Override

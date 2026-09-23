@@ -139,8 +139,7 @@ public abstract class MultiOperandNumericFunction implements Function {
      * Collects values from a single argument
      */
     private void collectValues(ValueEval operand, DoubleList temp) throws EvaluationException {
-        if (operand instanceof ThreeDEval) {
-            ThreeDEval ae = (ThreeDEval) operand;
+        if (operand instanceof ThreeDEval ae) {
             for (int sIx = ae.getFirstSheetIndex(); sIx <= ae.getLastSheetIndex(); sIx++) {
                 int width = ae.getWidth();
                 int height = ae.getHeight();
@@ -155,8 +154,7 @@ public abstract class MultiOperandNumericFunction implements Function {
             }
             return;
         }
-        if (operand instanceof TwoDEval) {
-            TwoDEval ae = (TwoDEval) operand;
+        if (operand instanceof TwoDEval ae) {
             int width = ae.getWidth();
             int height = ae.getHeight();
             for (int rrIx = 0; rrIx < height; rrIx++) {
@@ -168,8 +166,7 @@ public abstract class MultiOperandNumericFunction implements Function {
             }
             return;
         }
-        if (operand instanceof RefEval) {
-            RefEval re = (RefEval) operand;
+        if (operand instanceof RefEval re) {
             for (int sIx = re.getFirstSheetIndex(); sIx <= re.getLastSheetIndex(); sIx++) {
                 collectValue(re.getInnerValueEval(sIx), !treatStringsAsZero(), temp);
             }
@@ -182,8 +179,7 @@ public abstract class MultiOperandNumericFunction implements Function {
         if (ve == null) {
             throw new IllegalArgumentException("ve must not be null");
         }
-        if (ve instanceof BoolEval) {
-            BoolEval boolEval = (BoolEval) ve;
+        if (ve instanceof BoolEval boolEval) {
             if (isViaReference) {
                 boolByRefConsumer.accept(boolEval, temp);
             } else {
@@ -191,12 +187,11 @@ public abstract class MultiOperandNumericFunction implements Function {
             }
             return;
         }
-        if (ve instanceof NumericValueEval) {
-            NumericValueEval ne = (NumericValueEval) ve;
+        if (ve instanceof NumericValueEval ne) {
             temp.add(ne.getNumberValue());
             return;
         }
-        if (ve instanceof StringValueEval) {
+        if (ve instanceof StringValueEval sve) {
             if (isViaReference) {
                 // ignore all ref strings
                 return;
@@ -204,7 +199,7 @@ public abstract class MultiOperandNumericFunction implements Function {
             if (treatStringsAsZero()) {
                 temp.add(0.0);
             } else {
-                String s = ((StringValueEval) ve).getStringValue().trim();
+                String s = sve.getStringValue().trim();
                 Double d = OperandResolver.parseDouble(s);
                 if (d == null) {
                     throw new EvaluationException(ErrorEval.VALUE_INVALID);
@@ -214,8 +209,8 @@ public abstract class MultiOperandNumericFunction implements Function {
             }
             return;
         }
-        if (ve instanceof ErrorEval) {
-            throw new EvaluationException((ErrorEval) ve);
+        if (ve instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
         }
         if (ve == BlankEval.instance) {
             blankConsumer.accept((BlankEval) ve, temp);
@@ -248,16 +243,12 @@ public abstract class MultiOperandNumericFunction implements Function {
         }
 
         private static <T> EvalConsumer<T, DoubleList> createAny(EvalConsumer<T, DoubleList> coercer, Policy policy) {
-            switch (policy) {
-                case COERCE:
-                    return coercer;
-                case SKIP:
-                    return doNothing();
-                case ERROR:
-                    return throwValueInvalid();
-                default:
-                    throw new AssertionError();
-            }
+            return switch (policy) {
+                case COERCE -> coercer;
+                case SKIP -> doNothing();
+                case ERROR -> throwValueInvalid();
+                default -> throw new AssertionError();
+            };
         }
 
         private static <T> EvalConsumer<T, DoubleList> doNothing() {

@@ -95,6 +95,26 @@ final class TestCorrel {
         }
     }
 
+    @Test
+    void testZeroVarianceIsDiv0() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1()) {
+            HSSFSheet sheet = wb.getSheetAt(0);
+            addRow(sheet, 10, 1, 1);
+            addRow(sheet, 11, 1, 2);
+            addRow(sheet, 12, 1, 3);
+            HSSFCell cell = sheet.getRow(0).createCell(100);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            // used to put NaN in the cell
+            assertError(fe, cell, "CORREL(A11:A13,B11:B13)", FormulaError.DIV0);
+            assertError(fe, cell, "CORREL(B11:B13,A11:A13)", FormulaError.DIV0);
+            assertError(fe, cell, "PEARSON(A11:A13,B11:B13)", FormulaError.DIV0);
+            assertError(fe, cell, "CORREL({1,1},{1,2})", FormulaError.DIV0);
+            // fewer than two pairs
+            assertError(fe, cell, "CORREL(A11,B11)", FormulaError.DIV0);
+            assertDouble(fe, cell, "CORREL(B11:B13,B11:B13)", 1.0, 0);
+        }
+    }
+
     private HSSFWorkbook initWorkbook1() {
         return initWorkbook1(Double.valueOf(15));
     }

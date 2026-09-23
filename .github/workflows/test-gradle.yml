@@ -9,6 +9,12 @@ on:
   pull_request:
     branches: [ trunk, 5.5.x ]
 
+# one run per PR: a new commit cancels the run still in flight for the previous one;
+# pushes to the protected branches are never cancelled, so every commit there gets its result
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions: {}
 
 jobs:
@@ -27,7 +33,7 @@ jobs:
     - uses: actions/checkout@v7
 
     - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v6
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
@@ -36,5 +42,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    # SpotBugs is left to the nightly Jenkins jobs (the 'jenkins' task runs 'check' in full):
+    # it cannot fail this build (ignoreFailures = true) and only adds time and memory pressure here
     - name: Build with Gradle
-      run: ./gradlew check -PjdkVersion=17 --no-daemon --refresh-dependencies
+      run: ./gradlew check -PjdkVersion=17 -x spotbugsMain -x spotbugsTest --no-daemon --refresh-dependencies

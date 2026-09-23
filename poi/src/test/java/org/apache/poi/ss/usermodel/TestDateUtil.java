@@ -731,4 +731,29 @@ class TestDateUtil {
         final double d1 = DateUtil.getExcelDate(date1904, true);
         assertEquals(d, d1, 1E-10);
     }
+
+    /**
+     * Excel's dates run from serial 0 to 2958465 (9999-12-31); beyond that a serial is not a date,
+     * and the conversions return null rather than throwing (or, for getLocalDateTime, silently
+     * truncating the serial to an int)
+     */
+    @Test
+    void testDateSerialRange() {
+        assertTrue(DateUtil.isValidExcelDate(0));
+        assertTrue(DateUtil.isValidExcelDate(DateUtil.MAX_EXCEL_DATE_SERIAL));
+        assertTrue(DateUtil.isValidExcelDate(DateUtil.MAX_EXCEL_DATE_SERIAL + 0.99999));
+        assertFalse(DateUtil.isValidExcelDate(-1));
+        assertFalse(DateUtil.isValidExcelDate(DateUtil.MAX_EXCEL_DATE_SERIAL + 1));
+        assertFalse(DateUtil.isValidExcelDate(1E10));
+        assertFalse(DateUtil.isValidExcelDate(1E308));
+
+        assertEquals(LocalDateTime.of(9999, 12, 31, 0, 0), DateUtil.getLocalDateTime(DateUtil.MAX_EXCEL_DATE_SERIAL));
+        assertEquals(LocalDateTime.of(9999, 12, 31, 0, 0), DateUtil.getJavaDate(DateUtil.MAX_EXCEL_DATE_SERIAL).toInstant()
+                .atZone(LocaleUtil.getUserTimeZone().toZoneId()).toLocalDateTime());
+        for (double serial : new double[]{-1, DateUtil.MAX_EXCEL_DATE_SERIAL + 1, 1E10, 1E19, 1E308}) {
+            assertNull(DateUtil.getJavaDate(serial), Double.toString(serial));
+            assertNull(DateUtil.getJavaCalendar(serial), Double.toString(serial));
+            assertNull(DateUtil.getLocalDateTime(serial), Double.toString(serial));
+        }
+    }
 }

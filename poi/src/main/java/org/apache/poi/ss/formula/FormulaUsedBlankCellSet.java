@@ -43,10 +43,9 @@ final class FormulaUsedBlankCellSet {
         }
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof BookSheetKey)) {
+            if (!(obj instanceof BookSheetKey other)) {
                 return false;
             }
-            BookSheetKey other = (BookSheetKey) obj;
             return _bookIndex == other._bookIndex && _sheetIndex == other._sheetIndex;
         }
     }

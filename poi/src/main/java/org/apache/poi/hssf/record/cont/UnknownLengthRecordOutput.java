@@ -39,9 +39,8 @@ final class UnknownLengthRecordOutput implements LittleEndianOutput {
     public UnknownLengthRecordOutput(LittleEndianOutput out, int sid) {
         _originalOut = out;
         out.writeShort(sid);
-        if (out instanceof DelayableLittleEndianOutput) {
+        if (out instanceof DelayableLittleEndianOutput dleo) {
             // optimisation
-            DelayableLittleEndianOutput dleo = (DelayableLittleEndianOutput) out;
             _dataSizeOutput = dleo.createDelayedOutput(2);
             _byteBuffer = null;
             _out = out;

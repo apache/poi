@@ -236,8 +236,8 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
                 // Bingo, data contains this property
                 TextProp prop = tp.copy();
                 int val = 0;
-                if (prop instanceof HSLFTabStopPropCollection) {
-                    ((HSLFTabStopPropCollection)prop).parseProperty(data, dataOffset+bytesPassed);
+                if (prop instanceof HSLFTabStopPropCollection tspc) {
+                    tspc.parseProperty(data, dataOffset+bytesPassed);
                 } else if (prop.getSize() == 2) {
                     val = LittleEndian.getShort(data,dataOffset+bytesPassed);
                 } else if(prop.getSize() == 4) {
@@ -248,8 +248,8 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
                     continue;
                 }
 
-                if (prop instanceof BitMaskTextProp) {
-                    ((BitMaskTextProp)prop).setValueWithMask(val, containsField);
+                if (prop instanceof BitMaskTextProp bmtp) {
+                    bmtp.setValueWithMask(val, containsField);
                 } else if (!(prop instanceof HSLFTabStopPropCollection)) {
                     prop.setValue(val);
                 }
@@ -317,8 +317,8 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
                 Record.writeLittleEndian((short)val,o);
             } else if (textProp.getSize() == 4) {
                 Record.writeLittleEndian(val,o);
-            } else if (textProp instanceof HSLFTabStopPropCollection) {
-                ((HSLFTabStopPropCollection)textProp).writeProperty(o);
+            } else if (textProp instanceof HSLFTabStopPropCollection tspc) {
+                tspc.writeProperty(o);
             }
         }
     }
@@ -364,8 +364,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
             out.append("    ");
             out.append(p.toString());
             out.append("\n");
-            if (p instanceof BitMaskTextProp) {
-                BitMaskTextProp bm = (BitMaskTextProp)p;
+            if (p instanceof BitMaskTextProp bm) {
                 int i = 0;
                 for (String s : bm.getSubPropNames()) {
                     if (bm.getSubPropMatches()[i]) {

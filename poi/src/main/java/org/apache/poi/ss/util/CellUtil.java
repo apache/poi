@@ -23,7 +23,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
@@ -41,6 +40,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -660,22 +660,51 @@ public final class CellUtil {
         return props == null ? getFormatProperties(style) : props;
     }
 
-    private static boolean styleMapsMatch(final Map<CellPropertyType, Object> newProps,
-                                          final Map<CellPropertyType, Object> storedProps, final boolean disableNullColorCheck) {
-        final EnumMap<CellPropertyType, Object> map1Copy = new EnumMap<>(newProps);
-        final EnumMap<CellPropertyType, Object> map2Copy = new EnumMap<>(storedProps);
+    /**
+     * @param wbProps the properties of a style that exists in the workbook
+     * @param wantedProps the properties the cell should get
+     * @param disableNullColorCheck whether a null wanted fill color must be matched by a null color,
+     *                              rather than by the indexed colors
+     */
+    private static boolean styleMapsMatch(final Map<CellPropertyType, Object> wbProps,
+                                          final Map<CellPropertyType, Object> wantedProps, final boolean disableNullColorCheck) {
+        final EnumMap<CellPropertyType, Object> map1Copy = new EnumMap<>(wbProps);
+        final EnumMap<CellPropertyType, Object> map2Copy = new EnumMap<>(wantedProps);
         final Object backColor1 = map1Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR_COLOR);
         final Object backColor2 = map2Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR_COLOR);
         final Object foreColor1 = map1Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR);
         final Object foreColor2 = map2Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR);
-        if (map1Copy.equals(map2Copy)) {
-            final boolean backColorsMatch = (!disableNullColorCheck && backColor2 == null)
-                    || Objects.equals(backColor1, backColor2);
-            final boolean foreColorsMatch = (!disableNullColorCheck && foreColor2 == null)
-                    || Objects.equals(foreColor1, foreColor2);
-            return backColorsMatch && foreColorsMatch;
+        final Object backIndex1 = map1Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR);
+        final Object backIndex2 = map2Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR);
+        final Object foreIndex1 = map1Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR);
+        final Object foreIndex2 = map2Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR);
+        return map1Copy.equals(map2Copy)
+                && fillColorsMatch(backColor1, backIndex1, backColor2, backIndex2, disableNullColorCheck)
+                && fillColorsMatch(foreColor1, foreIndex1, foreColor2, foreIndex2, disableNullColorCheck);
+    }
+
+    /**
+     * A fill color is held twice in the properties, as a {@link Color} and as an indexed color. The indexed
+     * color is derived from the {@link Color} and is meaningless for an RGB or theme color, so it only counts
+     * when there is no wanted {@link Color}. A missing indexed color means the automatic color (bug 69366).
+     */
+    private static boolean fillColorsMatch(final Object wbColor, final Object wbIndex,
+                                           final Object wantedColor, final Object wantedIndex, final boolean disableNullColorCheck) {
+        if (wantedColor != null) {
+            return wantedColor.equals(wbColor);
         }
-        return false;
+        if (disableNullColorCheck && wbColor != null) {
+            return false;
+        }
+        return colorIndex(wbIndex) == colorIndex(wantedIndex);
+    }
+
+    private static short colorIndex(final Object index) {
+        return index instanceof Number n ? n.shortValue() : IndexedColors.AUTOMATIC.getIndex();
+    }
+
+    private static boolean hasBorder(Map<CellPropertyType, Object> properties, CellPropertyType border) {
+        return getBorderStyle(properties, border) != BorderStyle.NONE;
     }
 
     /**
@@ -834,16 +863,26 @@ public final class CellUtil {
         style.setBorderLeft(getBorderStyle(properties, CellPropertyType.BORDER_LEFT));
         style.setBorderRight(getBorderStyle(properties, CellPropertyType.BORDER_RIGHT));
         style.setBorderTop(getBorderStyle(properties, CellPropertyType.BORDER_TOP));
-        style.setBottomBorderColor(getShort(properties, CellPropertyType.BOTTOM_BORDER_COLOR));
+        // A style reports a default color for a side that has no border and no color. Writing that default
+        // back would turn the workbook's default border into a new one with a color on every side
+        // (bug 60895), so a color is only set when the side has a border or the color is not that default.
+        // A color on a side without a border is kept, it is used once the border is added (RegionUtil).
+        short bottomBorderColor = getShort(properties, CellPropertyType.BOTTOM_BORDER_COLOR);
+        if (hasBorder(properties, CellPropertyType.BORDER_BOTTOM) || bottomBorderColor != style.getBottomBorderColor()) {
+            style.setBottomBorderColor(bottomBorderColor);
+        }
         style.setDataFormat(getShort(properties, CellPropertyType.DATA_FORMAT));
         style.setFillPattern(getFillPattern(properties, CellPropertyType.FILL_PATTERN));
 
+        // An automatic fill color is what a new style has anyway. Setting it explicitly would put
+        // <fgColor indexed="64"/> and <bgColor indexed="64"/> into an XSSF fill that may have no pattern,
+        // which Excel renders as a black cell while it is being edited (bug 69463)
         Short fillForeColorShort = nullableShort(properties, CellPropertyType.FILL_FOREGROUND_COLOR);
-        if (fillForeColorShort != null) {
+        if (fillForeColorShort != null && fillForeColorShort != IndexedColors.AUTOMATIC.getIndex()) {
             style.setFillForegroundColor(fillForeColorShort);
         }
         Short fillBackColorShort = nullableShort(properties, CellPropertyType.FILL_BACKGROUND_COLOR);
-        if (fillBackColorShort != null) {
+        if (fillBackColorShort != null && fillBackColorShort != IndexedColors.AUTOMATIC.getIndex()) {
             style.setFillBackgroundColor(fillBackColorShort);
         }
 
@@ -870,11 +909,20 @@ public final class CellUtil {
         }
         style.setHidden(getBoolean(properties, CellPropertyType.HIDDEN));
         style.setIndention(getShort(properties, CellPropertyType.INDENTION));
-        style.setLeftBorderColor(getShort(properties, CellPropertyType.LEFT_BORDER_COLOR));
+        short leftBorderColor = getShort(properties, CellPropertyType.LEFT_BORDER_COLOR);
+        if (hasBorder(properties, CellPropertyType.BORDER_LEFT) || leftBorderColor != style.getLeftBorderColor()) {
+            style.setLeftBorderColor(leftBorderColor);
+        }
         style.setLocked(getBoolean(properties, CellPropertyType.LOCKED));
-        style.setRightBorderColor(getShort(properties, CellPropertyType.RIGHT_BORDER_COLOR));
+        short rightBorderColor = getShort(properties, CellPropertyType.RIGHT_BORDER_COLOR);
+        if (hasBorder(properties, CellPropertyType.BORDER_RIGHT) || rightBorderColor != style.getRightBorderColor()) {
+            style.setRightBorderColor(rightBorderColor);
+        }
         style.setRotation(getShort(properties, CellPropertyType.ROTATION));
-        style.setTopBorderColor(getShort(properties, CellPropertyType.TOP_BORDER_COLOR));
+        short topBorderColor = getShort(properties, CellPropertyType.TOP_BORDER_COLOR);
+        if (hasBorder(properties, CellPropertyType.BORDER_TOP) || topBorderColor != style.getTopBorderColor()) {
+            style.setTopBorderColor(topBorderColor);
+        }
         style.setWrapText(getBoolean(properties, CellPropertyType.WRAP_TEXT));
         style.setShrinkToFit(getBoolean(properties, CellPropertyType.SHRINK_TO_FIT));
         style.setQuotePrefixed(getBoolean(properties, CellPropertyType.QUOTE_PREFIXED));

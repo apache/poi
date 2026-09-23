@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
@@ -540,10 +539,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
             @Override
             public void setBulletFontColor(PaintStyle color) {
-                if (!(color instanceof SolidPaint)) {
+                if (!(color instanceof SolidPaint sp)) {
                     throw new IllegalArgumentException("HSLF only supports SolidPaint");
                 }
-                SolidPaint sp = (SolidPaint)color;
                 Color col = DrawPaint.applyColorTransform(sp.getSolidColor());
                 HSLFTextParagraph.this.setBulletColor(col);
             }
@@ -773,7 +771,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             tabStops = textRuler.getTabStops();
         }
 
-        return tabStops.stream().map(HSLFTabStopDecorator::new).collect(Collectors.toList());
+        return tabStops.stream().map(HSLFTabStopDecorator::new).toList();
     }
 
     @Override
@@ -873,8 +871,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         final HSLFSheet sheet = getSheet();
         final int txtype = getRunType();
         final HSLFMasterSheet master;
-        if (sheet instanceof HSLFMasterSheet) {
-            master = (HSLFMasterSheet)sheet;
+        if (sheet instanceof HSLFMasterSheet masterSheet) {
+            master = masterSheet;
         } else {
             master = sheet.getMasterSheet();
             if (master == null) {
@@ -918,8 +916,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         final boolean isChar = props.getTextPropType() == TextPropType.character;
 
         final TextPropCollection pc;
-        if (_sheet instanceof HSLFMasterSheet) {
-            pc = ((HSLFMasterSheet)_sheet).getPropCollection(getRunType(), getIndentLevel(), "*", isChar);
+        if (_sheet instanceof HSLFMasterSheet masterSheet) {
+            pc = masterSheet.getPropCollection(getRunType(), getIndentLevel(), "*", isChar);
             if (pc == null) {
                 throw new HSLFException("Master text property collection can't be determined.");
             }
@@ -1131,8 +1129,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         // If TextSpecInfoAtom is present, we must update the text size in it,
         // otherwise the ppt will be corrupted
         for (Record r : paragraphs.get(0).getRecords()) {
-            if (r instanceof TextSpecInfoAtom) {
-                ((TextSpecInfoAtom) r).setParentSize(rawText.length() + 1);
+            if (r instanceof TextSpecInfoAtom tsia) {
+                tsia.setParentSize(rawText.length() + 1);
                 break;
             }
         }
@@ -1412,9 +1410,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 // if we haven't found the wrapper in the sheet runs, create a new paragraph list from its record
                 List<List<HSLFTextParagraph>> rvl = findTextParagraphs(wrapper.getChildRecords());
                 switch (rvl.size()) {
-                case 0: break; // nothing found
-                case 1: rv = rvl.get(0); break; // normal case
-                default:
+                case 0 -> { } // nothing found
+                case 1 -> rv = rvl.get(0); // normal case
+                default ->
                     throw new HSLFException("TextBox contains more than one list of paragraphs.");
                 }
             }

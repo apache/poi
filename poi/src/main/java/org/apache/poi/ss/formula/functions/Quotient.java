@@ -20,7 +20,7 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 
 import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.util.MathUtil;
+import org.apache.poi.ss.util.ExcelArithmetic;
 
 /**
  * <p>Implementation for Excel QUOTIENT () function.
@@ -35,6 +35,7 @@ import org.apache.poi.util.MathUtil;
  *
  * If either enumerator/denominator is non numeric, QUOTIENT returns the #VALUE! error value.
  * If denominator is equals to zero, QUOTIENT returns the #DIV/0! error value.
+ * If the quotient is too large to represent, QUOTIENT returns the #NUM! error value.
  */
 public class Quotient extends Fixed2ArgFunction implements FreeRefFunction {
 
@@ -63,7 +64,13 @@ public class Quotient extends Fixed2ArgFunction implements FreeRefFunction {
             return ErrorEval.DIV_ZERO;
         }
 
-        return new NumberEval(MathUtil.safeDoubleToInt(enumerator / denominator));
+        double quotient = enumerator / denominator;
+        if (Double.isNaN(quotient) || Double.isInfinite(quotient)) {
+            return ErrorEval.NUM_ERROR;
+        }
+        // truncate towards zero on Excel's 15-digit view (QUOTIENT(880000000*0.00849,3) is 2490400, as INT);
+        // the result is kept as a double so that quotients beyond the int range work
+        return new NumberEval(ExcelArithmetic.truncate(quotient));
     }
 
     @Override

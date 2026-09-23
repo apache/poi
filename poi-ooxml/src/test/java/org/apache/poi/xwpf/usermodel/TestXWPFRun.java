@@ -18,6 +18,9 @@ package org.apache.poi.xwpf.usermodel;
 
 import static org.apache.poi.xwpf.XWPFTestDataSamples.openSampleDocument;
 import static org.apache.poi.xwpf.XWPFTestDataSamples.writeOutAndReadBack;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -47,6 +50,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
+import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
@@ -80,6 +84,22 @@ class TestXWPFRun {
     @AfterEach
     void tearDown() throws Exception {
         doc.close();
+    }
+
+    @Test
+    void addChartEscapesRelationshipId() {
+        XWPFRun run = p.createRun();
+        // A relationship id is an xsd:ID and can never legitimately contain XML metacharacters,
+        // but a hostile/malformed id must not break out of the r:id attribute of the generated
+        // drawing fragment (which would otherwise throw on parse, or inject markup).
+        final String craftedId = "rId1\"/><evil>";
+        CTInline inline = assertDoesNotThrow(() -> run.addChart(craftedId));
+        String xml = inline.getGraphic().xmlText();
+        assertThat("relationship id must not inject markup", xml, not(containsString("<evil>")));
+
+        // a normal relationship id still round-trips
+        CTInline ok = assertDoesNotThrow(() -> p.createRun().addChart("rId42"));
+        assertThat(ok.getGraphic().xmlText(), containsString("rId42"));
     }
 
     @Test
@@ -789,6 +809,33 @@ class TestXWPFRun {
             run = document.createParagraph().createRun();
             run.setEmphasisMark("dot");
             assertSame(STEm.DOT, run.getEmphasisMark());
+        }
+    }
+
+    @Test
+    void testGettersDoNotAddEmptyRunProperties() throws IOException {
+        // https://bz.apache.org/bugzilla/show_bug.cgi?id=69554
+        // the getters used to add empty <w:highlight/>, <w:vertAlign/> and <w:em/> elements when
+        // the run already had run properties - Word reports such documents as invalid
+        try (XWPFDocument document = new XWPFDocument()) {
+            XWPFRun run = document.createParagraph().createRun();
+            run.setText("Hello");
+            run.setBold(true);
+
+            assertSame(STHighlightColor.NONE, run.getTextHighlightColor());
+            assertFalse(run.isHighlighted());
+            assertSame(STVerticalAlignRun.BASELINE, run.getVerticalAlignment());
+            assertSame(STEm.NONE, run.getEmphasisMark());
+            assertEquals(UnderlinePatterns.NONE, run.getUnderline());
+            assertEquals("auto", run.getUnderlineColor());
+            assertSame(STThemeColor.NONE, run.getUnderlineThemeColor());
+
+            CTRPr rpr = run.getCTR().getRPr();
+            assertEquals(0, rpr.sizeOfHighlightArray());
+            assertEquals(0, rpr.sizeOfVertAlignArray());
+            assertEquals(0, rpr.sizeOfEmArray());
+            assertEquals(0, rpr.sizeOfUArray());
+            assertTrue(rpr.validate(), "run properties should be schema valid");
         }
     }
 

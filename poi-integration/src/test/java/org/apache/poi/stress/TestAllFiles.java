@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.util.IOUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.jupiter.api.function.Executable;
@@ -81,6 +82,19 @@ public class TestAllFiles {
 		}
 
 		ROOT_DIR = dir;
+
+		// Buffer large zip entries to temp files instead of holding them in memory. Some test
+		// files inflate to nearly the 100MB per-entry limit (e.g. spreadsheet/deep-data.xlsx
+		// has an entry that inflates to ~92MB while staying just above the minimum inflate
+		// ratio); materialising those on the heap on every open, with tests running in
+		// parallel, drives the CI builds into OutOfMemoryError.
+		// The threshold is deliberately low: a stream-opened workbook keeps every part on the
+		// heap until it is closed, and the handlers open each file several times over (the
+		// original, the re-read of the written copy, the extractors) with a few tests running
+		// in parallel. Since POI 6.0.0 this threshold also bounds how much of an entry with an
+		// unknown size (e.g. the data-descriptor entries POI itself writes to a stream, which
+		// the handlers re-read) is buffered on the heap before it is spilled to a temp file.
+		ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(2_000_000);
 	}
 
     public static final String[] SCAN_EXCLUDES = {

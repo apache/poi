@@ -46,13 +46,28 @@ public class AverageIf extends Baseifs {
 
             // collect pairs of ranges and criteria
             AreaEval ae = convertRangeArg(args[0]);
-            I_MatchPredicate mp = Countif.createCriteriaPredicate(args[1], ec.getRowIndex(), ec.getColumnIndex());
+            if (args[1] instanceof AreaEval crit && crit.getHeight() * crit.getWidth() > 1
+                    && Countif.isArrayCriteria(crit, isArrayContext(ec))) {
+                // one result per criterion
+                AreaEval finalSumRange = sumRange;
+                return Countif.evaluateForEachCriterion((AreaEval) args[1],
+                        criterion -> averageIf(finalSumRange, ae, criterion, ec));
+            }
+            return averageIf(sumRange, ae, args[1], ec);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+    }
 
-            if (mp instanceof Countif.ErrorMatcher) {
-                throw new EvaluationException(ErrorEval.valueOf(((Countif.ErrorMatcher) mp).getValue()));
+    private ValueEval averageIf(AreaEval sumRange, AreaEval testRange, ValueEval criteria, OperationEvaluationContext ec) {
+        try {
+            I_MatchPredicate mp = Countif.createCriteriaPredicate(criteria, ec.getRowIndex(), ec.getColumnIndex());
+
+            if (mp instanceof Countif.ErrorMatcher errorMatcher) {
+                throw new EvaluationException(ErrorEval.valueOf(errorMatcher.getValue()));
             }
 
-            return aggregateMatchingCells(createAggregator(), sumRange, ae, mp);
+            return aggregateMatchingCells(createAggregator(), sumRange, testRange, mp);
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
@@ -72,8 +87,8 @@ public class AverageIf extends Baseifs {
 
                 if (mp != null && mp.matches(_testValue)) {
                     // aggregate only if all of the corresponding criteria specified are true for that cell.
-                    if (_testValue instanceof ErrorEval) {
-                        throw new EvaluationException((ErrorEval) _testValue);
+                    if (_testValue instanceof ErrorEval errorEval) {
+                        throw new EvaluationException(errorEval);
                     }
                     aggregator.addValue(_sumValue);
                 }
@@ -96,9 +111,9 @@ public class AverageIf extends Baseifs {
             @Override
             public void addValue(ValueEval value) {
 
-                if (!(value instanceof NumberEval)) return;
+                if (!(value instanceof NumberEval ne)) return;
 
-                final double d = ((NumberEval) value).getNumberValue();
+                final double d = ne.getNumberValue();
                 sum += d;
                 count++;
 

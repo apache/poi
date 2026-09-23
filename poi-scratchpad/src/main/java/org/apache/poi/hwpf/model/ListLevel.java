@@ -120,9 +120,8 @@ public final class ListLevel
     @Override
     public boolean equals( Object obj )
     {
-        if (!(obj instanceof ListLevel)) return false;
+        if (!(obj instanceof ListLevel lvl)) return false;
 
-        ListLevel lvl = (ListLevel) obj;
         return lvl._lvlf.equals( this._lvlf )
                 && Arrays.equals( lvl._grpprlChpx, _grpprlChpx )
                 && Arrays.equals( lvl._grpprlPapx, _grpprlPapx )

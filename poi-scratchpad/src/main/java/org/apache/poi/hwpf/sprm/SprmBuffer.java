@@ -124,8 +124,7 @@ public final class SprmBuffer implements Duplicatable {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof SprmBuffer)) return false;
-        SprmBuffer sprmBuf = (SprmBuffer) obj;
+        if (!(obj instanceof SprmBuffer sprmBuf)) return false;
         return (Arrays.equals(_buf, sprmBuf._buf));
     }
 

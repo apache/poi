@@ -44,6 +44,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPBdr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTextAlignment;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
@@ -985,6 +987,157 @@ public final class TestXWPFParagraph {
                     "A square shape with text inside\n" +
                     "An ellipse with text inside\n" +
                     "A group of shapes\nWhere some contain text", p.getPictureText());
+        }
+    }
+
+    @Test
+    void testParagraphWithSdtRunAndContent() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFParagraph p = doc.createParagraph();
+
+            CTP ctp = p.getCTP();
+
+            CTR normalRun = ctp.addNewR();
+            normalRun.addNewT().setStringValue("Before ");
+
+            CTSdtRun sdtRun = ctp.addNewSdt();
+            CTSdtContentRun content = sdtRun.addNewSdtContent();
+
+            CTR innerRun = content.addNewR();
+            innerRun.addNewRPr().addNewB().setVal(STOnOff1.ON);
+            innerRun.addNewT().setStringValue("SDT Run Content");
+
+            CTR innerRun2 = content.addNewR();
+            innerRun2.addNewRPr().addNewI().setVal(STOnOff1.ON);
+            innerRun2.addNewT().setStringValue(" More");
+
+            CTR afterRun = ctp.addNewR();
+            afterRun.addNewT().setStringValue(" After");
+
+            XWPFParagraph newParagraph = new XWPFParagraph(ctp, doc);
+
+            // getRuns() includes: normal runs (always) + SDT content runs with RPr
+            // Before (1) + SDT Run Content (1) + More (1) + After (1) = 4 runs
+            List<XWPFRun> runs = newParagraph.getRuns();
+            assertEquals(4, runs.size(), "Should have 4 runs (2 normal + 2 SDT with RPr)");
+
+            // getIRuns() includes SDT elements, but SDT runs from processCTRs are NOT in iruns
+            // Before (1) + SDT (1) + After (1) = 3
+            List<IRunElement> iruns = newParagraph.getIRuns();
+            assertEquals(3, iruns.size(), "Should have 3 elements (SDT runs are not in iruns)");
+
+            // Verify text includes SDT content (text is also duplicated)
+            String text = newParagraph.getText();
+            assertTrue(text.contains("Before"), "Text should contain 'Before'");
+            assertTrue(text.contains("SDT Run Content"), "Text should contain 'SDT Run Content'");
+            assertTrue(text.contains(" More"), "Text should contain ' More'");
+            assertTrue(text.contains("After"), "Text should contain 'After'");
+        }
+    }
+
+    @Test
+    void testParagraphWithMultipleSdtRuns() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFParagraph p = doc.createParagraph();
+
+            CTP ctp = p.getCTP();
+
+            CTSdtRun sdtRun1 = ctp.addNewSdt();
+            CTSdtContentRun content1 = sdtRun1.addNewSdtContent();
+            CTR innerRun1 = content1.addNewR();
+            innerRun1.addNewRPr().addNewB().setVal(STOnOff1.ON);
+            innerRun1.addNewT().setStringValue("First");
+
+            CTR normalRun = ctp.addNewR();
+            normalRun.addNewT().setStringValue(" Middle ");
+
+            CTSdtRun sdtRun2 = ctp.addNewSdt();
+            CTSdtContentRun content2 = sdtRun2.addNewSdtContent();
+            CTR innerRun2 = content2.addNewR();
+            innerRun2.addNewRPr().addNewI().setVal(STOnOff1.ON);
+            innerRun2.addNewT().setStringValue("Second");
+
+            XWPFParagraph newParagraph = new XWPFParagraph(ctp, doc);
+
+            // getRuns() includes: normal run (always) + SDT content runs with RPr
+            // First (1) + Middle (1) + Second (1) = 3 runs
+            List<XWPFRun> runs = newParagraph.getRuns();
+            assertEquals(3, runs.size(), "Should have 3 runs (1 normal + 2 SDT with RPr)");
+
+            // getIRuns() includes SDT elements, but SDT runs from processCTRs are NOT in iruns
+            // SDT1 (1) + Middle (1) + SDT2 (1) = 3 (SDT runs are in runs, not iruns)
+            List<IRunElement> iruns = newParagraph.getIRuns();
+            assertEquals(3, iruns.size(), "Should have 3 elements (SDT runs are in runs, not iruns)");
+
+            // Verify text includes all content
+            String text = newParagraph.getText();
+            assertTrue(text.contains("First"), "Text should contain 'First' from SDT run");
+            assertTrue(text.contains("Middle"), "Text should contain 'Middle' from normal run");
+            assertTrue(text.contains("Second"), "Text should contain 'Second' from SDT run");
+        }
+    }
+
+    /**
+     * Bug 66263 — Test SDT runs in paragraph using sample document.
+     * Verifies that SDT runs with and without RPr are processed correctly.
+     */
+    @Test
+    void testSdtRunsFromSampleDocument() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug66263-paragraph.docx")) {
+            List<XWPFParagraph> paragraphs = doc.getParagraphs();
+
+            // Paragraph 1: SDT Run with RPr
+            XWPFParagraph paragraph1 = paragraphs.get(0);
+            String paragraph1Text = paragraph1.getText();
+            assertTrue(paragraph1Text.contains("Before"), "Paragraph 1 should contain 'Before'");
+            assertTrue(paragraph1Text.contains("SDT Run with RPr"), "Paragraph 1 should contain SDT run with RPr");
+            assertTrue(paragraph1Text.contains("After"), "Paragraph 1 should contain 'After'");
+
+            // getRuns() contains: 2 normal runs (always added) + 1 SDT run (added because it has RPr) = 3 runs
+            List<XWPFRun> runs1 = paragraph1.getRuns();
+            assertEquals(3, runs1.size(), "Paragraph 1 should have 3 runs (2 normal + 1 SDT with RPr)");
+            assertEquals("Before ", runs1.get(0).toString(), "First run should be 'Before'");
+            assertEquals("SDT Run with RPr", runs1.get(1).toString(), "Second run should be SDT content");
+            assertEquals(" After", runs1.get(2).toString(), "Third run should be 'After'");
+
+            // getIRuns() should contain all elements including SDT
+            List<IRunElement> iruns1 = paragraph1.getIRuns();
+            assertEquals(3, iruns1.size(), "Paragraph 1 should have 3 elements in getIRuns() (2 normal runs + 1 SDT)");
+
+            // Paragraph 2: SDT Run without RPr
+            XWPFParagraph paragraph2 = paragraphs.get(1);
+            String paragraph2Text = paragraph2.getText();
+            assertTrue(paragraph2Text.contains("Before No RPr"), "Paragraph 2 should contain 'Before No RPr'");
+            assertTrue(paragraph2Text.contains("SDT Run without RPr"), "Paragraph 2 should contain SDT run without RPr");
+            assertTrue(paragraph2Text.contains("After"), "Paragraph 2 should contain 'After'");
+
+            // getRuns() contains: 2 normal runs (always added) + 0 SDT runs (no RPr) = 2 runs
+            List<XWPFRun> runs2 = paragraph2.getRuns();
+            assertEquals(2, runs2.size(), "Paragraph 2 should have 2 runs (normal runs only, no SDT runs without RPr)");
+            assertEquals("Before No RPr ", runs2.get(0).toString(), "First run should be 'Before No RPr'");
+            assertEquals(" After", runs2.get(1).toString(), "Second run should be 'After'");
+
+            // getIRuns() should still contain all elements
+            List<IRunElement> iruns2 = paragraph2.getIRuns();
+            assertEquals(3, iruns2.size(), "Paragraph 2 should have 3 elements in getIRuns() (2 normal runs + 1 SDT)");
+
+            // Paragraph 3: Multiple SDT Runs
+            XWPFParagraph paragraph3 = paragraphs.get(2);
+            String paragraph3Text = paragraph3.getText();
+            assertTrue(paragraph3Text.contains("First"), "Paragraph 3 should contain 'First' from first SDT");
+            assertTrue(paragraph3Text.contains("Middle"), "Paragraph 3 should contain 'Middle'");
+            assertTrue(paragraph3Text.contains("Second"), "Paragraph 3 should contain 'Second' from second SDT");
+
+            // getRuns() contains: 1 normal run (always added) + 2 SDT runs (both have RPr) = 3 runs
+            List<XWPFRun> runs3 = paragraph3.getRuns();
+            assertEquals(3, runs3.size(), "Paragraph 3 should have 3 runs (1 normal + 2 SDT runs with RPr)");
+            assertTrue(runs3.get(0).toString().contains("First"), "First run should contain 'First'");
+            assertEquals(" Middle ", runs3.get(1).toString(), "Second run should be 'Middle'");
+            assertTrue(runs3.get(2).toString().contains("Second"), "Third run should contain 'Second'");
+
+            // getIRuns() should contain 3 elements (2 SDTs + 1 normal run)
+            List<IRunElement> iruns3 = paragraph3.getIRuns();
+            assertEquals(3, iruns3.size(), "Paragraph 3 should have 3 elements in getIRuns() (2 SDTs + 1 normal run)");
         }
     }
 }

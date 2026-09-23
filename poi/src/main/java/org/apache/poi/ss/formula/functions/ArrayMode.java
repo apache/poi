@@ -18,6 +18,11 @@ package org.apache.poi.ss.formula.functions;
 
 /**
  * Interface for those functions that evaluate arguments in array mode depending on context.
+ * <p>
+ * When an operator (e.g. {@code =} or {@code *}) has an area operand and its result is an argument
+ * of such a function, the operator is evaluated element-wise over the area instead of being reduced
+ * to the single value for the formula's cell. Both {@link Function}s and {@link FreeRefFunction}s
+ * (user-defined and "future" functions such as XLOOKUP) may implement this marker.
  */
 public interface ArrayMode {
 

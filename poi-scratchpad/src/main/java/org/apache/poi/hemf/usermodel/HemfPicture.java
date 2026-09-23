@@ -107,10 +107,10 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
         List<HemfRecord> r = getRecords();
         if (r.isEmpty()) {
             throw new RecordFormatException("No records could be parsed - your .emf file is invalid");
-        } else if (!(r.get(0) instanceof HemfHeader)) {
+        } else if (!(r.get(0) instanceof HemfHeader hemfHeader)) {
             throw new RecordFormatException("Could not convert object of type " + r.get(0).getClass() + " + - your .emf file is invalid");
         } else {
-            return (HemfHeader)r.get(0);
+            return hemfHeader;
         }
     }
 
@@ -121,8 +121,8 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
             isParsed = true;
             HemfHeader[] header = new HemfHeader[1];
             new HemfRecordIterator(stream).forEachRemaining(r -> {
-                if (r instanceof HemfHeader) {
-                    header[0] = (HemfHeader) r;
+                if (r instanceof HemfHeader hemfHeader) {
+                    header[0] = hemfHeader;
                 }
                 r.setHeader(header[0]);
                 if (r instanceof HwmfCharsetAware charsetAware) {

@@ -1869,8 +1869,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
             RefModeRecord refModeRecord = null;
             for (RecordBase record : records) {
-                if (record instanceof RefModeRecord) {
-                    refModeRecord = (RefModeRecord)record;
+                if (record instanceof RefModeRecord refMode) {
+                    refModeRecord = refMode;
                     break;
                 }
             }
@@ -1905,8 +1905,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
             RefModeRecord refModeRecord = null;
             for (RecordBase record : records) {
-                if (record instanceof RefModeRecord) {
-                    refModeRecord = (RefModeRecord)record;
+                if (record instanceof RefModeRecord refMode) {
+                    refModeRecord = refMode;
                     break;
                 }
             }
@@ -2110,26 +2110,13 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
         blipRecord.setRecordId((short) (EscherBlipRecord.RECORD_ID_START + format));
         switch (format) {
-            case PICTURE_TYPE_EMF:
-                blipRecord.setOptions(HSSFPictureData.MSOBI_EMF);
-                break;
-            case PICTURE_TYPE_WMF:
-                blipRecord.setOptions(HSSFPictureData.MSOBI_WMF);
-                break;
-            case PICTURE_TYPE_PICT:
-                blipRecord.setOptions(HSSFPictureData.MSOBI_PICT);
-                break;
-            case PICTURE_TYPE_PNG:
-                blipRecord.setOptions(HSSFPictureData.MSOBI_PNG);
-                break;
-            case PICTURE_TYPE_JPEG:
-                blipRecord.setOptions(HSSFPictureData.MSOBI_JPEG);
-                break;
-            case PICTURE_TYPE_DIB:
-                blipRecord.setOptions(HSSFPictureData.MSOBI_DIB);
-                break;
-            default:
-                throw new IllegalStateException("Unexpected picture format: " + format);
+            case PICTURE_TYPE_EMF -> blipRecord.setOptions(HSSFPictureData.MSOBI_EMF);
+            case PICTURE_TYPE_WMF -> blipRecord.setOptions(HSSFPictureData.MSOBI_WMF);
+            case PICTURE_TYPE_PICT -> blipRecord.setOptions(HSSFPictureData.MSOBI_PICT);
+            case PICTURE_TYPE_PNG -> blipRecord.setOptions(HSSFPictureData.MSOBI_PNG);
+            case PICTURE_TYPE_JPEG -> blipRecord.setOptions(HSSFPictureData.MSOBI_JPEG);
+            case PICTURE_TYPE_DIB -> blipRecord.setOptions(HSSFPictureData.MSOBI_DIB);
+            default -> throw new IllegalStateException("Unexpected picture format: " + format);
         }
 
         EscherBSERecord r = new EscherBSERecord();
@@ -2157,9 +2144,9 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         // The drawing group record always exists at the top level, so we won't need to do this recursively.
         List<HSSFPictureData> pictures = new ArrayList<>();
         for (org.apache.poi.hssf.record.Record r : workbook.getRecords()) {
-            if (r instanceof AbstractEscherHolderRecord) {
-                ((AbstractEscherHolderRecord) r).decode();
-                List<EscherRecord> escherRecords = ((AbstractEscherHolderRecord) r).getEscherRecords();
+            if (r instanceof AbstractEscherHolderRecord escherHolder) {
+                escherHolder.decode();
+                List<EscherRecord> escherRecords = escherHolder.getEscherRecords();
                 searchForPictures(escherRecords, pictures);
             }
         }
@@ -2175,8 +2162,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     private void searchForPictures(List<EscherRecord> escherRecords, List<HSSFPictureData> pictures) {
         for (EscherRecord escherRecord : escherRecords) {
 
-            if (escherRecord instanceof EscherBSERecord) {
-                EscherBlipRecord blip = ((EscherBSERecord) escherRecord).getBlipRecord();
+            if (escherRecord instanceof EscherBSERecord bse) {
+                EscherBlipRecord blip = bse.getBlipRecord();
                 if (blip != null) {
                     // TODO: Some kind of structure.
                     HSSFPictureData picture = new HSSFPictureData(blip);
@@ -2332,10 +2319,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      */
     private void getAllEmbeddedObjects(HSSFShapeContainer parent, List<HSSFObjectData> objects) {
         for (HSSFShape shape : parent.getChildren()) {
-            if (shape instanceof HSSFObjectData) {
-                objects.add((HSSFObjectData) shape);
-            } else if (shape instanceof HSSFShapeContainer) {
-                getAllEmbeddedObjects((HSSFShapeContainer) shape, objects);
+            if (shape instanceof HSSFObjectData objectData) {
+                objects.add(objectData);
+            } else if (shape instanceof HSSFShapeContainer container) {
+                getAllEmbeddedObjects(container, objects);
             }
         }
     }

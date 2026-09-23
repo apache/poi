@@ -80,7 +80,6 @@
       <li>Mark Murphy (jmarkmurphy at apache dot org)</li>
       <li>Danny Mui (dmui at apache dot org)</li>
       <li><a href="https://people.apache.org/~dnorth/">David North</a> (dnorth at apache dot org)</li>
-      <li>Javen O'Neal (onealj at apache dot org)</li>
       <li>Uwe Schindler (uschindler at apache dot org)</li>
       <li>Avik Sengupta (avik at apache dot org)</li>
       <li>Dominik Stadler (centic at apache dot org)</li>
@@ -89,6 +88,14 @@
       <li>Maxim Valyanskiy (maxcom at apache dot org)</li>
       <li>Sergey Vladimirov (sergey at apache dot org)</li>
       <li>Greg Woolsey (gwoolsey at apache dot org)</li>
+    </ul>
+  </section>
+
+  <section><title>Inactive Committers</title>
+    <!-- past committers who are no longer active in POI development -->
+    <!-- Alphabetical by surname -->
+    <ul>
+      <li>Javen O'Neal (onealj at apache dot org)</li>
     </ul>
   </section>
 

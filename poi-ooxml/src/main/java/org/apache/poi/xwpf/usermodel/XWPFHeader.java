@@ -59,12 +59,12 @@ public class XWPFHeader extends XWPFHeaderFooter {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
-                if (o instanceof CTP) {
-                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                if (o instanceof CTP ctp) {
+                    XWPFParagraph p = new XWPFParagraph(ctp, this);
                     paragraphs.add(p);
                 }
-                if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
+                if (o instanceof CTTbl tbl) {
+                    XWPFTable t = new XWPFTable(tbl, this, false);
                     tables.add(t);
                 }
             }
@@ -100,18 +100,18 @@ public class XWPFHeader extends XWPFHeaderFooter {
                 cursor.selectPath("./*");
                 while (cursor.toNextSelection()) {
                     XmlObject o = cursor.getObject();
-                    if (o instanceof CTP) {
-                        XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                    if (o instanceof CTP ctp) {
+                        XWPFParagraph p = new XWPFParagraph(ctp, this);
                         paragraphs.add(p);
                         bodyElements.add(p);
                     }
-                    if (o instanceof CTTbl) {
-                        XWPFTable t = new XWPFTable((CTTbl) o, this, false);
+                    if (o instanceof CTTbl tbl) {
+                        XWPFTable t = new XWPFTable(tbl, this, false);
                         tables.add(t);
                         bodyElements.add(t);
                     }
-                    if (o instanceof CTSdtBlock) {
-                        XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
+                    if (o instanceof CTSdtBlock block) {
+                        XWPFSDT c = new XWPFSDT(block, this);
                         bodyElements.add(c);
                     }
                 }

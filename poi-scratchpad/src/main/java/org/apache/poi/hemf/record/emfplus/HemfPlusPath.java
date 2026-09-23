@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.poi.common.usermodel.GenericRecord;
@@ -231,7 +230,7 @@ public class HemfPlusPath {
         private List<GenericRecord> getGenericPoints() {
             return IntStream.range(0, pathPoints.length).
                 mapToObj(this::getGenericPoint).
-                collect(Collectors.toList());
+                toList();
         }
 
         private GenericRecord getGenericPoint(final int idx) {

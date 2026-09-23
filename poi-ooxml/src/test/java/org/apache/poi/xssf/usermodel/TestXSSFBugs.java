@@ -43,6 +43,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -125,6 +126,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
@@ -3594,6 +3596,91 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
     }
 
+    /**
+     * Shared formula H2:J17 (si=0) is interrupted by cells with their own formulas and by nested
+     * shared formula groups. Blanking every cell, row by row, repeatedly moves the master of the group.
+     */
+    @Test
+    void testSetBlankOnSharedFormulaRangeBug67442() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("testSharedFormulasRangeSetBlankBug.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            Map<String, String> formulas = formulasOf(sheet);
+            assertEquals(83, formulas.size());
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    String address = cell.getAddress().formatAsString();
+                    if (cell.getCellType() == CellType.FORMULA) {
+                        // blanking the cells before this one must not have changed its formula
+                        assertEquals(formulas.get(address), cell.getCellFormula(), address);
+                    }
+                    cell.setBlank();
+                }
+            }
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    assertEquals(CellType.BLANK, cell.getCellType(), cell.getAddress().formatAsString());
+                }
+            }
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                assertEquals(Collections.emptyMap(), formulasOf(wb2.getSheetAt(0)));
+            }
+        }
+    }
+
+    /**
+     * Blanking the first row of shared formula H2:J17 (si=0) moves the master to H3, the first cell of
+     * the next row. Like Excel, the new master keeps the ref of the whole remaining range.
+     */
+    @Test
+    void testSharedFormulaMasterMovesToNextRowBug67442() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("testSharedFormulasRangeSetBlankBug.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            Map<String, String> formulas = formulasOf(sheet);
+            Map<String, String> values = new HashMap<>();
+            for (String address : formulas.keySet()) {
+                values.put(address, sheet.getRow(new CellReference(address).getRow())
+                        .getCell(new CellReference(address).getCol()).getStringCellValue());
+            }
+
+            XSSFRow row2 = sheet.getRow(1);
+            assertEquals("H2:J17", row2.getCell(7).getCTCell().getF().getRef());
+            row2.getCell(7).setBlank();
+            row2.getCell(8).setBlank();
+            row2.getCell(9).setBlank();
+
+            CTCellFormula master = sheet.getRow(2).getCell(7).getCTCell().getF();
+            assertEquals(STCellFormulaType.SHARED, master.getT());
+            assertEquals(0, master.getSi());
+            assertEquals("H3:J17", master.getRef());
+            assertEquals("CONCATENATE(B3,$E3,\" \",$F$24)", master.getStringValue());
+            formulas.keySet().removeAll(Arrays.asList("H2", "I2", "J2"));
+            assertEquals(formulas, formulasOf(sheet));
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFSheet sheet2 = wb2.getSheetAt(0);
+                assertEquals(formulas, formulasOf(sheet2));
+                wb2.getCreationHelper().createFormulaEvaluator().evaluateAll();
+                for (String address : formulas.keySet()) {
+                    CellReference ref = new CellReference(address);
+                    assertEquals(values.get(address),
+                            sheet2.getRow(ref.getRow()).getCell(ref.getCol()).getStringCellValue(), address);
+                }
+            }
+        }
+    }
+
+    private static Map<String, String> formulasOf(XSSFSheet sheet) {
+        Map<String, String> formulas = new HashMap<>();
+        for (Row row : sheet) {
+            for (Cell cell : row) {
+                if (cell.getCellType() == CellType.FORMULA) {
+                    formulas.put(cell.getAddress().formatAsString(), cell.getCellFormula());
+                }
+            }
+        }
+        return formulas;
+    }
+
     @Test
     void testBug65306() throws IOException {
         try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("bug65306.xlsx")) {
@@ -3639,6 +3726,76 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertDouble(fe, cell, "A1+1", DateUtil.getExcelDate(ldt) + 1);
             LocalDateTime expected = ldt.plusMinutes(90);
             assertDouble(fe, cell, "A1+\"1:30\"", DateUtil.getExcelDate(expected));
+        }
+    }
+
+    @Test
+    void testBug65231() throws IOException {
+        // the reporter's case: SUMPRODUCT forces COUNTIF to give one count per criteria cell,
+        // so B1:B3 = a,a,b against C1:C3 = a,b,a gives 2 + 1 + 2 (fixed with bug 65059)
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
+            XSSFSheet sheet = wb.createSheet("Sheet1");
+            addRow(sheet, 0, null, "a", "a");
+            addRow(sheet, 1, null, "a", "b");
+            addRow(sheet, 2, null, "b", "a");
+            XSSFCell cell = sheet.getRow(0).createCell(0);
+            assertDouble(fe, cell, "SUMPRODUCT(COUNTIF(B1:B3, C1:C3))", 5);
+        }
+    }
+
+    @Test
+    void testBug64369() throws IOException {
+        // "*" matches any text, so COUNTIF(range,"<>*") counts the cells that are not text
+        // (the reporter's ISNONTEXT idiom): numbers and dates yes, texts no, even ones that look
+        // like criteria themselves (fixed with bug 69853)
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
+            XSSFSheet sheet = wb.createSheet("Countif");
+            addRow(sheet, 0, null, 1);
+            addRow(sheet, 1, null, 1.0);
+            addRow(sheet, 2, null, "Testdata");
+            addRow(sheet, 3, null, "aaa");
+            addRow(sheet, 4, null, "<>*");
+            addRow(sheet, 5, null, "*");
+            addRow(sheet, 6, null, ">*");
+            addRow(sheet, 7, null, LocalDate.of(2020, 4, 21));
+            XSSFCell cell = sheet.getRow(0).createCell(0);
+
+            double[] isText = {0, 0, 1, 1, 1, 1, 1, 0};
+            for (int r = 0; r < isText.length; r++) {
+                String range = "B" + (r + 1) + ":B" + (r + 1);
+                assertDouble(fe, cell, "COUNTIF(" + range + ", \"*\")", isText[r]);
+                assertDouble(fe, cell, "COUNTIF(" + range + ", \"<>*\")", 1 - isText[r]);
+            }
+            assertDouble(fe, cell, "COUNTIF(B1:B8, \"*\")", 5);
+            assertDouble(fe, cell, "COUNTIF(B1:B8, \"<>*\")", 3);
+            assertDouble(fe, cell, "COUNTIF(B1:B8, \"*a*\")", 2);
+            assertDouble(fe, cell, "COUNTIF(B1:B8, \"*aa*\")", 1);
+            assertDouble(fe, cell, "COUNTIF(B1:B8, \"=1\")", 2);
+            // a blank cell is not text either
+            assertDouble(fe, cell, "COUNTIF(B1:B9, \"<>*\")", 4);
+        }
+    }
+
+    @Test
+    void testBug62271() throws IOException {
+        // the reporter's case: the classic "count distinct values" idiom. Inside SUMPRODUCT the
+        // & operator works element-wise, so A5:A10&"" is the array of texts, COUNTIF gives one
+        // count per text and 1/count sums to one per distinct value
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
+            XSSFSheet sheet = wb.createSheet("Sheet1");
+            String[] values = {"a", "b", "a", "c", "b", "a"};
+            for (int i = 0; i < values.length; i++) {
+                addRow(sheet, 4 + i, values[i]);
+            }
+            XSSFCell cell = sheet.createRow(0).createCell(1);
+            assertDouble(fe, cell, "SUMPRODUCT(1/COUNTIF(A5:A10,A5:A10&\"\"))", 3);
+            // the blank-tolerant variant of the same idiom
+            assertDouble(fe, cell, "SUMPRODUCT((A5:A10<>\"\")/COUNTIF(A5:A10,A5:A10&\"\"))", 3);
+            sheet.getRow(6).getCell(0).setBlank();
+            assertDouble(fe, cell, "SUMPRODUCT((A5:A10<>\"\")/COUNTIF(A5:A10,A5:A10&\"\"))", 3);
         }
     }
 
@@ -3927,6 +4084,25 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             // https://bz.apache.org/bugzilla/show_bug.cgi?id=69812: user says this should be "25,386"
             assertEquals("25,396", cellValue);
             assertEquals("#,##0,,", cellA1.getCellStyle().getDataFormatString());
+        }
+    }
+
+    @Test
+    void testInvalidCellRef() throws Exception {
+        // https://github.com/pjfanning/excel-streaming-reader/pull/390
+        try (XSSFWorkbook wb = openSampleWorkbook("invalid_cell_reference.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            String valueB1 = null;
+            for(Row row : sheet) {
+                for(Cell cell : row) {
+                    assertNotNull(cell);
+                    assertNotNull(cell.getAddress());
+                    if (cell.getAddress().formatAsString().equals("B1")) {
+                        valueB1 = cell.getStringCellValue();
+                    }
+                }
+            }
+            assertEquals("Second inline cell", valueB1);
         }
     }
 

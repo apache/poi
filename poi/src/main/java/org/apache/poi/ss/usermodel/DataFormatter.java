@@ -212,9 +212,10 @@ public class DataFormatter {
     private boolean use4DigitYearsInAllDateFormats = false;
 
     /**
-     * if set to true, avoid recalculating the values if there is a cached value available (default is false)
+     * if set to true, avoid recalculating the values if there is a cached value available
+     * (default is true since POI 6.0.0, was false in earlier releases)
      */
-    private boolean useCachedValuesForFormulaCells = false;
+    private boolean useCachedValuesForFormulaCells = true;
 
     /** stores the locale set by updateLocale method */
     private Locale locale;
@@ -297,7 +298,9 @@ public class DataFormatter {
      * @param useCachedValuesForFormulaCells if set to true, when you do not provide a {@link FormulaEvaluator},
      *                                       for cells with formulas, we will return the cached value for the cell (if available),
      *                                       otherwise - we return the formula itself.
-     *                                       The default is false and this means we return the formula itself.
+     *                                       Since POI 6.0.0, the default is true, so the cached value is used when it is
+     *                                       available. In POI 5.x, the default was false and the formula itself was returned.
+     *                                       Set this to false to restore the POI 5.x behaviour.
      * @since 5.2.0
      */
     public void setUseCachedValuesForFormulaCells(boolean useCachedValuesForFormulaCells) {
@@ -308,7 +311,8 @@ public class DataFormatter {
      * @return useCachedValuesForFormulaCells if set to true, when you do not provide a {@link FormulaEvaluator},
      *                                        for cells with formulas, we will return the cached value for the cell (if available),
      *                                        otherwise - we return the formula itself.
-     *                                        The default is false and this means we return the formula itself.
+     *                                        Since POI 6.0.0, the default is true, so the cached value is used when it is
+     *                                        available. In POI 5.x, the default was false and the formula itself was returned.
      * @since 5.2.0
      */
     public boolean useCachedValuesForFormulaCells() {
@@ -364,8 +368,8 @@ public class DataFormatter {
     }
 
     private boolean isDate1904(Cell cell) {
-        if ( cell != null && cell.getSheet().getWorkbook() instanceof Date1904Support) {
-            return ((Date1904Support)cell.getSheet().getWorkbook()).isDate1904();
+        if ( cell != null && cell.getSheet().getWorkbook() instanceof Date1904Support date1904Support) {
+            return date1904Support.isDate1904();
 
         }
         return false;
@@ -402,7 +406,8 @@ public class DataFormatter {
                 CellFormat cfmt = CellFormat.getInstance(locale, formatStr);
                 // CellFormat requires callers to identify date vs not, so do so
                 // don't try to handle Date value 0, let a 3 or 4-part format take care of it
-                Object cellValueO = (cellValue != 0.0 && DateUtil.isADateFormat(formatIndex, formatStr))
+                Object cellValueO = (cellValue != 0.0 && DateUtil.isADateFormat(formatIndex, formatStr)
+                        && DateUtil.isValidExcelDate(cellValue))
                     ? DateUtil.getJavaDate(cellValue, use1904Windowing)
                     : cellValue;
                 // Wrap and return (non-cacheable - CellFormat does that)
@@ -416,6 +421,15 @@ public class DataFormatter {
        if (emulateCSV && cellValue == 0.0 && formatStr.contains("#") && !formatStr.contains("0")) {
            formatStr = formatStr.replace("#", "");
        }
+
+        // A value a date format cannot show (negative, or past 9999-12-31) is displayed by Excel as
+        // ########; show it as a plain number. Checked before the cache, so that neither the date
+        // format is applied to such a value nor a number format built from a date pattern gets cached.
+        // Decided on the format string alone: a conditional format can carry a built-in date index
+        // with a number pattern such as "0.00E+00", which must keep formatting as a number.
+        if (!DateUtil.isValidExcelDate(cellValue) && DateUtil.isADateFormat(-1, formatStr)) {
+            return getDefaultFormat(cellValue);
+        }
 
         // See if we already have it cached
         Format format = formats.get(formatStr);
@@ -1006,9 +1020,9 @@ public class DataFormatter {
         if(DateUtil.isADateFormat(formatIndex,formatString)) {
             if(DateUtil.isValidExcelDate(value)) {
                 Format dateFormat = getFormat(value, formatIndex, formatString, use1904Windowing);
-                if(dateFormat instanceof ExcelStyleDateFormatter) {
+                if(dateFormat instanceof ExcelStyleDateFormatter formatter) {
                     // Hint about the raw excel value
-                    ((ExcelStyleDateFormatter)dateFormat).setDateToBeFormatted(value);
+                    formatter.setDateToBeFormatted(value);
                 }
                 Date d = DateUtil.getJavaDate(value, use1904Windowing);
                 return performDateFormatting(d, dateFormat);
@@ -1042,7 +1056,7 @@ public class DataFormatter {
         // If they requested a non-abbreviated Scientific format,
         //  and there's an E## (but not E-##), add the missing '+' for E+##
         String fslc = formatString.toLowerCase(Locale.ROOT);
-        if ((fslc.contains("general") || fslc.contains("e+0"))
+        if ((fslc.contains("general") || fslc.contains("e+0") || numberFormat == generalNumberFormat)
                 && result.contains("E") && !result.contains("E-")) {
             result = result.replaceFirst("E", "E+");
         }
@@ -1058,6 +1072,8 @@ public class DataFormatter {
      * <p>When passed a null or blank cell, this method will return an empty
      * String (""). Formulas in formula type cells will not be evaluated.
      * {@link #setUseCachedValuesForFormulaCells} controls how these cells are evaluated.
+     * Since POI 6.0.0, that setting defaults to true, so the cached value of a formula cell is
+     * returned when one is available (POI 5.x returned the formula itself by default).
      * </p>
      *
      * @param cell The cell

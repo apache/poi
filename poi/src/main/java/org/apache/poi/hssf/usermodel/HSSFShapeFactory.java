@@ -52,16 +52,16 @@ public class HSSFShapeFactory {
         if (container.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
             ObjRecord obj = null;
             EscherRecord child = container.getChild(0);
-            if (!(child instanceof EscherContainerRecord)) {
+            if (!(child instanceof EscherContainerRecord childContainer)) {
                 throw new IllegalArgumentException("Had unexpected type of child: " + child.getClass());
             }
-            EscherClientDataRecord clientData = ((EscherContainerRecord) child).getChildById(EscherClientDataRecord.RECORD_ID);
+            EscherClientDataRecord clientData = childContainer.getChildById(EscherClientDataRecord.RECORD_ID);
             if (null != clientData) {
                 Record record = agg.getShapeToObjMapping().get(clientData);
-                if (!(record instanceof ObjRecord)) {
+                if (!(record instanceof ObjRecord objRec)) {
                     throw new IllegalArgumentException("Had unexpected type of clientData: " + (record == null ? "<null>" : record.getClass()));
                 }
-                obj = (ObjRecord) record;
+                obj = objRec;
             }
             HSSFShapeGroup group = new HSSFShapeGroup(container, obj);
             List<EscherContainerRecord> children = container.getChildContainers();
@@ -79,18 +79,18 @@ public class HSSFShapeFactory {
                 switch (EscherRecordTypes.forTypeID(record.getRecordId())) {
                     case CLIENT_DATA: {
                         Record subRecord = shapeToObj.get(record);
-                        if (!(subRecord instanceof ObjRecord)) {
+                        if (!(subRecord instanceof ObjRecord objRec)) {
                             throw new RecordFormatException("Did not have a ObjRecord: " + subRecord);
                         }
-                        objRecord = (ObjRecord) subRecord;
+                        objRecord = objRec;
                         break;
                     }
                     case CLIENT_TEXTBOX: {
                         Record subRecord = shapeToObj.get(record);
-                        if (!(subRecord instanceof TextObjectRecord)) {
+                        if (!(subRecord instanceof TextObjectRecord txtRec)) {
                             throw new RecordFormatException("Did not have a TextObjRecord: " + subRecord);
                         }
-                        txtRecord = (TextObjectRecord) subRecord;
+                        txtRecord = txtRec;
                         break;
                     }
                     default:

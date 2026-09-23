@@ -127,7 +127,9 @@ public final class GenericRecordUtil {
             assert(sups[i] != null);
             if ("base".equals(vals[i])) {
                 Object baseMap = sups[i].get();
-                assert(baseMap instanceof Map);
+                if (!(baseMap instanceof Map)) {
+                    throw new AssertionError("Expected Map");
+                }
                 //noinspection unchecked
                 m.putAll((Map<String,Supplier<?>>)baseMap);
             } else {

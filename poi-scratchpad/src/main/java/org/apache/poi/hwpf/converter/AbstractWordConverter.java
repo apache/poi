@@ -281,8 +281,7 @@ public abstract class AbstractWordConverter {
          * reconstruct the structure of range -- sergey
          */
         List<Structure> structures = new LinkedList<>();
-        if (wordDocument instanceof HWPFDocument) {
-            final HWPFDocument doc = (HWPFDocument) wordDocument;
+        if (wordDocument instanceof HWPFDocument doc) {
 
             Map<Integer, List<Bookmark>> rangeBookmarks = doc.getBookmarks()
                 .getBookmarksStartedBetween(range.getStartOffset(),
@@ -314,7 +313,7 @@ public abstract class AbstractWordConverter {
                     continue;
                 }
 
-                Field aliveField = ((HWPFDocument) wordDocument).getFields()
+                Field aliveField = doc.getFields()
                     .getFieldByStartOffset(FieldsDocumentPart.MAIN,
                         characterRun.getStartOffset());
                 if (aliveField != null) {
@@ -354,10 +353,12 @@ public abstract class AbstractWordConverter {
             }
 
             if (structure.structure instanceof Bookmark) {
-                assert(wordDocument instanceof HWPFDocument);
+                if (!(wordDocument instanceof HWPFDocument doc)) {
+                    throw new AssertionError("Expected HWPFDocument");
+                }
                 // other bookmarks with same boundaries
                 List<Bookmark> bookmarks = new LinkedList<>();
-                for (Bookmark bookmark : ((HWPFDocument) wordDocument)
+                for (Bookmark bookmark : doc
                     .getBookmarks()
                     .getBookmarksStartedBetween(structure.start,
                         structure.start + 1).values().iterator()
@@ -383,12 +384,12 @@ public abstract class AbstractWordConverter {
                 } finally {
                     bookmarkStack.removeAll(bookmarks);
                 }
-            } else if (structure.structure instanceof Field) {
-                assert(wordDocument instanceof HWPFDocument);
-                Field field = (Field) structure.structure;
-                processField((HWPFDocument) wordDocument, range, currentTableLevel, field, block);
-            } else if (structure.structure instanceof DeadFieldBoundaries) {
-                DeadFieldBoundaries boundaries = (DeadFieldBoundaries) structure.structure;
+            } else if (structure.structure instanceof Field field) {
+                if (!(wordDocument instanceof HWPFDocument doc)) {
+                    throw new AssertionError("Expected HWPFDocument");
+                }
+                processField(doc, range, currentTableLevel, field, block);
+            } else if (structure.structure instanceof DeadFieldBoundaries boundaries) {
                 processDeadField(wordDocument, block, range,
                     currentTableLevel, boundaries.beginMark,
                     boundaries.separatorMark, boundaries.endMark);
@@ -428,10 +429,9 @@ public abstract class AbstractWordConverter {
                 throw new AssertionError();
             }
 
-            if (wordDocument instanceof HWPFDocument
-                && ((HWPFDocument) wordDocument).getPicturesTable()
+            if (wordDocument instanceof HWPFDocument newFormat
+                && newFormat.getPicturesTable()
                 .hasPicture(characterRun)) {
-                HWPFDocument newFormat = (HWPFDocument) wordDocument;
                 Picture picture = newFormat.getPicturesTable().extractPicture(
                     characterRun, true);
 
@@ -451,39 +451,35 @@ public abstract class AbstractWordConverter {
 
             if (characterRun.isSpecialCharacter()) {
                 if (text.charAt(0) == SPECCHAR_AUTONUMBERED_FOOTNOTE_REFERENCE
-                    && (wordDocument instanceof HWPFDocument)) {
-                    HWPFDocument doc = (HWPFDocument) wordDocument;
+                    && (wordDocument instanceof HWPFDocument doc)) {
                     processNoteAnchor(doc, characterRun, block);
                     continue;
                 }
                 if (text.charAt(0) == SPECCHAR_DRAWN_OBJECT
-                    && (wordDocument instanceof HWPFDocument)) {
-                    HWPFDocument doc = (HWPFDocument) wordDocument;
+                    && (wordDocument instanceof HWPFDocument doc)) {
                     processDrawnObject(doc, characterRun, block);
                     continue;
                 }
                 if (characterRun.isOle2()
-                    && (wordDocument instanceof HWPFDocument)) {
-                    HWPFDocument doc = (HWPFDocument) wordDocument;
+                    && (wordDocument instanceof HWPFDocument doc)) {
                     processOle2(doc, characterRun, block);
                     continue;
                 }
                 if (characterRun.isSymbol()
-                    && (wordDocument instanceof HWPFDocument)) {
-                    HWPFDocument doc = (HWPFDocument) wordDocument;
+                    && (wordDocument instanceof HWPFDocument doc)) {
                     processSymbol(doc, characterRun, block);
                     continue;
                 }
             }
 
             if (text.charAt(0) == FIELD_BEGIN_MARK) {
-                if (wordDocument instanceof HWPFDocument) {
-                    Field aliveField = ((HWPFDocument) wordDocument)
+                if (wordDocument instanceof HWPFDocument doc) {
+                    Field aliveField = doc
                         .getFields().getFieldByStartOffset(
                             FieldsDocumentPart.MAIN,
                             characterRun.getStartOffset());
                     if (aliveField != null) {
-                        processField(((HWPFDocument) wordDocument), range,
+                        processField(doc, range,
                             currentTableLevel, aliveField, block);
 
                         int continueAfter = aliveField.getFieldEndOffset();

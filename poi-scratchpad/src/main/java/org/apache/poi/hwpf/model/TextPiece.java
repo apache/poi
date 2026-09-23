@@ -186,8 +186,7 @@ public class TextPiece extends PropertyNode<TextPiece> {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof TextPiece)) return false;
-        TextPiece tp = (TextPiece) o;
+        if (!(o instanceof TextPiece tp)) return false;
         assert (_buf != null && tp._buf != null && _pd != null && tp._pd != null);
 
         return (

@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.util.ExcelArithmetic;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.MathUtil;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -57,7 +57,7 @@ final class MathX {
     }
 
     public static double round(double n, double p) {
-        return round(n, MathUtil.safeDoubleToInt(p));
+        return round(n, clampDigits(p));
     }
 
 
@@ -82,7 +82,7 @@ final class MathX {
     }
 
     public static double roundUp(double n, double p) {
-        return roundUp(n, MathUtil.safeDoubleToInt(p));
+        return roundUp(n, clampDigits(p));
     }
 
 
@@ -106,7 +106,19 @@ final class MathX {
     }
 
     public static double roundDown(double n, double p) {
-        return roundDown(n, MathUtil.safeDoubleToInt(p));
+        return roundDown(n, clampDigits(p));
+    }
+
+    /**
+     * A double has at most 15 significant digits and a decimal exponent within +/-324, so rounding
+     * to more than this many digits either side of the decimal point can never change the value.
+     * Larger digit counts are clamped to it: they would make {@link java.math.BigDecimal#setScale}
+     * build a number with billions of digits.
+     */
+    private static final int MAX_ROUNDING_DIGITS = 400;
+
+    private static int clampDigits(double p) {
+        return (int) Math.max(-MAX_ROUNDING_DIGITS, Math.min(MAX_ROUNDING_DIGITS, p));
     }
 
     private static double round(double n, int p, java.math.RoundingMode rounding) {
@@ -115,7 +127,7 @@ final class MathX {
         }
         else {
             final String excelNumber = NumberToTextConverter.toText(n);
-            return new java.math.BigDecimal(excelNumber).setScale(p, rounding).doubleValue();
+            return new java.math.BigDecimal(excelNumber).setScale(clampDigits(p), rounding).doubleValue();
         }
     }
 
@@ -234,6 +246,7 @@ final class MathX {
      * @param s
      */
     public static double floor(double n, double s) {
+        n = ExcelArithmetic.approxValue(n);
         if (s==0 && n!=0) {
             return Double.NaN;
         } else {
@@ -265,6 +278,7 @@ final class MathX {
      * @param s
      */
     public static double ceiling(double n, double s) {
+        n = ExcelArithmetic.approxValue(n);
         if (n>0 && s<0) {
             return Double.NaN;
         } else {
@@ -280,8 +294,9 @@ final class MathX {
 
     @Internal
     public static double scaledRoundUsingBigDecimal(double xval, double multiplier, RoundingMode mode) {
-        BigDecimal multiplierDecimal = BigDecimal.valueOf(multiplier);
-        BigDecimal bd = BigDecimal.valueOf(xval).divide(multiplierDecimal, MathContext.DECIMAL128)
+        // both on Excel's 15-digit view: FLOOR(0.9, 0.1*3) is 0.9, not 0.6 (0.9/0.30000000000000004 < 3)
+        BigDecimal multiplierDecimal = ExcelArithmetic.toBigDecimal(multiplier);
+        BigDecimal bd = ExcelArithmetic.toBigDecimal(xval).divide(multiplierDecimal, MathContext.DECIMAL128)
                 .setScale(0, mode)
                 .multiply(multiplierDecimal);
         return bd.doubleValue();
@@ -317,7 +332,19 @@ final class MathX {
     }
 
     public static double factorial(double d) {
-        return factorial(MathUtil.safeDoubleToInt(d));
+        if (Double.isNaN(d)) {
+            return Double.NaN;
+        }
+        // Excel truncates a non-integer argument, on its 15-digit view
+        double n = ExcelArithmetic.truncate(d);
+        if (n >= 171) {
+            // beyond Double.MAX_VALUE (and possibly beyond the int range)
+            return Double.POSITIVE_INFINITY;
+        }
+        if (n < 0) {
+            return Double.NaN;
+        }
+        return factorial((int) n);
     }
 
 
@@ -340,12 +367,20 @@ final class MathX {
         if (d == 0) {
             return Double.NaN;
         }
-        else if (sign(n) == sign(d)) {
+        // Excel defines MOD(n, d) = n - d*INT(n/d), with INT acting on the 15-digit view
+        double q = n / d;
+        if (Math.abs(q) < 0x1p52) {
+            double r = ExcelArithmetic.approxSub(n, Math.floor(ExcelArithmetic.approxValue(q)) * d);
+            if (!Double.isInfinite(r) && !Double.isNaN(r)) {
+                return r;
+            }
+        }
+        // the quotient is beyond the integer precision of a double, so Excel's formula cannot
+        // produce a meaningful remainder (Excel itself gives #NUM! here) - use the exact one
+        if (sign(n) == sign(d)) {
             return n % d;
         }
-        else {
-            return ((n % d) + d) % d;
-        }
+        return ((n % d) + d) % d;
     }
 
     /**

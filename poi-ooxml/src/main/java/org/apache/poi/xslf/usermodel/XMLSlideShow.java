@@ -508,18 +508,15 @@ public class XMLSlideShow extends POIXMLDocument
         removeRelation(slide);
         _presentation.getSldIdLst().removeSldId(index);
         for (POIXMLDocumentPart p : slide.getRelations()) {
-            if (p instanceof XSLFChart) {
-                XSLFChart chart = (XSLFChart) p;
+            if (p instanceof XSLFChart chart) {
                 slide.removeChartRelation(chart);
                 _charts.remove(chart);
-            } else if (p instanceof XSLFSlideLayout) {
-                XSLFSlideLayout layout = (XSLFSlideLayout) p;
+            } else if (p instanceof XSLFSlideLayout layout) {
                 slide.removeLayoutRelation(layout);
             } else if (p instanceof XSLFNotes) {
                 XSLFNotes notes = slide.removeNotes(_notesMaster);
                 removeRelation(notes);
-            } else if (p instanceof XSLFPictureData) {
-                XSLFPictureData picture = (XSLFPictureData) p;
+            } else if (p instanceof XSLFPictureData picture) {
                 removePictureRelations(slide, picture);
                 _pictures.remove(picture);
             }
@@ -534,12 +531,11 @@ public class XMLSlideShow extends POIXMLDocument
     private void removePictureRelations(XSLFSlide slide, XSLFShapeContainer container, XSLFPictureData picture) {
         for (XSLFShape shape : container.getShapes()) {
             // Find either group shapes (and recurse) ...
-            if (shape instanceof XSLFGroupShape) {
-                removePictureRelations(slide, (XSLFGroupShape)shape, picture);
+            if (shape instanceof XSLFGroupShape group) {
+                removePictureRelations(slide, group, picture);
             }
             // ... or the picture shape with this picture data and remove its relation to the picture data.
-            if (shape instanceof XSLFPictureShape) {
-                XSLFPictureShape pic = (XSLFPictureShape) shape;
+            if (shape instanceof XSLFPictureShape pic) {
                 if (pic.getPictureData() == picture) {
                     slide.removePictureRelation(pic);
                 }
@@ -734,8 +730,8 @@ public class XMLSlideShow extends POIXMLDocument
         }
         final POIXMLDocumentPart docPart = parent.getRelationPartById(blipId).getDocumentPart();
         XSLFPictureData parData;
-        if (docPart instanceof XSLFPictureData) {
-            parData = (XSLFPictureData)docPart;
+        if (docPart instanceof XSLFPictureData pd) {
+            parData = pd;
         } else {
             throw new IllegalStateException("cannot import blip " + blipId + " - its document part is not XSLFPictureData");
         }

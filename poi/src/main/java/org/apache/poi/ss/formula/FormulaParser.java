@@ -209,10 +209,10 @@ public final class FormulaParser {
     public static Area3DPxg parseStructuredReference(String tableText, FormulaParsingWorkbook workbook, int rowIndex) {
         final int sheetIndex = -1; //don't care?
         Ptg[] arr = FormulaParser.parse(tableText, workbook, FormulaType.CELL, sheetIndex, rowIndex);
-        if (arr.length != 1 || !(arr[0] instanceof Area3DPxg) ) {
+        if (arr.length != 1 || !(arr[0] instanceof Area3DPxg area) ) {
             throw new IllegalStateException("Illegal structured reference, had length: " + arr.length);
         }
-        return (Area3DPxg) arr[0];
+        return area;
     }
 
     /** Read New Character From Input Stream */
@@ -524,7 +524,7 @@ public final class FormulaParser {
                 resetPointer(colonPos);
                 if (!part1.isCell()) {
                     String prefix = "";
-                    if (sheetIden != null) {
+                    if (sheetIden != null && sheetIden.getSheetIdentifier() != null) {
                         prefix = "'" + sheetIden.getSheetIdentifier().getName() + '!';
                     }
                     throw new FormulaParseException(prefix + part1.getRep() + "' is not a proper reference.");
@@ -680,23 +680,12 @@ public final class FormulaParser {
                 break;
             }
             switch (specName) {
-                case specAll:
-                    isAllSpec = true;
-                    break;
-                case specData:
-                    isDataSpec = true;
-                    break;
-                case specHeaders:
-                    isHeadersSpec = true;
-                    break;
-                case specThisRow:
-                    isThisRowSpec = true;
-                    break;
-                case specTotals:
-                    isTotalsSpec = true;
-                    break;
-                default:
-                    throw new FormulaParseException("Unknown special quantifier " + specName);
+                case specAll -> isAllSpec = true;
+                case specData -> isDataSpec = true;
+                case specHeaders -> isHeadersSpec = true;
+                case specThisRow -> isThisRowSpec = true;
+                case specTotals -> isTotalsSpec = true;
+                default -> throw new FormulaParseException("Unknown special quantifier " + specName);
             }
             nSpecQuantifiers++;
             if (look == ','){
@@ -743,23 +732,12 @@ public final class FormulaParser {
                 String name = parseAsSpecialQuantifier();
                 if (name!=null) {
                     switch (name) {
-                        case specAll:
-                            isAllSpec = true;
-                            break;
-                        case specData:
-                            isDataSpec = true;
-                            break;
-                        case specHeaders:
-                            isHeadersSpec = true;
-                            break;
-                        case specThisRow:
-                            isThisRowSpec = true;
-                            break;
-                        case specTotals:
-                            isTotalsSpec = true;
-                            break;
-                        default:
-                            throw new FormulaParseException("Unknown special quantifier " + name);
+                        case specAll -> isAllSpec = true;
+                        case specData -> isDataSpec = true;
+                        case specHeaders -> isHeadersSpec = true;
+                        case specThisRow -> isThisRowSpec = true;
+                        case specTotals -> isTotalsSpec = true;
+                        default -> throw new FormulaParseException("Unknown special quantifier " + name);
                     }
                     nSpecQuantifiers++;
                 } else {
@@ -1364,17 +1342,16 @@ public final class FormulaParser {
                     LOGGER.atWarn().log("FormulaParser.function: Name '{}' is completely unknown in the current workbook.", name);
                     // name is probably the name of an unregistered User-Defined Function
                     switch (_book.getSpreadsheetVersion()) {
-                        case EXCEL97:
+                        case EXCEL97 -> {
                             // HSSFWorkbooks require a name to be added to Workbook defined names table
                             addName(name);
                             hName = _book.getName(name, _sheetIndex);
                             nameToken = hName.createPtg();
-                            break;
-                        case EXCEL2007:
+                        }
+                        case EXCEL2007 ->
                             // XSSFWorkbooks store formula names as strings.
                             nameToken = new NameXPxg(name);
-                            break;
-                        default:
+                        default ->
                             throw new IllegalStateException("Unexpected spreadsheet version: " + _book.getSpreadsheetVersion().name());
                     }
                 }
@@ -1590,24 +1567,26 @@ public final class FormulaParser {
     private ParseNode parseUnary(boolean isPlus) {
 
         boolean numberFollows = isDigit(look) || look=='.';
-        ParseNode factor = powerFactor();
+        // Excel gives negation higher precedence than '^': -2^2 is (-2)^2 = 4, not -(2^2).
+        // So the operand of a unary sign is a factor without '^'; the enclosing powerFactor() applies any '^'.
+        ParseNode factor = percentFactor();
 
         if (numberFollows) {
             // + or - directly next to a number is parsed with the number
 
             Ptg token = factor.getToken();
-            if (token instanceof NumberPtg) {
+            if (token instanceof NumberPtg numberPtg) {
                 if (isPlus) {
                     return factor;
                 }
-                token = new NumberPtg(-((NumberPtg)token).getValue());
+                token = new NumberPtg(-numberPtg.getValue());
                 return new ParseNode(token);
             }
-            if (token instanceof IntPtg) {
+            if (token instanceof IntPtg intPtg) {
                 if (isPlus) {
                     return factor;
                 }
-                int intVal = ((IntPtg)token).getValue();
+                int intVal = intPtg.getValue();
                 // note - cannot use IntPtg for negatives
                 token = new NumberPtg(-intVal);
                 return new ParseNode(token);
@@ -1701,10 +1680,10 @@ public final class FormulaParser {
 
     private static Double convertArrayNumber(Ptg ptg, boolean isPositive) {
         double value;
-        if (ptg instanceof IntPtg) {
-            value = ((IntPtg)ptg).getValue();
-        } else  if (ptg instanceof NumberPtg) {
-            value = ((NumberPtg)ptg).getValue();
+        if (ptg instanceof IntPtg ip) {
+            value = ip.getValue();
+        } else  if (ptg instanceof NumberPtg np) {
+            value = np.getValue();
         } else {
             throw new IllegalStateException("Unexpected ptg (" + ptg.getClass().getName() + ")");
         }
@@ -1746,7 +1725,12 @@ public final class FormulaParser {
             throw expected("Integer");
         }
 
-        return getNumberPtgFromString(number1, number2, exponent);
+        Ptg ptg = getNumberPtgFromString(number1, number2, exponent);
+        if (ptg instanceof NumberPtg np && Double.isInfinite(np.getValue())) {
+            // Excel refuses to enter a formula whose literal is beyond the double range, e.g. 1E400
+            throw new FormulaParseException("Number literal is too large: " + number1 + (number2 == null ? "" : "." + number2) + "E" + exponent);
+        }
+        return ptg;
     }
 
 
@@ -1759,7 +1743,7 @@ public final class FormulaParser {
         part1 = part1.toUpperCase(Locale.ROOT);
 
         switch(part1.charAt(0)) {
-            case 'V': {
+            case 'V' -> {
                 FormulaError fe = FormulaError.VALUE;
                 if(part1.equals(fe.name())) {
                     match('!');
@@ -1767,7 +1751,7 @@ public final class FormulaParser {
                 }
                 throw expected(fe.getString());
             }
-            case 'R': {
+            case 'R' -> {
                 FormulaError fe = FormulaError.REF;
                 if(part1.equals(fe.name())) {
                     match('!');
@@ -1775,7 +1759,7 @@ public final class FormulaParser {
                 }
                 throw expected(fe.getString());
             }
-            case 'D': {
+            case 'D' -> {
                 FormulaError fe = FormulaError.DIV0;
                 if(part1.equals("DIV")) {
                     match('/');
@@ -1785,7 +1769,7 @@ public final class FormulaParser {
                 }
                 throw expected(fe.getString());
             }
-            case 'N': {
+            case 'N' -> {
                 FormulaError fe = FormulaError.NAME;
                 if(part1.equals(fe.name())) {
                     // only one that ends in '?'
@@ -1902,16 +1886,17 @@ public final class FormulaParser {
             skipWhite();
             Ptg operator;
             switch(look) {
-                case '*':
+                case '*' -> {
                     match('*');
                     operator = MultiplyPtg.instance;
-                    break;
-                case '/':
+                }
+                case '/' -> {
                     match('/');
                     operator = DividePtg.instance;
-                    break;
-                default:
+                }
+                default -> {
                     return result; // finished with Term
+                }
             }
             ParseNode other = powerFactor();
             result = new ParseNode(operator, result, other);
@@ -2031,16 +2016,17 @@ public final class FormulaParser {
             skipWhite();
             Ptg operator;
             switch(look) {
-                case '+':
+                case '+' -> {
                     match('+');
                     operator = AddPtg.instance;
-                    break;
-                case '-':
+                }
+                case '-' -> {
                     match('-');
                     operator = SubtractPtg.instance;
-                    break;
-                default:
+                }
+                default -> {
                     return result; // finished with additive expression
+                }
             }
             ParseNode other = Term();
             result = new ParseNode(operator, result, other);

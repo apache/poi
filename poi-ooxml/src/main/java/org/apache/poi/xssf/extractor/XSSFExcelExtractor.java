@@ -169,13 +169,15 @@ public class XSSFExcelExtractor
                     }
 
                     // Output the comment, if requested and exists
-                    Comment comment = cell.getCellComment();
-                    if(includeCellComments && comment != null) {
-                        // Replace any newlines with spaces, otherwise it
-                        //  breaks the output
-                        String commentText = comment.getString().getString().replace('\n', ' ');
-                        checkMaxTextSize(text, commentText);
-                        text.append(" Comment by ").append(comment.getAuthor()).append(": ").append(commentText);
+                    if(includeCellComments) {
+                        Comment comment = cell.getCellComment();
+                        if(comment != null) {
+                            // Replace any newlines with spaces, otherwise it
+                            //  breaks the output
+                            String commentText = comment.getString().getString().replace('\n', ' ');
+                            checkMaxTextSize(text, commentText);
+                            text.append(" Comment by ").append(comment.getAuthor()).append(": ").append(commentText);
+                        }
                     }
 
                     if(ri.hasNext()) {

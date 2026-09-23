@@ -208,4 +208,10 @@ class TestFormulaParser {
     void testUnicodeSheetName() {
         checkFormula("'Sheet\u30FB1'!A1:A6");
     }
+
+    @Test
+    void testNPE() {
+        assertThrows(FormulaParseException.class,
+                () -> checkFormula("r:[]!d:F  "));
+    }
 }

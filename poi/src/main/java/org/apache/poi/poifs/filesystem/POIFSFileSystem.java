@@ -726,7 +726,7 @@ public class POIFSFileSystem extends BlockStore
      * is supported.
      */
     public boolean isInPlaceWriteable() {
-        return (_data instanceof FileBackedDataSource) && ((FileBackedDataSource) _data).isWriteable();
+        return (_data instanceof FileBackedDataSource fbds) && fbds.isWriteable();
     }
 
     /**
@@ -737,13 +737,13 @@ public class POIFSFileSystem extends BlockStore
      * @throws IOException thrown on errors writing to the stream
      */
     public void writeFilesystem() throws IOException {
-        if (!(_data instanceof FileBackedDataSource)) {
+        if (!(_data instanceof FileBackedDataSource fbds)) {
             throw new IllegalArgumentException(
                     "POIFS opened from an inputstream, so writeFilesystem() may " +
                             "not be called. Use writeFilesystem(OutputStream) instead"
             );
         }
-        if (!((FileBackedDataSource) _data).isWriteable()) {
+        if (!fbds.isWriteable()) {
             throw new IllegalArgumentException(
                     "POIFS opened in read only mode, so writeFilesystem() may " +
                             "not be called. Open the FileSystem in read-write mode first"
@@ -987,8 +987,8 @@ public class POIFSFileSystem extends BlockStore
 
     @Override
     protected void releaseBuffer(ByteBuffer buffer) {
-        if (_data instanceof FileBackedDataSource) {
-            ((FileBackedDataSource)_data).releaseBuffer(buffer);
+        if (_data instanceof FileBackedDataSource fbds) {
+            fbds.releaseBuffer(buffer);
         }
     }
 

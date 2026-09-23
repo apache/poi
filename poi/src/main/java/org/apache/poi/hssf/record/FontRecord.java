@@ -485,7 +485,7 @@ public final class FontRecord extends StandardRecord {
     }
 
     public boolean equals(Object o) {
-        return (o instanceof FontRecord) && sameProperties((FontRecord) o);
+        return (o instanceof FontRecord other) && sameProperties(other);
     }
 
     @Override

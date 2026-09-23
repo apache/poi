@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel.helpers;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
@@ -30,6 +31,10 @@ import org.apache.poi.ss.usermodel.helpers.BaseRowColShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.*;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTOneCellAnchor;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 import java.util.ArrayList;
@@ -113,8 +118,11 @@ import static org.apache.logging.log4j.util.Unbox.box;
                         if(f.getT() == STCellFormulaType.SHARED){
                             int si = Math.toIntExact(f.getSi());
                             CTCellFormula sf = sheet.getSharedFormula(si);
-                            sf.setStringValue(shiftedFormula);
-                            updateRefInCTCellFormula(row, formulaShifter, sf);
+                            // the sheet holds a detached copy of the master formula
+                            if (sf != null && sf != f) {
+                                sf.setStringValue(shiftedFormula);
+                                updateRefInCTCellFormula(row, formulaShifter, sf);
+                            }
                         }
                     }
 
@@ -243,5 +251,63 @@ import static org.apache.logging.log4j.util.Unbox.box;
         }
     }
 
+    /**
+     * Shift the anchors of the shapes (charts, pictures, ...) in the sheet's drawing along with the rows
+     * they are anchored to. A shape is moved when its top-left anchor row is within {@code [startRow, endRow]};
+     * the whole shape is moved so it keeps its size (Excel's "move but don't size with cells").
+     * Shapes with an absolute anchor are not moved.
+     */
+    /*package*/ static void shiftDrawingAnchorRows(XSSFSheet sheet, int startRow, int endRow, int n) {
+        shiftDrawingAnchors(sheet, startRow, endRow, n, true);
+    }
 
+    /**
+     * Shift the anchors of the shapes (charts, pictures, ...) in the sheet's drawing along with the columns
+     * they are anchored to. A shape is moved when its top-left anchor column is within
+     * {@code [startColumn, endColumn]}; the whole shape is moved so it keeps its size.
+     * Shapes with an absolute anchor are not moved.
+     */
+    /*package*/ static void shiftDrawingAnchorColumns(XSSFSheet sheet, int startColumn, int endColumn, int n) {
+        shiftDrawingAnchors(sheet, startColumn, endColumn, n, false);
+    }
+
+    private static void shiftDrawingAnchors(XSSFSheet sheet, int start, int end, int n, boolean rows) {
+        if (n == 0) {
+            return;
+        }
+        XSSFDrawing drawing = sheet.getDrawingPatriarch();
+        if (drawing == null) {
+            return;
+        }
+        CTDrawing ctDrawing = drawing.getCTDrawing();
+        for (CTTwoCellAnchor anchor : ctDrawing.getTwoCellAnchorList()) {
+            if (isInRange(anchor.getFrom(), start, end, rows)) {
+                shiftMarker(anchor.getFrom(), n, rows);
+                shiftMarker(anchor.getTo(), n, rows);
+            }
+        }
+        for (CTOneCellAnchor anchor : ctDrawing.getOneCellAnchorList()) {
+            if (isInRange(anchor.getFrom(), start, end, rows)) {
+                shiftMarker(anchor.getFrom(), n, rows);
+            }
+        }
+        // absolute anchors are positioned in EMUs, not cells, so they don't move with rows or columns
+    }
+
+    private static boolean isInRange(CTMarker marker, int start, int end, boolean rows) {
+        int idx = rows ? marker.getRow() : marker.getCol();
+        return idx >= start && idx <= end;
+    }
+
+    private static void shiftMarker(CTMarker marker, int n, boolean rows) {
+        if (rows) {
+            marker.setRow(clip(marker.getRow() + n, SpreadsheetVersion.EXCEL2007.getLastRowIndex()));
+        } else {
+            marker.setCol(clip(marker.getCol() + n, SpreadsheetVersion.EXCEL2007.getLastColumnIndex()));
+        }
+    }
+
+    private static int clip(int idx, int max) {
+        return Math.min(Math.max(0, idx), max);
+    }
 }

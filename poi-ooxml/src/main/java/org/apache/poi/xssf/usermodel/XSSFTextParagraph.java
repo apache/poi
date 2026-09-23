@@ -48,17 +48,14 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         _runs = new ArrayList<>();
 
         for(XmlObject ch : _p.selectPath("*")){
-            if(ch instanceof CTRegularTextRun){
-                CTRegularTextRun r = (CTRegularTextRun)ch;
+            if(ch instanceof CTRegularTextRun r){
                 _runs.add(new XSSFTextRun(r, this));
-            } else if (ch instanceof CTTextLineBreak){
-                CTTextLineBreak br = (CTTextLineBreak)ch;
+            } else if (ch instanceof CTTextLineBreak br){
                 CTRegularTextRun r = CTRegularTextRun.Factory.newInstance();
                 r.setRPr(br.getRPr());
                 r.setT("\n");
                 _runs.add(new XSSFTextRun(r, this));
-            } else if (ch instanceof CTTextField){
-                CTTextField f = (CTTextField)ch;
+            } else if (ch instanceof CTTextField f){
                 CTRegularTextRun r = CTRegularTextRun.Factory.newInstance();
                 r.setRPr(f.getRPr());
                 r.setT(f.getT());

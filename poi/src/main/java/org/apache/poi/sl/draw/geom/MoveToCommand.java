@@ -63,8 +63,7 @@ public final class MoveToCommand implements MoveToCommandIf {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MoveToCommand)) return false;
-        MoveToCommand that = (MoveToCommand) o;
+        if (!(o instanceof MoveToCommand that)) return false;
         return Objects.equals(pt, that.pt);
     }
 

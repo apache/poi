@@ -24,9 +24,6 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-
 /**
  * Implementation for Excel DOLLARFR() function.
  * <p>
@@ -55,28 +52,17 @@ public final class DollarFr extends Fixed2ArgFunction implements FreeRefFunction
             }
             int fractionLength = String.valueOf(fraction).length();
 
-            boolean negative = false;
-            long valueLong = number1.longValue();
-            if (valueLong < 0) {
-                negative = true;
-                valueLong = -valueLong;
-                number1 = -number1;
-            }
-
-            double valueFractional = number1 - valueLong;
+            boolean negative = number1 < 0;
+            double absolute = Math.abs(number1);
+            double valueInteger = Math.floor(absolute);
+            double valueFractional = absolute - valueInteger;
             if (valueFractional == 0.0) {
-                return new NumberEval(valueLong);
+                return new NumberEval(negative ? -valueInteger : valueInteger);
             }
 
-            BigDecimal calc = BigDecimal.valueOf(valueFractional).multiply(BigDecimal.valueOf(fraction))
-                    .divide(BigDecimal.valueOf(Math.pow(10, fractionLength)), MathContext.DECIMAL128);
-
-            BigDecimal result = calc.add(BigDecimal.valueOf(valueLong));
-            if (negative) {
-                result = result.multiply(BigDecimal.valueOf(-1));
-            }
-
-            return new NumberEval(result.doubleValue());
+            double result = valueInteger + valueFractional * fraction / Math.pow(10, fractionLength);
+            NumericFunction.checkValue(result);
+            return new NumberEval(negative ? -result : result);
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }

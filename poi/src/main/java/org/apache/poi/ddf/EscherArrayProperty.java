@@ -23,7 +23,6 @@ import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.poi.util.GenericRecordUtil;
@@ -261,7 +260,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
             "numElements", this::getNumberOfElementsInArray,
             "numElementsInMemory", this::getNumberOfElementsInMemory,
             "sizeOfElements", this::getSizeOfElements,
-            "elements", () -> StreamSupport.stream(spliterator(), false).collect(Collectors.toList())
+            "elements", () -> StreamSupport.stream(spliterator(), false).toList()
         );
     }
 }

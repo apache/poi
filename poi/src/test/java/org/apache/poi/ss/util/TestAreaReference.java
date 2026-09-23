@@ -20,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -69,18 +71,30 @@ class TestAreaReference {
     }
 
     @Test
-    void test62810() {
-        final Workbook wb = new HSSFWorkbook();
-        final Sheet sheet = wb.createSheet("Ctor test");
-        final String sheetName = sheet.getSheetName();
-        final CellReference topLeft = new CellReference(sheetName, 1, 1, true, true);
-        final CellReference bottomRight = new CellReference(sheetName, 5, 10, true, true);
-        final AreaReference goodAreaRef = new AreaReference(topLeft, bottomRight, SpreadsheetVersion.EXCEL2007);
-        final AreaReference badAreaRef = new AreaReference(bottomRight, topLeft, SpreadsheetVersion.EXCEL2007);
+    void test62810() throws IOException {
+        try (final Workbook wb = new HSSFWorkbook()) {
+            final Sheet sheet = wb.createSheet("Ctor test");
+            final String sheetName = sheet.getSheetName();
+            final CellReference topLeft = new CellReference(sheetName, 1, 1, true, true);
+            final CellReference bottomRight = new CellReference(sheetName, 5, 10, true, true);
+            final AreaReference goodAreaRef = new AreaReference(topLeft, bottomRight, SpreadsheetVersion.EXCEL2007);
+            final AreaReference badAreaRef = new AreaReference(bottomRight, topLeft, SpreadsheetVersion.EXCEL2007);
 
-        assertEquals("'Ctor test'!$B$2", topLeft.formatAsString());
-        assertEquals("'Ctor test'!$K$6", bottomRight.formatAsString());
-        assertEquals("'Ctor test'!$B$2:$K$6", goodAreaRef.formatAsString());
-        assertEquals("'Ctor test'!$B$2:$K$6", badAreaRef.formatAsString());
+            assertEquals("'Ctor test'!$B$2", topLeft.formatAsString());
+            assertEquals("'Ctor test'!$K$6", bottomRight.formatAsString());
+            assertEquals("'Ctor test'!$B$2:$K$6", goodAreaRef.formatAsString());
+            assertEquals("'Ctor test'!$B$2:$K$6", badAreaRef.formatAsString());
+        }
+    }
+
+    @Test
+    void test70008() {
+        AreaReference oldStyle = new AreaReference("A:B", SpreadsheetVersion.EXCEL97);
+        assertEquals(SpreadsheetVersion.EXCEL97.getLastRowIndex(), oldStyle.getLastCell().getRow());
+        assertTrue(oldStyle.isWholeColumnReference());
+
+        AreaReference newStyle = new AreaReference("A:B", SpreadsheetVersion.EXCEL2007);
+        assertEquals(SpreadsheetVersion.EXCEL2007.getLastRowIndex(), newStyle.getLastCell().getRow());
+        assertTrue(newStyle.isWholeColumnReference());
     }
 }

@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.apache.poi.ss.util.Utils.assertDoubleAndDisplay;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -69,6 +70,9 @@ final class TestStandardize {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             assertDouble(fe, cell, "STANDARDIZE(A2,A3,A4)", 1.33333333, 0.000001);
+            // plain IEEE 754 arithmetic, which Excel displays with 15 significant digits
+            assertDoubleAndDisplay(fe, cell, "STANDARDIZE(A2,A3,A4)", 2 / 1.5, "1.33333333333333");
+            assertDoubleAndDisplay(fe, cell, "STANDARDIZE(0.3,0.1,0.1)", (0.3 - 0.1) / 0.1, "2");
         }
     }
 

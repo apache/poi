@@ -235,16 +235,16 @@ public final class Chunks implements ChunkGroupWithProperties {
             } else if (prop == MAPIProperty.BODY) {
                 textBodyChunk = (StringChunk) chunk;
             } else if (prop == MAPIProperty.BODY_HTML) {
-                if (chunk instanceof StringChunk) {
-                    htmlBodyChunkString = (StringChunk) chunk;
+                if (chunk instanceof StringChunk stringChunk) {
+                    htmlBodyChunkString = stringChunk;
                 }
-                if (chunk instanceof ByteChunk) {
-                    htmlBodyChunkBinary = (ByteChunk) chunk;
+                if (chunk instanceof ByteChunk byteChunk) {
+                    htmlBodyChunkBinary = byteChunk;
                 }
             } else if (prop == MAPIProperty.RTF_COMPRESSED) {
                 rtfBodyChunk = (ByteChunk) chunk;
-            } else if (chunk instanceof MessagePropertiesChunk) {
-                messageProperties = (MessagePropertiesChunk) chunk;
+            } else if (chunk instanceof MessagePropertiesChunk propertiesChunk) {
+                messageProperties = propertiesChunk;
             }
 
             // And add to the main list

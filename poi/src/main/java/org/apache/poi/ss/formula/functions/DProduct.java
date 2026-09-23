@@ -31,11 +31,11 @@ public final class DProduct implements IDStarAlgorithm {
 
     @Override
     public boolean processMatch(ValueEval eval) {
-        if (eval instanceof NumericValueEval) {
+        if (eval instanceof NumericValueEval num) {
             if (initDone) {
-                product *= ((NumericValueEval) eval).getNumberValue();
+                product *= num.getNumberValue();
             } else {
-                product = ((NumericValueEval) eval).getNumberValue();
+                product = num.getNumberValue();
                 initDone = true;
             }
         }

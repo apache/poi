@@ -146,18 +146,18 @@ public class XSLFColor {
         try (XmlCursor cur = obj.newCursor()) {
             XmlObject ch;
             for (int idx=0; color == null && (ch = nextObject(obj, cur, idx)) != null; idx++) {
-                if (ch instanceof CTHslColor) {
-                    color = toColor((CTHslColor)ch);
-                } else if (ch instanceof CTPresetColor) {
-                    color = toColor((CTPresetColor)ch);
-                } else if (ch instanceof CTSchemeColor) {
-                    color = toColor((CTSchemeColor)ch, theme);
-                } else if (ch instanceof CTScRgbColor) {
-                    color = toColor((CTScRgbColor)ch);
-                } else if (ch instanceof CTSRgbColor) {
-                    color = toColor((CTSRgbColor)ch);
-                } else if (ch instanceof CTSystemColor) {
-                    color = toColor((CTSystemColor)ch);
+                if (ch instanceof CTHslColor hsl) {
+                    color = toColor(hsl);
+                } else if (ch instanceof CTPresetColor prst) {
+                    color = toColor(prst);
+                } else if (ch instanceof CTSchemeColor scheme) {
+                    color = toColor(scheme, theme);
+                } else if (ch instanceof CTScRgbColor scrgb) {
+                    color = toColor(scrgb);
+                } else if (ch instanceof CTSRgbColor srgb) {
+                    color = toColor(srgb);
+                } else if (ch instanceof CTSystemColor sys) {
+                    color = toColor(sys);
                 } else if (!(ch instanceof CTFontReference) && idx > 0) {
                     throw new IllegalArgumentException("Unexpected color choice: " + ch.getClass());
                 }
@@ -181,11 +181,10 @@ public class XSLFColor {
      */
     @Internal
     protected void setColor(Color color) {
-        if (!(_xmlObject instanceof CTSolidColorFillProperties)) {
+        if (!(_xmlObject instanceof CTSolidColorFillProperties fill)) {
             LOGGER.atError().log("XSLFColor.setColor currently only supports CTSolidColorFillProperties");
             return;
         }
-        CTSolidColorFillProperties fill = (CTSolidColorFillProperties)_xmlObject;
         if (fill.isSetSrgbClr()) {
             fill.unsetSrgbClr();
         }

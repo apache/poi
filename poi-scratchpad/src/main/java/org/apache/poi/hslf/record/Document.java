@@ -131,10 +131,10 @@ public final class Document extends PositionDependentRecordContainer
         _children = Record.findChildRecords(source,start+8,len-8);
 
         // Our first one should be a document atom
-        if(! (_children[0] instanceof DocumentAtom)) {
+        if(! (_children[0] instanceof DocumentAtom docAtom)) {
             throw new IllegalStateException("The first child of a Document must be a DocumentAtom");
         }
-        documentAtom = (DocumentAtom)_children[0];
+        documentAtom = docAtom;
 
         // Find how many SlideListWithTexts we have
         // Also, grab the Environment and PPDrawing records
@@ -144,14 +144,14 @@ public final class Document extends PositionDependentRecordContainer
             if(_children[i] instanceof SlideListWithText) {
                 slwtcount++;
             }
-            if(_children[i] instanceof Environment) {
-                environment = (Environment)_children[i];
+            if(_children[i] instanceof Environment env) {
+                environment = env;
             }
-            if(_children[i] instanceof PPDrawingGroup) {
-                ppDrawing = (PPDrawingGroup)_children[i];
+            if(_children[i] instanceof PPDrawingGroup group) {
+                ppDrawing = group;
             }
-            if(_children[i] instanceof ExObjList) {
-                exObjList = (ExObjList)_children[i];
+            if(_children[i] instanceof ExObjList list) {
+                exObjList = list;
             }
         }
 
@@ -169,8 +169,8 @@ public final class Document extends PositionDependentRecordContainer
         slwts = new SlideListWithText[slwtcount];
         slwtcount = 0;
         for(int i=1; i<_children.length; i++) {
-            if(_children[i] instanceof SlideListWithText) {
-                slwts[slwtcount] = (SlideListWithText)_children[i];
+            if(_children[i] instanceof SlideListWithText slwt) {
+                slwts[slwtcount] = slwt;
                 slwtcount++;
             }
         }

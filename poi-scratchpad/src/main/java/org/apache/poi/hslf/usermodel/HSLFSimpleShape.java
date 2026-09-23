@@ -592,12 +592,12 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         OEPlaceholderAtom oep = null;
         RoundTripHFPlaceholder12 rtp = null;
         for (org.apache.poi.hslf.record.Record r : clientData.getHSLFChildRecords()) {
-            if (r instanceof OEPlaceholderAtom) {
-                oep = (OEPlaceholderAtom) r;
+            if (r instanceof OEPlaceholderAtom atom) {
+                oep = atom;
                 break;
             }
-            if (r instanceof RoundTripHFPlaceholder12) {
-                rtp = (RoundTripHFPlaceholder12) r;
+            if (r instanceof RoundTripHFPlaceholder12 hfPlaceholder) {
+                rtp = hfPlaceholder;
                 break;
             }
         }
@@ -612,8 +612,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         final byte phId = getPlaceholderId(getSheet(), placeholder);
 
         switch (placeholder) {
-            case HEADER:
-            case FOOTER:
+            case HEADER, FOOTER -> {
                 if (rtp == null) {
                     rtp = new RoundTripHFPlaceholder12();
                     rtp.setPlaceholderId(phId);
@@ -622,15 +621,15 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
                 if (oep != null) {
                     clientData.removeChild(OEPlaceholderAtom.class);
                 }
-                break;
-            default:
+            }
+            default -> {
                 if (rtp != null) {
                     clientData.removeChild(RoundTripHFPlaceholder12.class);
                 }
                 if (oep == null) {
                     oep = createOEPlaceholderAtom(clientData, phId);
                 }
-                break;
+            }
         }
     }
 
@@ -644,16 +643,16 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
         // TODO: handle PaintStyle
         for (Object st : styles) {
-            if (st instanceof Number) {
-                setLineWidth(((Number)st).doubleValue());
-            } else if (st instanceof LineCap) {
-                setLineCap((LineCap)st);
-            } else if (st instanceof LineDash) {
-                setLineDash((LineDash)st);
-            } else if (st instanceof LineCompound) {
-                setLineCompound((LineCompound)st);
-            } else if (st instanceof Color) {
-                setLineColor((Color)st);
+            if (st instanceof Number number) {
+                setLineWidth(number.doubleValue());
+            } else if (st instanceof LineCap cap) {
+                setLineCap(cap);
+            } else if (st instanceof LineDash dash) {
+                setLineDash(dash);
+            } else if (st instanceof LineCompound compound) {
+                setLineCompound(compound);
+            } else if (st instanceof Color color) {
+                setLineColor(color);
             }
         }
     }

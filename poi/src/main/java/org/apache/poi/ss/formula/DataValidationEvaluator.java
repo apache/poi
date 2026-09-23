@@ -204,8 +204,7 @@ public class DataValidationEvaluator {
             ValueEval eval = context.getEvaluator().getWorkbookEvaluator().evaluateList(formula, context.getTarget(), context.getRegion());
             // formula is a StringEval if the validation is by a fixed list.  Use the explicit list later.
             // there is no way from the model to tell if the list is fixed values or formula based.
-            if (eval instanceof TwoDEval) {
-                TwoDEval twod = (TwoDEval) eval;
+            if (eval instanceof TwoDEval twod) {
                 for (int i=0; i < twod.getHeight(); i++) {
                     final ValueEval cellValue = twod.getValue(i,  0);
                     values.add(cellValue);
@@ -296,25 +295,25 @@ public class DataValidationEvaluator {
 
                 // compare cell value to each item
                 for (ValueEval listVal : valueList) {
-                    ValueEval comp = listVal instanceof RefEval ? ((RefEval) listVal).getInnerValueEval(context.getSheetIndex()) : listVal;
+                    ValueEval comp = listVal instanceof RefEval re ? re.getInnerValueEval(context.getSheetIndex()) : listVal;
 
                     // any value is valid if the list contains a blank value per Excel help
                     if (comp instanceof BlankEval) return true;
                     if (comp instanceof ErrorEval) continue; // nothing to check
-                    if (comp instanceof BoolEval) {
-                        if (isType(cell, CellType.BOOLEAN) && ((BoolEval) comp).getBooleanValue() == cell.getBooleanCellValue() ) {
+                    if (comp instanceof BoolEval be) {
+                        if (isType(cell, CellType.BOOLEAN) && be.getBooleanValue() == cell.getBooleanCellValue() ) {
                             return true;
                         } else {
                             continue; // check the rest
                         }
                     }
-                    if (comp instanceof NumberEval) {
+                    if (comp instanceof NumberEval ne) {
                         // could this have trouble with double precision/rounding errors and date/time values?
                         // do we need to allow a "close enough" double fractional range?
                         // I see 17 digits after the decimal separator in XSSF files, and for time values,
                         // there are sometimes discrepancies in the final decimal place.
                         // I don't have a validation test case yet though. - GW
-                        if (isType(cell, CellType.NUMERIC) && ((NumberEval) comp).getNumberValue() == cell.getNumericCellValue()) {
+                        if (isType(cell, CellType.NUMERIC) && ne.getNumberValue() == cell.getNumericCellValue()) {
                             return true;
                         } else {
                             continue; // check the rest
@@ -352,19 +351,19 @@ public class DataValidationEvaluator {
             public boolean isValidValue(Cell cell, DataValidationContext context) {
                 // unwrapped single value
                 ValueEval comp = context.getEvaluator().getWorkbookEvaluator().evaluate(context.getFormula1(), context.getTarget(), context.getRegion());
-                if (comp instanceof RefEval) {
-                    comp = ((RefEval) comp).getInnerValueEval(((RefEval) comp).getFirstSheetIndex());
+                if (comp instanceof RefEval re) {
+                    comp = re.getInnerValueEval(re.getFirstSheetIndex());
                 }
 
                 if (comp instanceof BlankEval) return true;
                 if (comp instanceof ErrorEval) return false;
-                if (comp instanceof BoolEval) {
-                    return ((BoolEval) comp).getBooleanValue();
+                if (comp instanceof BoolEval be) {
+                    return be.getBooleanValue();
                 }
                 // empirically tested in Excel - 0=false, any other number = true/valid
                 // see test file DataValidationEvaluations.xlsx
-                if (comp instanceof NumberEval) {
-                    return ((NumberEval) comp).getNumberValue() != 0;
+                if (comp instanceof NumberEval ne) {
+                    return ne.getNumberValue() != 0;
                 }
                 return false; // anything else is false, such as text
             }

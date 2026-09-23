@@ -686,8 +686,8 @@ public class POIXMLDocumentPart {
                         }
                         //here we are checking if part is embedded and excel then set it to chart class
                         //so that at the time to writing we can also write updated embedded part
-                        if (this instanceof XDDFChart && childPart instanceof XSSFWorkbook) {
-                            ((XDDFChart) this).setWorkbook((XSSFWorkbook) childPart);
+                        if (this instanceof XDDFChart chart && childPart instanceof XSSFWorkbook workbook) {
+                            chart.setWorkbook(workbook);
                         }
                         childPart.parent = this;
                         // already add child to context, so other children can reference it

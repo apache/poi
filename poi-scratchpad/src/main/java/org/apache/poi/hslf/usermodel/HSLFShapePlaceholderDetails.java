@@ -241,8 +241,8 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
 
     private void updatePlaceholderAtom(final Placeholder placeholder, final boolean create) {
         localDateTime = null;
-        if (shape instanceof HSLFTextBox) {
-            EscherTextboxWrapper txtBox = ((HSLFTextBox)shape).getEscherTextboxWrapper();
+        if (shape instanceof HSLFTextBox textBox) {
+            EscherTextboxWrapper txtBox = textBox.getEscherTextboxWrapper();
             if (txtBox != null) {
                 localDateTime = (DateTimeMCAtom)txtBox.findFirstOfType(RecordTypes.DateTimeMCAtom.typeID);
             }
@@ -259,11 +259,11 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
         }
 
         for (org.apache.poi.hslf.record.Record r : clientData.getHSLFChildRecords()) {
-            if (r instanceof OEPlaceholderAtom) {
-                oePlaceholderAtom = (OEPlaceholderAtom)r;
-            } else if (r instanceof RoundTripHFPlaceholder12) {
+            if (r instanceof OEPlaceholderAtom atom) {
+                oePlaceholderAtom = atom;
+            } else if (r instanceof RoundTripHFPlaceholder12 hfPlaceholder) {
                 //special case for files saved in Office 2007
-                roundTripHFPlaceholder12 = (RoundTripHFPlaceholder12)r;
+                roundTripHFPlaceholder12 = hfPlaceholder;
             }
         }
 

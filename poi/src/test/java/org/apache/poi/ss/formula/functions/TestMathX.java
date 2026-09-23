@@ -20,6 +20,7 @@
  */
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.formula.functions.XYNumericFunction.Accumulator;
@@ -554,6 +555,24 @@ public class TestMathX extends BaseTestNumeric {
     }
 
     @Test
+    void testFactorialDouble() {
+        // assertEquals rather than assertDouble: the latter does not really check NaN
+        assertEquals(1, MathX.factorial(0.0));
+        assertEquals(1, MathX.factorial(0.9));
+        assertEquals(1, MathX.factorial(-0.9));
+        assertEquals(120, MathX.factorial(5.5));
+        assertEquals(7.257415615307994E306, MathX.factorial(170.9));
+        assertEquals(Double.NaN, MathX.factorial(-1.0));
+        assertEquals(Double.NaN, MathX.factorial(Double.NaN));
+        assertEquals(Double.POSITIVE_INFINITY, MathX.factorial(171.0));
+        // beyond the int range: no IllegalArgumentException
+        assertEquals(Double.POSITIVE_INFINITY, MathX.factorial(1E10));
+        assertEquals(Double.POSITIVE_INFINITY, MathX.factorial(Double.POSITIVE_INFINITY));
+        assertEquals(Double.NaN, MathX.factorial(-1E10));
+        assertEquals(Double.NaN, MathX.factorial(Double.NEGATIVE_INFINITY));
+    }
+
+    @Test
     void testSumx2my2() {
         double[] xarr;
         double[] yarr;
@@ -1027,5 +1046,31 @@ public class TestMathX extends BaseTestNumeric {
         d = -123;
         s = 10;
         assertDouble("floor ", -130, MathX.floor(d, s));
+    }
+
+    @Test
+    void testModIsExcelsDefinition() {
+        // MOD(n, d) = n - d*INT(n/d)
+        assertDouble(1.5, MathX.mod(5.5, 2));
+        assertDouble(0.5, MathX.mod(-5.5, 2));
+        assertDouble(-0.5, MathX.mod(5.5, -2));
+        assertDouble(-1.5, MathX.mod(-5.5, -2));
+        assertDouble(0.0, MathX.mod(6, 3));
+        assertDouble(0.0, MathX.mod(-6, 3));
+        assertDouble(0.0, MathX.mod(1, 0.1));
+        assertDouble(10 - 3 * 3.3, MathX.mod(10, 3.3));
+        // INT acts on the 15-digit view: 0.7/0.1 is 6.999999999999999 in binary, 7 to Excel
+        assertDouble(0.0, MathX.mod(0.7, 0.1));
+        assertDouble(0.0, MathX.mod(880000000 * 0.00849, 3));
+        assertDouble(0.0, MathX.mod(0.3 - 0.1 - 0.1, 0.1));
+        // and the subtraction cancels to exactly zero like Excel
+        assertDouble(0.0, MathX.mod(0.1 + 0.2, 0.3));
+        assertDouble(0.0, MathX.mod(0.1 * 3, 0.1));
+        // very large quotients overflow Excel's formula: fall back to the exact remainder
+        assertDouble(1.0, MathX.mod(1e300, 7));
+        assertDouble(6.0, MathX.mod(-1e300, 7));
+        assertDouble(-6.0, MathX.mod(1e300, -7));
+        assertDouble(-1.0, MathX.mod(-1e300, -7));
+        assertDouble(0.0, MathX.mod(Double.MAX_VALUE, 1));
     }
 }

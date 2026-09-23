@@ -129,8 +129,7 @@ final class TextJoinFunction implements FreeRefFunction {
     //this is why lastRowOnly is supported
     private List<ValueEval> getValues(ValueEval eval, int srcRowIndex, int srcColumnIndex,
                                       boolean lastRowOnly) throws EvaluationException {
-        if (eval instanceof AreaEval) {
-            AreaEval ae = (AreaEval)eval;
+        if (eval instanceof AreaEval ae) {
             List<ValueEval> list = new ArrayList<>();
             int startRow = lastRowOnly ? ae.getLastRow() : ae.getFirstRow();
             for (int r = startRow; r <= ae.getLastRow(); r++) {

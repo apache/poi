@@ -376,8 +376,8 @@ public final class InternalSheet {
     public InternalSheet cloneSheet() {
         List<Record> clonedRecords = new ArrayList<>(_records.size());
         for (RecordBase rb : _records) {
-            if (rb instanceof RecordAggregate) {
-                ((RecordAggregate) rb).visitContainedRecords(new RecordCloner(clonedRecords));
+            if (rb instanceof RecordAggregate agg) {
+                agg.visitContainedRecords(new RecordCloner(clonedRecords));
                 continue;
             }
             if (rb instanceof EscherAggregate) {
@@ -558,11 +558,10 @@ public final class InternalSheet {
         for (int k = 0; k < _records.size(); k++) {
             RecordBase recordBase = _records.get(k);
 
-            if (recordBase instanceof RecordAggregate) {
-                RecordAggregate agg = (RecordAggregate) recordBase;
+            if (recordBase instanceof RecordAggregate agg) {
                 agg.visitContainedRecords(ptv);
-            } else if (recordBase instanceof Record) {
-                ptv.visitRecord((Record) recordBase);
+            } else if (recordBase instanceof Record record) {
+                ptv.visitRecord(record);
             }
 
             // If the BOF record was just serialized then add the IndexRecord
@@ -1284,10 +1283,9 @@ public final class InternalSheet {
         int max = _records.size();
         for (int i=0; i< max; i++) {
             Object rb = _records.get(i);
-            if (!(rb instanceof Record)) {
+            if (!(rb instanceof Record record)) {
                 continue;
             }
-            Record record = (Record) rb;
             if (record.getSid() == sid) {
                 return i;
             }
@@ -1656,8 +1654,8 @@ public final class InternalSheet {
         List<NoteRecord> temp = new ArrayList<>();
         for(int i=_records.size()-1; i>=0; i--) {
             RecordBase rec = _records.get(i);
-            if (rec instanceof NoteRecord) {
-                temp.add((NoteRecord) rec);
+            if (rec instanceof NoteRecord note) {
+                temp.add(note);
             }
         }
         if (temp.size() < 1) {

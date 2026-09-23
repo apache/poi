@@ -31,7 +31,7 @@ import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.ExceptionUtil;
+import org.apache.poi.util.IOUtils;
 
 /**
  * ExtractorFactory for HSSF and Old Excel format
@@ -46,14 +46,14 @@ public class MainExtractorFactory implements ExtractorProvider {
     @Override
     public POITextExtractor create(File file, String password) throws IOException {
         POIFSFileSystem fs = new POIFSFileSystem(file, true);
-        POITextExtractor extractor = null;
+        POITextExtractor extractor;
         try {
             extractor = create(fs.getRoot(), password);
         } catch (Throwable t) {
-            if (!ExceptionUtil.isFatal(t)) {
-                fs.close();
-                throw t;
-            }
+            // this method owns fs and construction did not complete, so close it and let
+            // every throwable through - including fatal ones such as VirtualMachineError
+            IOUtils.closeQuietly(fs);
+            throw t;
         }
         if (extractor == null) {
             fs.close();
@@ -64,14 +64,14 @@ public class MainExtractorFactory implements ExtractorProvider {
     @Override
     public POITextExtractor create(InputStream inputStream, String password) throws IOException {
         POIFSFileSystem fs = new POIFSFileSystem(inputStream);
-        POITextExtractor extractor = null;
+        POITextExtractor extractor;
         try {
             extractor = create(fs.getRoot(), password);
         } catch (Throwable t) {
-            if (!ExceptionUtil.isFatal(t)) {
-                fs.close();
-                throw t;
-            }
+            // this method owns fs and construction did not complete, so close it and let
+            // every throwable through - including fatal ones such as VirtualMachineError
+            IOUtils.closeQuietly(fs);
+            throw t;
         }
         if (extractor == null) {
             fs.close();

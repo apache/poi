@@ -53,6 +53,20 @@ final class TestDec2Bin {
         assertEquals(expected, ((StringEval) result).getStringValue(), msg);
     }
 
+    private static void confirmValue(String msg, String number1, String places, String expected) {
+        ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(places) };
+        ValueEval result = new Dec2Bin().evaluate(args, -1, -1);
+        assertEquals(StringEval.class, result.getClass(), "Had: " + result);
+        assertEquals(expected, ((StringEval) result).getStringValue(), msg);
+    }
+
+    private static void confirmValueError(String msg, String number1, String places, ErrorEval numError) {
+        ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(places) };
+        ValueEval result = new Dec2Bin().evaluate(args, -1, -1);
+        assertEquals(ErrorEval.class, result.getClass());
+        assertEquals(numError, result, msg);
+    }
+
     private static void confirmValueError(String msg, String number1, ErrorEval numError) {
         ValueEval result = invokeValue(number1);
         assertEquals(ErrorEval.class, result.getClass());
@@ -66,12 +80,15 @@ final class TestDec2Bin {
         confirmValue("Converts binary '1111111110' from binary (-2)", "-2",    "1111111110");
         confirmValue("Converts binary '0111111111' from binary (511)", "511",   "111111111");
         confirmValue("Converts binary '1000000000' from binary (511)", "-512", "1000000000");
+        confirmValue("A non-integer number is truncated", "5.9", "101");
+        confirmValue("A non-integer number is truncated", "511.9", "111111111");
     }
 
     @Test
     void testErrors() {
         confirmValueError("fails for >= 512 or < -512","512", ErrorEval.NUM_ERROR);
         confirmValueError("fails for >= 512 or < -512","-513", ErrorEval.NUM_ERROR);
+        confirmValueError("fails for >= 512 or < -512","512.5", ErrorEval.NUM_ERROR);
         confirmValueError("not a valid decimal number","GGGGGGG", ErrorEval.VALUE_INVALID);
         confirmValueError("not a valid decimal number","3.14159a", ErrorEval.VALUE_INVALID);
     }
@@ -135,8 +152,7 @@ final class TestDec2Bin {
         ValueEval result = new Dec2Bin().evaluate(args, -1, -1);
 
         assertEquals(StringEval.class, result.getClass(), "Had: " + result);
-        // TODO: documentation and behavior do not match here!
-        assertEquals("1101", ((StringEval) result).getStringValue());
+        assertEquals("00001101", ((StringEval) result).getStringValue());
     }
 
     @Test
@@ -147,8 +163,22 @@ final class TestDec2Bin {
         ValueEval result = new Dec2Bin().evaluate(args, ctx);
 
         assertEquals(StringEval.class, result.getClass(), "Had: " + result);
-        // TODO: documentation and behavior do not match here!
-        assertEquals("1101", ((StringEval) result).getStringValue());
+        assertEquals("00001101", ((StringEval) result).getStringValue());
+    }
+
+    @Test
+    void testPlaces() {
+        // https://support.microsoft.com/en-us/office/dec2bin-function-0f63a7af-6c60-4f52-a7c2-a4c6a5d0c2f4
+        confirmValue("Converts decimal 9 to binary with 4 characters", "9", "4", "1001");
+        confirmValue("Converts decimal 9 to binary with 8 characters", "9", "8", "00001001");
+        confirmValue("Converts decimal 9 to binary with 10 characters", "9", "10", "0000001001");
+        confirmValue("Places is truncated", "9", "8.9", "00001001");
+        confirmValue("Places is ignored for negative numbers", "-100", "3", "1110011100");
+        confirmValueError("more characters needed than places", "9", "3", ErrorEval.NUM_ERROR);
+        confirmValueError("zero places not allowed", "9", "0", ErrorEval.NUM_ERROR);
+        confirmValueError("more than 10 places not allowed", "9", "11", ErrorEval.NUM_ERROR);
+        confirmValueError("huge places used to exhaust memory", "9", "1E10", ErrorEval.NUM_ERROR);
+        confirmValueError("non-numeric places", "9", "abc", ErrorEval.VALUE_INVALID);
     }
 
     @Test

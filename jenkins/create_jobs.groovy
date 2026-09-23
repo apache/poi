@@ -53,12 +53,12 @@ def poijobs = [
         [ name: 'POI-DSL-1.24', jdk: '1.24', trigger: triggerSundays, skipcigame: true,
           disabled: true  // don't test non-LTS with newer LTS 25
         ],
-        [ name: 'POI-DSL-1.25', jdk: '1.25', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
+        [ name: 'POI-DSL-1.25', jdk: '1.25', trigger: triggerSundays, skipcigame: true,
         ],
-        [ name: 'POI-DSL-1.26', jdk: '1.26', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
+        [ name: 'POI-DSL-1.26', jdk: '1.26', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-DSL-1.27', jdk: '1.27', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
-                useAnt: true
+                useAnt: true, skipSourceBuild: true
         ],
         // Use Ant-build for now as selecting IBM JDK via toolchain does not work (yet)
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, useAnt: true
@@ -83,7 +83,7 @@ def poijobs = [
 //		  // replaced by Gradle-based build now
 //		  disabled: true
 //        ],
-        [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.17', trigger: 'H 7 * * *', sonar: true, skipcigame: true
+        [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.21', trigger: 'H 7 * * *', sonar: true, skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.8',
           trigger: 'H */12 * * *',
@@ -105,11 +105,10 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Windows-1.25', jdk: '1.25', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
         ],
-        [ name: 'POI-DSL-Windows-1.26', jdk: '1.26', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          skipSpotbugs: true
+        [ name: 'POI-DSL-Windows-1.26', jdk: '1.26', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.27', jdk: '1.27', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          skipSpotbugs: true, useAnt: true
+          skipSpotbugs: true, useAnt: true, skipSourceBuild: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', skipcigame: true, disabled: true
         ],
@@ -133,7 +132,7 @@ def xmlbeansjobs = [
         ],
         [ name: 'POI-XMLBeans-DSL-1.27', jdk: '1.27', trigger: triggerSundays, skipcigame: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.17', trigger: triggerSundays, skipcigame: true,
+        [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.21', trigger: triggerSundays, skipcigame: true,
           sonar: true
         ]
 ]

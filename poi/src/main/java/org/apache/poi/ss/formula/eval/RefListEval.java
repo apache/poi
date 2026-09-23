@@ -33,8 +33,8 @@ public class RefListEval implements ValueEval {
 
     private void add(ValueEval v) {
         // flatten multiple nested RefListEval
-        if(v instanceof RefListEval) {
-            list.addAll(((RefListEval)v).list);
+        if(v instanceof RefListEval rle) {
+            list.addAll(rle.list);
         } else {
             list.add(v);
         }

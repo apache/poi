@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
@@ -60,6 +61,23 @@ final class TestPercentEval {
     void test1x1Area() {
         AreaEval ae = EvalFactory.createAreaEval("B2:B2", new ValueEval[] { new NumberEval(50), });
         confirm(ae, 0.5);
+    }
+
+    @Test
+    void testArrayMode() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet("Sheet1");
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            row.createCell(1).setCellValue(50.0);
+            sheet.createRow(1).createCell(1).setCellValue(25.0);
+            sheet.createRow(2).createCell(1).setCellValue(125.0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+
+            // inside SUMPRODUCT the operator is applied to every element of the range
+            assertDouble(fe, cell, "SUMPRODUCT(B1:B3%)", 2);
+            assertDouble(fe, cell, "SUMPRODUCT(B1:B3%*B1:B3)", 0.5 * 50 + 0.25 * 25 + 1.25 * 125);
+        }
     }
 
     @Test

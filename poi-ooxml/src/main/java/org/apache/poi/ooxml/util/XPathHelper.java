@@ -160,8 +160,8 @@ public final class XPathHelper {
         // otherwise check first the choice then the fallback content
         XmlObject xo = cur.getObject();
         AlternateContentDocument.AlternateContent alterCont;
-        if (xo instanceof AlternateContentDocument.AlternateContent) {
-            alterCont = (AlternateContentDocument.AlternateContent)xo;
+        if (xo instanceof AlternateContentDocument.AlternateContent ac) {
+            alterCont = ac;
         } else {
             // Pesky XmlBeans bug - see Bugzilla #49934
             // it never happens when using poi-ooxml-full jar but may happen with the abridged poi-ooxml-lite jar

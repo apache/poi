@@ -22,7 +22,6 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.util.MathUtil;
 
 /**
  * Implementation for Excel REPT () function.
@@ -41,6 +40,8 @@ import org.apache.poi.util.MathUtil;
  */
 public class Rept extends Fixed2ArgFunction  {
 
+    private static final int MAX_RESULT_LENGTH = 32767;
+
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval text, ValueEval number_times) {
 
@@ -53,19 +54,21 @@ public class Rept extends Fixed2ArgFunction  {
         String strText1 = OperandResolver.coerceValueToString(veText1);
         double numberOfTime;
         try {
-            numberOfTime = OperandResolver.coerceValueToDouble(number_times);
+            ValueEval veTimes = OperandResolver.getSingleValue(number_times, srcRowIndex, srcColumnIndex);
+            numberOfTime = OperandResolver.coerceValueToDouble(veTimes);
         } catch (EvaluationException e) {
             return ErrorEval.VALUE_INVALID;
         }
 
-        int numberOfTimeInt = MathUtil.safeDoubleToInt(numberOfTime);
+        // the count is truncated; a negative count, or a result longer than 32,767 characters, is #VALUE!
+        // (checked before the result is built, so that REPT("x",1E9) does not allocate it)
+        if (numberOfTime < 0 || strText1.length() * Math.floor(numberOfTime) > MAX_RESULT_LENGTH) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        int numberOfTimeInt = (int) numberOfTime;
         StringBuilder strb = new StringBuilder(strText1.length() * numberOfTimeInt);
         for(int i = 0; i < numberOfTimeInt; i++) {
             strb.append(strText1);
-        }
-
-        if (strb.length() > 32767) {
-            return ErrorEval.VALUE_INVALID;
         }
 
         return new StringEval(strb.toString());

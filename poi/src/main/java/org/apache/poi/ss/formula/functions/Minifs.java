@@ -63,7 +63,7 @@ public final class Minifs extends Baseifs {
 
             @Override
             public void addValue(ValueEval value) {
-                double d = (value instanceof NumberEval) ? ((NumberEval) value).getNumberValue() : 0.0;
+                double d = (value instanceof NumberEval ne) ? ne.getNumberValue() : 0.0;
                 if(accumulator == null || accumulator > d) {
                     accumulator = d;
                 }

@@ -382,9 +382,8 @@ public class WordToFoConverter extends AbstractWordConverter
         if ( childNodes.getLength() > 0 )
         {
             Node lastChild = childNodes.item( childNodes.getLength() - 1 );
-            if ( lastChild instanceof Element )
+            if ( lastChild instanceof Element lastElement )
             {
-                Element lastElement = (Element) lastChild;
                 if ( !lastElement.hasAttribute( "break-after" ) )
                 {
                     block = lastElement;

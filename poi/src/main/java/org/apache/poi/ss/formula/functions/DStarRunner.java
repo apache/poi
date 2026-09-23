@@ -110,11 +110,9 @@ public final class DStarRunner implements Function3Arg {
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex,
             ValueEval database, ValueEval filterColumn, ValueEval conditionDatabase) {
         // Input processing and error checks.
-        if(!(database instanceof AreaEval) || !(conditionDatabase instanceof AreaEval)) {
+        if(!(database instanceof AreaEval db) || !(conditionDatabase instanceof AreaEval cdb)) {
             return ErrorEval.VALUE_INVALID;
         }
-        AreaEval db = (AreaEval)database;
-        AreaEval cdb = (AreaEval)conditionDatabase;
 
         // Create an algorithm runner.
         final IDStarAlgorithm algorithm = algoType.newInstance();
@@ -306,8 +304,8 @@ public final class DStarRunner implements Function3Arg {
      */
     private static boolean testNormalCondition(ValueEval value, ValueEval condition)
             throws EvaluationException {
-        if(condition instanceof StringEval) {
-            String conditionString = ((StringEval)condition).getStringValue();
+        if(condition instanceof StringEval se) {
+            String conditionString = se.getStringValue();
 
             if(conditionString.startsWith("<")) { // It's a </<=/<> condition.
                 String number = conditionString.substring(1);
@@ -361,13 +359,13 @@ public final class DStarRunner implements Function3Arg {
                     }
                 }
             }
-        } else if(condition instanceof NumericValueEval) {
-            double conditionNumber = ((NumericValueEval) condition).getNumberValue();
+        } else if(condition instanceof NumericValueEval num) {
+            double conditionNumber = num.getNumberValue();
             Double valueNumber = getNumberFromValueEval(value);
             return valueNumber != null && conditionNumber == valueNumber;
-        } else if(condition instanceof ErrorEval) {
-            if(value instanceof ErrorEval) {
-                return ((ErrorEval)condition).getErrorCode() == ((ErrorEval)value).getErrorCode();
+        } else if(condition instanceof ErrorEval conditionError) {
+            if(value instanceof ErrorEval valueError) {
+                return conditionError.getErrorCode() == valueError.getErrorCode();
             } else {
                 return false;
             }
@@ -388,9 +386,9 @@ public final class DStarRunner implements Function3Arg {
             ValueEval valueEval, operator op, String condition)
             throws EvaluationException {
         // Construct double from ValueEval.
-        if(!(valueEval instanceof NumericValueEval))
+        if(!(valueEval instanceof NumericValueEval num))
             return false;
-        double value = ((NumericValueEval)valueEval).getNumberValue();
+        double value = num.getNumberValue();
 
         // Construct double from condition.
         double conditionValue;

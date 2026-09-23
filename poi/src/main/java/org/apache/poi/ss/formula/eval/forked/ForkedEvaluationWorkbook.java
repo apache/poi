@@ -129,8 +129,7 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 
     @Override
     public int getSheetIndex(EvaluationSheet sheet) {
-        if (sheet instanceof ForkedEvaluationSheet) {
-            ForkedEvaluationSheet mes = (ForkedEvaluationSheet) sheet;
+        if (sheet instanceof ForkedEvaluationSheet mes) {
             return mes.getSheetIndex(_masterBook);
         }
         return _masterBook.getSheetIndex(sheet);

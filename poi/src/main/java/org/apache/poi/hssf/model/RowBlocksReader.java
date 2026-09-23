@@ -69,10 +69,9 @@ public final class RowBlocksReader {
             switch (rec.getSid()) {
                 case MergeCellsRecord.sid:    dest = mergeCellRecords; break;
                 case SharedFormulaRecord.sid: dest = shFrmRecords;
-                    if (!(prevRec instanceof FormulaRecord)) {
+                    if (!(prevRec instanceof FormulaRecord fr)) {
                         throw new IllegalStateException("Shared formula record should follow a FormulaRecord, but had " + prevRec);
                     }
-                    FormulaRecord fr = (FormulaRecord)prevRec;
                     firstCellRefs.add(new CellReference(fr.getRow(), fr.getColumn()));
                     break;
                 case ArrayRecord.sid:         dest = arrayRecords;     break;

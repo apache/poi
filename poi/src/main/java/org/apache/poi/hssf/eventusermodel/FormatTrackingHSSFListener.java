@@ -101,12 +101,10 @@ public class FormatTrackingHSSFListener implements HSSFListener {
      * @param record the record to be processed
      */
     public void processRecordInternally(Record record) {
-        if (record instanceof FormatRecord) {
-            FormatRecord fr = (FormatRecord) record;
+        if (record instanceof FormatRecord fr) {
             _customFormatRecords.put(Integer.valueOf(fr.getIndexCode()), fr);
         }
-        if (record instanceof ExtendedFormatRecord) {
-            ExtendedFormatRecord xr = (ExtendedFormatRecord) record;
+        if (record instanceof ExtendedFormatRecord xr) {
             _xfRecords.add(xr);
         }
     }
@@ -125,10 +123,10 @@ public class FormatTrackingHSSFListener implements HSSFListener {
      */
     public String formatNumberDateCell(CellValueRecordInterface cell) {
         double value;
-        if (cell instanceof NumberRecord) {
-            value = ((NumberRecord) cell).getValue();
-        } else if (cell instanceof FormulaRecord) {
-            value = ((FormulaRecord) cell).getValue();
+        if (cell instanceof NumberRecord nr) {
+            value = nr.getValue();
+        } else if (cell instanceof FormulaRecord fr) {
+            value = fr.getValue();
         } else {
             throw new IllegalArgumentException("Unsupported CellValue Record passed in " + cell);
         }

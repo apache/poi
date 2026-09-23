@@ -137,14 +137,14 @@ public class GeometrySection extends XDGFSection {
                     row = rows.next();
                 }
 
-                if (row instanceof SplineStart) {
+                if (row instanceof SplineStart splineStart) {
                     if (renderer != null)
                         throw new POIXMLException("SplineStart found multiple times!");
-                    renderer = new SplineCollector((SplineStart) row);
-                } else if (row instanceof SplineKnot) {
+                    renderer = new SplineCollector(splineStart);
+                } else if (row instanceof SplineKnot splineKnot) {
                     if (renderer == null)
                         throw new POIXMLException("SplineKnot found without SplineStart!");
-                    renderer.addKnot((SplineKnot) row);
+                    renderer.addKnot(splineKnot);
                 } else {
                     if (renderer != null) {
                         renderer.addToPath(path, parent);

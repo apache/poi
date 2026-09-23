@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.formula.eval.AreaEvalBase;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
@@ -52,16 +53,24 @@ final class ArgumentsEvaluator {
     public double evaluateDateArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
         ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, (short) srcCellCol);
 
-        if (ve instanceof StringEval) {
-            String strVal = ((StringEval) ve).getStringValue();
+        double result;
+        if (ve instanceof StringEval se) {
+            String strVal = se.getStringValue();
             Double dVal = OperandResolver.parseDouble(strVal);
             if (dVal != null) {
-                return dVal.doubleValue();
+                result = dVal;
+            } else {
+                LocalDate date = DateParser.parseLocalDate(strVal);
+                result = DateUtil.getExcelDate(date, false);
             }
-            LocalDate date = DateParser.parseLocalDate(strVal);
-            return DateUtil.getExcelDate(date, false);
+        } else {
+            result = OperandResolver.coerceValueToDouble(ve);
         }
-        return OperandResolver.coerceValueToDouble(ve);
+        if (result < 0 || result >= DateUtil.MAX_EXCEL_DATE_SERIAL + 1) {
+            // not a date Excel can work with
+            throw new EvaluationException(ErrorEval.NUM_ERROR);
+        }
+        return result;
     }
 
     /**
@@ -80,9 +89,8 @@ final class ArgumentsEvaluator {
 
         if (arg instanceof StringEval) {
             return new double[]{ evaluateDateArg(arg, srcCellRow, srcCellCol) };
-        } else if (arg instanceof AreaEvalBase) {
+        } else if (arg instanceof AreaEvalBase area) {
             List<Double> valuesList = new ArrayList<>();
-            AreaEvalBase area = (AreaEvalBase) arg;
             for (int i = area.getFirstRow(); i <= area.getLastRow(); i++) {
                 for (int j = area.getFirstColumn(); j <= area.getLastColumn(); j++) {
                     // getValue() is replaced with getAbsoluteValue() because loop variables i, j are
@@ -113,6 +121,6 @@ final class ArgumentsEvaluator {
             return 0f;
         }
 
-        return OperandResolver.coerceValueToDouble(arg);
+        return OperandResolver.coerceValueToDouble(OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol));
     }
 }

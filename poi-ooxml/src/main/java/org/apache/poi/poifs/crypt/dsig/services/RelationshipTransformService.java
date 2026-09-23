@@ -129,10 +129,9 @@ public class RelationshipTransformService extends TransformService {
     @Override
     public void init(TransformParameterSpec params) throws InvalidAlgorithmParameterException {
         LOG.atDebug().log("init(params)");
-        if (!(params instanceof RelationshipTransformParameterSpec)) {
+        if (!(params instanceof RelationshipTransformParameterSpec relParams)) {
             throw new InvalidAlgorithmParameterException();
         }
-        RelationshipTransformParameterSpec relParams = (RelationshipTransformParameterSpec) params;
         this.sourceIds.addAll(relParams.sourceIds);
     }
 

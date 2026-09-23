@@ -133,11 +133,11 @@ public final class HMEFDumper {
          // Print the contents
          String indent = "  ";
 
-         if(attr instanceof TNEFStringAttribute) {
-            System.out.println(indent + indent + indent + ((TNEFStringAttribute)attr).getString());
+         if(attr instanceof TNEFStringAttribute stringAttr) {
+            System.out.println(indent + indent + indent + stringAttr.getString());
          }
-         if(attr instanceof TNEFDateAttribute) {
-            System.out.println(indent + indent + indent + ((TNEFDateAttribute)attr).getDate());
+         if(attr instanceof TNEFDateAttribute dateAttr) {
+            System.out.println(indent + indent + indent + dateAttr.getDate());
          }
 
          System.out.println(indent + "Data of length " + attr.getData().length);

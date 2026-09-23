@@ -413,8 +413,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
 
                 case INLINE_STRING:
                     // TODO: Can these ever have formatting on them?
-                    XSSFRichTextString rtsi = new XSSFRichTextString(value.toString());
-                    thisStr = rtsi.toString();
+                    thisStr = decodeText(value.toString());
                     break;
 
                 case SST_STRING:
@@ -422,8 +421,14 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                     if (!sstIndex.isEmpty()) {
                         try {
                             int idx = parseInt(sstIndex);
-                            RichTextString rtss = sharedStringsTable.getItemAt(idx);
-                            thisStr = rtss.toString();
+                            if (sharedStringsTable instanceof ReadOnlySharedStringsTable roSst) {
+                                // this table holds plain strings anyway, so we can skip creating
+                                // a RichTextString (and its XmlBeans backing object) per cell
+                                thisStr = decodeText(roSst.getRawItemAt(idx));
+                            } else {
+                                RichTextString rtss = sharedStringsTable.getItemAt(idx);
+                                thisStr = rtss.toString();
+                            }
                         } catch (NumberFormatException ex) {
                             LOG.atError().withThrowable(ex).log("Failed to parse SST index '{}'", sstIndex);
                         }
@@ -460,6 +465,24 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
 
         // Output
         output.cell(cellRef, thisStr, comment);
+    }
+
+    /**
+     * Returns the same text as <code>new XSSFRichTextString(text).toString()</code> would,
+     * but without building the XmlBeans object backing the rich text string.
+     * <p>
+     * The only transformation that such a round-trip applies to a plain string is the decoding
+     * of the <code>_xHHHH_</code> escape sequences, so the (rare) strings that may contain such
+     * a sequence are still handled by {@link XSSFRichTextString}.
+     */
+    private static String decodeText(String text) {
+        if (text == null) {
+            return "";
+        }
+        if (!text.contains("_x")) {
+            return text;
+        }
+        return new XSSFRichTextString(text).toString();
     }
 
     /**

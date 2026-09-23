@@ -82,8 +82,7 @@ public final class ParagraphHeight implements Duplicatable {
 
   public boolean equals(Object o)
   {
-    if (!(o instanceof ParagraphHeight)) return false;
-    ParagraphHeight ph = (ParagraphHeight)o;
+    if (!(o instanceof ParagraphHeight ph)) return false;
 
     return infoField == ph.infoField && reserved == ph.reserved &&
            dxaCol == ph.dxaCol && dymLineOrHeight == ph.dymLineOrHeight;

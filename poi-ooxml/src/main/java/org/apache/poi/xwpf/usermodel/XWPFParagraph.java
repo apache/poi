@@ -71,6 +71,13 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         for (XWPFRun run : runs) {
             CTR r = run.getCTR();
 
+            // Footnote/endnote references are rare - only pay for the cursor walk below
+            // when the run actually holds at least one of them. CTFtnEdnRef can only occur
+            // as a w:footnoteReference or a w:endnoteReference child of the run.
+            if (r.sizeOfFootnoteReferenceArray() == 0 && r.sizeOfEndnoteReferenceArray() == 0) {
+                continue;
+            }
+
             // Check for bits that only apply when attached to a core document
             // TODO Make this nicer by tracking the XWPFFootnotes directly
             try (XmlCursor c = r.newCursor()) {
@@ -136,10 +143,21 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 if (o instanceof CTSdtBlock block) {
                     XWPFSDT cc = new XWPFSDT(block, part);
                     iruns.add(cc);
+                    CTSdtContentBlock content = block.getSdtContent();
+                    if (content != null) {
+                        for (CTP ctp : content.getPList()) {
+                            processCTRs(ctp.getRList());
+                        }
+                    }
                 }
                 if (o instanceof CTSdtRun run) {
                     XWPFSDT cc = new XWPFSDT(run, part);
                     iruns.add(cc);
+
+                    CTSdtContentRun sdtContent = run.getSdtContent();
+                    if (sdtContent != null) {
+                        processCTRs(sdtContent.getRList());
+                    }
                 }
                 if (o instanceof CTRunTrackChange parentRecord) {
                     for (CTR r : parentRecord.getRArray()) {
@@ -157,6 +175,20 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     // This implementation does not preserve the tagging information
                     buildRunsInOrderFromXml(o);
                 }
+            }
+        }
+    }
+
+    private void processCTRs(List<CTR> ctrs) {
+        if (ctrs == null) {
+            return;
+        }
+        for (CTR ctr : ctrs) {
+            // Only add runs that have formatting properties (RPr).
+            // SDT content runs are added to the runs list for formatting access,
+            // while the SDT element itself is in iruns for text extraction.
+            if (ctr.getRPr() != null) {
+                runs.add(new XWPFRun(ctr, (IRunBody) this));
             }
         }
     }

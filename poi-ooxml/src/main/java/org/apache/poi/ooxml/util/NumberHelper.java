@@ -37,10 +37,10 @@ public class NumberHelper {
      * @throws IllegalArgumentException if the number cannot be converted
      */
     public static double toDouble(Object number) {
-        if (number instanceof Number) {
-            return ((Number) number).doubleValue();
-        } else if (number instanceof String) {
-            return Double.parseDouble((String) number);
+        if (number instanceof Number num) {
+            return num.doubleValue();
+        } else if (number instanceof String str) {
+            return Double.parseDouble(str);
         }
         throw new IllegalArgumentException("Cannot convert of class" + number.getClass().getName() +
                 " to double");

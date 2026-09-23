@@ -17,10 +17,13 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.util.Units.EMU_PER_PIXEL;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Dimension;
 import java.io.IOException;
@@ -174,6 +177,72 @@ public final class TestXSSFPicture extends BaseTestPicture {
         } finally {
             ZipPackage.setUseTempFilePackageParts(originalTempFileSetting);
             ZipPackage.setEncryptTempFilePackageParts(originalEncryptSetting);
+        }
+    }
+
+    /**
+     * Degenerate in-cell XSSF anchors (col1 == col2, dx1 == dx2 == 0) must report the
+     * full cell size so picture.resize() has a positive base dimension. See #1201.
+     */
+    @Test
+    void testGetDimensionFromAnchorDegenerateInCell() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            byte[] png = XSSFITestDataProvider.instance.getTestDataFileContent("45829.png");
+            int idx = wb.addPicture(png, Workbook.PICTURE_TYPE_PNG);
+
+            XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 1, 1);
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            XSSFPicture picture = drawing.createPicture(anchor, idx);
+
+            int expectedWidth = Math.round(sheet.getColumnWidthInPixels(1) * EMU_PER_PIXEL);
+            int expectedHeight = (int) Math.round(ImageUtils.getRowHeightInPixels(sheet, 1) * EMU_PER_PIXEL);
+
+            Dimension dim = ImageUtils.getDimensionFromAnchor(picture);
+            assertEquals(expectedWidth, dim.getWidth(), "degenerate in-cell width should equal cell width");
+            assertEquals(expectedHeight, dim.getHeight(), "degenerate in-cell height should equal cell height");
+
+            picture.resize(1.0, 1.0);
+            Dimension afterResize = ImageUtils.getDimensionFromAnchor(picture);
+            assertTrue(afterResize.getWidth() > 0, "width should stay positive after resize");
+            assertTrue(afterResize.getHeight() > 0, "height should stay positive after resize");
+        }
+    }
+
+    /**
+     * Normal in-cell XSSF anchors with startD &lt; endD must report endD - startD.
+     */
+    @Test
+    void testGetDimensionFromAnchorInCellWithOffsets() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            int startD = 100_000;
+            int endD = 350_000;
+            XSSFClientAnchor anchor = new XSSFClientAnchor(startD, startD, endD, endD, 1, 1, 1, 1);
+
+            Dimension dim = ImageUtils.getDimensionFromAnchor(anchor, sheet);
+            assertEquals(endD - startD, dim.getWidth(), "in-cell width should be endD - startD");
+            assertEquals(endD - startD, dim.getHeight(), "in-cell height should be endD - startD");
+        }
+    }
+
+    /**
+     * Multi-cell XSSF anchors with dx2/dy2 == 0 must not include a full extra cell.
+     */
+    @Test
+    void testGetDimensionFromAnchorMultiCellZeroEndOffset() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 2, 1);
+
+            Dimension dim = ImageUtils.getDimensionFromAnchor(anchor, sheet);
+            int col1Emu = Math.round(sheet.getColumnWidthInPixels(1) * EMU_PER_PIXEL);
+            int col2Emu = Math.round(sheet.getColumnWidthInPixels(2) * EMU_PER_PIXEL);
+
+            assertEquals(col1Emu, dim.getWidth(),
+                "width must equal first column only when dx2 == 0 on second column");
+            assertNotEquals(col1Emu + col2Emu, dim.getWidth(),
+                "width must not include full second column when dx2 == 0");
         }
     }
 

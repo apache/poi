@@ -30,6 +30,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.util.ExcelArithmetic;
 
 public final class Fixed implements Function1Arg, Function2Arg, Function3Arg {
     @Override
@@ -74,18 +75,23 @@ public final class Fixed implements Function1Arg, Function2Arg, Function3Arg {
             ValueEval numberValueEval =
                     OperandResolver.getSingleValue(
                     numberParam, srcRowIndex, srcColumnIndex);
-            BigDecimal number =
-                    BigDecimal.valueOf(OperandResolver.coerceValueToDouble(numberValueEval));
+            double numberValue = OperandResolver.coerceValueToDouble(numberValueEval);
+            NumericFunction.checkValue(numberValue);
+            // Excel rounds on its 15-digit view: FIXED(0.1+0.2,17) is 0.30000000000000000
+            BigDecimal number = ExcelArithmetic.toBigDecimal(numberValue);
             ValueEval placesValueEval =
                     OperandResolver.getSingleValue(placesParam, srcRowIndex, srcColumnIndex);
             int places = OperandResolver.coerceValueToInt(placesValueEval);
+            if (places > NumericFunction.MAX_FORMATTED_DECIMALS) {
+                return ErrorEval.VALUE_INVALID;
+            }
             ValueEval skipThousandsSeparatorValueEval =
                     OperandResolver.getSingleValue(skipThousandsSeparatorParam, srcRowIndex, srcColumnIndex);
             Boolean skipThousandsSeparator =
                     OperandResolver.coerceValueToBoolean(skipThousandsSeparatorValueEval, false);
 
             // Round number to respective places.
-            number = number.setScale(places, RoundingMode.HALF_UP);
+            number = number.setScale(Math.max(places, NumericFunction.MIN_FORMATTED_DECIMALS), RoundingMode.HALF_UP);
 
             // Format number conditionally using a thousands separator.
             NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
@@ -93,7 +99,7 @@ public final class Fixed implements Function1Arg, Function2Arg, Function3Arg {
             formatter.setGroupingUsed(!(skipThousandsSeparator != null && skipThousandsSeparator));
             formatter.setMinimumFractionDigits(Math.max(places, 0));
             formatter.setMaximumFractionDigits(Math.max(places, 0));
-            String numberString = formatter.format(number.doubleValue());
+            String numberString = formatter.format(number);
 
             // Return the result as a StringEval.
             return new StringEval(numberString);

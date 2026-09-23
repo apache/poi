@@ -51,4 +51,30 @@ public interface EvaluationSheet {
      * @since 4.1.0
      */
     boolean isRowHidden(int rowIndex);
+
+    /**
+     * Propagated from {@link WorkbookEvaluator#notifyDeleteCell(EvaluationCell)} so that an
+     * implementation which caches {@link EvaluationCell} wrappers can drop the one for the
+     * deleted cell. The default implementation does nothing.
+     *
+     * @param rowIndex    zero-based row of the deleted cell
+     * @param columnIndex zero-based column of the deleted cell
+     * @since 6.0.0
+     */
+    default void notifyDeleteCell(int rowIndex, int columnIndex) {
+        // nothing cached by default
+    }
+
+    /**
+     * Propagated from {@link WorkbookEvaluator#notifyUpdateCell(EvaluationCell)} so that an
+     * implementation which caches anything derived from a cell (such as its parsed formula
+     * tokens) can drop what it holds for the changed cell. The default implementation does nothing.
+     *
+     * @param rowIndex    zero-based row of the changed cell
+     * @param columnIndex zero-based column of the changed cell
+     * @since 6.0.0
+     */
+    default void notifyUpdateCell(int rowIndex, int columnIndex) {
+        // nothing cached by default
+    }
 }

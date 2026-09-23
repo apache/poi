@@ -412,11 +412,10 @@ public final class HSLFTextRun implements TextRun {
 
     @Override
     public void setFontColor(PaintStyle color) {
-        if (!(color instanceof SolidPaint)) {
+        if (!(color instanceof SolidPaint sp)) {
             throw new IllegalArgumentException("HSLF only supports solid paint");
         }
         // In PowerPont RGB bytes are swapped, as BGR
-        SolidPaint sp = (SolidPaint)color;
         Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
         int rgb = new Color(c.getBlue(), c.getGreen(), c.getRed(), 254).getRGB();
         setFontColor(rgb);

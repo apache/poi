@@ -83,7 +83,7 @@ public class AreaReference {
             int col1 = CellReference.convertColStringToIndex(part1);
 
             _firstCell = new CellReference(0, col0, true, firstIsAbs);
-            _lastCell = new CellReference(0xFFFF, col1, true, lastIsAbs);
+            _lastCell = new CellReference(_version.getLastRowIndex(), col1, true, lastIsAbs);
             _isSingleCell = false;
             // TODO - whole row refs
         } else {

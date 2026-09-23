@@ -93,8 +93,7 @@ public final class CurveToCommand implements CurveToCommandIf {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CurveToCommand)) return false;
-        CurveToCommand that = (CurveToCommand) o;
+        if (!(o instanceof CurveToCommand that)) return false;
         return Objects.equals(pt1, that.pt1) &&
                 Objects.equals(pt2, that.pt2) &&
                 Objects.equals(pt3, that.pt3);

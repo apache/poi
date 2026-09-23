@@ -462,8 +462,8 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
                 break;
             }
             case SHADOW_COLOR: {
-                if (this instanceof HSLFSimpleShape) {
-                    return ((HSLFSimpleShape)this).getShadowColor();
+                if (this instanceof HSLFSimpleShape simpleShape) {
+                    return simpleShape.getShadowColor();
                 }
                 break;
             }
@@ -475,8 +475,8 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
                 return getColor(EscherPropertyTypes.FILL__FILLBACKCOLOR, EscherPropertyTypes.FILL__FILLOPACITY);
             }
             case LINE_BACKGROUND_COLOR: {
-                if (this instanceof HSLFSimpleShape) {
-                    return ((HSLFSimpleShape)this).getLineBackgroundColor();
+                if (this instanceof HSLFSimpleShape simpleShape) {
+                    return simpleShape.getLineBackgroundColor();
                 }
                 break;
             }

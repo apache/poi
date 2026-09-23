@@ -21,7 +21,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -216,13 +215,16 @@ public final class PPTXMLDump {
                 System.out.println("Dumping " + arg);
 
                 if (outFile) {
-                    OutputStream fos = Files.newOutputStream(Path.of(ppt.getName() + ".xml"));
-                    OutputStreamWriter out = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                    dump.dump(out);
-                    out.close();
+                    try (Writer out = new OutputStreamWriter(
+                            Files.newOutputStream(Path.of(ppt.getName() + ".xml")), StandardCharsets.UTF_8)) {
+                        dump.dump(out);
+                    }
                 } else {
-                    dump.dump(new BufferedWriter(
-                            new OutputStreamWriter(System.out, StandardCharsets.UTF_8)));
+                    Writer out = new BufferedWriter(
+                            new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
+                    dump.dump(out);
+                    // dump() does not flush, and System.out must not be closed here
+                    out.flush();
                 }
             }
         }

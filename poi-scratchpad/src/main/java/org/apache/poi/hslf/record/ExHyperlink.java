@@ -116,17 +116,17 @@ public class ExHyperlink extends RecordContainer {
 
         // First child should be the ExHyperlinkAtom
         Record child = _children[0];
-        if(child instanceof ExHyperlinkAtom) {
-            linkAtom = (ExHyperlinkAtom) child;
+        if(child instanceof ExHyperlinkAtom hyperlinkAtom) {
+            linkAtom = hyperlinkAtom;
         } else {
             LOG.atError().log("First child record wasn't a ExHyperlinkAtom, was of type {}", box(child.getRecordType()));
         }
 
         for (int i = 1; i < _children.length; i++) {
             child = _children[i];
-            if (child instanceof CString){
-                if ( linkDetailsA == null) linkDetailsA = (CString) child;
-                else linkDetailsB = (CString) child;
+            if (child instanceof CString cs){
+                if ( linkDetailsA == null) linkDetailsA = cs;
+                else linkDetailsB = cs;
             } else {
                 LOG.atError().log("Record after ExHyperlinkAtom wasn't a CString, was of type {}", box(child.getRecordType()));
             }

@@ -188,36 +188,41 @@ public class VariantSupport extends Variant {
              * other types as byte arrays. In future major versions it shall be
              * changed -- sergey
              */
-            case Variant.VT_EMPTY:
-            case Variant.VT_I1:
-            case Variant.VT_UI1:
-            case Variant.VT_UI2:
-            case Variant.VT_I4:
-            case Variant.VT_UI4:
-            case Variant.VT_I8:
-            case Variant.VT_UI8:
-            case Variant.VT_R4:
-            case Variant.VT_R8:
+            case Variant.VT_EMPTY,
+                 Variant.VT_I1,
+                 Variant.VT_UI1,
+                 Variant.VT_UI2,
+                 Variant.VT_I4,
+                 Variant.VT_UI4,
+                 Variant.VT_I8,
+                 Variant.VT_UI8,
+                 Variant.VT_R4,
+                 Variant.VT_R8 -> {
                 return typedPropertyValue.getValue();
+            }
 
             /*
              * also for backward-compatibility with prev. versions of POI
              * --sergey
              */
-            case Variant.VT_I2:
+            case Variant.VT_I2 -> {
                 return ( (Short) typedPropertyValue.getValue() ).intValue();
+            }
 
-            case Variant.VT_FILETIME:
+            case Variant.VT_FILETIME -> {
                 Filetime filetime = (Filetime) typedPropertyValue.getValue();
                 return filetime.getJavaValue();
+            }
 
-            case Variant.VT_LPSTR:
+            case Variant.VT_LPSTR -> {
                 CodePageString cpString = (CodePageString) typedPropertyValue.getValue();
                 return cpString.getJavaValue( codepage );
+            }
 
-            case Variant.VT_LPWSTR:
+            case Variant.VT_LPWSTR -> {
                 UnicodeString uniString = (UnicodeString) typedPropertyValue.getValue();
                 return uniString.toJavaString();
+            }
 
             // if(l1 < 0) {
             /*
@@ -237,25 +242,28 @@ public class VariantSupport extends Variant {
             // System.arraycopy(src, o1, v, 0, v.length);
             // value = v;
             // break;
-            case Variant.VT_CF:
+            case Variant.VT_CF -> {
                 ClipboardData clipboardData = (ClipboardData) typedPropertyValue.getValue();
                 return clipboardData.toByteArray();
+            }
 
-            case Variant.VT_BOOL:
+            case Variant.VT_BOOL -> {
                 VariantBool bool = (VariantBool) typedPropertyValue.getValue();
                 return bool.getValue();
+            }
 
             /*
              * it is not very good, but what can do without breaking current
              * API? --sergey
              */
-            default:
+            default -> {
                 final int unpadded = lei.getReadIndex()-offset;
                 lei.setReadIndex(offset);
                 final byte[] v = IOUtils.safelyAllocate(unpadded, CodePageString.getMaxRecordLength(),
                         "CodePageString.setMaxRecordLength()");
                 lei.readFully( v, 0, unpadded );
                 throw new ReadingNotSupportedException( type, v );
+            }
         }
     }
 
@@ -278,83 +286,81 @@ public class VariantSupport extends Variant {
     throws IOException, WritingNotSupportedException {
         int length = -1;
         switch ((int) type) {
-            case Variant.VT_BOOL: {
-                if (value instanceof Boolean) {
-                    int bb = ((Boolean)value) ? 0xff : 0x00;
+            case Variant.VT_BOOL -> {
+                if (value instanceof Boolean b) {
+                    int bb = b ? 0xff : 0x00;
                     out.write(bb);
                     out.write(bb);
                     length = 2;
                 }
-                break;
             }
 
-            case Variant.VT_LPSTR:
-                if (value instanceof String) {
+            case Variant.VT_LPSTR -> {
+                if (value instanceof String str) {
                     CodePageString codePageString = new CodePageString();
-                    codePageString.setJavaValue( (String)value, codepage );
+                    codePageString.setJavaValue( str, codepage );
                     length = codePageString.write( out );
                 }
-                break;
+            }
 
-            case Variant.VT_LPWSTR:
-                if (value instanceof String) {
+            case Variant.VT_LPWSTR -> {
+                if (value instanceof String str) {
                     UnicodeString uniString = new UnicodeString();
-                    uniString.setJavaValue((String)value);
+                    uniString.setJavaValue(str);
                     length = uniString.write(out);
                 }
-                break;
+            }
 
-            case Variant.VT_CF:
-                if (value instanceof byte[]) {
-                    final byte[] cf = (byte[]) value;
+            case Variant.VT_CF -> {
+                if (value instanceof byte[] cf) {
                     out.write(cf);
                     length = cf.length;
                 }
-                break;
+            }
 
-            case Variant.VT_EMPTY:
+            case Variant.VT_EMPTY -> {
                 LittleEndian.putUInt(Variant.VT_EMPTY, out);
                 length = LittleEndianConsts.INT_SIZE;
-                break;
+            }
 
-            case Variant.VT_I2:
-                if (value instanceof Number) {
-                    LittleEndian.putShort( out, ((Number)value).shortValue() );
+            case Variant.VT_I2 -> {
+                if (value instanceof Number n) {
+                    LittleEndian.putShort( out, n.shortValue() );
                     length = LittleEndianConsts.SHORT_SIZE;
                 }
-                break;
+            }
 
-            case Variant.VT_UI2:
-                if (value instanceof Number) {
-                    LittleEndian.putUShort( ((Number)value).intValue(), out );
+            case Variant.VT_UI2 -> {
+                if (value instanceof Number n) {
+                    LittleEndian.putUShort( n.intValue(), out );
                     length = LittleEndianConsts.SHORT_SIZE;
                 }
-                break;
+            }
 
-            case Variant.VT_I4:
-                if (value instanceof Number) {
-                    LittleEndian.putInt( ((Number)value).intValue(), out);
+            case Variant.VT_I4 -> {
+                if (value instanceof Number n) {
+                    LittleEndian.putInt( n.intValue(), out);
                     length = LittleEndianConsts.INT_SIZE;
                 }
-                break;
+            }
 
-            case Variant.VT_UI4:
-                if (value instanceof Number) {
-                    LittleEndian.putUInt( ((Number)value).longValue(), out);
+            case Variant.VT_UI4 -> {
+                if (value instanceof Number n) {
+                    LittleEndian.putUInt( n.longValue(), out);
                     length = LittleEndianConsts.INT_SIZE;
                 }
-                break;
+            }
 
-            case Variant.VT_I8:
-                if (value instanceof Number) {
-                    LittleEndian.putLong( ((Number)value).longValue(), out);
+            case Variant.VT_I8 -> {
+                if (value instanceof Number n) {
+                    LittleEndian.putLong( n.longValue(), out);
                     length = LittleEndianConsts.LONG_SIZE;
                 }
-                break;
+            }
 
-            case Variant.VT_UI8: {
-                if (value instanceof Number) {
-                    BigInteger bi = (value instanceof BigInteger) ? (BigInteger)value : BigInteger.valueOf(((Number)value).longValue());
+            case Variant.VT_UI8 -> {
+                if (value instanceof Number n) {
+                    BigInteger bi = (value instanceof BigInteger bigInt) ? bigInt : BigInteger.valueOf(n.longValue());
                     if (bi.bitLength() > 64) {
                         throw new WritingNotSupportedException(type, value);
                     }
@@ -371,39 +377,36 @@ public class VariantSupport extends Variant {
                     out.write(biBytesLE);
                     length = LittleEndianConsts.LONG_SIZE;
                 }
-                break;
             }
 
-            case Variant.VT_R4: {
-                if (value instanceof Number) {
-                    int floatBits = Float.floatToIntBits(((Number)value).floatValue());
+            case Variant.VT_R4 -> {
+                if (value instanceof Number n) {
+                    int floatBits = Float.floatToIntBits(n.floatValue());
                     LittleEndian.putInt(floatBits, out);
                     length = LittleEndianConsts.INT_SIZE;
                 }
-                break;
             }
 
-            case Variant.VT_R8:
-                if (value instanceof Number) {
-                    LittleEndian.putDouble( ((Number)value).doubleValue(), out);
+            case Variant.VT_R8 -> {
+                if (value instanceof Number n) {
+                    LittleEndian.putDouble( n.doubleValue(), out);
                     length = LittleEndianConsts.DOUBLE_SIZE;
                 }
-                break;
+            }
 
-            case Variant.VT_FILETIME:
-                Filetime filetimeValue = (value instanceof Date) ? new Filetime((Date)value) : new Filetime();
+            case Variant.VT_FILETIME -> {
+                Filetime filetimeValue = (value instanceof Date d) ? new Filetime(d) : new Filetime();
                 length = filetimeValue.write( out );
-                break;
+            }
 
-            default:
-                break;
+            default -> {
+            }
         }
 
         /* The variant type is not supported yet. However, if the value
          * is a byte array we can write it nevertheless. */
         if (length == -1) {
-            if (value instanceof byte[]) {
-                final byte[] b = (byte[]) value;
+            if (value instanceof byte[] b) {
                 out.write(b);
                 length = b.length;
                 writeUnsupportedTypeMessage(new WritingNotSupportedException(type, value));

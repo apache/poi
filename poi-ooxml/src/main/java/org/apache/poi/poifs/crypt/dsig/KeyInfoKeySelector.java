@@ -61,16 +61,14 @@ public class KeyInfoKeySelector extends KeySelector implements KeySelectorResult
         List<XMLStructure> keyInfoContent = keyInfo.getContent();
         certChain.clear();
         for (XMLStructure keyInfoStructure : keyInfoContent) {
-            if (!(keyInfoStructure instanceof X509Data)) {
+            if (!(keyInfoStructure instanceof X509Data x509Data)) {
                 continue;
             }
-            X509Data x509Data = (X509Data) keyInfoStructure;
             List<?> x509DataList = x509Data.getContent();
             for (Object x509DataObject : x509DataList) {
-                if (!(x509DataObject instanceof X509Certificate)) {
+                if (!(x509DataObject instanceof X509Certificate certificate)) {
                     continue;
                 }
-                X509Certificate certificate = (X509Certificate) x509DataObject;
                 LOG.atDebug().log("certificate: {}", certificate.getSubjectX500Principal());
                 certChain.add(certificate);
             }

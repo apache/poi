@@ -76,4 +76,87 @@ final class TestFloorMath {
             assertError(fe, cell, "FLOOR.MATH(\"abc\")", FormulaError.VALUE);
         }
     }
+
+    @Test
+    void testActsOnExcelsFifteenDigitView() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            // values a hair off an integer in binary are that integer at 15 significant digits
+            assertDouble(fe, cell, "FLOOR.MATH(2490399.9999999995)", 2490400.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(2490400.0000000005)", 2490400.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(-2490399.9999999995)", -2490400.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(-2490400.0000000005)", -2490400.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(880000000*0.00849/3)", 2490400.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(0.7/0.1)", 7.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(1.1/0.1)", 11.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(0.1*3,0.1)", 0.3, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(0.3-0.1-0.1,0.1)", 0.1, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(2490399.9999999995,100)", 2490400.0, 0);
+            // values that differ within 15 significant digits are rounded normally
+            assertDouble(fe, cell, "FLOOR.MATH(2490399.99999999)", 2490399.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(2490400.00000001)", 2490400.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(-2490399.99999999)", -2490400.0, 0);
+            // exact binary fractions are never approximated
+            assertDouble(fe, cell, "FLOOR.MATH(2.5)", 2.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(-2.5)", -3.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(2.5,0.5)", 2.5, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(1E15+0.5)", 1E15, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(1E20)", 1E20, 0);
+            // arguments are coerced as numbers, not via their text
+            assertDouble(fe, cell, "FLOOR.MATH(TRUE)", 1.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(\"2.5\")", 2.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(D1)", 0.0, 0);
+        }
+    }
+
+    @Test
+    void testModeWithFifteenDigitView() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            // mode <> 0 rounds negative numbers towards zero; the 15-digit view is applied first
+            assertDouble(fe, cell, "FLOOR.MATH(-2490399.9999999995,1,-1)", -2490400.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(-2490400.0000000005,1,-1)", -2490400.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(-2490399.99999999,1,-1)", -2490399.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(-2.5,1,-1)", -2.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(-0.1*3,0.1,-1)", -0.3, 0);
+        }
+    }
+
+    @Test
+    void testZeroSignificance() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            // Excel returns 0 for a significance of 0, whatever the number
+            assertDouble(fe, cell, "FLOOR.MATH(7.3,0)", 0.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(-7.3,0)", 0.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(0,0)", 0.0, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(-7.3,0,-1)", 0.0, 0);
+        }
+    }
+
+    @Test
+    void testBeyondDoubleRange() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertError(fe, cell, "FLOOR.MATH(\"1E400\")", FormulaError.VALUE);
+            assertError(fe, cell, "FLOOR.MATH(5,\"1E400\")", FormulaError.VALUE);
+            // a result that would overflow a double
+            assertError(fe, cell, "FLOOR.MATH(-1.7E308,1E308)", FormulaError.NUM);
+        }
+    }
+
+    @Test
+    void testSignificanceOnExcelsFifteenDigitView() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            // 0.1*3 is 0.3 to Excel, not 0.30000000000000004
+            assertDouble(fe, cell, "FLOOR.MATH(0.9,0.1*3)", 0.9, 0);
+            assertDouble(fe, cell, "FLOOR.MATH(1.6,0.7+0.1)", 1.6, 0);
+        }
+    }
 }

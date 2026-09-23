@@ -62,8 +62,8 @@ public final class SlideIdListing {
             // Grab any records that interest us
             Document document = null;
             for (Record latestRecord : latestRecords) {
-                if (latestRecord instanceof Document) {
-                    document = (Document) latestRecord;
+                if (latestRecord instanceof Document doc) {
+                    document = doc;
                 }
             }
 
@@ -76,8 +76,7 @@ public final class SlideIdListing {
             for (SlideListWithText slwt : slwts) {
                 Record[] cr = slwt.getChildRecords();
                 for (org.apache.poi.hslf.record.Record record : cr) {
-                    if (record instanceof SlidePersistAtom) {
-                        SlidePersistAtom spa = (SlidePersistAtom) record;
+                    if (record instanceof SlidePersistAtom spa) {
                         System.out.println("SlidePersistAtom knows about slide:");
                         System.out.println("\t" + spa.getRefID());
                         System.out.println("\t" + spa.getSlideIdentifier());
@@ -89,8 +88,7 @@ public final class SlideIdListing {
 
             // Look for latest core records that are slides or notes
             for (int i = 0; i < latestRecords.length; i++) {
-                if (latestRecords[i] instanceof Slide) {
-                    Slide s = (Slide) latestRecords[i];
+                if (latestRecords[i] instanceof Slide s) {
                     SlideAtom sa = s.getSlideAtom();
                     System.out.println("Found the latest version of a slide record:");
                     System.out.println("\tCore ID is " + s.getSheetId());
@@ -102,8 +100,7 @@ public final class SlideIdListing {
             }
             System.out.println();
             for (int i = 0; i < latestRecords.length; i++) {
-                if (latestRecords[i] instanceof Notes) {
-                    Notes n = (Notes) latestRecords[i];
+                if (latestRecords[i] instanceof Notes n) {
                     NotesAtom na = n.getNotesAtom();
                     System.out.println("Found the latest version of a notes record:");
                     System.out.println("\tCore ID is " + n.getSheetId());

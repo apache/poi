@@ -74,8 +74,8 @@ public class SignatureMarshalDefaultListener implements SignatureMarshalListener
         int len = nl.getLength();
         for(int i=0; i<len; i++) {
             Node n = nl.item(i);
-            if (n instanceof Element) {
-                consumer.accept((Element)n);
+            if (n instanceof Element element) {
+                consumer.accept(element);
             }
         }
     }
@@ -114,8 +114,8 @@ public class SignatureMarshalDefaultListener implements SignatureMarshalListener
     }
 
     private static void setXmlns(Node node, String prefix, String ns) {
-        if (node instanceof Element && !ns.equals(node.getParentNode().getNamespaceURI())) {
-            ((Element)node).setAttributeNS(XML_NS, XMLConstants.XMLNS_ATTRIBUTE + (prefix == null ? "" : ":"+prefix), ns);
+        if (node instanceof Element element && !ns.equals(node.getParentNode().getNamespaceURI())) {
+            element.setAttributeNS(XML_NS, XMLConstants.XMLNS_ATTRIBUTE + (prefix == null ? "" : ":"+prefix), ns);
         }
     }
 }

@@ -174,8 +174,7 @@ public final class StyleSheet {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof StyleSheet)) return false;
-        StyleSheet ss = (StyleSheet) o;
+        if (!(o instanceof StyleSheet ss)) return false;
 
         if (!ss._stshif.equals(this._stshif)
                 || ss._cbStshi != this._cbStshi

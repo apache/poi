@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static org.apache.poi.ss.format.CellFormatter.quote;
 import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
@@ -103,7 +102,7 @@ public class CellFormatPart {
         INDEXED_COLORS = Collections.unmodifiableList(
             Arrays.asList(indexedColors)
             .stream().map(Color::new)
-            .collect(Collectors.toList()));
+            .toList());
 
         // Build initial named color map
         Map<String, Color> namedColors = new TreeMap<>(
@@ -254,12 +253,11 @@ public class CellFormatPart {
      * @return {@code true} if this format part applies to the given value.
      */
     public boolean applies(Object valueObject) {
-        if (condition == null || !(valueObject instanceof Number)) {
+        if (condition == null || !(valueObject instanceof Number num)) {
             if (valueObject == null)
                 throw new NullPointerException("valueObject");
             return true;
         } else {
-            Number num = (Number) valueObject;
             return condition.pass(num.doubleValue());
         }
     }

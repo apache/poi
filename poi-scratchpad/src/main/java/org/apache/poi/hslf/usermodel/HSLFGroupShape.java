@@ -298,9 +298,8 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
                 continue;
             }
 
-            if(r instanceof EscherContainerRecord) {
+            if(r instanceof EscherContainerRecord container) {
                 // Create the Shape for it
-                EscherContainerRecord container = (EscherContainerRecord)r;
                 HSLFShape shape = HSLFShapeFactory.createShape(container, this);
                 shape.setSheet(getSheet());
                 shapeList.add( shape );
@@ -359,10 +358,10 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public HSLFPictureShape createPicture(PictureData pictureData) {
-        if (!(pictureData instanceof HSLFPictureData)) {
+        if (!(pictureData instanceof HSLFPictureData hslfPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type HSLFPictureData");
         }
-        HSLFPictureShape s = new HSLFPictureShape((HSLFPictureData)pictureData, this);
+        HSLFPictureShape s = new HSLFPictureShape(hslfPictureData, this);
         s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
@@ -381,10 +380,10 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public HSLFObjectShape createOleShape(PictureData pictureData) {
-        if (!(pictureData instanceof HSLFPictureData)) {
+        if (!(pictureData instanceof HSLFPictureData hslfPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type HSLFPictureData");
         }
-        HSLFObjectShape s = new HSLFObjectShape((HSLFPictureData)pictureData, this);
+        HSLFObjectShape s = new HSLFObjectShape(hslfPictureData, this);
         s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;

@@ -92,10 +92,8 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction implemen
             return -compareBlank(va);
         }
 
-        if (va instanceof BoolEval) {
-            if (vb instanceof BoolEval) {
-                BoolEval bA = (BoolEval) va;
-                BoolEval bB = (BoolEval) vb;
+        if (va instanceof BoolEval bA) {
+            if (vb instanceof BoolEval bB) {
                 if (bA.getBooleanValue() == bB.getBooleanValue()) {
                     return 0;
                 }
@@ -106,10 +104,8 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction implemen
         if (vb instanceof BoolEval) {
             return -1;
         }
-        if (va instanceof StringEval) {
-            if (vb instanceof StringEval) {
-                StringEval sA = (StringEval) va;
-                StringEval sB = (StringEval) vb;
+        if (va instanceof StringEval sA) {
+            if (vb instanceof StringEval sB) {
                 return sA.getStringValue().compareToIgnoreCase(sB.getStringValue());
             }
             return 1;
@@ -117,10 +113,8 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction implemen
         if (vb instanceof StringEval) {
             return -1;
         }
-        if (va instanceof NumberEval) {
-            if (vb instanceof NumberEval) {
-                NumberEval nA = (NumberEval) va;
-                NumberEval nB = (NumberEval) vb;
+        if (va instanceof NumberEval nA) {
+            if (vb instanceof NumberEval nB) {
                 return NumberComparer.compare(nA.getNumberValue(), nB.getNumberValue());
             }
         }
@@ -132,16 +126,13 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction implemen
         if (v == BlankEval.instance || v instanceof MissingArgEval) {
             return 0;
         }
-        if (v instanceof BoolEval) {
-            BoolEval boolEval = (BoolEval) v;
+        if (v instanceof BoolEval boolEval) {
             return boolEval.getBooleanValue() ? -1 : 0;
         }
-        if (v instanceof NumberEval) {
-            NumberEval ne = (NumberEval) v;
+        if (v instanceof NumberEval ne) {
             return NumberComparer.compare(0.0, ne.getNumberValue());
         }
-        if (v instanceof StringEval) {
-            StringEval se = (StringEval) v;
+        if (v instanceof StringEval se) {
             return se.getStringValue().length() < 1 ? 0 : -1;
         }
         throw new IllegalArgumentException("bad value class (" + v.getClass().getName() + ")");

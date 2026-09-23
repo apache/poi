@@ -200,11 +200,11 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
             int thisRow = -1;
 
             switch (record.getSid()) {
-                case BoundSheetRecord.sid:
+                case BoundSheetRecord.sid -> {
                     BoundSheetRecord sr = (BoundSheetRecord) record;
                     sheetNames.add(sr.getSheetname());
-                    break;
-                case BOFRecord.sid:
+                }
+                case BOFRecord.sid -> {
                     BOFRecord bof = (BOFRecord) record;
                     if (bof.getType() == BOFRecord.TYPE_WORKSHEET) {
                         sheetNum++;
@@ -215,12 +215,10 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
                             _text.append(sheetNames.get(sheetNum));
                         }
                     }
-                    break;
-                case SSTRecord.sid:
-                    sstRecord = (SSTRecord) record;
-                    break;
+                }
+                case SSTRecord.sid -> sstRecord = (SSTRecord) record;
 
-                case FormulaRecord.sid:
+                case FormulaRecord.sid -> {
                     FormulaRecord frec = (FormulaRecord) record;
                     thisRow = frec.getRow();
 
@@ -236,8 +234,8 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
                             thisText = _ft.formatNumberDateCell(frec);
                         }
                     }
-                    break;
-                case StringRecord.sid:
+                }
+                case StringRecord.sid -> {
                     if (outputNextStringValue) {
                         // String for formula
                         StringRecord srec = (StringRecord) record;
@@ -245,32 +243,32 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
                         thisRow = nextRow;
                         outputNextStringValue = false;
                     }
-                    break;
-                case LabelRecord.sid:
+                }
+                case LabelRecord.sid -> {
                     LabelRecord lrec = (LabelRecord) record;
                     thisRow = lrec.getRow();
                     thisText = lrec.getValue();
-                    break;
-                case LabelSSTRecord.sid:
+                }
+                case LabelSSTRecord.sid -> {
                     LabelSSTRecord lsrec = (LabelSSTRecord) record;
                     thisRow = lsrec.getRow();
                     if (sstRecord == null) {
                         throw new IllegalStateException("No SST record found");
                     }
                     thisText = sstRecord.getString(lsrec.getSSTIndex()).toString();
-                    break;
-                case NoteRecord.sid:
+                }
+                case NoteRecord.sid -> {
                     NoteRecord nrec = (NoteRecord) record;
                     thisRow = nrec.getRow();
                     // TODO: Find object to match nrec.getShapeId()
-                    break;
-                case NumberRecord.sid:
+                }
+                case NumberRecord.sid -> {
                     NumberRecord numrec = (NumberRecord) record;
                     thisRow = numrec.getRow();
                     thisText = _ft.formatNumberDateCell(numrec);
-                    break;
-                default:
-                    break;
+                }
+                default -> {
+                }
             }
 
             if (thisText != null) {
@@ -319,8 +317,8 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
         // also ensure that an underlying DirectoryNode
         // is closed properly to avoid leaking file-handles
         DirectoryEntry root = getRoot();
-        if (root instanceof DirectoryNode) {
-            Closeable fs = ((DirectoryNode) root).getFileSystem();
+        if (root instanceof DirectoryNode node) {
+            Closeable fs = node.getFileSystem();
             if (isCloseFilesystem() && fs != null) {
                 fs.close();
             }

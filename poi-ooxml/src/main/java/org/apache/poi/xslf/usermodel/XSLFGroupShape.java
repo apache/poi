@@ -263,10 +263,10 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public XSLFPictureShape createPicture(PictureData pictureData){
-        if (!(pictureData instanceof XSLFPictureData)) {
+        if (!(pictureData instanceof XSLFPictureData xPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
         }
-        RelationPart rp = getSheet().addRelation(null, XSLFRelation.IMAGES, (XSLFPictureData)pictureData);
+        RelationPart rp = getSheet().addRelation(null, XSLFRelation.IMAGES, xPictureData);
 
         XSLFPictureShape sh = getDrawing().createPicture(rp.getRelationship().getId());
         new DrawPictureShape(sh).resize();
@@ -277,11 +277,11 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public XSLFObjectShape createOleShape(PictureData pictureData) {
-        if (!(pictureData instanceof XSLFPictureData)) {
+        if (!(pictureData instanceof XSLFPictureData xPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
         }
 
-        RelationPart rp = getSheet().addRelation(null, XSLFRelation.IMAGES, (XSLFPictureData)pictureData);
+        RelationPart rp = getSheet().addRelation(null, XSLFRelation.IMAGES, xPictureData);
 
         XSLFObjectShape sh = getDrawing().createOleShape(rp.getRelationship().getId());
         CTOleObject oleObj = sh.getCTOleObject();
@@ -386,8 +386,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
                     newShape = createAutoShape();
                 } else if (shape instanceof XSLFConnectorShape) {
                     newShape = createConnector();
-                } else if (shape instanceof XSLFPictureShape) {
-                    XSLFPictureShape p = (XSLFPictureShape)shape;
+                } else if (shape instanceof XSLFPictureShape p) {
                     XSLFPictureData pd = p.getPictureData();
                     XSLFPictureData pdNew = getSheet().getSlideShow().addPicture(pd.getData(), pd.getType());
                     newShape = createPicture(pdNew);

@@ -48,8 +48,7 @@ public class HSMFDump {
          for(Chunk chunk : chunks.getChunks()) {
             MAPIProperty attr = MAPIProperty.get(chunk.getChunkId());
             
-            if (chunk instanceof PropertiesChunk) {
-               PropertiesChunk props = (PropertiesChunk)chunk;
+            if (chunk instanceof PropertiesChunk props) {
                out.println(
                      "   Properties - " + props.getProperties().size() + ":"
                );

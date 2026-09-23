@@ -60,16 +60,16 @@ public class XSLFPath implements PathIf {
             for (boolean hasNext = cur.toFirstChild(); hasNext; hasNext = cur.toNextSibling()) {
                 XmlObject xo = cur.getObject();
                 PathCommand pc;
-                if (xo instanceof CTPath2DArcTo) {
-                    pc = new XSLFArcTo((CTPath2DArcTo) xo);
-                } else if (xo instanceof CTPath2DCubicBezierTo) {
-                    pc = new XSLFCurveTo((CTPath2DCubicBezierTo) xo);
-                } else if (xo instanceof CTPath2DMoveTo) {
-                    pc = new XSLFMoveTo((CTPath2DMoveTo) xo);
-                } else if (xo instanceof CTPath2DLineTo) {
-                    pc = new XSLFLineTo((CTPath2DLineTo) xo);
-                } else if (xo instanceof CTPath2DQuadBezierTo) {
-                    pc = new XSLFQuadTo((CTPath2DQuadBezierTo) xo);
+                if (xo instanceof CTPath2DArcTo arcTo) {
+                    pc = new XSLFArcTo(arcTo);
+                } else if (xo instanceof CTPath2DCubicBezierTo cubicBezierTo) {
+                    pc = new XSLFCurveTo(cubicBezierTo);
+                } else if (xo instanceof CTPath2DMoveTo moveTo) {
+                    pc = new XSLFMoveTo(moveTo);
+                } else if (xo instanceof CTPath2DLineTo lineTo) {
+                    pc = new XSLFLineTo(lineTo);
+                } else if (xo instanceof CTPath2DQuadBezierTo quadBezierTo) {
+                    pc = new XSLFQuadTo(quadBezierTo);
                 } else if (xo instanceof CTPath2DClose) {
                     pc = new ClosePathCommand();
                 } else {

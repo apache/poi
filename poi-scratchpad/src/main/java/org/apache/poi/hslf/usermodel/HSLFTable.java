@@ -177,8 +177,8 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     private void cellListToArray() {
         List<HSLFTableCell> htc = new ArrayList<>();
         for (HSLFShape h : getShapes()) {
-            if (h instanceof HSLFTableCell) {
-                htc.add((HSLFTableCell)h);
+            if (h instanceof HSLFTableCell cell) {
+                htc.add(cell);
             }
         }
 
@@ -255,8 +255,8 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     private void fitLinesToCells() {
         List<LineRect> lines = new ArrayList<>();
         for (HSLFShape h : getShapes()) {
-            if (h instanceof HSLFLine) {
-                lines.add(new LineRect((HSLFLine)h));
+            if (h instanceof HSLFLine line) {
+                lines.add(new LineRect(line));
             }
         }
 

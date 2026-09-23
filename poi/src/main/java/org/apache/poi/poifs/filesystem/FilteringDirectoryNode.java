@@ -191,9 +191,9 @@ public class FilteringDirectoryNode implements DirectoryEntry
 
    private Entry wrapEntry(Entry entry) {
       String name = entry.getName();
-      if (childExcludes.containsKey(name) && entry instanceof DirectoryEntry) {
+      if (childExcludes.containsKey(name) && entry instanceof DirectoryEntry de) {
          return new FilteringDirectoryNode(
-               (DirectoryEntry)entry, childExcludes.get(name));
+               de, childExcludes.get(name));
       }
       return entry;
    }

@@ -424,10 +424,9 @@ public class SignatureInfo {
             List<XMLStructure> objectContentList = object.getContent();
             for (XMLStructure objectContent : objectContentList) {
                 LOG.atDebug().log("object content java type: {}", objectContent.getClass().getName());
-                if (!(objectContent instanceof Manifest)) {
+                if (!(objectContent instanceof Manifest manifest)) {
                     continue;
                 }
-                Manifest manifest = (Manifest) objectContent;
                 List<Reference> manifestReferences = manifest.getReferences();
                 for (Reference manifestReference : manifestReferences) {
                     if (manifestReference.getDigestValue() != null) {
@@ -642,8 +641,8 @@ public class SignatureInfo {
         if (uriDereferencer == null) {
             uriDereferencer = new OOXMLURIDereferencer();
         }
-        if (uriDereferencer instanceof OOXMLURIDereferencer) {
-            ((OOXMLURIDereferencer)uriDereferencer).setSignatureInfo(this);
+        if (uriDereferencer instanceof OOXMLURIDereferencer ooxmlUriDereferencer) {
+            ooxmlUriDereferencer.setSignatureInfo(this);
         }
     }
 

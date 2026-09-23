@@ -709,10 +709,9 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof HSSFRow)) {
+        if (!(obj instanceof HSSFRow other)) {
             return false;
         }
-        HSSFRow other = (HSSFRow) obj;
 
         return (this.getRowNum() == other.getRowNum()) &&
                (this.getSheet() == other.getSheet());

@@ -25,6 +25,7 @@ import java.io.InputStream;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
@@ -207,5 +208,68 @@ final class TestBiff8DecryptingStream {
 
     private static StreamTester createStreamTester() {
         return new StreamTester(new MockStream(0x50), "BA AD F0 0D 00", 0x96C66829);
+    }
+
+    /**
+     * A mock stream whose first bytes are a fixed prefix, followed by the same
+     * incrementing pattern as {@link MockStream} starting at 0x50.
+     */
+    private static final class PrefixedMockStream extends InputStream {
+        private final byte[] _prefix;
+        private int _position;
+
+        PrefixedMockStream(byte[] prefix) {
+            _prefix = prefix;
+        }
+
+        @Override
+        public int read() {
+            int p = _position++;
+            return (p < _prefix.length ? _prefix[p] : 0x50 + (p - _prefix.length)) & 0xFF;
+        }
+    }
+
+    private static Biff8DecryptingStream createBDS(InputStream ms) {
+        EncryptionInfo ei = new EncryptionInfo(EncryptionMode.binaryRC4);
+        Decryptor dec = ei.getDecryptor();
+        dec.setSecretKey(new SecretKeySpec(HexRead.readFromString("BA AD F0 0D 00"), "RC4"));
+        return new Biff8DecryptingStream(ms, 0, ei);
+    }
+
+    /**
+     * On a never-encrypted record, readFully(buf, off, len) must read exactly {@code len} bytes
+     * at {@code off} - not {@code buf.length}. With a non-zero offset the old code passed
+     * buf.length and over-ran the buffer.
+     */
+    @Test
+    void readFullyWithOffsetOnNeverEncryptedRecord() {
+        // SID 0x0809 (BOF) is a never-encrypted record, so subsequent reads use the plain path
+        Biff8DecryptingStream bds = createBDS(new PrefixedMockStream(new byte[]{0x09, 0x08}));
+        assertEquals(BOFRecord.sid, bds.readRecordSID());
+        assertEquals(2, bds.getPosition());
+
+        byte[] buf = new byte[5];
+        bds.readFully(buf, 2, 3);
+
+        // exactly 3 bytes read into buf[2..5); the offset region is untouched
+        assertArrayEquals(new byte[]{0, 0, 0x50, 0x51, 0x52}, buf);
+        assertEquals(5, bds.getPosition());
+    }
+
+    /**
+     * Same record type, offset 0 but len &lt; buf.length: the old code read buf.length bytes
+     * (over-reading the stream) rather than len.
+     */
+    @Test
+    void readFullyShorterThanBufferOnNeverEncryptedRecord() {
+        Biff8DecryptingStream bds = createBDS(new PrefixedMockStream(new byte[]{0x09, 0x08}));
+        assertEquals(BOFRecord.sid, bds.readRecordSID());
+
+        byte[] buf = new byte[5];
+        bds.readFully(buf, 0, 3);
+
+        // only 3 bytes consumed, so position is 2 (SID) + 3, not 2 + 5
+        assertArrayEquals(new byte[]{0x50, 0x51, 0x52, 0, 0}, buf);
+        assertEquals(5, bds.getPosition());
     }
 }

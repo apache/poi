@@ -53,10 +53,10 @@ public final class Environment extends PositionDependentRecordContainer
 
         // Find our FontCollection record
         for (Record child : _children) {
-            if (child instanceof FontCollection) {
-                fontCollection = (FontCollection) child;
-            } else if (child instanceof TxMasterStyleAtom) {
-                txmaster = (TxMasterStyleAtom) child;
+            if (child instanceof FontCollection fc) {
+                fontCollection = fc;
+            } else if (child instanceof TxMasterStyleAtom atom) {
+                txmaster = atom;
             }
         }
 

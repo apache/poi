@@ -123,9 +123,7 @@ public class PaneInformation
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PaneInformation)) return false;
-
-        PaneInformation that = (PaneInformation) o;
+        if (!(o instanceof PaneInformation that)) return false;
 
         if (x != that.x) return false;
         if (y != that.y) return false;

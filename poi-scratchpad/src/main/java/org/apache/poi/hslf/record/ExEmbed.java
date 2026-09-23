@@ -104,29 +104,28 @@ public class ExEmbed extends RecordContainer {
 
         // First child should be the ExHyperlinkAtom
         Record child = _children[0];
-        if(child instanceof ExEmbedAtom) {
-            embedAtom = (ExEmbedAtom) child;
+        if(child instanceof ExEmbedAtom atom) {
+            embedAtom = atom;
         } else {
             LOG.atError().log("First child record wasn't a ExEmbedAtom, was of type {}", box(child.getRecordType()));
         }
 
         // Second child should be the ExOleObjAtom
         child = _children[1];
-        if (child instanceof ExOleObjAtom) {
-            oleObjAtom = (ExOleObjAtom) child;
+        if (child instanceof ExOleObjAtom atom) {
+            oleObjAtom = atom;
         } else {
             LOG.atError().log("Second child record wasn't a ExOleObjAtom, was of type {}", box(child.getRecordType()));
         }
 
         for (int i = 2; i < _children.length; i++) {
-            if (_children[i] instanceof CString){
-                final CString cs = (CString)_children[i];
+            if (_children[i] instanceof CString cs){
                 final int opts = cs.getOptions() >> 4;
                 switch(opts){
-                    case 0x1: menuName = cs; break;
-                    case 0x2: progId = cs; break;
-                    case 0x3: clipboardName = cs; break;
-                    default: break;
+                    case 0x1 -> menuName = cs;
+                    case 0x2 -> progId = cs;
+                    case 0x3 -> clipboardName = cs;
+                    default -> { }
                 }
             }
         }

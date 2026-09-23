@@ -45,7 +45,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.output.NullOutputStream;
@@ -188,7 +187,7 @@ public class GenericRecordXmlWriter implements Closeable {
 
         final int oldChildIndex = childIndex;
         childIndex = 0;
-        List<Map.Entry<String,Supplier<?>>> complex = prop.entrySet().stream().flatMap(this::writeProp).collect(Collectors.toList());
+        List<Map.Entry<String,Supplier<?>>> complex = prop.entrySet().stream().flatMap(this::writeProp).toList();
 
         attributePhase = false;
         if (!complex.isEmpty()) {

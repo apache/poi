@@ -35,10 +35,9 @@ public final class ZipPackagePropertiesMarshaller extends PackagePropertiesMarsh
     @Override
     public boolean marshall(PackagePart part, OutputStream out)
             throws OpenXML4JException {
-        if (!(out instanceof ZipArchiveOutputStream)) {
+        if (!(out instanceof ZipArchiveOutputStream zos)) {
             throw new IllegalArgumentException("ZipOutputStream expected!");
         }
-        ZipArchiveOutputStream zos = (ZipArchiveOutputStream) out;
 
         // Saving the part in the zip file
         ZipArchiveEntry ctEntry = new ZipArchiveEntry(ZipHelper

@@ -246,7 +246,7 @@ public class TSPTimeStampService implements TimeStampService {
                 return Stream.concat(ul.stream(), cl).map(CRLEntry::getCrlBytes);
             })
             .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     protected boolean matchCRLbyUrl(CRLEntry other, X509Certificate holder, String url) {

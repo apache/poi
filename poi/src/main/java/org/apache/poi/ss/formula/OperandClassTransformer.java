@@ -90,7 +90,16 @@ final class OperandClassTransformer {
         if (isSimpleValueFunc) {
             boolean localForceArray = desiredOperandClass == Ptg.CLASS_ARRAY;
             for (ParseNode child : children) {
-                transformNode(child, desiredOperandClass, localForceArray);
+                byte childOperandClass = desiredOperandClass;
+                if (desiredOperandClass == Ptg.CLASS_REF && !(child.getToken() instanceof AbstractFunctionPtg)) {
+                    // The function's own parameters are all 'V' class, so a 'R' request from the
+                    // caller (e.g. the 2nd/3rd argument of IF) must not leak through to a plain
+                    // reference operand - Excel shows #VALUE! for IF(A1<>"",MID(A1,1,2),"X")
+                    // if A1 is left as 'R' (bugs 55324 and 55747). Nested functions keep the
+                    // caller's class, e.g. FREQUENCY stays 'A' in COUNT(ABS(FREQUENCY(...))).
+                    childOperandClass = Ptg.CLASS_VALUE;
+                }
+                transformNode(child, childOperandClass, localForceArray);
             }
             setSimpleValueFuncClass((AbstractFunctionPtg) token, desiredOperandClass, callerForceArrayFlag);
             return;
@@ -120,8 +129,8 @@ final class OperandClassTransformer {
             }
             return;
         }
-        if (token instanceof AbstractFunctionPtg) {
-            transformFunctionNode((AbstractFunctionPtg) token, children, desiredOperandClass, callerForceArrayFlag);
+        if (token instanceof AbstractFunctionPtg afp) {
+            transformFunctionNode(afp, children, desiredOperandClass, callerForceArrayFlag);
             return;
         }
         if (children.length > 0) {
@@ -140,16 +149,14 @@ final class OperandClassTransformer {
     }
 
     private static boolean isSingleArgSum(Ptg token) {
-        if (token instanceof AttrPtg) {
-            AttrPtg attrPtg = (AttrPtg) token;
+        if (token instanceof AttrPtg attrPtg) {
             return attrPtg.isSum();
         }
         return false;
     }
 
     private static boolean isSimpleValueFunction(Ptg token) {
-        if (token instanceof AbstractFunctionPtg) {
-            AbstractFunctionPtg aptg = (AbstractFunctionPtg) token;
+        if (token instanceof AbstractFunctionPtg aptg) {
             if (aptg.getDefaultOperandClass() != Ptg.CLASS_VALUE) {
                 return false;
             }

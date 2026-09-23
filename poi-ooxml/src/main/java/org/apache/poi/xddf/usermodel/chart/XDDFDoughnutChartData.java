@@ -84,9 +84,12 @@ public class XDDFDoughnutChartData extends XDDFChartData {
         }
     }
 
+    /**
+     * @return the size of the hole as a percentage of the chart (10 to 90), or null if not set
+     */
     public Integer getHoleSize() {
         if (chart.isSetHoleSize()) {
-            return POIXMLUnits.parsePercent(chart.getHoleSize().xgetVal());
+            return POIXMLUnits.parsePercent(chart.getHoleSize().xgetVal()) / 1000;
         } else {
             return null;
         }

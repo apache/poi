@@ -238,10 +238,10 @@ public abstract class HWPFDocumentCore extends POIDocument {
         DirectoryEntry objectPoolEntry = null;
         if (directory.hasEntryCaseInsensitive(STREAM_OBJECT_POOL)) {
             final Entry entry = directory.getEntryCaseInsensitive(STREAM_OBJECT_POOL);
-            if (!(entry instanceof DirectoryEntry)) {
+            if (!(entry instanceof DirectoryEntry directoryEntry)) {
                 throw new IllegalArgumentException("Had unexpected type of entry for name: " + STREAM_OBJECT_POOL + ": " + entry.getClass());
             }
-            objectPoolEntry = (DirectoryEntry) entry;
+            objectPoolEntry = directoryEntry;
         }
         _objectPool = new ObjectPoolImpl(objectPoolEntry);
     }
@@ -420,10 +420,9 @@ public abstract class HWPFDocumentCore extends POIDocument {
     protected byte[] getDocumentEntryBytes(String name, int encryptionOffset, final int len) throws IOException {
         DirectoryNode dir = getDirectory();
         final Entry entry = dir.getEntryCaseInsensitive(name);
-        if (!(entry instanceof DocumentEntry)) {
+        if (!(entry instanceof DocumentEntry documentProps)) {
             throw new IllegalArgumentException("Had unexpected type of entry for name: " + name + ": " + entry);
         }
-        DocumentEntry documentProps = (DocumentEntry) entry;
         int streamSize = documentProps.getSize();
         boolean isEncrypted = (encryptionOffset > -1 && getEncryptionInfo() != null);
 

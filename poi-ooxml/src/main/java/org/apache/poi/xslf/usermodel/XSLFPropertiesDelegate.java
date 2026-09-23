@@ -1826,14 +1826,14 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperti
         Object obj = null;
         if (props == null) {
             return null;
-        } else if (props instanceof CTShapeProperties) {
-            obj = new ShapeDelegate((CTShapeProperties)props);
-        } else if (props instanceof CTBackgroundProperties) {
-            obj = new BackgroundDelegate((CTBackgroundProperties)props);
-        } else if (props instanceof CTStyleMatrixReference) {
-            obj = new StyleMatrixDelegate((CTStyleMatrixReference)props);
-        } else if (props instanceof CTTableCellProperties) {
-            obj = new TableCellDelegate((CTTableCellProperties)props);
+        } else if (props instanceof CTShapeProperties shapeProps) {
+            obj = new ShapeDelegate(shapeProps);
+        } else if (props instanceof CTBackgroundProperties bgProps) {
+            obj = new BackgroundDelegate(bgProps);
+        } else if (props instanceof CTStyleMatrixReference styleRef) {
+            obj = new StyleMatrixDelegate(styleRef);
+        } else if (props instanceof CTTableCellProperties cellProps) {
+            obj = new TableCellDelegate(cellProps);
         } else if (props instanceof CTNoFillProperties
             || props instanceof CTSolidColorFillProperties
             || props instanceof CTGradientFillProperties
@@ -1841,12 +1841,12 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperti
             || props instanceof CTPatternFillProperties
             || props instanceof CTGroupFillProperties) {
             obj = new FillPartDelegate(props);
-        } else if (props instanceof CTFillProperties) {
-            obj = new FillDelegate((CTFillProperties)props);
-        } else if (props instanceof CTLineProperties) {
-            obj = new LineStyleDelegate((CTLineProperties)props);
-        } else if (props instanceof CTTextCharacterProperties) {
-            obj = new TextCharDelegate((CTTextCharacterProperties)props);
+        } else if (props instanceof CTFillProperties fillProps) {
+            obj = new FillDelegate(fillProps);
+        } else if (props instanceof CTLineProperties lineProps) {
+            obj = new LineStyleDelegate(lineProps);
+        } else if (props instanceof CTTextCharacterProperties textProps) {
+            obj = new TextCharDelegate(textProps);
         } else {
             LOG.atError().log("{} is an unknown properties type", props.getClass());
             return null;

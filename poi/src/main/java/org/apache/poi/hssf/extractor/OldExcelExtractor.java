@@ -122,8 +122,8 @@ public class OldExcelExtractor implements POITextExtractor {
 
     @SuppressWarnings("java:S2093")
     private void open(InputStream biffStream) throws IOException {
-        BufferedInputStream bis = (biffStream instanceof BufferedInputStream)
-            ? (BufferedInputStream)biffStream
+        BufferedInputStream bis = (biffStream instanceof BufferedInputStream bufferedStream)
+            ? bufferedStream
             : new BufferedInputStream(biffStream, 8);
 
         if (FileMagic.valueOf(bis) == FileMagic.OLE2) {
@@ -151,17 +151,17 @@ public class OldExcelExtractor implements POITextExtractor {
         DocumentNode book;
         try {
             Entry entry = directory.getEntryCaseInsensitive(OLD_WORKBOOK_DIR_ENTRY_NAME);
-            if (!(entry instanceof DocumentNode)) {
+            if (!(entry instanceof DocumentNode node)) {
                 throw new IllegalArgumentException("Did not have an Excel 5/95 Book stream: " + entry);
             }
-            book = (DocumentNode) entry;
+            book = node;
         } catch (FileNotFoundException | IllegalArgumentException e) {
             // some files have "Workbook" instead
             Entry entry = directory.getEntryCaseInsensitive(WORKBOOK);
-            if (!(entry instanceof DocumentNode)) {
+            if (!(entry instanceof DocumentNode node)) {
                 throw new IllegalArgumentException("Did not have an Excel 5/95 Book stream: " + entry);
             }
-            book = (DocumentNode) entry;
+            book = node;
         }
 
         ris = new RecordInputStream(directory.createDocumentInputStream(book));
@@ -187,22 +187,13 @@ public class OldExcelExtractor implements POITextExtractor {
 
         // Work out what version we're dealing with
         int bofSid = ris.getSid();
-        switch (bofSid) {
-            case BOFRecord.biff2_sid:
-                biffVersion = 2;
-                break;
-            case BOFRecord.biff3_sid:
-                biffVersion = 3;
-                break;
-            case BOFRecord.biff4_sid:
-                biffVersion = 4;
-                break;
-            case BOFRecord.biff5_sid:
-                biffVersion = 5;
-                break;
-            default:
-                throw new IllegalArgumentException("File does not begin with a BOF, found sid of " + bofSid);
-        }
+        biffVersion = switch (bofSid) {
+            case BOFRecord.biff2_sid -> 2;
+            case BOFRecord.biff3_sid -> 3;
+            case BOFRecord.biff4_sid -> 4;
+            case BOFRecord.biff5_sid -> 5;
+            default -> throw new IllegalArgumentException("File does not begin with a BOF, found sid of " + bofSid);
+        };
 
         // Get the type
         BOFRecord bof = new BOFRecord(ris);
@@ -249,39 +240,35 @@ public class OldExcelExtractor implements POITextExtractor {
             ris.nextRecord();
 
             switch (sid) {
-                case  FILE_PASS_RECORD_SID:
+                case FILE_PASS_RECORD_SID ->
                     throw new EncryptedDocumentException("Encryption not supported for Old Excel files");
 
-                case OldSheetRecord.sid:
+                case OldSheetRecord.sid -> {
                     OldSheetRecord shr = new OldSheetRecord(ris);
                     shr.setCodePage(codepage);
                     text.append("Sheet: ");
                     text.append(shr.getSheetname());
                     text.append('\n');
-                    break;
+                }
 
-                case OldLabelRecord.biff2_sid:
-                case OldLabelRecord.biff345_sid:
+                case OldLabelRecord.biff2_sid, OldLabelRecord.biff345_sid -> {
                     OldLabelRecord lr = new OldLabelRecord(ris);
                     lr.setCodePage(codepage);
                     text.append(lr.getValue());
                     text.append('\n');
-                    break;
-                case OldStringRecord.biff2_sid:
-                case OldStringRecord.biff345_sid:
+                }
+                case OldStringRecord.biff2_sid, OldStringRecord.biff345_sid -> {
                     OldStringRecord sr = new OldStringRecord(ris);
                     sr.setCodePage(codepage);
                     text.append(sr.getString());
                     text.append('\n');
-                    break;
+                }
 
-                case NumberRecord.sid:
+                case NumberRecord.sid -> {
                     NumberRecord nr = new NumberRecord(ris);
                     handleNumericCell(text, nr.getValue());
-                    break;
-                case OldFormulaRecord.biff2_sid:
-                case OldFormulaRecord.biff3_sid:
-                case OldFormulaRecord.biff4_sid:
+                }
+                case OldFormulaRecord.biff2_sid, OldFormulaRecord.biff3_sid, OldFormulaRecord.biff4_sid -> {
                     // Biff 2 and 5+ share the same SID, due to a bug...
                     if (biffVersion == 5) {
                         FormulaRecord fr = new FormulaRecord(ris);
@@ -294,18 +281,15 @@ public class OldExcelExtractor implements POITextExtractor {
                             handleNumericCell(text, fr.getValue());
                         }
                     }
-                    break;
-                case RKRecord.sid:
+                }
+                case RKRecord.sid -> {
                     RKRecord rr = new RKRecord(ris);
                     handleNumericCell(text, rr.getRKNumber());
-                    break;
+                }
 
-                case CodepageRecord.sid:
-                    codepage = new CodepageRecord(ris);
-                    break;
+                case CodepageRecord.sid -> codepage = new CodepageRecord(ris);
 
-                default:
-                    ris.readFully(HSSFWorkbook.safelyAllocate(ris.remaining()));
+                default -> ris.readFully(HSSFWorkbook.safelyAllocate(ris.remaining()));
             }
         }
 

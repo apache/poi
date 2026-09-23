@@ -78,6 +78,12 @@ public class OOXMLURIDereferencer implements URIDereferencer {
 
         PackagePart part = findPart(uri);
         if (part == null) {
+            // Signature references are expected to point at parts within the package (or be
+            // same-document references). A URI that carries a scheme (i.e. an absolute URI)
+            // refers to something outside the package and is not resolved here.
+            if (uri.isAbsolute()) {
+                throw new URIReferenceException("only in-package references are supported: " + uri);
+            }
             LOG.atDebug().log("cannot resolve {}, delegating to base DOM URI dereferencer", uri);
             return baseUriDereferencer.dereference(uriReference, context);
         }

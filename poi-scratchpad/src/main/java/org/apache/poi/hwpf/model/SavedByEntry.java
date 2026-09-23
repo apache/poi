@@ -56,8 +56,7 @@ public final class SavedByEntry
   public boolean equals(Object other)
   {
     if (other == this) return true;
-    if (!(other instanceof SavedByEntry)) return false;
-    SavedByEntry that = (SavedByEntry) other;
+    if (!(other instanceof SavedByEntry that)) return false;
     return that.userName.equals(userName) &&
            that.saveLocation.equals(saveLocation);
   }

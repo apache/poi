@@ -55,19 +55,17 @@ public class Sheet implements FreeRefFunction {
             } else {
                 ValueEval arg = args[0];
 
-                if (arg instanceof RefEval) {
+                if (arg instanceof RefEval ref) {
                     // Argument is a single cell reference → return the sheet index of that reference +1
-                    RefEval ref = (RefEval) arg;
                     int sheetIndex = ref.getFirstSheetIndex();
                     return new NumberEval((double) sheetIndex + 1);
-                } else if (arg instanceof AreaEval) {
+                } else if (arg instanceof AreaEval area) {
                     // Argument is a cell range → return the sheet index of that area +1
-                    AreaEval area = (AreaEval) arg;
                     int sheetIndex = area.getFirstSheetIndex();
                     return new NumberEval((double) sheetIndex + 1);
-                } else if (arg instanceof StringEval) {
+                } else if (arg instanceof StringEval se) {
                     // Argument is a string (sheet name, e.g., "Sheet3") → look up the sheet index by name
-                    String sheetName = ((StringEval) arg).getStringValue();
+                    String sheetName = se.getStringValue();
                     EvaluationWorkbook wb = ec.getWorkbook();
                     int sheetIndex = wb.getSheetIndex(sheetName);
                     if (sheetIndex >= 0) {

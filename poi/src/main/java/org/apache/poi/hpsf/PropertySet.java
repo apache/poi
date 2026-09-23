@@ -627,31 +627,27 @@ public class PropertySet {
         if (propertyValue == null) {
             return null;
         }
-        if (propertyValue instanceof String) {
-            return (String)propertyValue;
+        if (propertyValue instanceof String str) {
+            return str;
         }
 
         // Do our best with some edge cases
-        if (propertyValue instanceof byte[]) {
-            byte[] b = (byte[])propertyValue;
-            switch (b.length) {
-                case 0:
-                    return "";
-                case 1:
-                    return Byte.toString(b[0]);
-                case 2:
-                    return Integer.toString( LittleEndian.getUShort(b) );
-                case 4:
-                    return Long.toString( LittleEndian.getUInt(b) );
-                default:
+        if (propertyValue instanceof byte[] b) {
+            return switch (b.length) {
+                case 0 -> "";
+                case 1 -> Byte.toString(b[0]);
+                case 2 -> Integer.toString( LittleEndian.getUShort(b) );
+                case 4 -> Long.toString( LittleEndian.getUInt(b) );
+                default -> {
                     // Maybe it's a string? who knows!
                     try {
-                        return CodePageUtil.getStringFromCodePage(b, Property.DEFAULT_CODEPAGE);
+                        yield CodePageUtil.getStringFromCodePage(b, Property.DEFAULT_CODEPAGE);
                     } catch (UnsupportedEncodingException e) {
                         // doesn't happen ...
-                        return "";
+                        yield "";
                     }
-            }
+                }
+            };
         }
         return propertyValue.toString();
     }
@@ -799,10 +795,9 @@ public class PropertySet {
      */
     @Override
     public boolean equals(final Object o) {
-        if (!(o instanceof PropertySet)) {
+        if (!(o instanceof PropertySet ps)) {
             return false;
         }
-        final PropertySet ps = (PropertySet) o;
         int byteOrder1 = ps.getByteOrder();
         int byteOrder2 = getByteOrder();
         ClassID classID1 = ps.getClassID();

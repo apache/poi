@@ -79,8 +79,7 @@ public final class ConnectionSite implements ConnectionSiteIf {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ConnectionSite)) return false;
-        ConnectionSite that = (ConnectionSite) o;
+        if (!(o instanceof ConnectionSite that)) return false;
         return Objects.equals(pos, that.pos) &&
                 Objects.equals(ang, that.ang);
     }

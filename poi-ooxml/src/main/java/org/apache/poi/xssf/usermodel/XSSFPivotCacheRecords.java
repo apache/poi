@@ -27,14 +27,16 @@ import javax.xml.namespace.QName;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.SuppressForbidden;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheRecords;
 
 public class XSSFPivotCacheRecords extends POIXMLDocumentPart {
     private CTPivotCacheRecords ctPivotCacheRecords;
-    
+
     @Beta
     public XSSFPivotCacheRecords() {
         super();
@@ -46,7 +48,7 @@ public class XSSFPivotCacheRecords extends POIXMLDocumentPart {
      * Should only be called when reading in an existing file.
      *
      * @param part - The package part that holds xml data representing this pivot cache records.
-     * 
+     *
      * @since 3.14-Beta1
      */
     @Beta
@@ -56,13 +58,17 @@ public class XSSFPivotCacheRecords extends POIXMLDocumentPart {
             readFrom(stream);
         }
     }
-    
+
+    @SuppressForbidden(value = "InputStream.available() is used on purpose here to have at least some sort of safety-catch on large allocations")
     @Beta
     protected void readFrom(InputStream is) throws IOException {
-    try {
-        XmlOptions options  = new XmlOptions(DEFAULT_XML_OPTIONS);
-        //Removing root element
-        options.setLoadReplaceDocumentElement(null);
+        try {
+            XmlOptions options  = new XmlOptions(DEFAULT_XML_OPTIONS);
+            //Removing root element
+            options.setLoadReplaceDocumentElement(null);
+
+            IOUtils.safelyAllocateCheck(is.available(), 1024*1024);
+
             ctPivotCacheRecords = CTPivotCacheRecords.Factory.parse(is, options);
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());

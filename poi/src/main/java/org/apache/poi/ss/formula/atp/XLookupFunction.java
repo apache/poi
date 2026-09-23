@@ -21,6 +21,7 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.functions.ArrayFunction;
+import org.apache.poi.ss.formula.functions.ArrayMode;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.LookupUtils;
 
@@ -34,7 +35,7 @@ import org.apache.poi.ss.formula.functions.LookupUtils;
  * 
  * @since 5.2.0
  */
-final class XLookupFunction implements FreeRefFunction, ArrayFunction {
+final class XLookupFunction implements FreeRefFunction, ArrayFunction, ArrayMode {
 
     public static final FreeRefFunction instance = new XLookupFunction(ArgumentsEvaluator.instance);
 
@@ -117,8 +118,7 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
             } catch (EvaluationException e) {
                 if (ErrorEval.NA.equals(e.getErrorEval())) {
                     if (notFound != BlankEval.instance) {
-                        if (returnEval instanceof AreaEval) {
-                            AreaEval area = (AreaEval)returnEval;
+                        if (returnEval instanceof AreaEval area) {
                             int width = area.getWidth();
                             if (width <= 1) {
                                 return notFound;
@@ -133,8 +133,7 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
                     return e.getErrorEval();
                 }
             }
-            if (returnEval instanceof AreaEval) {
-                AreaEval area = (AreaEval)returnEval;
+            if (returnEval instanceof AreaEval area) {
                 if (tableArray.isColumn()) {
                     return area.offset(matchedIdx, matchedIdx,0, area.getWidth() - 1);
                 } else {

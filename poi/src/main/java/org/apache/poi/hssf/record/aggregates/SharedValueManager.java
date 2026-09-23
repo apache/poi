@@ -259,10 +259,12 @@ public final class SharedValueManager {
     }
 
     /**
-     * Add specified Array Record.
+     * Add specified Array Record. An existing record for exactly the same range is replaced,
+     * as re-entering an array formula over its range does in Excel.
      */
     public void addArrayRecord(ArrayRecord ar) {
         // could do a check here to make sure none of the ranges overlap
+        _arrayRecords.removeIf(existing -> existing.getRange().equals(ar.getRange()));
         _arrayRecords.add(ar);
     }
 

@@ -69,8 +69,8 @@ public class ExMCIMovie extends RecordContainer { // TODO - instantiable supercl
 
         // First child should be the ExVideoContainer
         final Record child = _children[0];
-        if (child instanceof ExVideoContainer) {
-            exVideo = (ExVideoContainer) child;
+        if (child instanceof ExVideoContainer videoContainer) {
+            exVideo = videoContainer;
         } else {
             LOG.atError().log("First child record wasn't a ExVideoContainer, was of type {}", box(child.getRecordType()));
         }

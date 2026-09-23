@@ -68,7 +68,7 @@ dependencies {
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
     api 'com.github.virtuald:curvesapi:1.08'
-    api 'org.apache.commons:commons-collections4:4.5.0'
+    api 'org.apache.commons:commons-collections4:4.6.0'
 
     signingImplementation "org.apache.santuario:xmlsec:${xmlSecVersion}"
     signingImplementation "org.bouncycastle:bcpkix-jdk18on:${bouncyCastleVersion}"
@@ -126,7 +126,7 @@ dependencies {
     testImplementation project(path:':poi-ooxml-lite-agent', configuration: 'archives')
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
     testRuntimeOnly "org.jspecify:jspecify:${jspecifyVersion}"
-    testImplementation 'org.xmlunit:xmlunit-core:2.13.0'
+    testImplementation 'org.xmlunit:xmlunit-core:2.14.0'
     testImplementation 'org.reflections:reflections:0.10.2'
     testImplementation 'org.openjdk.jmh:jmh-core:1.37'
     testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.37'

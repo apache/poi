@@ -87,11 +87,11 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
     @Override
     public boolean marshall(PackagePart part, OutputStream out)
             throws OpenXML4JException {
-        if (!(part instanceof PackagePropertiesPart))
+        if (!(part instanceof PackagePropertiesPart packagePropertiesPart))
             throw new IllegalArgumentException(
                     "'part' must be a PackagePropertiesPart instance, but had: " + part.getClass() +
                             ", check logs while reading.");
-        propsPart = (PackagePropertiesPart) part;
+        propsPart = packagePropertiesPart;
 
         // Configure the document
         xmlDoc = DocumentHelper.createDocument();

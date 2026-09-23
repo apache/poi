@@ -273,7 +273,16 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         if (!dir.hasEntryCaseInsensitive(PP97_DOCUMENT)) {
             return dir;
         }
-        return (DirectoryNode) dir.getEntryCaseInsensitive(PP97_DOCUMENT);
+        try {
+            return (DirectoryNode) dir.getEntryCaseInsensitive(PP97_DOCUMENT);
+        } catch (IOException | RuntimeException e) {
+            // this runs in the super(...) argument of the constructor below, so the
+            // constructor's own catch block cannot clean up after it. A malformed file whose
+            // PP97_DUALSTORAGE entry is a document rather than a directory fails the cast
+            // here, and without this the file handle would leak.
+            IOUtils.closeQuietly(dir.getFileSystem());
+            throw e;
+        }
     }
 
     /**
@@ -377,8 +386,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 entry.setValue(record);
             }
 
-            if (record instanceof PersistRecord) {
-                ((PersistRecord) record).setPersistId(persistId);
+            if (record instanceof PersistRecord persistRecord) {
+                persistRecord.setPersistId(persistId);
             }
         }
 
@@ -389,10 +398,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private void initRecordOffsets(byte[] docstream, int usrOffset, NavigableMap<Integer, Record> recordMap, Map<Integer, Integer> offset2id) {
         while (usrOffset != 0) {
             Record builtRecord = Record.buildRecordAtOffset(docstream, usrOffset);
-            if (!(builtRecord instanceof UserEditAtom)) {
+            if (!(builtRecord instanceof UserEditAtom usr)) {
                 throw new CorruptPowerPointFileException("Did not have a user edit atom: " + builtRecord);
             }
-            UserEditAtom usr = (UserEditAtom) builtRecord;
 
             recordMap.put(usrOffset, usr);
 
@@ -401,10 +409,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             if (record == null) {
                 throw new CorruptPowerPointFileException("Powerpoint document is missing a PersistPtrHolder at " + psrOffset);
             }
-            if (!(record instanceof PersistPtrHolder)) {
+            if (!(record instanceof PersistPtrHolder ptr)) {
                 throw new CorruptPowerPointFileException("Record is not a PersistPtrHolder: " + record + " at " + psrOffset);
             }
-            PersistPtrHolder ptr = (PersistPtrHolder) record;
             recordMap.put(psrOffset, ptr);
 
             for (Map.Entry<Integer, Integer> entry : ptr.getSlideLocationsLookup().entrySet()) {
@@ -437,8 +444,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     public DocumentEncryptionAtom getDocumentEncryptionAtom() {
         for (Record r : _records) {
-            if (r instanceof DocumentEncryptionAtom) {
-                return (DocumentEncryptionAtom) r;
+            if (r instanceof DocumentEncryptionAtom dea) {
+                return dea;
             }
         }
         return null;
@@ -477,10 +484,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
 
         final Entry en = getDirectory().getEntryCaseInsensitive("Pictures");
-        if (!(en instanceof DocumentEntry)) {
+        if (!(en instanceof DocumentEntry entry)) {
             throw new IllegalArgumentException("Had unexpected type of entry for name: Pictures: " + en.getClass());
         }
-        DocumentEntry entry = (DocumentEntry) en;
         EscherContainerRecord blipStore = getBlipStore();
         byte[] pictstream;
         try (DocumentInputStream is = getDirectory().createDocumentInputStream(entry)) {
@@ -584,10 +590,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         //  records share an offset.
         Map<Integer, List<EscherBSERecord>> unmatchedRecords = new HashMap<>();
         for (EscherRecord child : blipStore) {
-            if (!(child instanceof EscherBSERecord)) {
+            if (!(child instanceof EscherBSERecord record)) {
                 throw new CorruptPowerPointFileException("Did not have a EscherBSERecord: " + child);
             }
-            EscherBSERecord record = (EscherBSERecord) child;
             unmatchedRecords.computeIfAbsent(record.getOffset(), k -> new ArrayList<>()).add(record);
         }
 
@@ -700,10 +705,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         CountingOS cos = new CountingOS();
         for (Record record : _records) {
             // all top level records are position dependent
-            if (!(record instanceof PositionDependentRecord)) {
+            if (!(record instanceof PositionDependentRecord pdr)) {
                 throw new CorruptPowerPointFileException("Record is not a position dependent record: " + record);
             }
-            PositionDependentRecord pdr = (PositionDependentRecord) record;
             int oldPos = pdr.getLastOnDiskOffset();
             int newPos = cos.size();
             pdr.setLastOnDiskOffset(newPos);

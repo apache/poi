@@ -17,10 +17,14 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.Fixed2ArgFunction;
 import org.apache.poi.ss.formula.functions.Function;
 
-public final class ConcatEval  extends Fixed2ArgFunction {
+/**
+ * Implementation of Excel formula token '&amp;'.
+ */
+public final class ConcatEval  extends Fixed2ArgFunction implements ArrayFunction {
 
     public static final Function instance = new ConcatEval();
 
@@ -43,9 +47,18 @@ public final class ConcatEval  extends Fixed2ArgFunction {
         return new StringEval(sb.toString());
     }
 
+    @Override
+    public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        if (args.length != 2) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        return evaluateTwoArrayArgs(args[0], args[1], srcRowIndex, srcColumnIndex, (valA, valB) ->
+                evaluate(srcRowIndex, srcColumnIndex, valA, valB)
+        );
+    }
+
     private Object getText(ValueEval ve) {
-        if (ve instanceof StringValueEval) {
-            StringValueEval sve = (StringValueEval) ve;
+        if (ve instanceof StringValueEval sve) {
             return sve.getStringValue();
         }
         if (ve == BlankEval.instance) {

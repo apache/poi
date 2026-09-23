@@ -79,9 +79,12 @@ public final class ZipPartMarshaller implements PartMarshaller {
         }
 
         ZipArchiveOutputStream zos = (ZipArchiveOutputStream) os;
+        // Use getName() (the ASCII part name, preserving any percent-encoding) rather than the
+        // decoded getURI().getPath(): the zip item name is round-tripped verbatim on read
+        // (see ZipHelper.getOPCNameFromZipItemName), so a decoded name would corrupt a part name
+        // containing percent-encoded characters.
         ZipArchiveEntry partEntry = new ZipArchiveEntry(ZipHelper
-                .getZipItemNameFromOPCName(part.getPartName().getURI()
-                        .getPath()));
+                .getZipItemNameFromOPCName(part.getPartName().getName()));
         try {
             ZipHelper.adjustEntryTime(partEntry);
 

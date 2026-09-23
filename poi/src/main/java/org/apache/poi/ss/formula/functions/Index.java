@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.CacheAreaEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
@@ -46,10 +47,9 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg, Ar
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
-        TwoDEval reference = convertFirstArg(arg0);
-
         int columnIx = 0;
         try {
+            TwoDEval reference = convertFirstArg(arg0, srcRowIndex, srcColumnIndex);
             int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
 
             if (!reference.isColumn()) {
@@ -72,9 +72,8 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg, Ar
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
             ValueEval arg2) {
-        TwoDEval reference = convertFirstArg(arg0);
-
         try {
+            TwoDEval reference = convertFirstArg(arg0, srcRowIndex, srcColumnIndex);
             int columnIx = resolveIndexArg(arg2, srcRowIndex, srcColumnIndex);
             int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
             return getValueFromArea(reference, rowIx, columnIx);
@@ -93,32 +92,30 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg, Ar
         // The formula parser doesn't seem to support this yet. Not sure if the evaluator does either
     }
 
-    private static TwoDEval convertFirstArg(ValueEval arg0) {
-        if (arg0 instanceof RefEval) {
+    private static TwoDEval convertFirstArg(ValueEval arg0, int srcRowIndex, int srcColumnIndex)
+            throws EvaluationException {
+        if (arg0 instanceof RefEval refEval) {
             // convert to area ref for simpler code in getValueFromArea()
-            return ((RefEval) arg0).offset(0, 0, 0, 0);
+            return refEval.offset(0, 0, 0, 0);
         }
-        if((arg0 instanceof TwoDEval)) {
-            return (TwoDEval) arg0;
+        if((arg0 instanceof TwoDEval twoDEval)) {
+            return twoDEval;
         }
-        // else the other variation of this function takes an array as the first argument
-        // it seems like interface 'ArrayEval' does not even exist yet
-        throw new IllegalStateException("Incomplete code - cannot handle first arg of type ("
-                + arg0.getClass().getName() + ")");
-
+        if (arg0 instanceof ErrorEval ee) {
+            throw new EvaluationException(ee);
+        }
+        // a single value acts as a 1x1 array, e.g. INDEX(5,1) is 5
+        return new CacheAreaEval(srcRowIndex, srcColumnIndex, srcRowIndex, srcColumnIndex, new ValueEval[]{arg0});
     }
 
     @Override
     public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-        switch (args.length) {
-            case 2:
-                return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
-            case 3:
-                return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2]);
-            case 4:
-                return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3]);
-        }
-        return ErrorEval.VALUE_INVALID;
+        return switch (args.length) {
+            case 2 -> evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
+            case 3 -> evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2]);
+            case 4 -> evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3]);
+            default -> ErrorEval.VALUE_INVALID;
+        };
     }
 
     private static ValueEval getValueFromArea(TwoDEval ae, int pRowIx, int pColumnIx)

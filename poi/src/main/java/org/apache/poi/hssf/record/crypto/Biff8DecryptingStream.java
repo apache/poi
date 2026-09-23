@@ -111,7 +111,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
     @Override
     public void readFully(byte[] buf, int off, int len) {
         if (shouldSkipEncryptionOnCurrentRecord) {
-            readPlain(buf, off, buf.length);
+            readPlain(buf, off, len);
         } else {
             ccis.readFully(buf, off, len);
         }

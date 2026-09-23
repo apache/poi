@@ -16,8 +16,11 @@
 ==================================================================== */
 package org.apache.poi.hpsf;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.RecordFormatException;
@@ -75,5 +78,31 @@ class TestOverflowHardening {
 
         Array a = new Array();
         assertThrows(RecordFormatException.class, () -> a.read(lei));
+    }
+
+    /**
+     * A dictionary entry's length is an unsigned 32-bit field, so the byte count derived from it
+     * has to be range checked while it is still a long. Narrowing first made the conversion throw
+     * {@link ArithmeticException} out of the {@code Section} constructor, bypassing the
+     * corrupted-dictionary path that the oversize guard exists to take.
+     */
+    @Test
+    void dictionaryEntryLengthAboveIntMaxIsTreatedAsCorrupt() {
+        // ClassID (16) + section offset (4), then the section itself: size, property count,
+        // one property entry pointing at the dictionary, and a dictionary holding a single
+        // entry whose length is too large to narrow to an int
+        byte[] data = new byte[48];
+        LittleEndian.putUInt(data, 16, 20);                             // offset of the section
+        LittleEndian.putUInt(data, 20, 28);                             // section size
+        LittleEndian.putUInt(data, 24, 1);                              // property count
+        LittleEndian.putUInt(data, 28, PropertyIDMap.PID_DICTIONARY);   // property id
+        LittleEndian.putUInt(data, 32, 16);                             // property offset
+        LittleEndian.putUInt(data, 36, 1);                              // dictionary entry count
+        LittleEndian.putUInt(data, 40, 1);                              // entry key
+        LittleEndian.putUInt(data, 44, 0xFFFFFFFFL);                    // entry length
+
+        Section s = assertDoesNotThrow(() -> new Section(data, 0));
+        assertTrue(s.getDictionary() == null || s.getDictionary().isEmpty(),
+            "a dictionary entry with a bogus length should be discarded, not returned");
     }
 }

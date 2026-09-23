@@ -651,11 +651,13 @@ class TestXSSFCellStyle {
         }
         assertEquals(num + 1, stylesTable.getFills().size());
 
+        // NO_FILL is written like Excel's default fill and is recognised as it (bug 60895)
         cellStyle.setFillPattern(FillPatternType.NO_FILL);
         assertEquals(FillPatternType.NO_FILL, cellStyle.getFillPattern());
-        fillId = (int)cellStyle.getCoreXf().getFillId();
-        ctFill2 = stylesTable.getFillAt(fillId).getCTFill();
-        assertNull(ctFill2.getPatternFill());
+        assertEquals(0, cellStyle.getCoreXf().getFillId());
+        assertEquals(num + 1, stylesTable.getFills().size());
+        ctFill2 = stylesTable.getFillAt(0).getCTFill();
+        assertSame(STPatternType.NONE, ctFill2.getPatternFill().getPatternType());
     }
 
     @Test

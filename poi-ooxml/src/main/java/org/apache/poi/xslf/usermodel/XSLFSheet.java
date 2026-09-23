@@ -106,8 +106,8 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
     public XMLSlideShow getSlideShow() {
         POIXMLDocumentPart p = getParent();
         while(p != null) {
-            if(p instanceof XMLSlideShow){
-                return (XMLSlideShow)p;
+            if(p instanceof XMLSlideShow slideShow){
+                return slideShow;
             }
             p = p.getParent();
         }
@@ -139,24 +139,24 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
 
     @SuppressWarnings("WeakerAccess")
     protected static List<XSLFShape> buildShapes(CTGroupShape spTree, XSLFShapeContainer parent){
-        final XSLFSheet sheet = (parent instanceof XSLFSheet) ? (XSLFSheet)parent : ((XSLFShape)parent).getSheet();
+        final XSLFSheet sheet = (parent instanceof XSLFSheet s) ? s : ((XSLFShape)parent).getSheet();
 
         List<XSLFShape> shapes = new ArrayList<>();
         try (XmlCursor cur = spTree.newCursor()) {
             for (boolean b = cur.toFirstChild(); b; b = cur.toNextSibling()) {
                 XmlObject ch = cur.getObject();
-                if(ch instanceof CTShape){
+                if(ch instanceof CTShape sp){
                     // simple shape
-                    XSLFAutoShape shape = XSLFAutoShape.create((CTShape)ch, sheet);
+                    XSLFAutoShape shape = XSLFAutoShape.create(sp, sheet);
                     shapes.add(shape);
-                } else if (ch instanceof CTGroupShape){
-                    shapes.add(new XSLFGroupShape((CTGroupShape)ch, sheet));
-                } else if (ch instanceof CTConnector){
-                    shapes.add(new XSLFConnectorShape((CTConnector)ch, sheet));
-                } else if (ch instanceof CTPicture){
-                    shapes.add(new XSLFPictureShape((CTPicture)ch, sheet));
-                } else if (ch instanceof CTGraphicalObjectFrame){
-                    XSLFGraphicFrame shape = XSLFGraphicFrame.create((CTGraphicalObjectFrame)ch, sheet);
+                } else if (ch instanceof CTGroupShape grpSp){
+                    shapes.add(new XSLFGroupShape(grpSp, sheet));
+                } else if (ch instanceof CTConnector cxnSp){
+                    shapes.add(new XSLFConnectorShape(cxnSp, sheet));
+                } else if (ch instanceof CTPicture pic){
+                    shapes.add(new XSLFPictureShape(pic, sheet));
+                } else if (ch instanceof CTGraphicalObjectFrame frame){
+                    XSLFGraphicFrame shape = XSLFGraphicFrame.create(frame, sheet);
                     shapes.add(shape);
                 } else if (ch instanceof XmlAnyTypeImpl) {
                     // TODO: the link of the XLSF classes to the xml beans objects will
@@ -265,11 +265,11 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
 
     @Override
     public XSLFPictureShape createPicture(PictureData pictureData){
-        if (!(pictureData instanceof XSLFPictureData)) {
+        if (!(pictureData instanceof XSLFPictureData xPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
         }
 
-        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, (XSLFPictureData)pictureData);
+        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, xPictureData);
 
         XSLFPictureShape sh = getDrawing().createPicture(rp.getRelationship().getId());
         new DrawPictureShape(sh).resize();
@@ -305,10 +305,10 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
 
     @Override
     public XSLFObjectShape createOleShape(PictureData pictureData) {
-        if (!(pictureData instanceof XSLFPictureData)) {
+        if (!(pictureData instanceof XSLFPictureData xPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
         }
-        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, (XSLFPictureData)pictureData);
+        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, xPictureData);
 
         XSLFObjectShape sh = getDrawing().createOleShape(rp.getRelationship().getId());
         CTOleObject oleObj = sh.getCTOleObject();
@@ -403,10 +403,10 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
                 throw new IllegalStateException("CTGroupShape was not found");
             }
             XmlObject xmlObject = sp[0];
-            if (!(xmlObject instanceof CTGroupShape)) {
+            if (!(xmlObject instanceof CTGroupShape groupShape)) {
                 throw new IllegalArgumentException("Had unexpected type of entry: " + xmlObject.getClass());
             }
-            _spTree = (CTGroupShape) xmlObject;
+            _spTree = groupShape;
         }
         return _spTree;
     }
@@ -534,8 +534,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
     @SuppressWarnings("WeakerAccess")
     protected XSLFTextShape getTextShapeByType(Placeholder type){
         for(XSLFShape shape : this.getShapes()){
-            if(shape instanceof XSLFTextShape) {
-                XSLFTextShape txt = (XSLFTextShape)shape;
+            if(shape instanceof XSLFTextShape txt) {
                 if(txt.getTextType() == type) {
                     return txt;
                 }
@@ -569,8 +568,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
             _placeholderByTypeMap = new HashMap<>();
 
             for(final XSLFShape sh : getShapes()){
-                if(sh instanceof XSLFTextShape){
-                    final XSLFTextShape sShape = (XSLFTextShape)sh;
+                if(sh instanceof XSLFTextShape sShape){
                     final CTPlaceholder ph = sShape.getPlaceholderDetails().getCTPlaceholder(false);
                     if(ph != null) {
                         _placeholders.add(sShape);
@@ -703,8 +701,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
         int numberOfRelations = 0;
         String targetBlipId = pictureShape.getBlipId();
         for (XSLFShape shape : pictureShape.getSheet().getShapes()) {
-            if (shape instanceof XSLFPictureShape) {
-                XSLFPictureShape currentPictureShape = ((XSLFPictureShape) shape);
+            if (shape instanceof XSLFPictureShape currentPictureShape) {
                 String currentBlipId = currentPictureShape.getBlipId();
                 if (currentBlipId != null && currentBlipId.equals(targetBlipId)) {
                     numberOfRelations++;
@@ -760,46 +757,21 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
     protected String mapSchemeColor(CTColorMapping cmap, String schemeColor) {
         STColorSchemeIndex.Enum schemeMap = null;
         if (cmap != null && schemeColor != null) {
-            switch (schemeColor) {
-                case "accent1":
-                    schemeMap = cmap.getAccent1();
-                    break;
-                case "accent2":
-                    schemeMap = cmap.getAccent2();
-                    break;
-                case "accent3":
-                    schemeMap = cmap.getAccent3();
-                    break;
-                case "accent4":
-                    schemeMap = cmap.getAccent4();
-                    break;
-                case "accent5":
-                    schemeMap = cmap.getAccent5();
-                    break;
-                case "accent6":
-                    schemeMap = cmap.getAccent6();
-                    break;
-                case "bg1":
-                    schemeMap = cmap.getBg1();
-                    break;
-                case "bg2":
-                    schemeMap = cmap.getBg2();
-                    break;
-                case "folHlink":
-                    schemeMap = cmap.getFolHlink();
-                    break;
-                case "hlink":
-                    schemeMap = cmap.getHlink();
-                    break;
-                case "tx1":
-                    schemeMap = cmap.getTx1();
-                    break;
-                case "tx2":
-                    schemeMap = cmap.getTx2();
-                    break;
-                default:
-                    break;
-            }
+            schemeMap = switch (schemeColor) {
+                case "accent1" -> cmap.getAccent1();
+                case "accent2" -> cmap.getAccent2();
+                case "accent3" -> cmap.getAccent3();
+                case "accent4" -> cmap.getAccent4();
+                case "accent5" -> cmap.getAccent5();
+                case "accent6" -> cmap.getAccent6();
+                case "bg1" -> cmap.getBg1();
+                case "bg2" -> cmap.getBg2();
+                case "folHlink" -> cmap.getFolHlink();
+                case "hlink" -> cmap.getHlink();
+                case "tx1" -> cmap.getTx1();
+                case "tx2" -> cmap.getTx2();
+                default -> null;
+            };
         }
         return (schemeMap == null) ? null : schemeMap.toString();
     }

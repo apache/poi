@@ -17,10 +17,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -306,6 +309,84 @@ final class TestCountFuncs {
     }
 
     @Test
+    void testNotEqualCountsValuesOfOtherTypes_Bug69853() {
+        // "<>" means "not equal to the empty text", which every non-blank cell is: Excel's own
+        // COUNTIF documentation gives COUNTIF(range,"<>") as the way to count non-empty cells
+        I_MatchPredicate mp = createCriteriaPredicate(new StringEval("<>"));
+        assertTrue(mp.matches(new NumberEval(42)));
+        assertTrue(mp.matches(new NumberEval(0)));
+        assertTrue(mp.matches(BoolEval.FALSE));
+        assertTrue(mp.matches(ErrorEval.NA));
+        assertTrue(mp.matches(new StringEval("abc")));
+        assertFalse(mp.matches(BlankEval.instance));
+
+        // and "<>abc" counts everything that is not the text "abc", blanks included
+        mp = createCriteriaPredicate(new StringEval("<>abc"));
+        assertTrue(mp.matches(new NumberEval(42)));
+        assertTrue(mp.matches(BoolEval.TRUE));
+        assertTrue(mp.matches(ErrorEval.DIV_ZERO));
+        assertTrue(mp.matches(BlankEval.instance));
+        assertTrue(mp.matches(new StringEval("abd")));
+        assertFalse(mp.matches(new StringEval("abc")));
+        assertFalse(mp.matches(new StringEval("ABC")));
+
+        // whereas "=" and "abc" only ever match text (a number never equals a text)
+        mp = createCriteriaPredicate(new StringEval("abc"));
+        assertFalse(mp.matches(new NumberEval(42)));
+        assertFalse(mp.matches(BoolEval.TRUE));
+        assertFalse(mp.matches(ErrorEval.NA));
+
+        // the same for the other criteria types
+        mp = createCriteriaPredicate(new StringEval("<>5"));
+        assertTrue(mp.matches(BoolEval.TRUE));
+        assertTrue(mp.matches(ErrorEval.NA));
+        assertTrue(mp.matches(new StringEval("abc")));
+        assertTrue(mp.matches(new NumberEval(6)));
+        assertFalse(mp.matches(new NumberEval(5)));
+
+        mp = createCriteriaPredicate(new StringEval("<>TRUE"));
+        assertTrue(mp.matches(new NumberEval(1)));
+        assertTrue(mp.matches(ErrorEval.NA));
+        assertTrue(mp.matches(new StringEval("abc")));
+        assertTrue(mp.matches(BoolEval.FALSE));
+        assertFalse(mp.matches(BoolEval.TRUE));
+
+        mp = createCriteriaPredicate(new StringEval("<>#N/A"));
+        assertTrue(mp.matches(new NumberEval(1)));
+        assertTrue(mp.matches(new StringEval("abc")));
+        assertTrue(mp.matches(BoolEval.TRUE));
+        assertTrue(mp.matches(BlankEval.instance));
+        assertTrue(mp.matches(ErrorEval.DIV_ZERO));
+        assertFalse(mp.matches(ErrorEval.NA));
+        mp = createCriteriaPredicate(new StringEval("#N/A"));
+        assertFalse(mp.matches(new NumberEval(1)));
+        assertFalse(mp.matches(BlankEval.instance));
+    }
+
+    @Test
+    void testCountifNotEmptyInWorkbook_Bug69853() throws IOException {
+        // the reporter's spreadsheet: a number and a text, COUNTIF(A1:A2,"<>") is 2 in Excel
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet("Sheet1");
+            sheet.createRow(0).createCell(0).setCellValue(1);
+            sheet.createRow(1).createCell(0).setCellValue("a");
+            sheet.createRow(2).createCell(0).setCellValue(true);
+            sheet.createRow(3).createCell(0).setCellFormula("1/0");
+            sheet.createRow(4).createCell(0);
+            HSSFCell cell = sheet.createRow(5).createCell(1);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertDouble(fe, cell, "COUNTIF(A1:A2,\"<>\")", 2);
+            assertDouble(fe, cell, "COUNTIF(A1:A6,\"<>\")", 4);
+            assertDouble(fe, cell, "COUNTIF(A1:A6,\"<>a\")", 5);
+            assertDouble(fe, cell, "COUNTIF(A1:A6,\"<>1\")", 5);
+            assertDouble(fe, cell, "COUNTIFS(A1:A6,\"<>\")", 4);
+            // (the error in A4 would propagate into the sum, as it does in Excel)
+            assertDouble(fe, cell, "SUMIF(A1:A3,\"<>\",A1:A3)", 1);
+            assertDouble(fe, cell, "SUMIFS(A1:A3,A1:A3,\"<>a\")", 1);
+        }
+    }
+
+    @Test
     void testCountifEmptyStringCriteria() {
         I_MatchPredicate mp;
 
@@ -468,6 +549,79 @@ final class TestCountFuncs {
         confirmPredicate(false, mp, 12812);
         confirmPredicate(true, mp, "12812");
         confirmPredicate(false, mp, "128812");
+    }
+
+    @Test
+    void testWildCardsWithRegexMetaCharacters() {
+        I_MatchPredicate mp;
+
+        // bug 69878: '+' and '\\' were passed through to the regex unescaped
+        mp = createCriteriaPredicate(new StringEval("A+B*"));
+        confirmPredicate(true, mp, "A+B*");
+        confirmPredicate(true, mp, "a+bcd");
+        confirmPredicate(false, mp, "AAB");
+        confirmPredicate(false, mp, "AB");
+
+        mp = createCriteriaPredicate(new StringEval("\\*Foo+Bar*"));
+        confirmPredicate(true, mp, "\\Foo+Bar");
+        confirmPredicate(true, mp, "\\xFoo+Barx");
+        confirmPredicate(false, mp, "Foo+Bar");
+        confirmPredicate(false, mp, "\\FooBar");
+
+        // every other character with a special meaning in a regex is a literal in Excel
+        for (char c : "\\^$.|+()[]{}".toCharArray()) {
+            mp = createCriteriaPredicate(new StringEval("a" + c + "b*"));
+            confirmPredicate(true, mp, "a" + c + "b");
+            confirmPredicate(true, mp, "a" + c + "bc");
+            confirmPredicate(false, mp, "ab");
+            confirmPredicate(false, mp, "a" + c + c + "b");
+        }
+        mp = createCriteriaPredicate(new StringEval("[a-z]*"));
+        confirmPredicate(true, mp, "[a-z]");
+        confirmPredicate(false, mp, "a");
+        mp = createCriteriaPredicate(new StringEval("a{2}*"));
+        confirmPredicate(true, mp, "a{2}");
+        confirmPredicate(false, mp, "aa");
+        mp = createCriteriaPredicate(new StringEval("a|b*"));
+        confirmPredicate(true, mp, "a|b");
+        confirmPredicate(false, mp, "a");
+        confirmPredicate(false, mp, "b");
+    }
+
+    @Test
+    void testEscapedTilde() {
+        I_MatchPredicate mp;
+
+        // '~~' is a literal tilde, so the '*' after it is still a wildcard
+        mp = createCriteriaPredicate(new StringEval("a~~*"));
+        confirmPredicate(true, mp, "a~");
+        confirmPredicate(true, mp, "a~xyz");
+        confirmPredicate(false, mp, "a");
+        confirmPredicate(false, mp, "a*");
+
+        // '~~~*' is a literal tilde followed by a literal asterisk
+        mp = createCriteriaPredicate(new StringEval("a~~~*"));
+        confirmPredicate(true, mp, "a~*");
+        confirmPredicate(false, mp, "a~x");
+        confirmPredicate(false, mp, "a~~*");
+    }
+
+    @Test
+    void testWildCardsWithRegexMetaCharactersInWorkbook() throws IOException {
+        // the reporter's steps for bug 69878
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet("Sheet1");
+            HSSFRow row = sheet.createRow(0);
+            row.createCell(0).setCellFormula("\"A+B*\"");
+            HSSFCell cell = row.createCell(1);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertDouble(fe, cell, "COUNTIF(A1:A1, \"A+B*\")", 1);
+            assertDouble(fe, cell, "COUNTIF(A1:A1, \"A+*\")", 1);
+            assertDouble(fe, cell, "COUNTIF(A1:A1, \"A?B*\")", 1);
+            assertDouble(fe, cell, "COUNTIF(A1:A1, \"AB*\")", 0);
+            assertDouble(fe, cell, "SUMIF(A1:A1, \"A+B*\", B2:B2)", 0);
+            assertDouble(fe, cell, "COUNTIFS(A1:A1, \"A+B*\")", 1);
+        }
     }
 
     @Test

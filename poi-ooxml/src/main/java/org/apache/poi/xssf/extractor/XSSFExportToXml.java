@@ -81,13 +81,6 @@ import org.xml.sax.SAXException;
 public class XSSFExportToXml implements Comparator<String>{
     private static final Logger LOG = PoiLogManager.getLogger(XSSFExportToXml.class);
 
-
-    @FunctionalInterface
-    private interface SecurityFeature {
-        void accept(String name) throws SAXException;
-    }
-
-
     private XSSFMap map;
     private final HashMap<String, Integer> indexMap = new HashMap<>();
     /**
@@ -548,15 +541,5 @@ public class XSSFExportToXml implements Comparator<String>{
             node = node.getNextSibling();
         }
         return complexTypeNode;
-    }
-
-    private static void trySet(String name, SecurityFeature securityFeature) {
-        try {
-            securityFeature.accept(name);
-        } catch (Exception e) {
-            LOG.atWarn().withThrowable(e).log("SchemaFactory feature ({}) unsupported", name);
-        } catch (AbstractMethodError ame) {
-            LOG.atWarn().withThrowable(ame).log("Cannot set SchemaFactory feature ({}) because outdated XML parser in classpath", name);
-        }
     }
 }

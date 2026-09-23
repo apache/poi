@@ -144,10 +144,9 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
         }
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof RowColKey)) {
+            if (!(obj instanceof RowColKey other)) {
                 return false;
             }
-            RowColKey other = (RowColKey) obj;
             return _rowIndex == other._rowIndex && _columnIndex == other._columnIndex;
         }
         @Override

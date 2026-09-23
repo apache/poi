@@ -213,7 +213,7 @@ public class ClassID implements Duplicatable, GenericRecord {
      */
     @Override
     public boolean equals(final Object o) {
-        return (o instanceof ClassID) && Arrays.equals(bytes, ((ClassID)o).bytes);
+        return (o instanceof ClassID other) && Arrays.equals(bytes, other.bytes);
     }
 
     /**

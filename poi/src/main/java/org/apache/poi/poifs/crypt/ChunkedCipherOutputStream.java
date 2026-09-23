@@ -74,7 +74,17 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         this.fileOut = TempFile.createTempFile("encrypted_package", "crypt");
         this.out = Files.newOutputStream(fileOut.toPath());
         this.dir = dir;
-        this.cipher = initCipherForBlock(null, 0, false);
+        try {
+            this.cipher = initCipherForBlock(null, 0, false);
+        } catch (IOException | GeneralSecurityException | RuntimeException e) {
+            // the constructor did not complete, so the caller has no instance to close -
+            // release the stream and the temp file here instead of leaking both
+            IOUtils.closeQuietly(this.out);
+            if (!fileOut.delete()) {
+                LOG.atWarn().log("Can't delete temp file: {}", fileOut);
+            }
+            throw e;
+        }
     }
 
     public ChunkedCipherOutputStream(OutputStream stream, int chunkSize) throws IOException, GeneralSecurityException {

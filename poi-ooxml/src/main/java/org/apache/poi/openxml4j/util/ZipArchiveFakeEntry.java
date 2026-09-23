@@ -22,6 +22,7 @@ import java.nio.file.Files;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.crypt.temp.EncryptedTempData;
@@ -42,6 +43,13 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
     // can be overwritten via IOUtils.setByteArrayMaxOverride()
     private static final int DEFAULT_MAX_ENTRY_SIZE = 100_000_000;
     private static int MAX_ENTRY_SIZE = DEFAULT_MAX_ENTRY_SIZE;
+
+    // cap on the initial read-buffer allocation for entries with a known size. The declared
+    // entry size comes from the (untrusted) zip local file header, so we do not eagerly
+    // allocate more than this from it - the buffer grows beyond it only as real data arrives.
+    // Deliberately well below DEFAULT_MAX_ENTRY_SIZE; entries up to this size (the vast
+    // majority) are still read with a single exactly-sized allocation.
+    private static final int MAX_INIT_BUFFER_SIZE = 2_000_000;
 
     /**
      * Set the maximum size of a single entry in a zip-file.
@@ -75,17 +83,42 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
         if (threshold >= 0 && (entrySize >= threshold || entrySize == -1)) {
             boolean success = false;
             try {
-                if (ZipInputStreamZipEntrySource.shouldEncryptTempFiles()) {
-                    encryptedTempData = new EncryptedTempData();
-                    try (OutputStream os = encryptedTempData.getOutputStream()) {
-                        numberOfBytes = IOUtils.copy(inp, os);
+                final long bytes;
+                if (entrySize == -1) {
+                    // The entry does not declare its uncompressed size (e.g. it was written
+                    // with a data descriptor by a streaming zip writer). Most such entries
+                    // are small, so buffer in memory up to the temp-file threshold and only
+                    // spill to a temp file if the entry really is that large - an entry that
+                    // hides its size cannot force more than the threshold onto the heap, and
+                    // small entries no longer cost a temp file each.
+                    try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                        final long bytesInMemory = IOUtils.copy(inp, baos, threshold);
+                        final int nextByte = bytesInMemory < threshold ? -1 : inp.read();
+                        if (nextByte == -1) {
+                            data = baos.toByteArray();
+                            bytes = data.length;
+                        } else {
+                            try (OutputStream os = createTempDataOutputStream()) {
+                                LOG.atWarn().log("Zip entry {} does not declare its uncompressed size and is larger " +
+                                                "than the temp-file threshold of {} bytes - spilling it to {}",
+                                        entry.getName(), threshold,
+                                        tempFile != null ? tempFile.getAbsolutePath() : "encrypted temp data");
+                                baos.writeTo(os);
+                                os.write(nextByte);
+                                bytes = bytesInMemory + 1 + IOUtils.copy(inp, os);
+                            }
+                        }
                     }
                 } else {
-                    tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
-                    LOG.atInfo().log("Creating temp file {} for zip entry {} of size {} bytes",
-                            tempFile.getAbsolutePath(), entry.getName(), entrySize);
-                    numberOfBytes = IOUtils.copy(inp, tempFile);
+                    try (OutputStream os = createTempDataOutputStream()) {
+                        if (tempFile != null) {
+                            LOG.atInfo().log("Creating temp file {} for zip entry {} of size {} bytes",
+                                    tempFile.getAbsolutePath(), entry.getName(), entrySize);
+                        }
+                        bytes = IOUtils.copy(inp, os);
+                    }
                 }
+                numberOfBytes = bytes;
                 success = true;
             } finally {
                 if (!success) {
@@ -101,11 +134,42 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
                 throw new IOException("ZIP entry size is too large or invalid");
             }
 
-            // Grab the de-compressed contents for later
-            data = (entrySize == -1) ? IOUtils.toByteArrayWithMaxLength(inp, getMaxEntrySize()) :
-                    IOUtils.toByteArray(inp, entrySize, getMaxEntrySize(), "ZipArchiveFakeEntry.setMaxEntrySize()");
+            // Grab the de-compressed contents for later.
+            if (entrySize == -1) {
+                // size unknown: read what is present, bounded by getMaxEntrySize()
+                // (a stream longer than that fails with a RecordFormatException)
+                data = IOUtils.toByteArrayWithMaxLength(inp, getMaxEntrySize());
+            } else {
+                // size known: read exactly entrySize bytes (EOFException if the entry holds
+                // fewer). The initial buffer is sized from entrySize but capped at
+                // MAX_INIT_BUFFER_SIZE - entrySize comes from the (untrusted) zip local file
+                // header, so a tiny entry claiming a huge uncompressed size must not be able
+                // to force a large eager allocation before any data is read.
+                data = IOUtils.toByteArray(inp, Math.toIntExact(entrySize), getMaxEntrySize(),
+                        MAX_INIT_BUFFER_SIZE, "ZipArchiveFakeEntry.setMaxEntrySize()");
+                // the entry must not hold more bytes than it declared
+                if (inp.read() >= 0) {
+                    throw new IOException("Zip entry " + entry.getName()
+                            + " has more data than its declared size of " + entrySize + " bytes");
+                }
+            }
             numberOfBytes = data.length;
         }
+    }
+
+    /**
+     * Opens the output to buffer this entry's data outside the heap: encrypted temp data if
+     * {@link ZipInputStreamZipEntrySource#setEncryptTempFiles(boolean)} is enabled, a plain
+     * temp file otherwise. Sets the corresponding field so {@link #getInputStream()} and
+     * {@link #close()} can find it.
+     */
+    private OutputStream createTempDataOutputStream() throws IOException {
+        if (ZipInputStreamZipEntrySource.shouldEncryptTempFiles()) {
+            encryptedTempData = new EncryptedTempData();
+            return encryptedTempData.getOutputStream();
+        }
+        tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
+        return Files.newOutputStream(tempFile.toPath());
     }
 
     @Override

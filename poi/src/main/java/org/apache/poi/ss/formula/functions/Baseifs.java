@@ -20,10 +20,12 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.CacheAreaEval;
+import org.apache.poi.ss.formula.EvaluationCell;
+import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
@@ -75,35 +77,20 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
 
             validateCriteriaRanges(sumRange, ae);
 
-            // If any criteria argument is a multi-element array (e.g. {1,2,3} or a
-            // multi-cell range), expand it: evaluate once per element and sum the
-            // results. This supports SUM(COUNTIFS(range, {v1,v2,...})) patterns where
-            // the implicit-intersection approach used by getSingleValue would either
-            // yield the wrong single value or produce an ERROR when the formula cell
-            // lies outside the array's row/column bounds (Bug 70005).
+            // A criteria argument may stand for several criteria (an array constant such as {1,2},
+            // or in array context a multi-cell range such as D1:D3, see Countif.isArrayCriteria):
+            // Excel then evaluates the function once per element and returns an array of the
+            // results, which is what SUMPRODUCT(SUMIFS(sum,range,criteria_range)),
+            // SUM(COUNTIFS(range,{v1,v2})) and MAX(COUNTIFS(...)) rely on. Several array criteria
+            // are paired element-wise and must have the same shape.
+            Boolean arrayContext = null; // looked up only when a criteria argument is an array at all
             for (int k = 0; k < numPairs; k++) {
-                if (criteriaArgs[k] instanceof AreaEval) {
-                    AreaEval arrayCrit = (AreaEval) criteriaArgs[k];
-                    if (arrayCrit.getHeight() * arrayCrit.getWidth() > 1) {
-                        double total = 0.0;
-                        for (int r = 0; r < arrayCrit.getHeight(); r++) {
-                            for (int c = 0; c < arrayCrit.getWidth(); c++) {
-                                ValueEval element = arrayCrit.getRelativeValue(r, c);
-                                I_MatchPredicate[] mp = new I_MatchPredicate[numPairs];
-                                for (int j = 0; j < numPairs; j++) {
-                                    mp[j] = Countif.createCriteriaPredicate(
-                                            j == k ? element : criteriaArgs[j],
-                                            ec.getRowIndex(), ec.getColumnIndex());
-                                }
-                                validateCriteria(mp);
-                                ValueEval partial = aggregateMatchingCells(createAggregator(), sumRange, ae, mp);
-                                if (partial instanceof ErrorEval) return partial;
-                                if (partial instanceof NumberEval) {
-                                    total += ((NumberEval) partial).getNumberValue();
-                                }
-                            }
-                        }
-                        return new NumberEval(total);
+                if (criteriaArgs[k] instanceof AreaEval crit && crit.getHeight() * crit.getWidth() > 1) {
+                    if (arrayContext == null) {
+                        arrayContext = isArrayContext(ec);
+                    }
+                    if (Countif.isArrayCriteria(crit, arrayContext)) {
+                        return evaluateForEachCriterion(sumRange, ae, criteriaArgs, crit, arrayContext, ec);
                     }
                 }
             }
@@ -118,6 +105,56 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
+    }
+
+    /**
+     * @return whether the function is evaluated in array context: its result feeds an array-mode
+     * function such as SUMPRODUCT, or the formula cell is part of an array formula
+     * @since 6.0.0
+     */
+    /* package */ static boolean isArrayContext(OperationEvaluationContext ec) {
+        if (ec.isArraymode()) {
+            return true;
+        }
+        if (ec.getWorkbook() == null || ec.getSheetIndex() < 0) {
+            // a context without a cell (tests, conditional formatting, data validation)
+            return false;
+        }
+        EvaluationSheet sheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
+        EvaluationCell cell = sheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
+        return cell != null && cell.isPartOfArrayFormulaGroup();
+    }
+
+    private ValueEval evaluateForEachCriterion(AreaEval sumRange, AreaEval[] ranges, ValueEval[] criteriaArgs,
+            AreaEval shape, boolean arrayContext, OperationEvaluationContext ec) throws EvaluationException {
+        int height = shape.getHeight();
+        int width = shape.getWidth();
+        for (ValueEval criteria : criteriaArgs) {
+            if (Countif.isArrayCriteria(criteria, arrayContext)
+                    && (((AreaEval) criteria).getHeight() != height || ((AreaEval) criteria).getWidth() != width)) {
+                throw EvaluationException.invalidValue();
+            }
+        }
+        ValueEval[] results = new ValueEval[height * width];
+        for (int r = 0; r < height; r++) {
+            for (int c = 0; c < width; c++) {
+                I_MatchPredicate[] mp = new I_MatchPredicate[criteriaArgs.length];
+                for (int j = 0; j < criteriaArgs.length; j++) {
+                    ValueEval criterion = Countif.isArrayCriteria(criteriaArgs[j], arrayContext)
+                            ? ((AreaEval) criteriaArgs[j]).getRelativeValue(r, c) : criteriaArgs[j];
+                    mp[j] = Countif.createCriteriaPredicate(criterion, ec.getRowIndex(), ec.getColumnIndex());
+                }
+                ValueEval result;
+                try {
+                    validateCriteria(mp);
+                    result = aggregateMatchingCells(createAggregator(), sumRange, ranges, mp);
+                } catch (EvaluationException e) {
+                    result = e.getErrorEval();
+                }
+                results[r * width + c] = result;
+            }
+        }
+        return new CacheAreaEval(shape.getFirstRow(), shape.getFirstColumn(), shape.getLastRow(), shape.getLastColumn(), results);
     }
 
     /**
@@ -155,8 +192,8 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
         for(I_MatchPredicate predicate : criteria) {
 
             // check for errors in predicate and return immediately using this error code
-            if(predicate instanceof ErrorMatcher) {
-                throw new EvaluationException(ErrorEval.valueOf(((ErrorMatcher)predicate).getValue()));
+            if(predicate instanceof ErrorMatcher errorMatcher) {
+                throw new EvaluationException(ErrorEval.valueOf(errorMatcher.getValue()));
             }
         }
     }
@@ -192,8 +229,8 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
                 if(matches) { // aggregate only if all of the corresponding criteria specified are true for that cell.
                     if(sumRange != null) {
                         ValueEval value = sumRange.getRelativeValue(r, c);
-                        if (value instanceof ErrorEval) {
-                            throw new EvaluationException((ErrorEval)value);
+                        if (value instanceof ErrorEval errorEval) {
+                            throw new EvaluationException(errorEval);
                         }
                         aggregator.addValue(value);
                     } else {
@@ -206,11 +243,11 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
     }
 
     protected static AreaEval convertRangeArg(ValueEval eval) throws EvaluationException {
-        if (eval instanceof AreaEval) {
-            return (AreaEval) eval;
+        if (eval instanceof AreaEval areaEval) {
+            return areaEval;
         }
-        if (eval instanceof RefEval) {
-            return ((RefEval)eval).offset(0, 0, 0, 0);
+        if (eval instanceof RefEval refEval) {
+            return refEval.offset(0, 0, 0, 0);
         }
         throw new EvaluationException(ErrorEval.VALUE_INVALID);
     }

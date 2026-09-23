@@ -693,8 +693,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         for(RelationPart rp : rels) {
             POIXMLDocumentPart r = rp.getDocumentPart();
             // do not copy the drawing relationship, it will be re-created
-            if(r instanceof XSSFDrawing) {
-                dg = (XSSFDrawing)r;
+            if(r instanceof XSSFDrawing drawing) {
+                dg = drawing;
                 continue;
             }
 
@@ -758,11 +758,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 List<RelationPart> srcRels = drawingPatriarch.getRelationParts();
                 for (RelationPart rp : srcRels) {
                     POIXMLDocumentPart r = rp.getDocumentPart();
-                    if (r instanceof XSSFChart) {
+                    if (r instanceof XSSFChart srcChart) {
                         // Replace chart relation part with new relationship, cloning the chart's content
                         RelationPart chartPart = clonedDg.createChartRelationPart();
                         XSSFChart chart = chartPart.getDocumentPart();
-                        chart.importContent((XSSFChart) r);
+                        chart.importContent(srcChart);
                         chart.replaceReferences(clonedSheet);
                     } else {
                         addRelation(rp, clonedDg);
@@ -2038,17 +2038,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
         final CTSheet ctSheet = sheets.get(sheetIx).sheet;
         switch (visibility) {
-            case VISIBLE:
-                ctSheet.setState(STSheetState.VISIBLE);
-                break;
-            case HIDDEN:
-                ctSheet.setState(STSheetState.HIDDEN);
-                break;
-            case VERY_HIDDEN:
-                ctSheet.setState(STSheetState.VERY_HIDDEN);
-                break;
-            default:
-                throw new IllegalArgumentException("This should never happen");
+            case VISIBLE -> ctSheet.setState(STSheetState.VISIBLE);
+            case HIDDEN -> ctSheet.setState(STSheetState.HIDDEN);
+            case VERY_HIDDEN -> ctSheet.setState(STSheetState.VERY_HIDDEN);
+            default -> throw new IllegalArgumentException("This should never happen");
         }
     }
 
@@ -2199,8 +2192,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         } else {
             List<RelationPart> relationParts = getRelationParts();
             for (RelationPart relationPart : relationParts) {
-                if (relationPart.getDocumentPart() instanceof ExternalLinksTable) {
-                    ExternalLinksTable linksTable = relationPart.getDocumentPart();
+                if (relationPart.getDocumentPart() instanceof ExternalLinksTable linksTable) {
                     String linkedFileName = linksTable.getLinkedFileName();
                     if(linkedFileName.equals(name)){
                         String s = relationPart.getRelationship().getTargetURI().toString();
