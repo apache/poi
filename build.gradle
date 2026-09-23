@@ -59,6 +59,10 @@ if (project.hasProperty('enableSonar')) {
 }
 
 boolean isCIBuild = false
+
+// the modules that are published to Maven repositories (the same set as the 5.5.1 release)
+ext.publishedModules = ['poi', 'poi-ooxml', 'poi-ooxml-full', 'poi-ooxml-lite', 'poi-scratchpad',
+                        'poi-excelant', 'poi-examples']
 String dateSuffix = new Date().format('yyyyMMdd')
 
 // For help converting an Ant build to a Gradle build, see
@@ -584,31 +588,18 @@ subprojects {
                         }
                     }
 
+                    // metadata matches the POMs of the 5.5.1 release in Maven Central
                     licenses {
                         license {
                             name = 'Apache License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
                             distribution = 'repo'
                         }
                     }
 
                     organization {
                         name = 'Apache Software Foundation'
-                        url = 'http://www.apache.org/'
-                    }
-
-                    issueManagement {
-                        system = 'bugzilla'
-                        url = 'https://bz.apache.org/bugzilla'
-                    }
-
-                    developers {
-                        developer {
-                            name = 'POI Team'
-                            id = 'poi'
-                            email = 'user@poi.apache.org'
-                            organization = 'Apache POI'
-                        }
+                        url = 'https://www.apache.org/'
                     }
 
                     withXml {
@@ -616,7 +607,7 @@ subprojects {
                         def doc = r.getOwnerDocument()
                         def hdr = new File('../legal/HEADER')
                         if (!hdr.exists()) hdr = new File('legal/HEADER')
-                        def asl = doc.createComment(hdr.text)
+                        def asl = doc.createComment(hdr.text.replace('http://www.apache.org/', 'https://www.apache.org/'))
                         // adding ASF header before root node is ignored
                         // doc.insertBefore(asl, doc.getDocumentElement())
                         r.insertBefore(asl, r.getFirstChild())
@@ -638,6 +629,19 @@ subprojects {
                 }
             }
         }
+
+        repositories {
+            // Only the modules that are released to Maven Central are published to Nexus.
+            // Credentials are read from the Gradle properties 'apacheSnapshotsUsername' and
+            // 'apacheSnapshotsPassword' (or ORG_GRADLE_PROJECT_apacheSnapshotsUsername/Password env vars).
+            if (project.name in publishedModules && project.version.toString().endsWith('-SNAPSHOT')) {
+                maven {
+                    name = 'apacheSnapshots'
+                    url = 'https://repository.apache.org/content/repositories/snapshots/'
+                    credentials(PasswordCredentials)
+                }
+            }
+        }
     }
 
     generatePomFileForPOIPublication.destination = "../build/dist/maven/${base.archivesName.get()}/${base.archivesName.get()}-${project.version}.pom"
@@ -650,7 +654,8 @@ subprojects {
         setRequired {
             // signing is only required if this is a release version
             // and the artifacts are to be published
-            gradle.taskGraph.allTasks.any { it instanceof PublishToMavenRepository }
+            !project.version.toString().endsWith('-SNAPSHOT') &&
+                gradle.taskGraph.allTasks.any { it instanceof PublishToMavenRepository }
         }
         sign publishing.publications.POI
     }
