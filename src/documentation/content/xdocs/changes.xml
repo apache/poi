@@ -206,13 +206,13 @@
             <action type="fix" fixes-bug="github-1227" context="OOXML">Avoid large eager allocation from untrusted zip entry size in ZipArchiveFakeEntry</action>
             <action type="fix" fixes-bug="github-1228" context="OPC">Fix OPC part-name handling issues (percent-escape bounds check, marshaller round-trip)</action>
             <action type="fix" fixes-bug="github-1230" context="XWPF">Escape relationship id interpolated into drawing fragment in XWPFRun.addChart</action>
-            <action type="fix" fixes-bug="github-1231" context="XSLF XDGF">Apply DEFAULT_XML_OPTIONS to remaining XMLBeans parses</action>
+            <action type="fix" fixes-bug="github-1231" context="OOXML">Apply DEFAULT_XML_OPTIONS to remaining XMLBeans parses</action>
             <action type="fix" fixes-bug="github-1232" context="HSSF">Fix Biff8DecryptingStream.readFully to honour len on the never-encrypted path</action>
             <action type="fix" fixes-bug="github-1233" context="OOXML">Restrict OOXML signature reference dereferencing to the package</action>
             <action type="fix" fixes-bug="github-1234" context="XSSF">Fix findColumnIndex() to handle newline characters in column headers</action>
             <action type="fix" fixes-bug="github-1240" context="OPC">Fix ContentType.equals and the M1.10 part name segment check</action>
             <action type="fix" fixes-bug="github-1241" context="XSSF">XSSFExcelExtractor: cache the TransformerFactory and skip unwanted comment lookups</action>
-            <action type="fix" fixes-bug="github-1242" context="XSSF XDDF">Avoid quadratic XmlBeans element access on hot paths</action>
+            <action type="fix" fixes-bug="github-1242" context="OOXML">Avoid quadratic XmlBeans element access on hot paths</action>
             <action type="fix" fixes-bug="github-1243" context="XWPF">Reduce the per-run work done when opening a Word document</action>
             <action type="fix" fixes-bug="github-1244" context="XSSF">Avoid building XmlBeans objects for every shared string</action>
             <action type="fix" fixes-bug="github-1245" context="XSSF">Fix off-by-one when stripping the [] wrapper from an external book name</action>
@@ -245,10 +245,6 @@
             <action type="fix" fixes-bug="github-1346" context="HWMF">HwmfBitmapDib: bounds check the image size before narrowing it to int</action>
             <action type="fix" fixes-bug="github-1347" context="POIFS">CryptoAPIDecryptor: don't size the descriptor array from an untrusted count</action>
             <action type="fix" fixes-bug="github-1348" context="HSMF">Msg2txt: reject path traversal filenames during MSG attachment extraction</action>
-            <action type="fix" context="SS_Common">Avoid NPEs when parsing formulas with unusual sheet identifiers</action>
-            <action type="fix" context="XSSF">Add allocation check to XSSFPivotCacheRecords</action>
-            <action type="fix" context="HEMF">Throw an exception instead of failing an assert for an invalid EMF file</action>
-            <action type="update" breaks-compatibility="true" context="SS_Common">DataFormatter: setUseCachedValuesForFormulaCells(boolean) now defaults to true (was false in POI 5.x)</action>
         </actions>
     </release>
 
