@@ -74,6 +74,7 @@
         <summary>
             <summary-item>Minimum Java version is now JDK 17 (was JDK 8 in POI 5.x)</summary-item>
             <summary-item>DataFormatter now uses cached values for formula cells by default (see setUseCachedValuesForFormulaCells)</summary-item>
+            <summary-item>Removed some deprecated methods</summary-item>
             <summary-item>Upgrade bouncycastle dependency to 1.86</summary-item>
             <summary-item>Upgrade commons-codec dependency to 1.22.1</summary-item>
             <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
