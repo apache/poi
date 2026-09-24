@@ -1,0 +1,42 @@
+# Publishes the -SNAPSHOT artifacts to https://repository.apache.org/content/repositories/snapshots/
+# The modules that get published and the Nexus repository are configured in build.gradle.
+
+name: Publish snapshots
+
+on:
+  push:
+    branches: [ trunk ]
+  workflow_dispatch:
+
+# never cancel a publish that is in progress, but only run one at a time
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    # forks do not have the Nexus credentials
+    if: github.repository == 'apache/poi'
+    runs-on: ubuntu-latest
+    name: Publish snapshots to Nexus
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v6
+      with:
+        distribution: 'temurin'
+        java-version: 17
+        cache: 'gradle'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Publish with Gradle
+      run: ./gradlew publish -PjdkVersion=17 --no-daemon
+      env:
+        ORG_GRADLE_PROJECT_apacheSnapshotsUsername: ${{ secrets.NEXUS_USER }}
+        ORG_GRADLE_PROJECT_apacheSnapshotsPassword: ${{ secrets.NEXUS_PW }}
