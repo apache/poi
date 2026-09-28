@@ -168,7 +168,7 @@ subprojects {
         commonsIoVersion = '2.22.0'
         commonsMathVersion = '3.6.1'
         log4jVersion = '2.26.1'
-        mockitoVersion = '5.23.0'
+        mockitoVersion = '5.24.0'
         hamcrestVersion = '3.0'
         xmlbeansVersion = '5.4.1'
         batikVersion = '1.19'
