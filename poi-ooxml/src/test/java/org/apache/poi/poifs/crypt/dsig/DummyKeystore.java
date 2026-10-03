@@ -116,7 +116,7 @@ public class DummyKeystore {
 
         public KeyCertPair(PrivateKey key, Certificate[] x509chain) {
             this.key = key;
-            this.x509chain = Stream.of(x509chain).map(X509Certificate.class::cast).collect(Collectors.toList());
+            this.x509chain = Stream.of(x509chain).map(X509Certificate.class::cast).toList();
         }
 
         public PrivateKey getKey() {
