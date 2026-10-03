@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.format;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -131,8 +132,13 @@ public class CellFormat {
         };
     }
 
-    /** Maps a format string to its parsed version for efficiencies sake. */
-    private static final Map<Locale, Map<String, CellFormat>> formatCache =
+    /**
+     * Maps a format string to its parsed version for efficiencies sake.
+     * <p>
+     * The parsed version is held by a weak reference: a {@code CellFormat} refers to its own format string,
+     * so holding it strongly would keep the weak key, and with it the entry, reachable forever.
+     */
+    private static final Map<Locale, Map<String, WeakReference<CellFormat>>> formatCache =
             new WeakHashMap<>();
 
     /**
@@ -157,14 +163,16 @@ public class CellFormat {
      * @return A CellFormat that applies the given format.
      */
     public static synchronized CellFormat getInstance(Locale locale, String format) {
-        Map<String, CellFormat> formatMap = formatCache.computeIfAbsent(locale, k -> new WeakHashMap<>());
-        CellFormat fmt = formatMap.get(format);
+        Map<String, WeakReference<CellFormat>> formatMap =
+                formatCache.computeIfAbsent(locale, k -> new WeakHashMap<>());
+        WeakReference<CellFormat> cached = formatMap.get(format);
+        CellFormat fmt = cached == null ? null : cached.get();
         if (fmt == null) {
             if (format.equals("General") || format.equals("@"))
                 fmt = createGeneralFormat(locale);
             else
                 fmt = new CellFormat(locale, format);
-            formatMap.put(format, fmt);
+            formatMap.put(format, new WeakReference<>(fmt));
         }
         return fmt;
     }

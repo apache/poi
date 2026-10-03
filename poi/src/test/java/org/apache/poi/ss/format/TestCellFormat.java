@@ -18,10 +18,12 @@ package org.apache.poi.ss.format;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -1172,5 +1174,22 @@ class TestCellFormat {
         CellFormatPart part = new CellFormatPart("[h]\\h m\\m s\\s");
         assertNotNull(part);
         assertEquals("0h 0m 9s", part.apply(0.0001).text);
+    }
+
+    /**
+     * The format cache must not keep a format string nobody refers to any more: a cached {@code CellFormat}
+     * refers to its own format string, which used to keep the weak key of its entry reachable forever.
+     */
+    @Test
+    void testCacheReleasesUnusedFormats() throws InterruptedException {
+        String format = "0.00;-0.00;\"cache-" + System.nanoTime() + "\"";
+        WeakReference<String> key = new WeakReference<>(format);
+        assertNotNull(CellFormat.getInstance(Locale.ROOT, format));
+        format = null;
+        for (int i = 0; i < 50 && key.get() != null; i++) {
+            System.gc();
+            Thread.sleep(10);
+        }
+        assertNull(key.get(), "the format cache keeps a format string that is no longer used");
     }
 }
