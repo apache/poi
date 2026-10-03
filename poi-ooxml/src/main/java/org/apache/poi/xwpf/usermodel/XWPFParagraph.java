@@ -345,8 +345,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 BigInteger abstractNumId = num.getCTNum().getAbstractNumId().getVal();
                 CTAbstractNum anum = numbering.getAbstractNum(abstractNumId).getAbstractNum();
                 CTLvl level = null;
-                for (int i = 0; i < anum.sizeOfLvlArray(); i++) {
-                    CTLvl lvl = anum.getLvlArray(i);
+                for (CTLvl lvl : anum.getLvlArray()) {
                     if (lvl.getIlvl().equals(ilvl)) {
                         level = lvl;
                         break;
@@ -401,8 +400,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 }
 
                 CTLvl level = null;
-                for (int i = 0; i < anum.sizeOfLvlArray(); i++) {
-                    CTLvl lvl = anum.getLvlArray(i);
+                for (CTLvl lvl : anum.getLvlArray()) {
                     if (lvl != null && lvl.getIlvl() != null && lvl.getIlvl().equals(ilvl)) {
                         level = lvl;
                         break;
@@ -435,8 +433,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 }
                 BigInteger ilvl = getNumIlvl();
                 CTNumLvl level = null;
-                for (int i = 0; i < ctNum.sizeOfLvlOverrideArray(); i++) {
-                    CTNumLvl ctNumLvl = ctNum.getLvlOverrideArray(i);
+                for (CTNumLvl ctNumLvl : ctNum.getLvlOverrideArray()) {
                     if (ctNumLvl != null && ctNumLvl.getIlvl() != null &&
                             ctNumLvl.getIlvl().equals(ilvl)) {
                         level = ctNumLvl;

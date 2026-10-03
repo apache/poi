@@ -172,8 +172,9 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
             sheetNames = externalBook.addNewSheetNames();
         }
         int index = -1;
-        for (int i = 0; i < sheetNames.sizeOfSheetNameArray(); i++) {
-            CTExternalSheetName ctExternalSheetName = sheetNames.getSheetNameArray(i);
+        final CTExternalSheetName[] ctExternalSheetNames = sheetNames.getSheetNameArray();
+        for (int i = 0; i < ctExternalSheetNames.length; i++) {
+            CTExternalSheetName ctExternalSheetName = ctExternalSheetNames[i];
             if (ctExternalSheetName.getVal().equals(sheetName)) {
                 index = i;
                 break;
