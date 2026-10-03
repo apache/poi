@@ -44,7 +44,7 @@ public class XDDFLine3DChartData extends XDDFChartData {
             Map<Long, XDDFValueAxis> values) {
         super(parent);
         this.chart = chart;
-        for (CTLineSer series : chart.getSerList()) {
+        for (CTLineSer series : chart.getSerArray()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
         defineAxes(categories, values);

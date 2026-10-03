@@ -43,7 +43,7 @@ public class XDDFArea3DChartData extends XDDFChartData {
             Map<Long, XDDFValueAxis> values) {
         super(parent);
         this.chart = chart;
-        for (CTAreaSer series : chart.getSerList()) {
+        for (CTAreaSer series : chart.getSerArray()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
         defineAxes(categories, values);

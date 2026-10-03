@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel.chart;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -120,9 +121,8 @@ public final class XDDFChartLegend implements TextContainer {
     }
 
     public List<XDDFLegendEntry> getEntries() {
-        return legend
-            .getLegendEntryList()
-            .stream()
+        return Arrays.stream(legend
+            .getLegendEntryArray())
             .map(entry -> new XDDFLegendEntry(entry))
             .collect(Collectors.toList());
     }

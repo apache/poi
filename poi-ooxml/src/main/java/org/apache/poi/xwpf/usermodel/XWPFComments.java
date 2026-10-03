@@ -86,7 +86,7 @@ public class XWPFComments extends POIXMLDocumentPart {
         try (InputStream is = getPackagePart().getInputStream()) {
             CommentsDocument doc = CommentsDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             ctComments = doc.getComments();
-            for (CTComment ctComment : ctComments.getCommentList()) {
+            for (CTComment ctComment : ctComments.getCommentArray()) {
                 comments.add(new XWPFComment(ctComment, this));
             }
         } catch (XmlException e) {

@@ -42,7 +42,7 @@ public class XDDFSurfaceChartData extends XDDFChartData {
             Map<Long, XDDFValueAxis> values) {
         super(parent);
         this.chart = chart;
-        for (CTSurfaceSer series : chart.getSerList()) {
+        for (CTSurfaceSer series : chart.getSerArray()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
         defineAxes(categories, values);

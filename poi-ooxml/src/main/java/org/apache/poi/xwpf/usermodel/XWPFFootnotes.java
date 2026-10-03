@@ -117,7 +117,7 @@ public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
             throw new POIXMLException();
         }
 
-        for (CTFtnEdn note : ctFootnotes.getFootnoteList()) {
+        for (CTFtnEdn note : ctFootnotes.getFootnoteArray()) {
             listFootnote.add(new XWPFFootnote(note, this));
         }
     }

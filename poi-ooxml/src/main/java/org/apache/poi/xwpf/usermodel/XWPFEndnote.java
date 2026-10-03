@@ -76,7 +76,7 @@ public class XWPFEndnote extends XWPFAbstractFootnoteEndnote {
         }
         CTR ctr = r.getCTR();
         boolean foundRef = false;
-        for (CTFtnEdnRef ref : ctr.getEndnoteReferenceList()) {
+        for (CTFtnEdnRef ref : ctr.getEndnoteReferenceArray()) {
             if (getId().equals(ref.getId())) {
                 foundRef = true;
                 break;

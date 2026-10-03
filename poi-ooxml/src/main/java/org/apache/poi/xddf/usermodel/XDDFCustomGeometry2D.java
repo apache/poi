@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -85,10 +86,9 @@ public class XDDFCustomGeometry2D {
 
     public List<XDDFAdjustHandlePolar> getPolarAdjustHandles() {
         if (geometry.isSetAhLst()) {
-            return Collections.unmodifiableList(geometry
+            return Collections.unmodifiableList(Arrays.stream(geometry
                 .getAhLst()
-                .getAhPolarList()
-                .stream()
+                .getAhPolarArray())
                 .map(guide -> new XDDFAdjustHandlePolar(guide))
                 .toList());
         } else {
@@ -126,10 +126,9 @@ public class XDDFCustomGeometry2D {
 
     public List<XDDFAdjustHandleXY> getXYAdjustHandles() {
         if (geometry.isSetAhLst()) {
-            return Collections.unmodifiableList(geometry
+            return Collections.unmodifiableList(Arrays.stream(geometry
                 .getAhLst()
-                .getAhXYList()
-                .stream()
+                .getAhXYArray())
                 .map(guide -> new XDDFAdjustHandleXY(guide))
                 .toList());
         } else {
@@ -167,10 +166,9 @@ public class XDDFCustomGeometry2D {
 
     public List<XDDFGeometryGuide> getAdjustValues() {
         if (geometry.isSetAvLst()) {
-            return Collections.unmodifiableList(geometry
+            return Collections.unmodifiableList(Arrays.stream(geometry
                 .getAvLst()
-                .getGdList()
-                .stream()
+                .getGdArray())
                 .map(guide -> new XDDFGeometryGuide(guide))
                 .toList());
         } else {
@@ -208,10 +206,9 @@ public class XDDFCustomGeometry2D {
 
     public List<XDDFConnectionSite> getConnectionSites() {
         if (geometry.isSetCxnLst()) {
-            return Collections.unmodifiableList(geometry
+            return Collections.unmodifiableList(Arrays.stream(geometry
                 .getCxnLst()
-                .getCxnList()
-                .stream()
+                .getCxnArray())
                 .map(guide -> new XDDFConnectionSite(guide))
                 .toList());
         } else {
@@ -249,10 +246,9 @@ public class XDDFCustomGeometry2D {
 
     public List<XDDFGeometryGuide> getGuides() {
         if (geometry.isSetGdLst()) {
-            return Collections.unmodifiableList(geometry
+            return Collections.unmodifiableList(Arrays.stream(geometry
                 .getGdLst()
-                .getGdList()
-                .stream()
+                .getGdArray())
                 .map(guide -> new XDDFGeometryGuide(guide))
                 .toList());
         } else {
@@ -277,10 +273,9 @@ public class XDDFCustomGeometry2D {
     }
 
     public List<XDDFPath> getPaths() {
-        return Collections.unmodifiableList(geometry
+        return Collections.unmodifiableList(Arrays.stream(geometry
             .getPathLst()
-            .getPathList()
-            .stream()
+            .getPathArray())
             .map(ds -> new XDDFPath(ds))
             .toList());
     }

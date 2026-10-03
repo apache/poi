@@ -37,7 +37,7 @@ public class XDDFScatterChartData extends XDDFChartData {
             Map<Long, XDDFValueAxis> values) {
         super(parent);
         this.chart = chart;
-        for (CTScatterSer series : chart.getSerList()) {
+        for (CTScatterSer series : chart.getSerArray()) {
             this.series.add(new Series(series, series.getXVal(), series.getYVal()));
         }
         defineAxes(categories, values);

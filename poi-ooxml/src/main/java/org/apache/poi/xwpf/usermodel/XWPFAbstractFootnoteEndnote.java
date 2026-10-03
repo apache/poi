@@ -191,7 +191,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;
-        for (CTTbl tbl : ctFtnEdn.getTblList()) {
+        for (CTTbl tbl : ctFtnEdn.getTblArray()) {
             if (tbl == table.getCTTbl()) {
                 break;
             }

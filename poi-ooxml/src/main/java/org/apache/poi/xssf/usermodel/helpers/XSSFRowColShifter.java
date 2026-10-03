@@ -280,13 +280,13 @@ import static org.apache.logging.log4j.util.Unbox.box;
             return;
         }
         CTDrawing ctDrawing = drawing.getCTDrawing();
-        for (CTTwoCellAnchor anchor : ctDrawing.getTwoCellAnchorList()) {
+        for (CTTwoCellAnchor anchor : ctDrawing.getTwoCellAnchorArray()) {
             if (isInRange(anchor.getFrom(), start, end, rows)) {
                 shiftMarker(anchor.getFrom(), n, rows);
                 shiftMarker(anchor.getTo(), n, rows);
             }
         }
-        for (CTOneCellAnchor anchor : ctDrawing.getOneCellAnchorList()) {
+        for (CTOneCellAnchor anchor : ctDrawing.getOneCellAnchorArray()) {
             if (isInRange(anchor.getFrom(), start, end, rows)) {
                 shiftMarker(anchor.getFrom(), n, rows);
             }

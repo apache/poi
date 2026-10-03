@@ -83,7 +83,7 @@ public class XSSFTableStyle implements TableStyle {
             }
         }
 
-        for (CTTableStyleElement element : tableStyle.getTableStyleElementList()) {
+        for (CTTableStyleElement element : tableStyle.getTableStyleElementArray()) {
             if (element.getType() == null) {
                 throw new IllegalArgumentException("Did not have a type in table-style " + element);
             }

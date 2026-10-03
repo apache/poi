@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel.text;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -101,7 +102,7 @@ public class XDDFTextBody {
 
     public List<XDDFTextParagraph> getParagraphs() {
         return Collections.unmodifiableList(
-            _body.getPList().stream().map(ds -> new XDDFTextParagraph(ds, this)).toList());
+            Arrays.stream(_body.getPArray()).map(ds -> new XDDFTextParagraph(ds, this)).toList());
     }
 
     public XDDFBodyProperties getBodyProperties() {
