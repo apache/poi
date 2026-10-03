@@ -280,11 +280,12 @@ public class XSSFRichTextString implements RichTextString {
      * @return  the index within the string.
      */
     public int getIndexOfFormattingRun(int index) {
-        if(st.sizeOfRArray() == 0) return 0;
+        final CTRElt[] rs = st.getRArray();
+        if(rs.length == 0) return 0;
 
         int pos = 0;
-        for(int i = 0; i < st.sizeOfRArray(); i++){
-            CTRElt r = st.getRArray(i);
+        for(int i = 0; i < rs.length; i++){
+            CTRElt r = rs[i];
             if(i == index) return pos;
 
             pos += r.getT().length();

@@ -4542,8 +4542,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             CTTableParts tblParts = worksheet.getTableParts();
             int matchedPos = -1;
             if (rId != null) {
-                for (int i = 0; i < tblParts.sizeOfTablePartArray(); i++) {
-                    if (rId.equals(tblParts.getTablePartArray(i).getId())) {
+                final CTTablePart[] ctTableParts = tblParts.getTablePartArray();
+                for (int i = 0; i < ctTableParts.length; i++) {
+                    if (rId.equals(ctTableParts[i].getId())) {
                         matchedPos = i;
                         break;
                     }

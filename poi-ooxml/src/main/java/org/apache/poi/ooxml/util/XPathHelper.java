@@ -179,10 +179,8 @@ public final class XPathHelper {
             }
         }
 
-        final int choices = alterCont.sizeOfChoiceArray();
-        for (int i=0; i<choices; i++) {
+        for (AlternateContentDocument.AlternateContent.Choice choice : alterCont.getChoiceArray()) {
             // TODO: check [Requires] attribute of [Choice] element, if we can handle the content
-            AlternateContentDocument.AlternateContent.Choice choice = alterCont.getChoiceArray(i);
             XmlCursor innerCur = null;
             try (XmlCursor cCur = choice.newCursor()) {
                 String requiresNS = cCur.namespaceForPrefix(choice.getRequires());
