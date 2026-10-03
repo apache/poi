@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.output.NullOutputStream;
@@ -330,7 +329,7 @@ class TestXSLFBugs {
             XSLFSlide slide3 = ppt3.getSlides().get(0);
             slide3.getShapes().stream()
                     .filter(s -> s instanceof XSLFPictureShape)
-                    .collect(Collectors.toList())
+                    .toList()
                     .forEach(slide3::removeShape);
             assertNull(ppt3.getPackage().getPart(ppn));
         }

@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.poi.hslf.HSLFTestDataSamples;
@@ -523,7 +522,7 @@ public final class TestTextRun {
                     .flatMap(s -> s.getShapes().stream())
                     .filter(s -> s instanceof HSLFTextShape)
                     .map(s -> ((HSLFTextShape) s).getTextParagraphs().get(0).getTextRuns().get(0))
-                    .collect(Collectors.toList());
+                    .toList();
 
                 assertFalse(runs.isEmpty());
                 assertTrue(runs.stream().allMatch(HSLFTextRun::isBold));
@@ -538,7 +537,7 @@ public final class TestTextRun {
         try (HSLFSlideShow ppt = getSlideShow("52244.ppt")) {
             HSLFSlide slide = ppt.getSlides().get(0);
 
-            List<HSLFTextRun> runs = slide.getTextParagraphs().stream().map(tp -> tp.get(0).getTextRuns().get(0)).collect(Collectors.toList());
+            List<HSLFTextRun> runs = slide.getTextParagraphs().stream().map(tp -> tp.get(0).getTextRuns().get(0)).toList();
             assertTrue(runs.stream().map(HSLFTextRun::getFontFamily).allMatch("Arial"::equals));
 
             int[] exp = {36, 24, 12, 32, 12, 12};
@@ -599,7 +598,7 @@ public final class TestTextRun {
 
         try (HSLFSlideShow ppt = getSlideShow("datetime.ppt")) {
             List<HSLFTextShape> shapes = ppt.getSlides().get(0).getShapes()
-                .stream().map(HSLFTextShape.class::cast).collect(Collectors.toList());
+                .stream().map(HSLFTextShape.class::cast).toList();
 
             int[] expFormatId = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
             int[] actFormatId = shapes.stream().flatMap(tp -> Stream.of(tp.getTextParagraphs().get(0).getRecords()))
@@ -608,7 +607,7 @@ public final class TestTextRun {
             assertArrayEquals(expFormatId, actFormatId);
 
             List<HSLFShapePlaceholderDetails> phs =
-                    shapes.stream().map(HSLFSimpleShape::getPlaceholderDetails).collect(Collectors.toList());
+                    shapes.stream().map(HSLFSimpleShape::getPlaceholderDetails).toList();
 
             for (Map.Entry<Locale,String[]> me : formats.entrySet()) {
                 LocaleUtil.setUserLocale(me.getKey());

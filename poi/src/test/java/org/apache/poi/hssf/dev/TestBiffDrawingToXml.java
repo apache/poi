@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ddf.EscherRecord;
@@ -111,8 +110,8 @@ class TestBiffDrawingToXml extends BaseTestIteratingXLS {
     }
 
     private static List<HSSFSheet> getSheets(HSSFWorkbook workbook) {
-        List<Integer> sheetIdx = Arrays.stream(SHEET_IDX).boxed().collect(Collectors.toList());
-        List<String> sheetNms = Arrays.stream(SHEET_NAMES).collect(Collectors.toList());
+        List<Integer> sheetIdx = Arrays.stream(SHEET_IDX).boxed().toList();
+        List<String> sheetNms = Arrays.stream(SHEET_NAMES).toList();
 
         List<HSSFSheet> list = new ArrayList<>();
 

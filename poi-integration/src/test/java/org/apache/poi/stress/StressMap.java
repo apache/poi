@@ -25,7 +25,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.MultiValuedMap;
@@ -58,7 +57,7 @@ public class StressMap {
         return Stream.of(firstHandler, secondHandler(firstHandler))
             .filter(h -> !"NULL".equals(h))
             .map(FileHandlerKnown::valueOf)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public ExcInfo getExcInfo(String file, String testName, FileHandlerKnown handler) {
