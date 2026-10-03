@@ -19,9 +19,11 @@ package org.apache.poi.ss.formula;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayContaining;
+import static org.hamcrest.Matchers.arrayContainingInAnyOrder;
 import static org.hamcrest.Matchers.emptyArray;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -88,5 +90,47 @@ class TestCellCacheEntry {
         assertFalse(fcce.isInputSensitive());
         // clearing again is harmless
         fcce.clearFormulaEntry();
+    }
+
+    @Test
+    void invalidationWalkClearsEveryDependentAndEveryRegistration() {
+        // plain cell P is read by formulas F1 and F2; F1 is read by F2 and F3 (a diamond, so F2
+        // is reachable twice); F3 also reads itself (a circular reference caches its own error)
+        CellCacheEntry p = new PlainValueCellCacheEntry(new NumberEval(1));
+        FormulaCellCacheEntry f1 = new FormulaCellCacheEntry();
+        FormulaCellCacheEntry f2 = new FormulaCellCacheEntry();
+        FormulaCellCacheEntry f3 = new FormulaCellCacheEntry();
+        f1.updateFormulaResult(new NumberEval(2), new CellCacheEntry[] { p }, null);
+        f2.updateFormulaResult(new NumberEval(3), new CellCacheEntry[] { p, f1 }, null);
+        f3.updateFormulaResult(new NumberEval(4), new CellCacheEntry[] { f1, f3 }, null);
+        assertThat(p.getConsumingCells(), arrayContainingInAnyOrder(f1, f2));
+        assertThat(f1.getConsumingCells(), arrayContainingInAnyOrder(f2, f3));
+        assertThat(f3.getConsumingCells(), arrayContainingInAnyOrder(f3));
+
+        p.recurseClearCachedFormulaResults(null);
+
+        for (FormulaCellCacheEntry f : new FormulaCellCacheEntry[] { f1, f2, f3 }) {
+            assertNull(f.getValue());
+            assertFalse(f.isInputSensitive());
+            assertThat(f.getConsumingCells(), emptyArray());
+        }
+        assertThat(p.getConsumingCells(), emptyArray());
+        // the plain cell keeps its own value: only the formulas depending on it are stale
+        assertEquals(1, ((NumberEval) p.getValue()).getNumberValue(), 0);
+    }
+
+    @Test
+    void invalidationWalkOverManyConsumers() {
+        CellCacheEntry p = new PlainValueCellCacheEntry(new NumberEval(1));
+        FormulaCellCacheEntry[] consumers = new FormulaCellCacheEntry[500];
+        for (int i = 0; i < consumers.length; i++) {
+            consumers[i] = new FormulaCellCacheEntry();
+            consumers[i].updateFormulaResult(new NumberEval(i), new CellCacheEntry[] { p }, null);
+        }
+        p.recurseClearCachedFormulaResults(null);
+        assertThat(p.getConsumingCells(), emptyArray());
+        for (FormulaCellCacheEntry f : consumers) {
+            assertNull(f.getValue());
+        }
     }
 }
