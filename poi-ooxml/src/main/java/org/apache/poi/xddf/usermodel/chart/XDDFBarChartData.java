@@ -42,7 +42,7 @@ public class XDDFBarChartData extends XDDFChartData {
         if (chart.getBarDir() == null) {
             chart.addNewBarDir().setVal(BarDirection.BAR.underlying);
         }
-        for (CTBarSer series : chart.getSerList()) {
+        for (CTBarSer series : chart.getSerArray()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
         defineAxes(categories, values);

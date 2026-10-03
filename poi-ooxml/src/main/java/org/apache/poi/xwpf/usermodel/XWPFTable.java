@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -1204,7 +1205,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                         XmlObject parent = cursor.getObject();
                         if (parent instanceof CTTbl tbl) {
                             // Top-level row - insert into table
-                            List<CTRow> trList = tbl.getTrList();
+                            List<CTRow> trList = Arrays.asList(tbl.getTrArray());
                             int idx = trList.indexOf(nextCTRow);
                             if (idx >= 0) {
                                 CTRow addedRow = tbl.insertNewTr(idx);
@@ -1216,7 +1217,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                             }
                         } else if (parent instanceof CTSdtContentRow sdtContent) {
                             // SDT-wrapped row - insert into SDT content
-                            List<CTRow> trList = sdtContent.getTrList();
+                            List<CTRow> trList = Arrays.asList(sdtContent.getTrArray());
                             int idx = trList.indexOf(nextCTRow);
                             if (idx >= 0) {
                                 CTRow addedRow = sdtContent.insertNewTr(idx);
@@ -1268,7 +1269,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                         XmlObject parent = cursor.getObject();
                         if (parent instanceof CTTbl tbl) {
                             // Top-level row - insert into table
-                            List<CTRow> trList = tbl.getTrList();
+                            List<CTRow> trList = Arrays.asList(tbl.getTrArray());
                             int idx = trList.indexOf(nextCTRow);
                             if (idx >= 0) {
                                 insertedRow = tbl.insertNewTr(idx);
@@ -1278,7 +1279,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                             }
                         } else if (parent instanceof CTSdtContentRow sdtContent) {
                             // SDT-wrapped row - insert into SDT content
-                            List<CTRow> trList = sdtContent.getTrList();
+                            List<CTRow> trList = Arrays.asList(sdtContent.getTrArray());
                             int idx = trList.indexOf(nextCTRow);
                             if (idx >= 0) {
                                 insertedRow = sdtContent.insertNewTr(idx);
@@ -1320,21 +1321,21 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                     XmlObject parent = cursor.getObject();
                     if (parent instanceof CTTbl tbl) {
                         // Top-level row - find its actual position in tr array
-                        List<CTRow> trList = tbl.getTrList();
+                        List<CTRow> trList = Arrays.asList(tbl.getTrArray());
                         int idx = trList.indexOf(ctRow);
                         if (idx >= 0) {
                             tbl.removeTr(idx);
                         }
                     } else if (parent instanceof CTSdtContentRow sdtContent) {
                         // SDT-wrapped row - remove from SDT content
-                        List<CTRow> trList = sdtContent.getTrList();
+                        List<CTRow> trList = Arrays.asList(sdtContent.getTrArray());
                         int idx = trList.indexOf(ctRow);
                         if (idx >= 0) {
                             sdtContent.removeTr(idx);
                         }
                     } else {
                         // Fallback: try removing from the table directly
-                        List<CTRow> trList = ctTbl.getTrList();
+                        List<CTRow> trList = Arrays.asList(ctTbl.getTrArray());
                         int idx = trList.indexOf(ctRow);
                         if (idx >= 0) {
                             ctTbl.removeTr(idx);

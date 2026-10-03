@@ -3164,7 +3164,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
     private void rebuildTableFormulas(XSSFTable table) {
         //correct all sheet table-reference-formulas which probably got damaged after shift rows/columns
-        for (CTTableColumn tableCol : table.getCTTable().getTableColumns().getTableColumnList()) {
+        for (CTTableColumn tableCol : table.getCTTable().getTableColumns().getTableColumnArray()) {
             if (tableCol.getCalculatedColumnFormula() != null) {
                 int id = Math.toIntExact(tableCol.getId());
                 String formula = tableCol.getCalculatedColumnFormula().getStringValue();
@@ -3233,7 +3233,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         //rebuild the CTSheetData CTRow order
         SortedMap<Long, CTRow> ctRows = new TreeMap<>();
         CTSheetData sheetData = getCTWorksheet().getSheetData();
-        for (CTRow ctRow : sheetData.getRowList()) {
+        for (CTRow ctRow : sheetData.getRowArray()) {
             Long rownumL = ctRow.getR();
             ctRows.put(rownumL, ctRow);
         }
@@ -3244,7 +3244,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         //rebuild the _rows map
         _rows.clear();
-        for (CTRow ctRow : sheetData.getRowList()) {
+        for (CTRow ctRow : sheetData.getRowArray()) {
             XSSFRow row = new XSSFRow(ctRow, this);
             Integer rownumI = Math.toIntExact(row.getRowNum());
             _rows.put(rownumI, row);
@@ -4959,7 +4959,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     public Map<IgnoredErrorType, Set<CellRangeAddress>> getIgnoredErrors() {
         Map<IgnoredErrorType, Set<CellRangeAddress>> result = new LinkedHashMap<>();
         if (worksheet.isSetIgnoredErrors()) {
-            for (CTIgnoredError err : worksheet.getIgnoredErrors().getIgnoredErrorList()) {
+            for (CTIgnoredError err : worksheet.getIgnoredErrors().getIgnoredErrorArray()) {
                 for (IgnoredErrorType errType : XSSFIgnoredErrorHelper.getErrorTypes(err)) {
                     if (!result.containsKey(errType)) {
                         result.put(errType, new LinkedHashSet<>());
@@ -5143,11 +5143,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                 if (totalsRowCount == 1) { // never seen more than one totals row
                     XSSFRow totalsRow = sheet.getRow(clonedTable.getEndCellReference().getRow());
                     if (clonedTable.getCTTable().getTableColumns() != null
-                            && !clonedTable.getCTTable().getTableColumns().getTableColumnList().isEmpty()) {
+                            && clonedTable.getCTTable().getTableColumns().sizeOfTableColumnArray() > 0) {
                         clonedTable.getCTTable().setTotalsRowCount(totalsRowCount);
-                        for (int i = 0; i < clonedTable.getCTTable().getTableColumns().getTableColumnList().size(); i++) {
-                            CTTableColumn tableCol = table.getCTTable().getTableColumns().getTableColumnList().get(i);
-                            CTTableColumn clonedTableCol = clonedTable.getCTTable().getTableColumns().getTableColumnList().get(i);
+                        CTTableColumn[] tableCols = table.getCTTable().getTableColumns().getTableColumnArray();
+                        CTTableColumn[] clonedTableCols = clonedTable.getCTTable().getTableColumns().getTableColumnArray();
+                        for (int i = 0; i < clonedTableCols.length; i++) {
+                            CTTableColumn tableCol = tableCols[i];
+                            CTTableColumn clonedTableCol = clonedTableCols[i];
                             clonedTableCol.setTotalsRowFunction(tableCol.getTotalsRowFunction());
                             int intTotalsRowFunction = clonedTableCol.getTotalsRowFunction().intValue();
                             sheet.getWorkbook().setCellFormulaValidation(false);
@@ -5168,11 +5170,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
                 // clone calculated column formulas
                 if (clonedTable.getCTTable().getTableColumns() != null
-                        && !clonedTable.getCTTable().getTableColumns().getTableColumnList().isEmpty()) {
+                        && clonedTable.getCTTable().getTableColumns().sizeOfTableColumnArray() > 0) {
                     clonedTable.getCTTable().setTotalsRowCount(totalsRowCount);
-                    for (int i = 0; i < clonedTable.getCTTable().getTableColumns().getTableColumnList().size(); i++) {
-                        CTTableColumn tableCol = table.getCTTable().getTableColumns().getTableColumnList().get(i);
-                        CTTableColumn clonedTableCol = clonedTable.getCTTable().getTableColumns().getTableColumnList().get(i);
+                    CTTableColumn[] tableCols = table.getCTTable().getTableColumns().getTableColumnArray();
+                    CTTableColumn[] clonedTableCols = clonedTable.getCTTable().getTableColumns().getTableColumnArray();
+                    for (int i = 0; i < clonedTableCols.length; i++) {
+                        CTTableColumn tableCol = tableCols[i];
+                        CTTableColumn clonedTableCol = clonedTableCols[i];
                         if (tableCol.getCalculatedColumnFormula() != null) {
                             clonedTableCol.setCalculatedColumnFormula(tableCol.getCalculatedColumnFormula());
                             CTTableFormula calculatedColumnFormula = clonedTableCol.getCalculatedColumnFormula();

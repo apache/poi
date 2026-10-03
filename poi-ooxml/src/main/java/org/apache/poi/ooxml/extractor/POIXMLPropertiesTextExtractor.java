@@ -186,7 +186,7 @@ public class POIXMLPropertiesTextExtractor implements POIXMLTextExtractor {
         org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
                 props = document.getProperties().getCustomProperties().getUnderlyingProperties();
 
-        for (CTProperty property : props.getPropertyList()) {
+        for (CTProperty property : props.getPropertyArray()) {
             String val = "(not implemented!)";
 
             if (property.isSetLpwstr()) {

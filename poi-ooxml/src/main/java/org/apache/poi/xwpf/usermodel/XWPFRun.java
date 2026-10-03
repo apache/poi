@@ -1617,7 +1617,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (o instanceof CTFldChar ctfldChar) {
             if (ctfldChar.getFldCharType() == STFldCharType.BEGIN) {
                 if (ctfldChar.getFfData() != null) {
-                    for (CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxList()) {
+                    for (CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxArray()) {
                         String textValue = checkBox.getDefault() != null && POIXMLUnits.parseOnOff(checkBox.getDefault().xgetVal()) ?
                                 "|X|" : "|_|";
                         text.append(textValue);
