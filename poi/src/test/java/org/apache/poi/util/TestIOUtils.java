@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilterInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +38,7 @@ import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EmptyFileException;
@@ -256,6 +258,34 @@ final class TestIOUtils {
         try (ByteArrayInputStream is = new ByteArrayInputStream(array)) {
             assertThrows(RecordFormatException.class,
                     () -> IOUtils.toByteArray(is, 200, 100, 2, "setByteArrayMaxOverride"));
+        }
+    }
+
+    @Test
+    void testToByteArrayWithMaxInitBufferSizeGrowsOverSeveralReads() throws IOException {
+        // the buffer must grow several times past the cap, with the stream handing out short reads
+        final byte[] array = new byte[100_000];
+        new Random(42).nextBytes(array);
+        try (InputStream is = new ShortReadInputStream(new ByteArrayInputStream(array), 777)) {
+            assertArrayEquals(array, IOUtils.toByteArray(is, array.length, Integer.MAX_VALUE, 1000, null));
+        }
+        try (InputStream is = new ShortReadInputStream(new ByteArrayInputStream(array), 777)) {
+            assertThrows(EOFException.class,
+                    () -> IOUtils.toByteArray(is, array.length + 1, Integer.MAX_VALUE, 1000, null));
+        }
+    }
+
+    private static final class ShortReadInputStream extends FilterInputStream {
+        private final int maxRead;
+
+        ShortReadInputStream(InputStream in, int maxRead) {
+            super(in);
+            this.maxRead = maxRead;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            return super.read(b, off, Math.min(len, maxRead));
         }
     }
 
