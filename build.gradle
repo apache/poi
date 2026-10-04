@@ -134,13 +134,10 @@ abstract class VerifyModuleInfoIsPresent extends DefaultTask {
         }
 
         new ZipFile(jar).withCloseable { zip ->
-            def moduleInfo9Present = zip.getEntry("META-INF/versions/9/module-info.class") != null
-            def moduleInfoRootPresent = zip.getEntry("module-info.class") != null
-            if (moduleInfo9Present) {
-                if (moduleInfoRootPresent) {
-                    throw new VerificationException("Duplicate module-info in $jar")
-                }
-            } else if (!moduleInfoRootPresent) {
+            if (zip.getEntry("META-INF/versions/9/module-info.class") != null) {
+                throw new VerificationException("Unexpected multi-release module-info in $jar")
+            }
+            if (zip.getEntry("module-info.class") == null) {
                 throw new VerificationException("Missing module-info in $jar")
             }
         }
@@ -185,11 +182,29 @@ subprojects {
         // see https://github.com/gradle/gradle/blob/master/subprojects/jvm-services/src/main/java/org/gradle/internal/jvm/inspection/JvmVendor.java
         jdkVendor = (project.properties['jdkVendor'] ?: '') as String
 
-        JAVA9_SRC = 'src/main/java9'
-        JAVA9_OUT = layout.buildDirectory.dir('classes/java9/main/').get().asFile.absolutePath
-        TEST9_SRC = 'src/test/java9'
-        TEST9_OUT = layout.buildDirectory.dir('classes/java9/test/').get().asFile.absolutePath
-        VERSIONS9 = '/META-INF/versions/9'
+        JPMS_SRC = 'src/main/jpms'
+        JPMS_OUT = layout.buildDirectory.dir('classes/jpms/main/').get().asFile.absolutePath
+        TEST_JPMS_SRC = 'src/test/jpms'
+        TEST_JPMS_OUT = layout.buildDirectory.dir('classes/jpms/test/').get().asFile.absolutePath
+
+        // Registers a task compiling a module-info.java on its own: the already compiled classes of the module
+        // are patched into it and its dependencies are taken from the module path.
+        // The resulting module-info.class ends up in the jar root.
+        registerModuleInfoCompile = { Map args ->
+            tasks.register(args.name, JavaCompile) {
+                dependsOn args.dependsOn
+                options.release = 17
+                destinationDirectory = file(args.out)
+                source = file(args.src)
+                classpath = files()
+                doFirst {
+                    options.compilerArgs = [
+                        '--patch-module', "${args.module}=${files(args.patch).asPath}",
+                        '--module-path', files(args.modulePath).asPath
+                    ]
+                }
+            }
+        }
 
         NO_SCRATCHPAD = (findProperty("scratchpad.ignore") == "true")
         SAXON_TEST = (findProperty("saxon.test") == "true")
@@ -289,7 +304,7 @@ subprojects {
         doLast {
             // make sure we do not have distribution jar-files with different versions
             // in the build-dir as those lead to strange errors about "duplicate modules"
-            // when building java9 JPMS class files ("java9")
+            // when compiling the JPMS module-info files
             ant.delete(failOnError: true, verbose: true) {
                 fileset(dir: "../build/dist/maven/${base.archivesName.get()}", erroronmissingdir: false) {
                     include(name: '*.jar')
@@ -927,19 +942,19 @@ tasks.register('soLinkCheck') {
 }
 
 var srcDep = [
-    ':poi:compileJava9',
-    ':poi:compileTest9',
-    ':poi-ooxml-full:compileJava9',
-    ':poi-ooxml-lite-agent:compileJava9',
-    ':poi-ooxml:compileJava9',
-    ':poi-ooxml:compileTest9',
-    ':poi-scratchpad:compileJava9',
-    ':poi-scratchpad:compileTest9',
-    ':poi-excelant:compileJava9',
-    ':poi-excelant:compileTest9',
-    ':poi-examples:compileJava9',
-    ':poi-integration:compileTest9',
-    ':poi-ooxml-lite:compileJava9',
+    ':poi:compileModuleInfo',
+    ':poi:compileTestModuleInfo',
+    ':poi-ooxml-full:compileModuleInfo',
+    ':poi-ooxml-lite-agent:compileModuleInfo',
+    ':poi-ooxml:compileModuleInfo',
+    ':poi-ooxml:compileTestModuleInfo',
+    ':poi-scratchpad:compileModuleInfo',
+    ':poi-scratchpad:compileTestModuleInfo',
+    ':poi-excelant:compileModuleInfo',
+    ':poi-excelant:compileTestModuleInfo',
+    ':poi-examples:compileModuleInfo',
+    ':poi-integration:compileTestModuleInfo',
+    ':poi-ooxml-lite:compileModuleInfo',
     ':poi-ooxml-lite:generateModuleInfo'
 ]
 

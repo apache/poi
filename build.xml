@@ -150,6 +150,8 @@ under the License.
     <property name="ooxml.lite.jar" location="build/dist/maven/poi-ooxml-lite/poi-ooxml-lite-${version.id}.jar"/>
     <property name="ooxml.lite.includes" value="^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"/>
     <property name="ooxml.lite.output.dir" location="poi-ooxml-lite-agent/build/classes/ant/java"/>
+    <property name="ooxml.lite.output.jpms.dir" location="poi-ooxml-lite-agent/build/classes/ant/jpms"/>
+    <property name="ooxml.lite.jpms.dir" location="poi-ooxml-lite/build/classes/ant/jpms"/>
 
 
     <!-- Integration testing: -->
@@ -157,6 +159,7 @@ under the License.
     <property name="integration.resources.test" location="poi-integration/src/test/resources"/>
     <property name="integration.reports.test" location="poi-integration/build/test-results"/>
     <property name="integration.output.test.dir" location="poi-integration/build/test-classes"/>
+    <property name="integration.output.test.jpms.dir" location="poi-integration/build/classes/ant/jpms-test"/>
     <property name="integration.testokfile" location="poi-integration/build/testokfile.txt"/>
 
     <!-- Excelant: -->
@@ -352,6 +355,7 @@ under the License.
     <!-- See https://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
     <property name="ooxml-schema.output.dir" location="poi-ooxml-full/build/classes/ant/java"/>
+    <property name="ooxml-schema.output.jpms.dir" location="poi-ooxml-full/build/classes/ant/jpms"/>
     <property name="ooxml-schema.output.test.dir" location="poi-ooxml-full/build/test-classes"/>
     <property name="ooxml-schema.output.gen-sources.dir" location="poi-ooxml-full/build/generated-sources"/>
     <property name="ooxml-schema.output.gen-classes.dir" location="poi-ooxml-full/build/generated-classes"/>
@@ -623,6 +627,8 @@ under the License.
         <delete dir="poi/build"/>
         <delete dir="poi-ooxml/build"/>
         <delete dir="poi-ooxml-full/build"/>
+        <delete dir="poi-ooxml-lite/build"/>
+        <delete dir="poi-ooxml-lite-agent/build"/>
         <delete dir="poi-scratchpad/build"/>
     </target>
 
@@ -984,9 +990,10 @@ under the License.
             </classpath>
         </javac>
 
+        <mkdir dir="${ooxml-schema.output.jpms.dir}"/>
         <javac release="17"
-               srcdir="${basedir}/poi-ooxml-full/src/main/java9"
-               destdir="${basedir}/poi-ooxml-full/src/main/java9"
+               srcdir="${basedir}/poi-ooxml-full/src/main/jpms"
+               destdir="${ooxml-schema.output.jpms.dir}"
                includeantruntime="false"
                fork="true"
                modulepath="lib/ooxml">
@@ -998,11 +1005,9 @@ under the License.
         <jar destfile="${ooxml.xsds.jar}">
             <fileset dir="${ooxml-schema.output.dir}"/>
             <fileset dir="${ooxml-schema.output.gen-classes.dir}"/>
-            <zipfileset dir="${basedir}/poi-ooxml-full/src/main/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+            <fileset dir="${ooxml-schema.output.jpms.dir}"/>
             <metainf dir="legal/" excludes="HEADER"/>
             <manifest>
-                <attribute name="Multi-Release" value="true"/>
-                <attribute name="Automatic-Module-Name" value="org.apache.poi.ooxml.schemas"/>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Specification-Title" value="Apache POI OOXML Schemas"/>
                 <attribute name="Specification-Version" value="${version.id}"/>
@@ -1016,7 +1021,7 @@ under the License.
 
         <jar destfile="${ooxml.xsds.src.jar}">
             <fileset dir="${ooxml-schema.output.gen-sources.dir}"/>
-            <zipfileset dir="${basedir}/poi-ooxml-full/src/main/java9" prefix="META-INF/versions/9/" excludes="*.class"/>
+            <fileset dir="${basedir}/poi-ooxml-full/src/main/jpms"/>
             <metainf dir="legal" excludes="HEADER"/>
         </jar>
     </target>
@@ -1080,11 +1085,12 @@ under the License.
                 </filterchain>
             </loadresource>
 
-            <echo message="Building java9+ classes for @{module}"/>
+            <echo message="Building module-info for @{module}"/>
 
+            <mkdir dir="${basedir}/@{module}/build/classes/ant/jpms"/>
             <javac release="17"
-                   srcdir="${basedir}/@{module}/src/main/java9"
-                   destdir="${basedir}/@{module}/src/main/java9"
+                   srcdir="${basedir}/@{module}/src/main/jpms"
+                   destdir="${basedir}/@{module}/build/classes/ant/jpms"
                    includeantruntime="false"
                    fork="true">
                 <compilerarg line="--patch-module org.apache.poi.${module-name}=@{classes}"/>
@@ -1101,13 +1107,9 @@ under the License.
             <jar destfile="build/dist/maven/${maven-name}/${maven-name}-@{version}.jar">
                 <fileset dir="@{classes}"/>
                 <resources/>
-                <zipfileset dir="${basedir}/@{module}/src/main/java9"
-                            prefix="META-INF/versions/9"
-                            excludes="*.java"/>
+                <fileset dir="${basedir}/@{module}/build/classes/ant/jpms"/>
                 <metainf dir="legal/" excludes="HEADER"/>
                 <manifest>
-                    <attribute name="Multi-Release" value="true"/>
-                    <attribute name="Automatic-Module-Name" value="org.apache.poi.@{module}"/>
                     <attribute name="Built-By" value="${user.name}"/>
                     <attribute name="Specification-Title" value="Apache POI"/>
                     <attribute name="Specification-Version" value="${version.id}"/>
@@ -1142,9 +1144,10 @@ under the License.
                 <path location="@{test-classes}"/>
             </pathconvert>
 
+            <mkdir dir="${basedir}/@{module}/build/classes/ant/jpms-test" unless:blank="@{test}"/>
             <javac release="17"
-                   srcdir="${basedir}/@{module}/src/test/java9"
-                   destdir="${basedir}/@{module}/src/test/java9"
+                   srcdir="${basedir}/@{module}/src/test/jpms"
+                   destdir="${basedir}/@{module}/build/classes/ant/jpms-test"
                    includeantruntime="false"
                    fork="true"
                    unless:blank="@{test}">
@@ -1164,11 +1167,9 @@ under the License.
                 </fileset>
                 <resources/>
                 <test-resources/>
-                <zipfileset dir="${basedir}/@{module}/src/test/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+                <fileset dir="${basedir}/@{module}/build/classes/ant/jpms-test"/>
                 <metainf dir="legal/" excludes="HEADER"/>
                 <manifest>
-                    <attribute name="Multi-Release" value="true"/>
-                    <attribute name="Automatic-Module-Name" value="org.apache.poi.@{module}"/>
                     <attribute name="Built-By" value="${user.name}"/>
                     <attribute name="Specification-Title" value="Apache POI"/>
                     <attribute name="Specification-Version" value="${version.id}"/>
@@ -1281,9 +1282,10 @@ under the License.
             </classpath>
         </javac>
 
+        <mkdir dir="${ooxml.lite.output.jpms.dir}"/>
         <javac release="17"
-               srcdir="${basedir}/poi-ooxml-lite-agent/src/main/java9"
-               destdir="${basedir}/poi-ooxml-lite-agent/src/main/java9"
+               srcdir="${basedir}/poi-ooxml-lite-agent/src/main/jpms"
+               destdir="${ooxml.lite.output.jpms.dir}"
                includeantruntime="false"
                fork="true"
                modulepath="${basedir}/lib/main-tests">
@@ -1292,10 +1294,8 @@ under the License.
 
         <jar destfile="${ooxml.lite.agent}">
             <fileset dir="${ooxml.lite.output.dir}"/>
-            <zipfileset dir="${basedir}/poi-ooxml-lite-agent/src/main/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+            <fileset dir="${ooxml.lite.output.jpms.dir}"/>
             <manifest>
-                <attribute name="Multi-Release" value="true"/>
-                <attribute name="Automatic-Module-Name" value="org.apache.poi.ooxml_lite"/>
                 <attribute name="Premain-Class" value="org.apache.poi.ooxml.lite.OOXMLLiteAgent"/>
                 <!-- attribute name="Can-Retransform-Classes" value="true"/ -->
             </manifest>
@@ -1511,11 +1511,11 @@ under the License.
         </javac>
 
 
-        <mkdir dir="${integration.output.test.dir}/META-INF/versions/9"/>
+        <mkdir dir="${integration.output.test.jpms.dir}"/>
 
         <javac release="17"
-               srcdir="${basedir}/poi-integration/src/test/java9"
-               destdir="${integration.output.test.dir}/META-INF/versions/9"
+               srcdir="${basedir}/poi-integration/src/test/jpms"
+               destdir="${integration.output.test.jpms.dir}"
                includeantruntime="false"
                fork="true">
             <compilerarg line="--patch-module org.apache.poi.stress=${integration.output.test.dir}"/>
@@ -1533,14 +1533,10 @@ under the License.
             </modulepath>
         </javac>
 
-        <manifest file="poi-integration/build/poi-manifest.mf">
-            <attribute name="Multi-Release" value="true"/>
-            <attribute name="Automatic-Module-Name" value="org.apache.poi.stress"/>
-        </manifest>
-
-        <jar destfile="build/dist/maven/poi-integration/poi-integration-${version.id}.jar"
-             basedir="${integration.output.test.dir}"
-             manifest="poi-integration/build/poi-manifest.mf"/>
+        <jar destfile="build/dist/maven/poi-integration/poi-integration-${version.id}.jar">
+            <fileset dir="${integration.output.test.dir}"/>
+            <fileset dir="${integration.output.test.jpms.dir}"/>
+        </jar>
     </target>
 
     <target name="-version-java-check">
@@ -1876,7 +1872,7 @@ under the License.
 
         <local name="full.schema"/>
         <loadresource property="full.schema">
-            <file file="${basedir}/poi-ooxml-full/src/main/java9/module-info.java"/>
+            <file file="${basedir}/poi-ooxml-full/src/main/jpms/module-info.java"/>
             <filterchain>
                 <linecontains negate="true" matchany="true">
                     <contains value="exports"/>
@@ -1885,11 +1881,12 @@ under the License.
             </filterchain>
         </loadresource>
 
-        <echo output="${basedir}/poi-ooxml-lite/src/main/java9/module-info.java">${full.schema}${lite.exports}}</echo>
+        <echo output="${basedir}/poi-ooxml-lite/src/main/jpms/module-info.java">${full.schema}${lite.exports}}</echo>
 
+        <mkdir dir="${ooxml.lite.jpms.dir}"/>
         <javac release="17"
-               srcdir="${basedir}/poi-ooxml-lite/src/main/java9"
-               destdir="${basedir}/poi-ooxml-lite/src/main/java9"
+               srcdir="${basedir}/poi-ooxml-lite/src/main/jpms"
+               destdir="${ooxml.lite.jpms.dir}"
                includeantruntime="false"
                fork="true">
             <compilerarg line="--patch-module org.apache.poi.ooxml.schemas=${ooxml.xsds.jar}"/>
@@ -1923,7 +1920,7 @@ under the License.
         <mkdir dir="build/dist/maven/poi-ooxml-lite"/>
 
         <jar destfile="${ooxml.lite.jar}" duplicate="fail">
-            <zipfileset dir="${basedir}/poi-ooxml-lite/src/main/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+            <fileset dir="${ooxml.lite.jpms.dir}"/>
             <zipfileset src="${ooxml.xsds.jar}">
                 <patternset>
                     <includesfile name="${ooxml.lite.report}.clazz1"/>
@@ -1933,10 +1930,6 @@ under the License.
                     <include name="org/apache/poi/schemas/ooxml/element/**/*.xsb"/>
                 </patternset>
             </zipfileset>
-            <manifest>
-                <attribute name="Multi-Release" value="true"/>
-                <attribute name="Automatic-Module-Name" value="org.apache.poi.ooxml.schemas"/>
-            </manifest>
         </jar>
 
         <delete file="${ooxml.lite.report}.clazz1"/>
@@ -2197,77 +2190,6 @@ under the License.
         </javadoc>
     </target>
 
-    <macrodef name="maven-jar">
-        <attribute name="src"/>
-        <attribute name="module"/>
-        <element name="elements" implicit="true" optional="true"/>
-
-        <sequential>
-            <local name="destfile"/>
-            <pathconvert property="destfile" targetos="unix">
-                <path><pathelement path="@{src}"/></path>
-                <mapper>
-                    <chainedmapper>
-                        <filtermapper>
-                            <replaceregex pattern=".jar" replace="" flags="g"/>
-<!--                            <replaceregex pattern="ooxml-lite" replace="ooxml-schemas" flags="g"/>-->
-                            <replaceregex pattern="(.java|.src)$$" replace="-sources"/>
-                            <replaceregex pattern=".*(?:build|src).?(.*)?" replace="\1"/>
-                            <replaceregex pattern="(.*)(-classes|-sources)" replace="poi-\1/poi-\1-${version.id}\2"/>
-                            <replaceregex pattern="^(classes|sources)$$" replace="poi/poi-${version.id}-\1"/>
-                            <replaceregex pattern="-classes" replace=""/>
-                        </filtermapper>
-                    </chainedmapper>
-                </mapper>
-            </pathconvert>
-
-            <local name="isjar"/>
-            <condition property="isjar">
-                <contains string="@{src}" substring=".jar"/>
-            </condition>
-
-            <mkdir dir="@{src}/META-INF/versions/9"/>
-
-            <local name="module-name"/>
-            <loadresource property="module-name">
-                <string>@{module}</string>
-                <filterchain>
-                    <replacestring from="poi-" to=""/>
-                </filterchain>
-            </loadresource>
-
-            <echo message="Building maven-jar for @{module}, module-name: ${module-name} with src: @{src}"/>
-
-            <javac release="17"
-                   srcdir="${basedir}/@{module}/src/main/java9"
-                   destdir="@{src}/META-INF/versions/9"
-                   includeantruntime="false"
-                   fork="true"
-                   modulepath="${main.lib}">
-                <compilerarg line="--patch-module org.apache.poi.${module-name}=@{src}"/>
-                <elements/>
-            </javac>
-
-            <jar destfile="build/dist/maven/${destfile}.jar">
-                <fileset dir="@{src}" unless:true="${isjar}"/>
-                <zipfileset src="@{src}" if:true="${isjar}"/>
-                <metainf dir="legal/" excludes="HEADER"/>
-                <manifest>
-                    <attribute name="Multi-Release" value="true"/>
-                    <attribute name="Automatic-Module-Name" value="org.apache.poi.@{module}"/>
-                    <attribute name="Built-By" value="${user.name}"/>
-                    <attribute name="Specification-Title" value="Apache POI"/>
-                    <attribute name="Specification-Version" value="${version.id}"/>
-                    <attribute name="Specification-Vendor" value="The Apache Software Foundation"/>
-                    <attribute name="Implementation-Title" value="Apache POI"/>
-                    <attribute name="Implementation-Version" value="${version.id}"/>
-                    <attribute name="Implementation-Vendor-Id" value="org.apache.poi"/>
-                    <attribute name="Implementation-Vendor" value="The Apache Software Foundation"/>
-                </manifest>
-            </jar>
-        </sequential>
-    </macrodef>
-
     <target name="jar" depends="compile, compile-ooxml-lite" description="Creates jar files for distribution">
     </target>
 
@@ -2287,7 +2209,6 @@ under the License.
         <property name="build.maven.javadocs" location="build/tmp/maven-javadocs"/>
 
         <manifest file="build/poi-manifest.mf">
-            <attribute name="Multi-Release" value="true"/>
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Specification-Title" value="Apache POI"/>
             <attribute name="Specification-Version" value="${version.id}"/>

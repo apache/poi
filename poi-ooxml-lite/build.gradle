@@ -22,7 +22,7 @@ final String BEANS_RES = layout.buildDirectory.dir('generated-resources').get().
 
 sourceSets {
     main {
-        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
+        output.dir(JPMS_OUT, builtBy: 'compileModuleInfo')
         compileClasspath += files(BEANS_RES)
         java {
             srcDirs += BEANS_SRC
@@ -45,7 +45,7 @@ final String OOXML_LITE_REPORT = '../src/resources/ooxml-lite-report'
 
 tasks.register('generateModuleInfo') {
     File fileIn = file("${OOXML_LITE_REPORT}.clazz")
-    File fileOut = file("src/main/java9/module-info.java")
+    File fileOut = file("${JPMS_SRC}/module-info.java")
 
     inputs.file fileIn
     outputs.file fileOut
@@ -89,22 +89,10 @@ compileJava {
 processResources.dependsOn 'compileOoxmlLite'
 sourcesJar.dependsOn 'compileOoxmlLite'
 
-task compileJava9(type: JavaCompile, dependsOn: 'compileJava') {
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(17, jdkVersion))
-    }
-    sourceCompatibility = 17
-    targetCompatibility = 17
-    destinationDirectory = file(JAVA9_OUT + VERSIONS9)
-    source = file(JAVA9_SRC)
-    classpath = files()
-    doFirst {
-        options.compilerArgs = [
-                '--patch-module', "${MODULE_NAME}=${project(':poi-ooxml-full').sourceSets.main.output.asPath}",
-                '--module-path', files(MAIN_MODULE_PATH).asPath
-        ]
-    }
-}
+registerModuleInfoCompile(name: 'compileModuleInfo', dependsOn: 'compileJava',
+    src: JPMS_SRC, out: JPMS_OUT, module: MODULE_NAME,
+    patch: { project(':poi-ooxml-full').sourceSets.main.output.classesDirs + files(BEANS_RES) },
+    modulePath: MAIN_MODULE_PATH)
 
 jar {
     destinationDirectory = file("../build/dist/maven/${base.archivesName.get()}")
@@ -119,17 +107,13 @@ jar {
             File missingXsbsFile = file("missing-xsbs.txt")
             List xsbs2 = missingXsbsFile.findAll { !it.empty && !it.startsWith("#") }
               .collect { "org/apache/poi/schemas/ooxml/system/ooxml/${it.trim()}.xsb" }
-            includes = clazz + clazzInner + xsbs + xsbs2 + ['META-INF/versions/**', 'org/apache/poi/schemas/ooxml/element/**']
+            includes = clazz + clazzInner + xsbs + xsbs2 + ['module-info.class', 'org/apache/poi/schemas/ooxml/element/**']
         }
     }
 
     // ignore second module-info.class from poi-ooxml-full
     // duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     includeEmptyDirs = false
-
-    manifest {
-        attributes('Automatic-Module-Name' : MODULE_NAME, 'Multi-Release': 'true')
-    }
 }
 
 sourcesJar {
