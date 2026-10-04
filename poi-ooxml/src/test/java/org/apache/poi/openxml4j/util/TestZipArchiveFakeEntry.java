@@ -24,11 +24,13 @@ import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -168,6 +170,32 @@ public class TestZipArchiveFakeEntry {
         ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(4);
         try {
             runTestSpill(true, false);
+        } finally {
+            ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(-1);
+        }
+    }
+
+    @Test
+    void testUnknownSizeInMemoryBufferIsCappedBelowLargeThreshold() throws IOException {
+        // with a large temp-file threshold, an unknown-size entry still spills once it outgrows
+        // the in-memory cap (2_000_000 bytes) rather than sitting on the heap up to the threshold
+        ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(16_000_000);
+        try {
+            final byte[] small = new byte[2_000_000];
+            try (ZipArchiveFakeEntry fakeEntry = new ZipArchiveFakeEntry(
+                    new ZipArchiveEntry("small"), new ByteArrayInputStream(small))) {
+                assertFalse(fakeEntry.isUnencryptedTempFileBacked());
+                assertEquals(small.length, fakeEntry.getSize());
+            }
+            final byte[] large = new byte[2_000_001];
+            try (ZipArchiveFakeEntry fakeEntry = new ZipArchiveFakeEntry(
+                    new ZipArchiveEntry("large"), new ByteArrayInputStream(large))) {
+                assertTrue(fakeEntry.isUnencryptedTempFileBacked());
+                assertEquals(large.length, fakeEntry.getSize());
+                try (InputStream stream = fakeEntry.getInputStream()) {
+                    assertArrayEquals(large, IOUtils.toByteArray(stream));
+                }
+            }
         } finally {
             ZipInputStreamZipEntrySource.setThresholdBytesForTempFiles(-1);
         }
