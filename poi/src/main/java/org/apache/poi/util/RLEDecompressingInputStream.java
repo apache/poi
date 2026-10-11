@@ -125,17 +125,17 @@ public class RLEDecompressingInputStream extends InputStream {
     public long skip(long n) throws IOException {
         //this relies on readChunk's readFully to skipFully
         long length = n;
-        while (length > 0) {
+        while (length > 0 && len != -1) {
             if (pos >= len) {
                 if ((len = readChunk()) == -1) {
-                    return -1;
+                    break;
                 }
             }
-            int c = Math.toIntExact(Math.min(n, len - pos));
+            int c = Math.toIntExact(Math.min(length, len - pos));
             pos += c;
             length -= c;
         }
-        return n;
+        return Math.max(0, n - length);
     }
 
     @Override

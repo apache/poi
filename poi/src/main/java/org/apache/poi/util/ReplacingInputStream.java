@@ -127,7 +127,7 @@ public class ReplacingInputStream extends FilterInputStream {
         case NOT_MATCHED:
             // we are not currently matching, replacing, or unbuffering
             next=super.read();
-            if (pattern[0] != next) {
+            if ((pattern[0] & 0xFF) != next) {
                 return next;
             }
 
@@ -152,7 +152,7 @@ public class ReplacingInputStream extends FilterInputStream {
         case MATCHING:
             // the previous bytes matched part of the pattern
             next=super.read();
-            if (pattern[matchedIndex]==next) {
+            if ((pattern[matchedIndex] & 0xFF) == next) {
                 buf[matchedIndex++]=next;
                 if (matchedIndex==pattern.length) {
                     // we've found a full match!
@@ -176,7 +176,7 @@ public class ReplacingInputStream extends FilterInputStream {
 
         case REPLACING:
             // we've fully matched the pattern and are returning bytes from the replacement
-            next=replacement[replacedIndex++];
+            next=replacement[replacedIndex++] & 0xFF;
             if (replacedIndex==replacement.length) {
                 state=State.NOT_MATCHED;
                 replacedIndex=0;
@@ -193,6 +193,36 @@ public class ReplacingInputStream extends FilterInputStream {
             }
             return next;
         }
+    }
+
+    /**
+     * Skips by reading, so that the skipped bytes go through the replacement
+     */
+    @Override
+    public long skip(long n) throws IOException {
+        long skipped = 0;
+        while (skipped < n && read() != -1) {
+            skipped++;
+        }
+        return skipped;
+    }
+
+    /**
+     * Marking is not supported, as the match state can't be restored
+     */
+    @Override
+    public boolean markSupported() {
+        return false;
+    }
+
+    @Override
+    public void mark(int readlimit) {
+        // not supported
+    }
+
+    @Override
+    public void reset() throws IOException {
+        throw new IOException("mark/reset not supported");
     }
 
     @Override

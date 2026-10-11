@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -147,7 +148,8 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
          */
         root = XmlDocument.Factory.parse(
             new ReplacingInputStream(
-            new ReplacingInputStream(is, "<br>", "<br/>"),
+            // ReplacingInputStream reads byte by byte, so buffer the underlying stream
+            new ReplacingInputStream(new BufferedInputStream(is), "<br>", "<br/>"),
             " xmlns=\""+NS_SPREADSHEETML+"\"", "")
             , xopt);
 

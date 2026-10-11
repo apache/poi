@@ -30,11 +30,16 @@ import java.io.InputStream;
  */
 public class LittleEndianInputStream extends FilterInputStream implements LittleEndianInput {
 
-    private static final int BUFFERED_SIZE = 8096;
+    private static final int BUFFERED_SIZE = 8192;
+    private static final int SKIP_BUFFER_SIZE = 2048;
 
     private static final int EOF = -1;
     private int readIndex = 0;
     private int markIndex = -1;
+    /** reused by the primitive reads, so they don't allocate per call */
+    private final byte[] primitiveBuffer = new byte[LittleEndianConsts.LONG_SIZE];
+    /** reused by skipFully, allocated on first use */
+    private byte[] skipBuffer;
 
     public LittleEndianInputStream(InputStream is) {
         super(is.markSupported() ? is : new BufferedInputStream(is, BUFFERED_SIZE));
@@ -57,13 +62,16 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 
     @Override
     public int readUByte() {
-        byte[] buf = new byte[1];
+        final int b;
         try {
-            checkEOF(read(buf), 1);
+            b = read();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        return LittleEndian.getUByte(buf);
+        if (b == EOF) {
+            throw new IllegalStateException("Unexpected end-of-file");
+        }
+        return b;
     }
 
     /**
@@ -84,13 +92,8 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 
     @Override
     public int readInt() {
-        byte[] buf = new byte[LittleEndianConsts.INT_SIZE];
-        try {
-            checkEOF(read(buf), buf.length);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        return LittleEndian.getInt(buf);
+        readFully(primitiveBuffer, 0, LittleEndianConsts.INT_SIZE);
+        return LittleEndian.getInt(primitiveBuffer, 0);
     }
 
     /**
@@ -108,13 +111,8 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 
     @Override
     public long readLong() {
-        byte[] buf = new byte[LittleEndianConsts.LONG_SIZE];
-        try {
-            checkEOF(read(buf), LittleEndianConsts.LONG_SIZE);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        return LittleEndian.getLong(buf);
+        readFully(primitiveBuffer, 0, LittleEndianConsts.LONG_SIZE);
+        return LittleEndian.getLong(primitiveBuffer, 0);
     }
 
     @Override
@@ -124,13 +122,8 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 
     @Override
     public int readUShort() {
-        byte[] buf = new byte[LittleEndianConsts.SHORT_SIZE];
-        try {
-            checkEOF(read(buf), LittleEndianConsts.SHORT_SIZE);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        return LittleEndian.getUShort(buf);
+        readFully(primitiveBuffer, 0, LittleEndianConsts.SHORT_SIZE);
+        return LittleEndian.getUShort(primitiveBuffer, 0);
     }
 
     private static void checkEOF(int actualBytes, int expectedBytes) {
@@ -154,6 +147,22 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
     }
 
     @Override
+    public int read() throws IOException {
+        int b = super.read();
+        if (b != EOF) {
+            readIndex++;
+        }
+        return b;
+    }
+
+    @Override
+    public long skip(long n) throws IOException {
+        long skipped = super.skip(n);
+        readIndex += (int) Math.max(0, skipped);
+        return skipped;
+    }
+
+    @Override
     public int read(byte[] b, int off, int len) throws IOException {
         int readBytes = super.read(b, off, len);
 
@@ -164,13 +173,13 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
     }
 
     @Override
-    public synchronized void mark(int readlimit) {
+    public void mark(int readlimit) {
         super.mark(readlimit);
         markIndex = readIndex;
     }
 
     @Override
-    public synchronized void reset() throws IOException {
+    public void reset() throws IOException {
         super.reset();
         if (markIndex > -1) {
             readIndex = markIndex;
@@ -207,24 +216,37 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 
 
     public void skipFully(int len) throws IOException {
-        if (len == 0) {
-            return;
-        }
-        long skipped = IOUtils.skipFully(this, len);
-        if (skipped > Integer.MAX_VALUE) {
-            throw new IOException("can't skip further than "+Integer.MAX_VALUE);
-        }
-        checkEOF((int)skipped, len);
+        skipFully((long) len);
     }
 
+    /**
+     * Skips exactly {@code len} bytes.
+     * <p>
+     * The bytes are read rather than skipped with {@link #skip(long)}, as some streams
+     * don't report the end of the stream when skipping (see IO-203).
+     *
+     * @param len the number of bytes to skip
+     * @throws IllegalArgumentException if {@code len} is negative
+     * @throws IllegalStateException if the end of the stream is reached first
+     * @throws IOException if the stream can't be read
+     */
     public void skipFully(long len) throws IOException {
+        if (len < 0) {
+            throw new IllegalArgumentException("Skip count must be non-negative, actual: " + len);
+        }
         if (len == 0) {
             return;
         }
-        long skipped = IOUtils.skipFully(this, len);
-        if (skipped > Integer.MAX_VALUE) {
-            throw new IOException("can't skip further than "+Integer.MAX_VALUE);
+        if (skipBuffer == null) {
+            skipBuffer = new byte[SKIP_BUFFER_SIZE];
         }
-        checkEOF((int)skipped, (int)len);
+        long remaining = len;
+        while (remaining > 0) {
+            int count = read(skipBuffer, 0, (int) Math.min(remaining, SKIP_BUFFER_SIZE));
+            if (count == EOF) {
+                throw new IllegalStateException("Unexpected end-of-file");
+            }
+            remaining -= count;
+        }
     }
 }

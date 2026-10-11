@@ -33,9 +33,9 @@ import org.apache.poi.util.Internal;
 /* package */ class CryptoAPIDocumentInputStream extends ByteArrayInputStream {
     private Cipher cipher;
     private final CryptoAPIDecryptor decryptor;
-    private byte[] oneByte = {0};
+    private final byte[] oneByte = {0};
 
-    public void seek(int newpos) {
+    public synchronized void seek(int newpos) {
         if (newpos > count) {
             throw new ArrayIndexOutOfBoundsException(newpos);
         }
@@ -44,7 +44,7 @@ import org.apache.poi.util.Internal;
         mark = newpos;
     }
 
-    public void setBlock(int block) throws GeneralSecurityException {
+    public synchronized void setBlock(int block) throws GeneralSecurityException {
         cipher = decryptor.initCipherForBlock(cipher, block);
     }
 
