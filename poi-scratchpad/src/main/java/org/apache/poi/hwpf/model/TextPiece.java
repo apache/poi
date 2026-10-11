@@ -186,7 +186,8 @@ public class TextPiece extends PropertyNode<TextPiece> {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof TextPiece tp)) return false;
+        // compare the classes, as subclasses such as OldTextPiece compare differently
+        if (!(o instanceof TextPiece tp) || o.getClass() != getClass()) return false;
         assert (_buf != null && tp._buf != null && _pd != null && tp._pd != null);
 
         return (

@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,6 +45,22 @@ final class TestHSSFPalette {
     void setUp() {
         PaletteRecord _palette = new PaletteRecord();
         _hssfPalette = new HSSFPalette(_palette);
+    }
+
+    @Test
+    void testCustomColorEquals() {
+        _hssfPalette.setColorAtIndex((short) 0x12, (byte) 101, (byte) 230, (byte) 100);
+        _hssfPalette.setColorAtIndex((short) 0x13, (byte) 0, (byte) 255, (byte) 52);
+        HSSFColor color1 = _hssfPalette.getColor(0x12);
+        HSSFColor color2 = _hssfPalette.getColor(0x13);
+
+        assertNotEquals(color1, color2);
+        assertEquals(color1, _hssfPalette.getColor(0x12));
+        assertEquals(color1.hashCode(), _hssfPalette.getColor(0x12).hashCode());
+
+        // same index, other color
+        _hssfPalette.setColorAtIndex((short) 0x12, (byte) 1, (byte) 2, (byte) 3);
+        assertNotEquals(color1, _hssfPalette.getColor(0x12));
     }
 
     /**
