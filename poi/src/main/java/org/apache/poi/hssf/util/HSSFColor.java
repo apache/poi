@@ -42,6 +42,8 @@ public class HSSFColor implements Color {
 
     private static Map<Integer,HSSFColor> indexHash;
     private static Map<HSSFColorPredefined,HSSFColor> enumList;
+    /** Guards {@link #indexHash} and {@link #enumList}. A private lock, so other code can't block it by locking the class */
+    private static final Object LOCK = new Object();
 
     private final int rgb;
     private final int index;
@@ -197,12 +199,13 @@ public class HSSFColor implements Color {
      *
      * @return a Map containing all colours keyed by {@code Integer} excel-style palette indexes
      */
-    public static synchronized Map<Integer,HSSFColor> getIndexHash() {
-        if(indexHash == null) {
-           indexHash = Collections.unmodifiableMap( createColorsByIndexMap() );
+    public static Map<Integer,HSSFColor> getIndexHash() {
+        synchronized (LOCK) {
+            if (indexHash == null) {
+                indexHash = Collections.unmodifiableMap(createColorsByIndexMap());
+            }
+            return indexHash;
         }
-
-        return indexHash;
     }
     /**
      * This function returns all the Colours, stored in a Map that
@@ -261,59 +264,61 @@ public class HSSFColor implements Color {
     /**
      * Maps the Enums to the HSSFColor, in cases of user code evaluating the classname
      */
-    private static synchronized Map<HSSFColorPredefined,HSSFColor> mapEnumToColorClass() {
-        if (enumList == null) {
-            enumList = new EnumMap<>(HSSFColorPredefined.class);
-            // AUTOMATIC is not added to list
-            addHSSFColorPredefined(HSSFColorPredefined.BLACK);
-            addHSSFColorPredefined(HSSFColorPredefined.BROWN);
-            addHSSFColorPredefined(HSSFColorPredefined.OLIVE_GREEN);
-            addHSSFColorPredefined(HSSFColorPredefined.DARK_GREEN);
-            addHSSFColorPredefined(HSSFColorPredefined.DARK_TEAL);
-            addHSSFColorPredefined(HSSFColorPredefined.DARK_BLUE);
-            addHSSFColorPredefined(HSSFColorPredefined.INDIGO);
-            addHSSFColorPredefined(HSSFColorPredefined.GREY_80_PERCENT);
-            addHSSFColorPredefined(HSSFColorPredefined.ORANGE);
-            addHSSFColorPredefined(HSSFColorPredefined.DARK_YELLOW);
-            addHSSFColorPredefined(HSSFColorPredefined.GREEN);
-            addHSSFColorPredefined(HSSFColorPredefined.TEAL);
-            addHSSFColorPredefined(HSSFColorPredefined.BLUE);
-            addHSSFColorPredefined(HSSFColorPredefined.BLUE_GREY);
-            addHSSFColorPredefined(HSSFColorPredefined.GREY_50_PERCENT);
-            addHSSFColorPredefined(HSSFColorPredefined.RED);
-            addHSSFColorPredefined(HSSFColorPredefined.LIGHT_ORANGE);
-            addHSSFColorPredefined(HSSFColorPredefined.LIME);
-            addHSSFColorPredefined(HSSFColorPredefined.SEA_GREEN);
-            addHSSFColorPredefined(HSSFColorPredefined.AQUA);
-            addHSSFColorPredefined(HSSFColorPredefined.LIGHT_BLUE);
-            addHSSFColorPredefined(HSSFColorPredefined.VIOLET);
-            addHSSFColorPredefined(HSSFColorPredefined.GREY_40_PERCENT);
-            addHSSFColorPredefined(HSSFColorPredefined.PINK);
-            addHSSFColorPredefined(HSSFColorPredefined.GOLD);
-            addHSSFColorPredefined(HSSFColorPredefined.YELLOW);
-            addHSSFColorPredefined(HSSFColorPredefined.BRIGHT_GREEN);
-            addHSSFColorPredefined(HSSFColorPredefined.TURQUOISE);
-            addHSSFColorPredefined(HSSFColorPredefined.DARK_RED);
-            addHSSFColorPredefined(HSSFColorPredefined.SKY_BLUE);
-            addHSSFColorPredefined(HSSFColorPredefined.PLUM);
-            addHSSFColorPredefined(HSSFColorPredefined.GREY_25_PERCENT);
-            addHSSFColorPredefined(HSSFColorPredefined.ROSE);
-            addHSSFColorPredefined(HSSFColorPredefined.LIGHT_YELLOW);
-            addHSSFColorPredefined(HSSFColorPredefined.LIGHT_GREEN);
-            addHSSFColorPredefined(HSSFColorPredefined.LIGHT_TURQUOISE);
-            addHSSFColorPredefined(HSSFColorPredefined.PALE_BLUE);
-            addHSSFColorPredefined(HSSFColorPredefined.LAVENDER);
-            addHSSFColorPredefined(HSSFColorPredefined.WHITE);
-            addHSSFColorPredefined(HSSFColorPredefined.CORNFLOWER_BLUE);
-            addHSSFColorPredefined(HSSFColorPredefined.LEMON_CHIFFON);
-            addHSSFColorPredefined(HSSFColorPredefined.MAROON);
-            addHSSFColorPredefined(HSSFColorPredefined.ORCHID);
-            addHSSFColorPredefined(HSSFColorPredefined.CORAL);
-            addHSSFColorPredefined(HSSFColorPredefined.ROYAL_BLUE);
-            addHSSFColorPredefined(HSSFColorPredefined.LIGHT_CORNFLOWER_BLUE);
-            addHSSFColorPredefined(HSSFColorPredefined.TAN);
+    private static Map<HSSFColorPredefined,HSSFColor> mapEnumToColorClass() {
+        synchronized (LOCK) {
+            if (enumList == null) {
+                enumList = new EnumMap<>(HSSFColorPredefined.class);
+                // AUTOMATIC is not added to list
+                addHSSFColorPredefined(HSSFColorPredefined.BLACK);
+                addHSSFColorPredefined(HSSFColorPredefined.BROWN);
+                addHSSFColorPredefined(HSSFColorPredefined.OLIVE_GREEN);
+                addHSSFColorPredefined(HSSFColorPredefined.DARK_GREEN);
+                addHSSFColorPredefined(HSSFColorPredefined.DARK_TEAL);
+                addHSSFColorPredefined(HSSFColorPredefined.DARK_BLUE);
+                addHSSFColorPredefined(HSSFColorPredefined.INDIGO);
+                addHSSFColorPredefined(HSSFColorPredefined.GREY_80_PERCENT);
+                addHSSFColorPredefined(HSSFColorPredefined.ORANGE);
+                addHSSFColorPredefined(HSSFColorPredefined.DARK_YELLOW);
+                addHSSFColorPredefined(HSSFColorPredefined.GREEN);
+                addHSSFColorPredefined(HSSFColorPredefined.TEAL);
+                addHSSFColorPredefined(HSSFColorPredefined.BLUE);
+                addHSSFColorPredefined(HSSFColorPredefined.BLUE_GREY);
+                addHSSFColorPredefined(HSSFColorPredefined.GREY_50_PERCENT);
+                addHSSFColorPredefined(HSSFColorPredefined.RED);
+                addHSSFColorPredefined(HSSFColorPredefined.LIGHT_ORANGE);
+                addHSSFColorPredefined(HSSFColorPredefined.LIME);
+                addHSSFColorPredefined(HSSFColorPredefined.SEA_GREEN);
+                addHSSFColorPredefined(HSSFColorPredefined.AQUA);
+                addHSSFColorPredefined(HSSFColorPredefined.LIGHT_BLUE);
+                addHSSFColorPredefined(HSSFColorPredefined.VIOLET);
+                addHSSFColorPredefined(HSSFColorPredefined.GREY_40_PERCENT);
+                addHSSFColorPredefined(HSSFColorPredefined.PINK);
+                addHSSFColorPredefined(HSSFColorPredefined.GOLD);
+                addHSSFColorPredefined(HSSFColorPredefined.YELLOW);
+                addHSSFColorPredefined(HSSFColorPredefined.BRIGHT_GREEN);
+                addHSSFColorPredefined(HSSFColorPredefined.TURQUOISE);
+                addHSSFColorPredefined(HSSFColorPredefined.DARK_RED);
+                addHSSFColorPredefined(HSSFColorPredefined.SKY_BLUE);
+                addHSSFColorPredefined(HSSFColorPredefined.PLUM);
+                addHSSFColorPredefined(HSSFColorPredefined.GREY_25_PERCENT);
+                addHSSFColorPredefined(HSSFColorPredefined.ROSE);
+                addHSSFColorPredefined(HSSFColorPredefined.LIGHT_YELLOW);
+                addHSSFColorPredefined(HSSFColorPredefined.LIGHT_GREEN);
+                addHSSFColorPredefined(HSSFColorPredefined.LIGHT_TURQUOISE);
+                addHSSFColorPredefined(HSSFColorPredefined.PALE_BLUE);
+                addHSSFColorPredefined(HSSFColorPredefined.LAVENDER);
+                addHSSFColorPredefined(HSSFColorPredefined.WHITE);
+                addHSSFColorPredefined(HSSFColorPredefined.CORNFLOWER_BLUE);
+                addHSSFColorPredefined(HSSFColorPredefined.LEMON_CHIFFON);
+                addHSSFColorPredefined(HSSFColorPredefined.MAROON);
+                addHSSFColorPredefined(HSSFColorPredefined.ORCHID);
+                addHSSFColorPredefined(HSSFColorPredefined.CORAL);
+                addHSSFColorPredefined(HSSFColorPredefined.ROYAL_BLUE);
+                addHSSFColorPredefined(HSSFColorPredefined.LIGHT_CORNFLOWER_BLUE);
+                addHSSFColorPredefined(HSSFColorPredefined.TAN);
+            }
+            return enumList;
         }
-        return enumList;
     }
 
     private static void addHSSFColorPredefined(HSSFColorPredefined color) {
