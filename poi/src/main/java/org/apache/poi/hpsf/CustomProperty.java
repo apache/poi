@@ -17,7 +17,6 @@
 
 package org.apache.poi.hpsf;
 
-import java.util.Objects;
 
 /**
  * This class represents custom properties in the document summary
@@ -103,14 +102,6 @@ public class CustomProperty extends Property
         return equalNames && c.getID() == this.getID()
                 && c.getType() == this.getType()
                 && c.getValue().equals(this.getValue());
-    }
-
-    /**
-     * @see java.util.AbstractSet#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, getID());
     }
 
     /**

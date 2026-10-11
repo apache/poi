@@ -39,4 +39,18 @@ final class TestTextPiece {
         assertEquals(piece, new TextPiece(piece));
         assertEquals(oldPiece, new OldTextPiece(oldPiece));
     }
+
+    /**
+     * hashCode used to fail an assertion when assertions are enabled
+     */
+    @Test
+    void hashCodeIsConsistentWithEquals() {
+        byte[] text = "abc".getBytes(ISO_8859_1);
+        byte[] pdBytes = {0, 0, 0, 0, 0, 0x40, 0, 0};
+        TextPiece piece = new TextPiece(0, 3, text, new PieceDescriptor(pdBytes, 0));
+        assertEquals(piece.hashCode(), new TextPiece(piece).hashCode());
+
+        OldTextPiece oldPiece = new OldTextPiece(0, 3, text, new PieceDescriptor(pdBytes, 0));
+        assertEquals(oldPiece.hashCode(), new OldTextPiece(oldPiece).hashCode());
+    }
 }

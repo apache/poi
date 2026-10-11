@@ -41,4 +41,22 @@ final class TestCustomProperty {
         assertEquals(new CustomProperty(property, "name"), new CustomProperty(property, "name"));
         assertNotEquals(new CustomProperty(property, "name"), new CustomProperty(property, "other"));
     }
+
+    @Test
+    void hashCodeIsConsistentWithEquals() {
+        Property property = new Property(5, Variant.VT_LPWSTR, "value");
+        CustomProperty custom = new CustomProperty(property, "name");
+        assertEquals(property.hashCode(), custom.hashCode());
+
+        // equals treats VT_LPSTR and VT_LPWSTR as the same type
+        Property lpstr = new Property(5, Variant.VT_LPSTR, "value");
+        assertEquals(property, lpstr);
+        assertEquals(property.hashCode(), lpstr.hashCode());
+
+        // byte arrays are compared by content, without the padding bytes
+        Property bytes1 = new Property(6, Variant.VT_BLOB, new byte[]{1, 2, 3});
+        Property bytes2 = new Property(6, Variant.VT_BLOB, new byte[]{1, 2, 3, 0});
+        assertEquals(bytes1, bytes2);
+        assertEquals(bytes1.hashCode(), bytes2.hashCode());
+    }
 }
