@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.poi.hssf.record.PaletteRecord;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -215,6 +216,25 @@ public final class HSSFPalette {
         @Override
         public String getHexString() {
             return getGnumericPart(_red) + ":" + getGnumericPart(_green) + ":" + getGnumericPart(_blue);
+        }
+
+        // HSSFColor.equals compares fields this class doesn't set, so all custom colors were equal
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof CustomColor)) {
+                return false;
+            }
+            CustomColor other = (CustomColor) o;
+            return _byteOffset == other._byteOffset && _red == other._red
+                    && _green == other._green && _blue == other._blue;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(_byteOffset, _red, _green, _blue);
         }
 
         private String getGnumericPart(byte color)
