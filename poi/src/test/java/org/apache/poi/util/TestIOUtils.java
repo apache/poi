@@ -419,6 +419,24 @@ final class TestIOUtils {
     }
 
     @Test
+    void testSkipFullySmallSkip() throws IOException {
+        int[] maxRequested = {0};
+        InputStream is = new ByteArrayInputStream(new byte[100]) {
+            @Override
+            public synchronized int read(byte[] b, int off, int len) {
+                maxRequested[0] = Math.max(maxRequested[0], len);
+                // the buffer must be big enough for the request
+                assertTrue(off + len <= b.length);
+                return super.read(b, off, len);
+            }
+        };
+        assertEquals(3, IOUtils.skipFully(is, 3));
+        assertEquals(3, maxRequested[0]);
+        assertEquals(97, IOUtils.skipFully(is, 5000));
+        assertEquals(-1, IOUtils.skipFully(is, 1));
+    }
+
+    @Test
     void testSetMaxOverride() throws IOException {
         ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
         byte[] bytes = IOUtils.toByteArray(stream);

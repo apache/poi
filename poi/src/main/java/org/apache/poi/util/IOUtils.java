@@ -690,13 +690,14 @@ public final class IOUtils {
         if (toSkip == 0) {
             return 0L;
         }
-        // use dedicated buffer to avoid having other threads possibly access the bytes in a shared byte array
-        final byte[] skipBuffer = new byte[SKIP_BUFFER_SIZE];
+        // use dedicated buffer to avoid having other threads possibly access the bytes in a shared byte array,
+        // but no larger than needed, as most skips are only a few bytes
+        final byte[] skipBuffer = new byte[(int) Math.min(toSkip, SKIP_BUFFER_SIZE)];
         long remain = toSkip;
         while (remain > 0) {
             // See https://issues.apache.org/jira/browse/IO-203 for why we use read() rather than delegating to skip()
             final long n = input.read(
-                    skipBuffer, 0, Math.toIntExact(Math.min(remain, SKIP_BUFFER_SIZE)));
+                    skipBuffer, 0, Math.toIntExact(Math.min(remain, skipBuffer.length)));
             if (n < 0) { // EOF
                 break;
             }
