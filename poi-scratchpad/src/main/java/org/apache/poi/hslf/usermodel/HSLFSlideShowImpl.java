@@ -968,7 +968,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * PersistPtrIncrementalBlock.
      */
     @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
-    public synchronized int appendRootLevelRecord(Record newRecord) {
+    public int appendRootLevelRecord(Record newRecord) {
         int addedAt = -1;
         Record[] r = new Record[_records.length + 1];
         boolean added = false;

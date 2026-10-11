@@ -117,13 +117,18 @@ public class RelationshipTransformService extends TransformService {
      *
      * @see TransformService
      */
-    public static synchronized void registerDsigProvider() {
+    public static void registerDsigProvider() {
         // the xml signature classes will try to find a special TransformerService,
         // which is of course unknown to JCE before ...
-        if (Security.getProvider(POIXmlDsigProvider.NAME) == null) {
-            Security.addProvider(new POIXmlDsigProvider());
+        synchronized (REGISTER_LOCK) {
+            if (Security.getProvider(POIXmlDsigProvider.NAME) == null) {
+                Security.addProvider(new POIXmlDsigProvider());
+            }
         }
     }
+
+    /** A private lock, so other code can't block the registration by locking the class */
+    private static final Object REGISTER_LOCK = new Object();
 
 
     @Override
