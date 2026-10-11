@@ -365,8 +365,19 @@ public class Property {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,type,value);
-
+        // consistent with equals: the type is left out, as equals treats VT_LPSTR and VT_LPWSTR
+        // as equal, and byte arrays are compared without their padding bytes
+        final int valueHash;
+        if (value instanceof byte[] bytes) {
+            int hash = 1;
+            for (int i = 0, len = unpaddedLength(bytes); i < len; i++) {
+                hash = 31 * hash + bytes[i];
+            }
+            valueHash = hash;
+        } else {
+            valueHash = Objects.hashCode(value);
+        }
+        return Objects.hash(id, valueHash);
     }
 
     @Override

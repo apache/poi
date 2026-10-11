@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model;
 
 
 import java.nio.charset.Charset;
+import java.util.Objects;
 
 import org.apache.poi.hwpf.util.DoubleByteUtil;
 import org.apache.poi.util.Internal;
@@ -200,8 +201,7 @@ public class TextPiece extends PropertyNode<TextPiece> {
 
     @Override
     public int hashCode() {
-        assert false : "hashCode not designed";
-        return 42; // any arbitrary constant will do
+        return Objects.hash(getStart(), getEnd(), _usesUnicode, _buf.toString());
     }
 
 
