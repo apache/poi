@@ -520,7 +520,7 @@ public class HwmfMisc {
             int colorUsageEnum = leis.readUShort();
             colorUsage = ColorUsage.valueOf(colorUsageEnum);
             if (colorUsage == null) {
-                throw new IllegalArgumentException("Could not read color-usage " + colorUsage);
+                throw new IllegalArgumentException("Could not read color-usage " + colorUsageEnum);
             }
 
             int size = 2*LittleEndianConsts.SHORT_SIZE;

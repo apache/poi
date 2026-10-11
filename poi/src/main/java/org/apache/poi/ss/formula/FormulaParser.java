@@ -819,7 +819,7 @@ public final class FormulaParser {
 
         } else if (nColQuantifiers == 1 && !isThisRow) {
             if (startColumnName == null) {
-                throw new IllegalStateException("Cannot parse column: " + startColumnName + " with formula " + _formulaString);
+                throw new IllegalStateException("Cannot parse column: missing column name in formula " + _formulaString);
             }
             int idx = tbl.findColumnIndex(startColumnName);
             if (idx == -1) {

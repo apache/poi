@@ -271,8 +271,8 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
      */
     public PackageRelationship getRelationshipByID(String id) {
         if (id == null) {
-            throw new IllegalArgumentException("Cannot read relationship, provided ID is empty: " + id +
-                    ", having relationships: " + relationshipsByID.keySet());
+            throw new IllegalArgumentException("Cannot read relationship, no ID provided, having relationships: " +
+                    relationshipsByID.keySet());
         }
 
         return relationshipsByID.get(id);
