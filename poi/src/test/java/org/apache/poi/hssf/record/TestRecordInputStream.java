@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -102,6 +103,16 @@ final class TestRecordInputStream {
 
         in.mark(10);
         in.reset();
+    }
+
+    @Test
+    void testReadPlainWithOffset() {
+        RecordInputStream in = TestcaseRecordInputStream.create(HexRead.readFromString("AA AA 03 00 01 02 03"));
+        byte[] buf = new byte[5];
+        in.readPlain(buf, 1, 2);
+        assertArrayEquals(new byte[]{0, 1, 2, 0, 0}, buf);
+        assertEquals(1, in.remaining());
+        assertEquals(3, in.readUByte());
     }
 
     @ParameterizedTest

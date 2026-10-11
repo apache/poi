@@ -114,4 +114,17 @@ final class TestLittleEndianStreams {
         RuntimeException ex = assertThrows(RuntimeException.class, () -> lei.readFully(new byte[4]));
         assertContains(ex.getMessage(), "Buffer overrun");
     }
+
+    @Test
+    void testSetReadIndexToEnd() {
+        LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(HexRead.readFromString("01 02 03"));
+        lei.setReadIndex(3);
+        assertEquals(0, lei.available());
+        assertEquals(-1, lei.read());
+        lei.setReadIndex(1);
+        assertEquals(0x0302, lei.readUShort());
+        assertEquals(3, lei.getReadIndex());
+        assertThrows(IndexOutOfBoundsException.class, () -> lei.setReadIndex(4));
+        assertThrows(IndexOutOfBoundsException.class, () -> lei.setReadIndex(-1));
+    }
 }

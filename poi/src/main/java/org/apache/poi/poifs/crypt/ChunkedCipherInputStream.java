@@ -77,8 +77,24 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
 
     @Override
     public int read() throws IOException {
-        byte[] b = { 0 };
-        return (read(b) == 1) ? (b[0] & 0xFF) : -1;
+        if (remainingBytes() <= 0) {
+            return -1;
+        }
+        if (!chunkIsValid) {
+            try {
+                nextChunk();
+                chunkIsValid = true;
+            } catch (GeneralSecurityException e) {
+                throw new EncryptedDocumentException(e.getMessage(), e);
+            }
+        }
+        final int chunkMask = getChunkMask();
+        int b = chunk[Math.toIntExact(pos & chunkMask)] & 0xFF;
+        pos++;
+        if ((pos & chunkMask) == 0) {
+            chunkIsValid = false;
+        }
+        return b;
     }
 
     // do not implement! -> recursion
@@ -139,6 +155,21 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
         return skip;
     }
 
+    /**
+     * Skips by moving the position, as the size of the stream is known.
+     * The skipped chunks are not decrypted.
+     */
+    @Override
+    public void skipFully(long len) throws IOException {
+        if (len < 0) {
+            throw new IllegalArgumentException("Skip count must be non-negative, actual: " + len);
+        }
+        if (len > remainingBytes()) {
+            throw new IllegalStateException("Unexpected end-of-file");
+        }
+        skip(len);
+    }
+
     @Override
     public int available() {
         return remainingBytes();
@@ -159,12 +190,12 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
     }
 
     @Override
-    public synchronized void mark(int readlimit) {
+    public void mark(int readlimit) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         throw new UnsupportedOperationException();
     }
 

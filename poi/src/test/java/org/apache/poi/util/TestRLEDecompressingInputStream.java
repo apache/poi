@@ -146,6 +146,36 @@ class TestRLEDecompressingInputStream {
         assertArrayEquals(expected, expanded);
     }
 
+    /**
+     * skip must stop at the requested count when it spans several chunks
+     */
+    @Test
+    void skipAcrossChunks() throws IOException {
+        // two uncompressed chunks of 4096 bytes each
+        final int chunkSize = 4096;
+        byte[] data = new byte[1 + 2 * (2 + chunkSize)];
+        data[0] = 0x01;
+        int pos = 1;
+        int value = 0;
+        for (int chunk = 0; chunk < 2; chunk++) {
+            // chunk header: raw chunk (bit 15 unset), signature 0x3000, size 4096 - 1
+            data[pos++] = (byte) 0xFF;
+            data[pos++] = (byte) 0x3F;
+            for (int i = 0; i < chunkSize; i++) {
+                data[pos++] = (byte) (value++ % 251);
+            }
+        }
+
+        try (InputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(data))) {
+            assertEquals(10, stream.skip(10));
+            assertEquals(5000, stream.skip(5000));
+            assertEquals(5010 % 251, stream.read());
+            assertEquals(2 * chunkSize - 5011, stream.skip(10000));
+            assertEquals(0, stream.skip(1));
+            assertEquals(-1, stream.read());
+        }
+    }
+
     private static void checkRLEDecompression(String expected, byte[] runLengthEncodedData) throws IOException {
         InputStream compressedStream = new ByteArrayInputStream(runLengthEncodedData);
         UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();

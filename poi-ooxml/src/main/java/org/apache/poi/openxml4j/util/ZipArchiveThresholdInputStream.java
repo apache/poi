@@ -88,11 +88,12 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
 
     @Override
     public long skip(long n) throws IOException {
-        long cnt = IOUtils.skipFully(super.in, n);
+        // IOUtils.skipFully returns -1 at the end of the stream, but skip() must not be negative
+        long cnt = Math.max(0, IOUtils.skipFully(super.in, n));
         if (cnt > 0) {
             checkThreshold();
         }
-       return cnt;
+        return cnt;
     }
 
     /**
@@ -127,11 +128,9 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
             rawSize = 0;
         }
 
-        final String entryName = entry == null ? "not set" : entry.getName();
-
         // check the file size first, in case we are working on uncompressed streams
         if (payloadSize > getMaxEntrySize()) {
-            throw new IOException(String.format(Locale.ROOT, MAX_ENTRY_SIZE_MSG, payloadSize, rawSize, getMaxEntrySize(), entryName));
+            throw new IOException(String.format(Locale.ROOT, MAX_ENTRY_SIZE_MSG, payloadSize, rawSize, getMaxEntrySize(), getEntryName()));
         }
 
         // don't alert for small expanded size
@@ -145,7 +144,11 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
         }
 
         // one of the limits was reached, report it
-        throw new IOException(String.format(Locale.ROOT, MIN_INFLATE_RATIO_MSG, payloadSize, rawSize, ratio, MIN_INFLATE_RATIO, entryName));
+        throw new IOException(String.format(Locale.ROOT, MIN_INFLATE_RATIO_MSG, payloadSize, rawSize, ratio, MIN_INFLATE_RATIO, getEntryName()));
+    }
+
+    private String getEntryName() {
+        return entry == null ? "not set" : entry.getName();
     }
 
     public ZipArchiveEntry getNextEntry() throws IOException {
