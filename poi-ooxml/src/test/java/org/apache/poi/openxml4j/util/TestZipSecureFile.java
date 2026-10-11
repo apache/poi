@@ -17,8 +17,10 @@
 package org.apache.poi.openxml4j.util;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.DefaultTempFileCreationStrategy;
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.apache.poi.util.SuppressForbidden;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,6 +65,64 @@ class TestZipSecureFile {
                 }
             }
         }
+    }
+
+    /**
+     * Single-byte reads only check the thresholds periodically, but must still detect a zip bomb
+     */
+    @Test
+    void testSingleByteReadsDetectInflateRatio() throws IOException {
+        // 1 MB of zeros compresses far below the minimum inflate ratio
+        byte[] zip = zipWithEntry(new byte[1024 * 1024]);
+        try (ZipArchiveThresholdInputStream zis =
+                     new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(new ByteArrayInputStream(zip)))) {
+            assertNotNull(zis.getNextEntry());
+            IOException ex = assertThrows(IOException.class, () -> {
+                while (zis.read() != -1) {
+                    // read byte by byte
+                }
+            });
+            assertTrue(ex.getMessage().contains("Zip bomb detected"), ex.getMessage());
+        }
+    }
+
+    /**
+     * An entry over the max size, but shorter than the single-byte check interval,
+     * must fail before the end of the entry is reported
+     */
+    @Test
+    void testSingleByteReadsCheckBeforeEndOfEntry() throws IOException {
+        byte[] data = new byte[300];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (byte) (i * 31);
+        }
+        byte[] zip = zipWithEntry(data);
+        long oldMaxEntrySize = ZipSecureFile.getMaxEntrySize();
+        try {
+            ZipSecureFile.setMaxEntrySize(200);
+            try (ZipArchiveThresholdInputStream zis =
+                         new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(new ByteArrayInputStream(zip)))) {
+                assertNotNull(zis.getNextEntry());
+                IOException ex = assertThrows(IOException.class, () -> {
+                    while (zis.read() != -1) {
+                        // read byte by byte
+                    }
+                });
+                assertTrue(ex.getMessage().contains("max size"), ex.getMessage());
+            }
+        } finally {
+            ZipSecureFile.setMaxEntrySize(oldMaxEntrySize);
+        }
+    }
+
+    private static byte[] zipWithEntry(byte[] data) throws IOException {
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(bos)) {
+            zos.putArchiveEntry(new ZipArchiveEntry("entry.bin"));
+            zos.write(data);
+            zos.closeArchiveEntry();
+        }
+        return bos.toByteArray();
     }
 
     @Test

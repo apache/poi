@@ -61,6 +61,14 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
     private boolean guardState = true;
     private long entryCount;
 
+    /**
+     * Single-byte reads only check the thresholds every this many bytes, as each check queries
+     * the inflater. Bulk reads and skips still check on every call.
+     */
+    private static final int SINGLE_BYTE_CHECK_INTERVAL = 1024;
+    /** bytes returned by {@link #read()} since the last threshold check */
+    private int uncheckedBytes;
+
     public ZipArchiveThresholdInputStream(InputStream is) {
         super(is);
         if (!(is instanceof InputStreamStatistics)) {
@@ -72,6 +80,11 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
     public int read() throws IOException {
         int b = super.read();
         if (b > -1) {
+            if (++uncheckedBytes >= SINGLE_BYTE_CHECK_INTERVAL) {
+                checkThreshold();
+            }
+        } else if (uncheckedBytes > 0) {
+            // check the bytes read since the last check before reporting the end of the entry
             checkThreshold();
         }
         return b;
@@ -107,6 +120,7 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
     }
 
     private void checkThreshold() throws IOException {
+        uncheckedBytes = 0;
         if (!guardState) {
             return;
         }
@@ -157,6 +171,7 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
         }
 
         try {
+            uncheckedBytes = 0;
             entry = zis.getNextEntry();
             if (guardState && entry != null) {
                 if (++entryCount > MAX_FILE_COUNT) {
