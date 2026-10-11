@@ -1136,28 +1136,30 @@ public class SignatureConfig {
         if (keyStore == null) {
             return null;
         }
-        // TODO: add synchronized
-        try {
-            for (String a : Collections.list(keyStore.aliases())) {
-                Certificate[] chain = keyStore.getCertificateChain(a);
-                if (chain == null) {
-                    Certificate cert = keyStore.getCertificate(a);
-                    if (cert == null) {
-                        continue;
+        // the same lock as addCachedCertificate, as the keystore isn't thread-safe
+        synchronized (keyStore) {
+            try {
+                for (String a : Collections.list(keyStore.aliases())) {
+                    Certificate[] chain = keyStore.getCertificateChain(a);
+                    if (chain == null) {
+                        Certificate cert = keyStore.getCertificate(a);
+                        if (cert == null) {
+                            continue;
+                        }
+                        chain = new Certificate[]{cert};
                     }
-                    chain = new Certificate[]{cert};
+                    Optional<X509Certificate> found = Stream.of(chain)
+                        .map(X509Certificate.class::cast)
+                        .filter(c -> equalsIgnoreCase(principalName, c.getSubjectX500Principal().getName()))
+                        .findFirst();
+                    if (found.isPresent()) {
+                        return found.get();
+                    }
                 }
-                Optional<X509Certificate> found = Stream.of(chain)
-                    .map(X509Certificate.class::cast)
-                    .filter(c -> equalsIgnoreCase(principalName, c.getSubjectX500Principal().getName()))
-                    .findFirst();
-                if (found.isPresent()) {
-                    return found.get();
-                }
+                return null;
+            } catch (KeyStoreException e) {
+                return null;
             }
-            return null;
-        } catch (KeyStoreException e) {
-            return null;
         }
     }
 
