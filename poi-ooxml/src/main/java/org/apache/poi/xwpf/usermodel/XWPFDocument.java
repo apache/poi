@@ -1647,7 +1647,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             throw new InvalidFormatException("pictureType is not supported");
         }
         XWPFPictureData xwpfPicData = findPackagePictureData(pictureData);
-        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[pictureType.ooxmlId];
+        POIXMLRelation relDesc = XWPFPictureData.getRelationForType(pictureType.ooxmlId);
 
         if (xwpfPicData == null) {
             /* Part doesn't exist, create a new one */
@@ -1746,11 +1746,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             throw new InvalidFormatException("pictureType is not supported");
         }
         int img = getAllPackagePictures().size() + 1;
-        String proposal = XWPFPictureData.RELATIONS[pictureType.ooxmlId].getFileName(img);
+        String proposal = XWPFPictureData.getRelationForType(pictureType.ooxmlId).getFileName(img);
         PackagePartName createPartName = PackagingURIHelper.createPartName(proposal);
         while (this.getPackage().getPart(createPartName) != null) {
             img++;
-            proposal = XWPFPictureData.RELATIONS[pictureType.ooxmlId].getFileName(img);
+            proposal = XWPFPictureData.getRelationForType(pictureType.ooxmlId).getFileName(img);
             createPartName = PackagingURIHelper.createPartName(proposal);
         }
         return img;

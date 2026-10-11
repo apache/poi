@@ -56,7 +56,7 @@ public final class FunctionEval {
     /**
      * Array elements corresponding to unimplemented functions are <code>null</code>
      */
-    protected static final Function[] functions = produceFunctions();
+    private static final Function[] functions = produceFunctions();
 
     /**
      * See <a href="https://www.openoffice.org/sc/excelfileformat.pdf">Apache Open Office Excel File Format,

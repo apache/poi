@@ -603,7 +603,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     @Override
     public int addPicture(byte[] pictureData, int format) {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], this.xssfFactory, imageNumber, true).getDocumentPart();
+        XSSFPictureData img = createRelationship(XSSFPictureData.getRelationForType(format), this.xssfFactory, imageNumber, true).getDocumentPart();
         try (OutputStream out = img.getPackagePart().getOutputStream()) {
             out.write(pictureData);
         } catch (IOException e) {
@@ -630,7 +630,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     public int addPicture(InputStream is, int format) throws IOException {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], this.xssfFactory, imageNumber, true).getDocumentPart();
+        XSSFPictureData img = createRelationship(XSSFPictureData.getRelationForType(format), this.xssfFactory, imageNumber, true).getDocumentPart();
         try (OutputStream out = img.getPackagePart().getOutputStream()) {
             IOUtils.copy(is, out);
         }

@@ -162,8 +162,8 @@ public final class UnknownEscherRecord extends EscherRecord {
             return;
         }
 
-        if (childRecords.size() > MAX_NUMBER_OF_CHILDREN) {
-            throw new IllegalStateException("Cannot add more than " + MAX_NUMBER_OF_CHILDREN +
+        if (childRecords.size() > getMaxNumberOfChildren()) {
+            throw new IllegalStateException("Cannot add more than " + getMaxNumberOfChildren() +
                     " child records, you can use 'EscherRecord.setMaxNumberOfChildren()' to increase the allow size");
         }
 
@@ -177,8 +177,8 @@ public final class UnknownEscherRecord extends EscherRecord {
     }
 
     public void addChildRecord(EscherRecord childRecord) {
-        if (_childRecords.size() >= MAX_NUMBER_OF_CHILDREN) {
-            throw new IllegalStateException("Cannot add more than " + MAX_NUMBER_OF_CHILDREN +
+        if (_childRecords.size() >= getMaxNumberOfChildren()) {
+            throw new IllegalStateException("Cannot add more than " + getMaxNumberOfChildren() +
                     " child records, you can use 'EscherRecord.setMaxNumberOfChildren()' to increase the allow size");
         }
 

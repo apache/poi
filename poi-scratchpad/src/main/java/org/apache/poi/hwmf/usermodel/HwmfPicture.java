@@ -51,11 +51,17 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
     /** Max. record length - processing longer records will throw an exception */
     public static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
+    /**
+     * @deprecated use {@link #setMaxRecordLength(int)} and {@link #getMaxRecordLength()} instead - the field will be made private
+     */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private static final Logger LOG = PoiLogManager.getLogger(HwmfPicture.class);
