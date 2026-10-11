@@ -383,6 +383,10 @@ public final class XSSFRelation extends POIXMLRelation {
     public static final String NS_DRAWINGML = "http://schemas.openxmlformats.org/drawingml/2006/main";
     public static final String NS_CHART = "http://schemas.openxmlformats.org/drawingml/2006/chart";
 
+    private static final String TRANSITIONAL_RELATIONSHIPS_NS =
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/";
+    private static final String STRICT_RELATIONSHIPS_NS =
+            "http://purl.oclc.org/ooxml/officeDocument/relationships/";
 
     private XSSFRelation(String type, String rel, String defaultName) {
         this(type,rel, defaultName, null, null);
@@ -393,6 +397,23 @@ public final class XSSFRelation extends POIXMLRelation {
                          PackagePartConstructor packagePartConstructor) {
         super(type, rel, defaultName, noArgConstructor, packagePartConstructor, null);
         _table.put(rel, this);
+    }
+
+    /**
+     * Returns the relationship type used for this relation in Strict OOXML files.
+     * Strict OOXML (ISO/IEC 29500 Strict) uses the same local names as the transitional
+     * {@code officeDocument} relationship types, under a different namespace.
+     *
+     * @return the Strict OOXML relationship type, or null if this relation is not an
+     *     {@code officeDocument} relationship (for example, Microsoft extensions)
+     * @since 6.0.0
+     */
+    public String getStrictRelation() {
+        String rel = getRelation();
+        if (rel != null && rel.startsWith(TRANSITIONAL_RELATIONSHIPS_NS)) {
+            return STRICT_RELATIONSHIPS_NS + rel.substring(TRANSITIONAL_RELATIONSHIPS_NS.length());
+        }
+        return null;
     }
 
     /**
