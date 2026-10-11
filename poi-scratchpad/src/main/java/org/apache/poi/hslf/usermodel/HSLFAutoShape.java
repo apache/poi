@@ -184,7 +184,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
      */
     public int getAdjustmentValue(int idx){
         if(idx < 0 || idx > 9) throw new IllegalArgumentException("The index of an adjustment value must be in the [0, 9] range");
-        return getEscherProperty(ADJUST_VALUES[idx]);
+        return getEscherProperty(getAdjustValueProperty(idx));
     }
 
     /**
@@ -199,7 +199,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
      */
     public void setAdjustmentValue(int idx, int val){
         if(idx < 0 || idx > 9) throw new IllegalArgumentException("The index of an adjustment value must be in the [0, 9] range");
-        setEscherProperty(ADJUST_VALUES[idx], val);
+        setEscherProperty(getAdjustValueProperty(idx), val);
     }
 
     @Override

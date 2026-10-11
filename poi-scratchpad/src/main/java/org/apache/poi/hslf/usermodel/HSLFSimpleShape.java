@@ -54,6 +54,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 import static org.apache.poi.hslf.usermodel.HSLFShapePlaceholderDetails.createOEPlaceholderAtom;
@@ -70,7 +71,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     public static final double DEFAULT_LINE_WIDTH = 0.75;
 
-    protected static final EscherPropertyTypes[] ADJUST_VALUES = {
+    private static final EscherPropertyTypes[] ADJUST_VALUE_PROPERTIES = {
             EscherPropertyTypes.GEOMETRY__ADJUSTVALUE,
             EscherPropertyTypes.GEOMETRY__ADJUST2VALUE,
             EscherPropertyTypes.GEOMETRY__ADJUST3VALUE,
@@ -82,6 +83,23 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             EscherPropertyTypes.GEOMETRY__ADJUST9VALUE,
             EscherPropertyTypes.GEOMETRY__ADJUST10VALUE
     };
+
+    /**
+     * Changing this array has no effect, as POI uses its own copy.
+     *
+     * @deprecated the field will be removed
+     */
+    @Deprecated
+    @Removal(version = "7.0.0")
+    protected static final EscherPropertyTypes[] ADJUST_VALUES = ADJUST_VALUE_PROPERTIES.clone();
+
+    /**
+     * @param idx the 0-based index of the adjust value
+     * @return the escher property holding that adjust value
+     */
+    static EscherPropertyTypes getAdjustValueProperty(int idx) {
+        return ADJUST_VALUE_PROPERTIES[idx];
+    }
 
     /**
      * Hyperlink
@@ -347,7 +365,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         }
 
 
-        EscherPropertyTypes escherProp = ADJUST_VALUES[adjInt-1];
+        EscherPropertyTypes escherProp = getAdjustValueProperty(adjInt-1);
 
         int adjval = getEscherProperty(escherProp, -1);
 

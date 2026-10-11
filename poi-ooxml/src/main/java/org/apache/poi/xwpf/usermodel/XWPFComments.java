@@ -164,7 +164,7 @@ public class XWPFComments extends POIXMLDocumentPart {
             throw new InvalidFormatException("pictureType is not supported");
         }
         XWPFPictureData xwpfPicData = document.findPackagePictureData(pictureData);
-        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[pictureType.ooxmlId];
+        POIXMLRelation relDesc = XWPFPictureData.getRelationForType(pictureType.ooxmlId);
 
         if (xwpfPicData == null) {
             /* Part doesn't exist, create a new one */

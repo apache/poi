@@ -31,6 +31,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.Removal;
 
 /**
  * Supports reading and writing of variant data.<p>
@@ -52,10 +53,21 @@ public class VariantSupport extends Variant {
     /**
      * HPSF is able to read these {@link Variant} types.
      */
-    public static final int[] SUPPORTED_TYPES = { Variant.VT_EMPTY,
+    private static final int[] SUPPORTED_VARIANT_TYPES = { Variant.VT_EMPTY,
             Variant.VT_I2, Variant.VT_I4, Variant.VT_I8, Variant.VT_R8,
             Variant.VT_FILETIME, Variant.VT_LPSTR, Variant.VT_LPWSTR,
             Variant.VT_CF, Variant.VT_BOOL };
+
+    /**
+     * HPSF is able to read these {@link Variant} types.
+     * <p>
+     * Changing this array has no effect, as HPSF uses its own copy.
+     *
+     * @deprecated use {@link #isSupportedType(int)} - the field will be removed
+     */
+    @Deprecated
+    @Removal(version = "7.0.0")
+    public static final int[] SUPPORTED_TYPES = SUPPORTED_VARIANT_TYPES.clone();
 
 
     private static final Logger LOG = PoiLogManager.getLogger(VariantSupport.class);
@@ -122,8 +134,7 @@ public class VariantSupport extends Variant {
 
     /**
      * Checks whether HPSF supports the specified variant type. Unsupported
-     * types should be implemented included in the {@link #SUPPORTED_TYPES}
-     * array.
+     * types should be implemented included in the supported types.
      *
      * @see Variant
      * @param variantType the variant type to check
@@ -131,7 +142,7 @@ public class VariantSupport extends Variant {
      *         {@code false}
      */
     public boolean isSupportedType(final int variantType) {
-        for (int st : SUPPORTED_TYPES) {
+        for (int st : SUPPORTED_VARIANT_TYPES) {
             if (variantType == st) {
                 return true;
             }

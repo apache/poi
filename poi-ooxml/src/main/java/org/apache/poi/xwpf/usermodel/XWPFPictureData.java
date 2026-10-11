@@ -57,23 +57,42 @@ public class XWPFPictureData extends POIXMLDocumentPart {
     /**
      * Relationships for each known picture type
      */
-    protected static final POIXMLRelation[] RELATIONS;
+    private static final POIXMLRelation[] PICTURE_RELATIONS;
 
     static {
-        RELATIONS = new POIXMLRelation[15];
-        RELATIONS[PictureType.EMF.ooxmlId] = XWPFRelation.IMAGE_EMF;
-        RELATIONS[PictureType.WMF.ooxmlId] = XWPFRelation.IMAGE_WMF;
-        RELATIONS[PictureType.PICT.ooxmlId] = XWPFRelation.IMAGE_PICT;
-        RELATIONS[PictureType.JPEG.ooxmlId] = XWPFRelation.IMAGE_JPEG;
-        RELATIONS[PictureType.PNG.ooxmlId] = XWPFRelation.IMAGE_PNG;
-        RELATIONS[PictureType.DIB.ooxmlId] = XWPFRelation.IMAGE_DIB;
-        RELATIONS[PictureType.GIF.ooxmlId] = XWPFRelation.IMAGE_GIF;
-        RELATIONS[PictureType.TIFF.ooxmlId] = XWPFRelation.IMAGE_TIFF;
-        RELATIONS[PictureType.EPS.ooxmlId] = XWPFRelation.IMAGE_EPS;
-        RELATIONS[PictureType.BMP.ooxmlId] = XWPFRelation.IMAGE_BMP;
-        RELATIONS[PictureType.WPG.ooxmlId] = XWPFRelation.IMAGE_WPG;
-        RELATIONS[PictureType.WDP.ooxmlId] = XWPFRelation.HDPHOTO_WDP;
-        RELATIONS[PictureType.SVG.ooxmlId] = XWPFRelation.IMAGE_SVG;
+        PICTURE_RELATIONS = new POIXMLRelation[15];
+        PICTURE_RELATIONS[PictureType.EMF.ooxmlId] = XWPFRelation.IMAGE_EMF;
+        PICTURE_RELATIONS[PictureType.WMF.ooxmlId] = XWPFRelation.IMAGE_WMF;
+        PICTURE_RELATIONS[PictureType.PICT.ooxmlId] = XWPFRelation.IMAGE_PICT;
+        PICTURE_RELATIONS[PictureType.JPEG.ooxmlId] = XWPFRelation.IMAGE_JPEG;
+        PICTURE_RELATIONS[PictureType.PNG.ooxmlId] = XWPFRelation.IMAGE_PNG;
+        PICTURE_RELATIONS[PictureType.DIB.ooxmlId] = XWPFRelation.IMAGE_DIB;
+        PICTURE_RELATIONS[PictureType.GIF.ooxmlId] = XWPFRelation.IMAGE_GIF;
+        PICTURE_RELATIONS[PictureType.TIFF.ooxmlId] = XWPFRelation.IMAGE_TIFF;
+        PICTURE_RELATIONS[PictureType.EPS.ooxmlId] = XWPFRelation.IMAGE_EPS;
+        PICTURE_RELATIONS[PictureType.BMP.ooxmlId] = XWPFRelation.IMAGE_BMP;
+        PICTURE_RELATIONS[PictureType.WPG.ooxmlId] = XWPFRelation.IMAGE_WPG;
+        PICTURE_RELATIONS[PictureType.WDP.ooxmlId] = XWPFRelation.HDPHOTO_WDP;
+        PICTURE_RELATIONS[PictureType.SVG.ooxmlId] = XWPFRelation.IMAGE_SVG;
+    }
+
+    /**
+     * Relationships for each known picture type
+     * <p>
+     * Changing this array has no effect, as POI uses its own copy.
+     *
+     * @deprecated the field will be removed
+     */
+    @Deprecated
+    @Removal(version = "7.0.0")
+    protected static final POIXMLRelation[] RELATIONS = PICTURE_RELATIONS.clone();
+
+    /**
+     * @param pictureType the picture type, used as the index into the relationships
+     * @return the relationship for the picture type, or {@code null} if there is none
+     */
+    static POIXMLRelation getRelationForType(int pictureType) {
+        return PICTURE_RELATIONS[pictureType];
     }
 
     private Long checksum;
@@ -159,12 +178,12 @@ public class XWPFPictureData extends POIXMLDocumentPart {
     @Removal(version = "7.0.0") // repurpose to return PictureType
     public int getPictureType() {
         String contentType = getPackagePart().getContentType();
-        for (int i = 0; i < RELATIONS.length; i++) {
-            if (RELATIONS[i] == null) {
+        for (int i = 0; i < PICTURE_RELATIONS.length; i++) {
+            if (PICTURE_RELATIONS[i] == null) {
                 continue;
             }
 
-            if (RELATIONS[i].getContentType().equals(contentType)) {
+            if (PICTURE_RELATIONS[i].getContentType().equals(contentType)) {
                 return i;
             }
         }

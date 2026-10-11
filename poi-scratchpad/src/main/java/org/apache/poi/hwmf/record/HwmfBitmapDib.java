@@ -53,7 +53,7 @@ import org.apache.poi.util.RecordFormatException;
 public class HwmfBitmapDib implements GenericRecord {
     // arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_HEIGHT_WIDTH = 10_000;
-    protected static int MAX_HEIGHT_WIDTH = DEFAULT_MAX_HEIGHT_WIDTH;
+    private static int MAX_HEIGHT_WIDTH = DEFAULT_MAX_HEIGHT_WIDTH;
 
     private static final Logger LOG = PoiLogManager.getLogger(HwmfBitmapDib.class);
     private static final int BMP_HEADER_SIZE = 14;
