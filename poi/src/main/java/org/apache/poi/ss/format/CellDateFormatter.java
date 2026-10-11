@@ -34,11 +34,11 @@ import org.apache.poi.util.StringUtil;
  * Formats a date value.
  */
 public class CellDateFormatter extends CellFormatter {
-    private boolean amPmUpper;
-    private boolean showM;
-    private boolean showAmPm;
+    private final boolean amPmUpper;
+    private final boolean showM;
+    private final boolean showAmPm;
     private final DateFormat dateFmt;
-    private String sFmt;
+    private final String sFmt;
 
     private static final Calendar EXCEL_EPOCH_CAL =
             LocaleUtil.getLocaleCalendar(1904, 0, 1);
@@ -47,7 +47,11 @@ public class CellDateFormatter extends CellFormatter {
 
     private static CellDateFormatter SIMPLE_DATE_FORMATTER;
 
-    class DatePartHandler implements CellFormatPart.PartHandler {
+    static class DatePartHandler implements CellFormatPart.PartHandler {
+        private boolean amPmUpper;
+        private boolean showM;
+        private boolean showAmPm;
+        private String sFmt;
         private int mStart = -1;
         private int mLen;
         private int hStart = -1;
@@ -170,6 +174,10 @@ public class CellDateFormatter extends CellFormatter {
         StringBuffer descBuf = CellFormatPart.parseFormat(format,
                 CellFormatType.DATE, partHandler);
         partHandler.finish(descBuf);
+        amPmUpper = partHandler.amPmUpper;
+        showM = partHandler.showM;
+        showAmPm = partHandler.showAmPm;
+        sFmt = partHandler.sFmt;
         dateFmt = new SimpleDateFormat(descBuf.toString(), locale);
         dateFmt.setTimeZone(LocaleUtil.getUserTimeZone());
     }
