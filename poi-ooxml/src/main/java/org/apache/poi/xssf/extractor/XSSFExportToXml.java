@@ -402,7 +402,7 @@ public class XSSFExportToXml implements Comparator<String>{
 
         String[] leftTokens = leftXpath.split("/");
         String[] rightTokens = rightXpath.split("/");
-        String samePath = "";
+        StringBuilder samePath = new StringBuilder();
 
         int minLength = Math.min(leftTokens.length, rightTokens.length);
 
@@ -414,10 +414,10 @@ public class XSSFExportToXml implements Comparator<String>{
             String rightElementName = rightTokens[i];
 
             if (leftElementName.equals(rightElementName)) {
-                samePath += "/" + leftElementName;
+                samePath.append('/').append(leftElementName);
                 localComplexTypeRootNode = getComplexTypeForElement(leftElementName, xmlSchema, localComplexTypeRootNode);
             } else {
-                return indexOfElementInComplexType(samePath, leftElementName, rightElementName,localComplexTypeRootNode);
+                return indexOfElementInComplexType(samePath.toString(), leftElementName, rightElementName,localComplexTypeRootNode);
             }
         }
 
