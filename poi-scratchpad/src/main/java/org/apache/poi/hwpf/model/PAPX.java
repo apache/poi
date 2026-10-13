@@ -71,8 +71,9 @@ public final class PAPX extends BytePropertyNode<PAPX> {
                 int hugeGrpprlOffset = sprm.getOperand();
                 if(hugeGrpprlOffset >= 0 && hugeGrpprlOffset < datastream.length - 1)
                 {
-                    int grpprlSize = LittleEndian.getUShort(datastream, hugeGrpprlOffset);
-                    if( grpprlSize <= datastream.length - hugeGrpprlOffset - 2)
+                    // PrcData.cbGrpprl is a signed 16-bit size
+                    int grpprlSize = LittleEndian.getShort(datastream, hugeGrpprlOffset);
+                    if( grpprlSize >= 0 && grpprlSize <= datastream.length - hugeGrpprlOffset - 2)
                     {
                         byte[] hugeGrpprl = new byte[grpprlSize + 2];
                         // copy original istd into huge Grpprl
