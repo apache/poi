@@ -69,10 +69,10 @@ public final class PAPX extends BytePropertyNode<PAPX> {
                     && sprm.getSizeCode() == 3)
             {
                 int hugeGrpprlOffset = sprm.getOperand();
-                if(hugeGrpprlOffset+1 < datastream.length)
+                if(hugeGrpprlOffset >= 0 && hugeGrpprlOffset < datastream.length - 1)
                 {
-                    int grpprlSize = LittleEndian.getShort(datastream, hugeGrpprlOffset);
-                    if( hugeGrpprlOffset+grpprlSize < datastream.length)
+                    int grpprlSize = LittleEndian.getUShort(datastream, hugeGrpprlOffset);
+                    if( grpprlSize <= datastream.length - hugeGrpprlOffset - 2)
                     {
                         byte[] hugeGrpprl = new byte[grpprlSize + 2];
                         // copy original istd into huge Grpprl
