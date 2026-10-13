@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.model;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.hssf.model.HSSFFormulaParser.parse;
 import static org.junit.jupiter.api.Assertions.*;
@@ -1590,5 +1591,43 @@ final class TestFormulaParser {
     void testNPE() {
         assertThrows(FormulaParseException.class,
                 () -> parseFormula("[\f]!E鈩"));
+    }
+
+    @Test
+    void testDeeplyNestedFormulaIsRejected() {
+        int depth = 20_000;
+        String[] formulas = {
+            "(".repeat(depth) + "1" + ")".repeat(depth),
+            "ABS(".repeat(depth) + "1" + ")".repeat(depth),
+            "-".repeat(depth) + "1",
+            "SUM(1,(".repeat(depth) + "1" + "))".repeat(depth),
+        };
+        for (String formula : formulas) {
+            FormulaParseException e = assertThrows(FormulaParseException.class, () -> parseFormula(formula));
+            assertContains(e.getMessage(), "more than " + FormulaParser.DEFAULT_MAX_NESTING_DEPTH + " levels");
+        }
+    }
+
+    @Test
+    void testNestingDepthLimit() {
+        int max = FormulaParser.DEFAULT_MAX_NESTING_DEPTH;
+        assertEquals(max, FormulaParser.getMaxNestingDepth());
+        // sibling sub-expressions each get the full nesting allowance
+        assertEquals(2 * max + 3,
+            parseFormula("(".repeat(max) + "1" + ")".repeat(max) + "+" + "(".repeat(max) + "2" + ")".repeat(max)).length);
+        assertEquals(max + 1, parseFormula("ABS(".repeat(max) + "1" + ")".repeat(max)).length);
+        assertThrows(FormulaParseException.class,
+            () -> parseFormula("(".repeat(max + 1) + "1" + ")".repeat(max + 1)));
+        assertThrows(FormulaParseException.class,
+            () -> parseFormula("ABS(".repeat(max) + "-1" + ")".repeat(max)));
+
+        assertThrows(IllegalArgumentException.class, () -> FormulaParser.setMaxNestingDepth(-1));
+        try {
+            FormulaParser.setMaxNestingDepth(2);
+            assertEquals(3, parseFormula("ABS((1))").length);
+            assertThrows(FormulaParseException.class, () -> parseFormula("ABS(((1)))"));
+        } finally {
+            FormulaParser.setMaxNestingDepth(max);
+        }
     }
 }
