@@ -26,7 +26,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hsmf.datatypes.ByteChunk;
+import org.apache.poi.hsmf.datatypes.NameIdChunks;
 import org.apache.poi.hsmf.datatypes.StringChunk;
+import org.apache.poi.hsmf.datatypes.Types;
+import org.apache.poi.util.LittleEndian;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -85,5 +89,66 @@ public class TestNameIdChunks {
             .flatMap(me -> me.getValue().stream())
             .map(c -> ((StringChunk)c).getValue())
             .toArray(String[]::new);
+    }
+
+    /**
+     * A string named property whose StringOffset leaves no room for the
+     * 4-byte name length field in the string stream must be treated as
+     * not found rather than read past the end of the stream.
+     */
+    @Test
+    void testStringOffsetWithoutRoomForNameLength() {
+        for (int nameOffset : new int[] { 13, 14, 15 }) {
+            NameIdChunks nameIdChunks = createNameIdChunks(stringEntry(nameOffset), new byte[16]);
+            assertEquals(0, nameIdChunks.getPropertyTag(PS_PUBLIC_STRINGS.getClassID(), "Test", 0),
+                    "name offset " + nameOffset);
+        }
+    }
+
+    /**
+     * StringOffset is an unsigned 32-bit value. An offset of 0x80000000 or
+     * above must not be narrowed to a negative int and used to index the
+     * string stream.
+     */
+    @Test
+    void testOversizedStringOffset() {
+        for (long nameOffset : new long[] { 0x80000000L, 0xFFFFFFFFL }) {
+            NameIdChunks nameIdChunks = createNameIdChunks(stringEntry((int) nameOffset), new byte[16]);
+            assertEquals(0, nameIdChunks.getPropertyTag(PS_PUBLIC_STRINGS.getClassID(), "Test", 0),
+                    "name offset " + nameOffset);
+        }
+    }
+
+    /**
+     * A zero-length name whose length field occupies the last four bytes of
+     * the string stream is still in bounds.
+     */
+    @Test
+    void testEmptyNameAtEndOfStringStream() {
+        NameIdChunks nameIdChunks = createNameIdChunks(stringEntry(12), new byte[16]);
+        assertEquals(0, nameIdChunks.getPropertyTag(PS_PUBLIC_STRINGS.getClassID(), "Test", 0));
+    }
+
+    private static byte[] stringEntry(int nameOffset) {
+        byte[] entry = new byte[8];
+        LittleEndian.putInt(entry, 0, nameOffset);
+        // guid index 2 (PS_PUBLIC_STRINGS) with the string named property bit set
+        LittleEndian.putUShort(entry, 4, (2 << 1) | 1);
+        LittleEndian.putUShort(entry, 6, 0);
+        return entry;
+    }
+
+    private static NameIdChunks createNameIdChunks(byte[] entryStreamBytes, byte[] stringStreamBytes) {
+        NameIdChunks nameIdChunks = new NameIdChunks();
+        ByteChunk guidStream = new ByteChunk(2, Types.BINARY);
+        guidStream.setValue(new byte[0]);
+        ByteChunk entryStream = new ByteChunk(3, Types.BINARY);
+        entryStream.setValue(entryStreamBytes);
+        ByteChunk stringStream = new ByteChunk(4, Types.BINARY);
+        stringStream.setValue(stringStreamBytes);
+        nameIdChunks.record(guidStream);
+        nameIdChunks.record(entryStream);
+        nameIdChunks.record(stringStream);
+        return nameIdChunks;
     }
 }
