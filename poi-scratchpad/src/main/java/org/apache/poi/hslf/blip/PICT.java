@@ -88,8 +88,10 @@ public final class PICT extends Metafile {
                 throw new EOFException();
             }
             byte[] chunk = new byte[4096];
-            try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(header.getWmfSize()).get()) {
-                final int maxLength = getMaxRecordLength();
+            final int maxLength = getMaxRecordLength();
+            // wmfSize is untrusted, so only use it as a hint up to the inflate limit
+            final int bufferSize = Math.min(header.getWmfSize(), maxLength);
+            try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(bufferSize).get()) {
                 long totalInflated = 0;
                 try (InflaterInputStream inflater = new InflaterInputStream(bis)) {
                     int count;
