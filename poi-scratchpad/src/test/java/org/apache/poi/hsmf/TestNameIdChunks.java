@@ -121,34 +121,83 @@ public class TestNameIdChunks {
 
     /**
      * A zero-length name whose length field occupies the last four bytes of
-     * the string stream is still in bounds.
+     * the string stream is still in bounds and resolves through its stream entry.
      */
     @Test
     void testEmptyNameAtEndOfStringStream() {
         NameIdChunks nameIdChunks = createNameIdChunks(stringEntry(12), new byte[16]);
+        // CRC32 of the empty name is 0, so the stream ID is 0x1000 + (0 ^ ((2 << 1) | 1)) % 0x1F
+        nameIdChunks.record(binaryChunk(0x1005, entry(0, 2, 1, 7)));
+        assertEquals(0x8007, nameIdChunks.getPropertyTag(PS_PUBLIC_STRINGS.getClassID(), "", 0));
         assertEquals(0, nameIdChunks.getPropertyTag(PS_PUBLIC_STRINGS.getClassID(), "Test", 0));
     }
 
+    /**
+     * A numerical named property ID is an unsigned 32-bit value, so an ID of
+     * 0x80000000 or above must still map to the right stream.
+     */
+    @Test
+    void testHighNumericalPropertyId() {
+        NameIdChunks nameIdChunks = createNameIdChunks(entry(0x80000000, 2, 0, 9), new byte[0]);
+        // stream ID is 0x1000 + (0x80000000 ^ (2 << 1)) % 0x1F
+        nameIdChunks.record(binaryChunk(0x1006, entry(0x80000000, 2, 0, 9)));
+        assertEquals(0x8009, nameIdChunks.getPropertyTag(PS_PUBLIC_STRINGS.getClassID(), null, 0x80000000L));
+    }
+
+    /**
+     * A string stream chunk without a value must not fail string named
+     * property lookups, and must not affect numerical named property lookups.
+     */
+    @Test
+    void testStringStreamWithoutValue() {
+        byte[] entries = new byte[16];
+        System.arraycopy(stringEntry(0), 0, entries, 0, 8);
+        System.arraycopy(entry(0x8554, 2, 0, 3), 0, entries, 8, 8);
+        NameIdChunks nameIdChunks = createNameIdChunks(new byte[0], entries, null);
+        nameIdChunks.record(binaryChunk(0x1000 + (0x8554 ^ (2 << 1)) % 0x1F, entry(0x8554, 2, 0, 3)));
+        assertEquals(0, nameIdChunks.getPropertyTag(PS_PUBLIC_STRINGS.getClassID(), "Test", 0));
+        assertEquals(0x8003, nameIdChunks.getPropertyTag(PS_PUBLIC_STRINGS.getClassID(), null, 0x8554));
+    }
+
+    /**
+     * A GUID stream chunk without a value must not fail lookups of property
+     * sets that are stored in the GUID stream.
+     */
+    @Test
+    void testGuidStreamWithoutValue() {
+        NameIdChunks nameIdChunks = createNameIdChunks(null, entry(0x8554, 3, 0, 0), new byte[0]);
+        assertEquals(0, nameIdChunks.getPropertyTag(PSETID_COMMON.getClassID(), null, 0x8554));
+    }
+
     private static byte[] stringEntry(int nameOffset) {
-        byte[] entry = new byte[8];
-        LittleEndian.putInt(entry, 0, nameOffset);
         // guid index 2 (PS_PUBLIC_STRINGS) with the string named property bit set
-        LittleEndian.putUShort(entry, 4, (2 << 1) | 1);
-        LittleEndian.putUShort(entry, 6, 0);
+        return entry(nameOffset, 2, 1, 0);
+    }
+
+    private static byte[] entry(int nameOffsetOrId, int guidIndex, int propertyKind, int propertyIndex) {
+        byte[] entry = new byte[8];
+        LittleEndian.putInt(entry, 0, nameOffsetOrId);
+        LittleEndian.putUShort(entry, 4, (guidIndex << 1) | propertyKind);
+        LittleEndian.putUShort(entry, 6, propertyIndex);
         return entry;
     }
 
+    private static ByteChunk binaryChunk(int chunkId, byte[] value) {
+        ByteChunk chunk = new ByteChunk(chunkId, Types.BINARY);
+        chunk.setValue(value);
+        return chunk;
+    }
+
     private static NameIdChunks createNameIdChunks(byte[] entryStreamBytes, byte[] stringStreamBytes) {
+        return createNameIdChunks(new byte[0], entryStreamBytes, stringStreamBytes);
+    }
+
+    private static NameIdChunks createNameIdChunks(byte[] guidStreamBytes, byte[] entryStreamBytes,
+            byte[] stringStreamBytes) {
         NameIdChunks nameIdChunks = new NameIdChunks();
-        ByteChunk guidStream = new ByteChunk(2, Types.BINARY);
-        guidStream.setValue(new byte[0]);
-        ByteChunk entryStream = new ByteChunk(3, Types.BINARY);
-        entryStream.setValue(entryStreamBytes);
-        ByteChunk stringStream = new ByteChunk(4, Types.BINARY);
-        stringStream.setValue(stringStreamBytes);
-        nameIdChunks.record(guidStream);
-        nameIdChunks.record(entryStream);
-        nameIdChunks.record(stringStream);
+        nameIdChunks.record(binaryChunk(2, guidStreamBytes));
+        nameIdChunks.record(binaryChunk(3, entryStreamBytes));
+        nameIdChunks.record(binaryChunk(4, stringStreamBytes));
         return nameIdChunks;
     }
 }

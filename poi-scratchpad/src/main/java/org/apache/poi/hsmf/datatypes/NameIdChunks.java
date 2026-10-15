@@ -208,7 +208,7 @@ public final class NameIdChunks implements ChunkGroup {
             // GUID from guid stream
             byte[] guidStreamBytes = guidStream.getValue();
             int guidIndexOffset = (guidIndex - 3) * 0x10;
-            if (guidStreamBytes.length >= guidIndexOffset + 0x10) {
+            if (guidStreamBytes != null && guidStreamBytes.length >= guidIndexOffset + 0x10) {
                 return new ClassID(guidStreamBytes, guidIndexOffset);
             }
         }
@@ -237,7 +237,7 @@ public final class NameIdChunks implements ChunkGroup {
         long propertyNameCRC32 = -1;
         // nameOffset is an unsigned 32-bit offset of a 4-byte name length
         // followed by the name itself
-        if (nameOffset + 4 <= stringBytes.length) {
+        if (stringBytes != null && nameOffset + 4 <= stringBytes.length) {
             long nameLength = LittleEndian.getUInt(stringBytes, (int) nameOffset);
             if (stringBytes.length >= nameOffset + 4 + nameLength) {
                 int nameStart = (int) nameOffset + 4;
