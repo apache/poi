@@ -4088,6 +4088,19 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
+    void testBug70146() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("bug70146.xlsx")) {
+            XSSFRow row = wb.getSheetAt(0).getRow(0);
+            DataFormatter dataFormatter = new DataFormatter(Locale.US);
+            // currency strings without the language info, e.g. [$USD]
+            assertEquals("#,##0.00\\ [$USD];\\-#,##0.00\\ [$USD]", row.getCell(0).getCellStyle().getDataFormatString());
+            assertEquals("12,345.00 USD", dataFormatter.formatCellValue(row.getCell(0)));
+            assertEquals("[$HKD $]#,##0", row.getCell(1).getCellStyle().getDataFormatString());
+            assertEquals("HKD $12,345", dataFormatter.formatCellValue(row.getCell(1)));
+        }
+    }
+
+    @Test
     void testInvalidCellRef() throws Exception {
         // https://github.com/pjfanning/excel-streaming-reader/pull/390
         try (XSSFWorkbook wb = openSampleWorkbook("invalid_cell_reference.xlsx")) {

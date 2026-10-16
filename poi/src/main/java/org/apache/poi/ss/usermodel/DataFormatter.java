@@ -140,10 +140,10 @@ public class DataFormatter {
     private static final Pattern rangeConditionalPattern = Pattern.compile("\\[\\s*(<>|<=|>=|<|>|=)\\s*-?[0-9]*\\.?[0-9]+\\s*]");
 
     /**
-     * A regex to find locale patterns like [$$-1009] and [$?-452].
+     * A regex to find locale patterns like [$$-1009] and [$?-452], or a currency string without a locale like [$USD].
      * Note that we don't currently process these into locales
      */
-    private static final Pattern localePatternGroup = Pattern.compile("(\\[\\$[^-\\]]*-[0-9A-Z]+])");
+    private static final Pattern localePatternGroup = Pattern.compile("(\\[\\$[^-\\]]*(?:-[0-9A-Za-z]+)?])");
 
     /**
      * A regex to match the colour formatting's rules.
@@ -506,20 +506,25 @@ public class DataFormatter {
             formatStr = dbNumPattern.matcher(formatStr).replaceAll("");
         }
 
-        // Strip off the locale information, we use an instance-wide locale for everything
+        // Strip off the locale information, we use an instance-wide locale for everything.
+        // The locale is optional, e.g. "[$USD]" is just the currency string
         if (formatStr != null) {
             Matcher m = localePatternGroup.matcher(formatStr);
+            StringBuilder sb = new StringBuilder(formatStr.length());
             while (m.find()) {
                 String match = m.group();
-                String symbol = match.substring(match.indexOf('$') + 1, match.indexOf('-'));
-                if (symbol.indexOf('$') > -1) {
-                    symbol = symbol.substring(0, symbol.indexOf('$')) +
-                            '\\' +
-                            symbol.substring(symbol.indexOf('$'));
+                int dash = match.indexOf('-');
+                String symbol = match.substring(2, dash < 0 ? match.length() - 1 : dash);
+                // escaped, so that letters and dots in it, e.g. "EUR" or "Bs.", are not taken as part of the pattern
+                // (quoted text is not used, as date letters in it still make it count as a date format)
+                StringBuilder escaped = new StringBuilder(symbol.length() * 2);
+                for (int i = 0; i < symbol.length(); i++) {
+                    escaped.append('\\').append(symbol.charAt(i));
                 }
-                formatStr = m.replaceAll(symbol);
-                m = localePatternGroup.matcher(formatStr);
+                m.appendReplacement(sb, Matcher.quoteReplacement(escaped.toString()));
             }
+            m.appendTail(sb);
+            formatStr = sb.toString();
         }
 
         // Check for special cases
@@ -1047,6 +1052,55 @@ public class DataFormatter {
         return sb.toString();
     }
 
+    /** characters that DecimalFormat does not show as they are, unless they are quoted */
+    private static final String DECIMAL_FORMAT_SPECIALS = "0#.,;%‰E¤";
+
+    /**
+     * Quotes the characters in Excel's {@code "quoted text"} and {@code \}-escaped characters
+     * that DecimalFormat would otherwise treat as part of the pattern, e.g. the dot in {@code 0.00"x."}:
+     * a second decimal point makes the pattern invalid, or is shown as the locale's decimal separator.
+     */
+    private static String quoteSpecialLiterals(String formatStr) {
+        if (formatStr.indexOf('"') < 0 && formatStr.indexOf('\\') < 0) {
+            return formatStr;
+        }
+        StringBuilder sb = new StringBuilder(formatStr.length() + 8);
+        boolean inExcelQuotes = false;
+        boolean inPatternQuotes = false;
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            boolean literal = inExcelQuotes;
+            if (c == '"') {
+                inExcelQuotes = !inExcelQuotes;
+                sb.append(c);
+                continue;
+            } else if (!inExcelQuotes && (c == '_' || c == '*') && i < formatStr.length() - 1) {
+                // spacing and padding: the operand is removed later
+                if (inPatternQuotes) {
+                    sb.append('\'');
+                    inPatternQuotes = false;
+                }
+                sb.append(c).append(formatStr.charAt(++i));
+                continue;
+            } else if (!inExcelQuotes && c == '\\' && i < formatStr.length() - 1) {
+                sb.append(c);
+                c = formatStr.charAt(++i);
+                literal = true;
+            }
+            boolean special = literal && DECIMAL_FORMAT_SPECIALS.indexOf(c) >= 0;
+            if (special != inPatternQuotes) {
+                sb.append('\'');
+                inPatternQuotes = special;
+            }
+            // a quote character is written as two, in and out of DecimalFormat's quoted text
+            sb.append(literal && c == '\'' ? "''" : String.valueOf(c));
+        }
+        if (inPatternQuotes) {
+            sb.append('\'');
+        }
+        return sb.toString();
+    }
+
     private static class InternalDecimalFormatWithScale extends Format {
 
         private static final Pattern endsWithCommas = Pattern.compile("(,+)$");
@@ -1371,7 +1425,7 @@ public class DataFormatter {
     }
 
     private Format createNumberFormat(String formatStr, double cellValue) {
-        String format = cleanFormatForNumber(formatStr);
+        String format = cleanFormatForNumber(quoteSpecialLiterals(formatStr));
         DecimalFormatSymbols symbols = decimalSymbols;
 
         // Do we need to change the grouping character?
