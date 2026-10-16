@@ -49,6 +49,7 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven { url = 'https://repository.apache.org/content/repositories/snapshots' }
     // maven { url 'https://repository.apache.org/content/repositories/staging' }
 }
 
@@ -167,7 +168,7 @@ subprojects {
         log4jVersion = '2.26.1'
         mockitoVersion = '5.24.0'
         hamcrestVersion = '3.0'
-        xmlbeansVersion = '5.4.1'
+        xmlbeansVersion = '5.5.0-SNAPSHOT'
         batikVersion = '1.19'
         graphics2dVersion = '3.0.5'
         pdfboxVersion = '3.0.8'
@@ -239,6 +240,7 @@ subprojects {
 
     repositories {
         mavenCentral()
+        maven { url = 'https://repository.apache.org/content/repositories/snapshots' }
         // maven { url 'https://repository.apache.org/content/repositories/staging' }
     }
 
