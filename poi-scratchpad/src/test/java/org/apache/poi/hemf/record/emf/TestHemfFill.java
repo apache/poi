@@ -18,32 +18,43 @@
 package org.apache.poi.hemf.record.emf;
 
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 
 import org.apache.poi.hwmf.record.HwmfBitmapDib;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
 
 class TestHemfFill {
 
     /**
-     * When the bitmap header and bits are not contiguous, readBitmap copies them
-     * into an intermediate buffer. cbBmi and cbBits come straight from the record,
-     * so they must not be used to presize that buffer beyond the record limit:
-     * here they add up to almost 2 GB while the record only holds a few bytes.
+     * cbBmi and cbBits come straight from the record, so a bitmap that claims to
+     * extend past the end of the record must be rejected before anything is
+     * buffered: here they add up to almost 2 GB while the record only holds 8 bytes.
      */
     @Test
-    void oversizedBitmapSizesDoNotPresizeBuffer() throws Exception {
+    void bitmapExceedingRecordIsRejected() throws Exception {
         byte[] data = new byte[16];
         try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
-            // the record is truncated, so parsing still fails, but not by allocating ~2 GB first
-            Throwable t = assertThrows(Throwable.class, () -> HemfFill.readBitmap(
-                    leis, new HwmfBitmapDib(), HEADER_SIZE,
+            assertThrows(RecordFormatException.class, () -> HemfFill.readBitmap(
+                    leis, new HwmfBitmapDib(), HEADER_SIZE, 8,
                     1, 0x40000000, 0x7FFFFFF0, 0x3FFFFF00));
-            assertFalse(t instanceof OutOfMemoryError, "buffer was presized from cbBmi + cbBits");
+        }
+    }
+
+    /**
+     * cbBmi + cbBits must not overflow into a negative bitmap size, even when
+     * the record claims to be big enough to hold them.
+     */
+    @Test
+    void bitmapSizeOverflowIsRejected() throws Exception {
+        byte[] data = new byte[16];
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
+            assertThrows(RecordFormatException.class, () -> HemfFill.readBitmap(
+                    leis, new HwmfBitmapDib(), HEADER_SIZE, 0xFFFFFFFFL,
+                    1, 0x40000000, 0x40000001, 0x40000000));
         }
     }
 }
