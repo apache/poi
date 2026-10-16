@@ -845,7 +845,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
             final int destRowNum = getRowNum();
             final int rowDifference = destRowNum - srcRowNum;
 
-            final FormulaShifter formulaShifter = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRowNum, srcRowNum, rowDifference, SpreadsheetVersion.EXCEL2007);
+            final FormulaShifter formulaShifter = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRowNum, srcRowNum, rowDifference, SpreadsheetVersion.EXCEL97);
             final HSSFRowShifter rowShifter = new HSSFRowShifter(sheet);
             rowShifter.updateRowFormulas(this, formulaShifter);
 
