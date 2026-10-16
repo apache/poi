@@ -903,6 +903,17 @@ class TestDataFormatter {
     }
 
     @Test
+    void testFormatWithTrailingCommasAndFractionalValues() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        assertEquals("1,234.6", dfUS.formatRawCellContents(1234567, -1, "#,##0.0,"));
+        assertEquals("123.5", dfUS.formatRawCellContents(1234567, -1, "0\\.0,"));
+        assertEquals("123.5", dfUS.formatRawCellContents(1234567, -1, "0!.0,"));
+        assertEquals("0.9", dfUS.formatRawCellContents(9234, -1, "0\\.0,"));
+        assertEquals("0.9", dfUS.formatRawCellContents(9234, -1, "0!.0,"));
+        assertEquals("123.5", dfUS.formatRawCellContents(1234567, -1, "0\".\"0,"));
+    }
+
+    @Test
     void testFormatWithTrailingDotsOtherLocale() {
         DataFormatter dfIT = new DataFormatter(Locale.ITALY);
         assertEquals("1.000.000", dfIT.formatRawCellContents(1000000, -1, "#,##0"));
