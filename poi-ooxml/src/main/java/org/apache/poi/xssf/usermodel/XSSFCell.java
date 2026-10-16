@@ -350,7 +350,7 @@ public final class XSSFCell extends CellBase {
 
     @Override
     protected void setCellValueImpl(String value) {
-        setCellValueImpl(new XSSFRichTextString(value));
+        setCellValueImpl(new XSSFRichTextString(encodeIfEnabled(value)));
     }
 
     @Override
@@ -358,7 +358,7 @@ public final class XSSFCell extends CellBase {
         removeInlineString();
         CellType cellType = getCellType();
         if (cellType == CellType.FORMULA) {
-            _cell.setV(str.getString());
+            _cell.setV(encodeIfEnabled(str.getString()));
             _cell.setT(STCellType.STR);
         } else if (str instanceof XSSFRichTextString) {
             _cell.setT(STCellType.S);
@@ -368,11 +368,22 @@ public final class XSSFCell extends CellBase {
             _cell.setV(Integer.toString(sRef));
         } else {
             _cell.setT(STCellType.S);
-            XSSFRichTextString rt = new XSSFRichTextString(str.getString());
+            XSSFRichTextString rt = new XSSFRichTextString(encodeIfEnabled(str.getString()));
             rt.setStylesTableReference(_stylesSource);
             int sRef = _sharedStringSource.addSharedStringItem(rt);
             _cell.setV(Integer.toString(sRef));
         }
+    }
+
+    /**
+     * Escapes literal <code>_xHHHH_</code> sequences in text that is about to be stored,
+     * if the workbook asks for it.
+     *
+     * @see XSSFWorkbook#setEscapeLiteralUnicodeSequences(boolean)
+     */
+    private String encodeIfEnabled(String value) {
+        return getSheet().getWorkbook().isEscapeLiteralUnicodeSequences()
+                ? XSSFRichTextString.utfEncode(value) : value;
     }
 
     /**

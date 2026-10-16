@@ -991,6 +991,11 @@ public class SXSSFCell extends CellBase {
     {
         CellType getType();
     }
+
+    boolean isRichTextValue() {
+        return _value instanceof RichTextValue;
+    }
+
     static class NumericValue implements Value {
         double _value;
 

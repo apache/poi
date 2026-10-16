@@ -32,6 +32,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -536,8 +537,10 @@ public class XSSFRichTextString implements RichTextString {
      *
      * @param   value the string to decode
      * @return  the decoded string or null if the input string is null
+     * @see #utfEncode(String)
+     * @since 6.0.0
      */
-    static String utfDecode(String value) {
+    public static String utfDecode(String value) {
         if(value == null || !value.contains("_x")) {
             return value;
         }
@@ -566,6 +569,82 @@ public class XSSFRichTextString implements RichTextString {
 
         buf.append(value.substring(idx));
         return buf.toString();
+    }
+
+    /**
+     * Encodes a string so that it survives a round trip through {@link #utfDecode(String)},
+     * using the <code>_xHHHH_</code> escapes defined for <code>ST_Xstring</code> in the OOXML spec.
+     * <ul>
+     * <li>The leading underscore of literal text that would otherwise be read as a
+     * <code>_xHHHH_</code> escape is written as <code>_x005F_</code>, as Excel does,
+     * e.g. <code>_x0041_</code> becomes <code>_x005F_x0041_</code>.</li>
+     * <li>Characters that cannot be represented in XML 1.0 (control characters other than
+     * tab, line feed and carriage return, and U+FFFE/U+FFFF) are escaped,
+     * e.g. U+0001 becomes <code>_x0001_</code>.</li>
+     * </ul>
+     *
+     * @param   value the string to encode
+     * @return  the encoded string or null if the input string is null
+     * @see #utfDecode(String)
+     * @see XSSFWorkbook#setEscapeLiteralUnicodeSequences(boolean)
+     * @since 6.0.0
+     */
+    public static String utfEncode(String value) {
+        if (value == null) {
+            return null;
+        }
+        StringBuilder buf = null;
+        final int len = value.length();
+        for (int i = 0; i < len; i++) {
+            final char c = value.charAt(i);
+            final boolean escape = isInvalidXmlChar(c) || (c == '_' && startsEscapeSequence(value, i));
+            if (escape) {
+                if (buf == null) {
+                    buf = new StringBuilder(len + 16);
+                    buf.append(value, 0, i);
+                }
+                appendEscape(buf, c);
+            } else if (buf != null) {
+                buf.append(c);
+            }
+        }
+        // the encodings are rare, so we should almost always return the input
+        return buf == null ? value : buf.toString();
+    }
+
+    /**
+     * Whether the underscore at {@code index} would start a <code>_xHHHH_</code> escape
+     * once the string is encoded. An invalid XML character after the hex digits counts as
+     * the closing underscore, as its own escape starts with one.
+     */
+    private static boolean startsEscapeSequence(String value, int index) {
+        if (index + 6 >= value.length() || value.charAt(index + 1) != 'x') {
+            return false;
+        }
+        for (int i = index + 2; i < index + 6; i++) {
+            if (!isHexDigit(value.charAt(i))) {
+                return false;
+            }
+        }
+        final char next = value.charAt(index + 6);
+        return next == '_' || isInvalidXmlChar(next);
+    }
+
+    private static boolean isHexDigit(char c) {
+        return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
+    }
+
+    private static boolean isInvalidXmlChar(char c) {
+        return (c < ' ' && c != '\t' && c != '\n' && c != '\r') || c == '\uFFFE' || c == '\uFFFF';
+    }
+
+    private static void appendEscape(StringBuilder buf, char c) {
+        buf.append("_x");
+        final String hex = Integer.toHexString(c).toUpperCase(Locale.ROOT);
+        for (int i = hex.length(); i < 4; i++) {
+            buf.append('0');
+        }
+        buf.append(hex).append('_');
     }
 
     void applyFont(TreeMap<Integer, CTRPrElt> formats, int startIndex, int endIndex, CTRPrElt fmt) {
