@@ -336,16 +336,17 @@ class TestDataFormatter {
         assertEquals("-ve",       dfUS.formatRawCellContents(-1,       -1, "-ve;-ve;zero;xxx"));
         assertEquals("zero",      dfUS.formatRawCellContents(0,        -1, "zero;-ve;zero;xxx"));
 
-        // Custom formats - check text is stripped, including multiple spaces
+        // Custom formats - quoted and escaped text is shown, as Excel does, e.g. NumberFormatTests.xlsx
+        // has TEXT(23.75, "|#\:#/#|") = "|23:3/4|"; multiple unquoted spaces are collapsed
         assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#   #/#"));
-        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#\"  \" #/#"));
-        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#\"FRED\" #/#"));
+        assertEquals("321   1/3", dfUS.formatRawCellContents(321.321, -1, "#\"  \" #/#"));
+        assertEquals("321FRED 1/3", dfUS.formatRawCellContents(321.321, -1, "#\"FRED\" #/#"));
         assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#\\ #/#"));
-        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# \\q#/#"));
+        assertEquals("321 q1/3",  dfUS.formatRawCellContents(321.321, -1, "# \\q#/#"));
 
         // Cases that were very slow
         assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "0\" \"?/?;?/?")); // 0" "?/?;?/?     - length of -ve part was used
-        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "0 \"#\"\\#\\#?/?")); // 0 "#"\#\#?/? - length of text was used
+        assertEquals("321 ###1/3", dfUS.formatRawCellContents(321.321, -1, "0 \"#\"\\#\\#?/?")); // 0 "#"\#\#?/? - length of text was used
 
         assertEquals("321 295/919",  dfUS.formatRawCellContents(321.321, -1, "# #/###"));
         assertEquals("321 321/1000",  dfUS.formatRawCellContents(321.321, -1, "# #/####")); // Code limits to #### as that is as slow as we want to get
