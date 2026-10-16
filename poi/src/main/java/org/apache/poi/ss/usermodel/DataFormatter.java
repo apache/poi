@@ -167,6 +167,13 @@ public class DataFormatter {
      */
     private static final Pattern decimalFormatFix = Pattern.compile("0+#");
 
+    private static final Pattern multipleSpaces = Pattern.compile(" +");
+
+    /** A positive exponent, which Excel shows with an explicit '+' */
+    private static final Pattern exponentWithoutSign = Pattern.compile("E(\\d)");
+
+    private static final Pattern exponent = Pattern.compile("E", Pattern.LITERAL);
+
     /**
       * Cells formatted with a date or time format and which contain invalid date or time values
      *  show 255 pound signs ("#").
@@ -526,7 +533,7 @@ public class DataFormatter {
                 String chunk = chunk1.replace("?", "#");
                 Matcher matcher = fractionStripper.matcher(chunk);
                 chunk = matcher.replaceAll(" ");
-                chunk = chunk.replaceAll(" +", " ");
+                chunk = multipleSpaces.matcher(chunk).replaceAll(" ");
                 Matcher fractionMatcher = fractionPattern.matcher(chunk);
                 //take the first match
                 if (fractionMatcher.find()) {
@@ -883,7 +890,7 @@ public class DataFormatter {
         private static final BigDecimal ONE_THOUSAND = BigDecimal.valueOf(1000);
         private final DecimalFormat df;
         private static String trimTrailingCommas(String s) {
-            return s.replaceAll(",+$", "");
+            return endsWithCommas.matcher(s).replaceAll("");
         }
 
         public InternalDecimalFormatWithScale(String pattern, DecimalFormatSymbols symbols) {
@@ -1078,7 +1085,7 @@ public class DataFormatter {
                 formatted = numberFormat.format(d);
             }
         }
-        return formatted.replaceFirst("E(\\d)", "E+$1"); // to match Excel's E-notation
+        return exponentWithoutSign.matcher(formatted).replaceFirst("E+$1"); // to match Excel's E-notation
     }
 
     /**
@@ -1139,7 +1146,7 @@ public class DataFormatter {
         String fslc = formatString.toLowerCase(Locale.ROOT);
         if ((fslc.contains("general") || fslc.contains("e+0") || numberFormat == generalNumberFormat)
                 && result.contains("E") && !result.contains("E-")) {
-            result = result.replaceFirst("E", "E+");
+            result = exponent.matcher(result).replaceFirst("E+");
         }
         return result;
     }
