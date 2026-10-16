@@ -945,6 +945,31 @@ class TestDataFormatter {
         }
     }
 
+    /**
+     * Bug 61638: a '0' placeholder before '#' placeholders, which DecimalFormat does not accept.
+     * The expected values were checked with Excel's TEXT function.
+     */
+    @Test
+    void testZeroBeforeOptionalDigits() throws IOException {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        // the 6 is literal text; the 0 is shown only in its own position
+        assertEquals("60166609647", dfUS.formatRawCellContents(166609647, -1, "60#########"));
+        assertEquals("6012345678", dfUS.formatRawCellContents(12345678, -1, "60#########"));
+        assertEquals("60012345678", dfUS.formatRawCellContents(12345678, -1, "60000000000"));
+        assertEquals("05", dfUS.formatRawCellContents(5, -1, "0##"));
+        assertEquals("123", dfUS.formatRawCellContents(123, -1, "0##"));
+        assertEquals("1234", dfUS.formatRawCellContents(1234, -1, "0##"));
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            Cell cell = wb.createSheet().createRow(0).createCell(0);
+            CellStyle style = wb.createCellStyle();
+            style.setDataFormat(wb.createDataFormat().getFormat("60#########"));
+            cell.setCellStyle(style);
+            cell.setCellValue(166609647);
+            assertEquals("60166609647", dfUS.formatCellValue(cell));
+        }
+    }
+
     @Test
     void testFormatWithExclamationEscape() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
