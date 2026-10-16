@@ -839,6 +839,12 @@ public class CellNumberFormatter extends CellFormatter {
                 break;
             }
         }
+        // an integer part of zero is insignificant too: only a '0' placeholder shows it,
+        // e.g. "??" shows 0 as two spaces, and "#.00" shows 0.5 as ".50"
+        // (but not in fractions or scientific notation, where Excel shows the 0)
+        if (exponent == null && slash == null && strip == pos && pos >= 0 && result.charAt(pos) == '0') {
+            strip++;
+        }
 
         ListIterator<Special> it = numSpecials.listIterator(numSpecials.size());
         Special lastOutputIntegerDigit = null;
