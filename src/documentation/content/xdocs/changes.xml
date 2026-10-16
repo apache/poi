@@ -76,18 +76,18 @@
             <summary-item>DataFormatter now uses cached values for formula cells by default (see setUseCachedValuesForFormulaCells)</summary-item>
             <summary-item>Removed some deprecated methods</summary-item>
             <summary-item>Upgrade bouncycastle dependency to 1.86</summary-item>
-            <summary-item>Upgrade commons-codec dependency to 1.22.1</summary-item>
+            <summary-item>Upgrade commons-codec dependency to 1.23.0</summary-item>
             <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
             <summary-item>Upgrade commons-collections4 dependency to 4.6.0</summary-item>
             <summary-item>Upgrade commons-io dependency to 2.22.0</summary-item>
             <summary-item>Upgrade log4j-api dependency to 2.26.1</summary-item>
-            <summary-item>Upgrade mockito dependency to 5.23.0</summary-item>
+            <summary-item>Upgrade mockito dependency to 5.24.0</summary-item>
             <summary-item>Upgrade pdfbox dependency to 3.0.8</summary-item>
-            <summary-item>Upgrade SLF4J to 2.0.19</summary-item>
+            <summary-item>Upgrade SLF4J to 2.0.20</summary-item>
             <summary-item>Upgrade xmlbeans dependency to 5.4.1</summary-item>
             <summary-item>Upgrade xmlsec dependency to 3.0.6</summary-item>
             <summary-item>Upgrade Ant to 1.10.18</summary-item>
-            <summary-item>Upgrade Gradle to 9.7.1</summary-item>
+            <summary-item>Upgrade Gradle to 9.8.1</summary-item>
             <summary-item>Upgrade JUnit to 6.1.3</summary-item>
         </summary>
         <actions>
@@ -246,6 +246,35 @@
             <action type="fix" fixes-bug="github-1346" context="HWMF">HwmfBitmapDib: bounds check the image size before narrowing it to int</action>
             <action type="fix" fixes-bug="github-1347" context="POIFS">CryptoAPIDecryptor: don't size the descriptor array from an untrusted count</action>
             <action type="fix" fixes-bug="github-1348" context="HSMF">Msg2txt: reject path traversal filenames during MSG attachment extraction</action>
+            <action type="fix" fixes-bug="github-1358" context="XWPF">Load header and footer references of a section in linear time</action>
+            <action type="fix" fixes-bug="github-1359" context="SS_Common">Let the CellFormat cache release formats that are no longer used</action>
+            <action type="fix" fixes-bug="github-1360" context="OOXML">Fetch xmlbeans arrays once instead of calling indexed getters in loops</action>
+            <action type="update" fixes-bug="github-1365" context="POI_Overall">Put module-info.class in the jar root instead of a multi-release jar</action>
+            <action type="fix" fixes-bug="github-1370" context="POI_Overall">Fix bugs, locking and per-call allocations in POI's input streams</action>
+            <action type="fix" fixes-bug="github-1372" context="XSSF">XSSFBEventBasedExcelExtractor: make setHandleHyperlinksInCells work</action>
+            <action type="fix" fixes-bug="github-1373" context="POI_Overall">Fix exception messages that always printed null</action>
+            <action type="fix" fixes-bug="github-1374" context="POI_Overall">Stop POI depending on public mutable statics</action>
+            <action type="fix" fixes-bug="github-1375" context="POI_Overall">IOUtils.skipFully: size the skip buffer to the skip</action>
+            <action type="fix" fixes-bug="github-1376" context="POI_Overall">Don't lock on classes or other publicly accessible objects</action>
+            <action type="fix" fixes-bug="github-1377" context="XSSF">XSSFExportToXml.compare: build the common path with a StringBuilder</action>
+            <action type="fix" fixes-bug="github-1378" context="OPC">OpcOutputStream: drop synchronized from write</action>
+            <action type="fix" fixes-bug="github-1379" context="HSSF HPSF HWPF">Fix equals and hashCode in HSSFPalette.CustomColor, CustomProperty and TextPiece</action>
+            <action type="add" fixes-bug="github-1382" context="XSSF">XSSFReader: random access to sheet parts and Strict OOXML relationships</action>
+            <action type="fix" fixes-bug="github-1384" context="OOXML">ZipArchiveThresholdInputStream: check single-byte reads every 1 KB</action>
+            <action type="fix" fixes-bug="github-1386" context="SS_Common">FormulaParser: limit the nesting depth of parsed formulas</action>
+            <action type="fix" fixes-bug="github-1387" context="HWPF">Validate huge grpprl offset and size in PAPX.findHuge</action>
+            <action type="fix" fixes-bug="github-1392" context="HSMF">Validate string stream name offset in NameIdChunks</action>
+            <action type="fix" fixes-bug="github-1396" context="SS_Common">DataFormatter: fix trailing-comma scaling and literals between digits</action>
+            <action type="add" fixes-bug="github-1397" context="SS_Common">DataFormatter: support Chinese date/time formats, [DBNum] and quoted literals in date formats</action>
+            <action type="fix" fixes-bug="github-1398" context="SS_Common">DataFormatter: test against text calculated by Excel, and fix mismatches</action>
+            <action type="fix" fixes-bug="github-1399" context="SS_Common">DataFormatter: precompile regexes used when formatting</action>
+            <action type="fix" fixes-bug="github-1405" context="SS_Common">DataFormatter: round to the nearest second, as Excel does</action>
+            <action type="fix" fixes-bug="github-1406" context="SS_Common">CellFormat: fix fractions so they match Excel</action>
+            <action type="fix" fixes-bug="github-1407" context="HWMF HEMF">Don't presize metafile buffers from untrusted header sizes</action>
+            <action type="add" fixes-bug="github-1409" context="HSSF">FormatTrackingHSSFListener: optionally use file FORMAT records for built-in format indexes</action>
+            <action type="add" fixes-bug="github-1410" context="XSSF SXSSF">Optionally escape literal _xHHHH_ sequences in strings on write</action>
+            <action type="fix" fixes-bug="github-1414" context="HSSF">HSSFRow.copyRowFrom: shift formulas with the .xls row limit</action>
+            <action type="add" fixes-bug="github-1416" context="SS_Common">CellCopyPolicy: opt-in adjustment of relative formula references</action>
         </actions>
     </release>
 
