@@ -961,6 +961,57 @@ class TestDataFormatter {
     }
 
     /**
+     * Bug 54686: text after the digits that has characters DecimalFormat treats as special,
+     * e.g. a currency abbreviation that ends with a dot
+     */
+    @Test
+    void testFormatWithSpecialCharactersInLiteral() {
+        String currency = "#,##0.000000000\"тг.\"";
+        String accounting = "_-* #,##0.000000000\"тг.\"_-;\\-* #,##0.000000000\"тг.\"_-;_-* \"-\"?????????\"тг.\"_-;_-@_-";
+
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        assertEquals("0.00x.", dfUS.formatRawCellContents(0.001, -1, "0.00\"x.\""));
+        assertEquals("1.5.", dfUS.formatRawCellContents(1.5, -1, "0.0\\."));
+        assertEquals("0.001000000тг.", dfUS.formatRawCellContents(0.001, -1, currency));
+        assertEquals("0.001000000тг.", dfUS.formatRawCellContents(0.001, -1, accounting));
+        // a quoted comma does not scale the value, a quoted percent sign does not multiply it
+        assertEquals("1.5 ,", dfUS.formatRawCellContents(1.5, -1, "0.0\" ,\""));
+        assertEquals("5 %", dfUS.formatRawCellContents(5, -1, "0\" %\""));
+        assertEquals("5's", dfUS.formatRawCellContents(5, -1, "0\"'s\""));
+
+        // the quoted dot is not the decimal separator, which is a comma in Kazakhstan
+        DataFormatter dfKZ = new DataFormatter(Locale.forLanguageTag("kk-KZ"));
+        assertEquals("0,00x.", dfKZ.formatRawCellContents(0.001, -1, "0.00\"x.\""));
+        assertEquals("1,5.", dfKZ.formatRawCellContents(1.5, -1, "0.0\\."));
+        assertEquals("0,001000000тг.", dfKZ.formatRawCellContents(0.001, -1, currency));
+        assertEquals("0,001000000тг.", dfKZ.formatRawCellContents(0.001, -1, accounting));
+    }
+
+    /**
+     * Bug 70146: the language info of a currency string is optional, e.g. [$USD]
+     */
+    @Test
+    void testCurrencyStringWithoutLanguageInfo() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        // the formats of the bug's attachment
+        assertEquals("12,345.00 USD", dfUS.formatRawCellContents(12345, -1, "#,##0.00\\ [$USD];\\-#,##0.00\\ [$USD]"));
+        assertEquals("-12,345.00 USD", dfUS.formatRawCellContents(-12345, -1, "#,##0.00\\ [$USD];\\-#,##0.00\\ [$USD]"));
+        assertEquals("HKD $12,345", dfUS.formatRawCellContents(12345, -1, "[$HKD $]#,##0"));
+        assertEquals("12,345.00 USD", dfUS.formatRawCellContents(12345, -1, "#,##0.00 [$USD]"));
+        // currency strings with date letters are not a date format
+        assertEquals("USD 5", dfUS.formatRawCellContents(5, -1, "[$USD] 0"));
+        assertEquals("EUR 12,345.00", dfUS.formatRawCellContents(12345, -1, "[$EUR] #,##0.00"));
+        assertEquals("USD 5", dfUS.formatRawCellContents(5, -1, "[$USD] 0;[$EUR] -0"));
+        assertEquals("EUR -5", dfUS.formatRawCellContents(-5, -1, "[$USD] 0;[$EUR] -0"));
+        // with the language info
+        assertEquals("$12,345.00", dfUS.formatRawCellContents(12345, -1, "[$$-1009]#,##0.00"));
+        assertEquals("Bs. 12,345.00", dfUS.formatRawCellContents(12345, -1, "[$Bs.-400A] #,##0.00"));
+        assertEquals("12,345.00 €", dfUS.formatRawCellContents(12345, -1, "#,##0.00 [$€-407]"));
+        // with 3 or more sections, CellFormat formats it
+        assertEquals("12,345.00 USD", dfUS.formatRawCellContents(12345, -1, "#,##0.00 [$USD];-#,##0.00 [$USD];0 [$USD]"));
+    }
+
+    /**
      * Chinese date and time formats. Most of these are the zh-CN built-in number formats
      * from ECMA-376 Part 1, 18.8.30 (numFmt), e.g. ids 31 to 35.
      * 45000.6 is 2023-03-15 14:24

@@ -47,6 +47,8 @@ public class CellNumberFormatter extends CellFormatter {
     private final String printfFmt;
     private final double scale;
     private final Special decimalPoint;
+    /** where the decimal point is in {@link #desc}, shown as the locale's decimal separator, or -1 */
+    private final int decimalPointPos;
     private final Special slash;
     private final Special exponent;
     private final Special numerator;
@@ -193,6 +195,18 @@ public class CellNumberFormatter extends CellFormatter {
         } else {
             afterFractional = null;
         }
+
+        // the decimal point moves left by one for each comma before it, which is removed below
+        int pointPos = -1;
+        if (ph.getDecimalPoint() != null) {
+            pointPos = ph.getDecimalPoint().pos;
+            for (Special s : specials) {
+                if (s.ch == ',' && s.pos < ph.getDecimalPoint().pos) {
+                    pointPos--;
+                }
+            }
+        }
+        decimalPointPos = pointPos;
 
         double[] scaleByRef = {ph.getScale()};
         showGroupingSeparator = interpretIntegerCommas(descBuf, specials, decimalPoint, integerEnd(), fractionalEnd(), scaleByRef);
@@ -739,25 +753,18 @@ public class CellNumberFormatter extends CellFormatter {
         }
     }
 
+    /**
+     * Shows the decimal point as the locale's decimal separator. The grouping commas have
+     * already been removed from the format, so any other '.' or ',' is literal text, which Excel
+     * shows as it is, e.g. the dot in {@code 0.00"x."}
+     */
     private String localiseFormat(String format) {
-        DecimalFormatSymbols dfs = getDecimalFormatSymbols();
-        if(format.contains(",") && dfs.getGroupingSeparator() != ',') {
-            if(format.contains(".") && dfs.getDecimalSeparator() != '.') {
-                format = replaceLast(format, "\\.", "[DECIMAL_SEPARATOR]");
-                format = format.replace(',', dfs.getGroupingSeparator())
-                        .replace("[DECIMAL_SEPARATOR]", Character.toString(dfs.getDecimalSeparator()));
-            } else {
-                format = format.replace(',', dfs.getGroupingSeparator());
-            }
-        } else if(format.contains(".") && dfs.getDecimalSeparator() != '.') {
-            format = format.replace('.', dfs.getDecimalSeparator());
+        char decimalSeparator = getDecimalFormatSymbols().getDecimalSeparator();
+        if (decimalPointPos < 0 || decimalPointPos >= format.length() || decimalSeparator == '.'
+                || format.charAt(decimalPointPos) != '.') {
+            return format;
         }
-        return format;
-    }
-
-
-    private static String replaceLast(String text, String regex, String replacement) {
-        return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
+        return format.substring(0, decimalPointPos) + decimalSeparator + format.substring(decimalPointPos + 1);
     }
 
     private static boolean hasChar(char ch, List<Special> numSpecials) {
