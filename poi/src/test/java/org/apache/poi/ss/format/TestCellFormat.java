@@ -1002,9 +1002,11 @@ class TestCellFormat {
         // For zero, should be Space + currency symbol + spaces + Minus + spaces
         assertEquals(" $   - ", cfDft.apply((double) 0).text);
         assertEquals(" $   - ", cfUS.apply((double) 0).text);
-        // TODO Fix these to not have an incorrect bonus 0 on the end
-        //assertEquals(" "+pound+"   -  ", cfUK.apply((double) 0).text);
-        //assertEquals(" -    "+euro+"  ", cfFR.apply((double) 0).text);
+        // "-"?? is the minus and a space for each '?' (bug 62242)
+        assertEquals(" "+pound+"   -   ", cfUK.apply((double) 0).text);
+        assertEquals(" -     "+euro+"  ", cfFR.apply((double) 0).text);
+        assertEquals(" R   -   ", cfSA.apply((double) 0).text);
+        assertEquals(" USD    -   ", cfUSD.apply((double) 0).text);
     }
 
     @Test
@@ -1047,6 +1049,30 @@ class TestCellFormat {
     void testBug62865() {
         CellFormat cf = CellFormat.getInstance("\"ca. \"0");
         assertEquals("ca. 5", cf.apply((double) 5).text);
+    }
+
+    /**
+     * Bug 62242: '?' shows a space for an insignificant zero, including an integer part of zero
+     */
+    @Test
+    void testBug62242() {
+        CellFormat cf = CellFormat.getInstance("_ * #,##0.00_ ;_ * \\-#,##0.00_ ;_ * \"-\"??_ ;_ @_");
+        assertEquals("    -   ", cf.apply((double) 0).text);
+
+        assertEquals("  ", CellFormat.getInstance("??").apply((double) 0).text);
+        assertEquals(" 5", CellFormat.getInstance("??").apply((double) 5).text);
+
+        cf = CellFormat.getInstance("_-[$£-809]* \"-\"??_-");
+        assertEquals(" £   -   ", cf.apply((double) 0).text);
+        cf = CellFormat.getInstance("_-[$£-809]* \"-\"??_-a");
+        assertEquals(" £   -   a", cf.apply((double) 0).text);
+
+        // '#' shows nothing for it, '0' shows the 0
+        assertEquals("", CellFormat.getInstance("#").apply((double) 0).text);
+        assertEquals(".50", CellFormat.getInstance("#.00").apply(0.5).text);
+        assertEquals(" .5 ", CellFormat.getInstance("?.??").apply(0.5).text);
+        assertEquals("0.50", CellFormat.getInstance("0.00").apply(0.5).text);
+        assertEquals("0", CellFormat.getInstance("0").apply((double) 0).text);
     }
 
     @Test
