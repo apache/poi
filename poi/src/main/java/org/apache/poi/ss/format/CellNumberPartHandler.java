@@ -38,11 +38,20 @@ public class CellNumberPartHandler implements PartHandler {
     private Special numerator;
     private final List<Special> specials = new LinkedList<>();
     private boolean improperFraction;
+    /** the digits of a fixed denominator, e.g. "4" for "# ?/4", while they are being read */
+    private StringBuilder fixedDenominatorDigits;
+    private boolean afterSlash;
+    private int fixedDenominator;
+    private Special fixedDenominatorEnd;
 
     @Override
     public String handlePart(Matcher m, String part, CellFormatType type, StringBuffer descBuf) {
         int pos = descBuf.length();
         char firstCh = part.charAt(0);
+        if (handleFixedDenominator(part, pos)) {
+            // a digit of a fixed denominator is shown as it is
+            return part;
+        }
         switch (firstCh) {
         case 'e':
         case 'E':
@@ -88,6 +97,7 @@ public class CellNumberPartHandler implements PartHandler {
                 improperFraction |= (numerator == firstDigit(specials));
                 slash = new Special('.', pos);
                 specials.add(slash);
+                afterSlash = true;
             }
             break;
 
@@ -100,6 +110,62 @@ public class CellNumberPartHandler implements PartHandler {
             return null;
         }
         return part;
+    }
+
+    /**
+     * A denominator given as a number, e.g. "# ?/4", is a fixed denominator: the fraction is
+     * shown with that denominator, which is shown as it is. Excel reads all the digits of it,
+     * including any zeros (which would otherwise be digit placeholders), e.g. "?/10".
+     *
+     * @return whether the part is a digit of a fixed denominator
+     */
+    private boolean handleFixedDenominator(String part, int pos) {
+        boolean digits = part.chars().allMatch(Character::isDigit);
+        if (afterSlash) {
+            afterSlash = false;
+            if (digits && part.charAt(0) != '0') {
+                fixedDenominatorDigits = new StringBuilder(part);
+                fixedDenominatorEnd = new Special(part.charAt(part.length() - 1), pos + part.length() - 1);
+                return true;
+            }
+        } else if (fixedDenominatorDigits != null) {
+            if (digits) {
+                fixedDenominatorDigits.append(part);
+                fixedDenominatorEnd = new Special(part.charAt(part.length() - 1), pos + part.length() - 1);
+                return true;
+            }
+            finishFixedDenominator();
+        }
+        return false;
+    }
+
+    private void finishFixedDenominator() {
+        if (fixedDenominatorDigits != null) {
+            try {
+                fixedDenominator = Integer.parseInt(fixedDenominatorDigits.toString());
+                specials.add(fixedDenominatorEnd);
+            } catch (NumberFormatException e) {
+                // too big to be a denominator: leave it as text
+                fixedDenominatorEnd = null;
+            }
+            fixedDenominatorDigits = null;
+        }
+    }
+
+    /**
+     * @return the fixed denominator of a fraction, e.g. 4 for "# ?/4", or 0 if there is none
+     */
+    int getFixedDenominator() {
+        finishFixedDenominator();
+        return fixedDenominator;
+    }
+
+    /**
+     * @return the marker for the last digit of the fixed denominator, or null if there is none
+     */
+    Special getFixedDenominatorEnd() {
+        finishFixedDenominator();
+        return fixedDenominator > 0 ? fixedDenominatorEnd : null;
     }
 
     public double getScale() {
@@ -123,6 +189,7 @@ public class CellNumberPartHandler implements PartHandler {
     }
 
     public List<Special> getSpecials() {
+        finishFixedDenominator();
         return specials;
     }
 

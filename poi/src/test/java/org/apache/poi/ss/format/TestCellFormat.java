@@ -22,8 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,9 +35,13 @@ import java.util.stream.Stream;
 
 import javax.swing.JLabel;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -1191,5 +1197,45 @@ class TestCellFormat {
             Thread.sleep(10);
         }
         assertNull(key.get(), "the format cache keeps a format string that is no longer used");
+    }
+
+    /**
+     * 54686_fraction_formats.xls was saved by Excel, and 54686_fraction_formats.txt has the text that
+     * Excel shows for its cells (exported as tab delimited text). Check all the fraction columns, with
+     * up to 9 digit denominators ("# ?/?" to "#\\ ??/?????????") and fixed denominators ("#\\ ?/4"),
+     * including the spaces that the '?' placeholders give.
+     */
+    @Test
+    void testFractionsMatchExcel() throws IOException {
+        try (Workbook wb = HSSFTestDataSamples.openSampleWorkbook("54686_fraction_formats.xls");
+             BufferedReader reader = Files.newBufferedReader(
+                     HSSFTestDataSamples.getSampleFile("54686_fraction_formats.txt").toPath(), LocaleUtil.CHARSET_1252)) {
+            Sheet sheet = wb.getSheetAt(0);
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            // skip the header row
+            reader.readLine();
+            int checked = 0;
+            String line;
+            for (int i = 1; (line = reader.readLine()) != null && i <= sheet.getLastRowNum(); i++) {
+                String[] truths = line.split("\t", -1);
+                Row row = sheet.getRow(i);
+                // the 1Digit to Tika-1132 columns
+                for (int j = 3; j <= 12 && j < truths.length; j++) {
+                    Cell cell = row.getCell(j);
+                    CellValue cellValue = cell == null ? null : evaluator.evaluate(cell);
+                    if (cellValue == null || cellValue.getCellType() != CellType.NUMERIC) {
+                        continue;
+                    }
+                    String format = cell.getCellStyle().getDataFormatString();
+                    double value = cellValue.getNumberValue();
+                    String actual = CellFormat.getInstance(format).apply(value).text;
+                    // the export does not have the trailing spaces of the last column
+                    assertEquals(truths[j].replaceAll(" +$", ""), actual.replaceAll(" +$", ""),
+                            "row " + i + ", format " + format + ", value " + value);
+                    checked++;
+                }
+            }
+            assertTrue(checked > 3000);
+        }
     }
 }
