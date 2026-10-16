@@ -607,6 +607,10 @@ public class DataFormatter {
         return format;
     }
 
+    private static char toLowerAscii(char c) {
+        return c >= 'A' && c <= 'Z' ? (char) (c + ('a' - 'A')) : c;
+    }
+
     /** Pattern to find an elapsed time unit: [h], [mm], [ss] etc. */
     private static final Pattern elapsedTimePattern = Pattern.compile("\\[([hH]+|[mM]+|[sS]+)]");
 
@@ -805,11 +809,11 @@ public class DataFormatter {
                     sb.append(c);
                 }
             }
-            else if (elapsedUnits.indexOf(String.valueOf(Character.toLowerCase(c))) >= 0) {
+            else if (elapsedUnits.indexOf(String.valueOf(toLowerAscii(c))) >= 0) {
                 // once a unit is shown as elapsed time, e.g. [h], Excel shows it that way everywhere
-                char unit = Character.toLowerCase(c);
+                char unit = toLowerAscii(c);
                 int count = 1;
-                while (j + 1 < chars.length && Character.toLowerCase(chars[j + 1]) == unit) {
+                while (j + 1 < chars.length && toLowerAscii(chars[j + 1]) == unit) {
                     j++;
                     count++;
                 }
