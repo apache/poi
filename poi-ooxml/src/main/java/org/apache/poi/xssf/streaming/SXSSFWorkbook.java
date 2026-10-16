@@ -382,10 +382,10 @@ public class SXSSFWorkbook implements Workbook {
      * This sets the option on the underlying {@link XSSFWorkbook}.
      * <p>
      * Values set with {@link SXSSFCell#setCellValue(String)} and cached formula string results are
-     * escaped. With a shared strings table, {@link XSSFRichTextString} values are written as is, see
+     * escaped. With a shared strings table, {@link org.apache.poi.xssf.usermodel.XSSFRichTextString} values are written as is, see
      * {@link XSSFWorkbook#setEscapeLiteralUnicodeSequences(boolean)}. Inline strings hold only the
-     * text of an {@link XSSFRichTextString}, so they are escaped and read back as its
-     * {@link XSSFRichTextString#getString()}.
+     * text of an {@link org.apache.poi.xssf.usermodel.XSSFRichTextString}, so they are escaped and read back as its
+     * {@link org.apache.poi.xssf.usermodel.XSSFRichTextString#getString()}.
      *
      * @param value true to escape literal <code>_xHHHH_</code> sequences
      * @see XSSFWorkbook#setEscapeLiteralUnicodeSequences(boolean)
