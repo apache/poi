@@ -185,7 +185,7 @@ class TestSXSSFCell extends BaseTestXCell {
 
             SXSSFRow row = wb.createSheet().createRow(0);
             row.createCell(0).setCellValue("_x0041_ col");
-            row.createCell(1).setCellValue("plain");
+            row.createCell(1).setCellValue("plain\u0001");
             SXSSFCell formulaCell = row.createCell(2);
             formulaCell.setCellFormula("\"_x0043_\"");
             formulaCell.setCellValue("_x0043_");
@@ -194,7 +194,7 @@ class TestSXSSFCell extends BaseTestXCell {
             try (XSSFWorkbook wb2 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb)) {
                 XSSFRow row2 = wb2.getSheetAt(0).getRow(0);
                 assertEquals("_x0041_ col", row2.getCell(0).getStringCellValue());
-                assertEquals("plain", row2.getCell(1).getStringCellValue());
+                assertEquals("plain\u0001", row2.getCell(1).getStringCellValue());
                 assertEquals("_x0043_", row2.getCell(2).getStringCellValue());
                 assertEquals("_x0044_", row2.getCell(3).getStringCellValue());
             }

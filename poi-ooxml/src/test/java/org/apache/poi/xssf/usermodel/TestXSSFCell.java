@@ -927,6 +927,7 @@ public final class TestXSSFCell extends BaseTestXCell {
             // an XSSFRichTextString holds the stored form of its text, so it is not escaped
             row.createCell(6).setCellValue(new XSSFRichTextString("_x0045_"));
             row.createCell(7).setCellValue(new XSSFRichTextString(XSSFRichTextString.utfEncode("_x0046_")));
+            row.createCell(8).setCellValue("a\u0001b");
 
             // in-memory values are the literal text
             assertEquals("_x0041_ col", row.getCell(2).getStringCellValue());
@@ -944,6 +945,7 @@ public final class TestXSSFCell extends BaseTestXCell {
                 assertEquals("_x0044_", row2.getCell(5).getStringCellValue());
                 assertEquals("E", row2.getCell(6).getStringCellValue());
                 assertEquals("_x0046_", row2.getCell(7).getStringCellValue());
+                assertEquals("a\u0001b", row2.getCell(8).getStringCellValue());
             }
         }
     }

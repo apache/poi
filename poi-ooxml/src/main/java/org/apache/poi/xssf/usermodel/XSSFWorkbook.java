@@ -2627,7 +2627,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * when reading string values. Without escaping, a value such as <code>_x0041_ col</code> is read
      * back as <code>A col</code>. When this is enabled, the leading underscore of such sequences is
      * stored as <code>_x005F_</code> (see {@link XSSFRichTextString#utfEncode(String)}), so the value
-     * is read back unchanged.
+     * is read back unchanged. Characters that cannot be represented in XML 1.0, such as U+0001,
+     * are stored as <code>_xHHHH_</code> escapes too, rather than being replaced with <code>?</code>.
      * <p>
      * This applies to string values set with {@link XSSFCell#setCellValue(String)}, to cached
      * formula string results, and to {@link org.apache.poi.ss.usermodel.RichTextString}s that are
