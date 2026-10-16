@@ -222,6 +222,9 @@ public class DataFormatter {
      */
     private final Map<String,Format> formats = new HashMap<>();
 
+    /** format strings to use in place of the default (en-US) strings of built-in formats, keyed by format index */
+    private final Map<Integer,String> builtinFormatOverrides = new HashMap<>();
+
     /** whether CSV friendly adjustments should be made to the formatted text **/
     private boolean emulateCSV = false;
 
@@ -377,7 +380,7 @@ public class DataFormatter {
         }
 
         int formatIndex = numFmt.getIdx();
-        String formatStr = numFmt.getFormat();
+        String formatStr = applyBuiltinFormatOverride(formatIndex, numFmt.getFormat());
         if(StringUtil.isBlank(formatStr)) {
             return null;
         }
@@ -473,7 +476,7 @@ public class DataFormatter {
     public Format createFormat(Cell cell) {
 
         int formatIndex = cell.getCellStyle().getDataFormat();
-        String formatStr = cell.getCellStyle().getDataFormatString();
+        String formatStr = applyBuiltinFormatOverride(formatIndex, cell.getCellStyle().getDataFormatString());
         return createFormat(cell.getNumericCellValue(), formatIndex, formatStr);
     }
 
@@ -1640,8 +1643,10 @@ public class DataFormatter {
      *  format index and string, according to excel style rules.
      * @see #formatCellValue(Cell)
      */
-    public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
+    public String formatRawCellContents(double value, int formatIndex, String formatStringIn, boolean use1904Windowing) {
         checkForLocaleChange();
+
+        String formatString = applyBuiltinFormatOverride(formatIndex, formatStringIn);
 
         // Excel shows a negative elapsed time, e.g. for [h]:mm, with a minus sign
         if (value < 0 && isElapsedTimeFormat(formatIndex, formatString)) {
@@ -1860,6 +1865,60 @@ public class DataFormatter {
      */
     public void addFormat(String excelFormatStr, Format format) {
         formats.put(excelFormatStr, format);
+    }
+
+    /**
+     * Sets the format string to use for a built-in format, in place of the default (en-US) one
+     * from {@link BuiltinFormats}.
+     * <p>
+     * Excel does not store the format string of most built-in formats in a workbook, just the
+     * format index, and it displays some of them (for example 37-40) differently depending on
+     * the locale of the Excel installation. POI only knows the en-US versions, so for example
+     * index 40 is formatted as {@code #,##0.00_);[Red](#,##0.00)}, whereas German Excel shows it
+     * as <code>#,##0.00 _&#8364;;[Red]-#,##0.00 _&#8364;</code>. Use this method to supply the format string
+     * that matches the locale the workbook was made for.
+     * </p>
+     * <p>
+     * The override only applies when the format string of the cell is the default one for that
+     * index, so a format string that the workbook explicitly stores for the index is still used.
+     * </p>
+     *
+     * @param formatIndex index of a built-in format, see {@link BuiltinFormats}
+     * @param formatString the format string to use for the index, or {@code null} to remove an override
+     * @throws IllegalArgumentException if {@code formatIndex} is not the index of a built-in format
+     * @since 6.0.0
+     */
+    public void setBuiltinFormatOverride(int formatIndex, String formatString) {
+        if (BuiltinFormats.getBuiltinFormat(formatIndex) == null) {
+            throw new IllegalArgumentException("Not a built-in format index: " + formatIndex);
+        }
+        if (formatString == null) {
+            builtinFormatOverrides.remove(formatIndex);
+        } else {
+            builtinFormatOverrides.put(formatIndex, formatString);
+        }
+    }
+
+    /**
+     * @param formatIndex index of a built-in format, see {@link BuiltinFormats}
+     * @return the format string set with {@link #setBuiltinFormatOverride(int, String)} for the index,
+     * or {@code null} if there is none
+     * @since 6.0.0
+     */
+    public String getBuiltinFormatOverride(int formatIndex) {
+        return builtinFormatOverrides.get(formatIndex);
+    }
+
+    private String applyBuiltinFormatOverride(int formatIndex, String formatString) {
+        if (builtinFormatOverrides.isEmpty()) {
+            return formatString;
+        }
+        String override = builtinFormatOverrides.get(formatIndex);
+        if (override != null && formatString != null
+                && formatString.equals(BuiltinFormats.getBuiltinFormat(formatIndex))) {
+            return override;
+        }
+        return formatString;
     }
 
     // Some custom formats

@@ -1477,4 +1477,45 @@ class TestDataFormatter {
             assertTrue(hashes.chars().allMatch(ch -> ch == '#'));
         }
     }
+
+    /**
+     * Excel does not store the format string of built-in format 40 and displays it according
+     * to its locale, so callers can set the format string that matches the workbook's locale.
+     * See https://github.com/apache/poi/issues/977
+     */
+    @Test
+    void testBuiltinFormatOverride() throws IOException {
+        String german40 = "#,##0.00 _\u20ac;[Red]-#,##0.00 _\u20ac";
+        DataFormatter formatter = new DataFormatter(Locale.US);
+        String default40 = BuiltinFormats.getBuiltinFormat(40);
+        assertEquals("(378.13)", formatter.formatRawCellContents(-378.13, 40, default40));
+        assertNull(formatter.getBuiltinFormatOverride(40));
+
+        formatter.setBuiltinFormatOverride(40, german40);
+        assertEquals(german40, formatter.getBuiltinFormatOverride(40));
+        assertEquals("-378.13 ", formatter.formatRawCellContents(-378.13, 40, default40));
+        assertEquals("378.13 ", formatter.formatRawCellContents(378.13, 40, default40));
+
+        // a format string that the workbook stores for the index is used as is
+        assertEquals("-378.1", formatter.formatRawCellContents(-378.13, 40, "0.0"));
+        // other indexes are not affected
+        assertEquals("(378.00)", formatter.formatRawCellContents(-378, 39, BuiltinFormats.getBuiltinFormat(39)));
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            CellStyle style = wb.createCellStyle();
+            style.setDataFormat((short) 40);
+            Cell cell = wb.createSheet().createRow(0).createCell(0);
+            cell.setCellStyle(style);
+            cell.setCellValue(-378.13);
+            assertEquals("-378.13 ", formatter.formatCellValue(cell));
+            assertEquals("(378.13)", new DataFormatter(Locale.US).formatCellValue(cell));
+        }
+
+        formatter.setBuiltinFormatOverride(40, null);
+        assertNull(formatter.getBuiltinFormatOverride(40));
+        assertEquals("(378.13)", formatter.formatRawCellContents(-378.13, 40, default40));
+
+        assertThrows(IllegalArgumentException.class, () -> formatter.setBuiltinFormatOverride(164, german40));
+        assertThrows(IllegalArgumentException.class, () -> formatter.setBuiltinFormatOverride(-1, german40));
+    }
 }
