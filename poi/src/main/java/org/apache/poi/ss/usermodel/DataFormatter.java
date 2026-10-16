@@ -126,6 +126,12 @@ public class DataFormatter {
     /** Pattern to find "AM/PM" marker */
     private static final Pattern amPmPattern = Pattern.compile("(([AP])[M/P]*)", Pattern.CASE_INSENSITIVE);
 
+    /** Excel's Chinese AM/PM marker, which shows \u4e0a\u5348 (morning) or \u4e0b\u5348 (afternoon) */
+    private static final String CHINESE_AM_PM = "\u4e0a\u5348/\u4e0b\u5348";
+
+    /** Pattern to find the [DBNum1], [DBNum2] or [DBNum3] Chinese/Japanese numeral styles */
+    private static final Pattern dbNumPattern = Pattern.compile("\\[DBNum[123]]", Pattern.CASE_INSENSITIVE);
+
     /** Pattern to find formats with condition ranges e.g. [>=100] */
     private static final Pattern rangeConditionalPattern = Pattern.compile(".*\\[\\s*(>|>=|<|<=|=)\\s*[0-9]*\\.*[0-9].*");
 
@@ -486,6 +492,11 @@ public class DataFormatter {
             }
         }
 
+        // Strip off the numeral style: Arabic digits are shown instead of Chinese/Japanese numerals
+        if (formatStr != null) {
+            formatStr = dbNumPattern.matcher(formatStr).replaceAll("");
+        }
+
         // Strip off the locale information, we use an instance-wide locale for everything
         if (formatStr != null) {
             Matcher m = localePatternGroup.matcher(formatStr);
@@ -585,6 +596,32 @@ public class DataFormatter {
         return format;
     }
 
+    /**
+     * Converts Excel's {@code "quoted text"} into SimpleDateFormat's {@code 'quoted text'}, so that
+     * the letters in it are not taken as pattern letters and the quote marks are not shown.
+     * A {@code "} without a closing {@code "} is left as it is, as is text already in single quotes.
+     */
+    private static String quoteLiteralText(String formatStr) {
+        if (formatStr.indexOf('"') < 0) {
+            return formatStr;
+        }
+        StringBuilder sb = new StringBuilder(formatStr.length() + 2);
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            int end = c == '\'' || c == '"' ? formatStr.indexOf(c, i + 1) : -1;
+            if (end < 0) {
+                sb.append(c);
+            } else if (c == '\'') {
+                sb.append(formatStr, i, end + 1);
+                i = end;
+            } else {
+                sb.append('\'').append(formatStr.substring(i + 1, end).replace("'", "''")).append('\'');
+                i = end;
+            }
+        }
+        return sb.toString();
+    }
+
     private Format createDateFormat(String pFormatStr, double cellValue) {
         String formatStr = adjustTo4DigitYearsIfConfigured(pFormatStr);
         formatStr = formatStr.replace("\\-","-");
@@ -596,9 +633,17 @@ public class DataFormatter {
         formatStr = formatStr.replace("\"/\"", "/"); // "/" is escaped for no reason in: mm"/"dd"/"yyyy
         formatStr = formatStr.replace("\"\"", "'"); // replace Excel quoting with Java style quoting
         formatStr = formatStr.replace("\\T","'T'"); // Quote the T is iso8601 style dates
-
+        formatStr = quoteLiteralText(formatStr);
 
         boolean hasAmPm = false;
+        DateFormatSymbols symbols = dateSymbols;
+        if (formatStr.contains(CHINESE_AM_PM)) {
+            formatStr = formatStr.replace(CHINESE_AM_PM, "@");
+            hasAmPm = true;
+            // Excel shows the Chinese marker whatever the locale
+            symbols = (DateFormatSymbols) dateSymbols.clone();
+            symbols.setAmPmStrings(new String[] {"\u4e0a\u5348", "\u4e0b\u5348"});
+        }
         Matcher amPmMatcher = amPmPattern.matcher(formatStr);
         while (amPmMatcher.find()) {
             formatStr = amPmMatcher.replaceAll("@");
@@ -694,7 +739,9 @@ public class DataFormatter {
                 mIsMonth = true;
                 ms.clear();
             }
-            else if (Character.isLetter(c)) {
+            // only ASCII letters are pattern letters: others, like the Chinese \u65f6 (hour), are
+            // literal text, which does not stop an 'm' after 'h' being minutes
+            else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
                 mIsMonth = true;
                 ms.clear();
                 if (c == 'y' || c == 'Y') {
@@ -717,7 +764,7 @@ public class DataFormatter {
         formatStr = sb.toString();
 
         try {
-            return new ExcelStyleDateFormatter(formatStr, dateSymbols);
+            return new ExcelStyleDateFormatter(formatStr, symbols);
         } catch(IllegalArgumentException iae) {
             LOG.atDebug().withThrowable(iae).log("Formatting failed for format {}, falling back", formatStr);
             // the pattern could not be parsed correctly,
@@ -994,10 +1041,18 @@ public class DataFormatter {
      *  supplied Date and format
      */
     @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
-    private String performDateFormatting(Date d, Format dateFormat) {
+    private String performDateFormatting(Date d, double excelValue, Format dateFormat) {
         Format df = dateFormat != null ? dateFormat : defaultDateformat;
         synchronized (df) {
-            return df.format(d);
+            try {
+                return df.format(d);
+            } catch (IllegalArgumentException e) {
+                if (df instanceof DateFormat) {
+                    throw e;
+                }
+                // a date format that could not be parsed falls back to a number format
+                return df.format(excelValue);
+            }
         }
     }
 
@@ -1036,7 +1091,7 @@ public class DataFormatter {
                 formatter.setDateToBeFormatted(cell.getNumericCellValue());
             }
             Date d = cell.getDateCellValue();
-            return performDateFormatting(d, dateFormat);
+            return performDateFormatting(d, cell.getNumericCellValue(), dateFormat);
         }
     }
 
@@ -1106,7 +1161,7 @@ public class DataFormatter {
                     formatter.setDateToBeFormatted(value);
                 }
                 Date d = DateUtil.getJavaDate(value, use1904Windowing);
-                return performDateFormatting(d, dateFormat);
+                return performDateFormatting(d, value, dateFormat);
             }
             // RK: Invalid dates are 255 #s.
             if (emulateCSV) {

@@ -71,7 +71,9 @@ public class DateUtil {
     private static final Pattern date_ptrn2 = Pattern.compile("^\\[[a-zA-Z]+]");
     private static final Pattern date_ptrn3a = Pattern.compile("[yYmMdDhHsS]");
     // add "\u5e74 \u6708 \u65e5" for Chinese/Japanese date format:2017 \u5e74 2 \u6708 7 \u65e5
-    private static final Pattern date_ptrn3b = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-T/\u5e74\u6708\u65e5,. :\"\\\\]+0* ?[ampAMP/]*$");
+    // and "\u65f6 \u5206 \u79d2" (Chinese) or "\u6642 \u5206 \u79d2" (Japanese) for hours, minutes and seconds
+    private static final Pattern date_ptrn3b = Pattern.compile(
+            "^[\\[\\]yYmMdDhHsS\\-T/\u5e74\u6708\u65e5\u65f6\u6642\u5206\u79d2,. :\"\\\\]+0* ?[ampAMP/]*$");
     //  elapsed time patterns: [h],[m] and [s]
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)]");
 
@@ -695,6 +697,10 @@ public class DateUtil {
         // If it starts with [$-...], then could be a date, but
         //  who knows what that starting bit is all about
         fs = date_ptrn1.matcher(fs).replaceAll("");
+        // [DBNum1] can also come after [$-...]
+        fs = date_ptrn5.matcher(fs).replaceAll("");
+        // Excel's Chinese AM/PM marker usually comes before the time
+        fs = fs.replace("\u4e0a\u5348/\u4e0b\u5348", "");
         // If it starts with something like [Black] or [Yellow],
         //  then it could be a date
         fs = date_ptrn2.matcher(fs).replaceAll("");
