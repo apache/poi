@@ -808,10 +808,13 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      */
     @Beta
     public void copyRowFrom(Row srcRow, CellCopyPolicy policy, CellCopyContext context) {
+        // formula references are shifted for the whole row below, so don't also adjust them per cell
+        final CellCopyPolicy cellPolicy = policy.isAdjustFormulaReferences()
+                ? policy.createBuilder().adjustFormulaReferences(false).build() : policy;
         if (srcRow == null) {
             // srcRow is blank. Overwrite cells with blank values, blank styles, etc per cell copy policy
             for (Cell destCell : this) {
-                CellUtil.copyCell(null, destCell, policy, context);
+                CellUtil.copyCell(null, destCell, cellPolicy, context);
             }
 
             if (policy.isCopyMergedRegions()) {
@@ -836,7 +839,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
         } else {
             for (final Cell c : srcRow) {
                 final HSSFCell destCell = createCell(c.getColumnIndex());
-                CellUtil.copyCell(c, destCell, policy, context);
+                CellUtil.copyCell(c, destCell, cellPolicy, context);
             }
 
             final int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);

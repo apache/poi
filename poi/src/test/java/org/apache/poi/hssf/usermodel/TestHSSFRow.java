@@ -239,4 +239,18 @@ final class TestHSSFRow extends BaseTestRow {
         assertEquals(styleCount, workbook.getNumCellStyles(), "no new styles should be added by copyRow");
         workbook.close();
     }
+
+    @Test
+    void testCopyRowFromWithAdjustFormulaReferencesShiftsOnce() throws IOException {
+        try (Workbook workbook = new HSSFWorkbook()) {
+            final Sheet sheet = workbook.createSheet("Sheet1");
+            final Row srcRow = sheet.createRow(0);
+            srcRow.createCell(0).setCellFormula("B1+$B$1");
+
+            final CellCopyPolicy policy = new CellCopyPolicy.Builder().adjustFormulaReferences(true).build();
+            final HSSFRow destRow = (HSSFRow) sheet.createRow(3);
+            destRow.copyRowFrom(srcRow, policy);
+            assertEquals("B4+$B$1", destRow.getCell(0).getCellFormula());
+        }
+    }
 }
