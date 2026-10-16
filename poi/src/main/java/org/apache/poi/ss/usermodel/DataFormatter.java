@@ -137,7 +137,7 @@ public class DataFormatter {
     private static final Pattern dbNumPattern = Pattern.compile("\\[DBNum[123]]", Pattern.CASE_INSENSITIVE);
 
     /** Pattern to find formats with condition ranges e.g. [>=100] */
-    private static final Pattern rangeConditionalPattern = Pattern.compile(".*\\[\\s*(>|>=|<|<=|=)\\s*[0-9]*\\.*[0-9].*");
+    private static final Pattern rangeConditionalPattern = Pattern.compile("\\[\\s*(<>|<=|>=|<|>|=)\\s*-?[0-9]*\\.?[0-9]+\\s*]");
 
     /**
      * A regex to find locale patterns like [$$-1009] and [$?-452].
@@ -414,10 +414,8 @@ public class DataFormatter {
         //  handle these ourselves in a special way.
         // For now, if we detect 2+ parts, we call out to CellFormat to handle it
         // TODO Going forward, we should really merge the logic between the two classes
-        if (formatStr.contains(";") &&
-                (formatStr.indexOf(';') != formatStr.lastIndexOf(';')
-                 || rangeConditionalPattern.matcher(formatStr).matches()
-                ) ) {
+        if ((formatStr.contains(";") && formatStr.indexOf(';') != formatStr.lastIndexOf(';'))
+                || rangeConditionalPattern.matcher(formatStr).find()) {
             try {
                 // Ask CellFormat to get a formatter for it
                 CellFormat cfmt = CellFormat.getInstance(locale, formatStr);
@@ -542,7 +540,18 @@ public class DataFormatter {
             return createDateFormat(formatStr, cellValue);
         }
         // Excel supports fractions in format strings, which Java doesn't
-        if (formatStr.contains("#/") || formatStr.contains("?/")) {
+        boolean plainFraction = formatStr.contains("#/") || formatStr.contains("?/");
+        // FractionFormat strips any text in a fraction, and does not recognise one with text around
+        // the '/', e.g. "#_#=/=#" which Excel shows 3.75 as "15 =/=4": let CellFormat handle those
+        boolean fractionWithText = !plainFraction && formatStr.indexOf('/') >= 0 && hasTextInFraction(formatStr);
+        if (plainFraction || fractionWithText) {
+            if (fractionWithText) {
+                try {
+                    return new CellFormatWrapper(CellFormat.getInstance(locale, formatStr));
+                } catch (Exception e) {
+                    LOG.atWarn().withThrowable(e).log("Formatting failed for format {}, falling back", formatStr);
+                }
+            }
             String[] chunks = formatStr.split(";");
             for (String chunk1 : chunks) {
                 String chunk = chunk1.replace("?", "#");
@@ -572,7 +581,7 @@ public class DataFormatter {
             }
         }
 
-        if (numPattern.matcher(formatStr).find()) {
+        if (numPattern.matcher(formatStr).find() || hasUnquotedQuestionMark(formatStr)) {
             return createNumberFormat(formatStr, cellValue);
         }
 
@@ -1045,13 +1054,55 @@ public class DataFormatter {
         private final BigDecimal divider;
         private static final BigDecimal ONE_THOUSAND = BigDecimal.valueOf(1000);
         private final DecimalFormat df;
+        /** the integer and fraction digit placeholders of the positive section, e.g. "??0" and "0?" */
+        private final String integerPlaceholders;
+        private final String fractionPlaceholders;
+        private final boolean padsWithSpaces;
         private static String trimTrailingCommas(String s) {
             return endsWithCommas.matcher(s).replaceAll("");
         }
 
         public InternalDecimalFormatWithScale(String pattern, DecimalFormatSymbols symbols) {
+            // '?' is a digit placeholder that shows a space for a missing digit:
+            // DecimalFormat shows nothing for it, as for '#', and format() adds the spaces
+            StringBuilder integers = new StringBuilder();
+            StringBuilder fractions = new StringBuilder();
+            boolean quoted = false;
+            boolean inFraction = false;
+            for (int i = 0; i < pattern.length(); i++) {
+                char c = pattern.charAt(i);
+                if (c == '\'') {
+                    quoted = !quoted;
+                } else if (!quoted) {
+                    if (c == ';' || c == 'E') {
+                        break;
+                    } else if (c == '.') {
+                        inFraction = true;
+                    } else if (c == '0' || c == '#' || c == '?') {
+                        (inFraction ? fractions : integers).append(c);
+                    }
+                }
+            }
+            integerPlaceholders = integers.toString();
+            fractionPlaceholders = fractions.toString();
+            padsWithSpaces = pattern.indexOf('?') >= 0;
+            if (padsWithSpaces) {
+                pattern = pattern.replace('?', '#');
+            }
+            // each '%' multiplies by 100, but DecimalFormat only allows one
+            int percents = countUnquoted(pattern, '%');
+            if (percents > 1) {
+                pattern = quoteUnquoted(pattern, '%');
+            }
             df = new DecimalFormat(trimTrailingCommas(pattern), symbols);
+            if (percents > 1) {
+                df.setMultiplier((int) Math.pow(100, Math.min(percents, 4)));
+            }
             setExcelStyleRoundingMode(df);
+            // Excel shows the decimal point even when there are no digits after it, e.g. "#.#" shows 1 as "1."
+            if (hasDecimalPoint(pattern)) {
+                df.setDecimalSeparatorAlwaysShown(true);
+            }
             Matcher endsWithCommasMatcher = endsWithCommas.matcher(pattern);
             if (endsWithCommasMatcher.find()) {
                 String commas = (endsWithCommasMatcher.group(1));
@@ -1063,6 +1114,61 @@ public class DataFormatter {
             } else {
                 divider = null;
             }
+        }
+
+        private static int countUnquoted(String pattern, char ch) {
+            int count = 0;
+            boolean quoted = false;
+            for (int i = 0; i < pattern.length(); i++) {
+                char c = pattern.charAt(i);
+                if (c == '\'') {
+                    quoted = !quoted;
+                } else if (!quoted && c == ch) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        /** quotes each run of unquoted {@code ch}, so that DecimalFormat shows them as text */
+        private static String quoteUnquoted(String pattern, char ch) {
+            StringBuilder sb = new StringBuilder(pattern.length() + 8);
+            boolean quoted = false;
+            for (int i = 0; i < pattern.length(); i++) {
+                char c = pattern.charAt(i);
+                if (c == '\'') {
+                    quoted = !quoted;
+                    sb.append(c);
+                } else if (!quoted && c == ch) {
+                    int end = i;
+                    while (end < pattern.length() && pattern.charAt(end) == ch) {
+                        end++;
+                    }
+                    sb.append('\'').append(pattern, i, end).append('\'');
+                    i = end - 1;
+                } else {
+                    sb.append(c);
+                }
+            }
+            return sb.toString();
+        }
+
+        /** whether the positive section of the DecimalFormat pattern has a decimal point, outside quoted text */
+        private static boolean hasDecimalPoint(String pattern) {
+            boolean quoted = false;
+            for (int i = 0; i < pattern.length(); i++) {
+                char c = pattern.charAt(i);
+                if (c == '\'') {
+                    quoted = !quoted;
+                } else if (!quoted) {
+                    if (c == '.') {
+                        return true;
+                    } else if (c == ';' || c == 'E') {
+                        return false;
+                    }
+                }
+            }
+            return false;
         }
 
         boolean requiresScaling() {
@@ -1086,13 +1192,112 @@ public class DataFormatter {
         @Override
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
             obj = scaleInput(obj);
-            return df.format(obj, toAppendTo, pos);
+            if (!padsWithSpaces) {
+                return df.format(obj, toAppendTo, pos);
+            }
+            return toAppendTo.append(padWithSpaces(df.format(obj)));
+        }
+
+        /**
+         * Adds a space for each '?' placeholder that has no digit: before the integer digits
+         * (along with the grouping separators that the missing digits would have had) and after the fraction digits
+         */
+        private String padWithSpaces(String formatted) {
+            DecimalFormatSymbols symbols = df.getDecimalFormatSymbols();
+            char decimalSeparator = symbols.getDecimalSeparator();
+            char groupingSeparator = symbols.getGroupingSeparator();
+            int start = 0;
+            while (start < formatted.length() && !Character.isDigit(formatted.charAt(start))
+                    && formatted.charAt(start) != decimalSeparator) {
+                start++;
+            }
+            int end = start;
+            int integerDigits = 0;
+            while (end < formatted.length()
+                    && (Character.isDigit(formatted.charAt(end)) || formatted.charAt(end) == groupingSeparator)) {
+                if (Character.isDigit(formatted.charAt(end))) {
+                    integerDigits++;
+                }
+                end++;
+            }
+            int fractionEnd = end;
+            if (fractionEnd < formatted.length() && formatted.charAt(fractionEnd) == decimalSeparator) {
+                fractionEnd++;
+                while (fractionEnd < formatted.length() && Character.isDigit(formatted.charAt(fractionEnd))) {
+                    fractionEnd++;
+                }
+            }
+            int fractionDigits = Math.max(0, fractionEnd - end - 1);
+
+            int missingIntegers = integerPlaceholders.length() - integerDigits;
+            int leadingSpaces = 0;
+            if (missingIntegers > 0) {
+                String missing = integerPlaceholders.substring(0, missingIntegers);
+                if (missing.chars().allMatch(c -> c == '?')) {
+                    leadingSpaces = groupedWidth(integerPlaceholders.length()) - groupedWidth(integerDigits);
+                } else {
+                    leadingSpaces = (int) missing.chars().filter(c -> c == '?').count();
+                }
+            }
+            int missingFractions = fractionPlaceholders.length() - fractionDigits;
+            int trailingSpaces = missingFractions <= 0 ? 0 : (int) fractionPlaceholders
+                    .substring(fractionDigits).chars().filter(c -> c == '?').count();
+
+            return formatted.substring(0, start) + " ".repeat(leadingSpaces) + formatted.substring(start, fractionEnd)
+                    + " ".repeat(trailingSpaces) + formatted.substring(fractionEnd);
+        }
+
+        private int groupedWidth(int digits) {
+            return digits <= 0 ? 0 : digits + (df.isGroupingUsed() && df.getGroupingSize() > 0
+                    ? (digits - 1) / df.getGroupingSize() : 0);
         }
 
         @Override
         public Object parseObject(String source, ParsePosition pos) {
             throw new UnsupportedOperationException();
         }
+    }
+
+    /**
+     * Whether a single section fraction format has literal text or spacing (escaped, quoted, or {@code _x})
+     * between its first and last digit placeholders, e.g. {@code #\\:#/#}
+     */
+    private static boolean hasTextInFraction(String formatStr) {
+        if (formatStr.indexOf(';') >= 0) {
+            return false;
+        }
+        int first = -1;
+        int last = -1;
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            if (c == '0' || c == '#' || c == '?') {
+                first = first < 0 ? i : first;
+                last = i;
+            }
+        }
+        for (int i = first + 1; i < last; i++) {
+            char c = formatStr.charAt(i);
+            if (c == '\\' || c == '"' || c == '_' || c == '*') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** whether the format has a '?' digit placeholder, i.e. a '?' that is not quoted or escaped */
+    private static boolean hasUnquotedQuestionMark(String formatStr) {
+        boolean quoted = false;
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            if (c == '"') {
+                quoted = !quoted;
+            } else if (!quoted && c == '\\') {
+                i++;
+            } else if (!quoted && c == '?') {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1116,10 +1321,10 @@ public class DataFormatter {
         int start = -1;
         for (int i = 0; i < section.length() && start < 0; i++) {
             char c = section.charAt(i);
-            if (c == '0' || c == '#') {
+            if (c == '0' || c == '#' || c == '?') {
                 start = i;
-            } else if (c == '\'' || c == '?') {
-                // quoted text or '?' placeholders: leave it to DecimalFormat as before
+            } else if (c == '\'') {
+                // quoted text: leave it to DecimalFormat as before
                 return section;
             }
         }
@@ -1127,7 +1332,7 @@ public class DataFormatter {
             return section;
         }
         int end = start;
-        while (end < section.length() && "0#,".indexOf(section.charAt(end)) >= 0) {
+        while (end < section.length() && "0#?,".indexOf(section.charAt(end)) >= 0) {
             end++;
         }
         String integerPart = section.substring(start, end);
