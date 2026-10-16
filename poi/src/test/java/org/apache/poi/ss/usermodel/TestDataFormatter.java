@@ -903,6 +903,63 @@ class TestDataFormatter {
     }
 
     @Test
+    void testFormatWithTrailingCommasAndDecimals() throws IOException {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        assertEquals("1,234.6", dfUS.formatRawCellContents(1234567, -1, "#,##0.0,"));
+        assertEquals("9.2", dfUS.formatRawCellContents(9234, -1, "0.0,"));
+        assertEquals("1.23", dfUS.formatRawCellContents(1234567, -1, "0.00,,"));
+        assertEquals("-1,234.6", dfUS.formatRawCellContents(-1234567, -1, "#,##0.0,"));
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            Cell cell = wb.createSheet().createRow(0).createCell(0);
+            CellStyle style = wb.createCellStyle();
+            style.setDataFormat(wb.createDataFormat().getFormat("#,##0.0,"));
+            cell.setCellStyle(style);
+            cell.setCellValue(1234567);
+            assertEquals("1,234.6", dfUS.formatCellValue(cell));
+        }
+    }
+
+    @Test
+    void testFormatWithLiteralBetweenDigits() throws IOException {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        // a literal dot is not a decimal point, the digits either side of it are all integer digits
+        assertEquals("923.4", dfUS.formatRawCellContents(9234, -1, "0\\.0"));
+        assertEquals("123.5", dfUS.formatRawCellContents(1234567, -1, "0\\.0,"));
+        assertEquals("0.9", dfUS.formatRawCellContents(9234, -1, "0\\.0,"));
+        assertEquals("-0.9", dfUS.formatRawCellContents(-9234, -1, "0\\.0,"));
+        assertEquals("123.5", dfUS.formatRawCellContents(1234567, -1, "0\".\"0,"));
+        assertEquals("123.0", dfUS.formatRawCellContents(1230000, -1, "0\\.#,"));
+        assertEquals("123.05", dfUS.formatRawCellContents(1234567, -1, "0\".0\"0,"));
+        assertEquals("12.35", dfUS.formatRawCellContents(1234567, -1, "0\\.00,;-0\\.0,"));
+        assertEquals("-123.5", dfUS.formatRawCellContents(-1234567, -1, "0\\.00,;-0\\.0,"));
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            Cell cell = wb.createSheet().createRow(0).createCell(0);
+            CellStyle style = wb.createCellStyle();
+            style.setDataFormat(wb.createDataFormat().getFormat("0\\.0,"));
+            cell.setCellStyle(style);
+            cell.setCellValue(1234567);
+            assertEquals("123.5", dfUS.formatCellValue(cell));
+        }
+    }
+
+    @Test
+    void testFormatWithExclamationEscape() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        // '!' displays the next character literally, like '\'
+        assertEquals("923.4", dfUS.formatRawCellContents(9234, -1, "0!.0"));
+        assertEquals("0.9", dfUS.formatRawCellContents(9234, -1, "0!.0,"));
+        assertEquals("1.2345", dfUS.formatRawCellContents(12345, -1, "0!.0000"));
+        assertEquals("5.0万", dfUS.formatRawCellContents(50000, -1, "0!.0,\"万\""));
+        assertEquals("1.2", dfUS.formatRawCellContents(12345, -1, "[Red]0!.0,"));
+        assertEquals("5!", dfUS.formatRawCellContents(5, -1, "0!!"));
+        // a '!' that is quoted or escaped is a literal
+        assertEquals("5!", dfUS.formatRawCellContents(5, -1, "0\\!"));
+        assertEquals("5 Hi!", dfUS.formatRawCellContents(5, -1, "0\" Hi!\""));
+    }
+
+    @Test
     void testFormatWithTrailingDotsOtherLocale() {
         DataFormatter dfIT = new DataFormatter(Locale.ITALY);
         assertEquals("1.000.000", dfIT.formatRawCellContents(1000000, -1, "#,##0"));

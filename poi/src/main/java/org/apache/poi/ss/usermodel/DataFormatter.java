@@ -389,7 +389,7 @@ public class DataFormatter {
         // String formatStr = (i < formatBits.length) ? formatBits[i] : formatBits[0];
 
         // this replace is done to fix https://bz.apache.org/bugzilla/show_bug.cgi?id=63211
-        String formatStr = formatStrIn.replace("\\%", "'%'");
+        String formatStr = convertExclamationEscapes(formatStrIn).replace("\\%", "'%'");
 
         // Excel supports 2+ part conditional data formats, eg positive/negative/zero,
         //  or (>1000),(>0),(0),(negative). As Java doesn't handle these kinds
@@ -465,7 +465,7 @@ public class DataFormatter {
     private Format createFormat(double cellValue, int formatIndex, String sFormat) {
         checkForLocaleChange();
 
-        String formatStr = sFormat;
+        String formatStr = convertExclamationEscapes(sFormat);
 
         // Remove colour formatting if present
         if (formatStr != null) {
@@ -538,6 +538,16 @@ public class DataFormatter {
             // Strip custom text in quotes and escaped characters for now as it can cause performance problems in fractions.
             //String strippedFormatStr = formatStr.replaceAll("\\\\ ", " ").replaceAll("\\\\.", "").replaceAll("\"[^\"]*\"", " ").replaceAll("\\?", "#");
             return new FractionFormat(defaultFractionWholePartFormat, defaultFractionFractionPartFormat);
+        }
+
+        // DecimalFormat cannot show literal text between digit placeholders, e.g. the
+        // escaped dot in "0\\.0," which displays 12345 as "1.2", so let CellFormat handle it
+        if (hasLiteralBetweenDigits(formatStr)) {
+            try {
+                return new CellFormatWrapper(CellFormat.getInstance(locale, formatStr.replace("'%'", "\\%")));
+            } catch (Exception e) {
+                LOG.atWarn().withThrowable(e).log("Formatting failed for format {}, falling back", formatStr);
+            }
         }
 
         if (numPattern.matcher(formatStr).find()) {
@@ -717,6 +727,76 @@ public class DataFormatter {
 
     }
 
+    /**
+     * Excel treats {@code !} like {@code \}: it displays the next character literally.
+     * Rewrite such escapes as {@code \}, which the rest of the formatting code understands.
+     * Quoted text, bracketed sections and the operands of {@code _} and {@code *} are left alone.
+     */
+    private static String convertExclamationEscapes(String formatStr) {
+        if (formatStr == null || formatStr.indexOf('!') < 0) {
+            return formatStr;
+        }
+        StringBuilder sb = new StringBuilder(formatStr.length());
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            if (c == '"' || c == '[') {
+                int end = formatStr.indexOf(c == '"' ? '"' : ']', i + 1);
+                end = end < 0 ? formatStr.length() - 1 : end;
+                sb.append(formatStr, i, end + 1);
+                i = end;
+            } else if ((c == '\\' || c == '_' || c == '*') && i < formatStr.length() - 1) {
+                sb.append(c).append(formatStr.charAt(++i));
+            } else if (c == '!' && i < formatStr.length() - 1) {
+                sb.append('\\').append(formatStr.charAt(++i));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Whether any section of the number format has quoted or escaped text with a digit
+     * placeholder both before and after it, e.g. {@code 0\.0} or {@code 0"-"00}.
+     */
+    private static boolean hasLiteralBetweenDigits(String formatStr) {
+        boolean seenDigit = false;
+        boolean literalAfterDigit = false;
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            switch (c) {
+                case '"' -> {
+                    int end = formatStr.indexOf('"', i + 1);
+                    i = end < 0 ? formatStr.length() : end;
+                    literalAfterDigit |= seenDigit;
+                }
+                case '[' -> {
+                    int end = formatStr.indexOf(']', i + 1);
+                    i = end < 0 ? formatStr.length() : end;
+                }
+                case '\\' -> {
+                    i++;
+                    literalAfterDigit |= seenDigit;
+                }
+                case '_', '*' -> i++;
+                case ';' -> {
+                    seenDigit = false;
+                    literalAfterDigit = false;
+                }
+                case '0', '#', '?' -> {
+                    if (literalAfterDigit) {
+                        return true;
+                    }
+                    seenDigit = true;
+                }
+                default -> {
+                    // other characters don't affect the result
+                }
+            }
+        }
+        return false;
+    }
+
     private String cleanFormatForNumber(String formatStrIn) {
         // this replace is done to fix https://bz.apache.org/bugzilla/show_bug.cgi?id=63211
         String formatStr = formatStrIn.replace("\\%", "'%'");
@@ -829,7 +909,8 @@ public class DataFormatter {
         private Object scaleInput(Object obj) {
             if (divider != null) {
                 if (obj instanceof BigDecimal bd) {
-                    obj = bd.divide(divider, RoundingMode.HALF_UP);
+                    // dividing by a power of ten is exact, so keep all the digits until formatting
+                    obj = bd.divide(divider);
                 } else if (obj instanceof Double d) {
                     obj = d / divider.doubleValue();
                 } else {
@@ -1453,6 +1534,26 @@ public class DataFormatter {
             return df.parseObject(source, pos);
         }
     }
+    /**
+     * Cachable wrapper around a {@link CellFormat}, used for number formats that DecimalFormat cannot handle
+     */
+    @SuppressWarnings("serial")
+    private final class CellFormatWrapper extends Format {
+        private final CellFormat cellFormat;
+        private CellFormatWrapper(CellFormat cellFormat) {
+            this.cellFormat = cellFormat;
+        }
+        @Override
+        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+            String text = cellFormat.apply(obj).text;
+            return toAppendTo.append(emulateCSV ? text : text.trim());
+        }
+        @Override
+        public Object parseObject(String source, ParsePosition pos) {
+            return null; // Not supported
+        }
+    }
+
     /**
      * Workaround until we merge {@link DataFormatter} with {@link CellFormat}.
      * Constant, non-cachable wrapper around a {@link CellFormatResult}
