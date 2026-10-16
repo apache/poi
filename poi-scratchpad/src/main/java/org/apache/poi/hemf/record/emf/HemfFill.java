@@ -38,6 +38,7 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfBitmapDib;
 import org.apache.poi.hwmf.record.HwmfColorRef;
@@ -46,7 +47,6 @@ import org.apache.poi.hwmf.record.HwmfFill;
 import org.apache.poi.hwmf.record.HwmfFill.ColorUsage;
 import org.apache.poi.hwmf.record.HwmfRegionMode;
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
-import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
@@ -184,7 +184,7 @@ public final class HemfFill {
                 srcBounds.setRect(srcPnt.getX(), srcPnt.getY(), srcWidth, srcHeight);
             }
 
-            size += readBitmap(leis, bitmap, startIdx, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
+            size += readBitmap(leis, bitmap, startIdx, recordSize, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
 
             return size;
         }
@@ -290,7 +290,7 @@ public final class HemfFill {
 
             size += 8*LittleEndianConsts.INT_SIZE;
 
-            size += readBitmap(leis, bitmap, startIdx, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
+            size += readBitmap(leis, bitmap, startIdx, recordSize, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
 
             return size;
         }
@@ -655,7 +655,7 @@ public final class HemfFill {
 
             size += 7 * LittleEndianConsts.INT_SIZE;
 
-            size += readBitmap(leis, bitmap, startIdx, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
+            size += readBitmap(leis, bitmap, startIdx, recordSize, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
 
             return size;
         }
@@ -724,7 +724,7 @@ public final class HemfFill {
             final int cScans = Math.toIntExact(leis.readUInt());
             size += 7*LittleEndianConsts.INT_SIZE;
 
-            size += readBitmap(leis, bitmap, startIdx, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
+            size += readBitmap(leis, bitmap, startIdx, recordSize, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
 
             return size;
         }
@@ -767,7 +767,7 @@ public final class HemfFill {
     }
 
     static long readBitmap(final LittleEndianInputStream leis, final HwmfBitmapDib bitmap,
-            final int startIdx, final int offBmi, final int cbBmi, final int offBits, int cbBits)
+            final int startIdx, final long recordSize, final int offBmi, final int cbBmi, final int offBits, int cbBits)
     throws IOException {
         if (offBmi == 0) {
             return 0;
@@ -790,13 +790,24 @@ public final class HemfFill {
             return undefinedSpace1;
         }
 
-        final int dibSize = cbBmi+cbBits;
+        // the offsets are relative to the start of the record, so the bitmap must end within the record
+        final long recordEnd = HEADER_SIZE + recordSize;
+        if ((long)offBmi + cbBmi > recordEnd || (long)offBits + cbBits > recordEnd) {
+            throw new RecordFormatException("Bitmap exceeds record - offBmi: " + offBmi + ", cbBmi: " + cbBmi
+                    + ", offBits: " + offBits + ", cbBits: " + cbBits + ", recordSize: " + recordEnd);
+        }
+
+        final long dibSizeLong = (long)cbBmi + cbBits;
+        if (dibSizeLong > Integer.MAX_VALUE) {
+            throw new RecordFormatException("Invalid bitmap size - cbBmi: " + cbBmi + ", cbBits: " + cbBits);
+        }
+        final int dibSize = (int)dibSizeLong;
         if (undefinedSpace2 == 0) {
             return (long)undefinedSpace1 + bitmap.init(leis, dibSize);
         }
 
-        // cbBmi and cbBits are untrusted, so don't presize the buffer beyond the record limit
-        final int bufferSize = (int) Math.min((long) cbBmi + cbBits, HwmfPicture.getMaxRecordLength());
+        // cbBmi and cbBits are untrusted, so only use them as a hint, capped by the EMF record limit
+        final int bufferSize = Math.min(dibSize, HemfPicture.getMaxRecordLength());
         final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(bufferSize).get();
         final long cbBmiSrcAct = IOUtils.copy(leis, bos, cbBmi);
         assert (cbBmiSrcAct == cbBmi);

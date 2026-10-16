@@ -434,7 +434,7 @@ public class HemfMisc {
             int size = 6*LittleEndianConsts.INT_SIZE;
 
             patternDib = new HwmfBitmapDib();
-            size = Math.toIntExact(size + readBitmap(leis, patternDib, startIdx, offBmi, cbBmi, offBits, cbBits));
+            size = Math.toIntExact(size + readBitmap(leis, patternDib, startIdx, recordSize, offBmi, cbBmi, offBits, cbBits));
             return size;
         }
 
@@ -638,7 +638,7 @@ public class HemfMisc {
 
             size = Math.addExact(size, numStyleEntries * LittleEndianConsts.INT_SIZE);
 
-            size = Math.toIntExact(size + readBitmap(leis, bitmap, startIdx, offBmi, cbBmi, offBits, cbBits));
+            size = Math.toIntExact(size + readBitmap(leis, bitmap, startIdx, recordSize, offBmi, cbBmi, offBits, cbBits));
 
             return size;
         }
@@ -902,7 +902,7 @@ public class HemfMisc {
 
             int size = 6 * LittleEndianConsts.INT_SIZE;
 
-            size = Math.toIntExact(size + readBitmap(leis, bitmap, startIdx, offBmi, cbBmi, offBits, cbBits));
+            size = Math.toIntExact(size + readBitmap(leis, bitmap, startIdx, recordSize, offBmi, cbBmi, offBits, cbBits));
 
             return size;
         }
