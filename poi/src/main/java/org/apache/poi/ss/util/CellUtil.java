@@ -28,6 +28,16 @@ import java.util.Set;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.logging.PoiLogManager;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaParsingWorkbook;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
+import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyContext;
@@ -423,7 +433,8 @@ public final class CellUtil {
                         destCell.setCellValue(srcCell.getRichStringCellValue());
                         break;
                     case FORMULA:
-                        destCell.setCellFormula(srcCell.getCellFormula());
+                        destCell.setCellFormula(policy.isAdjustFormulaReferences()
+                                ? adjustFormulaReferences(srcCell, destCell) : srcCell.getCellFormula());
                         break;
                     case BLANK:
                         destCell.setBlank();
@@ -486,6 +497,50 @@ public final class CellUtil {
         }
     }
 
+
+    /**
+     * Returns the formula of srcCell with its relative references moved by the row and column
+     * offset from srcCell to destCell, as Excel does when a formula is copied and pasted.
+     * The formula is parsed and rendered against the destination workbook. It is returned
+     * unchanged if it cannot be parsed there.
+     */
+    private static String adjustFormulaReferences(Cell srcCell, Cell destCell) {
+        final String formula = srcCell.getCellFormula();
+        final int rowOffset = destCell.getRowIndex() - srcCell.getRowIndex();
+        final int columnOffset = destCell.getColumnIndex() - srcCell.getColumnIndex();
+        if (formula == null || formula.isEmpty() || (rowOffset == 0 && columnOffset == 0)) {
+            return formula;
+        }
+        final Sheet destSheet = destCell.getSheet();
+        final Workbook destWorkbook = destSheet.getWorkbook();
+        final EvaluationWorkbook evaluationWorkbook = destWorkbook.createEvaluationWorkbook();
+        if (!(evaluationWorkbook instanceof FormulaParsingWorkbook parsingWorkbook)
+                || !(evaluationWorkbook instanceof FormulaRenderingWorkbook renderingWorkbook)) {
+            return formula;
+        }
+        final int sheetIndex = destWorkbook.getSheetIndex(destSheet);
+        final String sheetName = destSheet.getSheetName();
+        final SpreadsheetVersion version = destWorkbook.getSpreadsheetVersion();
+        try {
+            final Ptg[] ptgs = FormulaParser.parse(formula, parsingWorkbook, FormulaType.CELL,
+                    sheetIndex, srcCell.getRowIndex());
+            boolean changed = false;
+            if (rowOffset != 0) {
+                final int srcRow = srcCell.getRowIndex();
+                changed = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRow, srcRow, rowOffset, version)
+                        .adjustFormula(ptgs, sheetIndex);
+            }
+            if (columnOffset != 0) {
+                final int srcColumn = srcCell.getColumnIndex();
+                changed |= FormulaShifter.createForColumnCopy(sheetIndex, sheetName, srcColumn, srcColumn, columnOffset, version)
+                        .adjustFormula(ptgs, sheetIndex);
+            }
+            return changed ? FormulaRenderer.toFormulaString(renderingWorkbook, ptgs) : formula;
+        } catch (FormulaParseException e) {
+            LOGGER.atWarn().withThrowable(e).log("Copying formula unchanged, as it could not be parsed in the destination workbook");
+            return formula;
+        }
+    }
     /**
      * Take a cell, and align it.
      * <p>
