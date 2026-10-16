@@ -67,10 +67,7 @@ class TestDataFormatterAgainstExcel {
     /**
      * Formats where DataFormatter does not match Excel for any of the sample values.
      */
-    private static final Set<String> UNSUPPORTED_FORMATS = Set.of(
-        // text and spacing in a fraction are stripped (as TestDataFormatter.testFractions expects)
-        "|#\\:#/#|", "|#-#-#\\:#/#|", "|#\\:? ?#/#|", "|#\\:? ?0#/000", "|#_#/#|"
-    );
+    private static final Set<String> UNSUPPORTED_FORMATS = Set.of();
 
     /**
      * Format and value combinations where DataFormatter does not match Excel,

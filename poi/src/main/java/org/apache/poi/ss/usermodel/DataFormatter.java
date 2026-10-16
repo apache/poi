@@ -542,8 +542,9 @@ public class DataFormatter {
         // Excel supports fractions in format strings, which Java doesn't
         boolean plainFraction = formatStr.contains("#/") || formatStr.contains("?/");
         // FractionFormat strips any text in a fraction, and does not recognise one with text around
-        // the '/', e.g. "#_#=/=#" which Excel shows 3.75 as "15 =/=4": let CellFormat handle those
-        boolean fractionWithText = !plainFraction && formatStr.indexOf('/') >= 0 && hasTextInFraction(formatStr);
+        // the '/', but Excel shows the text, e.g. "#\\:#/#" shows 23.75 as "23:3/4", and "#_#=/=#"
+        // shows 3.75 as "15 =/=4": let CellFormat handle any fraction with text or spacing in it
+        boolean fractionWithText = formatStr.indexOf('/') >= 0 && hasTextInFraction(formatStr);
         if (plainFraction || fractionWithText) {
             if (fractionWithText) {
                 try {
@@ -566,8 +567,6 @@ public class DataFormatter {
                 }
             }
 
-            // Strip custom text in quotes and escaped characters for now as it can cause performance problems in fractions.
-            //String strippedFormatStr = formatStr.replaceAll("\\\\ ", " ").replaceAll("\\\\.", "").replaceAll("\"[^\"]*\"", " ").replaceAll("\\?", "#");
             return new FractionFormat(defaultFractionWholePartFormat, defaultFractionFractionPartFormat);
         }
 
