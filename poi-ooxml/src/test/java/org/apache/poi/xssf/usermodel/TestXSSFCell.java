@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.tests.usermodel.BaseTestXCell;
@@ -901,5 +902,65 @@ public final class TestXSSFCell extends BaseTestXCell {
         cell.getCTCell().setT(STCellType.INLINE_STR);
         cell.getCTCell().setIs(rst);
         assertEquals(text, cell.getStringCellValue());
+    }
+
+    @Test
+    void testEscapeLiteralUnicodeSequences() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            assertFalse(wb.isEscapeLiteralUnicodeSequences());
+            XSSFSheet sheet = wb.createSheet();
+            XSSFRow row = sheet.createRow(0);
+            row.createCell(0).setCellValue("_x0041_ col");
+            row.createCell(1).setCellValue("_x000D_");
+
+            wb.setEscapeLiteralUnicodeSequences(true);
+            assertTrue(wb.isEscapeLiteralUnicodeSequences());
+            row.createCell(2).setCellValue("_x0041_ col");
+            row.createCell(3).setCellValue(new HSSFRichTextString("_x0042_"));
+            XSSFCell formulaCell = row.createCell(4);
+            formulaCell.setCellFormula("\"_x0043_\"");
+            formulaCell.setCellValue("_x0043_");
+            XSSFCell numericCell = row.createCell(5);
+            numericCell.setCellValue(1);
+            numericCell.setCellFormula("\"_x0044_\"");
+            numericCell.setCellValue("_x0044_");
+            // an XSSFRichTextString holds the stored form of its text, so it is not escaped
+            row.createCell(6).setCellValue(new XSSFRichTextString("_x0045_"));
+            row.createCell(7).setCellValue(new XSSFRichTextString(XSSFRichTextString.utfEncode("_x0046_")));
+
+            // in-memory values are the literal text
+            assertEquals("_x0041_ col", row.getCell(2).getStringCellValue());
+            assertEquals("_x0043_", formulaCell.getStringCellValue());
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                XSSFRow row2 = wb2.getSheetAt(0).getRow(0);
+                // written before the option was enabled
+                assertEquals("A col", row2.getCell(0).getStringCellValue());
+                assertEquals("\r", row2.getCell(1).getStringCellValue());
+
+                assertEquals("_x0041_ col", row2.getCell(2).getStringCellValue());
+                assertEquals("_x0042_", row2.getCell(3).getStringCellValue());
+                assertEquals("_x0043_", row2.getCell(4).getStringCellValue());
+                assertEquals("_x0044_", row2.getCell(5).getStringCellValue());
+                assertEquals("E", row2.getCell(6).getStringCellValue());
+                assertEquals("_x0046_", row2.getCell(7).getStringCellValue());
+            }
+        }
+    }
+
+    @Test
+    void testEscapeLiteralUnicodeSequencesSetCellType() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            wb.setEscapeLiteralUnicodeSequences(true);
+            XSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            cell.setCellFormula("\"_x0041_\"");
+            cell.setCellValue("_x0041_");
+            cell.setCellType(CellType.STRING);
+            assertEquals("_x0041_", cell.getStringCellValue());
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                assertEquals("_x0041_", wb2.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+            }
+        }
     }
 }

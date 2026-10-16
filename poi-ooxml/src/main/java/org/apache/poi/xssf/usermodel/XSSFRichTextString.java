@@ -78,6 +78,8 @@ import java.util.regex.Pattern;
  */
 public class XSSFRichTextString implements RichTextString {
     private static final Pattern utfPtrn = Pattern.compile("_x([0-9A-Fa-f]{4})_");
+    // an underscore that starts a _xHHHH_ sequence (lookahead, so overlapping sequences are all found)
+    private static final Pattern utfEncodePtrn = Pattern.compile("_(?=x[0-9A-Fa-f]{4}_)");
 
     private CTRst st;
     private StylesTable styles;
@@ -536,8 +538,10 @@ public class XSSFRichTextString implements RichTextString {
      *
      * @param   value the string to decode
      * @return  the decoded string or null if the input string is null
+     * @see #utfEncode(String)
+     * @since 6.0.0
      */
-    static String utfDecode(String value) {
+    public static String utfDecode(String value) {
         if(value == null || !value.contains("_x")) {
             return value;
         }
@@ -566,6 +570,28 @@ public class XSSFRichTextString implements RichTextString {
 
         buf.append(value.substring(idx));
         return buf.toString();
+    }
+
+    /**
+     * Escapes literal text that would otherwise be read as a <code>_xHHHH_</code>
+     * escape sequence, so that it survives a round trip through {@link #utfDecode(String)}.
+     * <p>
+     * The leading underscore of every <code>_xHHHH_</code> sequence is written as
+     * <code>_x005F_</code>, as Excel does, e.g. <code>_x0041_</code> becomes
+     * <code>_x005F_x0041_</code>. Other text, including characters that are invalid
+     * in XML 1.0, is not changed.
+     *
+     * @param   value the string to encode
+     * @return  the encoded string or null if the input string is null
+     * @see #utfDecode(String)
+     * @see XSSFWorkbook#setEscapeLiteralUnicodeSequences(boolean)
+     * @since 6.0.0
+     */
+    public static String utfEncode(String value) {
+        if(value == null || !value.contains("_x")) {
+            return value;
+        }
+        return utfEncodePtrn.matcher(value).replaceAll("_x005F_");
     }
 
     void applyFont(TreeMap<Integer, CTRPrElt> formats, int startIndex, int endIndex, CTRPrElt fmt) {

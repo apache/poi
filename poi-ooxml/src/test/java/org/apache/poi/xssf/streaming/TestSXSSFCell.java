@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 
 import java.io.IOException;
@@ -41,11 +42,14 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlCursor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 /**
@@ -168,5 +172,44 @@ class TestSXSSFCell extends BaseTestXCell {
     @Override
     @Disabled
     protected void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() {
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void testEscapeLiteralUnicodeSequences(boolean useSharedStringsTable) throws IOException {
+        try (SXSSFWorkbook wb = new SXSSFWorkbook(null, 100, false, useSharedStringsTable)) {
+            assertFalse(wb.isEscapeLiteralUnicodeSequences());
+            wb.setEscapeLiteralUnicodeSequences(true);
+            assertTrue(wb.isEscapeLiteralUnicodeSequences());
+            assertTrue(wb.getXSSFWorkbook().isEscapeLiteralUnicodeSequences());
+
+            SXSSFRow row = wb.createSheet().createRow(0);
+            row.createCell(0).setCellValue("_x0041_ col");
+            row.createCell(1).setCellValue("plain");
+            SXSSFCell formulaCell = row.createCell(2);
+            formulaCell.setCellFormula("\"_x0043_\"");
+            formulaCell.setCellValue("_x0043_");
+            row.createCell(3).setCellValue(new XSSFRichTextString(XSSFRichTextString.utfEncode("_x0044_")));
+
+            try (XSSFWorkbook wb2 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb)) {
+                XSSFRow row2 = wb2.getSheetAt(0).getRow(0);
+                assertEquals("_x0041_ col", row2.getCell(0).getStringCellValue());
+                assertEquals("plain", row2.getCell(1).getStringCellValue());
+                assertEquals("_x0043_", row2.getCell(2).getStringCellValue());
+                assertEquals("_x0044_", row2.getCell(3).getStringCellValue());
+            }
+            wb.dispose();
+        }
+    }
+
+    @Test
+    void testNoEscapeLiteralUnicodeSequencesByDefault() throws IOException {
+        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
+            wb.createSheet().createRow(0).createCell(0).setCellValue("_x0041_ col");
+            try (XSSFWorkbook wb2 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb)) {
+                assertEquals("A col", wb2.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+            }
+            wb.dispose();
+        }
     }
 }

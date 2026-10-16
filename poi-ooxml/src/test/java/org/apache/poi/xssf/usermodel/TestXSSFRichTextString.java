@@ -245,6 +245,31 @@ public final class TestXSSFRichTextString {
     }
 
     @Test
+    void testUtfEncode() {
+        assertNull(XSSFRichTextString.utfEncode(null));
+        assertEquals("", XSSFRichTextString.utfEncode(""));
+        assertEquals("abc_x", XSSFRichTextString.utfEncode("abc_x"));
+        assertEquals("_x00G1_", XSSFRichTextString.utfEncode("_x00G1_"));
+        assertEquals("\r", XSSFRichTextString.utfEncode("\r"));
+        assertEquals("_x005F_x0041_ col", XSSFRichTextString.utfEncode("_x0041_ col"));
+        assertEquals("a_x005F_x000d_b", XSSFRichTextString.utfEncode("a_x000d_b"));
+        assertEquals("_x005F_x005F_x005F_x0041_", XSSFRichTextString.utfEncode("_x005F_x0041_"));
+        // overlapping sequences: the second one would be decoded once the first is escaped
+        assertEquals("_x005F_x0041_x005F_x0042_", XSSFRichTextString.utfEncode("_x0041_x0042_"));
+    }
+
+    @Test
+    void testUtfEncodeRoundTrip() {
+        String[] values = {
+                "plain", "_x0041_", "_x0041_ col", "_x0041__x0042_", "_x0041_x0042_",
+                "_x005F_", "_x005F_x0041_", "__x0041_", "_x00_x0041_", "_x_x0041_", "_x000D_\r"
+        };
+        for (String value : values) {
+            assertEquals(value, XSSFRichTextString.utfDecode(XSSFRichTextString.utfEncode(value)), value);
+        }
+    }
+
+    @Test
     void testApplyFont_lowlevel(){
         CTRst st = CTRst.Factory.newInstance();
         String text = "Apache Software Foundation";
