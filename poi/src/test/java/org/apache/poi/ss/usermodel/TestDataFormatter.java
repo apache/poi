@@ -547,12 +547,13 @@ class TestDataFormatter {
         assertEquals("120", dfUS.formatRawCellContents(120*second, -1, "[ss]"));
         assertEquals("121", dfUS.formatRawCellContents(121*second, -1, "[ss]"));
 
-        assertEquals("27:18:08", dfUS.formatRawCellContents(1.1376, -1, "[h]:mm:ss"));
+        // 1.1376 days is 27:18:08.64, which Excel rounds to the nearest second
+        assertEquals("27:18:09", dfUS.formatRawCellContents(1.1376, -1, "[h]:mm:ss"));
         assertEquals("28:48:00", dfUS.formatRawCellContents(1.2, -1,  "[h]:mm:ss"));
         assertEquals("29:31:12", dfUS.formatRawCellContents(1.23, -1, "[h]:mm:ss"));
         assertEquals("31:26:24", dfUS.formatRawCellContents(1.31, -1, "[h]:mm:ss"));
 
-        assertEquals("27:18:08", dfUS.formatRawCellContents(1.1376, -1, "[hh]:mm:ss"));
+        assertEquals("27:18:09", dfUS.formatRawCellContents(1.1376, -1, "[hh]:mm:ss"));
         assertEquals("28:48:00", dfUS.formatRawCellContents(1.2, -1,  "[hh]:mm:ss"));
         assertEquals("29:31:12", dfUS.formatRawCellContents(1.23, -1, "[hh]:mm:ss"));
         assertEquals("31:26:24", dfUS.formatRawCellContents(1.31, -1, "[hh]:mm:ss"));
@@ -1039,7 +1040,8 @@ class TestDataFormatter {
         DataFormatter dfUS = new DataFormatter(Locale.US);
         assertEquals("2016-23-08 08:51:01", dfUS.formatRawCellContents(42605.368761574071, -1, "yyyy-dd-MM HH:mm:ss"));
         assertEquals("2016-23 08:51:01 08", dfUS.formatRawCellContents(42605.368761574071, -1, "yyyy-dd HH:mm:ss MM"));
-        assertEquals("2017-12-01 January 09:54:33", dfUS.formatRawCellContents(42747.412892397523, -1, "yyyy-dd-MM MMMM HH:mm:ss"));
+        // 42747.412892397523 is 09:54:33.903, which Excel rounds to the nearest second
+        assertEquals("2017-12-01 January 09:54:34", dfUS.formatRawCellContents(42747.412892397523, -1, "yyyy-dd-MM MMMM HH:mm:ss"));
         assertEquals("08", dfUS.formatRawCellContents(42605.368761574071, -1, "MM"));
         assertEquals("01", dfUS.formatRawCellContents(42605.368761574071, -1, "ss"));
 
@@ -1056,15 +1058,15 @@ class TestDataFormatter {
 
     @Test
     void testDateFormattingWithLocales() {
-        // 2017-12-01 09:54:33 which is 42747.412892397523 as double
+        // 2017-12-01 09:54:33.903 which is 42747.412892397523 as double, and Excel shows rounded to 09:54:34
         DataFormatter dfDE = new DataFormatter(Locale.GERMANY);
         DataFormatter dfZH = new DataFormatter(Locale.PRC);
         DataFormatter dfIE = new DataFormatter(new Locale.Builder().setLanguage("GA").setRegion("IE").build());
         double date = 42747.412892397523;
         String format = "dd MMMM yyyy HH:mm:ss";
-        assertEquals("12 Januar 2017 09:54:33", dfDE.formatRawCellContents(date, -1, format));
-        assertEquals("12 \u4E00\u6708 2017 09:54:33", dfZH.formatRawCellContents(date, -1, format));
-        assertEquals("12 Ean\u00E1ir 2017 09:54:33", dfIE.formatRawCellContents(date, -1, format));
+        assertEquals("12 Januar 2017 09:54:34", dfDE.formatRawCellContents(date, -1, format));
+        assertEquals("12 \u4E00\u6708 2017 09:54:34", dfZH.formatRawCellContents(date, -1, format));
+        assertEquals("12 Ean\u00E1ir 2017 09:54:34", dfIE.formatRawCellContents(date, -1, format));
     }
 
     /**
@@ -1257,8 +1259,9 @@ class TestDataFormatter {
     }
 
     private void doFormatTestSequential(DataFormatter formatter) {
+        // 43551.50990171296 is 12:14:15.508, which Excel rounds to the nearest second
         for (int i = 0; i < 1_000; i++) {
-            assertTrue(doFormatTest(formatter, 43551.50990171296, "3/27/19 12:14:15 PM", i));
+            assertTrue(doFormatTest(formatter, 43551.50990171296, "3/27/19 12:14:16 PM", i));
             assertTrue(doFormatTest(formatter, 36104.424780092595, "11/5/98 10:11:41 AM", i));
         }
     }
@@ -1269,14 +1272,14 @@ class TestDataFormatter {
             final int iteration = i;
             CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(
                     () -> {
-                        boolean r1 = doFormatTest(formatter1, 43551.50990171296, "3/27/19 12:14:15 PM", iteration);
+                        boolean r1 = doFormatTest(formatter1, 43551.50990171296, "3/27/19 12:14:16 PM", iteration);
                         boolean r2 = doFormatTest(formatter1, 36104.424780092595, "11/5/98 10:11:41 AM", iteration);
                         return r1 && r2;
                     });
             futures.add(future);
             future = CompletableFuture.supplyAsync(
                     () -> {
-                        boolean r1 = doFormatTest(formatter2, 43551.50990171296, "3/27/19 12:14:15 PM", iteration);
+                        boolean r1 = doFormatTest(formatter2, 43551.50990171296, "3/27/19 12:14:16 PM", iteration);
                         boolean r2 = doFormatTest(formatter2, 36104.424780092595, "11/5/98 10:11:41 AM", iteration);
                         return r1 && r2;
                     });

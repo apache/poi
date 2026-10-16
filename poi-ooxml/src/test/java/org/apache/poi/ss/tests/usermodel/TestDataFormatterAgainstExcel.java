@@ -76,10 +76,7 @@ class TestDataFormatterAgainstExcel {
      * Format and value combinations where DataFormatter does not match Excel,
      * for formats that match Excel for other values.
      */
-    private static final Set<String> KNOWN_FAILURES = Set.of(
-        // Excel rounds 37.638 seconds up to 38 when no fractional seconds are shown
-        failure("yyyy-mm-dd hh:mm:ss", 1.0032134017094)
-    );
+    private static final Set<String> KNOWN_FAILURES = Set.of();
 
     private static String failure(String format, double value) {
         return format + "|" + value;

@@ -78,7 +78,13 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         setTimeZone(LocaleUtil.getUserTimeZone());
     }
 
+    private static final int SECONDS_PER_DAY = 24 * 60 * 60;
+
     private double dateToBeFormatted;
+
+    /** the pattern {@link #roundToSeconds} was worked out for */
+    private String roundToSecondsPattern;
+    private boolean roundToSeconds;
 
     // no-arg constructor is private because of undefined super call with locale
 
@@ -128,6 +134,16 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
     @Override
     public StringBuffer format(Date date, StringBuffer paramStringBuffer,
                                FieldPosition paramFieldPosition) {
+        // Excel rounds to the nearest second when it shows seconds but no fractions of a second,
+        // e.g. hh:mm:ss shows 00:04:37.638 as 00:04:38
+        double elapsed = dateToBeFormatted;
+        if (showsWholeSeconds()) {
+            if (date != null) {
+                date = new Date(Math.round(date.getTime() / 1000.0) * 1000);
+            }
+            elapsed = Math.round(elapsed * SECONDS_PER_DAY) / (double) SECONDS_PER_DAY;
+        }
+
         // Do the normal format
         String s = super.format(date, paramStringBuffer, paramFieldPosition).toString();
 
@@ -138,7 +154,7 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
 
         if (s.indexOf(H_BRACKET_SYMBOL) != -1 ||
                 s.indexOf(HH_BRACKET_SYMBOL) != -1) {
-            float hours = (float) dateToBeFormatted * 24;
+            float hours = (float) elapsed * 24;
 
             s = s.replace(
                     String.valueOf(H_BRACKET_SYMBOL),
@@ -152,7 +168,7 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
 
         if (s.indexOf(M_BRACKET_SYMBOL) != -1 ||
                 s.indexOf(MM_BRACKET_SYMBOL) != -1) {
-            float minutes = (float) dateToBeFormatted * 24 * 60;
+            float minutes = (float) elapsed * 24 * 60;
             s = s.replace(
                     String.valueOf(M_BRACKET_SYMBOL),
                     format1digit.format(minutes)
@@ -164,7 +180,7 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         }
         if (s.indexOf(S_BRACKET_SYMBOL) != -1 ||
                 s.indexOf(SS_BRACKET_SYMBOL) != -1) {
-            float seconds = (float) (dateToBeFormatted * 24 * 60 * 60);
+            float seconds = (float) (elapsed * 24 * 60 * 60);
             s = s.replace(
                     String.valueOf(S_BRACKET_SYMBOL),
                     format1digit.format(seconds)
@@ -190,6 +206,30 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         }
 
         return new StringBuffer(s);
+    }
+
+    /**
+     * Whether the pattern shows seconds, or elapsed seconds, but no fractions of a second
+     */
+    private boolean showsWholeSeconds() {
+        String pattern = toPattern();
+        if (!pattern.equals(roundToSecondsPattern)) {
+            boolean seconds = false;
+            boolean fractions = false;
+            boolean quoted = false;
+            for (int i = 0; i < pattern.length(); i++) {
+                char c = pattern.charAt(i);
+                if (c == '\'') {
+                    quoted = !quoted;
+                } else if (!quoted) {
+                    seconds |= c == 's' || c == S_BRACKET_SYMBOL || c == SS_BRACKET_SYMBOL;
+                    fractions |= c == 'S' || c == L_BRACKET_SYMBOL || c == LL_BRACKET_SYMBOL;
+                }
+            }
+            roundToSeconds = seconds && !fractions;
+            roundToSecondsPattern = pattern;
+        }
+        return roundToSeconds;
     }
 
     @Override

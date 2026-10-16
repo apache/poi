@@ -199,6 +199,9 @@ public class CellDateFormatter extends CellFormatter {
                 c.add(Calendar.MILLISECOND, (int)(v % 1000));
                 value = c.getTime();
             }
+        } else if (value instanceof Date date && sFmt == null) {
+            // as for a number: if milliseconds were not requested in the format string, round the seconds
+            value = new Date(Math.round(date.getTime() / 1000.0) * 1000);
         }
 
         AttributedCharacterIterator it = dateFmt.formatToCharacterIterator(value);
