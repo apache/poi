@@ -577,9 +577,15 @@ public class DataFormatter {
 
         // DecimalFormat cannot show literal text between digit placeholders, e.g. the
         // escaped dot in "0\\.0," which displays 12345 as "1.2", so let CellFormat handle it
-        if (hasLiteralBetweenDigits(formatStr)) {
+        // Excel shows a '0' placeholder before '#' or '?' placeholders only in its own position,
+        // e.g. "60#########" shows 12345678 as "6012345678", but DecimalFormat does not accept
+        // the pattern, so let CellFormat handle it
+        if (hasLiteralBetweenDigits(formatStr) || hasZeroBeforeOptionalDigit(formatStr)) {
             try {
-                return new CellFormatWrapper(CellFormat.getInstance(locale, formatStr.replace("'%'", "\\%")));
+                CellFormat cellFormat = CellFormat.getInstance(locale, formatStr.replace("'%'", "\\%"));
+                // a format CellFormat cannot make sense of, e.g. "#''0#0'1#10L16EE", fails here, not when formatting
+                cellFormat.apply(cellValue);
+                return new CellFormatWrapper(cellFormat);
             } catch (Exception e) {
                 LOG.atWarn().withThrowable(e).log("Formatting failed for format {}, falling back", formatStr);
             }
@@ -964,6 +970,44 @@ public class DataFormatter {
                         return true;
                     }
                     seenDigit = true;
+                }
+                default -> {
+                    // other characters don't affect the result
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Whether the integer part of any section of the number format has a {@code 0} placeholder
+     * followed by a {@code #} or {@code ?} placeholder, e.g. {@code 0##} or {@code 60#########}.
+     */
+    private static boolean hasZeroBeforeOptionalDigit(String formatStr) {
+        boolean seenZero = false;
+        boolean inInteger = true;
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            switch (c) {
+                case '"' -> {
+                    int end = formatStr.indexOf('"', i + 1);
+                    i = end < 0 ? formatStr.length() : end;
+                }
+                case '[' -> {
+                    int end = formatStr.indexOf(']', i + 1);
+                    i = end < 0 ? formatStr.length() : end;
+                }
+                case '\\', '_', '*' -> i++;
+                case ';' -> {
+                    seenZero = false;
+                    inInteger = true;
+                }
+                case '.', 'E', 'e' -> inInteger = false;
+                case '0' -> seenZero |= inInteger;
+                case '#', '?' -> {
+                    if (seenZero && inInteger) {
+                        return true;
+                    }
                 }
                 default -> {
                     // other characters don't affect the result
