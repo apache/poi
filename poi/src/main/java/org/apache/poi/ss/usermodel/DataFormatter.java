@@ -731,7 +731,7 @@ public class DataFormatter {
             for (int i = 0; i < sb.length(); i++) {
                 char c = sb.charAt(i);
                 if (c == '_' || c == '*' || c == '?') {
-                    if (i > 0 && sb.charAt((i - 1)) == '\\') {
+                    if (i > 0 && (sb.charAt(i - 1) == '\\' || sb.charAt(i - 1) == '!')) {
                         // It's escaped, don't worry
                         continue;
                     }
@@ -760,7 +760,7 @@ public class DataFormatter {
             for (int i = 0; i < sb.length(); i++) {
                 char c = sb.charAt(i);
                 if (c == '_' || c == '*') {
-                    if (i > 0 && sb.charAt((i - 1)) == '\\') {
+                    if (i > 0 && (sb.charAt(i - 1) == '\\' || sb.charAt(i - 1) == '!')) {
                         // It's escaped, don't worry
                         continue;
                     }
@@ -781,8 +781,8 @@ public class DataFormatter {
         //  quoting and scientific notation
         for(int i = 0; i < sb.length(); i++) {
            char c = sb.charAt(i);
-            // remove quotes and back slashes
-            if (c == '\\' || c == '"') {
+            // remove quotes and escape characters
+            if (c == '\\' || c == '!' || c == '"') {
                 sb.deleteCharAt(i);
                 i--;
 
@@ -799,39 +799,57 @@ public class DataFormatter {
     private static class InternalDecimalFormatWithScale extends Format {
 
         private static final Pattern endsWithCommas = Pattern.compile("(,+)$");
-        private final BigDecimal divider;
-        private static final BigDecimal ONE_THOUSAND = BigDecimal.valueOf(1000);
+        private final int powersOfTenToScaleDown;
         private final DecimalFormat df;
         private static String trimTrailingCommas(String s) {
             return s.replaceAll(",+$", "");
         }
 
-        public InternalDecimalFormatWithScale(String pattern, DecimalFormatSymbols symbols) {
+        private static int digitsAfterLiteralDecimalPoint(String formatStr) {
+            int digits = 0;
+            boolean afterLiteralPoint = false;
+            boolean quoted = false;
+            for (int i = 0; i < formatStr.length(); i++) {
+                char c = formatStr.charAt(i);
+                boolean escaped = (c == '\\' || c == '!') && i < formatStr.length() - 1;
+                if (escaped) {
+                    c = formatStr.charAt(++i);
+                } else if (c == '"') {
+                    quoted = !quoted;
+                    continue;
+                }
+                if (c == '.') {
+                    afterLiteralPoint = escaped || quoted;
+                    digits = 0;
+                } else if (afterLiteralPoint && (c == '0' || c == '#')) {
+                    digits++;
+                }
+            }
+            return digits;
+        }
+
+        public InternalDecimalFormatWithScale(String pattern, DecimalFormatSymbols symbols, String rawPattern) {
             df = new DecimalFormat(trimTrailingCommas(pattern), symbols);
             setExcelStyleRoundingMode(df);
             Matcher endsWithCommasMatcher = endsWithCommas.matcher(pattern);
             if (endsWithCommasMatcher.find()) {
-                String commas = (endsWithCommasMatcher.group(1));
-                BigDecimal temp = BigDecimal.ONE;
-                for (int i = 0; i < commas.length(); ++i) {
-                    temp = temp.multiply(ONE_THOUSAND);
-                }
-                divider = temp;
+                powersOfTenToScaleDown =
+                        3 * endsWithCommasMatcher.group(1).length() + digitsAfterLiteralDecimalPoint(rawPattern);
             } else {
-                divider = null;
+                powersOfTenToScaleDown = 0;
             }
         }
 
         boolean requiresScaling() {
-            return divider != null;
+            return powersOfTenToScaleDown > 0;
         }
 
         private Object scaleInput(Object obj) {
-            if (divider != null) {
+            if (powersOfTenToScaleDown > 0) {
                 if (obj instanceof BigDecimal bd) {
-                    obj = bd.divide(divider, RoundingMode.HALF_UP);
+                    obj = bd.movePointLeft(powersOfTenToScaleDown);
                 } else if (obj instanceof Double d) {
-                    obj = d / divider.doubleValue();
+                    obj = d / Math.pow(10, powersOfTenToScaleDown);
                 } else {
                     throw new UnsupportedOperationException("cannot scaleInput of type " + obj.getClass());
                 }
@@ -879,7 +897,7 @@ public class DataFormatter {
         }
 
         try {
-            return new InternalDecimalFormatWithScale(format, symbols);
+            return new InternalDecimalFormatWithScale(format, symbols, formatStr);
         } catch(IllegalArgumentException iae) {
             LOG.atDebug().withThrowable(iae).log("Formatting failed for format {}, falling back", formatStr);
             // the pattern could not be parsed correctly,
