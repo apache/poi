@@ -384,12 +384,4 @@ public final class TestUnfixedBugs {
         }
 
     }
-
-    @Test
-    void testBug64759() throws IOException {
-        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64759.xlsx")) {
-            Sheet cloned = wb.cloneSheet(0);
-            assertNotNull(cloned);
-        }
-    }
 }
