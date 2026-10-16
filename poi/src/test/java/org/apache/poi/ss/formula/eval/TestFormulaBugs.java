@@ -269,4 +269,33 @@ final class TestFormulaBugs {
             assertEquals("0h 15m", value.getStringValue());
         }
     }
+
+    /**
+     * Bug 69892: multiplication rounded its operands to 15 significant digits (since 5.2.1),
+     * so SQRT(666)*SQRT(666) was 666.000000000001. Excel multiplies the doubles.
+     */
+    @Test
+    void test69892() throws IOException {
+        try (Workbook wb = new HSSFWorkbook()) {
+            FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+            Row row = wb.createSheet("test").createRow(0);
+            row.createCell(0).setCellValue(666);
+            Cell root = row.createCell(1);
+            root.setCellFormula("SQRT(A1)");
+            Cell cell = row.createCell(2);
+
+            cell.setCellFormula("SQRT(A1)*SQRT(A1)");
+            assertEquals(666.0, eval.evaluate(cell).getNumberValue());
+            cell.setCellFormula("B1*B1");
+            eval.clearAllCachedResultValues();
+            assertEquals(666.0, eval.evaluate(cell).getNumberValue());
+            cell.setCellFormula("SQRT(666)*SQRT(666)");
+            eval.clearAllCachedResultValues();
+            assertEquals(666.0, eval.evaluate(cell).getNumberValue());
+            // the IEEE 754 product, as in Excel, where SQRT(2)*SQRT(2)-2 is 4.44E-16
+            cell.setCellFormula("SQRT(2)*SQRT(2)");
+            eval.clearAllCachedResultValues();
+            assertEquals(Math.sqrt(2) * Math.sqrt(2), eval.evaluate(cell).getNumberValue());
+        }
+    }
 }
