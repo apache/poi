@@ -50,9 +50,11 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
 
     private static final Pattern MMMMM_TRUNCATE_PATTERN = Pattern.compile(
             MMMMM_START_SYMBOL + "(\\p{L}|\\p{P})[\\p{L}\\p{P}]+" + MMMMM_TRUNCATE_SYMBOL);
-    private static final Pattern MILLIS_3_DIGITS_PATTERN = Pattern.compile("s.000");
-    private static final Pattern MILLIS_2_DIGITS_PATTERN = Pattern.compile("s.00");
-    private static final Pattern MILLIS_1_DIGIT_PATTERN = Pattern.compile("s.0");
+    // seconds, or elapsed seconds ([s] or [ss]), followed by fractions of a second
+    private static final String SECONDS = "([s" + S_BRACKET_SYMBOL + SS_BRACKET_SYMBOL + "])";
+    private static final Pattern MILLIS_3_DIGITS_PATTERN = Pattern.compile(SECONDS + ".000");
+    private static final Pattern MILLIS_2_DIGITS_PATTERN = Pattern.compile(SECONDS + ".00");
+    private static final Pattern MILLIS_1_DIGIT_PATTERN = Pattern.compile(SECONDS + ".0");
 
     private static final DecimalFormat format1digit;
     private static final DecimalFormat format2digits;
@@ -107,9 +109,9 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         t = t.replace("[ss]", String.valueOf(SS_BRACKET_SYMBOL));
         t = t.replace("T", "'T'");
         t = t.replace("''T''", "'T'");
-        t = MILLIS_3_DIGITS_PATTERN.matcher(t).replaceAll("s.SSS");
-        t = MILLIS_2_DIGITS_PATTERN.matcher(t).replaceAll("s." + LL_BRACKET_SYMBOL);
-        t = MILLIS_1_DIGIT_PATTERN.matcher(t).replaceAll("s." + L_BRACKET_SYMBOL);
+        t = MILLIS_3_DIGITS_PATTERN.matcher(t).replaceAll("$1.SSS");
+        t = MILLIS_2_DIGITS_PATTERN.matcher(t).replaceAll("$1." + LL_BRACKET_SYMBOL);
+        t = MILLIS_1_DIGIT_PATTERN.matcher(t).replaceAll("$1." + L_BRACKET_SYMBOL);
         return t;
     }
 

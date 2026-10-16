@@ -68,10 +68,10 @@ class TestDataFormatterAgainstExcel {
      * Formats where DataFormatter does not match Excel for any of the sample values.
      */
     private static final Set<String> UNSUPPORTED_FORMATS = Set.of(
-        // grouping separators that are not between the thousands and hundreds digits
-        ",#", ",0", "#,#", "#,##", "#,##.#", "#,.#,",
-        "0,0", "0,00", "0,00.0", "0,0000", "0,00000", "0,000000", "0,0000000", "0,00000000", "0,000000000",
-        "0,0.00%", "0,0.00%%",
+        // a decimal point with no digits after it is still shown
+        "#,##.#",
+        // two percent signs multiply by 100 twice
+        "0,0.00%%",
         // '?' digit placeholders outside fractions
         "?,?", "?,??", "?,???", "?,????", "?,?????", "?,??????", "?,???????", "?,????????", "?,?????????",
         "|?.?|", "|??.?|", "|?.??|", "|??.??|",
@@ -79,16 +79,7 @@ class TestDataFormatterAgainstExcel {
         "|#_#/#|", "|#_#=/=#|", "|#_#=/=?|", "|#_#=/=0|", "|#_?=/=#|", "|#_?=/=?|",
         "|#\\:#/#|", "|#-#-#\\:#/#|", "|#\\:? ?#/#|", "|#\\:? ?0#/000",
         // a single-section format with a condition
-        "[>=10]#\" Big\"", "[>-10]#\" Big\"", "[>=-10]#\" Big\"", "[<>-10]#\" Wow\"",
-        // elapsed time
-        "[s].000", "[ss].000", "[s]\" [yes, \"ss\"] seconds\"", "s:m\" @ hour \"[hh]",
-        "s\" secs and \"[m]\" mins\"", "\"It was \"[h]\" [yes, \"h\"] hours and \"mm:ss",
-        // a single 'y' is a 2 digit year
-        "d-m-y", "D-M-Y", "d-m-y h:m:s",
-        // A/P and a/p show a single letter
-        "hh:mm:ss a/p", "HH:MM:SS A/P", "h:m:s.00 A/P", "H:M:S.00 a/p", "h:m:s.000 A/P",
-        // a day without a month or year
-        "d \"days\" h", "d \"days\" h am/pm", "d \\d\\a\\y\\s h", "d \\d\\a\\y\\s h a/p"
+        "[>=10]#\" Big\"", "[>-10]#\" Big\"", "[>=-10]#\" Big\"", "[<>-10]#\" Wow\""
     );
 
     /**
@@ -103,11 +94,6 @@ class TestDataFormatterAgainstExcel {
         failure("[=10]#\" Wow\"", 10.0),
         failure("[<>10]#\" Wow\"", 1.0), failure("[<>10]#\" Wow\"", 11.0),
         failure("[>10]#\" Big\"", 11.0), failure("[>10]#\" Big\"", 12.0),
-        // negative elapsed times
-        failure("[h]:m:s.000", -0.08546296296296296), failure("[h]:m:s.000", -3.14159),
-        failure("[hh]:mm:ss.0", -0.08546296296296296), failure("[hh]:mm:ss.0", -3.14159),
-        failure("[m]:s.000", -0.08546296296296296), failure("[m]:s.000", -3.14159),
-        failure("[mm]:ss.0", -0.08546296296296296), failure("[mm]:ss.0", -3.14159),
         // General shows very small numbers in scientific notation
         failure("General", 1.1E-10), failure("General", 1.12E-10), failure("General", 1.123E-10),
         failure("General", 1.12345E-10), failure("General", 1.123451E-10), failure("General", 1.123459E-10),
