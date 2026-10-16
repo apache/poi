@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -126,8 +127,11 @@ public class DataFormatter {
     /** Pattern to find "AM/PM" marker */
     private static final Pattern amPmPattern = Pattern.compile("(([AP])[M/P]*)", Pattern.CASE_INSENSITIVE);
 
-    /** Excel's Chinese AM/PM marker, which shows \u4e0a\u5348 (morning) or \u4e0b\u5348 (afternoon) */
-    private static final String CHINESE_AM_PM = "\u4e0a\u5348/\u4e0b\u5348";
+    /** Stands for the AM/PM marker while a date format is converted */
+    private static final String AM_PM_PLACEHOLDER = "\ue000";
+
+    /** Excel's Chinese AM/PM marker, which shows 上午 (morning) or 下午 (afternoon) */
+    private static final String CHINESE_AM_PM = "上午/下午";
 
     /** Pattern to find the [DBNum1], [DBNum2] or [DBNum3] Chinese/Japanese numeral styles */
     private static final Pattern dbNumPattern = Pattern.compile("\\[DBNum[123]]", Pattern.CASE_INSENSITIVE);
@@ -603,28 +607,91 @@ public class DataFormatter {
         return format;
     }
 
+    private static char toLowerAscii(char c) {
+        return c >= 'A' && c <= 'Z' ? (char) (c + ('a' - 'A')) : c;
+    }
+
+    /** Pattern to find an elapsed time unit: [h], [mm], [ss] etc. */
+    private static final Pattern elapsedTimePattern = Pattern.compile("\\[([hH]+|[mM]+|[sS]+)]");
+
+    private static boolean isElapsedTimeFormat(int formatIndex, String formatString) {
+        // only a single section format: the other sections of a format say how to show negative values
+        return formatString != null && formatString.indexOf(';') < 0
+                && elapsedTimePattern.matcher(formatString).find()
+                && DateUtil.isADateFormat(formatIndex, formatString);
+    }
+
     /**
      * Converts Excel's {@code "quoted text"} into SimpleDateFormat's {@code 'quoted text'}, so that
      * the letters in it are not taken as pattern letters and the quote marks are not shown.
      * A {@code "} without a closing {@code "} is left as it is, as is text already in single quotes.
      */
     private static String quoteLiteralText(String formatStr) {
-        if (formatStr.indexOf('"') < 0) {
+        if (formatStr.indexOf('"') < 0 && formatStr.indexOf('\\') < 0) {
             return formatStr;
         }
         StringBuilder sb = new StringBuilder(formatStr.length() + 2);
+        // whether sb ends with a literal that this method quoted, which the next literal can be added to
+        boolean inLiteral = false;
         for (int i = 0; i < formatStr.length(); i++) {
             char c = formatStr.charAt(i);
-            int end = c == '\'' || c == '"' ? formatStr.indexOf(c, i + 1) : -1;
-            if (end < 0) {
-                sb.append(c);
+            String literal = null;
+            if (c == '"') {
+                int end = formatStr.indexOf('"', i + 1);
+                if (end > 0) {
+                    literal = formatStr.substring(i + 1, end);
+                    i = end;
+                }
+            } else if (c == '\\' && i < formatStr.length() - 1) {
+                // an escaped character, e.g. \d
+                literal = String.valueOf(formatStr.charAt(++i));
             } else if (c == '\'') {
-                sb.append(formatStr, i, end + 1);
-                i = end;
-            } else {
-                sb.append('\'').append(formatStr.substring(i + 1, end).replace("'", "''")).append('\'');
-                i = end;
+                int end = formatStr.indexOf('\'', i + 1);
+                if (end > 0) {
+                    sb.append(formatStr, i, end + 1);
+                    i = end;
+                    inLiteral = false;
+                    continue;
+                }
             }
+            if (literal == null) {
+                sb.append(c);
+                inLiteral = false;
+            } else if (!literal.isEmpty()) {
+                if (inLiteral) {
+                    // continue the literal, instead of '' which is a quote character
+                    sb.setLength(sb.length() - 1);
+                } else {
+                    sb.append('\'');
+                }
+                sb.append(literal.replace("'", "''")).append('\'');
+                inLiteral = true;
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Applies {@code op} to the parts of a SimpleDateFormat pattern that are not quoted text
+     */
+    private static String mapUnquoted(String pattern, UnaryOperator<String> op) {
+        if (pattern.indexOf('\'') < 0) {
+            return op.apply(pattern);
+        }
+        StringBuilder sb = new StringBuilder(pattern.length());
+        int start = 0;
+        while (start < pattern.length()) {
+            int quote = pattern.indexOf('\'', start);
+            if (quote < 0) {
+                sb.append(op.apply(pattern.substring(start)));
+                break;
+            }
+            sb.append(op.apply(pattern.substring(start, quote)));
+            int end = pattern.indexOf('\'', quote + 1);
+            // an unterminated quote is left to SimpleDateFormat to complain about
+            end = end < 0 ? pattern.length() - 1 : end;
+            sb.append(pattern, quote, end + 1);
+            start = end + 1;
         }
         return sb.toString();
     }
@@ -642,28 +709,39 @@ public class DataFormatter {
         formatStr = formatStr.replace("\\T","'T'"); // Quote the T is iso8601 style dates
         formatStr = quoteLiteralText(formatStr);
 
-        boolean hasAmPm = false;
+        // the AM/PM marker found, if any
+        String[] amPm = new String[1];
+        formatStr = mapUnquoted(formatStr, part -> {
+            if (part.contains(CHINESE_AM_PM)) {
+                amPm[0] = CHINESE_AM_PM;
+                part = part.replace(CHINESE_AM_PM, AM_PM_PLACEHOLDER);
+            }
+            Matcher amPmMatcher = amPmPattern.matcher(part);
+            while (amPmMatcher.find()) {
+                if (amPm[0] == null || amPmMatcher.group().equalsIgnoreCase("A/P")) {
+                    amPm[0] = amPmMatcher.group();
+                }
+            }
+            part = amPmPattern.matcher(part).replaceAll(AM_PM_PLACEHOLDER);
+            Matcher dateMatcher = daysAsText.matcher(part);
+            if (dateMatcher.find()) {
+                String match = dateMatcher.group(0).toUpperCase(Locale.ROOT).replace('D', 'E');
+                part = dateMatcher.replaceAll(match);
+            }
+            return part;
+        });
+        formatStr = formatStr.replace(AM_PM_PLACEHOLDER, "a");
+        boolean hasAmPm = amPm[0] != null;
         DateFormatSymbols symbols = dateSymbols;
-        if (formatStr.contains(CHINESE_AM_PM)) {
-            formatStr = formatStr.replace(CHINESE_AM_PM, "@");
-            hasAmPm = true;
+        if (CHINESE_AM_PM.equals(amPm[0])) {
             // Excel shows the Chinese marker whatever the locale
             symbols = (DateFormatSymbols) dateSymbols.clone();
-            symbols.setAmPmStrings(new String[] {"\u4e0a\u5348", "\u4e0b\u5348"});
-        }
-        Matcher amPmMatcher = amPmPattern.matcher(formatStr);
-        while (amPmMatcher.find()) {
-            formatStr = amPmMatcher.replaceAll("@");
-            hasAmPm = true;
-            amPmMatcher = amPmPattern.matcher(formatStr);
-        }
-        formatStr = formatStr.replace('@', 'a');
-
-
-        Matcher dateMatcher = daysAsText.matcher(formatStr);
-        if (dateMatcher.find()) {
-            String match = dateMatcher.group(0).toUpperCase(Locale.ROOT).replace('D', 'E');
-            formatStr = dateMatcher.replaceAll(match);
+            symbols.setAmPmStrings(new String[] {"上午", "下午"});
+        } else if (hasAmPm && amPm[0].equalsIgnoreCase("A/P")) {
+            // A/P shows a single letter, in the case it is written in
+            boolean lowerCase = amPm[0].charAt(0) == 'a';
+            symbols = (DateFormatSymbols) dateSymbols.clone();
+            symbols.setAmPmStrings(lowerCase ? new String[] {"a", "p"} : new String[] {"A", "P"});
         }
 
         // Convert excel date format to SimpleDateFormat.
@@ -680,8 +758,17 @@ public class DataFormatter {
         boolean mIsMonth = true;
         List<Integer> ms = new ArrayList<>();
         boolean isElapsed = false;
+        // the units shown as elapsed time, e.g. 'h' for [h]
+        StringBuilder elapsedUnits = new StringBuilder();
+        boolean afterSeconds = false;
         for(int j=0; j<chars.length; j++) {
             char c = chars[j];
+            if (afterSeconds && c != 's' && c != 'S') {
+                afterSeconds = false;
+                if (Character.isWhitespace(c)) {
+                    mIsMonth = true;
+                }
+            }
             if (c == '\'') {
                 sb.append(c);
                 j++;
@@ -706,18 +793,32 @@ public class DataFormatter {
                 sb.append(c);
             }
             else if (isElapsed) {
-            if (c == 'h' || c == 'H') {
+                if (c == 'h' || c == 'H') {
                     sb.append('H');
+                    elapsedUnits.append('h');
                 }
                 else if (c == 'm' || c == 'M') {
                     sb.append('m');
+                    elapsedUnits.append('m');
                 }
                 else if (c == 's' || c == 'S') {
                     sb.append('s');
+                    elapsedUnits.append('s');
                 }
                 else {
                     sb.append(c);
                 }
+            }
+            else if (elapsedUnits.indexOf(String.valueOf(toLowerAscii(c))) >= 0) {
+                // once a unit is shown as elapsed time, e.g. [h], Excel shows it that way everywhere
+                char unit = toLowerAscii(c);
+                int count = 1;
+                while (j + 1 < chars.length && toLowerAscii(chars[j + 1]) == unit) {
+                    j++;
+                    count++;
+                }
+                String letters = String.valueOf(unit == 'h' ? 'H' : unit).repeat(Math.min(count, 2));
+                sb.append('[').append(letters).append(']');
             }
             else if (c == 'h' || c == 'H') {
                 mIsMonth = false;
@@ -743,16 +844,24 @@ public class DataFormatter {
                         sb.replace(index, index + 1, "m");
                     }
                 }
-                mIsMonth = true;
+                // an 'm' straight after the seconds is minutes too, e.g. "s:m", but not after a space
+                mIsMonth = false;
+                afterSeconds = true;
                 ms.clear();
             }
-            // only ASCII letters are pattern letters: others, like the Chinese \u65f6 (hour), are
+            // only ASCII letters are pattern letters: others, like the Chinese 时 (hour), are
             // literal text, which does not stop an 'm' after 'h' being minutes
             else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
                 mIsMonth = true;
                 ms.clear();
                 if (c == 'y' || c == 'Y') {
-                    sb.append('y');
+                    // y and yy are a 2 digit year, yyy and longer a 4 digit year
+                    int count = 1;
+                    while (j + 1 < chars.length && (chars[j + 1] == 'y' || chars[j + 1] == 'Y')) {
+                        j++;
+                        count++;
+                    }
+                    sb.append(count <= 2 ? "yy" : "yyyy");
                 }
                 else if (c == 'd' || c == 'D') {
                     sb.append('d');
@@ -986,6 +1095,77 @@ public class DataFormatter {
         }
     }
 
+    /**
+     * Rewrites the commas of a number format the way DecimalFormat needs them. In Excel, a comma between
+     * digit placeholders turns on grouping by thousands, wherever it is: "0,00" shows 1234567 as "1,234,567".
+     * Commas straight after the integer digits scale the value by 1000, before a decimal point
+     * as well as at the end ("#,.#," shows 1234567 as "1.2"), and a comma before the digits is shown as it is.
+     */
+    private static String normalizeGrouping(String format) {
+        if (format.indexOf(',') < 0) {
+            return format;
+        }
+        String[] sections = format.split(";", -1);
+        for (int i = 0; i < sections.length; i++) {
+            sections[i] = normalizeSectionGrouping(sections[i]);
+        }
+        return String.join(";", sections);
+    }
+
+    private static String normalizeSectionGrouping(String section) {
+        int start = -1;
+        for (int i = 0; i < section.length() && start < 0; i++) {
+            char c = section.charAt(i);
+            if (c == '0' || c == '#') {
+                start = i;
+            } else if (c == '\'' || c == '?') {
+                // quoted text or '?' placeholders: leave it to DecimalFormat as before
+                return section;
+            }
+        }
+        if (start < 0) {
+            return section;
+        }
+        int end = start;
+        while (end < section.length() && "0#,".indexOf(section.charAt(end)) >= 0) {
+            end++;
+        }
+        String integerPart = section.substring(start, end);
+        int scalingCommas = 0;
+        while (integerPart.endsWith(",")) {
+            integerPart = integerPart.substring(0, integerPart.length() - 1);
+            scalingCommas++;
+        }
+        String suffix = section.substring(end);
+        boolean beforeDecimalPoint = suffix.startsWith(".");
+        if (!beforeDecimalPoint && suffix.indexOf(',') >= 0) {
+            // commas after the digits, e.g. in a literal: not something we can handle here
+            return section;
+        }
+        String digits = integerPart.replace(",", "");
+        if (digits.length() < integerPart.length()) {
+            // a comma between digit placeholders means grouping by thousands
+            StringBuilder sb = new StringBuilder(digits);
+            while (sb.length() < 4) {
+                sb.insert(0, '#');
+            }
+            integerPart = sb.insert(sb.length() - 3, ',').toString();
+        }
+        StringBuilder sb = new StringBuilder();
+        // a comma before the digits is a literal
+        sb.append(section.substring(0, start).replace(",", "','"));
+        sb.append(integerPart);
+        if (beforeDecimalPoint) {
+            // move the scaling commas to the end, where InternalDecimalFormatWithScale looks for them
+            sb.append(suffix);
+            sb.append(",".repeat(scalingCommas));
+        } else {
+            sb.append(",".repeat(scalingCommas));
+            sb.append(suffix);
+        }
+        return sb.toString();
+    }
+
     private Format createNumberFormat(String formatStr, double cellValue) {
         String format = cleanFormatForNumber(formatStr);
         DecimalFormatSymbols symbols = decimalSymbols;
@@ -1007,6 +1187,8 @@ public class DataFormatter {
                 format = format.replace(oldPart, newPart);
             }
         }
+
+        format = normalizeGrouping(format);
 
         // Excel ignores leading zeros, but Java fails with an exception below
         if (decimalFormatFix.matcher(format).matches()) {
@@ -1159,6 +1341,11 @@ public class DataFormatter {
     public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
         checkForLocaleChange();
 
+        // Excel shows a negative elapsed time, e.g. for [h]:mm, with a minus sign
+        if (value < 0 && isElapsedTimeFormat(formatIndex, formatString)) {
+            return "-" + formatRawCellContents(-value, formatIndex, formatString, use1904Windowing);
+        }
+
         // Is it a date?
         if(DateUtil.isADateFormat(formatIndex,formatString)) {
             if(DateUtil.isValidExcelDate(value)) {
@@ -1307,6 +1494,11 @@ public class DataFormatter {
         switch (cellType) {
             case NUMERIC :
 
+                if (cfEvaluator == null && cell.getNumericCellValue() < 0 && cell.getCellStyle() != null
+                        && isElapsedTimeFormat(cell.getCellStyle().getDataFormat(), cell.getCellStyle().getDataFormatString())) {
+                    return formatRawCellContents(cell.getNumericCellValue(), cell.getCellStyle().getDataFormat(),
+                            cell.getCellStyle().getDataFormatString(), isDate1904(cell));
+                }
                 if (DateUtil.isCellDateFormatted(cell, cfEvaluator)) {
                     return getFormattedDateString(cell, cfEvaluator);
                 }

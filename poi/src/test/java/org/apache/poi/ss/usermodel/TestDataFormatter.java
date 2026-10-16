@@ -968,22 +968,22 @@ class TestDataFormatter {
         for (Locale locale : new Locale[] {Locale.CHINA, Locale.US}) {
             DataFormatter formatter = new DataFormatter(locale);
             // quoted literals
-            assertEquals("2023\u5e743\u670815\u65e5", formatter.formatRawCellContents(45000.6, -1, "yyyy\"\u5e74\"m\"\u6708\"d\"\u65e5\""));
-            assertEquals("3\u670815\u65e5", formatter.formatRawCellContents(45000.6, -1, "m\"\u6708\"d\"\u65e5\""));
+            assertEquals("2023年3月15日", formatter.formatRawCellContents(45000.6, -1, "yyyy\"年\"m\"月\"d\"日\""));
+            assertEquals("3月15日", formatter.formatRawCellContents(45000.6, -1, "m\"月\"d\"日\""));
             // hours, minutes and seconds, quoted or not
-            assertEquals("14\u65f624\u5206", formatter.formatRawCellContents(45000.6, -1, "h\"\u65f6\"mm\"\u5206\""));
-            assertEquals("14\u65f624\u520600\u79d2", formatter.formatRawCellContents(45000.6, -1, "h\"\u65f6\"mm\"\u5206\"ss\"\u79d2\""));
-            assertEquals("14\u65f624\u520600\u79d2", formatter.formatRawCellContents(45000.6, -1, "h\u65f6mm\u5206ss\u79d2"));
-            assertEquals("2023\u5e743\u670815\u65e5 14\u65f624\u5206",
-                formatter.formatRawCellContents(45000.6, -1, "yyyy\"\u5e74\"m\"\u6708\"d\"\u65e5\" h\"\u65f6\"mm\"\u5206\""));
+            assertEquals("14时24分", formatter.formatRawCellContents(45000.6, -1, "h\"时\"mm\"分\""));
+            assertEquals("14时24分00秒", formatter.formatRawCellContents(45000.6, -1, "h\"时\"mm\"分\"ss\"秒\""));
+            assertEquals("14时24分00秒", formatter.formatRawCellContents(45000.6, -1, "h时mm分ss秒"));
+            assertEquals("2023年3月15日 14时24分",
+                formatter.formatRawCellContents(45000.6, -1, "yyyy\"年\"m\"月\"d\"日\" h\"时\"mm\"分\""));
             // Japanese hour
-            assertEquals("14\u664224\u5206", formatter.formatRawCellContents(45000.6, -1, "h\"\u6642\"mm\"\u5206\""));
+            assertEquals("14時24分", formatter.formatRawCellContents(45000.6, -1, "h\"時\"mm\"分\""));
             // the Chinese AM/PM marker, shown whatever the locale
-            assertEquals("\u4e0b\u53482\u65f624\u5206", formatter.formatRawCellContents(45000.6, -1, "\u4e0a\u5348/\u4e0b\u5348h\"\u65f6\"mm\"\u5206\""));
-            assertEquals("\u4e0b\u53482\u65f624\u520600\u79d2",
-                formatter.formatRawCellContents(45000.6, -1, "\u4e0a\u5348/\u4e0b\u5348h\"\u65f6\"mm\"\u5206\"ss\"\u79d2\""));
-            assertEquals("\u4e0a\u53489:05", formatter.formatRawCellContents(45000 + (9 * 60 + 5) / 1440.0, -1, "\u4e0a\u5348/\u4e0b\u5348h:mm"));
-            assertEquals("2023/3/15 \u4e0b\u53482:24", formatter.formatRawCellContents(45000.6, -1, "yyyy/m/d \u4e0a\u5348/\u4e0b\u5348h:mm"));
+            assertEquals("下午2时24分", formatter.formatRawCellContents(45000.6, -1, "上午/下午h\"时\"mm\"分\""));
+            assertEquals("下午2时24分00秒",
+                formatter.formatRawCellContents(45000.6, -1, "上午/下午h\"时\"mm\"分\"ss\"秒\""));
+            assertEquals("上午9:05", formatter.formatRawCellContents(45000 + (9 * 60 + 5) / 1440.0, -1, "上午/下午h:mm"));
+            assertEquals("2023/3/15 下午2:24", formatter.formatRawCellContents(45000.6, -1, "yyyy/m/d 上午/下午h:mm"));
         }
     }
 
@@ -998,10 +998,10 @@ class TestDataFormatter {
     @Test
     void testDBNum() {
         // Excel shows Chinese numerals for these; Arabic digits are shown instead
-        for (String format : new String[] {"[DBNum1]yyyy\"\u5e74\"m\"\u6708\"d\"\u65e5\"",
-                "[DBNum1][$-804]yyyy\"\u5e74\"m\"\u6708\"d\"\u65e5\"", "[$-804][DBNum1]yyyy\"\u5e74\"m\"\u6708\"d\"\u65e5\""}) {
+        for (String format : new String[] {"[DBNum1]yyyy\"年\"m\"月\"d\"日\"",
+                "[DBNum1][$-804]yyyy\"年\"m\"月\"d\"日\"", "[$-804][DBNum1]yyyy\"年\"m\"月\"d\"日\""}) {
             assertTrue(DateUtil.isADateFormat(-1, format), format);
-            assertEquals("2023\u5e743\u670815\u65e5", new DataFormatter(Locale.CHINA).formatRawCellContents(45000.6, -1, format));
+            assertEquals("2023年3月15日", new DataFormatter(Locale.CHINA).formatRawCellContents(45000.6, -1, format));
         }
         assertEquals("45000.60", new DataFormatter(Locale.CHINA).formatRawCellContents(45000.6, -1, "[DBNum2]0.00"));
         assertEquals("45000.60", new DataFormatter(Locale.CHINA).formatRawCellContents(45000.6, -1, "[DBNum3]0.00"));
@@ -1009,9 +1009,9 @@ class TestDataFormatter {
 
     @Test
     void testNotChineseDateFormat() {
-        String format = "0.00\"m/\u79d2\"";
+        String format = "0.00\"m/秒\"";
         assertFalse(DateUtil.isADateFormat(-1, format));
-        assertEquals("1.50m/\u79d2", new DataFormatter(Locale.US).formatRawCellContents(1.5, -1, format));
+        assertEquals("1.50m/秒", new DataFormatter(Locale.US).formatRawCellContents(1.5, -1, format));
     }
 
     @Test
