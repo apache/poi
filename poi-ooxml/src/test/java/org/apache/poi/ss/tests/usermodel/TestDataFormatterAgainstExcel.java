@@ -68,18 +68,8 @@ class TestDataFormatterAgainstExcel {
      * Formats where DataFormatter does not match Excel for any of the sample values.
      */
     private static final Set<String> UNSUPPORTED_FORMATS = Set.of(
-        // a decimal point with no digits after it is still shown
-        "#,##.#",
-        // two percent signs multiply by 100 twice
-        "0,0.00%%",
-        // '?' digit placeholders outside fractions
-        "?,?", "?,??", "?,???", "?,????", "?,?????", "?,??????", "?,???????", "?,????????", "?,?????????",
-        "|?.?|", "|??.?|", "|?.??|", "|??.??|",
-        // fractions with text or spacing between the digits
-        "|#_#/#|", "|#_#=/=#|", "|#_#=/=?|", "|#_#=/=0|", "|#_?=/=#|", "|#_?=/=?|",
-        "|#\\:#/#|", "|#-#-#\\:#/#|", "|#\\:? ?#/#|", "|#\\:? ?0#/000",
-        // a single-section format with a condition
-        "[>=10]#\" Big\"", "[>-10]#\" Big\"", "[>=-10]#\" Big\"", "[<>-10]#\" Wow\""
+        // text and spacing in a fraction are stripped (as TestDataFormatter.testFractions expects)
+        "|#\\:#/#|", "|#-#-#\\:#/#|", "|#\\:? ?#/#|", "|#\\:? ?0#/000", "|#_#/#|"
     );
 
     /**
@@ -87,18 +77,6 @@ class TestDataFormatterAgainstExcel {
      * for formats that match Excel for other values.
      */
     private static final Set<String> KNOWN_FAILURES = Set.of(
-        // the text is dropped when the condition of a single-section format applies
-        failure("[<10]#\" Wow\"", 1.0), failure("[<10]#\" Wow\"", 1.5),
-        failure("[< 10]#\" Wow\"", 1.0), failure("[<      10]#\" Wow\"", 1.0),
-        failure("[<=10]#\" Wow\"", 1.0), failure("[<=10]#\" Wow\"", 10.0),
-        failure("[=10]#\" Wow\"", 10.0),
-        failure("[<>10]#\" Wow\"", 1.0), failure("[<>10]#\" Wow\"", 11.0),
-        failure("[>10]#\" Big\"", 11.0), failure("[>10]#\" Big\"", 12.0),
-        // General shows very small numbers in scientific notation
-        failure("General", 1.1E-10), failure("General", 1.12E-10), failure("General", 1.123E-10),
-        failure("General", 1.12345E-10), failure("General", 1.123451E-10), failure("General", 1.123459E-10),
-        failure("General", -1.1E-10), failure("General", -1.12E-10), failure("General", -1.123E-10),
-        failure("General", -1.12345E-10), failure("General", -1.123451E-10), failure("General", -1.123459E-10),
         // Excel rounds 37.638 seconds up to 38 when no fractional seconds are shown
         failure("yyyy-mm-dd hh:mm:ss", 1.0032134017094)
     );
