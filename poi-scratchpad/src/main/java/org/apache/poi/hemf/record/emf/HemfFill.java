@@ -46,6 +46,7 @@ import org.apache.poi.hwmf.record.HwmfFill;
 import org.apache.poi.hwmf.record.HwmfFill.ColorUsage;
 import org.apache.poi.hwmf.record.HwmfRegionMode;
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
+import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
@@ -794,7 +795,9 @@ public final class HemfFill {
             return (long)undefinedSpace1 + bitmap.init(leis, dibSize);
         }
 
-        final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(cbBmi+cbBits).get();
+        // cbBmi and cbBits are untrusted, so don't presize the buffer beyond the record limit
+        final int bufferSize = (int) Math.min((long) cbBmi + cbBits, HwmfPicture.getMaxRecordLength());
+        final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(bufferSize).get();
         final long cbBmiSrcAct = IOUtils.copy(leis, bos, cbBmi);
         assert (cbBmiSrcAct == cbBmi);
         leis.skipFully(undefinedSpace2);

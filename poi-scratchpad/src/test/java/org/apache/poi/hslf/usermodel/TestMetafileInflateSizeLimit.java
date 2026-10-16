@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,6 +31,7 @@ import org.apache.poi.hslf.blip.Metafile;
 import org.apache.poi.hslf.blip.PICT;
 import org.apache.poi.hslf.blip.WMF;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -133,6 +135,25 @@ public class TestMetafileInflateSizeLimit {
             Metafile.setMaxRecordLength(10);
             assertThrows(RecordFormatException.class, pd::getData,
                     "PICT getData() should throw RecordFormatException when limit is exceeded");
+        }
+    }
+
+    /**
+     * The PICT header's uncompressed size is only a hint for the output buffer,
+     * so a bogus value must not be used to presize it beyond the inflate limit.
+     */
+    @Test
+    void testPictGetDataIgnoresOversizedHeaderSize() throws IOException {
+        byte[] pictBytes = SLIDE_TESTS.readFile("cow.pict");
+        try (HSLFSlideShow ppt = new HSLFSlideShow()) {
+            HSLFPictureData pd = ppt.addPicture(pictBytes, PictureType.PICT);
+            byte[] expected = pd.getData();
+
+            // wmfsize is the first field of the metafile header after the UIDs
+            int headerOffset = HSLFPictureData.CHECKSUM_SIZE * pd.getUIDInstanceCount();
+            LittleEndian.putInt(pd.getRawData(), headerOffset, Integer.MAX_VALUE - 16);
+
+            assertArrayEquals(expected, pd.getData());
         }
     }
 
