@@ -63,6 +63,7 @@ public class DateUtil {
     private static final BigDecimal BD_SECOND_RND = BigDecimal.valueOf(0.5 * 1e9);
 
     private static final Pattern TIME_SEPARATOR_PATTERN = Pattern.compile(":");
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
     /**
      * The following patterns are used in {@link #isADateFormat(int, String)}
@@ -987,7 +988,7 @@ public class DateUtil {
     }
 
     public static Double parseDateTime(String str){
-        TemporalAccessor tmp = dateTimeFormats.parse(str.replaceAll("\\s+", " "));
+        TemporalAccessor tmp = dateTimeFormats.parse(WHITESPACE_PATTERN.matcher(str).replaceAll(" "));
         LocalTime time = tmp.query(TemporalQueries.localTime());
         LocalDate date = tmp.query(TemporalQueries.localDate());
         if(time == null && date == null) return null;

@@ -24,6 +24,7 @@ import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.apache.poi.util.LocaleUtil;
 
@@ -46,6 +47,12 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
     public static final char SS_BRACKET_SYMBOL = '\ue015';
     public static final char L_BRACKET_SYMBOL = '\ue016';
     public static final char LL_BRACKET_SYMBOL = '\ue017';
+
+    private static final Pattern MMMMM_TRUNCATE_PATTERN = Pattern.compile(
+            MMMMM_START_SYMBOL + "(\\p{L}|\\p{P})[\\p{L}\\p{P}]+" + MMMMM_TRUNCATE_SYMBOL);
+    private static final Pattern MILLIS_3_DIGITS_PATTERN = Pattern.compile("s.000");
+    private static final Pattern MILLIS_2_DIGITS_PATTERN = Pattern.compile("s.00");
+    private static final Pattern MILLIS_1_DIGIT_PATTERN = Pattern.compile("s.0");
 
     private static final DecimalFormat format1digit;
     private static final DecimalFormat format2digits;
@@ -100,9 +107,9 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         t = t.replace("[ss]", String.valueOf(SS_BRACKET_SYMBOL));
         t = t.replace("T", "'T'");
         t = t.replace("''T''", "'T'");
-        t = t.replaceAll("s.000", "s.SSS");
-        t = t.replaceAll("s.00", "s." + LL_BRACKET_SYMBOL);
-        t = t.replaceAll("s.0", "s." + L_BRACKET_SYMBOL);
+        t = MILLIS_3_DIGITS_PATTERN.matcher(t).replaceAll("s.SSS");
+        t = MILLIS_2_DIGITS_PATTERN.matcher(t).replaceAll("s." + LL_BRACKET_SYMBOL);
+        t = MILLIS_1_DIGIT_PATTERN.matcher(t).replaceAll("s." + L_BRACKET_SYMBOL);
         return t;
     }
 
@@ -124,21 +131,18 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
 
         // Now handle our special cases
         if (s.indexOf(MMMMM_START_SYMBOL) != -1) {
-            s = s.replaceAll(
-                    MMMMM_START_SYMBOL + "(\\p{L}|\\p{P})[\\p{L}\\p{P}]+" + MMMMM_TRUNCATE_SYMBOL,
-                    "$1"
-            );
+            s = MMMMM_TRUNCATE_PATTERN.matcher(s).replaceAll("$1");
         }
 
         if (s.indexOf(H_BRACKET_SYMBOL) != -1 ||
                 s.indexOf(HH_BRACKET_SYMBOL) != -1) {
             float hours = (float) dateToBeFormatted * 24;
 
-            s = s.replaceAll(
+            s = s.replace(
                     String.valueOf(H_BRACKET_SYMBOL),
                     format1digit.format(hours)
             );
-            s = s.replaceAll(
+            s = s.replace(
                     String.valueOf(HH_BRACKET_SYMBOL),
                     format2digits.format(hours)
             );
@@ -147,11 +151,11 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         if (s.indexOf(M_BRACKET_SYMBOL) != -1 ||
                 s.indexOf(MM_BRACKET_SYMBOL) != -1) {
             float minutes = (float) dateToBeFormatted * 24 * 60;
-            s = s.replaceAll(
+            s = s.replace(
                     String.valueOf(M_BRACKET_SYMBOL),
                     format1digit.format(minutes)
             );
-            s = s.replaceAll(
+            s = s.replace(
                     String.valueOf(MM_BRACKET_SYMBOL),
                     format2digits.format(minutes)
             );
@@ -159,11 +163,11 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         if (s.indexOf(S_BRACKET_SYMBOL) != -1 ||
                 s.indexOf(SS_BRACKET_SYMBOL) != -1) {
             float seconds = (float) (dateToBeFormatted * 24 * 60 * 60);
-            s = s.replaceAll(
+            s = s.replace(
                     String.valueOf(S_BRACKET_SYMBOL),
                     format1digit.format(seconds)
             );
-            s = s.replaceAll(
+            s = s.replace(
                     String.valueOf(SS_BRACKET_SYMBOL),
                     format2digits.format(seconds)
             );
@@ -173,11 +177,11 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
                 s.indexOf(LL_BRACKET_SYMBOL) != -1) {
             float millisTemp = (float) ((dateToBeFormatted - Math.floor(dateToBeFormatted)) * 24 * 60 * 60);
             float millis = (millisTemp - (int) millisTemp);
-            s = s.replaceAll(
+            s = s.replace(
                     String.valueOf(L_BRACKET_SYMBOL),
                     format3digit.format(millis * 10.0)
             );
-            s = s.replaceAll(
+            s = s.replace(
                     String.valueOf(LL_BRACKET_SYMBOL),
                     format4digits.format(millis * 100.0)
             );
