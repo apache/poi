@@ -1567,6 +1567,7 @@ under the License.
                 <pathelement path="${ooxml.lib}"/>
                 <pathelement path="${ooxml-provided.lib}"/>
                 <pathelement path="${ooxml-tests.lib}"/>
+                <pathelement location="${main.ant.jar}"/>
             </modulepath>
         </javac>
 
@@ -1868,6 +1869,7 @@ under the License.
             <pathelement path="lib/ooxml"/>
             <pathelement path="lib/ooxml-provided"/>
             <pathelement path="lib/ooxml-tests"/>
+            <pathelement location="${main.ant.jar}"/>
         </path>
 
         <poiunit failureproperty="integration.test.failed" heap="3072" showoutput="true" jacocodest="build/jacoco-integration.exec"

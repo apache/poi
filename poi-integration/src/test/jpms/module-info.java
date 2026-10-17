@@ -24,6 +24,7 @@ module org.apache.poi.stress {
     requires org.apache.commons.collections4;
     requires org.apache.commons.csv;
     requires org.apache.commons.io;
+    requires ant;
     requires transitive org.apache.poi.poi;
     requires org.apache.poi.examples;
     requires org.apache.poi.scratchpad;
