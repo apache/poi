@@ -43,7 +43,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
  * the child {@link XWPFTableCell}s
  */
 public class XWPFTableRow {
-    private final CTRow ctRow;
+    private CTRow ctRow;
     private final XWPFTable table;
     private List<XWPFTableCell> tableCells;
 
@@ -56,6 +56,16 @@ public class XWPFTableRow {
     @Internal
     public CTRow getCtRow() {
         return ctRow;
+    }
+
+    /**
+     * Point this row at ctRow, the copy of its XML that a table has just added,
+     * and rebuild its cells from it.
+     */
+    void setCtRow(CTRow ctRow) {
+        this.ctRow = ctRow;
+        this.tableCells = null;
+        getTableCells();
     }
 
     /**
