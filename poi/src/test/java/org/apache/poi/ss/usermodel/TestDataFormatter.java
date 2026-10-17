@@ -945,6 +945,19 @@ class TestDataFormatter {
         }
     }
 
+    @Test
+    void testFormatWithLiteralAfterTrailingCommas() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        assertEquals("1234.6\u4e07", dfUS.formatRawCellContents(1234567, -1, "0.0,\"\u4e07\""));
+        assertEquals("1M", dfUS.formatRawCellContents(1234567, -1, "#,##0,,\"M\""));
+        // a quoted comma is literal text, not a trailing comma
+        assertEquals("1,234.6,", dfUS.formatRawCellContents(1234567, -1, "#,##0.0,\",\""));
+        assertEquals("1,234.6K", dfUS.formatRawCellContents(1234567, -1, "#,##0.0,\\K"));
+        assertEquals("-1,235K", dfUS.formatRawCellContents(-1234567, -1, "#,##0,\"K\""));
+        // grouping commas are not trailing commas
+        assertEquals("1,234,567 units", dfUS.formatRawCellContents(1234567, -1, "#,##0\" units\""));
+    }
+
     /**
      * Bug 61638: a '0' placeholder before '#' placeholders, which DecimalFormat does not accept.
      * The expected values were checked with Excel's TEXT function.
