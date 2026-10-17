@@ -135,6 +135,8 @@ public class WorkbookUtil {
         for (int i=0; i<len; i++) {
             char ch = sheetName.charAt(i);
             switch (ch) {
+                case '\u0000':
+                case '\u0003':
                 case '/':
                 case '\\':
                 case '?':
