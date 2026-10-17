@@ -44,7 +44,15 @@ public class XWPFSDTContent implements ISDTContent {
         if (sdtRun == null) {
             return;
         }
-        try (final XmlCursor cursor = sdtRun.newCursor()) {
+        addRuns(sdtRun, part, parent);
+    }
+
+    /**
+     * Add the runs in container, including those inside hyperlinks, simple fields,
+     * smart tags and custom XML runs, as XWPFParagraph does for its own runs.
+     */
+    private void addRuns(XmlObject container, IBody part, IRunBody parent) {
+        try (final XmlCursor cursor = container.newCursor()) {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
@@ -54,6 +62,16 @@ public class XWPFSDTContent implements ISDTContent {
                 } else if (o instanceof CTSdtRun sdt) {
                     XWPFSDT c = new XWPFSDT(sdt, part);
                     bodyElements.add(c);
+                } else if (o instanceof CTHyperlink link) {
+                    for (CTR r : link.getRArray()) {
+                        bodyElements.add(new XWPFHyperlinkRun(link, r, parent));
+                    }
+                } else if (o instanceof CTSimpleField field) {
+                    for (CTR r : field.getRArray()) {
+                        bodyElements.add(new XWPFFieldRun(field, r, parent));
+                    }
+                } else if (o instanceof CTSmartTagRun || o instanceof CTCustomXmlRun) {
+                    addRuns(o, part, parent);
                 }
             }
         }

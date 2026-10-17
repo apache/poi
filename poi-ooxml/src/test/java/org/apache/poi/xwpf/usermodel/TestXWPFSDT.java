@@ -28,12 +28,47 @@ import java.util.List;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
 
 public final class TestXWPFSDT {
 
     /**
      * Test text extraction from nested SDTs
      */
+    /**
+     * Runs inside hyperlinks, simple fields, smart tags and custom XML runs
+     * within an inline SDT are part of its content.
+     */
+    @Test
+    void testInlineSdtWithWrappedRuns() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTP ctp = doc.createParagraph().getCTP();
+            CTSdtContentRun content = ctp.addNewSdt().addNewSdtContent();
+            addRunWithText(content.addNewR(), "run ");
+            addRunWithText(content.addNewHyperlink().addNewR(), "link ");
+            addRunWithText(content.addNewFldSimple().addNewR(), "field ");
+            addRunWithText(content.addNewSmartTag().addNewR(), "tag ");
+            addRunWithText(content.addNewCustomXml().addNewR(), "custom");
+
+            XWPFParagraph p = new XWPFParagraph(ctp, doc);
+            XWPFSDT sdt = assertInstanceOf(XWPFSDT.class, p.getIRuns().get(0));
+            XWPFSDTContent sdtContent = assertInstanceOf(XWPFSDTContent.class, sdt.getContent());
+
+            List<ISDTContents> elements = sdtContent.getBodyElements();
+            assertEquals(5, elements.size());
+            assertInstanceOf(XWPFHyperlinkRun.class, elements.get(1));
+            assertInstanceOf(XWPFFieldRun.class, elements.get(2));
+            assertEquals("run link field tag custom", sdtContent.getText());
+            assertEquals("run link field tag custom", p.getText());
+        }
+    }
+
+    private static void addRunWithText(CTR r, String text) {
+        r.addNewT().setStringValue(text);
+    }
+
     @Test
     void testNestedSDTs() throws Exception {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug64561.docx")) {
