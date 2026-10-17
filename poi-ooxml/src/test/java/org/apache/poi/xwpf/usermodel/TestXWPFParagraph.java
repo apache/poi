@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
@@ -1127,13 +1126,13 @@ public final class TestXWPFParagraph {
     }
 
     private static List<String> runTexts(List<XWPFRun> runs) {
-        return runs.stream().map(XWPFRun::text).collect(Collectors.toList());
+        return runs.stream().map(XWPFRun::text).toList();
     }
 
     private static List<String> sdtRunTexts(XWPFSDT sdt) {
         XWPFSDTContent content = assertInstanceOf(XWPFSDTContent.class, sdt.getContent());
         return content.getBodyElements().stream()
                 .map(e -> assertInstanceOf(XWPFRun.class, e).text())
-                .collect(Collectors.toList());
+                .toList();
     }
 }

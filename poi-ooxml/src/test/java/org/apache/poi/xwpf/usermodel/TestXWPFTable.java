@@ -757,6 +757,24 @@ class TestXWPFTable {
     }
 
     @Test
+    void testCreateRowInTableWithOnlySdtRows() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            CTRow innerRow = table.addNewSdt().addNewSdtContent().addNewTr();
+            innerRow.addNewTc().addNewP();
+            innerRow.addNewTc().addNewP();
+            innerRow.addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            XWPFTableRow created = xtab.createRow();
+
+            assertEquals(3, created.getTableCells().size());
+            assertEquals(2, xtab.getNumberOfRows());
+            assertSame(created, xtab.getRow(1));
+        }
+    }
+
+    @Test
     void testTableWithMultipleSdtRows() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl table = CTTbl.Factory.newInstance();

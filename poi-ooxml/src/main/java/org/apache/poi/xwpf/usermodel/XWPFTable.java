@@ -304,8 +304,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return tableRow
      */
     public XWPFTableRow createRow() {
-        int sizeCol = ctTbl.sizeOfTrArray() > 0 ? ctTbl.getTrArray(0)
-                .sizeOfTcArray() : 0;
+        int sizeCol = tableRows.isEmpty() ? 0 : tableRows.get(0).getCtRow().sizeOfTcArray();
         XWPFTableRow tabRow = new XWPFTableRow(ctTbl.addNewTr(), this);
         addColumn(tabRow, sizeCol);
         tableRows.add(tabRow);
