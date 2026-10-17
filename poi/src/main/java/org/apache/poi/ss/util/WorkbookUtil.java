@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.util;
 
+import java.util.Locale;
+
 /**
  * Helper methods for when working with Usermodel Workbooks
  */
@@ -149,7 +151,11 @@ public class WorkbookUtil {
                     // all other chars OK
                     continue;
             }
-            throw new IllegalArgumentException("Invalid char (" + ch
+            // show control chars such as 0x0000 as a code point, not as an invisible char
+            String shownChar = Character.isISOControl(ch)
+                    ? String.format(Locale.ROOT, "U+%04X", (int) ch)
+                    : String.valueOf(ch);
+            throw new IllegalArgumentException("Invalid char (" + shownChar
                     + ") found at index (" + i + ") in sheet name '" + sheetName + "'");
         }
         if (sheetName.charAt(0) == '\'' || sheetName.charAt(len-1) == '\'') {
