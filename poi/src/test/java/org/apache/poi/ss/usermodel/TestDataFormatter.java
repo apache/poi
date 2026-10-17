@@ -945,6 +945,10 @@ class TestDataFormatter {
         }
     }
 
+    /**
+     * Literal text after trailing scaling commas, which DecimalFormat cannot show.
+     * The expected values were checked with Excel's TEXT function.
+     */
     @Test
     void testFormatWithLiteralAfterTrailingCommas() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
