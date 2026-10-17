@@ -757,6 +757,24 @@ class TestXWPFTable {
     }
 
     @Test
+    void testCreateRowInTableWithOnlySdtRows() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            CTRow innerRow = table.addNewSdt().addNewSdtContent().addNewTr();
+            innerRow.addNewTc().addNewP();
+            innerRow.addNewTc().addNewP();
+            innerRow.addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            XWPFTableRow created = xtab.createRow();
+
+            assertEquals(3, created.getTableCells().size());
+            assertEquals(2, xtab.getNumberOfRows());
+            assertSame(created, xtab.getRow(1));
+        }
+    }
+
+    @Test
     void testTableWithMultipleSdtRows() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl table = CTTbl.Factory.newInstance();
@@ -848,6 +866,58 @@ class TestXWPFTable {
             assertNotNull(xtab.getRow(0));
             assertNotNull(xtab.getRow(1));
             assertEquals(xtab.getRow(1), newTableRow);
+        }
+    }
+
+    @Test
+    void testRemoveLastRowOfSdtRemovesSdt() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            table.addNewTr().addNewTc().addNewP();
+            table.addNewSdt().addNewSdtContent().addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(2, xtab.getNumberOfRows());
+
+            assertTrue(xtab.removeRow(1));
+            assertEquals(1, xtab.getNumberOfRows());
+            assertEquals(1, table.sizeOfTrArray());
+            assertEquals(0, table.sizeOfSdtArray());
+        }
+    }
+
+    @Test
+    void testRemoveLastRowOfNestedSdtRemovesBothSdts() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            table.addNewTr().addNewTc().addNewP();
+            CTSdtContentRow outerContent = table.addNewSdt().addNewSdtContent();
+            outerContent.addNewSdt().addNewSdtContent().addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(2, xtab.getNumberOfRows());
+
+            assertTrue(xtab.removeRow(1));
+            assertEquals(1, xtab.getNumberOfRows());
+            assertEquals(0, table.sizeOfSdtArray());
+        }
+    }
+
+    @Test
+    void testRemoveRowKeepsSdtWithOtherRows() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            CTSdtContentRow content = table.addNewSdt().addNewSdtContent();
+            content.addNewTr().addNewTc().addNewP();
+            content.addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(2, xtab.getNumberOfRows());
+
+            assertTrue(xtab.removeRow(0));
+            assertEquals(1, xtab.getNumberOfRows());
+            assertEquals(1, table.sizeOfSdtArray());
+            assertEquals(1, table.getSdtArray(0).getSdtContent().sizeOfTrArray());
         }
     }
 

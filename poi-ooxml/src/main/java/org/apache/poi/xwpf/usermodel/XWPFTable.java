@@ -169,7 +169,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
         // is an empty table: I add one row and one column as default
         // Check if table has any row-like content (either TR or SDT-wrapped rows)
-        if (initRow && table.sizeOfTrArray() == 0 && !hasSdtRows(table)) {
+        if (initRow && table.sizeOfTrArray() == 0 && table.sizeOfSdtArray() == 0) {
             createEmptyTable(table);
         }
 
@@ -263,27 +263,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
-     * Check if the table contains any SDT-wrapped rows.
-     * This is needed to avoid adding an extra blank row to tables that
-     * already have row-like content, even if it's wrapped in SDT elements.
-     *
-     * @param table the CTTbl to check
-     * @return true if the table contains any SDT row elements
-     */
-    private boolean hasSdtRows(CTTbl table) {
-        try (XmlCursor cursor = table.newCursor()) {
-            cursor.selectPath("./*");
-            while (cursor.toNextSelection()) {
-                XmlObject xmlObject = cursor.getObject();
-                if (xmlObject instanceof CTSdtRow) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * @return ctTbl object
      */
     @Internal
@@ -325,8 +304,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return tableRow
      */
     public XWPFTableRow createRow() {
-        int sizeCol = ctTbl.sizeOfTrArray() > 0 ? ctTbl.getTrArray(0)
-                .sizeOfTcArray() : 0;
+        int sizeCol = tableRows.isEmpty() ? 0 : tableRows.get(0).getCtRow().sizeOfTcArray();
         XWPFTableRow tabRow = new XWPFTableRow(ctTbl.addNewTr(), this);
         addColumn(tabRow, sizeCol);
         tableRows.add(tabRow);
@@ -1332,6 +1310,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                         int idx = trList.indexOf(ctRow);
                         if (idx >= 0) {
                             sdtContent.removeTr(idx);
+                            removeEmptySdtRows(sdtContent);
                         }
                     } else {
                         // Fallback: try removing from the table directly
@@ -1349,6 +1328,35 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Remove the SDT that holds sdtContent once it has no content left,
+     * and likewise any enclosing SDT rows that end up empty.
+     */
+    private static void removeEmptySdtRows(CTSdtContentRow sdtContent) {
+        XmlObject content = sdtContent;
+        while (content instanceof CTSdtContentRow) {
+            XmlObject sdt;
+            XmlObject parent;
+            try (XmlCursor cursor = content.newCursor()) {
+                if (cursor.toFirstChild()) {
+                    return;
+                }
+                if (!cursor.toParent()) {
+                    return;
+                }
+                sdt = cursor.getObject();
+                if (!cursor.toParent()) {
+                    return;
+                }
+                parent = cursor.getObject();
+            }
+            try (XmlCursor cursor = sdt.newCursor()) {
+                cursor.removeXml();
+            }
+            content = parent;
+        }
     }
 
     public List<XWPFTableRow> getRows() {
