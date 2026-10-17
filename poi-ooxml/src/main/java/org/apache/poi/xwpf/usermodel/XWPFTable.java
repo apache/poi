@@ -169,7 +169,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
         // is an empty table: I add one row and one column as default
         // Check if table has any row-like content (either TR or SDT-wrapped rows)
-        if (initRow && table.sizeOfTrArray() == 0 && !hasSdtRows(table)) {
+        if (initRow && table.sizeOfTrArray() == 0 && table.sizeOfSdtArray() == 0) {
             createEmptyTable(table);
         }
 
@@ -260,27 +260,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
          * tblgrid.addNewGridCol().setW(new BigInteger("2000"));
          */
         //getRows();
-    }
-
-    /**
-     * Check if the table contains any SDT-wrapped rows.
-     * This is needed to avoid adding an extra blank row to tables that
-     * already have row-like content, even if it's wrapped in SDT elements.
-     *
-     * @param table the CTTbl to check
-     * @return true if the table contains any SDT row elements
-     */
-    private boolean hasSdtRows(CTTbl table) {
-        try (XmlCursor cursor = table.newCursor()) {
-            cursor.selectPath("./*");
-            while (cursor.toNextSelection()) {
-                XmlObject xmlObject = cursor.getObject();
-                if (xmlObject instanceof CTSdtRow) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**
