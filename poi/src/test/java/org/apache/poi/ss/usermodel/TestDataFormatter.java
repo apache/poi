@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.Format;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1527,7 +1528,7 @@ class TestDataFormatter {
             @Override
             protected Format createFormat(double cellValue, int formatIndex, String sFormat) {
                 if ("[custom]".equals(sFormat)) {
-                    return new DecimalFormat("'custom '0.0");
+                    return new DecimalFormat("'custom '0.0", DecimalFormatSymbols.getInstance(Locale.ROOT));
                 }
                 return super.createFormat(cellValue, formatIndex, sFormat);
             }
@@ -1542,7 +1543,7 @@ class TestDataFormatter {
             @Override
             protected Format getFormat(double cellValue, int formatIndex, String formatStrIn, boolean use1904Windowing) {
                 if ("[units]0".equals(formatStrIn)) {
-                    return new DecimalFormat("0' units'");
+                    return new DecimalFormat("0' units'", DecimalFormatSymbols.getInstance(Locale.ROOT));
                 }
                 return super.getFormat(cellValue, formatIndex, formatStrIn, use1904Windowing);
             }
