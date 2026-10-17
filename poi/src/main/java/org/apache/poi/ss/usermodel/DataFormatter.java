@@ -395,7 +395,24 @@ public class DataFormatter {
         return false;
     }
 
-    private Format getFormat(double cellValue, int formatIndex, String formatStrIn, boolean use1904Windowing) {
+    /**
+     * Returns the Format to use for a value with the given format.
+     * <p>
+     * Formats with several sections or conditions are evaluated with {@link CellFormat} for this value
+     * and are not cached. Other formats are looked up in the cache of formats (see {@link #addFormat}),
+     * and otherwise created with {@link #createFormat(double, int, String)} and cached.
+     * <p>
+     * Subclasses can override this to change the Format used for some format strings.
+     * For date formats, the returned Format is given a {@link java.util.Date} to format.
+     *
+     * @param cellValue the value to format
+     * @param formatIndex the index of the format
+     * @param formatStrIn the format string
+     * @param use1904Windowing whether the 1904 date system is used
+     * @return the Format to use, or null if the value should be shown with {@link String#valueOf(double)}
+     * @since 6.0.0
+     */
+    protected Format getFormat(double cellValue, int formatIndex, String formatStrIn, boolean use1904Windowing) {
         if (formatStrIn == null) {
             throw new IllegalArgumentException("Missing input format for value " + cellValue + " and index " + formatIndex);
         }
@@ -480,7 +497,20 @@ public class DataFormatter {
         return createFormat(cell.getNumericCellValue(), formatIndex, formatStr);
     }
 
-    private Format createFormat(double cellValue, int formatIndex, String sFormat) {
+    /**
+     * Creates a Format for the given format string. The result is not cached by this method,
+     * {@link #getFormat(double, int, String, boolean)} caches it.
+     * <p>
+     * Subclasses can override this to change how some format strings are handled.
+     *
+     * @param cellValue the value to format
+     * @param formatIndex the index of the format
+     * @param sFormat the format string
+     * @return the Format to use, a default Format if the pattern cannot be parsed,
+     *  or null if the value should be shown with {@link String#valueOf(double)}
+     * @since 6.0.0
+     */
+    protected Format createFormat(double cellValue, int formatIndex, String sFormat) {
         checkForLocaleChange();
 
         String formatStr = convertExclamationEscapes(sFormat);
