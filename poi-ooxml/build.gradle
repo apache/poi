@@ -70,11 +70,17 @@ dependencies {
     api 'com.github.virtuald:curvesapi:1.08'
     api 'org.apache.commons:commons-collections4:4.6.0'
 
+    // xmlsec 4's module-info requires jakarta.xml.bind and jakarta.activation, but its pom
+    // declares them with provided scope, so they must be supplied when xmlsec is on the module path
     signingImplementation "org.apache.santuario:xmlsec:${xmlSecVersion}"
+    signingImplementation "jakarta.xml.bind:jakarta.xml.bind-api:${jakartaXmlBindVersion}"
+    signingImplementation "jakarta.activation:jakarta.activation-api:${jakartaActivationVersion}"
     signingImplementation "org.bouncycastle:bcpkix-jdk18on:${bouncyCastleVersion}"
     signingImplementation "org.bouncycastle:bcutil-jdk18on:${bouncyCastleVersion}"
 
     rendersignImplementation "org.apache.santuario:xmlsec:${xmlSecVersion}"
+    rendersignImplementation "jakarta.xml.bind:jakarta.xml.bind-api:${jakartaXmlBindVersion}"
+    rendersignImplementation "jakarta.activation:jakarta.activation-api:${jakartaActivationVersion}"
     rendersignImplementation "org.bouncycastle:bcpkix-jdk18on:${bouncyCastleVersion}"
     rendersignImplementation "org.bouncycastle:bcutil-jdk18on:${bouncyCastleVersion}"
 

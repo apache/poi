@@ -292,7 +292,9 @@ under the License.
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.18" usage="excelant"/>
 
     <!-- xml signature libs - not part of the distribution -->
-    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:3.0.6" usage="ooxml-provided"/>
+    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:4.0.4" usage="ooxml-provided"/>
+    <dependency prefix="dsig.jakarta-xml-bind" artifact="jakarta.xml.bind:jakarta.xml.bind-api:4.0.2" usage="ooxml-provided"/>
+    <dependency prefix="dsig.jakarta-activation" artifact="jakarta.activation:jakarta.activation-api:2.1.3" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk18on:1.86" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk18on:1.86" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk18on:1.86" usage="ooxml-provided"/>
@@ -451,6 +453,8 @@ under the License.
 
     <path id="ooxml.xmlsec.classpath">
         <pathelement location="${dsig.xmlsec.jar}"/>
+        <pathelement location="${dsig.jakarta-xml-bind.jar}"/>
+        <pathelement location="${dsig.jakarta-activation.jar}"/>
         <pathelement location="${dsig.bouncycastle-prov.jar}"/>
         <pathelement location="${dsig.bouncycastle-pkix.jar}"/>
         <pathelement location="${dsig.bouncycastle-util.jar}"/>
@@ -715,6 +719,7 @@ under the License.
                 <include name="fontbox-3.0.5.jar"/>
                 <include name="graphics2d-3.0.3.jar"/>
                 <include name="stax2-api-4.2.1.jar"/>
+                <include name="xmlsec-3.0.6.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-tests">
                 <include name="guava-20.0.jar"/>
@@ -787,6 +792,8 @@ under the License.
                     <available file="${dsig.bouncycastle-pkix.jar}"/>
                     <available file="${dsig.bouncycastle-util.jar}"/>
                     <available file="${dsig.xmlsec.jar}"/>
+                    <available file="${dsig.jakarta-xml-bind.jar}"/>
+                    <available file="${dsig.jakarta-activation.jar}"/>
                     <available file="${main.commons-collections4.jar}"/>
                     <available file="${main.commons-logging.jar}"/>
                     <available file="${main.commons-math3.jar}"/>
@@ -847,6 +854,8 @@ under the License.
         <downloadfile src="${dsig.bouncycastle-pkix.url}" dest="${dsig.bouncycastle-pkix.jar}"/>
         <downloadfile src="${dsig.bouncycastle-util.url}" dest="${dsig.bouncycastle-util.jar}"/>
         <downloadfile src="${dsig.xmlsec.url}" dest="${dsig.xmlsec.jar}"/>
+        <downloadfile src="${dsig.jakarta-xml-bind.url}" dest="${dsig.jakarta-xml-bind.jar}"/>
+        <downloadfile src="${dsig.jakarta-activation.url}" dest="${dsig.jakarta-activation.jar}"/>
     </target>
 
     <target name="check-ooxml-jars">
@@ -1479,7 +1488,7 @@ under the License.
 
         <poiunit failureproperty="ooxml.test.failed" heap="768" modulepath-ref="restest.modules"
             module1="ooxml" module2="scratchpad" module3="org.bouncycastle.pkix" module4="org.slf4j"
-            module5="org.apache.commons.logging"
+            module5="org.apache.santuario.xmlsec,org.apache.commons.logging"
             outputDir="${ooxml.reports.test}">
             <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
                 <include name="**/${testpattern}.class"/>
@@ -1558,6 +1567,7 @@ under the License.
                 <pathelement path="${ooxml.lib}"/>
                 <pathelement path="${ooxml-provided.lib}"/>
                 <pathelement path="${ooxml-tests.lib}"/>
+                <pathelement location="${main.ant.jar}"/>
             </modulepath>
         </javac>
 
@@ -1799,7 +1809,7 @@ under the License.
         <sequential>
             <poiunit failureproperty="ooxml.test.failed" heap="768" jacocodest="build/jacoco-@{type}.exec"
                      modulepath-ref="@{modulepath-ref}" module1="ooxml" module2="scratchpad" module3="org.bouncycastle.pkix"
-                     module4="org.slf4j" module5="org.apache.commons.logging" outputDir="${ooxml.reports.test}">
+                     module4="org.slf4j" module5="org.apache.santuario.xmlsec,org.apache.commons.logging" outputDir="${ooxml.reports.test}">
                 <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
                     <include name="**/${testpattern}.class"/>
                     <exclude name="**/*$*.class"/>
@@ -1859,6 +1869,7 @@ under the License.
             <pathelement path="lib/ooxml"/>
             <pathelement path="lib/ooxml-provided"/>
             <pathelement path="lib/ooxml-tests"/>
+            <pathelement location="${main.ant.jar}"/>
         </path>
 
         <poiunit failureproperty="integration.test.failed" heap="3072" showoutput="true" jacocodest="build/jacoco-integration.exec"
