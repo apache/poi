@@ -1310,6 +1310,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                         int idx = trList.indexOf(ctRow);
                         if (idx >= 0) {
                             sdtContent.removeTr(idx);
+                            removeEmptySdtRows(sdtContent);
                         }
                     } else {
                         // Fallback: try removing from the table directly
@@ -1327,6 +1328,35 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Remove the SDT that holds sdtContent once it has no content left,
+     * and likewise any enclosing SDT rows that end up empty.
+     */
+    private static void removeEmptySdtRows(CTSdtContentRow sdtContent) {
+        XmlObject content = sdtContent;
+        while (content instanceof CTSdtContentRow) {
+            XmlObject sdt;
+            XmlObject parent;
+            try (XmlCursor cursor = content.newCursor()) {
+                if (cursor.toFirstChild()) {
+                    return;
+                }
+                if (!cursor.toParent()) {
+                    return;
+                }
+                sdt = cursor.getObject();
+                if (!cursor.toParent()) {
+                    return;
+                }
+                parent = cursor.getObject();
+            }
+            try (XmlCursor cursor = sdt.newCursor()) {
+                cursor.removeXml();
+            }
+            content = parent;
+        }
     }
 
     public List<XWPFTableRow> getRows() {

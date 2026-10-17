@@ -870,6 +870,58 @@ class TestXWPFTable {
     }
 
     @Test
+    void testRemoveLastRowOfSdtRemovesSdt() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            table.addNewTr().addNewTc().addNewP();
+            table.addNewSdt().addNewSdtContent().addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(2, xtab.getNumberOfRows());
+
+            assertTrue(xtab.removeRow(1));
+            assertEquals(1, xtab.getNumberOfRows());
+            assertEquals(1, table.sizeOfTrArray());
+            assertEquals(0, table.sizeOfSdtArray());
+        }
+    }
+
+    @Test
+    void testRemoveLastRowOfNestedSdtRemovesBothSdts() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            table.addNewTr().addNewTc().addNewP();
+            CTSdtContentRow outerContent = table.addNewSdt().addNewSdtContent();
+            outerContent.addNewSdt().addNewSdtContent().addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(2, xtab.getNumberOfRows());
+
+            assertTrue(xtab.removeRow(1));
+            assertEquals(1, xtab.getNumberOfRows());
+            assertEquals(0, table.sizeOfSdtArray());
+        }
+    }
+
+    @Test
+    void testRemoveRowKeepsSdtWithOtherRows() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            CTSdtContentRow content = table.addNewSdt().addNewSdtContent();
+            content.addNewTr().addNewTc().addNewP();
+            content.addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            assertEquals(2, xtab.getNumberOfRows());
+
+            assertTrue(xtab.removeRow(0));
+            assertEquals(1, xtab.getNumberOfRows());
+            assertEquals(1, table.sizeOfSdtArray());
+            assertEquals(1, table.getSdtArray(0).getSdtContent().sizeOfTrArray());
+        }
+    }
+
+    @Test
     void testRemoveSdtRow() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl table = CTTbl.Factory.newInstance();
