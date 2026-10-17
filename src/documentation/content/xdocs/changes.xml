@@ -85,7 +85,7 @@
             <summary-item>Upgrade pdfbox dependency to 3.0.8</summary-item>
             <summary-item>Upgrade SLF4J to 2.0.20</summary-item>
             <summary-item>Upgrade xmlbeans dependency to 5.4.1</summary-item>
-            <summary-item>Upgrade xmlsec dependency to 3.0.6</summary-item>
+            <summary-item>Upgrade xmlsec dependency to 4.0.4 (when using JPMS, jakarta.xml.bind-api and jakarta.activation-api are also needed on the module path)</summary-item>
             <summary-item>Upgrade Ant to 1.10.18</summary-item>
             <summary-item>Upgrade Gradle to 9.8.1</summary-item>
             <summary-item>Upgrade JUnit to 6.1.3</summary-item>

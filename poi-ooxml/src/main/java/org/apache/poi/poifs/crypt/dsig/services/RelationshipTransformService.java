@@ -54,7 +54,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.SuppressForbidden;
-import org.apache.xml.security.signature.XMLSignatureInput;
+import org.apache.xml.security.signature.XMLSignatureNodeInput;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.CTRelationshipReference;
@@ -229,7 +229,7 @@ public class RelationshipTransformService extends TransformService {
 
         LOG.atDebug().log("# Relationship elements: {}", box(rsList.size()));
 
-        return new ApacheNodeSetData(new XMLSignatureInput(root));
+        return new ApacheNodeSetData(new XMLSignatureNodeInput(root));
     }
 
     public Data transform(Data data, XMLCryptoContext context, OutputStream os) throws TransformException {
