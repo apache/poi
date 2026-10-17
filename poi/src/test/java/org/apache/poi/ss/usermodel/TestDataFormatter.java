@@ -25,6 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1534,5 +1537,35 @@ class TestDataFormatter {
 
         assertThrows(IllegalArgumentException.class, () -> formatter.setBuiltinFormatOverride(164, german40));
         assertThrows(IllegalArgumentException.class, () -> formatter.setBuiltinFormatOverride(-1, german40));
+    }
+
+    @Test
+    void testSubclassCanOverrideCreateFormat() {
+        DataFormatter formatter = new DataFormatter(Locale.US) {
+            @Override
+            protected Format createFormat(double cellValue, int formatIndex, String sFormat) {
+                if ("[custom]".equals(sFormat)) {
+                    return new DecimalFormat("'custom '0.0", DecimalFormatSymbols.getInstance(Locale.ROOT));
+                }
+                return super.createFormat(cellValue, formatIndex, sFormat);
+            }
+        };
+        assertEquals("custom 1.5", formatter.formatRawCellContents(1.5, 200, "[custom]"));
+        assertEquals("1.50", formatter.formatRawCellContents(1.5, 201, "0.00"));
+    }
+
+    @Test
+    void testSubclassCanOverrideGetFormat() {
+        DataFormatter formatter = new DataFormatter(Locale.US) {
+            @Override
+            protected Format getFormat(double cellValue, int formatIndex, String formatStrIn, boolean use1904Windowing) {
+                if ("[units]0".equals(formatStrIn)) {
+                    return new DecimalFormat("0' units'", DecimalFormatSymbols.getInstance(Locale.ROOT));
+                }
+                return super.getFormat(cellValue, formatIndex, formatStrIn, use1904Windowing);
+            }
+        };
+        assertEquals("2 units", formatter.formatRawCellContents(1.5, 200, "[units]0"));
+        assertEquals("1.50", formatter.formatRawCellContents(1.5, 201, "0.00"));
     }
 }
