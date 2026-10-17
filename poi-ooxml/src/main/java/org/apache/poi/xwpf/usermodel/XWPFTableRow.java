@@ -28,6 +28,7 @@ import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTCustomXmlCell;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHeight;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
@@ -194,7 +195,13 @@ public class XWPFTableRow {
         List<ICell> cells = new ArrayList<>();
         //Can't use ctRow.getTcList because that only gets table cells
         //Can't use ctRow.getSdtList because that only gets sdts that are at cell level
-        try (XmlCursor cursor = ctRow.newCursor()) {
+        addTableICells(ctRow, cells);
+        return cells;
+    }
+
+    // cells wrapped in custom XML cells (w:customXml) count as cells of this row
+    private void addTableICells(XmlObject container, List<ICell> cells) {
+        try (XmlCursor cursor = container.newCursor()) {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
@@ -202,10 +209,11 @@ public class XWPFTableRow {
                     cells.add(new XWPFTableCell((CTTc) o, this, table.getBody()));
                 } else if (o instanceof CTSdtCell) {
                     cells.add(new XWPFSDTCell((CTSdtCell) o, this, table.getBody()));
+                } else if (o instanceof CTCustomXmlCell) {
+                    addTableICells(o, cells);
                 }
             }
         }
-        return cells;
     }
 
     /**
