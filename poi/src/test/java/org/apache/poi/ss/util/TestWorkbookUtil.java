@@ -91,9 +91,18 @@ final class TestWorkbookUtil {
 
     @Test
     void testValidateSheetNameRejectsControlCharacters() {
-        assertThrows(IllegalArgumentException.class,
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
                 () -> WorkbookUtil.validateSheetName("before\u0000after"));
-        assertThrows(IllegalArgumentException.class,
+        assertEquals("Invalid char (U+0000) found at index (6) in sheet name 'before\u0000after'", e.getMessage());
+        e = assertThrows(IllegalArgumentException.class,
                 () -> WorkbookUtil.validateSheetName("before\u0003after"));
+        assertEquals("Invalid char (U+0003) found at index (6) in sheet name 'before\u0003after'", e.getMessage());
+    }
+
+    @Test
+    void testValidateSheetNameMessageShowsPrintableChar() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> WorkbookUtil.validateSheetName("a:b"));
+        assertEquals("Invalid char (:) found at index (1) in sheet name 'a:b'", e.getMessage());
     }
 }
