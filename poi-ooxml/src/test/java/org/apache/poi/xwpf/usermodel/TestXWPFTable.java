@@ -835,6 +835,52 @@ class TestXWPFTable {
     }
 
     @Test
+    void testGetTableCellInSdtRowFromDocument() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug66263-table.docx")) {
+            XWPFTableCell cell = doc.getTables().get(0).getRow(0).getCell(1);
+            assertSame(cell, doc.getTableCell(cell.getCTTc()));
+        }
+    }
+
+    @Test
+    void testGetTableCellInSdtRowOfNestedTable() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl outer = CTTbl.Factory.newInstance();
+            CTTc outerTc = outer.addNewTr().addNewTc();
+            CTTbl nested = outerTc.addNewTbl();
+            CTSdtContentRow content = nested.addNewSdt().addNewSdtContent().addNewSdt().addNewSdtContent();
+            content.addNewTr().addNewTc().addNewP();
+            outerTc.addNewP();
+
+            XWPFTableCell outerCell = new XWPFTable(outer, doc).getRow(0).getCell(0);
+            XWPFTableCell nestedCell = outerCell.getTables().get(0).getRow(0).getCell(0);
+            assertSame(nestedCell, outerCell.getTableCell(nestedCell.getCTTc()));
+        }
+    }
+
+    @Test
+    void testInsertRowsBeforeSdtRowAndTopLevelRow() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTTbl table = CTTbl.Factory.newInstance();
+            table.addNewTr().addNewTc().addNewP();
+            table.addNewSdt().addNewSdtContent().addNewTr().addNewTc().addNewP();
+
+            XWPFTable xtab = new XWPFTable(table, doc);
+            XWPFTableRow beforeSdtRow = xtab.insertNewTableRow(1);
+            XWPFTableRow beforeFirstRow = xtab.insertNewTableRow(0);
+
+            assertEquals(4, xtab.getNumberOfRows());
+            assertSame(beforeFirstRow, xtab.getRow(0));
+            assertSame(beforeSdtRow, xtab.getRow(2));
+            // the row inserted before the SDT row goes inside the SDT
+            assertEquals(2, table.sizeOfTrArray());
+            assertSame(table.getTrArray(0), beforeFirstRow.getCtRow());
+            assertEquals(2, table.getSdtArray(0).getSdtContent().sizeOfTrArray());
+            assertSame(table.getSdtArray(0).getSdtContent().getTrArray(0), beforeSdtRow.getCtRow());
+        }
+    }
+
+    @Test
     void testAddRowToSdtTable() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl table = CTTbl.Factory.newInstance();

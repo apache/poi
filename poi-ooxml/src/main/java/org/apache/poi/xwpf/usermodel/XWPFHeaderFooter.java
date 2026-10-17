@@ -570,10 +570,9 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
                 return null;
             }
             row = ctRow;
-            cursor.toParent();
-            o = cursor.getObject();
         }
-        if (!(o instanceof CTTbl tbl)) {
+        CTTbl tbl = XWPFTable.getParentTable(row);
+        if (tbl == null) {
             return null;
         }
         XWPFTable table = getTable(tbl);
