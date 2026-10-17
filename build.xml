@@ -1488,7 +1488,7 @@ under the License.
 
         <poiunit failureproperty="ooxml.test.failed" heap="768" modulepath-ref="restest.modules"
             module1="ooxml" module2="scratchpad" module3="org.bouncycastle.pkix" module4="org.slf4j"
-            module5="org.apache.commons.logging"
+            module5="org.apache.santuario.xmlsec,org.apache.commons.logging"
             outputDir="${ooxml.reports.test}">
             <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
                 <include name="**/${testpattern}.class"/>
@@ -1808,7 +1808,7 @@ under the License.
         <sequential>
             <poiunit failureproperty="ooxml.test.failed" heap="768" jacocodest="build/jacoco-@{type}.exec"
                      modulepath-ref="@{modulepath-ref}" module1="ooxml" module2="scratchpad" module3="org.bouncycastle.pkix"
-                     module4="org.slf4j" module5="org.apache.commons.logging" outputDir="${ooxml.reports.test}">
+                     module4="org.slf4j" module5="org.apache.santuario.xmlsec,org.apache.commons.logging" outputDir="${ooxml.reports.test}">
                 <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
                     <include name="**/${testpattern}.class"/>
                     <exclude name="**/*$*.class"/>
