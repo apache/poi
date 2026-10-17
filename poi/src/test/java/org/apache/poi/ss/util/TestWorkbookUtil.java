@@ -18,6 +18,7 @@
 package org.apache.poi.ss.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -86,5 +87,13 @@ final class TestWorkbookUtil {
 
         actual = WorkbookUtil.createSafeSheetName("sheet:a4");
         assertEquals("sheet a4", actual);
+    }
+
+    @Test
+    void testValidateSheetNameRejectsControlCharacters() {
+        assertThrows(IllegalArgumentException.class,
+                () -> WorkbookUtil.validateSheetName("before\u0000after"));
+        assertThrows(IllegalArgumentException.class,
+                () -> WorkbookUtil.validateSheetName("before\u0003after"));
     }
 }
