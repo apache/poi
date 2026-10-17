@@ -21,6 +21,7 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.Format;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -261,6 +263,20 @@ class TestDataFormatter {
         String format = "[>=10]#,##0;[<10]0.0";
         assertEquals("17,876", dfUS.formatRawCellContents(17876.000, -1, format), "Wrong format for " + format);
         assertEquals("9.7", dfUS.formatRawCellContents(9.71, -1, format), "Wrong format for " + format);
+
+        assertEquals("[1.2]", dfUS.formatRawCellContents(1.23, -1, "[<1.5]\"[\"0.0\"]\""));
+        assertEquals("[0.6]", dfUS.formatRawCellContents(0.55, -1, "[>=.5]\"[\"0.0\"]\""));
+    }
+
+    @Test
+    void testConditionalRangeWithLongNumber() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // an unterminated condition with many digits used to backtrack polynomially in rangeConditionalPattern
+        String format = "[<" + "1".repeat(50_000);
+        String result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> dfUS.formatRawCellContents(1.5, -1, format));
+        assertEquals("1.5", result);
     }
 
     /**
