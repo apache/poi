@@ -579,11 +579,12 @@ public class DataFormatter {
         }
 
         // DecimalFormat cannot show literal text between digit placeholders, e.g. the
-        // escaped dot in "0\\.0," which displays 12345 as "1.2", so let CellFormat handle it
+        // escaped dot in "0\\.0," which displays 12345 as "1.2", or after trailing scaling
+        // commas, e.g. "#,##0,,\"M\"", so let CellFormat handle it
         // Excel shows a '0' placeholder before '#' or '?' placeholders only in its own position,
         // e.g. "60#########" shows 12345678 as "6012345678", but DecimalFormat does not accept
         // the pattern, so let CellFormat handle it
-        if (hasLiteralBetweenDigits(formatStr) || hasZeroBeforeOptionalDigit(formatStr)) {
+        if (hasLiteralDecimalFormatCannotShow(formatStr) || hasZeroBeforeOptionalDigit(formatStr)) {
             try {
                 CellFormat cellFormat = CellFormat.getInstance(locale, formatStr.replace("'%'", "\\%"));
                 // a format CellFormat cannot make sense of, e.g. "#''0#0'1#10L16EE", fails here, not when formatting
@@ -942,17 +943,22 @@ public class DataFormatter {
 
     /**
      * Whether any section of the number format has quoted or escaped text with a digit
-     * placeholder both before and after it, e.g. {@code 0\.0} or {@code 0"-"00}.
+     * placeholder both before and after it, e.g. {@code 0\.0} or {@code 0"-"00}, or
+     * after trailing scaling commas, e.g. {@code 0.0,"K"} or {@code #,##0.0,","}.
      */
-    private static boolean hasLiteralBetweenDigits(String formatStr) {
+    private static boolean hasLiteralDecimalFormatCannotShow(String formatStr) {
         boolean seenDigit = false;
         boolean literalAfterDigit = false;
+        boolean commaAfterDigit = false;
         for (int i = 0; i < formatStr.length(); i++) {
             char c = formatStr.charAt(i);
             switch (c) {
                 case '"' -> {
                     int end = formatStr.indexOf('"', i + 1);
                     i = end < 0 ? formatStr.length() : end;
+                    if (commaAfterDigit) {
+                        return true;
+                    }
                     literalAfterDigit |= seenDigit;
                 }
                 case '[' -> {
@@ -961,18 +967,25 @@ public class DataFormatter {
                 }
                 case '\\' -> {
                     i++;
+                    if (commaAfterDigit) {
+                        return true;
+                    }
                     literalAfterDigit |= seenDigit;
                 }
+                case ',' -> commaAfterDigit |= seenDigit;
                 case '_', '*' -> i++;
                 case ';' -> {
                     seenDigit = false;
                     literalAfterDigit = false;
+                    commaAfterDigit = false;
                 }
                 case '0', '#', '?' -> {
                     if (literalAfterDigit) {
                         return true;
                     }
                     seenDigit = true;
+                    // a comma followed by a digit placeholder is a grouping separator, not a scaler
+                    commaAfterDigit = false;
                 }
                 default -> {
                     // other characters don't affect the result
