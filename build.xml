@@ -788,6 +788,7 @@ under the License.
                     <available file="${dsig.bouncycastle-util.jar}"/>
                     <available file="${dsig.xmlsec.jar}"/>
                     <available file="${main.commons-collections4.jar}"/>
+                    <available file="${main.commons-logging.jar}"/>
                     <available file="${main.commons-math3.jar}"/>
                     <available file="${main.commons-io.jar}"/>
                     <available file="${main.com.zaxxer.jar}"/>
@@ -1332,6 +1333,7 @@ under the License.
         <attribute name="module2" default=""/>
         <attribute name="module3" default=""/>
         <attribute name="module4" default=""/>
+        <attribute name="module5" default=""/>
         <attribute name="outputDir"/>
         <element name="elements" implicit="true"/>
         <sequential>
@@ -1387,6 +1389,7 @@ under the License.
             <local name="use_module2"/>
             <local name="use_module3"/>
             <local name="use_module4"/>
+            <local name="use_module5"/>
             <condition property="use_module1" value="true">
                 <length string="@{module1}" when="greater" length="0"/>
             </condition>
@@ -1398,6 +1401,9 @@ under the License.
             </condition>
             <condition property="use_module4" value="true">
                 <length string="@{module4}" when="greater" length="0"/>
+            </condition>
+            <condition property="use_module5" value="true">
+                <length string="@{module5}" when="greater" length="0"/>
             </condition>
 
             <!-- As of 2018, JaCoCo is managing expectations and stay on Java 5 and therefore don't support junitlauncher -->
@@ -1445,6 +1451,7 @@ under the License.
                         <jvmarg line="--add-modules org.apache.poi.@{module2}" if:set="use_module2"/>
                         <jvmarg line="--add-modules @{module3}" if:set="use_module3"/>
                         <jvmarg line="--add-modules @{module4}" if:set="use_module4"/>
+                        <jvmarg line="--add-modules @{module5}" if:set="use_module5"/>
                     </fork>
 
                     <listener classname="Junit5Progress" />
@@ -1472,6 +1479,7 @@ under the License.
 
         <poiunit failureproperty="ooxml.test.failed" heap="768" modulepath-ref="restest.modules"
             module1="ooxml" module2="scratchpad" module3="org.bouncycastle.pkix" module4="org.slf4j"
+            module5="org.apache.commons.logging"
             outputDir="${ooxml.reports.test}">
             <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
                 <include name="**/${testpattern}.class"/>
@@ -1791,7 +1799,7 @@ under the License.
         <sequential>
             <poiunit failureproperty="ooxml.test.failed" heap="768" jacocodest="build/jacoco-@{type}.exec"
                      modulepath-ref="@{modulepath-ref}" module1="ooxml" module2="scratchpad" module3="org.bouncycastle.pkix"
-                     module4="org.slf4j" outputDir="${ooxml.reports.test}">
+                     module4="org.slf4j" module5="org.apache.commons.logging" outputDir="${ooxml.reports.test}">
                 <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
                     <include name="**/${testpattern}.class"/>
                     <exclude name="**/*$*.class"/>
