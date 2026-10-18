@@ -118,11 +118,16 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
                 }
             }
 
-            if (realINum != 1 && realINum != -1) {
+            if (realINum == -1) {
+                strb.append("-");
+            } else if (realINum != 1) {
                 strb.append(NumberToTextConverter.toText(realINum));
             }
 
             strb.append(suffixValue);
+        }
+        if (strb.length() == 0) {
+            strb.append("0");
         }
 
         return new StringEval(strb.toString());
