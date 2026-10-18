@@ -73,8 +73,10 @@ public class DateUtil {
     private static final Pattern date_ptrn3a = Pattern.compile("[yYmMdDhHsS]");
     // add "年 月 日" for Chinese/Japanese date format:2017 年 2 月 7 日
     // and "时 分 秒" (Chinese) or "時 分 秒" (Japanese) for hours, minutes and seconds
+    // The first part is possessive: it shares ' ', 'm', 'M' and '/' with the rest, and giving them back
+    // one at a time was quadratic. It never needs to, as the rest can then match without them too.
     private static final Pattern date_ptrn3b = Pattern.compile(
-            "^[\\[\\]yYmMdDhHsS\\-T/年月日时時分秒,. :\"\\\\]+0* ?[ampAMP/]*$");
+            "^[\\[\\]yYmMdDhHsS\\-T/年月日时時分秒,. :\"\\\\]++0* ?[ampAMP/]*$");
     //  elapsed time patterns: [h],[m] and [s]
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)]");
     private static final Pattern date_ptrn4b = Pattern.compile("\\[([hH]+|[mM]+|[sS]+)]");

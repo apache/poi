@@ -19,11 +19,13 @@ package org.apache.poi.ss.tests.extractor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -42,6 +44,19 @@ import org.junit.jupiter.api.Test;
 
 class TestEmbeddedExtractor {
     private static final POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
+
+    @Test
+    void filenameWithoutPath() {
+        assertEquals("a.pdf", new EmbeddedData("C:\\docs/x\\ a.pdf ", null, null).getFilename());
+        assertEquals("", new EmbeddedData("dir/", null, null).getFilename());
+        assertEquals("unknown.bin", new EmbeddedData(null, null, null).getFilename());
+
+        // a long name without a separator used to be retried from every character, which was quadratic
+        String name = "a".repeat(50_000) + ".pdf";
+        EmbeddedData ed = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> new EmbeddedData(name, null, null));
+        assertEquals(name, ed.getFilename());
+    }
 
     @Test
     void extractPDFfromEMF() throws Exception {
