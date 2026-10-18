@@ -279,6 +279,60 @@ class TestDataFormatter {
         assertEquals("1.5", result);
     }
 
+    @Test
+    void testManyColours() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // each colour used to be removed by searching again from the start of the format, which was quadratic
+        String format = "#".repeat(25_000) + "[Red]".repeat(5_000);
+        String result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> dfUS.formatRawCellContents(1.5, -1, format));
+        assertEquals("2", result);
+
+        // removing a colour can make another one
+        assertEquals("2", dfUS.formatRawCellContents(1.5, -1, "[Re[Blue]d]0"));
+    }
+
+    @Test
+    void testLocaleWithoutEnd() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // a "[$" with no '-' or ']' after it used to be retried from every "[$", which was quadratic
+        String format = "0" + "[$".repeat(25_000);
+        String result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> dfUS.formatRawCellContents(1.5, -1, format));
+        assertEquals("2" + "[$".repeat(25_000), result);
+    }
+
+    @Test
+    void testManyCommasNotAtEnd() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // a long run of commas that is not at the end used to be tried from every comma, which was quadratic
+        String commas = ",".repeat(50_000);
+        String format = "0\"x" + commas + "y\"";
+        String result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> dfUS.formatRawCellContents(1.5, -1, format));
+        assertEquals("2x" + commas + "y", result);
+
+        // scaling commas straight after the digits
+        String scaling = "0" + ",".repeat(50_000) + "x";
+        result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> dfUS.formatRawCellContents(1.5, -1, scaling));
+        assertEquals("1.5", result);
+    }
+
+    @Test
+    void testLongDateLikeFormat() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // '/' is allowed both in the date part and in the AM/PM part, which used to backtrack quadratically
+        String format = "y" + "/".repeat(50_000) + "x";
+        String result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> dfUS.formatRawCellContents(1.5, -1, format));
+        assertEquals("1.5", result);
+    }
+
     /**
      * Test how we handle negative and zeros.
      * Note - some tests are disabled as DecimalFormat

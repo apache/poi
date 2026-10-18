@@ -27,8 +27,10 @@ import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -138,12 +140,6 @@ public class DataFormatter {
 
     /** Pattern to find formats with condition ranges e.g. [>=100] */
     private static final Pattern rangeConditionalPattern = Pattern.compile("\\[\\s*(<>|<=|>=|<|>|=)\\s*-?(?:[0-9]*\\.)?[0-9]+\\s*]");
-
-    /**
-     * A regex to find locale patterns like [$$-1009] and [$?-452], or a currency string without a locale like [$USD].
-     * Note that we don't currently process these into locales
-     */
-    private static final Pattern localePatternGroup = Pattern.compile("(\\[\\$[^-\\]]*(?:-[0-9A-Za-z]+)?])");
 
     /**
      * A regex to match the colour formatting's rules.
@@ -519,21 +515,7 @@ public class DataFormatter {
 
         // Remove colour formatting if present
         if (formatStr != null) {
-            Matcher colourM = colorPattern.matcher(formatStr);
-            while (colourM.find()) {
-                String colour = colourM.group();
-
-                // Paranoid replacement...
-                int at = formatStr.indexOf(colour);
-                if (at == -1) break;
-                String nFormatStr = formatStr.substring(0, at) +
-                        formatStr.substring(at + colour.length());
-                if (nFormatStr.equals(formatStr)) break;
-
-                // Try again in case there's multiple
-                formatStr = nFormatStr;
-                colourM = colorPattern.matcher(formatStr);
-            }
+            formatStr = removeColours(formatStr);
         }
 
         // Strip off the numeral style: Arabic digits are shown instead of Chinese/Japanese numerals
@@ -544,22 +526,7 @@ public class DataFormatter {
         // Strip off the locale information, we use an instance-wide locale for everything.
         // The locale is optional, e.g. "[$USD]" is just the currency string
         if (formatStr != null) {
-            Matcher m = localePatternGroup.matcher(formatStr);
-            StringBuilder sb = new StringBuilder(formatStr.length());
-            while (m.find()) {
-                String match = m.group();
-                int dash = match.indexOf('-');
-                String symbol = match.substring(2, dash < 0 ? match.length() - 1 : dash);
-                // escaped, so that letters and dots in it, e.g. "EUR" or "Bs.", are not taken as part of the pattern
-                // (quoted text is not used, as date letters in it still make it count as a date format)
-                StringBuilder escaped = new StringBuilder(symbol.length() * 2);
-                for (int i = 0; i < symbol.length(); i++) {
-                    escaped.append('\\').append(symbol.charAt(i));
-                }
-                m.appendReplacement(sb, Matcher.quoteReplacement(escaped.toString()));
-            }
-            m.appendTail(sb);
-            formatStr = sb.toString();
+            formatStr = replaceLocalePatterns(formatStr);
         }
 
         // Check for special cases
@@ -636,6 +603,92 @@ public class DataFormatter {
         }
         // TODO - when does this occur?
         return null;
+    }
+
+    /**
+     * Removes the colours, e.g. [Red] or [Color 10]. Removing one can make another, e.g. "[Re[Red]d]",
+     * and that is removed too.
+     * A colour has no brackets inside it, so one can only end at a ']' and start at the last '[' before it.
+     * This is a single pass: finding the first colour and searching again from the start after removing it
+     * was quadratic.
+     */
+    private static String removeColours(String formatStr) {
+        StringBuilder sb = new StringBuilder(formatStr.length());
+        // the positions in sb of the '[' after the last ']' that was kept
+        Deque<Integer> opens = new ArrayDeque<>();
+        Matcher m = colorPattern.matcher(sb);
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            sb.append(c);
+            if (c == '[') {
+                opens.push(sb.length() - 1);
+            } else if (c == ']') {
+                if (!opens.isEmpty()) {
+                    int start = opens.peek();
+                    m.reset(sb).region(start, sb.length());
+                    if (m.matches()) {
+                        sb.setLength(start);
+                        opens.pop();
+                        continue;
+                    }
+                }
+                // no colour can include this ']' or anything before it
+                opens.clear();
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Replaces the locale patterns like [$$-1009] and [$?-452], or a currency string without a locale like [$USD],
+     * with the escaped currency string. Note that we don't currently process these into locales.
+     * <p>
+     * This finds the same matches as the regex {@code \[\$[^-\]]*(?:-[0-9A-Za-z]+)?]}, but does not try again
+     * from every "[$" before a failed match, which was quadratic.
+     */
+    private static String replaceLocalePatterns(String formatStr) {
+        final int length = formatStr.length();
+        StringBuilder sb = new StringBuilder(length);
+        int copied = 0;
+        int start = formatStr.indexOf("[$");
+        while (start >= 0) {
+            // the currency string runs to the first '-' or ']'
+            int end = start + 2;
+            while (end < length && formatStr.charAt(end) != '-' && formatStr.charAt(end) != ']') {
+                end++;
+            }
+            if (end == length) {
+                // no later "[$" can match either
+                break;
+            }
+            int dash = -1;
+            if (formatStr.charAt(end) == '-') {
+                // the locale must be letters and digits, then the ']'
+                dash = end++;
+                while (end < length && isAsciiLetterOrDigit(formatStr.charAt(end))) {
+                    end++;
+                }
+                if (end == dash + 1 || end == length || formatStr.charAt(end) != ']') {
+                    // a "[$" before the '-' would stop at the same '-' and fail the same way
+                    start = formatStr.indexOf("[$", dash + 1);
+                    continue;
+                }
+            }
+            sb.append(formatStr, copied, start);
+            // escaped, so that letters and dots in it, e.g. "EUR" or "Bs.", are not taken as part of the pattern
+            // (quoted text is not used, as date letters in it still make it count as a date format)
+            for (int i = start + 2; i < (dash < 0 ? end : dash); i++) {
+                sb.append('\\').append(formatStr.charAt(i));
+            }
+            copied = end + 1;
+            start = formatStr.indexOf("[$", copied);
+        }
+        sb.append(formatStr, copied, length);
+        return sb.toString();
+    }
+
+    private static boolean isAsciiLetterOrDigit(char c) {
+        return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
     }
 
     String adjustTo4DigitYearsIfConfigured(String format) {
@@ -1195,7 +1248,9 @@ public class DataFormatter {
 
     private static class InternalDecimalFormatWithScale extends Format {
 
-        private static final Pattern endsWithCommas = Pattern.compile("(,+)$");
+        // the lookbehind and the possessive quantifier stop find() from trying every comma in a run
+        // that is not at the end, which was quadratic
+        private static final Pattern endsWithCommas = Pattern.compile("(?<!,)(,++)$");
         private final BigDecimal divider;
         private static final BigDecimal ONE_THOUSAND = BigDecimal.valueOf(1000);
         private final DecimalFormat df;
@@ -1480,12 +1535,12 @@ public class DataFormatter {
         while (end < section.length() && "0#?,".indexOf(section.charAt(end)) >= 0) {
             end++;
         }
-        String integerPart = section.substring(start, end);
-        int scalingCommas = 0;
-        while (integerPart.endsWith(",")) {
-            integerPart = integerPart.substring(0, integerPart.length() - 1);
-            scalingCommas++;
+        int digitsEnd = end;
+        while (section.charAt(digitsEnd - 1) == ',') {
+            digitsEnd--;
         }
+        String integerPart = section.substring(start, digitsEnd);
+        int scalingCommas = end - digitsEnd;
         String suffix = section.substring(end);
         boolean beforeDecimalPoint = suffix.startsWith(".");
         if (!beforeDecimalPoint && suffix.indexOf(',') >= 0) {
