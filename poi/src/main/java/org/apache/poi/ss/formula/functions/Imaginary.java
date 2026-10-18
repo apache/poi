@@ -20,7 +20,6 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -66,12 +65,11 @@ public class Imaginary extends Fixed1ArgFunction implements FreeRefFunction {
         }
         String iNumber = OperandResolver.coerceValueToString(veText1);
 
-        Matcher m = COMPLEX_NUMBER_PATTERN.matcher(iNumber);
-        boolean result = m.matches();
+        String[] groups = parseComplexNumber(iNumber);
 
         String imaginary = "";
-        if (result) {
-            String imaginaryGroup = m.group(5);
+        if (groups != null) {
+            String imaginaryGroup = groups[5];
             boolean hasImaginaryPart = imaginaryGroup.equals("i") || imaginaryGroup.equals("j");
 
             if (imaginaryGroup.isEmpty()) {
@@ -80,12 +78,12 @@ public class Imaginary extends Fixed1ArgFunction implements FreeRefFunction {
 
             if (hasImaginaryPart) {
                 String sign = "";
-                String imaginarySign = m.group(GROUP3_IMAGINARY_SIGN);
+                String imaginarySign = groups[GROUP3_IMAGINARY_SIGN];
                 if (imaginarySign.length() != 0 && !(imaginarySign.equals("+"))) {
                     sign = imaginarySign;
                 }
 
-                String groupImaginaryNumber = m.group(GROUP4_IMAGINARY_INTEGER_OR_DOUBLE);
+                String groupImaginaryNumber = groups[GROUP4_IMAGINARY_INTEGER_OR_DOUBLE];
                 if (groupImaginaryNumber.length() != 0) {
                     imaginary = sign + groupImaginaryNumber;
                 } else {
@@ -97,6 +95,101 @@ public class Imaginary extends Fixed1ArgFunction implements FreeRefFunction {
         }
 
         return new StringEval(imaginary);
+    }
+
+    /**
+     * Gives the same result as matching {@link #COMPLEX_NUMBER_PATTERN}, without the regular expression:
+     * its groups can split a run of digits in many ways, so matching text that is not a complex number
+     * took polynomial time. This tries the same splits in the same order as the regular expression
+     * backtracking does, but checks each one in constant time.
+     *
+     * @return the groups that {@link java.util.regex.Matcher#group(int)} would return, indexed by group number
+     *  (index 0 is the whole text), or {@code null} if the text does not match the pattern
+     */
+    static String[] parseComplexNumber(String text) {
+        int n = text.length();
+        // digitsEnd[i] is the end of the run of digits that starts at i
+        int[] digitsEnd = new int[n + 1];
+        digitsEnd[n] = n;
+        for (int i = n - 1; i >= 0; i--) {
+            digitsEnd[i] = isDigit(text.charAt(i)) ? digitsEnd[i + 1] : i;
+        }
+        // group 1: [+-]? tries the sign first
+        boolean hasRealSign = n > 0 && isSign(text.charAt(0));
+        for (int realStart = hasRealSign ? 1 : 0; realStart >= 0; realStart--) {
+            // group 2: [0-9]+\.[0-9]+ with fewer and fewer digits after the '.', then [0-9]* with fewer and fewer digits
+            int pointEnd = decimalPointEnd(text, realStart, digitsEnd);
+            if (pointEnd >= 0) {
+                for (int realEnd = digitsEnd[pointEnd]; realEnd > pointEnd; realEnd--) {
+                    String[] groups = parseImaginaryPart(text, realStart, realEnd, digitsEnd);
+                    if (groups != null) {
+                        return groups;
+                    }
+                }
+            }
+            for (int realEnd = digitsEnd[realStart]; realEnd >= realStart; realEnd--) {
+                String[] groups = parseImaginaryPart(text, realStart, realEnd, digitsEnd);
+                if (groups != null) {
+                    return groups;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** groups 3 to 5, for groups 1 and 2 ending at {@code realStart} and {@code realEnd} */
+    private static String[] parseImaginaryPart(String text, int realStart, int realEnd, int[] digitsEnd) {
+        int n = text.length();
+        // group 3: [+-]? tries the sign first
+        boolean hasImaginarySign = realEnd < n && isSign(text.charAt(realEnd));
+        for (int imaginaryStart = hasImaginarySign ? realEnd + 1 : realEnd; imaginaryStart >= realEnd; imaginaryStart--) {
+            // group 4 is followed by [ij]? and the end of the text, and neither starts with a digit,
+            // so of all the ways group 4 can match, only the longest one of each alternative can succeed
+            int imaginaryEnd = -1;
+            int pointEnd = decimalPointEnd(text, imaginaryStart, digitsEnd);
+            if (pointEnd >= 0 && isImaginaryUnitAndEnd(text, digitsEnd[pointEnd])) {
+                imaginaryEnd = digitsEnd[pointEnd];
+            } else if (isImaginaryUnitAndEnd(text, digitsEnd[imaginaryStart])) {
+                imaginaryEnd = digitsEnd[imaginaryStart];
+            }
+            if (imaginaryEnd >= 0) {
+                return new String[] {
+                        text,
+                        text.substring(0, realStart),
+                        text.substring(realStart, realEnd),
+                        text.substring(realEnd, imaginaryStart),
+                        text.substring(imaginaryStart, imaginaryEnd),
+                        text.substring(imaginaryEnd)
+                };
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return the index after the '.' if {@code [0-9]+\.[0-9]} matches at {@code start}, otherwise -1
+     */
+    private static int decimalPointEnd(String text, int start, int[] digitsEnd) {
+        int pointIndex = digitsEnd[start];
+        if (pointIndex > start && pointIndex + 1 < text.length() && text.charAt(pointIndex) == '.'
+                && isDigit(text.charAt(pointIndex + 1))) {
+            return pointIndex + 1;
+        }
+        return -1;
+    }
+
+    /** whether {@code ([ij]?)} followed by the end of the text matches at {@code index} */
+    private static boolean isImaginaryUnitAndEnd(String text, int index) {
+        int n = text.length();
+        return index == n || (index == n - 1 && (text.charAt(index) == 'i' || text.charAt(index) == 'j'));
+    }
+
+    private static boolean isDigit(char ch) {
+        return ch >= '0' && ch <= '9';
+    }
+
+    private static boolean isSign(char ch) {
+        return ch == '+' || ch == '-';
     }
 
     @Override

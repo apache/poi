@@ -21,8 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -139,6 +141,18 @@ final class TestOperandResolver {
         assertNull(OperandResolver.parseDouble("1.5E999"));
         // the largest finite double is still fine
         assertEquals(Double.MAX_VALUE, OperandResolver.parseDouble("1.7976931348623157E308"), 0);
+    }
+
+    @Test
+    void testParseDoubleLongNonNumericText() {
+        // the number regular expression used to backtrack over the ways to split the digits,
+        // which took minutes for this text
+        String digits = "1".repeat(20000);
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            assertNull(OperandResolver.parseDouble(digits + "x"));
+            assertNull(OperandResolver.parseDouble(digits + "." + digits + "e"));
+            assertEquals(1.25, OperandResolver.parseDouble(" 1.25" + "0".repeat(20000) + " "), 0);
+        });
     }
 
     @Test

@@ -19,8 +19,11 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import java.time.Duration;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
@@ -235,6 +238,20 @@ final class TestMatch {
         confirmInt(12, invokeMatch(BoolEval.TRUE, ae, MATCH_LARGEST_LTE));
     }
 
+
+    @Test
+    void testWildCardsDoNotTakeExponentialTime() {
+        // the lookup value used to be matched with a backtracking regular expression,
+        // which took minutes for this text
+        AreaEval ae = EvalFactory.createAreaEval("A1:A2", new ValueEval[] {
+                new StringEval("x"),
+                new StringEval("a".repeat(2000) + "b"),
+        });
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            assertEquals(ErrorEval.NA, invokeMatch(new StringEval("*a*a*c"), ae, MATCH_EXACT));
+            confirmInt(2, invokeMatch(new StringEval("*a*a*b"), ae, MATCH_EXACT));
+        });
+    }
 
     /**
      * Ensures that the match_type argument can be an {@code AreaEval}.<br>
