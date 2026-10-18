@@ -18,7 +18,12 @@
 package org.apache.poi.openxml4j.opc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.Duration;
 
 import org.junit.jupiter.api.Test;
 
@@ -55,5 +60,25 @@ public final class TestPackagePartName {
         assertEquals("/aasx/_rels/test%20document.txt.rels", relName.getName());
         assertEquals(partName.getURI(),
                 PackagingURIHelper.getSourcePartUriFromRelationshipPartUri(relName.getURI()));
+    }
+
+    @Test
+    void testIsRelationshipPartURI() throws Exception {
+        assertTrue(PackagingURIHelper.createPartName("/_rels/.rels").isRelationshipPartURI());
+        assertTrue(PackagingURIHelper.createPartName("/word/_rels/document.xml.rels").isRelationshipPartURI());
+        assertFalse(PackagingURIHelper.createPartName("/word/document.xml").isRelationshipPartURI());
+        assertFalse(PackagingURIHelper.createPartName("/word/_rels/document.xml").isRelationshipPartURI());
+        assertFalse(PackagingURIHelper.createPartName("/word/_rels.rels").isRelationshipPartURI());
+    }
+
+    /**
+     * The regex this used to be checked with backtracked quadratically on "/_rels" repeated
+     */
+    @Test
+    void testIsRelationshipPartURISlowness() throws Exception {
+        String name = "/_rels".repeat(40_000) + "/x";
+        Boolean result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> PackagingURIHelper.createPartName(name).isRelationshipPartURI());
+        assertFalse(result);
     }
 }

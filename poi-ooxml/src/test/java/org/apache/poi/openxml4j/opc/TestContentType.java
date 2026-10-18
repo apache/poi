@@ -100,6 +100,25 @@ public final class TestContentType {
     }
 
     /**
+     * The single regex this used to be matched with recursed per parameter and threw StackOverflowError
+     */
+    @Test
+    void testContentTypeWithManyParameters() throws InvalidFormatException {
+        StringBuilder sb = new StringBuilder("application/x-test");
+        for (int i = 0; i < 5000; i++) {
+            sb.append(";p").append(i).append("=\"v").append(i).append('"');
+        }
+        ContentType contentType = new ContentType(sb.toString());
+        assertEquals("application", contentType.getType());
+        assertEquals("x-test", contentType.getSubType());
+        assertEquals(5000, contentType.getParameterKeys().length);
+        assertEquals("\"v4999\"", contentType.getParameter("p4999"));
+
+        sb.append(";bad");
+        assertThrows(InvalidFormatException.class, () -> new ContentType(sb.toString()));
+    }
+
+    /**
      * Check rule [O1.2]: Format designers might restrict the usage of
      * parameters for content types.
      */

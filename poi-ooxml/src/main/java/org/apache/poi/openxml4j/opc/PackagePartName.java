@@ -141,10 +141,17 @@ public final class PackagePartName implements Comparable<PackagePartName> {
         }
 
         final String uriPath = partUri.getPath();
-        return uriPath != null && uriPath.matches(
-                "^.*/" + PackagingURIHelper.RELATIONSHIP_PART_SEGMENT_NAME + "/.*\\"
-                        + PackagingURIHelper.RELATIONSHIP_PART_EXTENSION_NAME
-                        + "$");
+        if (uriPath == null || PackagingURIHelper.hasLineTerminator(uriPath)
+                || !uriPath.endsWith(PackagingURIHelper.RELATIONSHIP_PART_EXTENSION_NAME)) {
+            return false;
+        }
+
+        // same result as uriPath.matches("^.*/_rels/.*\\.rels$") but without the regex,
+        // which backtracks quadratically on "/_rels" repeated
+        final String segment = "/" + PackagingURIHelper.RELATIONSHIP_PART_SEGMENT_NAME + "/";
+        final int index = uriPath.indexOf(segment);
+        return index >= 0 && index + segment.length()
+                <= uriPath.length() - PackagingURIHelper.RELATIONSHIP_PART_EXTENSION_NAME.length();
     }
 
     /**
