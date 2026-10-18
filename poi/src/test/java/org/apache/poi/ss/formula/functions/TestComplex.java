@@ -51,11 +51,34 @@ class TestComplex {
 
         confirmValue("Complex number with 0 and 1 as the real and imaginary coefficients (i)", "0","1", "", "i");
         confirmValue("Complex number with 1 and 0 as the real and imaginary coefficients (1)", "1","0", "", "1");
+        confirmValue("Complex number with 0 and -1 as the real and imaginary coefficients (-i)", "0","-1", "", "-i");
+        confirmValue("Complex number with 3 and -1 as the real and imaginary coefficients (3-i)", "3","-1", "", "3-i");
+        confirmValue("Complex number with 0 and 0 as the real and imaginary coefficients (0)", "0","0", "", "0");
 
         confirmValue("Complex number with 2 and 3 as the real and imaginary coefficients (2 + 3i)", "2","3", "", "2+3i");
         confirmValue("Complex number with -2 and -3 as the real and imaginary coefficients (-2-3i)", "-2","-3", "", "-2-3i");
 
         confirmValue("Complex number with -2 and -3 as the real and imaginary coefficients (-0.5-3.2i)", "-0.5","-3.2", "", "-0.5-3.2i");
+    }
+
+    /**
+     * IMAGINARY and IMREAL must read back what COMPLEX produces, including a number without
+     * a real part such as "-i" or "3i", whose coefficient the regex captures as the real part
+     */
+    @Test
+    void testImaginaryAndImRealOfComplex() {
+        double[][] parts = {{3, 4}, {3, -1}, {-2, -3}, {-0.5, -3.2}, {1, 0}, {0, 0},
+                {0, 1}, {0, -1}, {0, 3}, {0, -3}, {0, 2.5}, {0, -0.5}};
+        for (double[] part : parts) {
+            for (String suffix : new String[]{"i", "j"}) {
+                ValueEval complex = invokeValue(String.valueOf(part[0]), String.valueOf(part[1]), suffix);
+                String text = ((StringEval) complex).getStringValue();
+                ValueEval real = new ImReal().evaluate(-1, -1, complex);
+                ValueEval imaginary = new Imaginary().evaluate(-1, -1, complex);
+                assertEquals(part[0], Double.parseDouble(((StringEval) real).getStringValue()), 0, "IMREAL(\"" + text + "\")");
+                assertEquals(part[1], Double.parseDouble(((StringEval) imaginary).getStringValue()), 0, "IMAGINARY(\"" + text + "\")");
+            }
+        }
     }
 
     @Test

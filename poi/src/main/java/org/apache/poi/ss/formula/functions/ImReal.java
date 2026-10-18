@@ -59,7 +59,7 @@ public class ImReal extends Fixed1ArgFunction implements FreeRefFunction {
         }
 
         String realGroup = groups[2];
-        if (realGroup.isEmpty()) {
+        if (realGroup.isEmpty() || Imaginary.isImaginaryOnly(groups)) {
             return new StringEval("0");
         }
 

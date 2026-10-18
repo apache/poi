@@ -79,11 +79,16 @@ public class Imaginary extends Fixed1ArgFunction implements FreeRefFunction {
             if (hasImaginaryPart) {
                 String sign = "";
                 String imaginarySign = groups[GROUP3_IMAGINARY_SIGN];
+                String groupImaginaryNumber = groups[GROUP4_IMAGINARY_INTEGER_OR_DOUBLE];
+                if (isImaginaryOnly(groups)) {
+                    // e.g. "-i" or "3i": the sign and coefficient were matched as the real part
+                    imaginarySign = groups[GROUP1_REAL_SIGN];
+                    groupImaginaryNumber = groups[GROUP2_IMAGINARY_INTEGER_OR_DOUBLE];
+                }
                 if (imaginarySign.length() != 0 && !(imaginarySign.equals("+"))) {
                     sign = imaginarySign;
                 }
 
-                String groupImaginaryNumber = groups[GROUP4_IMAGINARY_INTEGER_OR_DOUBLE];
                 if (groupImaginaryNumber.length() != 0) {
                     imaginary = sign + groupImaginaryNumber;
                 } else {
@@ -95,6 +100,15 @@ public class Imaginary extends Fixed1ArgFunction implements FreeRefFunction {
         }
 
         return new StringEval(imaginary);
+    }
+
+    /**
+     * Whether the groups from {@link #parseComplexNumber(String)} are a number without a real part, e.g. "-i" or "3i".
+     * The pattern then captures the sign and coefficient in the real part groups, and the imaginary ones are empty.
+     */
+    static boolean isImaginaryOnly(String[] groups) {
+        return !groups[5].isEmpty() && groups[GROUP3_IMAGINARY_SIGN].isEmpty()
+                && groups[GROUP4_IMAGINARY_INTEGER_OR_DOUBLE].isEmpty();
     }
 
     /**
