@@ -398,6 +398,18 @@ class TestDataFormatter {
         assertEquals("11",   dfUS.formatRawCellContents(11.0, -1, "# #/#"));
     }
 
+    @Test
+    void testFractionWithLongRun() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // a long run of # or digits before a '/' used to backtrack quadratically in fractionPattern
+        for (String format : new String[] {"#".repeat(50_000) + "/", "0" + "#".repeat(50_000) + "/", "1".repeat(50_000) + " #/"}) {
+            String result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                    () -> dfUS.formatRawCellContents(1.5, -1, format));
+            assertEquals("1 1/2", result);
+        }
+    }
+
     /**
      * Test that _x (blank with the space taken by "x")
      *  and *x (fill to the column width with "x"s) are
