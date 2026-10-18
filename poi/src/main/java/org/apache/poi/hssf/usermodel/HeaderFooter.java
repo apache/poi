@@ -347,7 +347,7 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
 
     /** the characters that '.' does not match in a regex */
     private static boolean isLineTerminator(char c) {
-        return c == '\n' || c == '\r' || c == '\u0085' || c == ' ' || c == ' ';
+        return c == '\n' || c == '\r' || c == '\u0085' || c == '\u2028' || c == '\u2029';
     }
 
     private enum MarkupTag {
