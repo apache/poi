@@ -190,8 +190,8 @@ public final class PackagingURIHelper {
                 case '\n':
                 case '\r':
                 case '\u0085':
-                case ' ':
-                case ' ':
+                case '\u2028':
+                case '\u2029':
                     return true;
                 default:
                     break;
