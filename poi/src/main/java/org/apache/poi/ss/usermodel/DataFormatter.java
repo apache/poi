@@ -137,7 +137,7 @@ public class DataFormatter {
     private static final Pattern dbNumPattern = Pattern.compile("\\[DBNum[123]]", Pattern.CASE_INSENSITIVE);
 
     /** Pattern to find formats with condition ranges e.g. [>=100] */
-    private static final Pattern rangeConditionalPattern = Pattern.compile("\\[\\s*(<>|<=|>=|<|>|=)\\s*-?[0-9]*\\.?[0-9]+\\s*]");
+    private static final Pattern rangeConditionalPattern = Pattern.compile("\\[\\s*(<>|<=|>=|<|>|=)\\s*-?(?:[0-9]*\\.)?[0-9]+\\s*]");
 
     /**
      * A regex to find locale patterns like [$$-1009] and [$?-452], or a currency string without a locale like [$USD].
