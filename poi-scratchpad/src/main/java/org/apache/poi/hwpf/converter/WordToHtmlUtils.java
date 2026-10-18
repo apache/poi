@@ -115,7 +115,44 @@ public class WordToHtmlUtils extends AbstractWordUtils
         if ( isEmpty( fontFamily ) )
             return;
 
-        style.append("font-family:").append(fontFamily).append(";");
+        style.append("font-family:").append(cssFontFamily(fontFamily)).append(";");
+    }
+
+    /**
+     * The font name comes straight from the document and ends up in the text of the
+     * {@code <style>} element, which the html output method writes unescaped. Names made
+     * of letters, digits, spaces, hyphens and underscores are written as they are; anything
+     * else is written as a CSS string, with quotes, backslashes, control characters and the
+     * HTML delimiters hex-escaped, so the name can neither close the style element nor add
+     * declarations of its own.
+     */
+    static String cssFontFamily( final String fontFamily )
+    {
+        boolean plain = true;
+        for ( int i = 0; i < fontFamily.length() && plain; i++ )
+        {
+            char c = fontFamily.charAt( i );
+            plain = Character.isLetterOrDigit( c ) || c == ' ' || c == '-' || c == '_';
+        }
+        if ( plain )
+            return fontFamily;
+
+        StringBuilder sb = new StringBuilder( fontFamily.length() + 2 );
+        sb.append( '"' );
+        for ( int i = 0; i < fontFamily.length(); i++ )
+        {
+            char c = fontFamily.charAt( i );
+            if ( c < 0x20 || c == '"' || c == '\\' || c == '<' || c == '>' )
+            {
+                sb.append( '\\' ).append( Integer.toHexString( c ) ).append( ' ' );
+            }
+            else
+            {
+                sb.append( c );
+            }
+        }
+        sb.append( '"' );
+        return sb.toString();
     }
 
     public static void addFontSize( final int fontSize, StringBuilder style )
