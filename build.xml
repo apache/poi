@@ -1873,7 +1873,7 @@ under the License.
         </path>
 
         <poiunit failureproperty="integration.test.failed" heap="3072" showoutput="true" jacocodest="build/jacoco-integration.exec"
-                 modulepath-ref="test-integration.modules" module1="stress" outputDir="${integration.reports.test}">
+                 modulepath-ref="test-integration.modules" module1="stress" module2="scratchpad" outputDir="${integration.reports.test}">
             <zipfileset src="build/dist/maven/poi-integration/poi-integration-${version.id}.jar">
                 <include name="**/${testpattern}.class"/>
                 <exclude name="**/*$*.class"/>

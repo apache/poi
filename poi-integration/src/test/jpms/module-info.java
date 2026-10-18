@@ -27,7 +27,7 @@ module org.apache.poi.stress {
     requires ant;
     requires transitive org.apache.poi.poi;
     requires org.apache.poi.examples;
-    requires org.apache.poi.scratchpad;
+    requires static org.apache.poi.scratchpad;
 
     requires org.apache.santuario.xmlsec;
     requires org.bouncycastle.provider;

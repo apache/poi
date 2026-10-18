@@ -157,6 +157,10 @@ test {
         ]
         if (NO_SCRATCHPAD) {
             systemProperty 'scratchpad.ignore', 'true'
+        } else {
+            // org.apache.poi.stress only has a static (optional) dependency on scratchpad,
+            // so it has to be added to the module graph explicitly
+            jvmArgs += ['--add-modules', 'org.apache.poi.scratchpad']
         }
     }
 }
