@@ -21,9 +21,11 @@ import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -604,6 +606,34 @@ final class TestCountFuncs {
         confirmPredicate(true, mp, "a~*");
         confirmPredicate(false, mp, "a~x");
         confirmPredicate(false, mp, "a~~*");
+    }
+
+    @Test
+    void testWildCardsWithSeveralAsterisks() {
+        I_MatchPredicate mp = createCriteriaPredicate(new StringEval("*a*b*c"));
+        confirmPredicate(true, mp, "abc");
+        confirmPredicate(true, mp, "xAxBxC");
+        confirmPredicate(false, mp, "xAxBxCx");
+        confirmPredicate(true, mp, "cbaabc");
+        confirmPredicate(false, mp, "cba");
+
+        mp = createCriteriaPredicate(new StringEval("a*?b"));
+        confirmPredicate(false, mp, "ab");
+        confirmPredicate(true, mp, "axb");
+        confirmPredicate(true, mp, "abbb");
+    }
+
+    @Test
+    void testWildCardsDoNotTakeExponentialTime() {
+        // the criteria used to be matched with a backtracking regular expression,
+        // which took minutes for this text: each '*' multiplied the work by the text length
+        String text = "a".repeat(2000) + "b";
+        I_MatchPredicate noMatch = createCriteriaPredicate(new StringEval("*a*a*c"));
+        I_MatchPredicate match = createCriteriaPredicate(new StringEval("*A*a*B"));
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            confirmPredicate(false, noMatch, text);
+            confirmPredicate(true, match, text);
+        });
     }
 
     @Test

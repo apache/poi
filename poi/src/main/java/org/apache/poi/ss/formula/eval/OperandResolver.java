@@ -34,14 +34,17 @@ public final class OperandResolver {
 
     // Based on regular expression defined in JavaDoc at {@link java.lang.Double#valueOf}
     // modified to remove support for NaN, Infinity, Hexadecimal support and floating type suffixes
-    private static final String Digits    = "(\\p{Digit}+)";
-    private static final String Exp    = "[eE][+-]?"+Digits;
+    // The quantifiers are possessive: "digits, optional '.', optional digits" could otherwise split a run
+    // of digits in many ways, and text that is not a number made matches() take polynomial time.
+    // Each part can only end where the next one starts, so this accepts the same text.
+    private static final String Digits    = "\\p{Digit}++";
+    private static final String Exp    = "([eE][+-]?"+Digits+")?+";
     private static final String fpRegex    =
-                ("[\\x00-\\x20]*" +
+                ("[\\x00-\\x20]*+" +
                  "[+-]?(" +
-                   "("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+
-                 "(\\."+Digits+"("+Exp+")?))"+
-                 "[\\x00-\\x20]*");
+                   "("+Digits+"(\\.\\p{Digit}*+)?+"+Exp+")|"+
+                 "(\\."+Digits+Exp+"))"+
+                 "[\\x00-\\x20]*+");
     private static final Pattern fpPattern = Pattern.compile(fpRegex);
 
     private OperandResolver() {
