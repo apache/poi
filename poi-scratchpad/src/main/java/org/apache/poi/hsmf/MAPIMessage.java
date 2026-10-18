@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
@@ -86,9 +84,6 @@ public class MAPIMessage extends POIReadOnlyDocument {
      * For logging problems we spot with the file
      */
     private static final Logger LOG = PoiLogManager.getLogger(MAPIMessage.class);
-
-    private static final Pattern GUESS_7_BIT_ENCODING_PATTERN = Pattern.compile("content-type:.*?charset=[\"']?([^;'\"]+)[\"']?", Pattern.CASE_INSENSITIVE);
-
 
     private Chunks mainChunks;
     private NameIdChunks nameIdChunks;
@@ -500,9 +495,9 @@ public class MAPIMessage extends POIReadOnlyDocument {
                 if (headers != null) {
                     for (String header : headers) {
                         if (header.toLowerCase(LocaleUtil.getUserLocale()).startsWith("content-type")) {
-                            Matcher m = GUESS_7_BIT_ENCODING_PATTERN.matcher(header);
-                            if (m.matches()) {
-                                generalcodepage = m.group(1);
+                            String charset = getCharsetFromContentType(header);
+                            if (charset != null) {
+                                generalcodepage = charset;
                             }
                         }
                     }
@@ -746,6 +741,70 @@ public class MAPIMessage extends POIReadOnlyDocument {
      */
     public void setReturnNullOnMissingChunk(boolean returnNullOnMissingChunk) {
         this.returnNullOnMissingChunk = returnNullOnMissingChunk;
+    }
+
+    /**
+     * Extracts the charset from a content type header, matching it the same way as
+     * the regular expression {@code content-type:.*?charset=["']?([^;'"]+)["']?}
+     * (ASCII case-insensitive, whole header), which this replaces because it
+     * backtracks quadratically on headers with many {@code charset=} parts.
+     *
+     * @return the charset (group 1 of the expression), or {@code null} if it doesn't match
+     */
+    static String getCharsetFromContentType(String header) {
+        if (!startsWithIgnoreAsciiCase(header, 0, "content-type:")) {
+            return null;
+        }
+        final int len = header.length();
+        // the charset value runs to the end, less an optional closing quote,
+        // and must not contain ';' or a quote
+        final int end = len > 0 && isQuote(header.charAt(len - 1)) ? len - 1 : len;
+        int lastInvalid = -1;
+        for (int i = end - 1; i >= 0; i--) {
+            final char c = header.charAt(i);
+            if (c == ';' || isQuote(c)) {
+                lastInvalid = i;
+                break;
+            }
+        }
+        // ".*?" picks the first "charset=" on the first line whose value is valid
+        for (int i = 13; i < len && !isLineTerminator(header.charAt(i)); i++) {
+            if (startsWithIgnoreAsciiCase(header, i, "charset=")) {
+                int start = i + 8;
+                if (start < len && isQuote(header.charAt(start))) {
+                    start++;
+                }
+                if (start < end && start > lastInvalid) {
+                    return header.substring(start, end);
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean startsWithIgnoreAsciiCase(String str, int offset, String lowerCasePrefix) {
+        if (offset + lowerCasePrefix.length() > str.length()) {
+            return false;
+        }
+        for (int i = 0; i < lowerCasePrefix.length(); i++) {
+            char c = str.charAt(offset + i);
+            if (c >= 'A' && c <= 'Z') {
+                c += 'a' - 'A';
+            }
+            if (c != lowerCasePrefix.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isQuote(char c) {
+        return c == '"' || c == '\'';
+    }
+
+    /** the characters {@code .} does not match in a regular expression */
+    private static boolean isLineTerminator(char c) {
+        return c == '\n' || c == '\r' || c == '\u0085' || c == '\u2028' || c == '\u2029';
     }
 
 

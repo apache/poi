@@ -18,9 +18,15 @@ package org.apache.poi.hwpf.converter;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringWriter;
+import java.time.Duration;
+import java.util.regex.Matcher;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -31,6 +37,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.util.XMLHelper;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.w3c.dom.Document;
@@ -115,6 +122,41 @@ public class TestWordToHtmlConverter {
                 assertContains(result, match);
             }
         }
+    }
+
+    @Test
+    void testFieldPatterns() {
+        Matcher m = AbstractWordConverter.PATTERN_HYPERLINK_EXTERNAL.matcher(" HYPERLINK \"http://testuri.org/\" ");
+        assertTrue(m.matches());
+        assertEquals("http://testuri.org/", m.group(1));
+
+        m = AbstractWordConverter.PATTERN_HYPERLINK_LOCAL.matcher("HYPERLINK \\l \"_Toc1\" text\"");
+        assertTrue(m.matches());
+        assertEquals("_Toc1", m.group(1));
+        assertEquals("text\"", m.group(2));
+
+        m = AbstractWordConverter.PATTERN_PAGEREF.matcher("\r\n PAGEREF _Toc2 \t\\h \\* MERGEFORMAT \r");
+        assertTrue(m.find());
+        assertEquals("_Toc2", m.group(1));
+
+        m = AbstractWordConverter.PATTERN_PAGEREF.matcher("PAGEREF _Toc2\t\\h");
+        assertTrue(m.find());
+        assertEquals("_Toc2\t", m.group(1));
+    }
+
+    @Test
+    void testFieldPatternsBacktracking() {
+        // these used to take minutes, as every shorter match was retried before failing
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            assertFalse(AbstractWordConverter.PATTERN_HYPERLINK_EXTERNAL.matcher(
+                "HYPERLINK \"" + "\"".repeat(100_000) + "\"\nx").matches());
+            assertFalse(AbstractWordConverter.PATTERN_HYPERLINK_LOCAL.matcher(
+                "HYPERLINK \\l \"" + "\" ".repeat(50_000) + "\nx").matches());
+            assertFalse(AbstractWordConverter.PATTERN_PAGEREF.matcher(
+                "PAGEREF " + "\t".repeat(100_000) + "x").find());
+            assertFalse(AbstractWordConverter.PATTERN_PAGEREF.matcher(
+                "PAGEREF " + "\\h".repeat(50_000) + "\n\n").find());
+        });
     }
 
     private static String getHtmlText(final String sampleFileName, boolean emulatePictureStorage) throws Exception {

@@ -121,14 +121,21 @@ public abstract class AbstractWordConverter {
 
     private static final Logger LOG = PoiLogManager.getLogger(AbstractWordConverter.class);
 
-    private static final Pattern PATTERN_HYPERLINK_EXTERNAL = Pattern
-        .compile("^[ \\t\\r\\n]*HYPERLINK \"(.*)\".*$");
+    // The atomic groups (?>...) keep only the longest match of the leading part.
+    // If the trailing ".*$" fails after it, it is because of a line break that
+    // a shorter match would run into too, so retrying them (quadratic on long
+    // formulas) cannot find a match.
+    // The patterns are package-private for testing.
+    static final Pattern PATTERN_HYPERLINK_EXTERNAL = Pattern
+        .compile("^[ \\t\\r\\n]*HYPERLINK \"(?>(.*)\").*$");
 
-    private static final Pattern PATTERN_HYPERLINK_LOCAL = Pattern
-        .compile("^[ \\t\\r\\n]*HYPERLINK \\\\l \"(.*)\"[ ](.*)$");
+    static final Pattern PATTERN_HYPERLINK_LOCAL = Pattern
+        .compile("^[ \\t\\r\\n]*HYPERLINK \\\\l \"(?>(.*)\"[ ])(.*)$");
 
-    private static final Pattern PATTERN_PAGEREF = Pattern
-        .compile("^[ \\t\\r\\n]*PAGEREF ([^ ]*)[ \\t\\r\\n]*\\\\h.*$");
+    // within the atomic group, whitespace directly after ([^ ]*) must start with
+    // a space: tabs and line breaks there are matched by ([^ ]*) itself first
+    static final Pattern PATTERN_PAGEREF = Pattern
+        .compile("^[ \\t\\r\\n]*PAGEREF (?>([^ ]*)(?: [ \\t\\r\\n]*+)?\\\\h).*$");
 
     private static final byte SPECCHAR_AUTONUMBERED_FOOTNOTE_REFERENCE = 2;
     private static final byte SPECCHAR_DRAWN_OBJECT = 8;
