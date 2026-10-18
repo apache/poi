@@ -19,6 +19,10 @@
 package org.apache.poi.sl.draw.geom;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+
+import java.time.Duration;
 
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +54,20 @@ class TestFormulaParser {
         assertEquals(1.5, ctx.getValue("a3"), 0.0);
         assertEquals(200.0, ctx.getValue("a4"), 0.0);
         assertEquals(2.0, ctx.getValue("a5"), 0.0);
+    }
+
+    @Test
+    void testNumericValues() {
+        Context ctx = new Context(new CustomGeometry(), null, null);
+        assertEquals(150.0, ctx.getValue("1.5e2"), 0.0);
+        assertEquals(-0.25, ctx.getValue(" -.25 "), 0.0);
+        assertEquals(8.0, ctx.getValue("0x1p3"), 0.0);
+        assertEquals(12.0, ctx.getValue("12d"), 0.0);
+
+        // a long name made of digits used to take minutes to be rejected as a number
+        String key = "1".repeat(50_000) + "x";
+        assertTimeoutPreemptively(Duration.ofSeconds(10),
+            () -> assertThrows(IllegalArgumentException.class, () -> ctx.getValue(key)));
     }
 
     private static Guide newGuide(String name, String fmla) {
