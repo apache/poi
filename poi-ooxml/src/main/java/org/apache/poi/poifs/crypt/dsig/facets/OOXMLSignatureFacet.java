@@ -131,7 +131,9 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
         Set<String> digestedPartNames = new HashSet<>();
         for (PackagePart pp : relsEntryNames) {
-            final String baseUri = pp.getPartName().getName().replaceFirst("(.*)/_rels/.*", "$1");
+            // (?<!.) only lets a match start at the beginning of a line, which is where the leftmost match
+            // starts anyway - it avoids quadratic backtracking on long part names without "/_rels/"
+            final String baseUri = pp.getPartName().getName().replaceFirst("(?<!.)(.*)/_rels/.*", "$1");
 
             PackageRelationshipCollection prc;
             try {
@@ -347,7 +349,9 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
     protected static boolean isSignedRelationship(String relationshipType) {
         LOG.atDebug().log("relationship type: {}", relationshipType);
-        String rt = relationshipType.replaceFirst(".*/relationships/", "");
+        // (?<!.) only lets a match start at the beginning of a line, which is where the leftmost match
+        // starts anyway - it avoids quadratic backtracking on long types without "/relationships/"
+        String rt = relationshipType.replaceFirst("(?<!.).*/relationships/", "");
         return (signed.contains(rt) || rt.endsWith("customXml"));
     }
 

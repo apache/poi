@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -48,6 +49,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -155,6 +157,26 @@ class TestSignatureInfo {
 
         // Set line.separator for bug61182
         // System.setProperty("line.separator", "\n");
+    }
+
+    @Test
+    void isSignedRelationship() {
+        assertTrue(RelationshipTypeFacet.isSigned("http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"));
+        assertTrue(RelationshipTypeFacet.isSigned("a/relationships/b/relationships/styles"));
+        assertFalse(RelationshipTypeFacet.isSigned("http://schemas.openxmlformats.org/officeDocument/2006/relationships/unknown"));
+        // '.' does not match line terminators, so only the first line's prefix is removed
+        assertFalse(RelationshipTypeFacet.isSigned("x/relationships/a\nb/relationships/styles"));
+        assertTrue(RelationshipTypeFacet.isSigned("x\nb/relationships/customXml"));
+
+        // the old ".*/relationships/" regex backtracked quadratically on types without "/relationships/"
+        String longType = "a".repeat(50_000);
+        assertFalse(assertTimeoutPreemptively(Duration.ofSeconds(10), () -> RelationshipTypeFacet.isSigned(longType)));
+    }
+
+    private static class RelationshipTypeFacet extends OOXMLSignatureFacet {
+        static boolean isSigned(String relationshipType) {
+            return isSignedRelationship(relationshipType);
+        }
     }
 
     @Disabled("This test is very sensitive, it breaks with every little change to the produced XML")
