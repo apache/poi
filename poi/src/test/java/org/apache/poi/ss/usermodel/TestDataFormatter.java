@@ -21,6 +21,7 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.Format;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -380,6 +382,18 @@ class TestDataFormatter {
         //Bug53150 formatting a whole number with fractions should just give the number
         assertEquals("1",   dfUS.formatRawCellContents(1.0, -1, "# #/#"));
         assertEquals("11",   dfUS.formatRawCellContents(11.0, -1, "# #/#"));
+    }
+
+    @Test
+    void testFractionWithLongRun() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // a long run of # or digits before a '/' used to backtrack quadratically in fractionPattern
+        for (String format : new String[] {"#".repeat(50_000) + "/", "0" + "#".repeat(50_000) + "/", "1".repeat(50_000) + " #/"}) {
+            String result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                    () -> dfUS.formatRawCellContents(1.5, -1, format));
+            assertEquals("1 1/2", result);
+        }
     }
 
     /**

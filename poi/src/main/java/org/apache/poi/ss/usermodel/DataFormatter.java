@@ -157,9 +157,11 @@ public class DataFormatter {
 
     /**
      * A regex to identify a fraction pattern.
-     * This requires that replaceAll("\\?", "#") has already been called
+     * This requires that replaceAll("\\?", "#") has already been called.
+     * The lookbehinds and possessive quantifiers stop find() from rescanning a run of # or digits
+     * from every position in it, which was quadratic; the leftmost match and its groups are unchanged.
      */
-    private static final Pattern fractionPattern = Pattern.compile("(?:([#\\d]+)\\s+)?(#+)\\s*/\\s*([#\\d]+)");
+    private static final Pattern fractionPattern = Pattern.compile("(?:(?<![#\\d])([#\\d]++)\\s+)?(?<!#)(#++)\\s*/\\s*([#\\d]+)");
 
     /**
      * A regex to strip junk out of fraction formats
