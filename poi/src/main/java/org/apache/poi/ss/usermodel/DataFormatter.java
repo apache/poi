@@ -692,27 +692,24 @@ public class DataFormatter {
     }
 
     String adjustTo4DigitYearsIfConfigured(String format) {
-        if (use4DigitYearsInAllDateFormats) {
-            int ypos2 = format.indexOf("yy");
-            if (ypos2 < 0) {
-                return format;
+        if (!use4DigitYearsInAllDateFormats) {
+            return format;
+        }
+        // a loop rather than recursing once per "yy", which overflowed the stack on a long format
+        StringBuilder sb = new StringBuilder(format.length() + 16);
+        int pos = 0;
+        for (int ypos = format.indexOf("yy"); ypos >= 0; ypos = format.indexOf("yy", pos)) {
+            if (format.startsWith("yyyy", ypos)) {
+                sb.append(format, pos, ypos + 4);
+                pos = ypos + 4;
+            } else if (format.startsWith("yyy", ypos)) {
+                break;
             } else {
-                int ypos3 = format.indexOf("yyy");
-                int ypos4 = format.indexOf("yyyy");
-                if (ypos4 == ypos2) {
-                    String part1 = format.substring(0, ypos2 + 4);
-                    String part2 = format.substring(ypos2 + 4);
-                    return part1 + adjustTo4DigitYearsIfConfigured(part2);
-                } else if (ypos3 == ypos2) {
-                    return format;
-                } else {
-                    String part1 = format.substring(0, ypos2 + 2);
-                    String part2 = format.substring(ypos2 + 2);
-                    return part1 + "yy" + adjustTo4DigitYearsIfConfigured(part2);
-                }
+                sb.append(format, pos, ypos + 2).append("yy");
+                pos = ypos + 2;
             }
         }
-        return format;
+        return sb.append(format, pos, format.length()).toString();
     }
 
     private static char toLowerAscii(char c) {

@@ -1426,6 +1426,21 @@ class TestDataFormatter {
 
         String formatString4 = "[$-F400]m/d/yy h:mm:ss\\ AM/PM;[$-F400]m/d/yy h:mm:ss\\ AM/PM;_-* \"\"??_-;_-@_-";
         assertEquals(formatString4.replace("yy", "yyyy"), dataFormatter.adjustTo4DigitYearsIfConfigured(formatString4));
+
+        // a 3 digit year stops the adjustment of the rest of the format
+        assertEquals("yyyy/yyy/yy", dataFormatter.adjustTo4DigitYearsIfConfigured("yy/yyy/yy"));
+    }
+
+    @Test
+    void testAdjustTo4DigitYearsWithLongFormat() {
+        DataFormatter dataFormatter = new DataFormatter();
+        dataFormatter.setUse4DigitYearsInAllDateFormats(true);
+
+        // this used to recurse once per "yy" and throw StackOverflowError
+        String format = "yy/".repeat(50_000);
+        String result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> dataFormatter.adjustTo4DigitYearsIfConfigured(format));
+        assertEquals("yyyy/".repeat(50_000), result);
     }
 
     @Test
