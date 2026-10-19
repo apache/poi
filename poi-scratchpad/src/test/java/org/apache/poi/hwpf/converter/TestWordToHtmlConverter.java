@@ -178,8 +178,14 @@ public class TestWordToHtmlConverter {
                 assertContains(result, "font-family:\"\\3c /style\\3e \\3c p\\3e x\";");
             }
         }
+    }
 
+    @Test
+    void testCssFontFamily() {
         assertEquals("Times New Roman", WordToHtmlUtils.cssFontFamily("Times New Roman"));
+        assertEquals("MS-Mincho_2", WordToHtmlUtils.cssFontFamily("MS-Mincho_2"));
+        assertEquals("\"3M Sans\"", WordToHtmlUtils.cssFontFamily("3M Sans"));
+        assertEquals("\"Font -1\"", WordToHtmlUtils.cssFontFamily("Font -1"));
         assertEquals("\"a\\22 b\\5c c\\a d\"", WordToHtmlUtils.cssFontFamily("a\"b\\c\nd"));
     }
 

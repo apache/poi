@@ -120,21 +120,16 @@ public class WordToHtmlUtils extends AbstractWordUtils
 
     /**
      * The font name comes straight from the document and ends up in the text of the
-     * {@code <style>} element, which the html output method writes unescaped. Names made
-     * of letters, digits, spaces, hyphens and underscores are written as they are; anything
+     * {@code <style>} element, which the html output method writes unescaped. Names whose
+     * space-separated words are all CSS identifiers (letters, digits, hyphens and underscores,
+     * not starting with a digit or a hyphen and digit) are written as they are; anything
      * else is written as a CSS string, with quotes, backslashes, control characters and the
      * HTML delimiters hex-escaped, so the name can neither close the style element nor add
      * declarations of its own.
      */
     static String cssFontFamily( final String fontFamily )
     {
-        boolean plain = true;
-        for ( int i = 0; i < fontFamily.length() && plain; i++ )
-        {
-            char c = fontFamily.charAt( i );
-            plain = Character.isLetterOrDigit( c ) || c == ' ' || c == '-' || c == '_';
-        }
-        if ( plain )
+        if ( isCssIdentifiers( fontFamily ) )
             return fontFamily;
 
         StringBuilder sb = new StringBuilder( fontFamily.length() + 2 );
@@ -153,6 +148,31 @@ public class WordToHtmlUtils extends AbstractWordUtils
         }
         sb.append( '"' );
         return sb.toString();
+    }
+
+    private static boolean isCssIdentifiers( final String fontFamily )
+    {
+        boolean wordStart = true;
+        for ( int i = 0; i < fontFamily.length(); i++ )
+        {
+            char c = fontFamily.charAt( i );
+            if ( c == ' ' )
+            {
+                wordStart = true;
+                continue;
+            }
+            if ( !Character.isLetterOrDigit( c ) && c != '-' && c != '_' )
+                return false;
+            if ( wordStart )
+            {
+                // an identifier must not start with a digit, or with a hyphen and a digit
+                char first = c == '-' && i + 1 < fontFamily.length() ? fontFamily.charAt( i + 1 ) : c;
+                if ( Character.isDigit( first ) )
+                    return false;
+                wordStart = false;
+            }
+        }
+        return true;
     }
 
     public static void addFontSize( final int fontSize, StringBuilder style )
