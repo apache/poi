@@ -201,7 +201,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
                 && !Objects.equals( triplet.fontName,
                         blockProperies.pFontName ) )
         {
-            style.append("font-family:").append(triplet.fontName).append(";");
+            WordToHtmlUtils.addFontFamily( triplet.fontName, style );
         }
         if ( characterRun.getFontSize() / 2 != blockProperies.pFontSize )
         {
