@@ -91,10 +91,13 @@
             <summary-item>Upgrade JUnit to 6.1.3</summary-item>
         </summary>
         <actions>
+            <action type="fix" fixes-bug="54686,70146" context="SS_Common">DataFormatter: currency strings without a locale, and dots in literal text</action>
             <action type="fix" fixes-bug="55747" context="HSSF">Keep reference operands of value functions nested in IF as value class, not reference class</action>
             <action type="fix" fixes-bug="60072" context="HSSF XSSF">Move drawing anchors when shifting rows or columns</action>
             <action type="fix" fixes-bug="60848" context="SS_Common">Fix SUMPRODUCT with unary minus (--) on array arguments and other cases</action>
             <action type="fix" fixes-bug="60895" context="SS_Common">CellUtil: a changed property keeps the default fill and border instead of adding new ones</action>
+            <action type="fix" fixes-bug="61638" context="SS_Common">DataFormatter: support a '0' placeholder before '#' placeholders, e.g. 60#########</action>
+            <action type="fix" fixes-bug="62242" context="SS_Common">CellFormat: '?' and '#' show an integer part of zero as insignificant</action>
             <action type="fix" fixes-bug="62271" context="SS_Common">Apply &amp; and % operators element-wise in array mode</action>
             <action type="fix" fixes-bug="64137" context="SS_Common">IRR: fall back to bracketed Newton-Raphson when the iteration diverges</action>
             <action type="fix" fixes-bug="65059,65231" context="SS_Common">SUMIF/COUNTIF/AVERAGEIF and the *IFS functions: an array of criteria gives an array of results</action>
@@ -130,6 +133,7 @@
             <action type="fix" fixes-bug="github-962" context="XSSF">Remove pre-existing inline strings when updating cell value</action>
             <action type="add" fixes-bug="github-968" context="XSLF">Add methods to manage first slide number (firstSlideNum)</action>
             <action type="fix" fixes-bug="github-969" context="XSLF">Fix rules for table style application in XSLFTables</action>
+            <action type="add" fixes-bug="github-977,github-1427" context="SS_Common">DataFormatter: allow overriding the format strings of built-in formats, and make getFormat and createFormat protected</action>
             <action type="add" fixes-bug="github-982" context="XWPF">Allow loading a word document with chartex chart</action>
             <action type="add" fixes-bug="github-986" context="XWPF">Allow public access of theme and add helpers for theme fonts in XWPF</action>
             <action type="add" fixes-bug="github-990" context="XSLF">Support rendering transparent bitmaps in presentations</action>
@@ -266,15 +270,21 @@
             <action type="fix" fixes-bug="github-1392" context="HSMF">Validate string stream name offset in NameIdChunks</action>
             <action type="fix" fixes-bug="github-1396" context="SS_Common">DataFormatter: fix trailing-comma scaling and literals between digits</action>
             <action type="add" fixes-bug="github-1397" context="SS_Common">DataFormatter: support Chinese date/time formats, [DBNum] and quoted literals in date formats</action>
-            <action type="fix" fixes-bug="github-1398" context="SS_Common">DataFormatter: test against text calculated by Excel, and fix mismatches</action>
+            <action type="fix" fixes-bug="github-1398,github-1404" context="SS_Common">DataFormatter: test against text calculated by Excel, and fix mismatches</action>
             <action type="fix" fixes-bug="github-1399" context="SS_Common">DataFormatter: precompile regexes used when formatting</action>
             <action type="fix" fixes-bug="github-1405" context="SS_Common">DataFormatter: round to the nearest second, as Excel does</action>
-            <action type="fix" fixes-bug="github-1406" context="SS_Common">CellFormat: fix fractions so they match Excel</action>
+            <action type="fix" fixes-bug="github-1406,github-1412" context="SS_Common">CellFormat: fix fractions so they match Excel</action>
             <action type="fix" fixes-bug="github-1407" context="HWMF HEMF">Don't presize metafile buffers from untrusted header sizes</action>
             <action type="add" fixes-bug="github-1409" context="HSSF">FormatTrackingHSSFListener: optionally use file FORMAT records for built-in format indexes</action>
             <action type="add" fixes-bug="github-1410" context="XSSF SXSSF">Optionally escape literal _xHHHH_ sequences in strings on write</action>
             <action type="fix" fixes-bug="github-1414" context="HSSF">HSSFRow.copyRowFrom: shift formulas with the .xls row limit</action>
             <action type="add" fixes-bug="github-1416" context="SS_Common">CellCopyPolicy: opt-in adjustment of relative formula references</action>
+            <action type="fix" fixes-bug="github-1426" context="SS_Common">DataFormatter: format literal text after trailing commas with CellFormat</action>
+            <action type="fix" fixes-bug="github-1430,github-1431,github-1434" context="XWPF">XWPF: keep inline SDT runs out of XWPFParagraph.getRuns(); read table rows, cells and text wrapped in SDTs and custom XML</action>
+            <action type="fix" fixes-bug="github-1432" context="SS_Common">Reject prohibited NUL and ETX characters in sheet names</action>
+            <action type="fix" fixes-bug="github-1436,github-1437,github-1438,github-1439,github-1440,github-1441,github-1442,github-1443" context="POI_Overall">Avoid regex backtracking and recursion that let crafted format strings, formulas, wildcard criteria, part names, content types and field codes take quadratic or exponential time or overflow the stack</action>
+            <action type="fix" fixes-bug="github-1444" context="SS_Common">IMAGINARY/IMREAL of a number without a real part; COMPLEX with an imaginary coefficient of -1 or both coefficients 0</action>
+            <action type="fix" fixes-bug="github-1446" context="HWPF">WordToHtmlConverter: escape font names written into the stylesheet</action>
         </actions>
     </release>
 
