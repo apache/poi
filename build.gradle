@@ -176,7 +176,7 @@ subprojects {
         slf4jVersion = '2.0.20'
         jspecifyVersion = '1.0.1'
         xmlSecVersion = '4.0.4'
-        jakartaXmlBindVersion = '4.0.2'
+        jakartaXmlBindVersion = '4.0.5'
         jakartaActivationVersion = '2.1.4'
         apiGuardianVersion = '1.1.2'
 
