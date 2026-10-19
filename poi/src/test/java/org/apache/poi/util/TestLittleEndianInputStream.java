@@ -20,7 +20,9 @@ package org.apache.poi.util;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.record.common.FormatRun;
@@ -69,4 +71,66 @@ class TestLittleEndianInputStream {
         assertEquals(0, inp.getReadIndex());
     }
 
+    @Test
+    void readIndexCountsSingleByteReadsAndSkips() throws IOException {
+        byte[] b = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        try (LittleEndianInputStream inp = new LittleEndianInputStream(new ByteArrayInputStream(b))) {
+            assertEquals(1, inp.read());
+            assertEquals(1, inp.getReadIndex());
+            assertEquals(2, inp.skip(2));
+            assertEquals(3, inp.getReadIndex());
+            assertEquals(4, inp.readUByte());
+            assertEquals(4, inp.getReadIndex());
+            inp.skipFully(3);
+            assertEquals(7, inp.getReadIndex());
+            assertEquals(8, inp.readByte());
+            assertEquals(8, inp.getReadIndex());
+        }
+    }
+
+    @Test
+    void skipFully() throws IOException {
+        byte[] b = new byte[5000];
+        for (int i = 0; i < b.length; i++) {
+            b[i] = (byte) i;
+        }
+        try (LittleEndianInputStream inp = new LittleEndianInputStream(new ByteArrayInputStream(b))) {
+            inp.skipFully(0);
+            assertThrows(IllegalArgumentException.class, () -> inp.skipFully(-1));
+            // larger than the internal skip buffer
+            inp.skipFully(4500L);
+            assertEquals(4500, inp.getReadIndex());
+            assertEquals(b[4500] & 0xFF, inp.readUByte());
+            IllegalStateException ex = assertThrows(IllegalStateException.class, () -> inp.skipFully(1000));
+            assertEquals("Unexpected end-of-file", ex.getMessage());
+        }
+    }
+
+    /**
+     * The primitive reads must not fail when the inner stream returns fewer bytes than requested
+     */
+    @Test
+    void primitivesWithShortReads() throws IOException {
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (LittleEndianOutputStream out = new LittleEndianOutputStream(baos)) {
+            out.writeLong(0x0102030405060708L);
+            out.writeInt(-2);
+            out.writeShort(0xFFFE);
+            out.writeByte(0xFD);
+        }
+        InputStream oneByteAtATime = new FilterInputStream(baos.toInputStream()) {
+            @Override
+            public int read(byte[] b, int off, int len) throws IOException {
+                return super.read(b, off, Math.min(len, 1));
+            }
+        };
+        try (LittleEndianInputStream inp = new LittleEndianInputStream(oneByteAtATime)) {
+            assertEquals(0x0102030405060708L, inp.readLong());
+            assertEquals(-2, inp.readInt());
+            assertEquals(0xFFFE, inp.readUShort());
+            assertEquals(0xFD, inp.readUByte());
+            assertEquals(15, inp.getReadIndex());
+            assertThrows(IllegalStateException.class, inp::readShort);
+        }
+    }
 }

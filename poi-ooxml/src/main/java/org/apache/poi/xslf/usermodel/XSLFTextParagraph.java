@@ -137,22 +137,25 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         if (_runs.remove(textRun)) {
             XmlObject xo = textRun.getXmlObject();
             if (xo instanceof CTRegularTextRun) {
-                for (int i = 0; i < getXmlObject().sizeOfRArray(); i++) {
-                    if (getXmlObject().getRArray(i).equals(xo)) {
+                final CTRegularTextRun[] elements = getXmlObject().getRArray();
+                for (int i = 0; i < elements.length; i++) {
+                    if (elements[i].equals(xo)) {
                         getXmlObject().removeR(i);
                         return true;
                     }
                 }
             } else if (xo instanceof CTTextField) {
-                for (int i = 0; i < getXmlObject().sizeOfFldArray(); i++) {
-                    if (getXmlObject().getFldArray(i).equals(xo)) {
+                final CTTextField[] elements = getXmlObject().getFldArray();
+                for (int i = 0; i < elements.length; i++) {
+                    if (elements[i].equals(xo)) {
                         getXmlObject().removeFld(i);
                         return true;
                     }
                 }
             } else if (xo instanceof CTTextLineBreak) {
-                for (int i = 0; i < getXmlObject().sizeOfBrArray(); i++) {
-                    if (getXmlObject().getBrArray(i).equals(xo)) {
+                final CTTextLineBreak[] elements = getXmlObject().getBrArray();
+                for (int i = 0; i < elements.length; i++) {
+                    if (elements[i].equals(xo)) {
                         getXmlObject().removeBr(i);
                         return true;
                     }

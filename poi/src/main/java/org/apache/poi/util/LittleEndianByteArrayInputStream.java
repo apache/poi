@@ -86,7 +86,7 @@ public class LittleEndianByteArrayInputStream extends ByteArrayInputStream imple
     }
 
     public void setReadIndex(int pos) {
-       if (pos < 0 || pos >= count) {
+       if (pos < 0 || pos > count) {
             throw new IndexOutOfBoundsException("Invalid position: " + pos + " with count " + count);
        }
        this.pos = pos;
@@ -96,7 +96,7 @@ public class LittleEndianByteArrayInputStream extends ByteArrayInputStream imple
     @Override
     public byte readByte() {
         checkPosition(1);
-        return (byte)read();
+        return buf[pos++];
     }
 
     @Override
@@ -104,8 +104,7 @@ public class LittleEndianByteArrayInputStream extends ByteArrayInputStream imple
         final int size = LittleEndianConsts.INT_SIZE;
         checkPosition(size);
         int le = LittleEndian.getInt(buf, pos);
-        long skipped = super.skip(size);
-        assert skipped == size : "Buffer overrun";
+        pos += size;
         return le;
     }
 
@@ -114,8 +113,7 @@ public class LittleEndianByteArrayInputStream extends ByteArrayInputStream imple
         final int size = LittleEndianConsts.LONG_SIZE;
         checkPosition(size);
         long le = LittleEndian.getLong(buf, pos);
-        long skipped = super.skip(size);
-        assert skipped == size : "Buffer overrun";
+        pos += size;
         return le;
     }
 
@@ -124,8 +122,7 @@ public class LittleEndianByteArrayInputStream extends ByteArrayInputStream imple
         final int size = LittleEndianConsts.SHORT_SIZE;
         checkPosition(size);
         short le = LittleEndian.getShort(buf, pos);
-        long skipped = super.skip(size);
-        assert skipped == size : "Buffer overrun";
+        pos += size;
         return le;
     }
 

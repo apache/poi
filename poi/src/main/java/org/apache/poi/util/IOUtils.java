@@ -348,18 +348,25 @@ public final class IOUtils {
 
         final int derivedLen = isLengthKnown && length >= 0 ? Math.min(length, derivedMaxLength) : derivedMaxLength;
         final int byteArrayInitLen = calculateByteArrayInitLength(isLengthKnown, length, derivedMaxLength, maxInitBufferSize);
-        if (isLengthKnown && length >= 0 && byteArrayInitLen == derivedLen) {
-            // The whole payload fits the initial allocation, so read it straight into the result
-            // array. Going through a ByteArrayOutputStream would hold a second full copy of the
-            // data while toByteArray() copies it out, doubling the transient memory of every
-            // sized read (zip entries, records, ...).
+        if (isLengthKnown && length >= 0) {
+            // Read straight into the result array. Going through a ByteArrayOutputStream would
+            // hold a second full copy of the data while toByteArray() copies it out, doubling the
+            // transient memory of every sized read (zip entries, records, ...).
+            // If the initial allocation is capped below the declared length (the length may come
+            // from untrusted input), grow the array as real data arrives - doubling, but never
+            // past the declared length - so a complete read ends in an exactly-sized array with
+            // no final copy, and the peak stays below twice the payload.
             // Keep reading in DEFAULT_BUFFER_SIZE chunks as the buffered path does, so that
             // streams which enforce limits per read (e.g. the zip-bomb ratio check) report
             // the same byte counts as before.
-            final byte[] result = new byte[derivedLen];
+            byte[] result = new byte[byteArrayInitLen];
             int totalBytes = 0, readBytes;
             do {
-                readBytes = stream.read(result, totalBytes, Math.min(DEFAULT_BUFFER_SIZE, derivedLen - totalBytes));
+                if (totalBytes == result.length) {
+                    result = Arrays.copyOf(result, (int) Math.min(derivedLen,
+                            Math.max(2L * result.length, DEFAULT_BUFFER_SIZE)));
+                }
+                readBytes = stream.read(result, totalBytes, Math.min(DEFAULT_BUFFER_SIZE, result.length - totalBytes));
                 totalBytes += Math.max(readBytes, 0);
             } while (totalBytes < derivedLen && readBytes > -1);
             if (totalBytes == derivedLen) {
@@ -683,13 +690,14 @@ public final class IOUtils {
         if (toSkip == 0) {
             return 0L;
         }
-        // use dedicated buffer to avoid having other threads possibly access the bytes in a shared byte array
-        final byte[] skipBuffer = new byte[SKIP_BUFFER_SIZE];
+        // use dedicated buffer to avoid having other threads possibly access the bytes in a shared byte array,
+        // but no larger than needed, as most skips are only a few bytes
+        final byte[] skipBuffer = new byte[(int) Math.min(toSkip, SKIP_BUFFER_SIZE)];
         long remain = toSkip;
         while (remain > 0) {
             // See https://issues.apache.org/jira/browse/IO-203 for why we use read() rather than delegating to skip()
             final long n = input.read(
-                    skipBuffer, 0, Math.toIntExact(Math.min(remain, SKIP_BUFFER_SIZE)));
+                    skipBuffer, 0, Math.toIntExact(Math.min(remain, skipBuffer.length)));
             if (n < 0) { // EOF
                 break;
             }

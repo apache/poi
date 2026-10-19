@@ -19,7 +19,6 @@ package org.apache.poi.hssf.model;
 
 import static org.apache.logging.log4j.util.Unbox.box;
 
-import java.security.AccessControlException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -1139,9 +1138,9 @@ public final class InternalWorkbook {
             }
 
             retval.setUsername(username);
-        } catch (AccessControlException e) {
+        } catch (SecurityException e) {
             LOG.atWarn().withThrowable(e).log("can't determine user.name");
-            // AccessControlException can occur in a restricted context
+            // SecurityException can occur in a restricted context
             // (client applet/jws application or restricted security server)
             retval.setUsername(defaultUserName);
         }

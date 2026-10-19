@@ -54,7 +54,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.SuppressForbidden;
-import org.apache.xml.security.signature.XMLSignatureInput;
+import org.apache.xml.security.signature.XMLSignatureNodeInput;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.CTRelationshipReference;
@@ -117,13 +117,18 @@ public class RelationshipTransformService extends TransformService {
      *
      * @see TransformService
      */
-    public static synchronized void registerDsigProvider() {
+    public static void registerDsigProvider() {
         // the xml signature classes will try to find a special TransformerService,
         // which is of course unknown to JCE before ...
-        if (Security.getProvider(POIXmlDsigProvider.NAME) == null) {
-            Security.addProvider(new POIXmlDsigProvider());
+        synchronized (REGISTER_LOCK) {
+            if (Security.getProvider(POIXmlDsigProvider.NAME) == null) {
+                Security.addProvider(new POIXmlDsigProvider());
+            }
         }
     }
+
+    /** A private lock, so other code can't block the registration by locking the class */
+    private static final Object REGISTER_LOCK = new Object();
 
 
     @Override
@@ -224,7 +229,7 @@ public class RelationshipTransformService extends TransformService {
 
         LOG.atDebug().log("# Relationship elements: {}", box(rsList.size()));
 
-        return new ApacheNodeSetData(new XMLSignatureInput(root));
+        return new ApacheNodeSetData(new XMLSignatureNodeInput(root));
     }
 
     public Data transform(Data data, XMLCryptoContext context, OutputStream os) throws TransformException {

@@ -33,6 +33,7 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.GenericRecordXmlWriter;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
 /**
  * The base abstract record from which all escher records are defined.  Subclasses will need
@@ -47,6 +48,11 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
 
     // arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_NUMBER_OF_CHILDREN = 100_000;
+    /**
+     * @deprecated use {@link #setMaxNumberOfChildren(int)} and {@link #getMaxNumberOfChildren()} instead - the field will be made private
+     */
+    @Deprecated
+    @Removal(version = "7.0.0")
     protected static int MAX_NUMBER_OF_CHILDREN = DEFAULT_MAX_NUMBER_OF_CHILDREN;
 
     /**

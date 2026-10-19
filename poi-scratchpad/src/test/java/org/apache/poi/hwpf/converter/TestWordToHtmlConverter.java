@@ -18,9 +18,19 @@ package org.apache.poi.hwpf.converter;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.regex.Matcher;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -30,7 +40,9 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.XMLHelper;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.w3c.dom.Document;
@@ -117,27 +129,115 @@ public class TestWordToHtmlConverter {
         }
     }
 
+    @Test
+    void testFieldPatterns() {
+        Matcher m = AbstractWordConverter.PATTERN_HYPERLINK_EXTERNAL.matcher(" HYPERLINK \"http://testuri.org/\" ");
+        assertTrue(m.matches());
+        assertEquals("http://testuri.org/", m.group(1));
+
+        m = AbstractWordConverter.PATTERN_HYPERLINK_LOCAL.matcher("HYPERLINK \\l \"_Toc1\" text\"");
+        assertTrue(m.matches());
+        assertEquals("_Toc1", m.group(1));
+        assertEquals("text\"", m.group(2));
+
+        m = AbstractWordConverter.PATTERN_PAGEREF.matcher("\r\n PAGEREF _Toc2 \t\\h \\* MERGEFORMAT \r");
+        assertTrue(m.find());
+        assertEquals("_Toc2", m.group(1));
+
+        m = AbstractWordConverter.PATTERN_PAGEREF.matcher("PAGEREF _Toc2\t\\h");
+        assertTrue(m.find());
+        assertEquals("_Toc2\t", m.group(1));
+    }
+
+    @Test
+    void testFieldPatternsBacktracking() {
+        // these used to take minutes, as every shorter match was retried before failing
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            assertFalse(AbstractWordConverter.PATTERN_HYPERLINK_EXTERNAL.matcher(
+                "HYPERLINK \"" + "\"".repeat(100_000) + "\"\nx").matches());
+            assertFalse(AbstractWordConverter.PATTERN_HYPERLINK_LOCAL.matcher(
+                "HYPERLINK \\l \"" + "\" ".repeat(50_000) + "\nx").matches());
+            assertFalse(AbstractWordConverter.PATTERN_PAGEREF.matcher(
+                "PAGEREF " + "\t".repeat(100_000) + "x").find());
+            assertFalse(AbstractWordConverter.PATTERN_PAGEREF.matcher(
+                "PAGEREF " + "\\h".repeat(50_000) + "\n\n").find());
+        });
+    }
+
+    @Test
+    void testFontNameInStylesheet() throws Exception {
+        // the font name is written into the text of the <style> element, which the html output
+        // method does not escape, so a crafted name used to close the element and add markup
+        String fontName = "</style><p>x";
+        try (POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.openResourceAsStream("SampleDoc.doc"))) {
+            renameFont(fs, "Times New Roman", fontName);
+
+            try (HWPFDocument hwpfDocument = new HWPFDocument(fs)) {
+                String result = getHtmlText(hwpfDocument, true);
+                assertNotContains(result, "</style><p>");
+                assertContains(result, "font-family:\"\\3c /style\\3e \\3c p\\3e x\";");
+            }
+        }
+    }
+
+    @Test
+    void testCssFontFamily() {
+        assertEquals("Times New Roman", WordToHtmlUtils.cssFontFamily("Times New Roman"));
+        assertEquals("MS-Mincho_2", WordToHtmlUtils.cssFontFamily("MS-Mincho_2"));
+        assertEquals("\"3M Sans\"", WordToHtmlUtils.cssFontFamily("3M Sans"));
+        assertEquals("\"Font -1\"", WordToHtmlUtils.cssFontFamily("Font -1"));
+        assertEquals("\"a\\22 b\\5c c\\a d\"", WordToHtmlUtils.cssFontFamily("a\"b\\c\nd"));
+    }
+
+    /**
+     * Overwrites the name of a font in the font table of the table stream, in place: the new
+     * name must not be longer than the old one, the rest of the entry is padded with zeros.
+     */
+    private static void renameFont(POIFSFileSystem fs, String oldName, String newName) throws IOException {
+        // not closed, as that would close the file system too
+        HWPFDocument hwpfDocument = new HWPFDocument(fs);
+        byte[] table = hwpfDocument.getTableStream();
+        String tableName = hwpfDocument.getFileInformationBlock().getFibBase().isFWhichTblStm() ? "1Table" : "0Table";
+        int start = hwpfDocument.getFileInformationBlock().getFcSttbfffn();
+        int end = start + hwpfDocument.getFileInformationBlock().getLcbSttbfffn();
+
+        byte[] oldBytes = (oldName + "\0").getBytes(StandardCharsets.UTF_16LE);
+        byte[] newBytes = Arrays.copyOf(newName.getBytes(StandardCharsets.UTF_16LE), oldBytes.length);
+        for (int i = start; i + oldBytes.length <= end; i++) {
+            if (Arrays.equals(oldBytes, Arrays.copyOfRange(table, i, i + oldBytes.length))) {
+                System.arraycopy(newBytes, 0, table, i, newBytes.length);
+                fs.createOrUpdateDocument(new ByteArrayInputStream(table), tableName);
+                return;
+            }
+        }
+        throw new IllegalStateException("font " + oldName + " not found");
+    }
+
     private static String getHtmlText(final String sampleFileName, boolean emulatePictureStorage) throws Exception {
+        try (HWPFDocument hwpfDocument = new HWPFDocument(SAMPLES.openResourceAsStream(sampleFileName))) {
+            return getHtmlText(hwpfDocument, emulatePictureStorage);
+        }
+    }
+
+    private static String getHtmlText(HWPFDocument hwpfDocument, boolean emulatePictureStorage) throws Exception {
         Document newDocument = XMLHelper.newDocumentBuilder().newDocument();
         WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(newDocument);
 
-        try (HWPFDocument hwpfDocument = new HWPFDocument(SAMPLES.openResourceAsStream(sampleFileName))) {
-            if (emulatePictureStorage) {
-                wordToHtmlConverter.setPicturesManager((content, pictureType, suggestedName, widthInches, heightInches) -> suggestedName);
-            }
-
-            wordToHtmlConverter.processDocument(hwpfDocument);
-
-            StringWriter stringWriter = new StringWriter();
-
-            Transformer transformer = XMLHelper.newTransformer();
-            transformer.setOutputProperty(OutputKeys.METHOD, "html");
-            transformer.transform(
-                new DOMSource(wordToHtmlConverter.getDocument()),
-                new StreamResult(stringWriter));
-
-            return stringWriter.toString();
+        if (emulatePictureStorage) {
+            wordToHtmlConverter.setPicturesManager((content, pictureType, suggestedName, widthInches, heightInches) -> suggestedName);
         }
+
+        wordToHtmlConverter.processDocument(hwpfDocument);
+
+        StringWriter stringWriter = new StringWriter();
+
+        Transformer transformer = XMLHelper.newTransformer();
+        transformer.setOutputProperty(OutputKeys.METHOD, "html");
+        transformer.transform(
+            new DOMSource(wordToHtmlConverter.getDocument()),
+            new StreamResult(stringWriter));
+
+        return stringWriter.toString();
     }
 
 

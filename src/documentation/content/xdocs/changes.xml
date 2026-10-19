@@ -74,26 +74,30 @@
         <summary>
             <summary-item>Minimum Java version is now JDK 17 (was JDK 8 in POI 5.x)</summary-item>
             <summary-item>DataFormatter now uses cached values for formula cells by default (see setUseCachedValuesForFormulaCells)</summary-item>
+            <summary-item>Removed some deprecated methods</summary-item>
             <summary-item>Upgrade bouncycastle dependency to 1.86</summary-item>
-            <summary-item>Upgrade commons-codec dependency to 1.22.1</summary-item>
+            <summary-item>Upgrade commons-codec dependency to 1.23.0</summary-item>
             <summary-item>Upgrade commons-compress dependency to 1.28.0</summary-item>
             <summary-item>Upgrade commons-collections4 dependency to 4.6.0</summary-item>
             <summary-item>Upgrade commons-io dependency to 2.22.0</summary-item>
             <summary-item>Upgrade log4j-api dependency to 2.26.1</summary-item>
-            <summary-item>Upgrade mockito dependency to 5.23.0</summary-item>
+            <summary-item>Upgrade mockito dependency to 5.24.0</summary-item>
             <summary-item>Upgrade pdfbox dependency to 3.0.8</summary-item>
-            <summary-item>Upgrade SLF4J to 2.0.19</summary-item>
+            <summary-item>Upgrade SLF4J to 2.0.20</summary-item>
             <summary-item>Upgrade xmlbeans dependency to 5.4.1</summary-item>
-            <summary-item>Upgrade xmlsec dependency to 3.0.6</summary-item>
+            <summary-item>Upgrade xmlsec dependency to 4.0.4 (when using JPMS, jakarta.xml.bind-api and jakarta.activation-api are also needed on the module path, and xmlsec is no longer an automatic module so it must be resolved explicitly, e.g. with --add-modules org.apache.santuario.xmlsec or a requires in your own module-info)</summary-item>
             <summary-item>Upgrade Ant to 1.10.18</summary-item>
-            <summary-item>Upgrade Gradle to 9.7.1</summary-item>
+            <summary-item>Upgrade Gradle to 9.8.1</summary-item>
             <summary-item>Upgrade JUnit to 6.1.3</summary-item>
         </summary>
         <actions>
+            <action type="fix" fixes-bug="54686,70146" context="SS_Common">DataFormatter: currency strings without a locale, and dots in literal text</action>
             <action type="fix" fixes-bug="55747" context="HSSF">Keep reference operands of value functions nested in IF as value class, not reference class</action>
             <action type="fix" fixes-bug="60072" context="HSSF XSSF">Move drawing anchors when shifting rows or columns</action>
             <action type="fix" fixes-bug="60848" context="SS_Common">Fix SUMPRODUCT with unary minus (--) on array arguments and other cases</action>
             <action type="fix" fixes-bug="60895" context="SS_Common">CellUtil: a changed property keeps the default fill and border instead of adding new ones</action>
+            <action type="fix" fixes-bug="61638" context="SS_Common">DataFormatter: support a '0' placeholder before '#' placeholders, e.g. 60#########</action>
+            <action type="fix" fixes-bug="62242" context="SS_Common">CellFormat: '?' and '#' show an integer part of zero as insignificant</action>
             <action type="fix" fixes-bug="62271" context="SS_Common">Apply &amp; and % operators element-wise in array mode</action>
             <action type="fix" fixes-bug="64137" context="SS_Common">IRR: fall back to bracketed Newton-Raphson when the iteration diverges</action>
             <action type="fix" fixes-bug="65059,65231" context="SS_Common">SUMIF/COUNTIF/AVERAGEIF and the *IFS functions: an array of criteria gives an array of results</action>
@@ -129,6 +133,7 @@
             <action type="fix" fixes-bug="github-962" context="XSSF">Remove pre-existing inline strings when updating cell value</action>
             <action type="add" fixes-bug="github-968" context="XSLF">Add methods to manage first slide number (firstSlideNum)</action>
             <action type="fix" fixes-bug="github-969" context="XSLF">Fix rules for table style application in XSLFTables</action>
+            <action type="add" fixes-bug="github-977,github-1427" context="SS_Common">DataFormatter: allow overriding the format strings of built-in formats, and make getFormat and createFormat protected</action>
             <action type="add" fixes-bug="github-982" context="XWPF">Allow loading a word document with chartex chart</action>
             <action type="add" fixes-bug="github-986" context="XWPF">Allow public access of theme and add helpers for theme fonts in XWPF</action>
             <action type="add" fixes-bug="github-990" context="XSLF">Support rendering transparent bitmaps in presentations</action>
@@ -206,13 +211,13 @@
             <action type="fix" fixes-bug="github-1227" context="OOXML">Avoid large eager allocation from untrusted zip entry size in ZipArchiveFakeEntry</action>
             <action type="fix" fixes-bug="github-1228" context="OPC">Fix OPC part-name handling issues (percent-escape bounds check, marshaller round-trip)</action>
             <action type="fix" fixes-bug="github-1230" context="XWPF">Escape relationship id interpolated into drawing fragment in XWPFRun.addChart</action>
-            <action type="fix" fixes-bug="github-1231" context="XSLF XDGF">Apply DEFAULT_XML_OPTIONS to remaining XMLBeans parses</action>
+            <action type="fix" fixes-bug="github-1231" context="OOXML">Apply DEFAULT_XML_OPTIONS to remaining XMLBeans parses</action>
             <action type="fix" fixes-bug="github-1232" context="HSSF">Fix Biff8DecryptingStream.readFully to honour len on the never-encrypted path</action>
             <action type="fix" fixes-bug="github-1233" context="OOXML">Restrict OOXML signature reference dereferencing to the package</action>
             <action type="fix" fixes-bug="github-1234" context="XSSF">Fix findColumnIndex() to handle newline characters in column headers</action>
             <action type="fix" fixes-bug="github-1240" context="OPC">Fix ContentType.equals and the M1.10 part name segment check</action>
             <action type="fix" fixes-bug="github-1241" context="XSSF">XSSFExcelExtractor: cache the TransformerFactory and skip unwanted comment lookups</action>
-            <action type="fix" fixes-bug="github-1242" context="XSSF XDDF">Avoid quadratic XmlBeans element access on hot paths</action>
+            <action type="fix" fixes-bug="github-1242" context="OOXML">Avoid quadratic XmlBeans element access on hot paths</action>
             <action type="fix" fixes-bug="github-1243" context="XWPF">Reduce the per-run work done when opening a Word document</action>
             <action type="fix" fixes-bug="github-1244" context="XSSF">Avoid building XmlBeans objects for every shared string</action>
             <action type="fix" fixes-bug="github-1245" context="XSSF">Fix off-by-one when stripping the [] wrapper from an external book name</action>
@@ -245,10 +250,41 @@
             <action type="fix" fixes-bug="github-1346" context="HWMF">HwmfBitmapDib: bounds check the image size before narrowing it to int</action>
             <action type="fix" fixes-bug="github-1347" context="POIFS">CryptoAPIDecryptor: don't size the descriptor array from an untrusted count</action>
             <action type="fix" fixes-bug="github-1348" context="HSMF">Msg2txt: reject path traversal filenames during MSG attachment extraction</action>
-            <action type="fix" context="SS_Common">Avoid NPEs when parsing formulas with unusual sheet identifiers</action>
-            <action type="fix" context="XSSF">Add allocation check to XSSFPivotCacheRecords</action>
-            <action type="fix" context="HEMF">Throw an exception instead of failing an assert for an invalid EMF file</action>
-            <action type="update" breaks-compatibility="true" context="SS_Common">DataFormatter: setUseCachedValuesForFormulaCells(boolean) now defaults to true (was false in POI 5.x)</action>
+            <action type="fix" fixes-bug="github-1358" context="XWPF">Load header and footer references of a section in linear time</action>
+            <action type="fix" fixes-bug="github-1359" context="SS_Common">Let the CellFormat cache release formats that are no longer used</action>
+            <action type="fix" fixes-bug="github-1360" context="OOXML">Fetch xmlbeans arrays once instead of calling indexed getters in loops</action>
+            <action type="update" fixes-bug="github-1365" context="POI_Overall">Put module-info.class in the jar root instead of a multi-release jar</action>
+            <action type="fix" fixes-bug="github-1370" context="POI_Overall">Fix bugs, locking and per-call allocations in POI's input streams</action>
+            <action type="fix" fixes-bug="github-1372" context="XSSF">XSSFBEventBasedExcelExtractor: make setHandleHyperlinksInCells work</action>
+            <action type="fix" fixes-bug="github-1373" context="POI_Overall">Fix exception messages that always printed null</action>
+            <action type="fix" fixes-bug="github-1374" context="POI_Overall">Stop POI depending on public mutable statics</action>
+            <action type="fix" fixes-bug="github-1375" context="POI_Overall">IOUtils.skipFully: size the skip buffer to the skip</action>
+            <action type="fix" fixes-bug="github-1376" context="POI_Overall">Don't lock on classes or other publicly accessible objects</action>
+            <action type="fix" fixes-bug="github-1377" context="XSSF">XSSFExportToXml.compare: build the common path with a StringBuilder</action>
+            <action type="fix" fixes-bug="github-1378" context="OPC">OpcOutputStream: drop synchronized from write</action>
+            <action type="fix" fixes-bug="github-1379" context="HSSF HPSF HWPF">Fix equals and hashCode in HSSFPalette.CustomColor, CustomProperty and TextPiece</action>
+            <action type="add" fixes-bug="github-1382" context="XSSF">XSSFReader: random access to sheet parts and Strict OOXML relationships</action>
+            <action type="fix" fixes-bug="github-1384" context="OOXML">ZipArchiveThresholdInputStream: check single-byte reads every 1 KB</action>
+            <action type="fix" fixes-bug="github-1386" context="SS_Common">FormulaParser: limit the nesting depth of parsed formulas</action>
+            <action type="fix" fixes-bug="github-1387" context="HWPF">Validate huge grpprl offset and size in PAPX.findHuge</action>
+            <action type="fix" fixes-bug="github-1392" context="HSMF">Validate string stream name offset in NameIdChunks</action>
+            <action type="fix" fixes-bug="github-1396" context="SS_Common">DataFormatter: fix trailing-comma scaling and literals between digits</action>
+            <action type="add" fixes-bug="github-1397" context="SS_Common">DataFormatter: support Chinese date/time formats, [DBNum] and quoted literals in date formats</action>
+            <action type="fix" fixes-bug="github-1398,github-1404" context="SS_Common">DataFormatter: test against text calculated by Excel, and fix mismatches</action>
+            <action type="fix" fixes-bug="github-1399" context="SS_Common">DataFormatter: precompile regexes used when formatting</action>
+            <action type="fix" fixes-bug="github-1405" context="SS_Common">DataFormatter: round to the nearest second, as Excel does</action>
+            <action type="fix" fixes-bug="github-1406,github-1412" context="SS_Common">CellFormat: fix fractions so they match Excel</action>
+            <action type="fix" fixes-bug="github-1407" context="HWMF HEMF">Don't presize metafile buffers from untrusted header sizes</action>
+            <action type="add" fixes-bug="github-1409" context="HSSF">FormatTrackingHSSFListener: optionally use file FORMAT records for built-in format indexes</action>
+            <action type="add" fixes-bug="github-1410" context="XSSF SXSSF">Optionally escape literal _xHHHH_ sequences in strings on write</action>
+            <action type="fix" fixes-bug="github-1414" context="HSSF">HSSFRow.copyRowFrom: shift formulas with the .xls row limit</action>
+            <action type="add" fixes-bug="github-1416" context="SS_Common">CellCopyPolicy: opt-in adjustment of relative formula references</action>
+            <action type="fix" fixes-bug="github-1426" context="SS_Common">DataFormatter: format literal text after trailing commas with CellFormat</action>
+            <action type="fix" fixes-bug="github-1430,github-1431,github-1434" context="XWPF">XWPF: keep inline SDT runs out of XWPFParagraph.getRuns(); read table rows, cells and text wrapped in SDTs and custom XML</action>
+            <action type="fix" fixes-bug="github-1432" context="SS_Common">Reject prohibited NUL and ETX characters in sheet names</action>
+            <action type="fix" fixes-bug="github-1436,github-1437,github-1438,github-1439,github-1440,github-1441,github-1442,github-1443" context="POI_Overall">Avoid regex backtracking and recursion that let crafted format strings, formulas, wildcard criteria, part names, content types and field codes take quadratic or exponential time or overflow the stack</action>
+            <action type="fix" fixes-bug="github-1444" context="SS_Common">IMAGINARY/IMREAL of a number without a real part; COMPLEX with an imaginary coefficient of -1 or both coefficients 0</action>
+            <action type="fix" fixes-bug="github-1446" context="HWPF">WordToHtmlConverter: escape font names written into the stylesheet</action>
         </actions>
     </release>
 

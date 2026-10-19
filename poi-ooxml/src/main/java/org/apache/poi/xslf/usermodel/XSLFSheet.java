@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntConsumer;
 
 import javax.xml.namespace.QName;
 
@@ -354,25 +355,38 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
      * @throws IllegalArgumentException if the type of the specified shape
      *         is incompatible with this sheet (optional)
      */
+    /**
+     * Removes {@code obj} via {@code remover}, looking up its index in {@code elements}.
+     * This avoids {@code List.remove(Object)} on an xmlbeans list, which looks up each element by index.
+     */
+    static void removeElement(XmlObject[] elements, XmlObject obj, IntConsumer remover) {
+        for (int i = 0; i < elements.length; i++) {
+            if (elements[i] == obj) {
+                remover.accept(i);
+                return;
+            }
+        }
+    }
+
     @Override
     public boolean removeShape(XSLFShape xShape) {
         XmlObject obj = xShape.getXmlObject();
         CTGroupShape spTree = getSpTree();
         deregisterShapeId(xShape.getShapeId());
         if(obj instanceof CTShape){
-            spTree.getSpList().remove(obj);
+            removeElement(spTree.getSpArray(), obj, spTree::removeSp);
         } else if (obj instanceof CTGroupShape) {
             XSLFGroupShape gs = (XSLFGroupShape)xShape;
             new ArrayList<>(gs.getShapes()).forEach(gs::removeShape);
-            spTree.getGrpSpList().remove(obj);
+            removeElement(spTree.getGrpSpArray(), obj, spTree::removeGrpSp);
         } else if (obj instanceof CTConnector) {
-            spTree.getCxnSpList().remove(obj);
+            removeElement(spTree.getCxnSpArray(), obj, spTree::removeCxnSp);
         } else if (obj instanceof CTGraphicalObjectFrame) {
-            spTree.getGraphicFrameList().remove(obj);
+            removeElement(spTree.getGraphicFrameArray(), obj, spTree::removeGraphicFrame);
         } else if (obj instanceof CTPicture) {
             XSLFPictureShape ps = (XSLFPictureShape)xShape;
             removePictureRelation(ps);
-            spTree.getPicList().remove(obj);
+            removeElement(spTree.getPicArray(), obj, spTree::removePic);
         } else {
             throw new IllegalArgumentException("Unsupported shape: " + xShape);
         }

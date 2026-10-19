@@ -401,7 +401,7 @@ public class XWPFTableCell implements IBody, ICell {
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;
-        for (CTTbl tbl : ctTc.getTblList()) {
+        for (CTTbl tbl : ctTc.getTblArray()) {
             if (tbl == table.getCTTbl()) {
                 break;
             }
@@ -512,10 +512,9 @@ public class XWPFTableCell implements IBody, ICell {
                 return null;
             }
             row = ctRow;
-            cursor.toParent();
-            o = cursor.getObject();
         }
-        if (!(o instanceof CTTbl tbl)) {
+        CTTbl tbl = XWPFTable.getParentTable(row);
+        if (tbl == null) {
             return null;
         }
         XWPFTable table = getTable(tbl);

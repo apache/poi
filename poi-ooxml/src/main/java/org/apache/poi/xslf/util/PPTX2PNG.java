@@ -259,13 +259,9 @@ public final class PPTX2PNG {
                 outdir = file.getAbsoluteFile().getParentFile();
             }
         }
-        if (!outdir.exists()) {
-            usage("Outdir doesn't exist");
-            return false;
-        }
-
-        if (!"null".equals(format) && (outdir == null || !outdir.exists() || !outdir.isDirectory())) {
-            usage("Output directory doesn't exist");
+        // the "null" format writes no files, so it doesn't need the output directory
+        if (!"null".equals(format) && (!outdir.exists() || !outdir.isDirectory())) {
+            usage("Output directory doesn't exist or isn't a directory");
             return false;
         }
 

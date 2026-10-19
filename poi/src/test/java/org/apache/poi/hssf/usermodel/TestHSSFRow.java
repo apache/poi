@@ -29,6 +29,7 @@ import java.io.IOException;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
 import org.junit.jupiter.api.Test;
 
@@ -143,6 +144,30 @@ final class TestHSSFRow extends BaseTestRow {
     }
 
     @Test
+    void testCopyRowFromShiftsPastExcel97RowLimitToRefError() throws IOException {
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            final HSSFSheet sheet = workbook.createSheet("Sheet1");
+            final HSSFRow srcRow = sheet.createRow(0);
+            srcRow.createCell(0).setCellFormula("B2");
+            srcRow.createCell(1).setCellFormula("SUM(B2:B3)");
+            srcRow.createCell(2).setCellFormula("B$2");
+
+            // the last row in .xls: B2 would move to row 65537, which does not exist
+            final HSSFRow destRow = sheet.createRow(SpreadsheetVersion.EXCEL97.getLastRowIndex());
+            destRow.copyRowFrom(srcRow, new CellCopyPolicy());
+
+            assertEquals("#REF!", destRow.getCell(0).getCellFormula());
+            assertEquals("SUM(#REF!)", destRow.getCell(1).getCellFormula());
+            assertEquals("B$2", destRow.getCell(2).getCellFormula());
+
+            // still within the .xls row limit
+            final HSSFRow nearRow = sheet.createRow(SpreadsheetVersion.EXCEL97.getLastRowIndex() - 1);
+            nearRow.copyRowFrom(srcRow, new CellCopyPolicy());
+            assertEquals("B65536", nearRow.getCell(0).getCellFormula());
+        }
+    }
+
+    @Test
     void testCopyRowFromExternalSheet() throws IOException {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet srcSheet = workbook.createSheet("src");
@@ -238,5 +263,19 @@ final class TestHSSFRow extends BaseTestRow {
 
         assertEquals(styleCount, workbook.getNumCellStyles(), "no new styles should be added by copyRow");
         workbook.close();
+    }
+
+    @Test
+    void testCopyRowFromWithAdjustFormulaReferencesShiftsOnce() throws IOException {
+        try (Workbook workbook = new HSSFWorkbook()) {
+            final Sheet sheet = workbook.createSheet("Sheet1");
+            final Row srcRow = sheet.createRow(0);
+            srcRow.createCell(0).setCellFormula("B1+$B$1");
+
+            final CellCopyPolicy policy = new CellCopyPolicy.Builder().adjustFormulaReferences(true).build();
+            final HSSFRow destRow = (HSSFRow) sheet.createRow(3);
+            destRow.copyRowFrom(srcRow, policy);
+            assertEquals("B4+$B$1", destRow.getCell(0).getCellFormula());
+        }
     }
 }

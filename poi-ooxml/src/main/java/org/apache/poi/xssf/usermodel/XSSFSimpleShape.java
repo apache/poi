@@ -106,8 +106,8 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
             _textBody = null;
         } else {
             _textBody = new XDDFTextBody(this, body);
-            for (int i = 0; i < body.sizeOfPArray(); i++) {
-                _paragraphs.add(new XSSFTextParagraph(body.getPArray(i), ctShape));
+            for (CTTextParagraph p : body.getPArray()) {
+                _paragraphs.add(new XSSFTextParagraph(p, ctShape));
             }
         }
     }
@@ -474,8 +474,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
             r.setT(str.getString());
 
         } else {
-            for (int i = 0; i < str.getCTRst().sizeOfRArray(); i++) {
-                CTRElt lt = str.getCTRst().getRArray(i);
+            for (CTRElt lt : str.getCTRst().getRArray()) {
                 CTRPrElt ltPr = lt.getRPr();
                 if (ltPr == null) {
                     ltPr = lt.addNewRPr();
@@ -548,8 +547,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
             r.setT(str.getString());
 
         } else {
-            for (int i = 0; i < str.getCTRst().sizeOfRArray(); i++) {
-                CTRElt lt = str.getCTRst().getRArray(i);
+            for (CTRElt lt : str.getCTRst().getRArray()) {
                 CTRPrElt ltPr = lt.getRPr();
                 if (ltPr == null) {
                     ltPr = lt.addNewRPr();

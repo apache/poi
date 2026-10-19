@@ -42,6 +42,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.CodepointsUtil;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 /**
@@ -255,6 +256,8 @@ public class SheetDataWriter implements Closeable {
             // APIs
             writeAttribute("s", Integer.toString(cellStyle.getIndex() & 0xffff));
         }
+        boolean encode = cell.getSheet().getWorkbook() instanceof SXSSFWorkbook wb
+                && wb.isEscapeLiteralUnicodeSequences();
         CellType cellType = cell.getCellType();
         switch (cellType) {
             case BLANK: {
@@ -292,7 +295,7 @@ public class SheetDataWriter implements Closeable {
                         String value = cell.getStringCellValue();
                         if(value != null && !value.isEmpty()) {
                             _out.write("<v>");
-                            outputEscapedString(value);
+                            outputEscapedString(encode ? XSSFRichTextString.utfEncode(value) : value);
                             _out.write("</v>");
                         }
                         break;
@@ -314,7 +317,12 @@ public class SheetDataWriter implements Closeable {
             }
             case STRING: {
                 if (_sharedStringSource != null) {
-                    RichTextString rt = cell.getRichStringCellValue();
+                    // XSSFRichTextString values already hold the stored form of the text
+                    boolean encodeString = encode
+                            && !(cell instanceof SXSSFCell sxCell && sxCell.isRichTextValue());
+                    RichTextString rt = encodeString
+                            ? new XSSFRichTextString(XSSFRichTextString.utfEncode(cell.getStringCellValue()))
+                            : cell.getRichStringCellValue();
                     int sRef = _sharedStringSource.addSharedStringItem(rt);
 
                     writeAttribute("t", STCellType.S.toString());
@@ -324,11 +332,12 @@ public class SheetDataWriter implements Closeable {
                 } else {
                     writeAttribute("t", "inlineStr");
                     _out.write("><is><t");
-                    if (hasLeadingTrailingSpaces(cell.getStringCellValue())) {
+                    String value = cell.getStringCellValue();
+                    if (hasLeadingTrailingSpaces(value)) {
                         writeAttribute("xml:space", "preserve");
                     }
                     _out.write(">");
-                    outputEscapedString(cell.getStringCellValue());
+                    outputEscapedString(encode ? XSSFRichTextString.utfEncode(value) : value);
                     _out.write("</t></is>");
                 }
                 break;

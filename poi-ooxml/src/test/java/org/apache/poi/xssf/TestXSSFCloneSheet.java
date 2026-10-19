@@ -133,6 +133,10 @@ class TestXSSFCloneSheet  extends BaseTestCloneSheet {
             Sheet source_sh = template_wb.cloneSheet(0);
             assertNotNull(source_sh);
         }
+        // the file attached to the bug
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64759.xlsx")) {
+            assertNotNull(wb.cloneSheet(0));
+        }
     }
 
     @Test

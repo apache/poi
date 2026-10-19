@@ -46,6 +46,12 @@ public final class PICT extends Metafile {
     private static final Logger LOG = PoiLogManager.getLogger(PICT.class);
 
     /**
+     * Upper bound for presizing the inflate buffer from the untrusted wmfSize header field.
+     * Larger metafiles are still supported, the buffer just grows as data is inflated.
+     */
+    private static final int MAX_BUFFER_PRESIZE = 4 * 1024 * 1024;
+
+    /**
      * Creates a new instance.
      *
      * @param recordContainer Record tracking all pictures. Should be attached to the slideshow that this picture is
@@ -88,8 +94,10 @@ public final class PICT extends Metafile {
                 throw new EOFException();
             }
             byte[] chunk = new byte[4096];
-            try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(header.getWmfSize()).get()) {
-                final int maxLength = getMaxRecordLength();
+            final int maxLength = getMaxRecordLength();
+            // wmfSize is untrusted, so only use it as a hint, and don't presize a huge buffer
+            final int bufferSize = Math.min(header.getWmfSize(), Math.min(maxLength, MAX_BUFFER_PRESIZE));
+            try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(bufferSize).get()) {
                 long totalInflated = 0;
                 try (InflaterInputStream inflater = new InflaterInputStream(bis)) {
                     int count;

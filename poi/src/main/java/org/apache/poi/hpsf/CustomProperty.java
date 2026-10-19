@@ -17,7 +17,6 @@
 
 package org.apache.poi.hpsf;
 
-import java.util.Objects;
 
 /**
  * This class represents custom properties in the document summary
@@ -106,15 +105,15 @@ public class CustomProperty extends Property
     }
 
     /**
-     * @see java.util.AbstractSet#hashCode()
+     * Two custom properties are equal if their names, ids, types and values are equal.
+     * A plain {@link Property} has no name, so it is compared as {@link Property#equals(Object)}
+     * does, which keeps the comparison symmetric.
      */
     @Override
-    public int hashCode() {
-        return Objects.hash(name, getID());
-    }
-
-    @Override
     public boolean equals(Object o) {
-        return (o instanceof CustomProperty) && equalsContents(o);
+        if (o instanceof CustomProperty) {
+            return equalsContents(o);
+        }
+        return o instanceof Property && super.equals(o);
     }
 }

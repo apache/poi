@@ -33,6 +33,8 @@ import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTCustomXmlPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTCustomXmlRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJcTable;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
@@ -167,26 +169,16 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         this.ctTbl = table;
 
         // is an empty table: I add one row and one column as default
-        // Check if table has any row-like content (either TR or SDT-wrapped rows)
-        if (initRow && table.sizeOfTrArray() == 0 && !hasSdtRows(table)) {
+        // Check if table has any row-like content (TR, or rows wrapped in SDT or custom XML)
+        if (initRow && table.sizeOfTrArray() == 0 && table.sizeOfSdtArray() == 0
+                && table.sizeOfCustomXmlArray() == 0) {
             createEmptyTable(table);
         }
 
-        try (XmlCursor cursor = table.newCursor()) {
-            cursor.selectPath("./*");
-            while (cursor.toNextSelection()) {
-                XmlObject xmlObject = cursor.getObject();
-                if (xmlObject instanceof CTRow ctRow) {
-                    processCTRow(ctRow);
-                }
-                else if (xmlObject instanceof CTSdtRow sdtRow) {
-                    List<CTRow> rows = new ArrayList<>();
-                    collectCTRowsInnerSdtRow(sdtRow, rows);
-                    for (CTRow row : rows) {
-                        processCTRow(row);
-                    }
-                }
-            }
+        List<CTRow> rows = new ArrayList<>();
+        collectRows(table, rows);
+        for (CTRow row : rows) {
+            processCTRow(row);
         }
     }
 
@@ -213,13 +205,12 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         }
     }
 
-    private void collectCTRowsInnerSdtRow(CTSdtRow sdtRow, List<CTRow> rows) {
-        CTSdtContentRow sdtContent = sdtRow.getSdtContent();
-        if (sdtContent == null) {
-            return;
-        }
-
-        try (XmlCursor cursor = sdtContent.newCursor()) {
+    /**
+     * Collect the rows in container in document order, including rows wrapped
+     * in SDT rows (w:sdt) or custom XML rows (w:customXml), however deeply nested.
+     */
+    private static void collectRows(XmlObject container, List<CTRow> rows) {
+        try (XmlCursor cursor = container.newCursor()) {
             if (!cursor.toFirstChild()) {
                 return;
             }
@@ -227,8 +218,13 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                 XmlObject child = cursor.getObject();
                 if (child instanceof CTRow ctRow) {
                     rows.add(ctRow);
-                } else if (child instanceof CTSdtRow sdtChild) {
-                    collectCTRowsInnerSdtRow(sdtChild, rows);
+                } else if (child instanceof CTSdtRow sdtRow) {
+                    CTSdtContentRow sdtContent = sdtRow.getSdtContent();
+                    if (sdtContent != null) {
+                        collectRows(sdtContent, rows);
+                    }
+                } else if (child instanceof CTCustomXmlRow customXmlRow) {
+                    collectRows(customXmlRow, rows);
                 }
             } while (cursor.toNextSibling());
         }
@@ -259,27 +255,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
          * tblgrid.addNewGridCol().setW(new BigInteger("2000"));
          */
         //getRows();
-    }
-
-    /**
-     * Check if the table contains any SDT-wrapped rows.
-     * This is needed to avoid adding an extra blank row to tables that
-     * already have row-like content, even if it's wrapped in SDT elements.
-     *
-     * @param table the CTTbl to check
-     * @return true if the table contains any SDT row elements
-     */
-    private boolean hasSdtRows(CTTbl table) {
-        try (XmlCursor cursor = table.newCursor()) {
-            cursor.selectPath("./*");
-            while (cursor.toNextSelection()) {
-                XmlObject xmlObject = cursor.getObject();
-                if (xmlObject instanceof CTSdtRow) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**
@@ -324,8 +299,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return tableRow
      */
     public XWPFTableRow createRow() {
-        int sizeCol = ctTbl.sizeOfTrArray() > 0 ? ctTbl.getTrArray(0)
-                .sizeOfTcArray() : 0;
+        int sizeCol = tableRows.isEmpty() ? 0 : tableRows.get(0).getCtRow().sizeOfTcArray();
         XWPFTableRow tabRow = new XWPFTableRow(ctTbl.addNewTr(), this);
         addColumn(tabRow, sizeCol);
         tableRows.add(tabRow);
@@ -1171,6 +1145,10 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * add a new Row to the table
+     * <p>
+     * The row's XML is copied into the table and row is updated to use that copy,
+     * so later changes made through row are kept. Cells fetched from row before
+     * this call no longer belong to it.
      *
      * @param row the row which should be added
      */
@@ -1178,66 +1156,30 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         // Add to end of table
         CTRow addedRow = ctTbl.addNewTr();
         addedRow.set(row.getCtRow());
+        row.setCtRow(addedRow);
         tableRows.add(row);
     }
 
     /**
      * add a new Row to the table
      * at position pos
+     * <p>
+     * If the row currently at pos is inside an SDT row (content control)
+     * or a custom XML row, the new row is added inside that too.
+     * <p>
+     * The row's XML is copied into the table and row is updated to use that copy,
+     * so later changes made through row are kept. Cells fetched from row before
+     * this call no longer belong to it.
      *
      * @param row the row which should be added
      */
     public boolean addRow(XWPFTableRow row, int pos) {
         if (pos >= 0 && pos <= tableRows.size()) {
-            if (pos == tableRows.size()) {
-                // Add to end of table
-                CTRow addedRow = ctTbl.addNewTr();
-                addedRow.set(row.getCtRow());
-            } else {
-                // Insert before the row currently at position pos
-                XWPFTableRow nextRow = tableRows.get(pos);
-                CTRow nextCTRow = nextRow.getCtRow();
-
-                // Find where to insert by checking the parent of the next row
-                try (XmlCursor cursor = nextCTRow.newCursor()) {
-                    if (cursor.toParent()) {
-                        XmlObject parent = cursor.getObject();
-                        if (parent instanceof CTTbl tbl) {
-                            // Top-level row - insert into table
-                            List<CTRow> trList = tbl.getTrList();
-                            int idx = trList.indexOf(nextCTRow);
-                            if (idx >= 0) {
-                                CTRow addedRow = tbl.insertNewTr(idx);
-                                addedRow.set(row.getCtRow());
-                            } else {
-                                // Fallback: add to end
-                                CTRow addedRow = ctTbl.addNewTr();
-                                addedRow.set(row.getCtRow());
-                            }
-                        } else if (parent instanceof CTSdtContentRow sdtContent) {
-                            // SDT-wrapped row - insert into SDT content
-                            List<CTRow> trList = sdtContent.getTrList();
-                            int idx = trList.indexOf(nextCTRow);
-                            if (idx >= 0) {
-                                CTRow addedRow = sdtContent.insertNewTr(idx);
-                                addedRow.set(row.getCtRow());
-                            } else {
-                                // Fallback: add to end of SDT content
-                                CTRow addedRow = sdtContent.addNewTr();
-                                addedRow.set(row.getCtRow());
-                            }
-                        } else {
-                            // Unknown parent - add to table as fallback
-                            CTRow addedRow = ctTbl.addNewTr();
-                            addedRow.set(row.getCtRow());
-                        }
-                    } else {
-                        // No parent - add to table as fallback
-                        CTRow addedRow = ctTbl.addNewTr();
-                        addedRow.set(row.getCtRow());
-                    }
-                }
-            }
+            CTRow addedRow = pos == tableRows.size()
+                    ? ctTbl.addNewTr()
+                    : insertNewTrBefore(tableRows.get(pos).getCtRow());
+            addedRow.set(row.getCtRow());
+            row.setCtRow(addedRow);
             tableRows.add(pos, row);
             return true;
         }
@@ -1246,62 +1188,39 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * inserts a new tablerow at position pos
+     * <p>
+     * If the row currently at pos is inside an SDT row (content control)
+     * or a custom XML row, the new row is inserted inside that too.
      *
      * @param pos the position to insert the new row
      * @return the inserted row
      */
     public XWPFTableRow insertNewTableRow(int pos) {
         if (pos >= 0 && pos <= tableRows.size()) {
-            CTRow insertedRow;
-
-            if (pos == tableRows.size() || tableRows.isEmpty()) {
-                // Insert at end or first row in empty table - add to table
-                insertedRow = ctTbl.addNewTr();
-            } else {
-                // Insert before the row currently at position pos
-                XWPFTableRow nextRow = tableRows.get(pos);
-                CTRow nextCTRow = nextRow.getCtRow();
-
-                // Find where to insert by checking the parent of the next row
-                try (XmlCursor cursor = nextCTRow.newCursor()) {
-                    if (cursor.toParent()) {
-                        XmlObject parent = cursor.getObject();
-                        if (parent instanceof CTTbl tbl) {
-                            // Top-level row - insert into table
-                            List<CTRow> trList = tbl.getTrList();
-                            int idx = trList.indexOf(nextCTRow);
-                            if (idx >= 0) {
-                                insertedRow = tbl.insertNewTr(idx);
-                            } else {
-                                // Fallback: add to end of table
-                                insertedRow = ctTbl.addNewTr();
-                            }
-                        } else if (parent instanceof CTSdtContentRow sdtContent) {
-                            // SDT-wrapped row - insert into SDT content
-                            List<CTRow> trList = sdtContent.getTrList();
-                            int idx = trList.indexOf(nextCTRow);
-                            if (idx >= 0) {
-                                insertedRow = sdtContent.insertNewTr(idx);
-                            } else {
-                                // Fallback: add to end of SDT content
-                                insertedRow = sdtContent.addNewTr();
-                            }
-                        } else {
-                            // Unknown parent - add to table as fallback
-                            insertedRow = ctTbl.addNewTr();
-                        }
-                    } else {
-                        // No parent - add to table as fallback
-                        insertedRow = ctTbl.addNewTr();
-                    }
-                }
-            }
-
+            CTRow insertedRow = pos == tableRows.size()
+                    ? ctTbl.addNewTr()
+                    : insertNewTrBefore(tableRows.get(pos).getCtRow());
             XWPFTableRow tableRow = new XWPFTableRow(insertedRow, this);
             tableRows.add(pos, tableRow);
             return tableRow;
         }
         return null;
+    }
+
+    /**
+     * Insert a new w:tr just before next, in whatever holds next: the table itself,
+     * the content of an SDT row or a custom XML row. If next is in none of these,
+     * add the new row at the end of the table.
+     */
+    private CTRow insertNewTrBefore(CTRow next) {
+        if (!isRowContainer(getParent(next))) {
+            return ctTbl.addNewTr();
+        }
+        try (XmlCursor cursor = next.newCursor()) {
+            cursor.beginElement("tr", CTRow.type.getName().getNamespaceURI());
+            cursor.toParent();
+            return (CTRow) cursor.getObject();
+        }
     }
 
     /**
@@ -1311,43 +1230,81 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     public boolean removeRow(int pos) throws IndexOutOfBoundsException {
         if (pos >= 0 && pos < tableRows.size()) {
-            XWPFTableRow row = tableRows.get(pos);
-            CTRow ctRow = row.getCtRow();
-
-            // Remove the row from its actual parent (could be CTTbl or CTSdtContentRow)
-            try (XmlCursor cursor = ctRow.newCursor()) {
-                if (cursor.toParent()) {
-                    XmlObject parent = cursor.getObject();
-                    if (parent instanceof CTTbl tbl) {
-                        // Top-level row - find its actual position in tr array
-                        List<CTRow> trList = tbl.getTrList();
-                        int idx = trList.indexOf(ctRow);
-                        if (idx >= 0) {
-                            tbl.removeTr(idx);
-                        }
-                    } else if (parent instanceof CTSdtContentRow sdtContent) {
-                        // SDT-wrapped row - remove from SDT content
-                        List<CTRow> trList = sdtContent.getTrList();
-                        int idx = trList.indexOf(ctRow);
-                        if (idx >= 0) {
-                            sdtContent.removeTr(idx);
-                        }
-                    } else {
-                        // Fallback: try removing from the table directly
-                        List<CTRow> trList = ctTbl.getTrList();
-                        int idx = trList.indexOf(ctRow);
-                        if (idx >= 0) {
-                            ctTbl.removeTr(idx);
-                        }
-                    }
+            CTRow ctRow = tableRows.get(pos).getCtRow();
+            // the row is either a direct child of a table or inside an SDT or custom XML row
+            XmlObject parent = getParent(ctRow);
+            if (isRowContainer(parent)) {
+                try (XmlCursor cursor = ctRow.newCursor()) {
+                    cursor.removeXml();
                 }
+                removeEmptyRowWrappers(parent);
             }
-
-            // Remove from our list
             tableRows.remove(pos);
             return true;
         }
         return false;
+    }
+
+    /**
+     * Remove the SDT row or custom XML row that container belongs to once it holds
+     * nothing but its properties, and likewise any enclosing wrappers that end up empty.
+     */
+    private static void removeEmptyRowWrappers(XmlObject container) {
+        while (container instanceof CTSdtContentRow || container instanceof CTCustomXmlRow) {
+            if (hasContent(container)) {
+                return;
+            }
+            // for an SDT row, container is the w:sdtContent, so remove the w:sdt around it
+            XmlObject wrapper = container instanceof CTSdtContentRow ? getParent(container) : container;
+            XmlObject parent = wrapper == null ? null : getParent(wrapper);
+            if (parent == null) {
+                return;
+            }
+            try (XmlCursor cursor = wrapper.newCursor()) {
+                cursor.removeXml();
+            }
+            container = parent;
+        }
+    }
+
+    private static boolean hasContent(XmlObject container) {
+        try (XmlCursor cursor = container.newCursor()) {
+            if (!cursor.toFirstChild()) {
+                return false;
+            }
+            do {
+                if (!(cursor.getObject() instanceof CTCustomXmlPr)) {
+                    return true;
+                }
+            } while (cursor.toNextSibling());
+        }
+        return false;
+    }
+
+    private static boolean isRowContainer(XmlObject xmlObject) {
+        return xmlObject instanceof CTTbl || xmlObject instanceof CTSdtContentRow
+                || xmlObject instanceof CTCustomXmlRow;
+    }
+
+    private static XmlObject getParent(XmlObject xmlObject) {
+        try (XmlCursor cursor = xmlObject.newCursor()) {
+            return cursor.toParent() ? cursor.getObject() : null;
+        }
+    }
+
+    /**
+     * Get the table that holds a row, looking through any SDT rows
+     * (w:sdt/w:sdtContent) and custom XML rows (w:customXml) between the two.
+     *
+     * @return the table, or null if the row is not in a table
+     */
+    static CTTbl getParentTable(CTRow row) {
+        XmlObject parent = getParent(row);
+        while (parent instanceof CTSdtContentRow || parent instanceof CTSdtRow
+                || parent instanceof CTCustomXmlRow) {
+            parent = getParent(parent);
+        }
+        return parent instanceof CTTbl tbl ? tbl : null;
     }
 
     public List<XWPFTableRow> getRows() {

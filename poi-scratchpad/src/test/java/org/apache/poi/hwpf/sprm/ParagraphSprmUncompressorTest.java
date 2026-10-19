@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,7 +43,7 @@ class ParagraphSprmUncompressorTest {
             }
         }
 
-        List<String> descriptions = paragraphs.stream().map(this::extractTabStops).collect(Collectors.toList());
+        List<String> descriptions = paragraphs.stream().map(this::extractTabStops).toList();
 
         assertEquals(6, paragraphs.size());
         assertEquals(6, descriptions.size());

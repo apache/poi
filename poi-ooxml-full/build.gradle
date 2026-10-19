@@ -26,7 +26,7 @@ sourceSets {
         // TypeSystemHolder.class is in the resources
         output.dir(BEANS_RES, builtBy: 'generate_beans')
         compileClasspath += files(BEANS_RES)
-        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
+        output.dir(JPMS_OUT, builtBy: 'compileModuleInfo')
         java {
             srcDirs = [BEANS_SRC]
         }
@@ -54,22 +54,10 @@ compileJava {
     options.forkOptions.jvmArgs += '-Xmx2G'
 }
 
-tasks.register('compileJava9', JavaCompile) {
-    dependsOn 'compileJava'
-
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(Math.max(17, jdkVersion))
-    }
-    sourceCompatibility = 17
-    targetCompatibility = 17
-    destinationDirectory = file(JAVA9_OUT + VERSIONS9)
-    source = file(JAVA9_SRC)
-    classpath = files()
-    options.compilerArgs = [
-            '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.asPath}",
-            '--module-path', files(MAIN_MODULE_PATH).asPath
-    ]
-}
+registerModuleInfoCompile(name: 'compileModuleInfo', dependsOn: 'compileJava',
+    src: JPMS_SRC, out: JPMS_OUT, module: MODULE_NAME,
+    patch: sourceSets.main.output.classesDirs + files(BEANS_RES),
+    modulePath: MAIN_MODULE_PATH)
 
 tasks.register('copy_xsds', Copy) {
     from('src/main/xmlschema/org/apache/poi/xdgf')
@@ -134,9 +122,6 @@ tasks.register('sourceJar', Jar) {
 jar {
     dependsOn 'sourceJar'
 
-    manifest {
-        attributes ('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
-    }
 }
 
 sourcesJar {

@@ -37,7 +37,7 @@ public class XDDFPieChartData extends XDDFChartData {
     protected XDDFPieChartData(XDDFChart parent, CTPieChart chart) {
         super(parent);
         this.chart = chart;
-        for (CTPieSer series : chart.getSerList()) {
+        for (CTPieSer series : chart.getSerArray()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
     }

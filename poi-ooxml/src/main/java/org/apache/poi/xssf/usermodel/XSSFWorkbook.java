@@ -194,6 +194,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     private boolean cellFormulaValidation = true;
 
     /**
+     * Whether literal <code>_xHHHH_</code> sequences in string cell values are escaped when stored.
+     */
+    private boolean escapeLiteralUnicodeSequences;
+
+    /**
      * array of pictures for this workbook
      */
     private List<XSSFPictureData> pictures;
@@ -603,7 +608,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     @Override
     public int addPicture(byte[] pictureData, int format) {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], this.xssfFactory, imageNumber, true).getDocumentPart();
+        XSSFPictureData img = createRelationship(XSSFPictureData.getRelationForType(format), this.xssfFactory, imageNumber, true).getDocumentPart();
         try (OutputStream out = img.getPackagePart().getOutputStream()) {
             out.write(pictureData);
         } catch (IOException e) {
@@ -630,7 +635,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     public int addPicture(InputStream is, int format) throws IOException {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], this.xssfFactory, imageNumber, true).getDocumentPart();
+        XSSFPictureData img = createRelationship(XSSFPictureData.getRelationForType(format), this.xssfFactory, imageNumber, true).getDocumentPart();
         try (OutputStream out = img.getPackagePart().getOutputStream()) {
             IOUtils.copy(is, out);
         }
@@ -2613,6 +2618,43 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     public boolean getCellFormulaValidation() {
         return this.cellFormulaValidation;
+    }
+
+    /**
+     * Whether literal <code>_xHHHH_</code> sequences in string cell values are escaped when stored.
+     * <p>
+     * OOXML uses <code>_xHHHH_</code> to escape characters, and POI and Excel decode such sequences
+     * when reading string values. Without escaping, a value such as <code>_x0041_ col</code> is read
+     * back as <code>A col</code>. When this is enabled, the leading underscore of such sequences is
+     * stored as <code>_x005F_</code> (see {@link XSSFRichTextString#utfEncode(String)}), so the value
+     * is read back unchanged. Characters that cannot be represented in XML 1.0, such as U+0001,
+     * are stored as <code>_xHHHH_</code> escapes too, rather than being replaced with <code>?</code>.
+     * <p>
+     * This applies to string values set with {@link XSSFCell#setCellValue(String)}, to cached
+     * formula string results, and to {@link org.apache.poi.ss.usermodel.RichTextString}s that are
+     * not {@link XSSFRichTextString}s. An {@link XSSFRichTextString} already holds the stored form of its text (its
+     * {@link XSSFRichTextString#getString()} decodes <code>_xHHHH_</code> sequences), so it is stored
+     * as is; use {@link XSSFRichTextString#utfEncode(String)} on the text you put into it.
+     * <p>
+     * Defaults to {@code false}, which stores strings as given. This allows deliberate escapes,
+     * e.g. <code>_x000D_</code>, to be written.
+     *
+     * @param value true to escape literal <code>_xHHHH_</code> sequences
+     * @since 6.0.0
+     */
+    public void setEscapeLiteralUnicodeSequences(boolean value) {
+        this.escapeLiteralUnicodeSequences = value;
+    }
+
+    /**
+     * Whether literal <code>_xHHHH_</code> sequences in string cell values are escaped when stored.
+     *
+     * @return true if literal <code>_xHHHH_</code> sequences are escaped
+     * @see #setEscapeLiteralUnicodeSequences(boolean)
+     * @since 6.0.0
+     */
+    public boolean isEscapeLiteralUnicodeSequences() {
+        return this.escapeLiteralUnicodeSequences;
     }
 
     @Override

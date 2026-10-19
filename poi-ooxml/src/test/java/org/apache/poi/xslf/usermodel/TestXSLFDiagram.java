@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,7 +40,7 @@ public class TestXSLFDiagram {
         return slideShow.getSlides()
                 .stream()
                 .flatMap(s -> extractDiagrams(s).stream())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private static List<XSLFDiagram> extractDiagrams(XSLFSlide slide) {
@@ -49,7 +48,7 @@ public class TestXSLFDiagram {
                 .stream()
                 .filter(s -> s instanceof XSLFDiagram)
                 .map(s -> (XSLFDiagram) s)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private static String colorToHex(Color color) {

@@ -261,8 +261,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         CTTextBody txBody = getTextBody(false);
         if (txBody != null) {
             if (_paragraphs.remove(paragraph)) {
-                for (int i = 0; i < txBody.sizeOfPArray(); i++) {
-                    if (txBody.getPArray(i).equals(ctTextParagraph)) {
+                final CTTextParagraph[] ps = txBody.getPArray();
+                for (int i = 0; i < ps.length; i++) {
+                    if (ps[i].equals(ctTextParagraph)) {
                         txBody.removeP(i);
                         return true;
                     }

@@ -23,8 +23,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
@@ -390,14 +388,14 @@ public final class LookupUtils {
     private static class StringLookupComparer extends LookupValueComparerBase {
 
         protected final String _value;
-        protected final Pattern _wildCardPattern;
+        protected final WildcardMatcher _wildCardMatcher;
         protected final boolean _matchExact;
         protected final boolean _isMatchFunction;
 
         protected StringLookupComparer(StringEval se, boolean matchExact, boolean isMatchFunction) {
             super(se);
             _value = se.getStringValue();
-            _wildCardPattern = Countif.StringMatcher.getWildCardPattern(_value);
+            _wildCardMatcher = WildcardMatcher.compile(_value);
             _matchExact = matchExact;
             _isMatchFunction = isMatchFunction;
         }
@@ -410,11 +408,8 @@ public final class LookupUtils {
         @Override
         protected CompareResult compareSameType(ValueEval other) {
             String stringValue = convertToString(other);
-            if (_wildCardPattern != null && (_isMatchFunction || !_matchExact)) {
-                Matcher matcher = _wildCardPattern.matcher(stringValue);
-                boolean matches = matcher.matches();
-
-                return CompareResult.valueOf(matches);
+            if (_wildCardMatcher != null && (_isMatchFunction || !_matchExact)) {
+                return CompareResult.valueOf(_wildCardMatcher.matches(stringValue));
             }
 
             return CompareResult.valueOf(_value.compareToIgnoreCase(stringValue));

@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -137,10 +138,9 @@ public class XDDFLineProperties {
 
     public List<XDDFDashStop> getDashStops() {
         if (props.isSetCustDash()) {
-            return Collections.unmodifiableList(props
+            return Collections.unmodifiableList(Arrays.stream(props
                 .getCustDash()
-                .getDsList()
-                .stream()
+                .getDsArray())
                 .map(ds -> new XDDFDashStop(ds))
                 .toList());
         } else {

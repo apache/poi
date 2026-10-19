@@ -243,7 +243,7 @@ public class XWPFComment implements IBody {
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;
-        for (CTTbl tbl : ctComment.getTblList()) {
+        for (CTTbl tbl : ctComment.getTblArray()) {
             if (tbl == table.getCTTbl()) {
                 break;
             }
@@ -264,10 +264,9 @@ public class XWPFComment implements IBody {
                 return null;
             }
             row = ctRow;
-            cursor.toParent();
-            o = cursor.getObject();
         }
-        if (!(o instanceof CTTbl tbl)) {
+        CTTbl tbl = XWPFTable.getParentTable(row);
+        if (tbl == null) {
             return null;
         }
         XWPFTable table = getTable(tbl);

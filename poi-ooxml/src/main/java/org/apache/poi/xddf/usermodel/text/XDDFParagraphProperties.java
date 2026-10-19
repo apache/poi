@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel.text;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -260,10 +261,9 @@ public class XDDFParagraphProperties {
 
     public List<XDDFTabStop> getTabStops() {
         if (props.isSetTabLst()) {
-            return Collections.unmodifiableList(props
+            return Collections.unmodifiableList(Arrays.stream(props
                 .getTabLst()
-                .getTabList()
-                .stream()
+                .getTabArray())
                 .map(gs -> new XDDFTabStop(gs))
                 .toList());
         } else {

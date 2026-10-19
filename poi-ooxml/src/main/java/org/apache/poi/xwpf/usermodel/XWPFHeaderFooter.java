@@ -257,7 +257,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             throw new InvalidFormatException("pictureType is not supported");
         }
         XWPFPictureData xwpfPicData = document.findPackagePictureData(pictureData);
-        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[pictureType.ooxmlId];
+        POIXMLRelation relDesc = XWPFPictureData.getRelationForType(pictureType.ooxmlId);
 
         if (xwpfPicData == null) {
             /* Part doesn't exist, create a new one */
@@ -570,10 +570,9 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
                 return null;
             }
             row = ctRow;
-            cursor.toParent();
-            o = cursor.getObject();
         }
-        if (!(o instanceof CTTbl tbl)) {
+        CTTbl tbl = XWPFTable.getParentTable(row);
+        if (tbl == null) {
             return null;
         }
         XWPFTable table = getTable(tbl);

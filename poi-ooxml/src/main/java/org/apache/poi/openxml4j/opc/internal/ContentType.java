@@ -17,7 +17,6 @@
 
 package org.apache.poi.openxml4j.opc.internal;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Locale;
@@ -72,9 +71,10 @@ public final class ContentType {
      */
     private static final Pattern patternTypeSubType;
     /**
-     * Media type compiled pattern, with parameters.
+     * Media type compiled pattern, without parameters, matched as a prefix of
+     * a content type that has parameters.
      */
-    private static final Pattern patternTypeSubTypeParams;
+    private static final Pattern patternTypeSubTypePrefix;
     /**
      * Pattern to match on just the parameters part, to work
      * around the Java Regexp group capture behaviour
@@ -130,8 +130,8 @@ public final class ContentType {
 
         patternTypeSubType       = Pattern.compile("^(" + token + "+)/(" +
                                                    token + "+)$");
-        patternTypeSubTypeParams = Pattern.compile("^(" + token + "+)/(" +
-                                                   token + "+)(;" + parameter + ")*$");
+        patternTypeSubTypePrefix = Pattern.compile("^(" + token + "+)/(" +
+                                                   token + "+)");
         patternParams            = Pattern.compile(";" + parameter);
     }
 
@@ -145,38 +145,38 @@ public final class ContentType {
      */
     public ContentType(String contentType) throws InvalidFormatException {
         Matcher mMediaType = patternTypeSubType.matcher(contentType);
+        this.parameters = new HashMap<>();
         if (!mMediaType.matches()) {
-            // How about with parameters?
-            mMediaType = patternTypeSubTypeParams.matcher(contentType);
-        }
-        if (!mMediaType.matches()) {
-            throw new InvalidFormatException(
-                    "The specified content type '"
-                    + contentType
-                    + "' is not compliant with RFC 2616: malformed content type.");
+            // How about with parameters? Match them one at a time rather than with
+            // a single (;parameter)*$ regex, which recurses per parameter and throws
+            // StackOverflowError on a content type with many parameters.
+            // A parameter can only be followed by ';' or the end of the string,
+            // so this accepts and extracts exactly what that regex did.
+            mMediaType = patternTypeSubTypePrefix.matcher(contentType);
+            if (!mMediaType.lookingAt()) {
+                throw malformed(contentType);
+            }
+            Matcher mParams = patternParams.matcher(contentType);
+            int end = contentType.length();
+            for (int pos = mMediaType.end(); pos < end; pos = mParams.end()) {
+                mParams.region(pos, end);
+                if (!mParams.lookingAt()) {
+                    throw malformed(contentType);
+                }
+                this.parameters.put(mParams.group(1), mParams.group(2));
+            }
         }
 
         // Type/subtype
-        if (mMediaType.groupCount() >= 2) {
-            this.type = mMediaType.group(1);
-            this.subType = mMediaType.group(2);
+        this.type = mMediaType.group(1);
+        this.subType = mMediaType.group(2);
+    }
 
-            // Parameters
-            this.parameters = new HashMap<>();
-            // Java RegExps are unhelpful, and won't do multiple group captures
-            // See http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html#cg
-            if (mMediaType.groupCount() >= 5) {
-                Matcher mParams = patternParams.matcher(contentType.substring(mMediaType.end(2)));
-                while (mParams.find()) {
-                    this.parameters.put(mParams.group(1), mParams.group(2));
-                }
-            }
-        } else {
-            // missing media type and subtype
-            this.type = "";
-            this.subType = "";
-            this.parameters = Collections.emptyMap();
-        }
+    private static InvalidFormatException malformed(String contentType) {
+        return new InvalidFormatException(
+                "The specified content type '"
+                + contentType
+                + "' is not compliant with RFC 2616: malformed content type.");
     }
 
     /**

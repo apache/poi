@@ -42,7 +42,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="6.0.0-SNAPSHOT"/>
+    <property name="version.id" value="6.0.0"/>
     <property name="release.rc" value=""/>
 
     <property environment="env"/>
@@ -150,6 +150,8 @@ under the License.
     <property name="ooxml.lite.jar" location="build/dist/maven/poi-ooxml-lite/poi-ooxml-lite-${version.id}.jar"/>
     <property name="ooxml.lite.includes" value="^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"/>
     <property name="ooxml.lite.output.dir" location="poi-ooxml-lite-agent/build/classes/ant/java"/>
+    <property name="ooxml.lite.output.jpms.dir" location="poi-ooxml-lite-agent/build/classes/ant/jpms"/>
+    <property name="ooxml.lite.jpms.dir" location="poi-ooxml-lite/build/classes/ant/jpms"/>
 
 
     <!-- Integration testing: -->
@@ -157,6 +159,7 @@ under the License.
     <property name="integration.resources.test" location="poi-integration/src/test/resources"/>
     <property name="integration.reports.test" location="poi-integration/build/test-results"/>
     <property name="integration.output.test.dir" location="poi-integration/build/test-classes"/>
+    <property name="integration.output.test.jpms.dir" location="poi-integration/build/classes/ant/jpms-test"/>
     <property name="integration.testokfile" location="poi-integration/build/testokfile.txt"/>
 
     <!-- Excelant: -->
@@ -256,17 +259,17 @@ under the License.
 
 
     <!-- jars in the /lib directory, see the fetch-jars target-->
-    <dependency prefix="main.commons-codec" artifact="commons-codec:commons-codec:1.22.1" usage="main"/>
-    <dependency prefix="main.commons-collections4" artifact="org.apache.commons:commons-collections4:4.5.0" usage="main"/>
+    <dependency prefix="main.commons-codec" artifact="commons-codec:commons-codec:1.23.0" usage="main"/>
+    <dependency prefix="main.commons-collections4" artifact="org.apache.commons:commons-collections4:4.6.0" usage="main"/>
     <dependency prefix="main.commons-math3" artifact="org.apache.commons:commons-math3:3.6.1" usage="main"/>
     <dependency prefix="main.commons-io" artifact="commons-io:commons-io:2.22.0" usage="main"/>
     <dependency prefix="main.com.zaxxer" artifact="com.zaxxer:SparseBitSet:1.3" usage="main"/>
-    <dependency prefix="main.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.26.0" usage="main"/>
+    <dependency prefix="main.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.26.1" usage="main"/>
 
     <dependency prefix="main.junit-api" artifact="org.junit.jupiter:junit-jupiter-api:6.1.3" usage="main-tests"/>
     <dependency prefix="main.junit-jengine" artifact="org.junit.jupiter:junit-jupiter-engine:6.1.3" usage="main-tests"/>
     <dependency prefix="main.junit-params" artifact="org.junit.jupiter:junit-jupiter-params:6.1.3" usage="main-tests"/>
-    <dependency prefix="main.junit-opentest4j" artifact="org.opentest4j:opentest4j:1.2.0" usage="main-tests"/>
+    <dependency prefix="main.junit-opentest4j" artifact="org.opentest4j:opentest4j:1.3.0" usage="main-tests"/>
     <dependency prefix="main.junit-apiguardian" artifact="org.apiguardian:apiguardian-api:1.1.2" usage="main-tests"/>
     <dependency prefix="main.junit-jspecify" artifact="org.jspecify:jspecify:1.0.1" usage="main-tests"/>
     <dependency prefix="main.junit-pcommons" artifact="org.junit.platform:junit-platform-commons:6.1.3" usage="main-tests"/>
@@ -274,28 +277,30 @@ under the License.
     <dependency prefix="main.junit-plauncher" artifact="org.junit.platform:junit-platform-launcher:6.1.3" usage="main-tests"/>
 
 
-    <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.35" usage="main-tests"/>
-    <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.35" usage="main-tests"/>
+    <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.37" usage="main-tests"/>
+    <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.37" usage="main-tests"/>
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:3.0" usage="main-tests"/>
-    <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.10.3" usage="main-tests"/>
-    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:5.20.0" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.18.10" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.18.10" usage="main-tests"/>
-    <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
+    <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.14.0" usage="main-tests"/>
+    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:5.24.0" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.18.15" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.18.15" usage="main-tests"/>
+    <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.3" usage="main-tests"/>
     <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.26.1" usage="main-tests"/>
-    <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main-tests"/>
+    <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.4.0" usage="main-tests"/>
 
     <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.18" usage="excelant"/>
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.18" usage="excelant"/>
 
     <!-- xml signature libs - not part of the distribution -->
-    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:3.0.6" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk18on:1.85" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk18on:1.85" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk18on:1.85" usage="ooxml-provided"/>
+    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:4.0.4" usage="ooxml-provided"/>
+    <dependency prefix="dsig.jakarta-xml-bind" artifact="jakarta.xml.bind:jakarta.xml.bind-api:4.0.2" usage="ooxml-provided"/>
+    <dependency prefix="dsig.jakarta-activation" artifact="jakarta.activation:jakarta.activation-api:2.1.3" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk18on:1.86" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk18on:1.86" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk18on:1.86" usage="ooxml-provided"/>
     <!-- only used for signing the release - not used with the ooxml signatures -->
-    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk18on:1.85" usage="util"/>
-    <dependency prefix="ooxml.test.stax2" artifact="org.codehaus.woodstox:stax2-api:4.2.1" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk18on:1.86" usage="util"/>
+    <dependency prefix="ooxml.test.stax2" artifact="org.codehaus.woodstox:stax2-api:4.3.1" usage="ooxml-provided"/>
 
     <!-- svg/batik/pdf libs - not part of the distribution - move batik to its own directory because of JPMS module-path issues -->
     <dependency prefix="svg.xml-apis-ext" artifact="xml-apis:xml-apis-ext:1.3.04" usage="ooxml-batik"/>
@@ -319,10 +324,10 @@ under the License.
     <dependency prefix="svg.batik-transcoder" artifact="org.apache.xmlgraphics:batik-transcoder:1.19" usage="ooxml-batik"/>
     <dependency prefix="svg.batik-util" artifact="org.apache.xmlgraphics:batik-util:1.19" usage="ooxml-batik"/>
     <dependency prefix="svg.batik-xml" artifact="org.apache.xmlgraphics:batik-xml:1.19" usage="ooxml-batik"/>
-    <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:3.0.5" usage="ooxml-provided"/>
-    <dependency prefix="pdf.pdfbox.io" artifact="org.apache.pdfbox:pdfbox-io:3.0.5" usage="ooxml-provided"/>
-    <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:3.0.5" usage="ooxml-provided"/>
-    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:3.0.3" usage="ooxml-provided"/>
+    <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:3.0.8" usage="ooxml-provided"/>
+    <dependency prefix="pdf.pdfbox.io" artifact="org.apache.pdfbox:pdfbox-io:3.0.8" usage="ooxml-provided"/>
+    <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:3.0.8" usage="ooxml-provided"/>
+    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:3.0.5" usage="ooxml-provided"/>
 
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.08" usage="ooxml"/>
@@ -333,10 +338,10 @@ under the License.
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.test.commons-csv" artifact="org.apache.commons:commons-csv:1.14.1" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.10.2" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:33.7.1-jre" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:33.7.2-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava.failureaccess" artifact="com.google.guava:failureaccess:1.0.3" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:2.0.17" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.28.0-GA" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:2.0.20" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.opczip" artifact="com.github.rzymek:opczip:1.2.0" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
@@ -352,6 +357,7 @@ under the License.
     <!-- See https://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
     <property name="ooxml-schema.output.dir" location="poi-ooxml-full/build/classes/ant/java"/>
+    <property name="ooxml-schema.output.jpms.dir" location="poi-ooxml-full/build/classes/ant/jpms"/>
     <property name="ooxml-schema.output.test.dir" location="poi-ooxml-full/build/test-classes"/>
     <property name="ooxml-schema.output.gen-sources.dir" location="poi-ooxml-full/build/generated-sources"/>
     <property name="ooxml-schema.output.gen-classes.dir" location="poi-ooxml-full/build/generated-classes"/>
@@ -447,6 +453,8 @@ under the License.
 
     <path id="ooxml.xmlsec.classpath">
         <pathelement location="${dsig.xmlsec.jar}"/>
+        <pathelement location="${dsig.jakarta-xml-bind.jar}"/>
+        <pathelement location="${dsig.jakarta-activation.jar}"/>
         <pathelement location="${dsig.bouncycastle-prov.jar}"/>
         <pathelement location="${dsig.bouncycastle-pkix.jar}"/>
         <pathelement location="${dsig.bouncycastle-util.jar}"/>
@@ -623,6 +631,8 @@ under the License.
         <delete dir="poi/build"/>
         <delete dir="poi-ooxml/build"/>
         <delete dir="poi-ooxml-full/build"/>
+        <delete dir="poi-ooxml-lite/build"/>
+        <delete dir="poi-ooxml-lite-agent/build"/>
         <delete dir="poi-scratchpad/build"/>
     </target>
 
@@ -661,6 +671,9 @@ under the License.
                 <include name="log4j-api-2.17*.jar"/>
                 <include name="commons-logging-1.2.jar"/>
                 <include name="*slf4j*.jar"/>
+                <include name="commons-codec-1.22.1.jar"/>
+                <include name="commons-collections4-4.5.0.jar"/>
+                <include name="log4j-api-2.26.0.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/main-tests">
                 <include name="byte-buddy-*1.12*.jar"/>
@@ -677,6 +690,13 @@ under the License.
                 <include name="log4j-core-2.15*.jar"/>
                 <include name="log4j-core-2.16*.jar"/>
                 <include name="log4j-core-2.17*.jar"/>
+                <include name="byte-buddy-*1.18.10.jar"/>
+                <include name="commons-logging-1.2.jar"/>
+                <include name="jmh-*-1.35.jar"/>
+                <include name="mockito-core-5.20.0.jar"/>
+                <include name="objenesis-3.1.jar"/>
+                <include name="opentest4j-1.2.0.jar"/>
+                <include name="xmlunit-core-2.10.3.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml">
                 <include name="xmlbeans-3*.jar"/>
@@ -693,12 +713,23 @@ under the License.
                 <include name="slf4j*-1.*.jar"/>
                 <include name="xmlsec-2*.jar"/>
                 <include name="xmlgraphics-commons-*.jar"/>
+                <include name="bc*-jdk18on-1.85.jar"/>
+                <include name="pdfbox-3.0.5.jar"/>
+                <include name="pdfbox-io-3.0.5.jar"/>
+                <include name="fontbox-3.0.5.jar"/>
+                <include name="graphics2d-3.0.3.jar"/>
+                <include name="stax2-api-4.2.1.jar"/>
+                <include name="xmlsec-3.0.6.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-tests">
                 <include name="guava-20.0.jar"/>
+                <include name="guava-33.7.1-jre.jar"/>
+                <include name="javassist-3.27.0-GA.jar"/>
+                <include name="slf4j-api-2.0.17.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/util">
                 <include name="asm*7.2.jar"/>
+                <include name="bcpg-jdk18on-1.85.jar"/>
                 <include name="asm*9.0.jar"/>
                 <include name="asm*9.3.jar"/>
                 <include name="org.jacoco.*-0.8.5.*.jar"/>
@@ -761,7 +792,10 @@ under the License.
                     <available file="${dsig.bouncycastle-pkix.jar}"/>
                     <available file="${dsig.bouncycastle-util.jar}"/>
                     <available file="${dsig.xmlsec.jar}"/>
+                    <available file="${dsig.jakarta-xml-bind.jar}"/>
+                    <available file="${dsig.jakarta-activation.jar}"/>
                     <available file="${main.commons-collections4.jar}"/>
+                    <available file="${main.commons-logging.jar}"/>
                     <available file="${main.commons-math3.jar}"/>
                     <available file="${main.commons-io.jar}"/>
                     <available file="${main.com.zaxxer.jar}"/>
@@ -820,6 +854,8 @@ under the License.
         <downloadfile src="${dsig.bouncycastle-pkix.url}" dest="${dsig.bouncycastle-pkix.jar}"/>
         <downloadfile src="${dsig.bouncycastle-util.url}" dest="${dsig.bouncycastle-util.jar}"/>
         <downloadfile src="${dsig.xmlsec.url}" dest="${dsig.xmlsec.jar}"/>
+        <downloadfile src="${dsig.jakarta-xml-bind.url}" dest="${dsig.jakarta-xml-bind.jar}"/>
+        <downloadfile src="${dsig.jakarta-activation.url}" dest="${dsig.jakarta-activation.jar}"/>
     </target>
 
     <target name="check-ooxml-jars">
@@ -984,9 +1020,10 @@ under the License.
             </classpath>
         </javac>
 
+        <mkdir dir="${ooxml-schema.output.jpms.dir}"/>
         <javac release="17"
-               srcdir="${basedir}/poi-ooxml-full/src/main/java9"
-               destdir="${basedir}/poi-ooxml-full/src/main/java9"
+               srcdir="${basedir}/poi-ooxml-full/src/main/jpms"
+               destdir="${ooxml-schema.output.jpms.dir}"
                includeantruntime="false"
                fork="true"
                modulepath="lib/ooxml">
@@ -998,11 +1035,9 @@ under the License.
         <jar destfile="${ooxml.xsds.jar}">
             <fileset dir="${ooxml-schema.output.dir}"/>
             <fileset dir="${ooxml-schema.output.gen-classes.dir}"/>
-            <zipfileset dir="${basedir}/poi-ooxml-full/src/main/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+            <fileset dir="${ooxml-schema.output.jpms.dir}"/>
             <metainf dir="legal/" excludes="HEADER"/>
             <manifest>
-                <attribute name="Multi-Release" value="true"/>
-                <attribute name="Automatic-Module-Name" value="org.apache.poi.ooxml.schemas"/>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Specification-Title" value="Apache POI OOXML Schemas"/>
                 <attribute name="Specification-Version" value="${version.id}"/>
@@ -1016,7 +1051,7 @@ under the License.
 
         <jar destfile="${ooxml.xsds.src.jar}">
             <fileset dir="${ooxml-schema.output.gen-sources.dir}"/>
-            <zipfileset dir="${basedir}/poi-ooxml-full/src/main/java9" prefix="META-INF/versions/9/" excludes="*.class"/>
+            <fileset dir="${basedir}/poi-ooxml-full/src/main/jpms"/>
             <metainf dir="legal" excludes="HEADER"/>
         </jar>
     </target>
@@ -1080,11 +1115,12 @@ under the License.
                 </filterchain>
             </loadresource>
 
-            <echo message="Building java9+ classes for @{module}"/>
+            <echo message="Building module-info for @{module}"/>
 
+            <mkdir dir="${basedir}/@{module}/build/classes/ant/jpms"/>
             <javac release="17"
-                   srcdir="${basedir}/@{module}/src/main/java9"
-                   destdir="${basedir}/@{module}/src/main/java9"
+                   srcdir="${basedir}/@{module}/src/main/jpms"
+                   destdir="${basedir}/@{module}/build/classes/ant/jpms"
                    includeantruntime="false"
                    fork="true">
                 <compilerarg line="--patch-module org.apache.poi.${module-name}=@{classes}"/>
@@ -1101,13 +1137,9 @@ under the License.
             <jar destfile="build/dist/maven/${maven-name}/${maven-name}-@{version}.jar">
                 <fileset dir="@{classes}"/>
                 <resources/>
-                <zipfileset dir="${basedir}/@{module}/src/main/java9"
-                            prefix="META-INF/versions/9"
-                            excludes="*.java"/>
+                <fileset dir="${basedir}/@{module}/build/classes/ant/jpms"/>
                 <metainf dir="legal/" excludes="HEADER"/>
                 <manifest>
-                    <attribute name="Multi-Release" value="true"/>
-                    <attribute name="Automatic-Module-Name" value="org.apache.poi.@{module}"/>
                     <attribute name="Built-By" value="${user.name}"/>
                     <attribute name="Specification-Title" value="Apache POI"/>
                     <attribute name="Specification-Version" value="${version.id}"/>
@@ -1142,9 +1174,10 @@ under the License.
                 <path location="@{test-classes}"/>
             </pathconvert>
 
+            <mkdir dir="${basedir}/@{module}/build/classes/ant/jpms-test" unless:blank="@{test}"/>
             <javac release="17"
-                   srcdir="${basedir}/@{module}/src/test/java9"
-                   destdir="${basedir}/@{module}/src/test/java9"
+                   srcdir="${basedir}/@{module}/src/test/jpms"
+                   destdir="${basedir}/@{module}/build/classes/ant/jpms-test"
                    includeantruntime="false"
                    fork="true"
                    unless:blank="@{test}">
@@ -1164,11 +1197,9 @@ under the License.
                 </fileset>
                 <resources/>
                 <test-resources/>
-                <zipfileset dir="${basedir}/@{module}/src/test/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+                <fileset dir="${basedir}/@{module}/build/classes/ant/jpms-test"/>
                 <metainf dir="legal/" excludes="HEADER"/>
                 <manifest>
-                    <attribute name="Multi-Release" value="true"/>
-                    <attribute name="Automatic-Module-Name" value="org.apache.poi.@{module}"/>
                     <attribute name="Built-By" value="${user.name}"/>
                     <attribute name="Specification-Title" value="Apache POI"/>
                     <attribute name="Specification-Version" value="${version.id}"/>
@@ -1281,9 +1312,10 @@ under the License.
             </classpath>
         </javac>
 
+        <mkdir dir="${ooxml.lite.output.jpms.dir}"/>
         <javac release="17"
-               srcdir="${basedir}/poi-ooxml-lite-agent/src/main/java9"
-               destdir="${basedir}/poi-ooxml-lite-agent/src/main/java9"
+               srcdir="${basedir}/poi-ooxml-lite-agent/src/main/jpms"
+               destdir="${ooxml.lite.output.jpms.dir}"
                includeantruntime="false"
                fork="true"
                modulepath="${basedir}/lib/main-tests">
@@ -1292,10 +1324,8 @@ under the License.
 
         <jar destfile="${ooxml.lite.agent}">
             <fileset dir="${ooxml.lite.output.dir}"/>
-            <zipfileset dir="${basedir}/poi-ooxml-lite-agent/src/main/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+            <fileset dir="${ooxml.lite.output.jpms.dir}"/>
             <manifest>
-                <attribute name="Multi-Release" value="true"/>
-                <attribute name="Automatic-Module-Name" value="org.apache.poi.ooxml_lite"/>
                 <attribute name="Premain-Class" value="org.apache.poi.ooxml.lite.OOXMLLiteAgent"/>
                 <!-- attribute name="Can-Retransform-Classes" value="true"/ -->
             </manifest>
@@ -1312,6 +1342,7 @@ under the License.
         <attribute name="module2" default=""/>
         <attribute name="module3" default=""/>
         <attribute name="module4" default=""/>
+        <attribute name="module5" default=""/>
         <attribute name="outputDir"/>
         <element name="elements" implicit="true"/>
         <sequential>
@@ -1367,6 +1398,7 @@ under the License.
             <local name="use_module2"/>
             <local name="use_module3"/>
             <local name="use_module4"/>
+            <local name="use_module5"/>
             <condition property="use_module1" value="true">
                 <length string="@{module1}" when="greater" length="0"/>
             </condition>
@@ -1378,6 +1410,9 @@ under the License.
             </condition>
             <condition property="use_module4" value="true">
                 <length string="@{module4}" when="greater" length="0"/>
+            </condition>
+            <condition property="use_module5" value="true">
+                <length string="@{module5}" when="greater" length="0"/>
             </condition>
 
             <!-- As of 2018, JaCoCo is managing expectations and stay on Java 5 and therefore don't support junitlauncher -->
@@ -1425,6 +1460,7 @@ under the License.
                         <jvmarg line="--add-modules org.apache.poi.@{module2}" if:set="use_module2"/>
                         <jvmarg line="--add-modules @{module3}" if:set="use_module3"/>
                         <jvmarg line="--add-modules @{module4}" if:set="use_module4"/>
+                        <jvmarg line="--add-modules @{module5}" if:set="use_module5"/>
                     </fork>
 
                     <listener classname="Junit5Progress" />
@@ -1452,6 +1488,7 @@ under the License.
 
         <poiunit failureproperty="ooxml.test.failed" heap="768" modulepath-ref="restest.modules"
             module1="ooxml" module2="scratchpad" module3="org.bouncycastle.pkix" module4="org.slf4j"
+            module5="org.apache.santuario.xmlsec,org.apache.commons.logging"
             outputDir="${ooxml.reports.test}">
             <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
                 <include name="**/${testpattern}.class"/>
@@ -1511,11 +1548,11 @@ under the License.
         </javac>
 
 
-        <mkdir dir="${integration.output.test.dir}/META-INF/versions/9"/>
+        <mkdir dir="${integration.output.test.jpms.dir}"/>
 
         <javac release="17"
-               srcdir="${basedir}/poi-integration/src/test/java9"
-               destdir="${integration.output.test.dir}/META-INF/versions/9"
+               srcdir="${basedir}/poi-integration/src/test/jpms"
+               destdir="${integration.output.test.jpms.dir}"
                includeantruntime="false"
                fork="true">
             <compilerarg line="--patch-module org.apache.poi.stress=${integration.output.test.dir}"/>
@@ -1530,17 +1567,14 @@ under the License.
                 <pathelement path="${ooxml.lib}"/>
                 <pathelement path="${ooxml-provided.lib}"/>
                 <pathelement path="${ooxml-tests.lib}"/>
+                <pathelement location="${main.ant.jar}"/>
             </modulepath>
         </javac>
 
-        <manifest file="poi-integration/build/poi-manifest.mf">
-            <attribute name="Multi-Release" value="true"/>
-            <attribute name="Automatic-Module-Name" value="org.apache.poi.stress"/>
-        </manifest>
-
-        <jar destfile="build/dist/maven/poi-integration/poi-integration-${version.id}.jar"
-             basedir="${integration.output.test.dir}"
-             manifest="poi-integration/build/poi-manifest.mf"/>
+        <jar destfile="build/dist/maven/poi-integration/poi-integration-${version.id}.jar">
+            <fileset dir="${integration.output.test.dir}"/>
+            <fileset dir="${integration.output.test.jpms.dir}"/>
+        </jar>
     </target>
 
     <target name="-version-java-check">
@@ -1775,7 +1809,7 @@ under the License.
         <sequential>
             <poiunit failureproperty="ooxml.test.failed" heap="768" jacocodest="build/jacoco-@{type}.exec"
                      modulepath-ref="@{modulepath-ref}" module1="ooxml" module2="scratchpad" module3="org.bouncycastle.pkix"
-                     module4="org.slf4j" outputDir="${ooxml.reports.test}">
+                     module4="org.slf4j" module5="org.apache.santuario.xmlsec,org.apache.commons.logging" outputDir="${ooxml.reports.test}">
                 <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
                     <include name="**/${testpattern}.class"/>
                     <exclude name="**/*$*.class"/>
@@ -1835,10 +1869,11 @@ under the License.
             <pathelement path="lib/ooxml"/>
             <pathelement path="lib/ooxml-provided"/>
             <pathelement path="lib/ooxml-tests"/>
+            <pathelement location="${main.ant.jar}"/>
         </path>
 
         <poiunit failureproperty="integration.test.failed" heap="3072" showoutput="true" jacocodest="build/jacoco-integration.exec"
-                 modulepath-ref="test-integration.modules" module1="stress" outputDir="${integration.reports.test}">
+                 modulepath-ref="test-integration.modules" module1="stress" module2="scratchpad" outputDir="${integration.reports.test}">
             <zipfileset src="build/dist/maven/poi-integration/poi-integration-${version.id}.jar">
                 <include name="**/${testpattern}.class"/>
                 <exclude name="**/*$*.class"/>
@@ -1876,7 +1911,7 @@ under the License.
 
         <local name="full.schema"/>
         <loadresource property="full.schema">
-            <file file="${basedir}/poi-ooxml-full/src/main/java9/module-info.java"/>
+            <file file="${basedir}/poi-ooxml-full/src/main/jpms/module-info.java"/>
             <filterchain>
                 <linecontains negate="true" matchany="true">
                     <contains value="exports"/>
@@ -1885,11 +1920,12 @@ under the License.
             </filterchain>
         </loadresource>
 
-        <echo output="${basedir}/poi-ooxml-lite/src/main/java9/module-info.java">${full.schema}${lite.exports}}</echo>
+        <echo output="${basedir}/poi-ooxml-lite/src/main/jpms/module-info.java">${full.schema}${lite.exports}}</echo>
 
+        <mkdir dir="${ooxml.lite.jpms.dir}"/>
         <javac release="17"
-               srcdir="${basedir}/poi-ooxml-lite/src/main/java9"
-               destdir="${basedir}/poi-ooxml-lite/src/main/java9"
+               srcdir="${basedir}/poi-ooxml-lite/src/main/jpms"
+               destdir="${ooxml.lite.jpms.dir}"
                includeantruntime="false"
                fork="true">
             <compilerarg line="--patch-module org.apache.poi.ooxml.schemas=${ooxml.xsds.jar}"/>
@@ -1923,7 +1959,7 @@ under the License.
         <mkdir dir="build/dist/maven/poi-ooxml-lite"/>
 
         <jar destfile="${ooxml.lite.jar}" duplicate="fail">
-            <zipfileset dir="${basedir}/poi-ooxml-lite/src/main/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+            <fileset dir="${ooxml.lite.jpms.dir}"/>
             <zipfileset src="${ooxml.xsds.jar}">
                 <patternset>
                     <includesfile name="${ooxml.lite.report}.clazz1"/>
@@ -1933,10 +1969,6 @@ under the License.
                     <include name="org/apache/poi/schemas/ooxml/element/**/*.xsb"/>
                 </patternset>
             </zipfileset>
-            <manifest>
-                <attribute name="Multi-Release" value="true"/>
-                <attribute name="Automatic-Module-Name" value="org.apache.poi.ooxml.schemas"/>
-            </manifest>
         </jar>
 
         <delete file="${ooxml.lite.report}.clazz1"/>
@@ -2197,77 +2229,6 @@ under the License.
         </javadoc>
     </target>
 
-    <macrodef name="maven-jar">
-        <attribute name="src"/>
-        <attribute name="module"/>
-        <element name="elements" implicit="true" optional="true"/>
-
-        <sequential>
-            <local name="destfile"/>
-            <pathconvert property="destfile" targetos="unix">
-                <path><pathelement path="@{src}"/></path>
-                <mapper>
-                    <chainedmapper>
-                        <filtermapper>
-                            <replaceregex pattern=".jar" replace="" flags="g"/>
-<!--                            <replaceregex pattern="ooxml-lite" replace="ooxml-schemas" flags="g"/>-->
-                            <replaceregex pattern="(.java|.src)$$" replace="-sources"/>
-                            <replaceregex pattern=".*(?:build|src).?(.*)?" replace="\1"/>
-                            <replaceregex pattern="(.*)(-classes|-sources)" replace="poi-\1/poi-\1-${version.id}\2"/>
-                            <replaceregex pattern="^(classes|sources)$$" replace="poi/poi-${version.id}-\1"/>
-                            <replaceregex pattern="-classes" replace=""/>
-                        </filtermapper>
-                    </chainedmapper>
-                </mapper>
-            </pathconvert>
-
-            <local name="isjar"/>
-            <condition property="isjar">
-                <contains string="@{src}" substring=".jar"/>
-            </condition>
-
-            <mkdir dir="@{src}/META-INF/versions/9"/>
-
-            <local name="module-name"/>
-            <loadresource property="module-name">
-                <string>@{module}</string>
-                <filterchain>
-                    <replacestring from="poi-" to=""/>
-                </filterchain>
-            </loadresource>
-
-            <echo message="Building maven-jar for @{module}, module-name: ${module-name} with src: @{src}"/>
-
-            <javac release="17"
-                   srcdir="${basedir}/@{module}/src/main/java9"
-                   destdir="@{src}/META-INF/versions/9"
-                   includeantruntime="false"
-                   fork="true"
-                   modulepath="${main.lib}">
-                <compilerarg line="--patch-module org.apache.poi.${module-name}=@{src}"/>
-                <elements/>
-            </javac>
-
-            <jar destfile="build/dist/maven/${destfile}.jar">
-                <fileset dir="@{src}" unless:true="${isjar}"/>
-                <zipfileset src="@{src}" if:true="${isjar}"/>
-                <metainf dir="legal/" excludes="HEADER"/>
-                <manifest>
-                    <attribute name="Multi-Release" value="true"/>
-                    <attribute name="Automatic-Module-Name" value="org.apache.poi.@{module}"/>
-                    <attribute name="Built-By" value="${user.name}"/>
-                    <attribute name="Specification-Title" value="Apache POI"/>
-                    <attribute name="Specification-Version" value="${version.id}"/>
-                    <attribute name="Specification-Vendor" value="The Apache Software Foundation"/>
-                    <attribute name="Implementation-Title" value="Apache POI"/>
-                    <attribute name="Implementation-Version" value="${version.id}"/>
-                    <attribute name="Implementation-Vendor-Id" value="org.apache.poi"/>
-                    <attribute name="Implementation-Vendor" value="The Apache Software Foundation"/>
-                </manifest>
-            </jar>
-        </sequential>
-    </macrodef>
-
     <target name="jar" depends="compile, compile-ooxml-lite" description="Creates jar files for distribution">
     </target>
 
@@ -2287,7 +2248,6 @@ under the License.
         <property name="build.maven.javadocs" location="build/tmp/maven-javadocs"/>
 
         <manifest file="build/poi-manifest.mf">
-            <attribute name="Multi-Release" value="true"/>
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Specification-Title" value="Apache POI"/>
             <attribute name="Specification-Version" value="${version.id}"/>

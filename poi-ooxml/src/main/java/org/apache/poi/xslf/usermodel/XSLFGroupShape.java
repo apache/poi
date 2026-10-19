@@ -175,22 +175,22 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         CTGroupShape grpSp = (CTGroupShape)getXmlObject();
         getSheet().deregisterShapeId(xShape.getShapeId());
         if(obj instanceof CTShape){
-            grpSp.getSpList().remove(obj);
+            XSLFSheet.removeElement(grpSp.getSpArray(), obj, grpSp::removeSp);
         } else if (obj instanceof CTGroupShape){
             XSLFGroupShape gs = (XSLFGroupShape)xShape;
             new ArrayList<>(gs.getShapes()).forEach(gs::removeShape);
-            grpSp.getGrpSpList().remove(obj);
+            XSLFSheet.removeElement(grpSp.getGrpSpArray(), obj, grpSp::removeGrpSp);
         } else if (obj instanceof CTConnector){
-            grpSp.getCxnSpList().remove(obj);
+            XSLFSheet.removeElement(grpSp.getCxnSpArray(), obj, grpSp::removeCxnSp);
         } else if (obj instanceof CTGraphicalObjectFrame) {
-            grpSp.getGraphicFrameList().remove(obj);
+            XSLFSheet.removeElement(grpSp.getGraphicFrameArray(), obj, grpSp::removeGraphicFrame);
         } else if (obj instanceof CTPicture) {
             XSLFPictureShape ps = (XSLFPictureShape)xShape;
             XSLFSheet sh = getSheet();
             if (sh != null) {
                 sh.removePictureRelation(ps);
             }
-            grpSp.getPicList().remove(obj);
+            XSLFSheet.removeElement(grpSp.getPicArray(), obj, grpSp::removePic);
         } else {
             throw new IllegalArgumentException("Unsupported shape: " + xShape);
         }

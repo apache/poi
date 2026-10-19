@@ -18,7 +18,6 @@
 package org.apache.poi.ss.formula.functions;
 
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
@@ -351,11 +350,11 @@ public final class DStarRunner implements Function3Arg {
                     String valueString = value instanceof BlankEval ? "" : OperandResolver.coerceValueToString(value);
                     final String lowerValue = valueString.toLowerCase(LocaleUtil.getUserLocale());
                     final String lowerCondition = conditionString.toLowerCase(LocaleUtil.getUserLocale());
-                    final Pattern pattern = Countif.StringMatcher.getWildCardPattern(lowerCondition);
-                    if (pattern == null) {
+                    final WildcardMatcher wildCardMatcher = WildcardMatcher.compile(lowerCondition);
+                    if (wildCardMatcher == null) {
                         return lowerValue.startsWith(lowerCondition);
                     } else {
-                        return pattern.matcher(lowerValue).matches();
+                        return wildCardMatcher.matches(lowerValue);
                     }
                 }
             }

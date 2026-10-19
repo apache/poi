@@ -301,7 +301,7 @@ public final class RecordInputStream implements LittleEndianInput {
 
     @Override
     public void readPlain(byte[] buf, int off, int len) {
-        readFully(buf, 0, buf.length, true);
+        readFully(buf, off, len, true);
     }
 
     @Override

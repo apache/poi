@@ -19,16 +19,19 @@ package org.apache.poi.xwpf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHeight;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
 
 class TestXWPFTableRow {
@@ -197,6 +200,24 @@ class TestXWPFTableRow {
             CTHeight height = tr.getCtRow().getTrPr().getTrHeightArray(0);
             height.setHRule(STHeightRule.EXACT);
             assertEquals(twipsPerInch/10., Units.toDXA(POIXMLUnits.parseLength(height.xgetVal())), 0);
+        }
+    }
+
+    @Test
+    void testTableICellsIncludeCustomXmlCells() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFTable table = doc.createTable();
+            CTRow ctRow = table.getRow(0).getCtRow();
+            ctRow.addNewCustomXml().addNewTc().addNewP().addNewR().addNewT().setStringValue("custom");
+            ctRow.addNewSdt().addNewSdtContent().addNewTc().addNewP().addNewR().addNewT().setStringValue("sdt");
+            ctRow.addNewCustomXml().addNewCustomXml().addNewTc().addNewP().addNewR().addNewT().setStringValue("nested");
+
+            List<ICell> cells = new XWPFTableRow(ctRow, table).getTableICells();
+            assertEquals(4, cells.size());
+            assertInstanceOf(XWPFTableCell.class, cells.get(0));
+            assertEquals("custom", assertInstanceOf(XWPFTableCell.class, cells.get(1)).getText());
+            assertInstanceOf(XWPFSDTCell.class, cells.get(2));
+            assertEquals("nested", assertInstanceOf(XWPFTableCell.class, cells.get(3)).getText());
         }
     }
 }

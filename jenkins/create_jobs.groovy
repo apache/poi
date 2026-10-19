@@ -31,20 +31,11 @@ def xercesUrl = 'https://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesIm
 def xercesLib = './xercesImpl-2.6.1.jar'
 
 def poijobs = [
-        [ name: 'POI-DSL-1.8',
-          jdk: '1.8',
-          trigger: 'H */12 * * *',
-          jenkinsLite: true,
-          disabled: true  // JDK 8 is no longer supported by POI 6
-        ],
         [ name: 'POI-DSL-1.8-branch-5.5.x',
           jdk: '1.8',
           branch: '5.5.x',
           trigger: 'H */12 * * *',
           jenkinsLite: true,
-        ],
-        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
-          disabled: true  // JDK 11 is no longer supported by POI 6
         ],
         [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true
         ],
@@ -85,17 +76,6 @@ def poijobs = [
 //        ],
         [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.21', trigger: 'H 7 * * *', sonar: true, skipcigame: true
         ],
-        [ name: 'POI-DSL-Windows-1.8',
-          trigger: 'H */12 * * *',
-          windows: true,
-          slaves: 'Windows',
-          jenkinsLite: true,
-          disabled: true  // JDK 8 is no longer supported by POI 6
-        ],
-        [ name: 'POI-DSL-Windows-1.11', jdk: '1.11', trigger: triggerSundays, windows: true, slaves: 'Windows',
-          jenkinsLite: true,
-          disabled: true  // JDK 11 is no longer supported by POI 6
-        ],
         [ name: 'POI-DSL-Windows-1.17', jdk: '1.17', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.21', jdk: '1.21', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
@@ -116,8 +96,10 @@ def poijobs = [
 
 def xmlbeansjobs = [
         [ name: 'POI-XMLBeans-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true,
+          disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
+          disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true,
         ],

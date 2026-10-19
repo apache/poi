@@ -93,8 +93,8 @@ final class TestFractionFormat {
             for (int i = 1; i < sheet.getLastRowNum() && truthLine != null; i++) {
                 Row r = sheet.getRow(i);
                 String[] truths = truthLine.split("\t");
-                // Intentionally ignore the last column (tika-1132), for now
-                for (short j = 3; j < 12; j++) {
+                // the last column (tika-1132) has a 9 digit denominator
+                for (short j = 3; j <= 12; j++) {
                     Cell cell = r.getCell(j, MissingCellPolicy.CREATE_NULL_AS_BLANK);
                     String formatted = clean(formatter.formatCellValue(cell, evaluator));
                     if (truths.length <= j) {

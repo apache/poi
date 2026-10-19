@@ -41,7 +41,9 @@ import org.apache.poi.xwpf.usermodel.XWPFSDT;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 
@@ -545,4 +547,23 @@ class TestXWPFWordExtractor {
         return allsdts;
     }
 
+    @Test
+    void testCustomXmlCellsAndWrappedRunsInSdt() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CTRow row = doc.getDocument().getBody().addNewTbl().addNewTr();
+            row.addNewCustomXml().addNewTc().addNewP().addNewR().addNewT().setStringValue("custom cell");
+            row.addNewSdt().addNewSdtContent().addNewTc().addNewP().addNewR().addNewT().setStringValue("sdt cell");
+
+            CTSdtContentRun content = doc.getDocument().getBody().addNewP().addNewSdt().addNewSdtContent();
+            content.addNewR().addNewT().setStringValue("run ");
+            content.addNewHyperlink().addNewR().addNewT().setStringValue("link ");
+            content.addNewFldSimple().addNewR().addNewT().setStringValue("field ");
+            content.addNewSmartTag().addNewR().addNewT().setStringValue("tag");
+
+            try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc);
+                 XWPFWordExtractor extractor = new XWPFWordExtractor(doc2)) {
+                assertEquals("custom cell\tsdt cell\n\nrun link field tag\n", extractor.getText());
+            }
+        }
+    }
 }

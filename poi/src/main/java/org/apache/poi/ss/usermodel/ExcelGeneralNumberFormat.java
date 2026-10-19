@@ -65,7 +65,8 @@ public class ExcelGeneralNumberFormat extends Format {
         }
 
         final double abs = Math.abs(value);
-        if (abs >= 1E11 || (abs <= 1E-10 && abs > 0)) {
+        // Excel shows 1E-9 as 0.000000001, but anything smaller, e.g. 1.1E-10, in scientific notation
+        if (abs >= 1E11 || (abs < 1E-9 && abs > 0)) {
             return scientificFormat.format(number, toAppendTo, pos);
         } else if (Math.floor(value) == value || abs >= 1E10) {
             // integer, or integer portion uses all 11 allowed digits

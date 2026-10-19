@@ -18,10 +18,14 @@ package org.apache.poi.ss.format;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,9 +35,13 @@ import java.util.stream.Stream;
 
 import javax.swing.JLabel;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -994,9 +1002,11 @@ class TestCellFormat {
         // For zero, should be Space + currency symbol + spaces + Minus + spaces
         assertEquals(" $   - ", cfDft.apply((double) 0).text);
         assertEquals(" $   - ", cfUS.apply((double) 0).text);
-        // TODO Fix these to not have an incorrect bonus 0 on the end
-        //assertEquals(" "+pound+"   -  ", cfUK.apply((double) 0).text);
-        //assertEquals(" -    "+euro+"  ", cfFR.apply((double) 0).text);
+        // "-"?? is the minus and a space for each '?' (bug 62242)
+        assertEquals(" "+pound+"   -   ", cfUK.apply((double) 0).text);
+        assertEquals(" -     "+euro+"  ", cfFR.apply((double) 0).text);
+        assertEquals(" R   -   ", cfSA.apply((double) 0).text);
+        assertEquals(" USD    -   ", cfUSD.apply((double) 0).text);
     }
 
     @Test
@@ -1039,6 +1049,30 @@ class TestCellFormat {
     void testBug62865() {
         CellFormat cf = CellFormat.getInstance("\"ca. \"0");
         assertEquals("ca. 5", cf.apply((double) 5).text);
+    }
+
+    /**
+     * Bug 62242: '?' shows a space for an insignificant zero, including an integer part of zero
+     */
+    @Test
+    void testBug62242() {
+        CellFormat cf = CellFormat.getInstance("_ * #,##0.00_ ;_ * \\-#,##0.00_ ;_ * \"-\"??_ ;_ @_");
+        assertEquals("    -   ", cf.apply((double) 0).text);
+
+        assertEquals("  ", CellFormat.getInstance("??").apply((double) 0).text);
+        assertEquals(" 5", CellFormat.getInstance("??").apply((double) 5).text);
+
+        cf = CellFormat.getInstance("_-[$£-809]* \"-\"??_-");
+        assertEquals(" £   -   ", cf.apply((double) 0).text);
+        cf = CellFormat.getInstance("_-[$£-809]* \"-\"??_-a");
+        assertEquals(" £   -   a", cf.apply((double) 0).text);
+
+        // '#' shows nothing for it, '0' shows the 0
+        assertEquals("", CellFormat.getInstance("#").apply((double) 0).text);
+        assertEquals(".50", CellFormat.getInstance("#.00").apply(0.5).text);
+        assertEquals(" .5 ", CellFormat.getInstance("?.??").apply(0.5).text);
+        assertEquals("0.50", CellFormat.getInstance("0.00").apply(0.5).text);
+        assertEquals("0", CellFormat.getInstance("0").apply((double) 0).text);
     }
 
     @Test
@@ -1172,5 +1206,62 @@ class TestCellFormat {
         CellFormatPart part = new CellFormatPart("[h]\\h m\\m s\\s");
         assertNotNull(part);
         assertEquals("0h 0m 9s", part.apply(0.0001).text);
+    }
+
+    /**
+     * The format cache must not keep a format string nobody refers to any more: a cached {@code CellFormat}
+     * refers to its own format string, which used to keep the weak key of its entry reachable forever.
+     */
+    @Test
+    void testCacheReleasesUnusedFormats() throws InterruptedException {
+        String format = "0.00;-0.00;\"cache-" + System.nanoTime() + "\"";
+        WeakReference<String> key = new WeakReference<>(format);
+        assertNotNull(CellFormat.getInstance(Locale.ROOT, format));
+        format = null;
+        for (int i = 0; i < 50 && key.get() != null; i++) {
+            System.gc();
+            Thread.sleep(10);
+        }
+        assertNull(key.get(), "the format cache keeps a format string that is no longer used");
+    }
+
+    /**
+     * 54686_fraction_formats.xls was saved by Excel, and 54686_fraction_formats.txt has the text that
+     * Excel shows for its cells (exported as tab delimited text). Check all the fraction columns, with
+     * up to 9 digit denominators ("# ?/?" to "#\\ ??/?????????") and fixed denominators ("#\\ ?/4"),
+     * including the spaces that the '?' placeholders give.
+     */
+    @Test
+    void testFractionsMatchExcel() throws IOException {
+        try (Workbook wb = HSSFTestDataSamples.openSampleWorkbook("54686_fraction_formats.xls");
+             BufferedReader reader = Files.newBufferedReader(
+                     HSSFTestDataSamples.getSampleFile("54686_fraction_formats.txt").toPath(), LocaleUtil.CHARSET_1252)) {
+            Sheet sheet = wb.getSheetAt(0);
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            // skip the header row
+            reader.readLine();
+            int checked = 0;
+            String line;
+            for (int i = 1; (line = reader.readLine()) != null && i <= sheet.getLastRowNum(); i++) {
+                String[] truths = line.split("\t", -1);
+                Row row = sheet.getRow(i);
+                // the 1Digit to Tika-1132 columns
+                for (int j = 3; j <= 12 && j < truths.length; j++) {
+                    Cell cell = row.getCell(j);
+                    CellValue cellValue = cell == null ? null : evaluator.evaluate(cell);
+                    if (cellValue == null || cellValue.getCellType() != CellType.NUMERIC) {
+                        continue;
+                    }
+                    String format = cell.getCellStyle().getDataFormatString();
+                    double value = cellValue.getNumberValue();
+                    String actual = CellFormat.getInstance(format).apply(value).text;
+                    // the export does not have the trailing spaces of the last column
+                    assertEquals(truths[j].replaceAll(" +$", ""), actual.replaceAll(" +$", ""),
+                            "row " + i + ", format " + format + ", value " + value);
+                    checked++;
+                }
+            }
+            assertTrue(checked > 3000);
+        }
     }
 }

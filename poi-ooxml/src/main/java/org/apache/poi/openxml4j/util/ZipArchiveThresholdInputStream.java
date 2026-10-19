@@ -61,6 +61,14 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
     private boolean guardState = true;
     private long entryCount;
 
+    /**
+     * Single-byte reads only check the thresholds every this many bytes, as each check queries
+     * the inflater. Bulk reads and skips still check on every call.
+     */
+    private static final int SINGLE_BYTE_CHECK_INTERVAL = 1024;
+    /** bytes returned by {@link #read()} since the last threshold check */
+    private int uncheckedBytes;
+
     public ZipArchiveThresholdInputStream(InputStream is) {
         super(is);
         if (!(is instanceof InputStreamStatistics)) {
@@ -72,6 +80,11 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
     public int read() throws IOException {
         int b = super.read();
         if (b > -1) {
+            if (++uncheckedBytes >= SINGLE_BYTE_CHECK_INTERVAL) {
+                checkThreshold();
+            }
+        } else if (uncheckedBytes > 0) {
+            // check the bytes read since the last check before reporting the end of the entry
             checkThreshold();
         }
         return b;
@@ -88,11 +101,12 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
 
     @Override
     public long skip(long n) throws IOException {
-        long cnt = IOUtils.skipFully(super.in, n);
+        // IOUtils.skipFully returns -1 at the end of the stream, but skip() must not be negative
+        long cnt = Math.max(0, IOUtils.skipFully(super.in, n));
         if (cnt > 0) {
             checkThreshold();
         }
-       return cnt;
+        return cnt;
     }
 
     /**
@@ -106,6 +120,7 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
     }
 
     private void checkThreshold() throws IOException {
+        uncheckedBytes = 0;
         if (!guardState) {
             return;
         }
@@ -127,11 +142,9 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
             rawSize = 0;
         }
 
-        final String entryName = entry == null ? "not set" : entry.getName();
-
         // check the file size first, in case we are working on uncompressed streams
         if (payloadSize > getMaxEntrySize()) {
-            throw new IOException(String.format(Locale.ROOT, MAX_ENTRY_SIZE_MSG, payloadSize, rawSize, getMaxEntrySize(), entryName));
+            throw new IOException(String.format(Locale.ROOT, MAX_ENTRY_SIZE_MSG, payloadSize, rawSize, getMaxEntrySize(), getEntryName()));
         }
 
         // don't alert for small expanded size
@@ -145,7 +158,11 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
         }
 
         // one of the limits was reached, report it
-        throw new IOException(String.format(Locale.ROOT, MIN_INFLATE_RATIO_MSG, payloadSize, rawSize, ratio, MIN_INFLATE_RATIO, entryName));
+        throw new IOException(String.format(Locale.ROOT, MIN_INFLATE_RATIO_MSG, payloadSize, rawSize, ratio, MIN_INFLATE_RATIO, getEntryName()));
+    }
+
+    private String getEntryName() {
+        return entry == null ? "not set" : entry.getName();
     }
 
     public ZipArchiveEntry getNextEntry() throws IOException {
@@ -154,6 +171,7 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
         }
 
         try {
+            uncheckedBytes = 0;
             entry = zis.getNextEntry();
             if (guardState && entry != null) {
                 if (++entryCount > MAX_FILE_COUNT) {

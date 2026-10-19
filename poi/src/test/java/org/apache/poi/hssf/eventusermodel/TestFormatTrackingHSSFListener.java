@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.eventusermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,8 +29,10 @@ import java.util.List;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.FormatRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NumberRecord;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.jupiter.api.Test;
 
@@ -61,6 +64,25 @@ final class TestFormatTrackingHSSFListener {
         assertEquals("_(\"$\"* #,##0_);_(\"$\"* (#,##0);_(\"$\"* \"-\"_);_(@_)", listener.getFormatString(42));
         assertEquals("_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)", listener.getFormatString(43));
         assertEquals("_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)", listener.getFormatString(44));
+    }
+
+    @Test
+    void testFileFormatsForBuiltinIndexes() {
+        listener = new FormatTrackingHSSFListener(new MockHSSFListener());
+        String yuan = "\"\uFFE5\"#,##0.00;\\-\"\uFFE5\"#,##0.00";
+        listener.processRecord(new FormatRecord(7, yuan));
+        listener.processRecord(new FormatRecord(23, "0.0%"));
+
+        assertFalse(listener.isUseFileFormatsForBuiltinIndexes());
+        assertEquals(HSSFDataFormat.getBuiltinFormat((short) 7), listener.getFormatString(7));
+        assertEquals(HSSFDataFormat.getBuiltinFormat((short) 23), listener.getFormatString(23));
+
+        listener.setUseFileFormatsForBuiltinIndexes(true);
+        assertTrue(listener.isUseFileFormatsForBuiltinIndexes());
+        assertEquals(yuan, listener.getFormatString(7));
+        assertEquals("0.0%", listener.getFormatString(23));
+        // no FORMAT record in the file, so the built-in format is used
+        assertEquals(HSSFDataFormat.getBuiltinFormat((short) 14), listener.getFormatString(14));
     }
 
     /**

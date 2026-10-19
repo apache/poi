@@ -167,10 +167,37 @@ public final class PackagingURIHelper {
             throw new IllegalArgumentException("partUri");
 
         final String path = partUri.getPath();
+        if (path == null || hasLineTerminator(path)) {
+            return false;
+        }
 
-        return path != null && path.matches(
-                ".*" + RELATIONSHIP_PART_SEGMENT_NAME + ".*"
-                        + RELATIONSHIP_PART_EXTENSION_NAME + "$");
+        // same result as path.matches(".*_rels.*.rels$") - the '.' before "rels" is any
+        // character - but without the regex, which backtracks quadratically on "_rels" repeated
+        final int segment = path.indexOf(RELATIONSHIP_PART_SEGMENT_NAME);
+        final int extension = path.length() - RELATIONSHIP_PART_EXTENSION_NAME.length();
+        return segment >= 0
+                && segment + RELATIONSHIP_PART_SEGMENT_NAME.length() <= extension
+                && path.startsWith(RELATIONSHIP_PART_EXTENSION_NAME.substring(1), extension + 1);
+    }
+
+    /**
+     * Whether the string contains a line terminator, i.e. a character that the
+     * regex {@code .} does not match by default (see {@link Pattern}).
+     */
+    static boolean hasLineTerminator(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            switch (s.charAt(i)) {
+                case '\n':
+                case '\r':
+                case '\u0085':
+                case '\u2028':
+                case '\u2029':
+                    return true;
+                default:
+                    break;
+            }
+        }
+        return false;
     }
 
     /**

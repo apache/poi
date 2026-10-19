@@ -29,11 +29,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
@@ -152,6 +154,17 @@ class TestDateUtil {
         assertEquals(date, DateUtil.getLocalDateTime(dateValue));
         assertEquals(date, DateUtil.getLocalDateTime(dateValue, use1904windowing));
         assertEquals(date, DateUtil.getLocalDateTime(dateValue, use1904windowing, roundSeconds));
+    }
+
+    @Test
+    void isADateFormatWithLongRun() {
+        // '/' is allowed both in the date part and in the AM/PM part, which used to backtrack quadratically
+        String format = "y" + "/".repeat(50_000) + "x";
+        boolean result = assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> DateUtil.isADateFormat(-1, format));
+        assertFalse(result);
+        assertTrue(DateUtil.isADateFormat(-1, "y" + "/".repeat(50_000) + "AM/PM"));
+        assertTrue(DateUtil.isADateFormat(-1, "mm/dd/yy m/"));
     }
 
     @Test

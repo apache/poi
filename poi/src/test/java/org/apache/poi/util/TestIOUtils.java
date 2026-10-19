@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilterInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +38,7 @@ import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EmptyFileException;
@@ -260,6 +262,34 @@ final class TestIOUtils {
     }
 
     @Test
+    void testToByteArrayWithMaxInitBufferSizeGrowsOverSeveralReads() throws IOException {
+        // the buffer must grow several times past the cap, with the stream handing out short reads
+        final byte[] array = new byte[100_000];
+        new Random(42).nextBytes(array);
+        try (InputStream is = new ShortReadInputStream(new ByteArrayInputStream(array), 777)) {
+            assertArrayEquals(array, IOUtils.toByteArray(is, array.length, Integer.MAX_VALUE, 1000, null));
+        }
+        try (InputStream is = new ShortReadInputStream(new ByteArrayInputStream(array), 777)) {
+            assertThrows(EOFException.class,
+                    () -> IOUtils.toByteArray(is, array.length + 1, Integer.MAX_VALUE, 1000, null));
+        }
+    }
+
+    private static final class ShortReadInputStream extends FilterInputStream {
+        private final int maxRead;
+
+        ShortReadInputStream(InputStream in, int maxRead) {
+            super(in);
+            this.maxRead = maxRead;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            return super.read(b, off, Math.min(len, maxRead));
+        }
+    }
+
+    @Test
     void testSkipFully() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
             long skipped = IOUtils.skipFully(is, 20000L);
@@ -386,6 +416,24 @@ final class TestIOUtils {
     void testWonkyInputStream() throws IOException {
         long skipped = IOUtils.skipFully(new WonkyInputStream(), 10000);
         assertEquals(10000, skipped);
+    }
+
+    @Test
+    void testSkipFullySmallSkip() throws IOException {
+        int[] maxRequested = {0};
+        InputStream is = new ByteArrayInputStream(new byte[100]) {
+            @Override
+            public synchronized int read(byte[] b, int off, int len) {
+                maxRequested[0] = Math.max(maxRequested[0], len);
+                // the buffer must be big enough for the request
+                assertTrue(off + len <= b.length);
+                return super.read(b, off, len);
+            }
+        };
+        assertEquals(3, IOUtils.skipFully(is, 3));
+        assertEquals(3, maxRequested[0]);
+        assertEquals(97, IOUtils.skipFully(is, 5000));
+        assertEquals(-1, IOUtils.skipFully(is, 1));
     }
 
     @Test

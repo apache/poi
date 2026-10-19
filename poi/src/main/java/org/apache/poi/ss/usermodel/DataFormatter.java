@@ -27,12 +27,15 @@ import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -126,14 +129,17 @@ public class DataFormatter {
     /** Pattern to find "AM/PM" marker */
     private static final Pattern amPmPattern = Pattern.compile("(([AP])[M/P]*)", Pattern.CASE_INSENSITIVE);
 
-    /** Pattern to find formats with condition ranges e.g. [>=100] */
-    private static final Pattern rangeConditionalPattern = Pattern.compile(".*\\[\\s*(>|>=|<|<=|=)\\s*[0-9]*\\.*[0-9].*");
+    /** Stands for the AM/PM marker while a date format is converted */
+    private static final String AM_PM_PLACEHOLDER = "\ue000";
 
-    /**
-     * A regex to find locale patterns like [$$-1009] and [$?-452].
-     * Note that we don't currently process these into locales
-     */
-    private static final Pattern localePatternGroup = Pattern.compile("(\\[\\$[^-\\]]*-[0-9A-Z]+])");
+    /** Excel's Chinese AM/PM marker, which shows 上午 (morning) or 下午 (afternoon) */
+    private static final String CHINESE_AM_PM = "上午/下午";
+
+    /** Pattern to find the [DBNum1], [DBNum2] or [DBNum3] Chinese/Japanese numeral styles */
+    private static final Pattern dbNumPattern = Pattern.compile("\\[DBNum[123]]", Pattern.CASE_INSENSITIVE);
+
+    /** Pattern to find formats with condition ranges e.g. [>=100] */
+    private static final Pattern rangeConditionalPattern = Pattern.compile("\\[\\s*(<>|<=|>=|<|>|=)\\s*-?(?:[0-9]*\\.)?[0-9]+\\s*]");
 
     /**
      * A regex to match the colour formatting's rules.
@@ -147,9 +153,11 @@ public class DataFormatter {
 
     /**
      * A regex to identify a fraction pattern.
-     * This requires that replaceAll("\\?", "#") has already been called
+     * This requires that replaceAll("\\?", "#") has already been called.
+     * The lookbehinds and possessive quantifiers stop find() from rescanning a run of # or digits
+     * from every position in it, which was quadratic; the leftmost match and its groups are unchanged.
      */
-    private static final Pattern fractionPattern = Pattern.compile("(?:([#\\d]+)\\s+)?(#+)\\s*/\\s*([#\\d]+)");
+    private static final Pattern fractionPattern = Pattern.compile("(?:(?<![#\\d])([#\\d]++)\\s+)?(?<!#)(#++)\\s*/\\s*([#\\d]+)");
 
     /**
      * A regex to strip junk out of fraction formats
@@ -166,6 +174,13 @@ public class DataFormatter {
      * For handling '0#' properly
      */
     private static final Pattern decimalFormatFix = Pattern.compile("0+#");
+
+    private static final Pattern multipleSpaces = Pattern.compile(" +");
+
+    /** A positive exponent, which Excel shows with an explicit '+' */
+    private static final Pattern exponentWithoutSign = Pattern.compile("E(\\d)");
+
+    private static final Pattern exponent = Pattern.compile("E", Pattern.LITERAL);
 
     /**
       * Cells formatted with a date or time format and which contain invalid date or time values
@@ -204,6 +219,9 @@ public class DataFormatter {
      *  Map<String,Format> formats
      */
     private final Map<String,Format> formats = new HashMap<>();
+
+    /** format strings to use in place of the default (en-US) strings of built-in formats, keyed by format index */
+    private final Map<Integer,String> builtinFormatOverrides = new HashMap<>();
 
     /** whether CSV friendly adjustments should be made to the formatted text **/
     private boolean emulateCSV = false;
@@ -360,7 +378,7 @@ public class DataFormatter {
         }
 
         int formatIndex = numFmt.getIdx();
-        String formatStr = numFmt.getFormat();
+        String formatStr = applyBuiltinFormatOverride(formatIndex, numFmt.getFormat());
         if(StringUtil.isBlank(formatStr)) {
             return null;
         }
@@ -375,7 +393,24 @@ public class DataFormatter {
         return false;
     }
 
-    private Format getFormat(double cellValue, int formatIndex, String formatStrIn, boolean use1904Windowing) {
+    /**
+     * Returns the Format to use for a value with the given format.
+     * <p>
+     * Formats with several sections or conditions are evaluated with {@link CellFormat} for this value
+     * and are not cached. Other formats are looked up in the cache of formats (see {@link #addFormat}),
+     * and otherwise created with {@link #createFormat(double, int, String)} and cached.
+     * <p>
+     * Subclasses can override this to change the Format used for some format strings.
+     * For date formats, the returned Format is given a {@link java.util.Date} to format.
+     *
+     * @param cellValue the value to format
+     * @param formatIndex the index of the format
+     * @param formatStrIn the format string
+     * @param use1904Windowing whether the 1904 date system is used
+     * @return the Format to use, or null if the value should be shown with {@link String#valueOf(double)}
+     * @since 6.0.0
+     */
+    protected Format getFormat(double cellValue, int formatIndex, String formatStrIn, boolean use1904Windowing) {
         if (formatStrIn == null) {
             throw new IllegalArgumentException("Missing input format for value " + cellValue + " and index " + formatIndex);
         }
@@ -389,7 +424,7 @@ public class DataFormatter {
         // String formatStr = (i < formatBits.length) ? formatBits[i] : formatBits[0];
 
         // this replace is done to fix https://bz.apache.org/bugzilla/show_bug.cgi?id=63211
-        String formatStr = formatStrIn.replace("\\%", "'%'");
+        String formatStr = convertExclamationEscapes(formatStrIn).replace("\\%", "'%'");
 
         // Excel supports 2+ part conditional data formats, eg positive/negative/zero,
         //  or (>1000),(>0),(0),(negative). As Java doesn't handle these kinds
@@ -397,10 +432,8 @@ public class DataFormatter {
         //  handle these ourselves in a special way.
         // For now, if we detect 2+ parts, we call out to CellFormat to handle it
         // TODO Going forward, we should really merge the logic between the two classes
-        if (formatStr.contains(";") &&
-                (formatStr.indexOf(';') != formatStr.lastIndexOf(';')
-                 || rangeConditionalPattern.matcher(formatStr).matches()
-                ) ) {
+        if ((formatStr.contains(";") && formatStr.indexOf(';') != formatStr.lastIndexOf(';'))
+                || rangeConditionalPattern.matcher(formatStr).find()) {
             try {
                 // Ask CellFormat to get a formatter for it
                 CellFormat cfmt = CellFormat.getInstance(locale, formatStr);
@@ -458,48 +491,42 @@ public class DataFormatter {
     public Format createFormat(Cell cell) {
 
         int formatIndex = cell.getCellStyle().getDataFormat();
-        String formatStr = cell.getCellStyle().getDataFormatString();
+        String formatStr = applyBuiltinFormatOverride(formatIndex, cell.getCellStyle().getDataFormatString());
         return createFormat(cell.getNumericCellValue(), formatIndex, formatStr);
     }
 
-    private Format createFormat(double cellValue, int formatIndex, String sFormat) {
+    /**
+     * Creates a Format for the given format string. The result is not cached by this method,
+     * {@link #getFormat(double, int, String, boolean)} caches it.
+     * <p>
+     * Subclasses can override this to change how some format strings are handled.
+     *
+     * @param cellValue the value to format
+     * @param formatIndex the index of the format
+     * @param sFormat the format string
+     * @return the Format to use, a default Format if the pattern cannot be parsed,
+     *  or null if the value should be shown with {@link String#valueOf(double)}
+     * @since 6.0.0
+     */
+    protected Format createFormat(double cellValue, int formatIndex, String sFormat) {
         checkForLocaleChange();
 
-        String formatStr = sFormat;
+        String formatStr = convertExclamationEscapes(sFormat);
 
         // Remove colour formatting if present
         if (formatStr != null) {
-            Matcher colourM = colorPattern.matcher(formatStr);
-            while (colourM.find()) {
-                String colour = colourM.group();
-
-                // Paranoid replacement...
-                int at = formatStr.indexOf(colour);
-                if (at == -1) break;
-                String nFormatStr = formatStr.substring(0, at) +
-                        formatStr.substring(at + colour.length());
-                if (nFormatStr.equals(formatStr)) break;
-
-                // Try again in case there's multiple
-                formatStr = nFormatStr;
-                colourM = colorPattern.matcher(formatStr);
-            }
+            formatStr = removeColours(formatStr);
         }
 
-        // Strip off the locale information, we use an instance-wide locale for everything
+        // Strip off the numeral style: Arabic digits are shown instead of Chinese/Japanese numerals
         if (formatStr != null) {
-            Matcher m = localePatternGroup.matcher(formatStr);
-            while (m.find()) {
-                String match = m.group();
-                String symbol = match.substring(match.indexOf('$') + 1, match.indexOf('-'));
-                if (symbol.indexOf('$') > -1) {
-                    symbol = symbol.substring(0, symbol.indexOf('$')) +
-                            '\\' +
-                            symbol.substring(symbol.indexOf('$'));
-                }
-                formatStr = m.replaceAll(symbol);
-                m = localePatternGroup.matcher(formatStr);
-            }
+            formatStr = dbNumPattern.matcher(formatStr).replaceAll("");
+        }
+
+        // Strip off the locale information, we use an instance-wide locale for everything.
+        // The locale is optional, e.g. "[$USD]" is just the currency string
+        if (formatStr != null) {
+            formatStr = replaceLocalePatterns(formatStr);
         }
 
         // Check for special cases
@@ -520,13 +547,25 @@ public class DataFormatter {
             return createDateFormat(formatStr, cellValue);
         }
         // Excel supports fractions in format strings, which Java doesn't
-        if (formatStr.contains("#/") || formatStr.contains("?/")) {
+        boolean plainFraction = formatStr.contains("#/") || formatStr.contains("?/");
+        // FractionFormat strips any text in a fraction, and does not recognise one with text around
+        // the '/', but Excel shows the text, e.g. "#\\:#/#" shows 23.75 as "23:3/4", and "#_#=/=#"
+        // shows 3.75 as "15 =/=4": let CellFormat handle any fraction with text or spacing in it
+        boolean fractionWithText = formatStr.indexOf('/') >= 0 && hasTextInFraction(formatStr);
+        if (plainFraction || fractionWithText) {
+            if (fractionWithText) {
+                try {
+                    return new CellFormatWrapper(CellFormat.getInstance(locale, formatStr));
+                } catch (Exception e) {
+                    LOG.atWarn().withThrowable(e).log("Formatting failed for format {}, falling back", formatStr);
+                }
+            }
             String[] chunks = formatStr.split(";");
             for (String chunk1 : chunks) {
                 String chunk = chunk1.replace("?", "#");
                 Matcher matcher = fractionStripper.matcher(chunk);
                 chunk = matcher.replaceAll(" ");
-                chunk = chunk.replaceAll(" +", " ");
+                chunk = multipleSpaces.matcher(chunk).replaceAll(" ");
                 Matcher fractionMatcher = fractionPattern.matcher(chunk);
                 //take the first match
                 if (fractionMatcher.find()) {
@@ -535,12 +574,27 @@ public class DataFormatter {
                 }
             }
 
-            // Strip custom text in quotes and escaped characters for now as it can cause performance problems in fractions.
-            //String strippedFormatStr = formatStr.replaceAll("\\\\ ", " ").replaceAll("\\\\.", "").replaceAll("\"[^\"]*\"", " ").replaceAll("\\?", "#");
             return new FractionFormat(defaultFractionWholePartFormat, defaultFractionFractionPartFormat);
         }
 
-        if (numPattern.matcher(formatStr).find()) {
+        // DecimalFormat cannot show literal text between digit placeholders, e.g. the
+        // escaped dot in "0\\.0," which displays 12345 as "1.2", or after trailing scaling
+        // commas, e.g. "#,##0,,\"M\"", so let CellFormat handle it
+        // Excel shows a '0' placeholder before '#' or '?' placeholders only in its own position,
+        // e.g. "60#########" shows 12345678 as "6012345678", but DecimalFormat does not accept
+        // the pattern, so let CellFormat handle it
+        if (hasLiteralDecimalFormatCannotShow(formatStr) || hasZeroBeforeOptionalDigit(formatStr)) {
+            try {
+                CellFormat cellFormat = CellFormat.getInstance(locale, formatStr.replace("'%'", "\\%"));
+                // a format CellFormat cannot make sense of, e.g. "#''0#0'1#10L16EE", fails here, not when formatting
+                cellFormat.apply(cellValue);
+                return new CellFormatWrapper(cellFormat);
+            } catch (Exception e) {
+                LOG.atWarn().withThrowable(e).log("Formatting failed for format {}, falling back", formatStr);
+            }
+        }
+
+        if (numPattern.matcher(formatStr).find() || hasUnquotedQuestionMark(formatStr)) {
             return createNumberFormat(formatStr, cellValue);
         }
 
@@ -551,28 +605,200 @@ public class DataFormatter {
         return null;
     }
 
-    String adjustTo4DigitYearsIfConfigured(String format) {
-        if (use4DigitYearsInAllDateFormats) {
-            int ypos2 = format.indexOf("yy");
-            if (ypos2 < 0) {
-                return format;
-            } else {
-                int ypos3 = format.indexOf("yyy");
-                int ypos4 = format.indexOf("yyyy");
-                if (ypos4 == ypos2) {
-                    String part1 = format.substring(0, ypos2 + 4);
-                    String part2 = format.substring(ypos2 + 4);
-                    return part1 + adjustTo4DigitYearsIfConfigured(part2);
-                } else if (ypos3 == ypos2) {
-                    return format;
-                } else {
-                    String part1 = format.substring(0, ypos2 + 2);
-                    String part2 = format.substring(ypos2 + 2);
-                    return part1 + "yy" + adjustTo4DigitYearsIfConfigured(part2);
+    /**
+     * Removes the colours, e.g. [Red] or [Color 10]. Removing one can make another, e.g. "[Re[Red]d]",
+     * and that is removed too.
+     * A colour has no brackets inside it, so one can only end at a ']' and start at the last '[' before it.
+     * This is a single pass: finding the first colour and searching again from the start after removing it
+     * was quadratic.
+     */
+    private static String removeColours(String formatStr) {
+        StringBuilder sb = new StringBuilder(formatStr.length());
+        // the positions in sb of the '[' after the last ']' that was kept
+        Deque<Integer> opens = new ArrayDeque<>();
+        Matcher m = colorPattern.matcher(sb);
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            sb.append(c);
+            if (c == '[') {
+                opens.push(sb.length() - 1);
+            } else if (c == ']') {
+                if (!opens.isEmpty()) {
+                    int start = opens.peek();
+                    m.reset(sb).region(start, sb.length());
+                    if (m.matches()) {
+                        sb.setLength(start);
+                        opens.pop();
+                        continue;
+                    }
                 }
+                // no colour can include this ']' or anything before it
+                opens.clear();
             }
         }
-        return format;
+        return sb.toString();
+    }
+
+    /**
+     * Replaces the locale patterns like [$$-1009] and [$?-452], or a currency string without a locale like [$USD],
+     * with the escaped currency string. Note that we don't currently process these into locales.
+     * <p>
+     * This finds the same matches as the regex {@code \[\$[^-\]]*(?:-[0-9A-Za-z]+)?]}, but does not try again
+     * from every "[$" before a failed match, which was quadratic.
+     */
+    private static String replaceLocalePatterns(String formatStr) {
+        final int length = formatStr.length();
+        StringBuilder sb = new StringBuilder(length);
+        int copied = 0;
+        int start = formatStr.indexOf("[$");
+        while (start >= 0) {
+            // the currency string runs to the first '-' or ']'
+            int end = start + 2;
+            while (end < length && formatStr.charAt(end) != '-' && formatStr.charAt(end) != ']') {
+                end++;
+            }
+            if (end == length) {
+                // no later "[$" can match either
+                break;
+            }
+            int dash = -1;
+            if (formatStr.charAt(end) == '-') {
+                // the locale must be letters and digits, then the ']'
+                dash = end++;
+                while (end < length && isAsciiLetterOrDigit(formatStr.charAt(end))) {
+                    end++;
+                }
+                if (end == dash + 1 || end == length || formatStr.charAt(end) != ']') {
+                    // a "[$" before the '-' would stop at the same '-' and fail the same way
+                    start = formatStr.indexOf("[$", dash + 1);
+                    continue;
+                }
+            }
+            sb.append(formatStr, copied, start);
+            // escaped, so that letters and dots in it, e.g. "EUR" or "Bs.", are not taken as part of the pattern
+            // (quoted text is not used, as date letters in it still make it count as a date format)
+            for (int i = start + 2; i < (dash < 0 ? end : dash); i++) {
+                sb.append('\\').append(formatStr.charAt(i));
+            }
+            copied = end + 1;
+            start = formatStr.indexOf("[$", copied);
+        }
+        sb.append(formatStr, copied, length);
+        return sb.toString();
+    }
+
+    private static boolean isAsciiLetterOrDigit(char c) {
+        return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+    }
+
+    String adjustTo4DigitYearsIfConfigured(String format) {
+        if (!use4DigitYearsInAllDateFormats) {
+            return format;
+        }
+        // a loop rather than recursing once per "yy", which overflowed the stack on a long format
+        StringBuilder sb = new StringBuilder(format.length() + 16);
+        int pos = 0;
+        for (int ypos = format.indexOf("yy"); ypos >= 0; ypos = format.indexOf("yy", pos)) {
+            if (format.startsWith("yyyy", ypos)) {
+                sb.append(format, pos, ypos + 4);
+                pos = ypos + 4;
+            } else if (format.startsWith("yyy", ypos)) {
+                break;
+            } else {
+                sb.append(format, pos, ypos + 2).append("yy");
+                pos = ypos + 2;
+            }
+        }
+        return sb.append(format, pos, format.length()).toString();
+    }
+
+    private static char toLowerAscii(char c) {
+        return c >= 'A' && c <= 'Z' ? (char) (c + ('a' - 'A')) : c;
+    }
+
+    /** Pattern to find an elapsed time unit: [h], [mm], [ss] etc. */
+    private static final Pattern elapsedTimePattern = Pattern.compile("\\[([hH]+|[mM]+|[sS]+)]");
+
+    private static boolean isElapsedTimeFormat(int formatIndex, String formatString) {
+        // only a single section format: the other sections of a format say how to show negative values
+        return formatString != null && formatString.indexOf(';') < 0
+                && elapsedTimePattern.matcher(formatString).find()
+                && DateUtil.isADateFormat(formatIndex, formatString);
+    }
+
+    /**
+     * Converts Excel's {@code "quoted text"} into SimpleDateFormat's {@code 'quoted text'}, so that
+     * the letters in it are not taken as pattern letters and the quote marks are not shown.
+     * A {@code "} without a closing {@code "} is left as it is, as is text already in single quotes.
+     */
+    private static String quoteLiteralText(String formatStr) {
+        if (formatStr.indexOf('"') < 0 && formatStr.indexOf('\\') < 0) {
+            return formatStr;
+        }
+        StringBuilder sb = new StringBuilder(formatStr.length() + 2);
+        // whether sb ends with a literal that this method quoted, which the next literal can be added to
+        boolean inLiteral = false;
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            String literal = null;
+            if (c == '"') {
+                int end = formatStr.indexOf('"', i + 1);
+                if (end > 0) {
+                    literal = formatStr.substring(i + 1, end);
+                    i = end;
+                }
+            } else if (c == '\\' && i < formatStr.length() - 1) {
+                // an escaped character, e.g. \d
+                literal = String.valueOf(formatStr.charAt(++i));
+            } else if (c == '\'') {
+                int end = formatStr.indexOf('\'', i + 1);
+                if (end > 0) {
+                    sb.append(formatStr, i, end + 1);
+                    i = end;
+                    inLiteral = false;
+                    continue;
+                }
+            }
+            if (literal == null) {
+                sb.append(c);
+                inLiteral = false;
+            } else if (!literal.isEmpty()) {
+                if (inLiteral) {
+                    // continue the literal, instead of '' which is a quote character
+                    sb.setLength(sb.length() - 1);
+                } else {
+                    sb.append('\'');
+                }
+                sb.append(literal.replace("'", "''")).append('\'');
+                inLiteral = true;
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Applies {@code op} to the parts of a SimpleDateFormat pattern that are not quoted text
+     */
+    private static String mapUnquoted(String pattern, UnaryOperator<String> op) {
+        if (pattern.indexOf('\'') < 0) {
+            return op.apply(pattern);
+        }
+        StringBuilder sb = new StringBuilder(pattern.length());
+        int start = 0;
+        while (start < pattern.length()) {
+            int quote = pattern.indexOf('\'', start);
+            if (quote < 0) {
+                sb.append(op.apply(pattern.substring(start)));
+                break;
+            }
+            sb.append(op.apply(pattern.substring(start, quote)));
+            int end = pattern.indexOf('\'', quote + 1);
+            // an unterminated quote is left to SimpleDateFormat to complain about
+            end = end < 0 ? pattern.length() - 1 : end;
+            sb.append(pattern, quote, end + 1);
+            start = end + 1;
+        }
+        return sb.toString();
     }
 
     private Format createDateFormat(String pFormatStr, double cellValue) {
@@ -586,22 +812,41 @@ public class DataFormatter {
         formatStr = formatStr.replace("\"/\"", "/"); // "/" is escaped for no reason in: mm"/"dd"/"yyyy
         formatStr = formatStr.replace("\"\"", "'"); // replace Excel quoting with Java style quoting
         formatStr = formatStr.replace("\\T","'T'"); // Quote the T is iso8601 style dates
+        formatStr = quoteLiteralText(formatStr);
 
-
-        boolean hasAmPm = false;
-        Matcher amPmMatcher = amPmPattern.matcher(formatStr);
-        while (amPmMatcher.find()) {
-            formatStr = amPmMatcher.replaceAll("@");
-            hasAmPm = true;
-            amPmMatcher = amPmPattern.matcher(formatStr);
-        }
-        formatStr = formatStr.replace('@', 'a');
-
-
-        Matcher dateMatcher = daysAsText.matcher(formatStr);
-        if (dateMatcher.find()) {
-            String match = dateMatcher.group(0).toUpperCase(Locale.ROOT).replace('D', 'E');
-            formatStr = dateMatcher.replaceAll(match);
+        // the AM/PM marker found, if any
+        String[] amPm = new String[1];
+        formatStr = mapUnquoted(formatStr, part -> {
+            if (part.contains(CHINESE_AM_PM)) {
+                amPm[0] = CHINESE_AM_PM;
+                part = part.replace(CHINESE_AM_PM, AM_PM_PLACEHOLDER);
+            }
+            Matcher amPmMatcher = amPmPattern.matcher(part);
+            while (amPmMatcher.find()) {
+                if (amPm[0] == null || amPmMatcher.group().equalsIgnoreCase("A/P")) {
+                    amPm[0] = amPmMatcher.group();
+                }
+            }
+            part = amPmPattern.matcher(part).replaceAll(AM_PM_PLACEHOLDER);
+            Matcher dateMatcher = daysAsText.matcher(part);
+            if (dateMatcher.find()) {
+                String match = dateMatcher.group(0).toUpperCase(Locale.ROOT).replace('D', 'E');
+                part = dateMatcher.replaceAll(match);
+            }
+            return part;
+        });
+        formatStr = formatStr.replace(AM_PM_PLACEHOLDER, "a");
+        boolean hasAmPm = amPm[0] != null;
+        DateFormatSymbols symbols = dateSymbols;
+        if (CHINESE_AM_PM.equals(amPm[0])) {
+            // Excel shows the Chinese marker whatever the locale
+            symbols = (DateFormatSymbols) dateSymbols.clone();
+            symbols.setAmPmStrings(new String[] {"上午", "下午"});
+        } else if (hasAmPm && amPm[0].equalsIgnoreCase("A/P")) {
+            // A/P shows a single letter, in the case it is written in
+            boolean lowerCase = amPm[0].charAt(0) == 'a';
+            symbols = (DateFormatSymbols) dateSymbols.clone();
+            symbols.setAmPmStrings(lowerCase ? new String[] {"a", "p"} : new String[] {"A", "P"});
         }
 
         // Convert excel date format to SimpleDateFormat.
@@ -618,8 +863,17 @@ public class DataFormatter {
         boolean mIsMonth = true;
         List<Integer> ms = new ArrayList<>();
         boolean isElapsed = false;
+        // the units shown as elapsed time, e.g. 'h' for [h]
+        StringBuilder elapsedUnits = new StringBuilder();
+        boolean afterSeconds = false;
         for(int j=0; j<chars.length; j++) {
             char c = chars[j];
+            if (afterSeconds && c != 's' && c != 'S') {
+                afterSeconds = false;
+                if (Character.isWhitespace(c)) {
+                    mIsMonth = true;
+                }
+            }
             if (c == '\'') {
                 sb.append(c);
                 j++;
@@ -644,18 +898,32 @@ public class DataFormatter {
                 sb.append(c);
             }
             else if (isElapsed) {
-            if (c == 'h' || c == 'H') {
+                if (c == 'h' || c == 'H') {
                     sb.append('H');
+                    elapsedUnits.append('h');
                 }
                 else if (c == 'm' || c == 'M') {
                     sb.append('m');
+                    elapsedUnits.append('m');
                 }
                 else if (c == 's' || c == 'S') {
                     sb.append('s');
+                    elapsedUnits.append('s');
                 }
                 else {
                     sb.append(c);
                 }
+            }
+            else if (elapsedUnits.indexOf(String.valueOf(toLowerAscii(c))) >= 0) {
+                // once a unit is shown as elapsed time, e.g. [h], Excel shows it that way everywhere
+                char unit = toLowerAscii(c);
+                int count = 1;
+                while (j + 1 < chars.length && toLowerAscii(chars[j + 1]) == unit) {
+                    j++;
+                    count++;
+                }
+                String letters = String.valueOf(unit == 'h' ? 'H' : unit).repeat(Math.min(count, 2));
+                sb.append('[').append(letters).append(']');
             }
             else if (c == 'h' || c == 'H') {
                 mIsMonth = false;
@@ -681,14 +949,24 @@ public class DataFormatter {
                         sb.replace(index, index + 1, "m");
                     }
                 }
-                mIsMonth = true;
+                // an 'm' straight after the seconds is minutes too, e.g. "s:m", but not after a space
+                mIsMonth = false;
+                afterSeconds = true;
                 ms.clear();
             }
-            else if (Character.isLetter(c)) {
+            // only ASCII letters are pattern letters: others, like the Chinese 时 (hour), are
+            // literal text, which does not stop an 'm' after 'h' being minutes
+            else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
                 mIsMonth = true;
                 ms.clear();
                 if (c == 'y' || c == 'Y') {
-                    sb.append('y');
+                    // y and yy are a 2 digit year, yyy and longer a 4 digit year
+                    int count = 1;
+                    while (j + 1 < chars.length && (chars[j + 1] == 'y' || chars[j + 1] == 'Y')) {
+                        j++;
+                        count++;
+                    }
+                    sb.append(count <= 2 ? "yy" : "yyyy");
                 }
                 else if (c == 'd' || c == 'D') {
                     sb.append('d');
@@ -707,7 +985,7 @@ public class DataFormatter {
         formatStr = sb.toString();
 
         try {
-            return new ExcelStyleDateFormatter(formatStr, dateSymbols);
+            return new ExcelStyleDateFormatter(formatStr, symbols);
         } catch(IllegalArgumentException iae) {
             LOG.atDebug().withThrowable(iae).log("Formatting failed for format {}, falling back", formatStr);
             // the pattern could not be parsed correctly,
@@ -715,6 +993,126 @@ public class DataFormatter {
             return getDefaultFormat(cellValue);
         }
 
+    }
+
+    /**
+     * Excel treats {@code !} like {@code \}: it displays the next character literally.
+     * Rewrite such escapes as {@code \}, which the rest of the formatting code understands.
+     * Quoted text, bracketed sections and the operands of {@code _} and {@code *} are left alone.
+     */
+    private static String convertExclamationEscapes(String formatStr) {
+        if (formatStr == null || formatStr.indexOf('!') < 0) {
+            return formatStr;
+        }
+        StringBuilder sb = new StringBuilder(formatStr.length());
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            if (c == '"' || c == '[') {
+                int end = formatStr.indexOf(c == '"' ? '"' : ']', i + 1);
+                end = end < 0 ? formatStr.length() - 1 : end;
+                sb.append(formatStr, i, end + 1);
+                i = end;
+            } else if ((c == '\\' || c == '_' || c == '*') && i < formatStr.length() - 1) {
+                sb.append(c).append(formatStr.charAt(++i));
+            } else if (c == '!' && i < formatStr.length() - 1) {
+                sb.append('\\').append(formatStr.charAt(++i));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Whether any section of the number format has quoted or escaped text with a digit
+     * placeholder both before and after it, e.g. {@code 0\.0} or {@code 0"-"00}, or
+     * after trailing scaling commas, e.g. {@code 0.0,"K"} or {@code #,##0.0,","}.
+     */
+    private static boolean hasLiteralDecimalFormatCannotShow(String formatStr) {
+        boolean seenDigit = false;
+        boolean literalAfterDigit = false;
+        boolean commaAfterDigit = false;
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            switch (c) {
+                case '"' -> {
+                    int end = formatStr.indexOf('"', i + 1);
+                    i = end < 0 ? formatStr.length() : end;
+                    if (commaAfterDigit) {
+                        return true;
+                    }
+                    literalAfterDigit |= seenDigit;
+                }
+                case '[' -> {
+                    int end = formatStr.indexOf(']', i + 1);
+                    i = end < 0 ? formatStr.length() : end;
+                }
+                case '\\' -> {
+                    i++;
+                    if (commaAfterDigit) {
+                        return true;
+                    }
+                    literalAfterDigit |= seenDigit;
+                }
+                case ',' -> commaAfterDigit |= seenDigit;
+                case '_', '*' -> i++;
+                case ';' -> {
+                    seenDigit = false;
+                    literalAfterDigit = false;
+                    commaAfterDigit = false;
+                }
+                case '0', '#', '?' -> {
+                    if (literalAfterDigit) {
+                        return true;
+                    }
+                    seenDigit = true;
+                    // a comma followed by a digit placeholder is a grouping separator, not a scaler
+                    commaAfterDigit = false;
+                }
+                default -> {
+                    // other characters don't affect the result
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Whether the integer part of any section of the number format has a {@code 0} placeholder
+     * followed by a {@code #} or {@code ?} placeholder, e.g. {@code 0##} or {@code 60#########}.
+     */
+    private static boolean hasZeroBeforeOptionalDigit(String formatStr) {
+        boolean seenZero = false;
+        boolean inInteger = true;
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            switch (c) {
+                case '"' -> {
+                    int end = formatStr.indexOf('"', i + 1);
+                    i = end < 0 ? formatStr.length() : end;
+                }
+                case '[' -> {
+                    int end = formatStr.indexOf(']', i + 1);
+                    i = end < 0 ? formatStr.length() : end;
+                }
+                case '\\', '_', '*' -> i++;
+                case ';' -> {
+                    seenZero = false;
+                    inInteger = true;
+                }
+                case '.', 'E', 'e' -> inInteger = false;
+                case '0' -> seenZero |= inInteger;
+                case '#', '?' -> {
+                    if (seenZero && inInteger) {
+                        return true;
+                    }
+                }
+                default -> {
+                    // other characters don't affect the result
+                }
+            }
+        }
+        return false;
     }
 
     private String cleanFormatForNumber(String formatStrIn) {
@@ -796,19 +1194,112 @@ public class DataFormatter {
         return sb.toString();
     }
 
+    /** characters that DecimalFormat does not show as they are, unless they are quoted */
+    private static final String DECIMAL_FORMAT_SPECIALS = "0#.,;%‰E¤";
+
+    /**
+     * Quotes the characters in Excel's {@code "quoted text"} and {@code \}-escaped characters
+     * that DecimalFormat would otherwise treat as part of the pattern, e.g. the dot in {@code 0.00"x."}:
+     * a second decimal point makes the pattern invalid, or is shown as the locale's decimal separator.
+     */
+    private static String quoteSpecialLiterals(String formatStr) {
+        if (formatStr.indexOf('"') < 0 && formatStr.indexOf('\\') < 0) {
+            return formatStr;
+        }
+        StringBuilder sb = new StringBuilder(formatStr.length() + 8);
+        boolean inExcelQuotes = false;
+        boolean inPatternQuotes = false;
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            boolean literal = inExcelQuotes;
+            if (c == '"') {
+                inExcelQuotes = !inExcelQuotes;
+                sb.append(c);
+                continue;
+            } else if (!inExcelQuotes && (c == '_' || c == '*') && i < formatStr.length() - 1) {
+                // spacing and padding: the operand is removed later
+                if (inPatternQuotes) {
+                    sb.append('\'');
+                    inPatternQuotes = false;
+                }
+                sb.append(c).append(formatStr.charAt(++i));
+                continue;
+            } else if (!inExcelQuotes && c == '\\' && i < formatStr.length() - 1) {
+                sb.append(c);
+                c = formatStr.charAt(++i);
+                literal = true;
+            }
+            boolean special = literal && DECIMAL_FORMAT_SPECIALS.indexOf(c) >= 0;
+            if (special != inPatternQuotes) {
+                sb.append('\'');
+                inPatternQuotes = special;
+            }
+            // a quote character is written as two, in and out of DecimalFormat's quoted text
+            sb.append(literal && c == '\'' ? "''" : String.valueOf(c));
+        }
+        if (inPatternQuotes) {
+            sb.append('\'');
+        }
+        return sb.toString();
+    }
+
     private static class InternalDecimalFormatWithScale extends Format {
 
-        private static final Pattern endsWithCommas = Pattern.compile("(,+)$");
+        // the lookbehind and the possessive quantifier stop find() from trying every comma in a run
+        // that is not at the end, which was quadratic
+        private static final Pattern endsWithCommas = Pattern.compile("(?<!,)(,++)$");
         private final BigDecimal divider;
         private static final BigDecimal ONE_THOUSAND = BigDecimal.valueOf(1000);
         private final DecimalFormat df;
+        /** the integer and fraction digit placeholders of the positive section, e.g. "??0" and "0?" */
+        private final String integerPlaceholders;
+        private final String fractionPlaceholders;
+        private final boolean padsWithSpaces;
         private static String trimTrailingCommas(String s) {
-            return s.replaceAll(",+$", "");
+            return endsWithCommas.matcher(s).replaceAll("");
         }
 
         public InternalDecimalFormatWithScale(String pattern, DecimalFormatSymbols symbols) {
+            // '?' is a digit placeholder that shows a space for a missing digit:
+            // DecimalFormat shows nothing for it, as for '#', and format() adds the spaces
+            StringBuilder integers = new StringBuilder();
+            StringBuilder fractions = new StringBuilder();
+            boolean quoted = false;
+            boolean inFraction = false;
+            for (int i = 0; i < pattern.length(); i++) {
+                char c = pattern.charAt(i);
+                if (c == '\'') {
+                    quoted = !quoted;
+                } else if (!quoted) {
+                    if (c == ';' || c == 'E') {
+                        break;
+                    } else if (c == '.') {
+                        inFraction = true;
+                    } else if (c == '0' || c == '#' || c == '?') {
+                        (inFraction ? fractions : integers).append(c);
+                    }
+                }
+            }
+            integerPlaceholders = integers.toString();
+            fractionPlaceholders = fractions.toString();
+            padsWithSpaces = pattern.indexOf('?') >= 0;
+            if (padsWithSpaces) {
+                pattern = pattern.replace('?', '#');
+            }
+            // each '%' multiplies by 100, but DecimalFormat only allows one
+            int percents = countUnquoted(pattern, '%');
+            if (percents > 1) {
+                pattern = quoteUnquoted(pattern, '%');
+            }
             df = new DecimalFormat(trimTrailingCommas(pattern), symbols);
+            if (percents > 1) {
+                df.setMultiplier((int) Math.pow(100, Math.min(percents, 4)));
+            }
             setExcelStyleRoundingMode(df);
+            // Excel shows the decimal point even when there are no digits after it, e.g. "#.#" shows 1 as "1."
+            if (hasDecimalPoint(pattern)) {
+                df.setDecimalSeparatorAlwaysShown(true);
+            }
             Matcher endsWithCommasMatcher = endsWithCommas.matcher(pattern);
             if (endsWithCommasMatcher.find()) {
                 String commas = (endsWithCommasMatcher.group(1));
@@ -822,6 +1313,61 @@ public class DataFormatter {
             }
         }
 
+        private static int countUnquoted(String pattern, char ch) {
+            int count = 0;
+            boolean quoted = false;
+            for (int i = 0; i < pattern.length(); i++) {
+                char c = pattern.charAt(i);
+                if (c == '\'') {
+                    quoted = !quoted;
+                } else if (!quoted && c == ch) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        /** quotes each run of unquoted {@code ch}, so that DecimalFormat shows them as text */
+        private static String quoteUnquoted(String pattern, char ch) {
+            StringBuilder sb = new StringBuilder(pattern.length() + 8);
+            boolean quoted = false;
+            for (int i = 0; i < pattern.length(); i++) {
+                char c = pattern.charAt(i);
+                if (c == '\'') {
+                    quoted = !quoted;
+                    sb.append(c);
+                } else if (!quoted && c == ch) {
+                    int end = i;
+                    while (end < pattern.length() && pattern.charAt(end) == ch) {
+                        end++;
+                    }
+                    sb.append('\'').append(pattern, i, end).append('\'');
+                    i = end - 1;
+                } else {
+                    sb.append(c);
+                }
+            }
+            return sb.toString();
+        }
+
+        /** whether the positive section of the DecimalFormat pattern has a decimal point, outside quoted text */
+        private static boolean hasDecimalPoint(String pattern) {
+            boolean quoted = false;
+            for (int i = 0; i < pattern.length(); i++) {
+                char c = pattern.charAt(i);
+                if (c == '\'') {
+                    quoted = !quoted;
+                } else if (!quoted) {
+                    if (c == '.') {
+                        return true;
+                    } else if (c == ';' || c == 'E') {
+                        return false;
+                    }
+                }
+            }
+            return false;
+        }
+
         boolean requiresScaling() {
             return divider != null;
         }
@@ -829,7 +1375,8 @@ public class DataFormatter {
         private Object scaleInput(Object obj) {
             if (divider != null) {
                 if (obj instanceof BigDecimal bd) {
-                    obj = bd.divide(divider, RoundingMode.HALF_UP);
+                    // dividing by a power of ten is exact, so keep all the digits until formatting
+                    obj = bd.divide(divider);
                 } else if (obj instanceof Double d) {
                     obj = d / divider.doubleValue();
                 } else {
@@ -842,7 +1389,64 @@ public class DataFormatter {
         @Override
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
             obj = scaleInput(obj);
-            return df.format(obj, toAppendTo, pos);
+            if (!padsWithSpaces) {
+                return df.format(obj, toAppendTo, pos);
+            }
+            return toAppendTo.append(padWithSpaces(df.format(obj)));
+        }
+
+        /**
+         * Adds a space for each '?' placeholder that has no digit: before the integer digits
+         * (along with the grouping separators that the missing digits would have had) and after the fraction digits
+         */
+        private String padWithSpaces(String formatted) {
+            DecimalFormatSymbols symbols = df.getDecimalFormatSymbols();
+            char decimalSeparator = symbols.getDecimalSeparator();
+            char groupingSeparator = symbols.getGroupingSeparator();
+            int start = 0;
+            while (start < formatted.length() && !Character.isDigit(formatted.charAt(start))
+                    && formatted.charAt(start) != decimalSeparator) {
+                start++;
+            }
+            int end = start;
+            int integerDigits = 0;
+            while (end < formatted.length()
+                    && (Character.isDigit(formatted.charAt(end)) || formatted.charAt(end) == groupingSeparator)) {
+                if (Character.isDigit(formatted.charAt(end))) {
+                    integerDigits++;
+                }
+                end++;
+            }
+            int fractionEnd = end;
+            if (fractionEnd < formatted.length() && formatted.charAt(fractionEnd) == decimalSeparator) {
+                fractionEnd++;
+                while (fractionEnd < formatted.length() && Character.isDigit(formatted.charAt(fractionEnd))) {
+                    fractionEnd++;
+                }
+            }
+            int fractionDigits = Math.max(0, fractionEnd - end - 1);
+
+            int missingIntegers = integerPlaceholders.length() - integerDigits;
+            int leadingSpaces = 0;
+            if (missingIntegers > 0) {
+                String missing = integerPlaceholders.substring(0, missingIntegers);
+                if (missing.chars().allMatch(c -> c == '?')) {
+                    leadingSpaces = groupedWidth(integerPlaceholders.length()) - groupedWidth(integerDigits);
+                } else {
+                    leadingSpaces = (int) missing.chars().filter(c -> c == '?').count();
+                }
+            }
+            int missingFractions = fractionPlaceholders.length() - fractionDigits;
+            int trailingSpaces = missingFractions <= 0 ? 0 : (int) fractionPlaceholders
+                    .substring(fractionDigits).chars().filter(c -> c == '?').count();
+
+            return formatted.substring(0, start) + " ".repeat(leadingSpaces) + formatted.substring(start, fractionEnd)
+                    + " ".repeat(trailingSpaces) + formatted.substring(fractionEnd);
+        }
+
+        private int groupedWidth(int digits) {
+            return digits <= 0 ? 0 : digits + (df.isGroupingUsed() && df.getGroupingSize() > 0
+                    ? (digits - 1) / df.getGroupingSize() : 0);
         }
 
         @Override
@@ -851,8 +1455,121 @@ public class DataFormatter {
         }
     }
 
+    /**
+     * Whether a single section fraction format has literal text or spacing (escaped, quoted, or {@code _x})
+     * between its first and last digit placeholders, e.g. {@code #\\:#/#}
+     */
+    private static boolean hasTextInFraction(String formatStr) {
+        if (formatStr.indexOf(';') >= 0) {
+            return false;
+        }
+        int first = -1;
+        int last = -1;
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            if (c == '0' || c == '#' || c == '?') {
+                first = first < 0 ? i : first;
+                last = i;
+            }
+        }
+        for (int i = first + 1; i < last; i++) {
+            char c = formatStr.charAt(i);
+            if (c == '\\' || c == '"' || c == '_' || c == '*') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** whether the format has a '?' digit placeholder, i.e. a '?' that is not quoted or escaped */
+    private static boolean hasUnquotedQuestionMark(String formatStr) {
+        boolean quoted = false;
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            if (c == '"') {
+                quoted = !quoted;
+            } else if (!quoted && c == '\\') {
+                i++;
+            } else if (!quoted && c == '?') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Rewrites the commas of a number format the way DecimalFormat needs them. In Excel, a comma between
+     * digit placeholders turns on grouping by thousands, wherever it is: "0,00" shows 1234567 as "1,234,567".
+     * Commas straight after the integer digits scale the value by 1000, before a decimal point
+     * as well as at the end ("#,.#," shows 1234567 as "1.2"), and a comma before the digits is shown as it is.
+     */
+    private static String normalizeGrouping(String format) {
+        if (format.indexOf(',') < 0) {
+            return format;
+        }
+        String[] sections = format.split(";", -1);
+        for (int i = 0; i < sections.length; i++) {
+            sections[i] = normalizeSectionGrouping(sections[i]);
+        }
+        return String.join(";", sections);
+    }
+
+    private static String normalizeSectionGrouping(String section) {
+        int start = -1;
+        for (int i = 0; i < section.length() && start < 0; i++) {
+            char c = section.charAt(i);
+            if (c == '0' || c == '#' || c == '?') {
+                start = i;
+            } else if (c == '\'') {
+                // quoted text: leave it to DecimalFormat as before
+                return section;
+            }
+        }
+        if (start < 0) {
+            return section;
+        }
+        int end = start;
+        while (end < section.length() && "0#?,".indexOf(section.charAt(end)) >= 0) {
+            end++;
+        }
+        int digitsEnd = end;
+        while (section.charAt(digitsEnd - 1) == ',') {
+            digitsEnd--;
+        }
+        String integerPart = section.substring(start, digitsEnd);
+        int scalingCommas = end - digitsEnd;
+        String suffix = section.substring(end);
+        boolean beforeDecimalPoint = suffix.startsWith(".");
+        if (!beforeDecimalPoint && suffix.indexOf(',') >= 0) {
+            // commas after the digits, e.g. in a literal: not something we can handle here
+            return section;
+        }
+        String digits = integerPart.replace(",", "");
+        if (digits.length() < integerPart.length()) {
+            // a comma between digit placeholders means grouping by thousands
+            StringBuilder sb = new StringBuilder(digits);
+            while (sb.length() < 4) {
+                sb.insert(0, '#');
+            }
+            integerPart = sb.insert(sb.length() - 3, ',').toString();
+        }
+        StringBuilder sb = new StringBuilder();
+        // a comma before the digits is a literal
+        sb.append(section.substring(0, start).replace(",", "','"));
+        sb.append(integerPart);
+        if (beforeDecimalPoint) {
+            // move the scaling commas to the end, where InternalDecimalFormatWithScale looks for them
+            sb.append(suffix);
+            sb.append(",".repeat(scalingCommas));
+        } else {
+            sb.append(",".repeat(scalingCommas));
+            sb.append(suffix);
+        }
+        return sb.toString();
+    }
+
     private Format createNumberFormat(String formatStr, double cellValue) {
-        String format = cleanFormatForNumber(formatStr);
+        String format = cleanFormatForNumber(quoteSpecialLiterals(formatStr));
         DecimalFormatSymbols symbols = decimalSymbols;
 
         // Do we need to change the grouping character?
@@ -872,6 +1589,8 @@ public class DataFormatter {
                 format = format.replace(oldPart, newPart);
             }
         }
+
+        format = normalizeGrouping(format);
 
         // Excel ignores leading zeros, but Java fails with an exception below
         if (decimalFormatFix.matcher(format).matches()) {
@@ -913,10 +1632,18 @@ public class DataFormatter {
      *  supplied Date and format
      */
     @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
-    private String performDateFormatting(Date d, Format dateFormat) {
+    private String performDateFormatting(Date d, double excelValue, Format dateFormat) {
         Format df = dateFormat != null ? dateFormat : defaultDateformat;
         synchronized (df) {
-            return df.format(d);
+            try {
+                return df.format(d);
+            } catch (IllegalArgumentException e) {
+                if (df instanceof DateFormat) {
+                    throw e;
+                }
+                // a date format that could not be parsed falls back to a number format
+                return df.format(excelValue);
+            }
         }
     }
 
@@ -955,7 +1682,7 @@ public class DataFormatter {
                 formatter.setDateToBeFormatted(cell.getNumericCellValue());
             }
             Date d = cell.getDateCellValue();
-            return performDateFormatting(d, dateFormat);
+            return performDateFormatting(d, cell.getNumericCellValue(), dateFormat);
         }
     }
 
@@ -997,7 +1724,7 @@ public class DataFormatter {
                 formatted = numberFormat.format(d);
             }
         }
-        return formatted.replaceFirst("E(\\d)", "E+$1"); // to match Excel's E-notation
+        return exponentWithoutSign.matcher(formatted).replaceFirst("E+$1"); // to match Excel's E-notation
     }
 
     /**
@@ -1013,8 +1740,15 @@ public class DataFormatter {
      *  format index and string, according to excel style rules.
      * @see #formatCellValue(Cell)
      */
-    public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
+    public String formatRawCellContents(double value, int formatIndex, String formatStringIn, boolean use1904Windowing) {
         checkForLocaleChange();
+
+        String formatString = applyBuiltinFormatOverride(formatIndex, formatStringIn);
+
+        // Excel shows a negative elapsed time, e.g. for [h]:mm, with a minus sign
+        if (value < 0 && isElapsedTimeFormat(formatIndex, formatString)) {
+            return "-" + formatRawCellContents(-value, formatIndex, formatString, use1904Windowing);
+        }
 
         // Is it a date?
         if(DateUtil.isADateFormat(formatIndex,formatString)) {
@@ -1025,7 +1759,7 @@ public class DataFormatter {
                     formatter.setDateToBeFormatted(value);
                 }
                 Date d = DateUtil.getJavaDate(value, use1904Windowing);
-                return performDateFormatting(d, dateFormat);
+                return performDateFormatting(d, value, dateFormat);
             }
             // RK: Invalid dates are 255 #s.
             if (emulateCSV) {
@@ -1058,7 +1792,7 @@ public class DataFormatter {
         String fslc = formatString.toLowerCase(Locale.ROOT);
         if ((fslc.contains("general") || fslc.contains("e+0") || numberFormat == generalNumberFormat)
                 && result.contains("E") && !result.contains("E-")) {
-            result = result.replaceFirst("E", "E+");
+            result = exponent.matcher(result).replaceFirst("E+");
         }
         return result;
     }
@@ -1164,6 +1898,11 @@ public class DataFormatter {
         switch (cellType) {
             case NUMERIC :
 
+                if (cfEvaluator == null && cell.getNumericCellValue() < 0 && cell.getCellStyle() != null
+                        && isElapsedTimeFormat(cell.getCellStyle().getDataFormat(), cell.getCellStyle().getDataFormatString())) {
+                    return formatRawCellContents(cell.getNumericCellValue(), cell.getCellStyle().getDataFormat(),
+                            cell.getCellStyle().getDataFormatString(), isDate1904(cell));
+                }
                 if (DateUtil.isCellDateFormatted(cell, cfEvaluator)) {
                     return getFormattedDateString(cell, cfEvaluator);
                 }
@@ -1223,6 +1962,60 @@ public class DataFormatter {
      */
     public void addFormat(String excelFormatStr, Format format) {
         formats.put(excelFormatStr, format);
+    }
+
+    /**
+     * Sets the format string to use for a built-in format, in place of the default (en-US) one
+     * from {@link BuiltinFormats}.
+     * <p>
+     * Excel does not store the format string of most built-in formats in a workbook, just the
+     * format index, and it displays some of them (for example 37-40) differently depending on
+     * the locale of the Excel installation. POI only knows the en-US versions, so for example
+     * index 40 is formatted as {@code #,##0.00_);[Red](#,##0.00)}, whereas German Excel shows it
+     * as <code>#,##0.00 _&#8364;;[Red]-#,##0.00 _&#8364;</code>. Use this method to supply the format string
+     * that matches the locale the workbook was made for.
+     * </p>
+     * <p>
+     * The override only applies when the format string of the cell is the default one for that
+     * index, so a format string that the workbook explicitly stores for the index is still used.
+     * </p>
+     *
+     * @param formatIndex index of a built-in format, see {@link BuiltinFormats}
+     * @param formatString the format string to use for the index, or {@code null} to remove an override
+     * @throws IllegalArgumentException if {@code formatIndex} is not the index of a built-in format
+     * @since 6.0.0
+     */
+    public void setBuiltinFormatOverride(int formatIndex, String formatString) {
+        if (BuiltinFormats.getBuiltinFormat(formatIndex) == null) {
+            throw new IllegalArgumentException("Not a built-in format index: " + formatIndex);
+        }
+        if (formatString == null) {
+            builtinFormatOverrides.remove(formatIndex);
+        } else {
+            builtinFormatOverrides.put(formatIndex, formatString);
+        }
+    }
+
+    /**
+     * @param formatIndex index of a built-in format, see {@link BuiltinFormats}
+     * @return the format string set with {@link #setBuiltinFormatOverride(int, String)} for the index,
+     * or {@code null} if there is none
+     * @since 6.0.0
+     */
+    public String getBuiltinFormatOverride(int formatIndex) {
+        return builtinFormatOverrides.get(formatIndex);
+    }
+
+    private String applyBuiltinFormatOverride(int formatIndex, String formatString) {
+        if (builtinFormatOverrides.isEmpty()) {
+            return formatString;
+        }
+        String override = builtinFormatOverrides.get(formatIndex);
+        if (override != null && formatString != null
+                && formatString.equals(BuiltinFormats.getBuiltinFormat(formatIndex))) {
+            return override;
+        }
+        return formatString;
     }
 
     // Some custom formats
@@ -1453,6 +2246,26 @@ public class DataFormatter {
             return df.parseObject(source, pos);
         }
     }
+    /**
+     * Cachable wrapper around a {@link CellFormat}, used for number formats that DecimalFormat cannot handle
+     */
+    @SuppressWarnings("serial")
+    private final class CellFormatWrapper extends Format {
+        private final CellFormat cellFormat;
+        private CellFormatWrapper(CellFormat cellFormat) {
+            this.cellFormat = cellFormat;
+        }
+        @Override
+        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+            String text = cellFormat.apply(obj).text;
+            return toAppendTo.append(emulateCSV ? text : text.trim());
+        }
+        @Override
+        public Object parseObject(String source, ParsePosition pos) {
+            return null; // Not supported
+        }
+    }
+
     /**
      * Workaround until we merge {@link DataFormatter} with {@link CellFormat}.
      * Constant, non-cachable wrapper around a {@link CellFormatResult}

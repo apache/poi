@@ -689,7 +689,7 @@ public class POIXMLProperties {
          */
         protected int getLastPid() {
             int propid = 1;
-            for(CTProperty p : props.getProperties().getPropertyList()) {
+            for(CTProperty p : props.getProperties().getPropertyArray()) {
                 if(p.getPid() > propid) propid = p.getPid();
             }
             return propid;
@@ -702,7 +702,7 @@ public class POIXMLProperties {
          * @return whether a property with the given name exists in the custom properties
          */
         public boolean contains(String name) {
-            for(CTProperty p : props.getProperties().getPropertyList()) {
+            for(CTProperty p : props.getProperties().getPropertyArray()) {
                 if(p.getName().equals(name)) return true;
             }
             return false;
@@ -720,7 +720,7 @@ public class POIXMLProperties {
          * @return the custom property with this name, or null if none exists
          */
         public CTProperty getProperty(String name) {
-            for(CTProperty p : props.getProperties().getPropertyList()) {
+            for(CTProperty p : props.getProperties().getPropertyArray()) {
                 if(p.getName().equals(name)) {
                     return p;
                 }

@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.format;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -131,9 +132,17 @@ public class CellFormat {
         };
     }
 
-    /** Maps a format string to its parsed version for efficiencies sake. */
-    private static final Map<Locale, Map<String, CellFormat>> formatCache =
+    /**
+     * Maps a format string to its parsed version for efficiencies sake.
+     * <p>
+     * The parsed version is held by a weak reference: a {@code CellFormat} refers to its own format string,
+     * so holding it strongly would keep the weak key, and with it the entry, reachable forever.
+     */
+    private static final Map<Locale, Map<String, WeakReference<CellFormat>>> formatCache =
             new WeakHashMap<>();
+
+    /** Guards {@link #formatCache}. A private lock, so other code can't block it by locking the class */
+    private static final Object FORMAT_CACHE_LOCK = new Object();
 
     /**
      * Returns a CellFormat that applies the given format.  Two calls
@@ -156,17 +165,39 @@ public class CellFormat {
      *
      * @return A CellFormat that applies the given format.
      */
-    public static synchronized CellFormat getInstance(Locale locale, String format) {
-        Map<String, CellFormat> formatMap = formatCache.computeIfAbsent(locale, k -> new WeakHashMap<>());
-        CellFormat fmt = formatMap.get(format);
-        if (fmt == null) {
-            if (format.equals("General") || format.equals("@"))
-                fmt = createGeneralFormat(locale);
-            else
-                fmt = new CellFormat(locale, format);
-            formatMap.put(format, fmt);
+    public static CellFormat getInstance(Locale locale, String format) {
+        CellFormat fmt = getCachedInstance(locale, format);
+        if (fmt != null) {
+            return fmt;
+        }
+
+        // parse outside the lock, so that threads formatting with other formats are not held up
+        CellFormat parsed;
+        if (format.equals("General") || format.equals("@"))
+            parsed = createGeneralFormat(locale);
+        else
+            parsed = new CellFormat(locale, format);
+
+        synchronized (FORMAT_CACHE_LOCK) {
+            Map<String, WeakReference<CellFormat>> formatMap =
+                    formatCache.computeIfAbsent(locale, k -> new WeakHashMap<>());
+            // another thread may have cached the same format in the meantime
+            WeakReference<CellFormat> cached = formatMap.get(format);
+            fmt = cached == null ? null : cached.get();
+            if (fmt == null) {
+                fmt = parsed;
+                formatMap.put(format, new WeakReference<>(fmt));
+            }
         }
         return fmt;
+    }
+
+    private static CellFormat getCachedInstance(Locale locale, String format) {
+        synchronized (FORMAT_CACHE_LOCK) {
+            Map<String, WeakReference<CellFormat>> formatMap = formatCache.get(locale);
+            WeakReference<CellFormat> cached = formatMap == null ? null : formatMap.get(format);
+            return cached == null ? null : cached.get();
+        }
     }
 
     /**

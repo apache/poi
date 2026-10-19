@@ -65,6 +65,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListE
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideSize;
 import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
 
@@ -215,21 +216,21 @@ public class XMLSlideShow extends POIXMLDocument
 
             _masters.clear();
             if (_presentation.isSetSldMasterIdLst()) {
-                _presentation.getSldMasterIdLst().getSldMasterIdList().forEach(
-                        id -> _masters.add(masterMap.get(id.getId2()))
-                );
+                for (CTSlideMasterIdListEntry id : _presentation.getSldMasterIdLst().getSldMasterIdArray()) {
+                    _masters.add(masterMap.get(id.getId2()));
+                }
             }
 
             _slides.clear();
             if (_presentation.isSetSldIdLst()) {
-                _presentation.getSldIdLst().getSldIdList().forEach(id -> {
+                for (CTSlideIdListEntry id : _presentation.getSldIdLst().getSldIdArray()) {
                     XSLFSlide sh = shIdMap.get(id.getId2());
                     if (sh == null) {
                         LOG.atWarn().log("Slide with r:id {} was defined, but didn't exist in package, skipping", box(id.getId()));
                     } else {
                         _slides.add(sh);
                     }
-                });
+                }
             }
         } catch (POIException e) {
             throw new IOException(e);

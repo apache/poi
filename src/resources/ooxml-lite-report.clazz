@@ -2559,3 +2559,8 @@ org/openxmlformats/schemas/drawingml/x2006/chart/impl/STHPercentUShortImpl
 org/openxmlformats/schemas/drawingml/x2006/chart/impl/STDepthPercentWithSymbolImpl
 org/openxmlformats/schemas/drawingml/x2006/chart/impl/STHPercentWithSymbolImpl
 org/openxmlformats/schemas/drawingml/x2006/main/impl/CTPath2DQuadBezierToImpl
+org/openxmlformats/schemas/wordprocessingml/x2006/main/CTCustomXmlRow
+org/openxmlformats/schemas/wordprocessingml/x2006/main/impl/CTCustomXmlRowImpl
+org/openxmlformats/schemas/wordprocessingml/x2006/main/CTCustomXmlCell
+org/openxmlformats/schemas/officeDocument/x2006/sharedTypes/STConformanceClass
+org/openxmlformats/schemas/wordprocessingml/x2006/main/impl/CTCustomXmlCellImpl

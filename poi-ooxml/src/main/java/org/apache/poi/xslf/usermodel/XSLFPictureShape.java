@@ -338,9 +338,8 @@ public class XSLFPictureShape extends XSLFSimpleShape
             return null;
         }
 
-        int size = extLst.sizeOfExtArray();
-        for (int i = 0; i < size; i++) {
-            try (XmlCursor cur = extLst.getExtArray(i).newCursor()) {
+        for (CTOfficeArtExtension ext : extLst.getExtArray()) {
+            try (XmlCursor cur = ext.newCursor()) {
                 if (cur.toChild(MS_SVG_NS, "svgBlip")) {
                     String svgRelId = cur.getAttributeText(EMBED_TAG);
                     return (svgRelId != null) ? (XSLFPictureData) getSheet().getRelationById(svgRelId) : null;
@@ -398,9 +397,9 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
 
     private int getExt(CTOfficeArtExtensionList extLst, String uri) {
-        final int size = extLst.sizeOfExtArray();
-        for (int i=0; i<size; i++) {
-            CTOfficeArtExtension ext = extLst.getExtArray(i);
+        final CTOfficeArtExtension[] exts = extLst.getExtArray();
+        for (int i=0; i<exts.length; i++) {
+            CTOfficeArtExtension ext = exts[i];
             if (uri.equals(ext.getUri())) {
                 return i;
             }

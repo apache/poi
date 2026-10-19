@@ -288,23 +288,23 @@ public final class Countif extends Fixed2ArgFunction implements ArrayFunction {
     public static final class StringMatcher extends MatcherBase {
 
         private final String _value;
-        private final Pattern _pattern;
+        private final WildcardMatcher _wildCardMatcher;
 
         public StringMatcher(String value, CmpOp operator) {
             super(operator);
             _value = value;
-            _pattern = switch (operator.getCode()) {
-                case CmpOp.NONE, CmpOp.EQ, CmpOp.NE -> getWildCardPattern(value);
+            _wildCardMatcher = switch (operator.getCode()) {
+                case CmpOp.NONE, CmpOp.EQ, CmpOp.NE -> WildcardMatcher.compile(value);
                 // pattern matching is never used for < > <= =>
                 default -> null;
             };
         }
         @Override
         protected String getValueText() {
-            if (_pattern == null) {
+            if (_wildCardMatcher == null) {
                 return _value;
             }
-            return _pattern.pattern();
+            return getWildCardPattern(_value).pattern();
         }
 
         @Override
@@ -340,8 +340,8 @@ public final class Countif extends Fixed2ArgFunction implements ArrayFunction {
                     default -> false;
                 };
             }
-            if (_pattern != null) {
-                return evaluate(_pattern.matcher(testedValue).matches());
+            if (_wildCardMatcher != null) {
+                return evaluate(_wildCardMatcher.matches(testedValue));
             }
             // String criteria in COUNTIF are case insensitive:
             // for example, the string "apples" and the string "APPLES" will match the same cells.

@@ -68,7 +68,9 @@ public class XSSFReader {
     private static final Set<String> WORKSHEET_RELS =
             Collections.unmodifiableSet(new HashSet<>(
                     Arrays.asList(XSSFRelation.WORKSHEET.getRelation(),
+                            XSSFRelation.WORKSHEET.getStrictRelation(),
                             XSSFRelation.CHARTSHEET.getRelation(),
+                            XSSFRelation.CHARTSHEET.getStrictRelation(),
                             XSSFRelation.MACRO_SHEET_XML.getRelation())
             ));
     private static final Logger LOGGER = PoiLogManager.getLogger(XSSFReader.class);
@@ -244,6 +246,19 @@ public class XSSFReader {
      * @throws IOException if there is an I/O issue reading the data
      */
     public InputStream getSheet(String relId) throws IOException, InvalidFormatException {
+        return getSheetPart(relId).getInputStream();
+    }
+
+    /**
+     * Returns the package part for the specified Sheet.
+     *
+     * @param relId The relationId of the sheet, from a r:id on the workbook
+     * @return the package part holding the sheet data
+     * @throws InvalidFormatException if the sheet data format is invalid
+     * @throws IllegalArgumentException if there is no sheet with this relationId
+     * @since 6.0.0
+     */
+    public PackagePart getSheetPart(String relId) throws InvalidFormatException {
         PackageRelationship rel = workbookPart.getRelationship(relId);
         if (rel == null) {
             throw new IllegalArgumentException("No Sheet found with r:id " + relId);
@@ -254,7 +269,79 @@ public class XSSFReader {
         if (sheet == null) {
             throw new IllegalArgumentException("No data found for Sheet with r:id " + relId);
         }
-        return sheet.getInputStream();
+        return sheet;
+    }
+
+    /**
+     * Returns the comments part associated with a sheet.
+     *
+     * @param sheetPart the package part holding the sheet data
+     * @param allowStrictOoxmlFiles whether to also look for the Strict OOXML comments relationship.
+     *     Note that the returned part is then in Strict OOXML format and {@link CommentsTable}
+     *     cannot parse it directly.
+     * @return the comments part, or null if the sheet has no comments or the part is missing
+     * @throws InvalidFormatException if the relationship target is not a valid part name
+     * @since 6.0.0
+     */
+    public static PackagePart getSheetCommentsPart(PackagePart sheetPart, boolean allowStrictOoxmlFiles)
+            throws InvalidFormatException {
+        // Do we have a comments relationship? (Only ever one if so)
+        PackageRelationshipCollection commentsList =
+                getRelationshipsByType(sheetPart, XSSFRelation.SHEET_COMMENTS, allowStrictOoxmlFiles);
+        if (commentsList.isEmpty()) {
+            return null;
+        }
+        PackageRelationship comments = commentsList.getRelationship(0);
+        if (comments == null) {
+            LOGGER.warn("Failed to find sheet comments packageRelationship");
+            return null;
+        }
+        PackagePartName commentsName = PackagingURIHelper.createPartName(comments.getTargetURI());
+        PackagePart commentsPart = sheetPart.getPackage().getPart(commentsName);
+        if (commentsPart == null) {
+            LOGGER.warn("Failed to find sheet comments: {}", commentsName);
+        }
+        return commentsPart;
+    }
+
+    /**
+     * Returns the drawing parts associated with a sheet. Missing parts are skipped.
+     *
+     * @param sheetPart the package part holding the sheet data
+     * @param allowStrictOoxmlFiles whether to also look for the Strict OOXML drawing relationship.
+     *     Note that the returned parts are then in Strict OOXML format and {@link XSSFDrawing}
+     *     cannot parse them directly.
+     * @return the drawing parts, never null
+     * @throws InvalidFormatException if a relationship target is not a valid part name
+     * @since 6.0.0
+     */
+    public static List<PackagePart> getSheetDrawingParts(PackagePart sheetPart, boolean allowStrictOoxmlFiles)
+            throws InvalidFormatException {
+        PackageRelationshipCollection drawingsList =
+                getRelationshipsByType(sheetPart, XSSFRelation.DRAWINGS, allowStrictOoxmlFiles);
+        int drawingsSize = drawingsList.size();
+        List<PackagePart> drawingParts = new ArrayList<>(drawingsSize);
+        for (int i = 0; i < drawingsSize; i++) {
+            PackageRelationship drawings = drawingsList.getRelationship(i);
+            PackagePartName drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
+            PackagePart drawingsPart = sheetPart.getPackage().getPart(drawingsName);
+            if (drawingsPart == null) {
+                //parts can go missing; Excel ignores them silently -- TIKA-2134
+                LOGGER.atWarn().log("Missing drawing: {}. Skipping it.", drawingsName);
+                continue;
+            }
+            drawingParts.add(drawingsPart);
+        }
+        return drawingParts;
+    }
+
+    private static PackageRelationshipCollection getRelationshipsByType(
+            PackagePart part, XSSFRelation relation, boolean allowStrictOoxmlFiles) throws InvalidFormatException {
+        PackageRelationshipCollection rels = part.getRelationshipsByType(relation.getRelation());
+        if (rels.isEmpty() && allowStrictOoxmlFiles && relation.getStrictRelation() != null) {
+            rels = part.getRelationshipsByType(relation.getStrictRelation());
+        }
+        return rels;
     }
 
     /**
@@ -309,6 +396,8 @@ public class XSSFReader {
          */
         protected final Iterator<XSSFSheetRef> sheetIterator;
 
+        private final List<XSSFSheetRef> sheetRefs;
+
         /**
          * Construct a new SheetIterator
          *
@@ -335,9 +424,35 @@ public class XSSFReader {
                     sheetMap.put(rel.getId(), pkg.getPart(relName));
                 }
             }
-            //step 2. Read array of CTSheet elements, wrap it in a LinkedList
+            //step 2. Read array of CTSheet elements, keep them as a list
             //and construct an iterator
-            sheetIterator = createSheetIteratorFromWB(wb);
+            List<XSSFSheetRef> refs = new ArrayList<>();
+            createSheetIteratorFromWB(wb).forEachRemaining(refs::add);
+            sheetRefs = Collections.unmodifiableList(refs);
+            sheetIterator = sheetRefs.iterator();
+        }
+
+        /**
+         * Returns all the sheet references, in {@code logical} order, regardless of the
+         * position of this iterator. Use with {@link #getSheetPart(XSSFSheetRef)} for
+         * random access to the sheets.
+         *
+         * @return unmodifiable list of the sheet references
+         * @since 6.0.0
+         */
+        public List<XSSFSheetRef> getSheetRefs() {
+            return sheetRefs;
+        }
+
+        /**
+         * Returns the package part for a sheet, regardless of the position of this iterator.
+         *
+         * @param sheetRef one of the sheet references returned by {@link #getSheetRefs()}
+         * @return the package part holding the sheet data, or null if it is missing
+         * @since 6.0.0
+         */
+        public PackagePart getSheetPart(XSSFSheetRef sheetRef) {
+            return sheetMap.get(sheetRef.getId());
         }
 
         protected Iterator<XSSFSheetRef> createSheetIteratorFromWB(PackagePart wb) throws IOException {
@@ -429,31 +544,13 @@ public class XSSFReader {
          * or null if there aren't any
          */
         public Comments getSheetComments() {
-            PackagePart sheetPkg = getSheetPart();
-
-            // Do we have a comments relationship? (Only ever one if so)
             try {
-                PackageRelationshipCollection commentsList =
-                        sheetPkg.getRelationshipsByType(XSSFRelation.SHEET_COMMENTS.getRelation());
-                if (!commentsList.isEmpty()) {
-                    PackageRelationship comments = commentsList.getRelationship(0);
-                    if (comments == null) {
-                        LOGGER.warn("Failed to find sheet comments packageRelationship");
-                        return null;
-                    }
-                    PackagePartName commentsName = PackagingURIHelper.createPartName(comments.getTargetURI());
-                    PackagePart commentsPart = sheetPkg.getPackage().getPart(commentsName);
-                    if (commentsPart == null) {
-                        LOGGER.warn("Failed to find sheet comments: {}", commentsName);
-                        return null;
-                    }
-                    return parseComments(commentsPart);
-                }
+                PackagePart commentsPart = XSSFReader.getSheetCommentsPart(getSheetPart(), false);
+                return commentsPart == null ? null : parseComments(commentsPart);
             } catch (InvalidFormatException|IOException e) {
                 LOGGER.atWarn().withThrowable(e).log("Failed to load sheet comments");
                 return null;
             }
-            return null;
         }
 
         //to allow subclassing
@@ -466,21 +563,9 @@ public class XSSFReader {
          * an empty list or null if there is an exception
          */
         public List<XSSFShape> getShapes() {
-            PackagePart sheetPkg = getSheetPart();
             List<XSSFShape> shapes = new LinkedList<>();
-            // Do we have a shapes relationship? (Only ever one if so)
             try {
-                PackageRelationshipCollection drawingsList = sheetPkg.getRelationshipsByType(XSSFRelation.DRAWINGS.getRelation());
-                int drawingsSize = drawingsList.size();
-                for (int i = 0; i < drawingsSize; i++) {
-                    PackageRelationship drawings = drawingsList.getRelationship(i);
-                    PackagePartName drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
-                    PackagePart drawingsPart = sheetPkg.getPackage().getPart(drawingsName);
-                    if (drawingsPart == null) {
-                        //parts can go missing; Excel ignores them silently -- TIKA-2134
-                        LOGGER.atWarn().log("Missing drawing: {}. Skipping it.", drawingsName);
-                        continue;
-                    }
+                for (PackagePart drawingsPart : XSSFReader.getSheetDrawingParts(getSheetPart(), false)) {
                     XSSFDrawing drawing = new XSSFDrawing(drawingsPart);
                     shapes.addAll(drawing.getShapes());
                 }

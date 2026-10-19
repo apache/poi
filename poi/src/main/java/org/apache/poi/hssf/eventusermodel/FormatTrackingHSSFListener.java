@@ -49,6 +49,7 @@ public class FormatTrackingHSSFListener implements HSSFListener {
     private final NumberFormat _defaultFormat;
     private final Map<Integer, FormatRecord> _customFormatRecords = new HashMap<>();
     private final List<ExtendedFormatRecord> _xfRecords = new ArrayList<>();
+    private boolean _useFileFormatsForBuiltinIndexes;
 
     /**
      * Creates a format tracking wrapper around the given listener, using
@@ -72,6 +73,42 @@ public class FormatTrackingHSSFListener implements HSSFListener {
         _childListener = childListener;
         _formatter = new HSSFDataFormatter(locale);
         _defaultFormat = NumberFormat.getInstance(locale);
+    }
+
+    /**
+     * Whether format strings for built-in format indexes are taken from the
+     * FORMAT records in the file, where the file defines them.
+     *
+     * @return {@code true} if the file's FORMAT records take precedence over
+     * the built-in format strings
+     * @see #setUseFileFormatsForBuiltinIndexes(boolean)
+     * @since 6.0.0
+     */
+    public boolean isUseFileFormatsForBuiltinIndexes() {
+        return _useFileFormatsForBuiltinIndexes;
+    }
+
+    /**
+     * Sets whether format strings for built-in format indexes are taken from
+     * the FORMAT records in the file, where the file defines them.
+     * <p>
+     * Excel writes FORMAT records for some built-in indexes, and their content
+     * depends on the locale that Excel ran in (e.g. the currency formats 5-8,
+     * 42 and 44 use that locale's currency symbol). With this enabled,
+     * {@link #getFormatString(int)} returns the file's format string for such
+     * indexes, as {@link HSSFDataFormat#getFormat(short)} does. It falls back
+     * to {@link HSSFDataFormat#getBuiltinFormat(short)} when the file defines
+     * nothing for the index.
+     * <p>
+     * Defaults to {@code false}, which always returns the built-in format
+     * string for built-in indexes.
+     *
+     * @param useFileFormatsForBuiltinIndexes {@code true} to prefer the file's
+     * FORMAT records for built-in indexes
+     * @since 6.0.0
+     */
+    public void setUseFileFormatsForBuiltinIndexes(boolean useFileFormatsForBuiltinIndexes) {
+        _useFileFormatsForBuiltinIndexes = useFileFormatsForBuiltinIndexes;
     }
 
     protected int getNumberOfCustomFormats() {
@@ -145,6 +182,8 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 
     /**
      * Returns the format string, eg $##.##, for the given number format index.
+     * <p>
+     * For built-in indexes, see {@link #setUseFileFormatsForBuiltinIndexes(boolean)}.
      *
      * @param formatIndex the format index
      *
@@ -160,7 +199,9 @@ public class FormatTrackingHSSFListener implements HSSFListener {
                 format = tfr.getFormatString();
             }
         } else {
-            format = HSSFDataFormat.getBuiltinFormat((short) formatIndex);
+            FormatRecord tfr = _useFileFormatsForBuiltinIndexes
+                    ? _customFormatRecords.get(Integer.valueOf(formatIndex)) : null;
+            format = tfr != null ? tfr.getFormatString() : HSSFDataFormat.getBuiltinFormat((short) formatIndex);
         }
         return format;
     }

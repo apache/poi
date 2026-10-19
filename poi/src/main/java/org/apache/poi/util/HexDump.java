@@ -81,7 +81,7 @@ public final class HexDump {
      *            null
      */
 
-    public synchronized static void dump(final byte [] data, final long offset,
+    public static void dump(final byte [] data, final long offset,
             final OutputStream stream, final int index)
     throws IOException, ArrayIndexOutOfBoundsException, IllegalArgumentException {
         dump(data, offset, stream, index, Integer.MAX_VALUE);

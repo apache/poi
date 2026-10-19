@@ -101,6 +101,13 @@ import static org.apache.poi.util.StringUtil.equalsIgnoreCase;
 public final class FormulaParser {
     private static final Logger LOGGER = PoiLogManager.getLogger(FormulaParser.class);
 
+    /**
+     * The default value for {@link #getMaxNestingDepth()}. Excel itself allows 64 levels of nested functions.
+     */
+    public static final int DEFAULT_MAX_NESTING_DEPTH = 128;
+
+    private static int MAX_NESTING_DEPTH = DEFAULT_MAX_NESTING_DEPTH;
+
     private final String _formulaString;
     private final int _formulaLength;
     /** points at the next character to be read (after the {@link #look} codepoint) */
@@ -130,6 +137,9 @@ public final class FormulaParser {
     private final int _sheetIndex;
     private final int _rowIndex; // 0-based
 
+    /** the number of parentheses, function calls and unary signs enclosing the current parse position */
+    private int _nestingDepth;
+
 
     /**
      * Create the formula parser, with the string that is to be
@@ -151,6 +161,31 @@ public final class FormulaParser {
         _formulaLength = _formulaString.length();
         _sheetIndex = sheetIndex;
         _rowIndex = rowIndex;
+    }
+
+    /**
+     * The parser is recursive, so deeply nested formulas could otherwise exhaust the thread stack.
+     * Formulas with more levels of nested parentheses, function calls and unary signs than this
+     * are rejected with a {@link FormulaParseException}.
+     *
+     * @param maxNestingDepth the maximum nesting depth (defaults to {@link #DEFAULT_MAX_NESTING_DEPTH})
+     * @throws IllegalArgumentException if {@code maxNestingDepth} is negative
+     * @since 6.0.0
+     */
+    public static void setMaxNestingDepth(int maxNestingDepth) {
+        if (maxNestingDepth < 0) {
+            throw new IllegalArgumentException("maxNestingDepth must not be negative: " + maxNestingDepth);
+        }
+        MAX_NESTING_DEPTH = maxNestingDepth;
+    }
+
+    /**
+     * @return the maximum levels of nested parentheses, function calls and unary signs in a formula
+     * @see #setMaxNestingDepth(int)
+     * @since 6.0.0
+     */
+    public static int getMaxNestingDepth() {
+        return MAX_NESTING_DEPTH;
     }
 
     /**
@@ -255,6 +290,13 @@ public final class FormulaParser {
     }
 
     /** Report What Was Expected */
+    private void enterNesting() {
+        if (++_nestingDepth > MAX_NESTING_DEPTH) {
+            throw new FormulaParseException("Formula has more than " + MAX_NESTING_DEPTH
+                    + " levels of nested parentheses, functions or unary signs");
+        }
+    }
+
     private RuntimeException expected(String s) {
         String msg;
 
@@ -819,7 +861,7 @@ public final class FormulaParser {
 
         } else if (nColQuantifiers == 1 && !isThisRow) {
             if (startColumnName == null) {
-                throw new IllegalStateException("Cannot parse column: " + startColumnName + " with formula " + _formulaString);
+                throw new IllegalStateException("Cannot parse column: missing column name in formula " + _formulaString);
             }
             int idx = tbl.findColumnIndex(startColumnName);
             if (idx == -1) {
@@ -1359,7 +1401,13 @@ public final class FormulaParser {
         }
 
         match('(');
-        ParseNode[] args = Arguments();
+        ParseNode[] args;
+        enterNesting();
+        try {
+            args = Arguments();
+        } finally {
+            _nestingDepth--;
+        }
         match(')');
 
         return getFunction(name, nameToken, args);
@@ -1541,7 +1589,13 @@ public final class FormulaParser {
                 return parseUnary(true);
             case '(':
                 match('(');
-                ParseNode inside = unionExpression();
+                ParseNode inside;
+                enterNesting();
+                try {
+                    inside = unionExpression();
+                } finally {
+                    _nestingDepth--;
+                }
                 match(')');
                 return new ParseNode(ParenthesisPtg.instance, inside);
             case '"':
@@ -1569,7 +1623,13 @@ public final class FormulaParser {
         boolean numberFollows = isDigit(look) || look=='.';
         // Excel gives negation higher precedence than '^': -2^2 is (-2)^2 = 4, not -(2^2).
         // So the operand of a unary sign is a factor without '^'; the enclosing powerFactor() applies any '^'.
-        ParseNode factor = percentFactor();
+        ParseNode factor;
+        enterNesting();
+        try {
+            factor = percentFactor();
+        } finally {
+            _nestingDepth--;
+        }
 
         if (numberFollows) {
             // + or - directly next to a number is parsed with the number

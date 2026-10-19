@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.xddf.usermodel.text.XDDFTextParagraph;
@@ -102,7 +101,7 @@ class TestXSLFShape {
                     List<XSLFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
                             .map(XSLFTextParagraph::getTextRuns)
                             .flatMap(List::stream)
-                            .collect(Collectors.toList());
+                            .toList();
                     int pos = 0;
                     for (XSLFTextRun r : textBoxParagraphTextRuns) {
                         r.setText("Replaced" + pos++);
@@ -121,7 +120,7 @@ class TestXSLFShape {
                         List<XSLFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
                                 .map(XSLFTextParagraph::getTextRuns)
                                 .flatMap(List::stream)
-                                .collect(Collectors.toList());
+                                .toList();
                         int pos = 0;
                         for (XSLFTextRun r : textBoxParagraphTextRuns) {
                             assertEquals("Replaced" + pos++, r.getRawText());
@@ -147,7 +146,7 @@ class TestXSLFShape {
                     List<XDDFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
                             .map(XDDFTextParagraph::getTextRuns)
                             .flatMap(List::stream)
-                            .collect(Collectors.toList());
+                            .toList();
                     int pos = 0;
                     for (XDDFTextRun r : textBoxParagraphTextRuns) {
                         r.setText("Replaced" + pos++);
@@ -166,7 +165,7 @@ class TestXSLFShape {
                         List<XSLFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
                                 .map(XSLFTextParagraph::getTextRuns)
                                 .flatMap(List::stream)
-                                .collect(Collectors.toList());
+                                .toList();
                         int pos = 0;
                         for (XSLFTextRun r : textBoxParagraphTextRuns) {
                             assertEquals("Replaced" + pos++, r.getRawText());
@@ -194,7 +193,7 @@ class TestXSLFShape {
                     List<XDDFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
                             .map(XDDFTextParagraph::getTextRuns)
                             .flatMap(List::stream)
-                            .collect(Collectors.toList());
+                            .toList();
                     int pos = 0;
                     for (XDDFTextRun r : textBoxParagraphTextRuns) {
                         r.setText("Replaced" + pos++);
@@ -214,7 +213,7 @@ class TestXSLFShape {
                         List<XSLFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
                                 .map(XSLFTextParagraph::getTextRuns)
                                 .flatMap(List::stream)
-                                .collect(Collectors.toList());
+                                .toList();
                         int pos = 0;
                         for (XSLFTextRun r : textBoxParagraphTextRuns) {
                             assertEquals("Replaced" + pos++, r.getRawText());
@@ -230,7 +229,7 @@ class TestXSLFShape {
                         List<XSLFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
                                 .map(XSLFTextParagraph::getTextRuns)
                                 .flatMap(List::stream)
-                                .collect(Collectors.toList());
+                                .toList();
                         assertEquals(1, textBoxParagraphTextRuns.size());
                         String expected = shapeNumber == 0 ? "Learning PPTX" : "Cloud";
                         assertEquals(expected, textBoxParagraphTextRuns.get(0).getRawText());
@@ -259,7 +258,7 @@ class TestXSLFShape {
                     List<XDDFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
                             .map(XDDFTextParagraph::getTextRuns)
                             .flatMap(List::stream)
-                            .collect(Collectors.toList());
+                            .toList();
                     int pos = 0;
                     for (XDDFTextRun r : textBoxParagraphTextRuns) {
                         r.setText("Replaced" + pos++);
@@ -279,7 +278,7 @@ class TestXSLFShape {
                         List<XDDFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
                                 .map(XDDFTextParagraph::getTextRuns)
                                 .flatMap(List::stream)
-                                .collect(Collectors.toList());
+                                .toList();
                         int pos = 0;
                         for (XDDFTextRun r : textBoxParagraphTextRuns) {
                             assertEquals("Replaced" + pos++, r.getText());

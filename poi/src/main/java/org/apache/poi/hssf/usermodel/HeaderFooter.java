@@ -299,7 +299,7 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
         // Now do the tricky, dynamic ones
         // These are things like font sizes, font names and colours
         text = text.replaceAll("&\\d+", "");
-        text = text.replaceAll("&\".*?,.*?\"", "");
+        text = stripFontNames(text);
         text = text.replaceAll("&K[\\dA-F]{6}", "");
         text = text.replaceAll("&K[\\d]{2}[+][\\d]{3}", "");
 
@@ -308,6 +308,46 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
 
         // All done
         return text;
+    }
+
+    /**
+     * Removes font name fields, giving the same result as
+     * {@code text.replaceAll("&\".*?,.*?\"", "")} but in linear time:
+     * that regex backtracks quadratically on, e.g., {@code &"} followed by many commas.
+     */
+    private static String stripFontNames(String text) {
+        int start = text.indexOf("&\"");
+        if (start < 0) {
+            return text;
+        }
+        final int len = text.length();
+        StringBuilder sb = new StringBuilder(len);
+        int copied = 0;
+        while (start >= 0) {
+            // like '.' in the regex, the comma and the closing quote must be on the same line
+            int i = start + 2;
+            while (i < len && text.charAt(i) != ',' && !isLineTerminator(text.charAt(i))) {
+                i++;
+            }
+            if (i < len && text.charAt(i) == ',') {
+                i++;
+                while (i < len && text.charAt(i) != '"' && !isLineTerminator(text.charAt(i))) {
+                    i++;
+                }
+                if (i < len && text.charAt(i) == '"') {
+                    sb.append(text, copied, start);
+                    copied = ++i;
+                }
+            }
+            // on a failed match, i is at the end of the line, and no later match can start before then
+            start = text.indexOf("&\"", i);
+        }
+        return sb.append(text, copied, len).toString();
+    }
+
+    /** the characters that '.' does not match in a regex */
+    private static boolean isLineTerminator(char c) {
+        return c == '\n' || c == '\r' || c == '\u0085' || c == '\u2028' || c == '\u2029';
     }
 
     private enum MarkupTag {

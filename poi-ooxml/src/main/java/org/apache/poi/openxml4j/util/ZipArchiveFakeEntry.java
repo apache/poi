@@ -51,6 +51,13 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
     // majority) are still read with a single exactly-sized allocation.
     private static final int MAX_INIT_BUFFER_SIZE = 2_000_000;
 
+    // when temp files are enabled, the most of an entry with an unknown size (e.g. a
+    // data-descriptor entry written by a streaming zip writer) that is buffered on the heap
+    // before it is spilled to a temp file - capped independently of the temp-file threshold,
+    // because the source holds every entry until it is closed, so a large threshold would
+    // otherwise let each unknown-size part of a package sit on the heap at up to that size.
+    private static final int MAX_UNKNOWN_SIZE_IN_MEMORY = 2_000_000;
+
     /**
      * Set the maximum size of a single entry in a zip-file.
      * @param maxEntrySize number of bytes at which a zip entry is regarded as too large for holding in memory
@@ -87,21 +94,23 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
                 if (entrySize == -1) {
                     // The entry does not declare its uncompressed size (e.g. it was written
                     // with a data descriptor by a streaming zip writer). Most such entries
-                    // are small, so buffer in memory up to the temp-file threshold and only
-                    // spill to a temp file if the entry really is that large - an entry that
-                    // hides its size cannot force more than the threshold onto the heap, and
-                    // small entries no longer cost a temp file each.
+                    // are small, so buffer in memory up to the temp-file threshold (but no
+                    // more than MAX_UNKNOWN_SIZE_IN_MEMORY) and only spill to a temp file if
+                    // the entry really is that large - an entry that hides its size cannot
+                    // force more than that onto the heap, and small entries no longer cost a
+                    // temp file each.
+                    final int inMemoryLimit = Math.min(threshold, MAX_UNKNOWN_SIZE_IN_MEMORY);
                     try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
-                        final long bytesInMemory = IOUtils.copy(inp, baos, threshold);
-                        final int nextByte = bytesInMemory < threshold ? -1 : inp.read();
+                        final long bytesInMemory = IOUtils.copy(inp, baos, inMemoryLimit);
+                        final int nextByte = bytesInMemory < inMemoryLimit ? -1 : inp.read();
                         if (nextByte == -1) {
                             data = baos.toByteArray();
                             bytes = data.length;
                         } else {
                             try (OutputStream os = createTempDataOutputStream()) {
-                                LOG.atWarn().log("Zip entry {} does not declare its uncompressed size and is larger " +
-                                                "than the temp-file threshold of {} bytes - spilling it to {}",
-                                        entry.getName(), threshold,
+                                LOG.atInfo().log("Zip entry {} does not declare its uncompressed size and is larger " +
+                                                "than {} bytes - spilling it to {}",
+                                        entry.getName(), inMemoryLimit,
                                         tempFile != null ? tempFile.getAbsolutePath() : "encrypted temp data");
                                 baos.writeTo(os);
                                 os.write(nextByte);
