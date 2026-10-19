@@ -171,7 +171,7 @@ subprojects {
         batikVersion = '1.19'
         graphics2dVersion = '3.0.5'
         pdfboxVersion = '3.0.8'
-        saxonVersion = '13.0'
+        saxonVersion = '13.1'
         guavaVersion = '33.7.2-jre'
         slf4jVersion = '2.0.20'
         jspecifyVersion = '1.0.1'
