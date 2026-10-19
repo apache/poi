@@ -237,9 +237,11 @@ document.write("Last Published: " + document.lastModified);
             
 <li>DataFormatter now uses cached values for formula cells by default (see setUseCachedValuesForFormulaCells)</li>
             
+<li>Removed some deprecated methods</li>
+            
 <li>Upgrade bouncycastle dependency to 1.86</li>
             
-<li>Upgrade commons-codec dependency to 1.22.1</li>
+<li>Upgrade commons-codec dependency to 1.23.0</li>
             
 <li>Upgrade commons-compress dependency to 1.28.0</li>
             
@@ -249,19 +251,19 @@ document.write("Last Published: " + document.lastModified);
             
 <li>Upgrade log4j-api dependency to 2.26.1</li>
             
-<li>Upgrade mockito dependency to 5.23.0</li>
+<li>Upgrade mockito dependency to 5.24.0</li>
             
 <li>Upgrade pdfbox dependency to 3.0.8</li>
             
-<li>Upgrade SLF4J to 2.0.19</li>
+<li>Upgrade SLF4J to 2.0.20</li>
             
 <li>Upgrade xmlbeans dependency to 5.4.1</li>
             
-<li>Upgrade xmlsec dependency to 3.0.6</li>
+<li>Upgrade xmlsec dependency to 4.0.4 (when using JPMS, jakarta.xml.bind-api and jakarta.activation-api are also needed on the module path, and xmlsec is no longer an automatic module so it must be resolved explicitly, e.g. with --add-modules org.apache.santuario.xmlsec or a requires in your own module-info)</li>
             
 <li>Upgrade Ant to 1.10.18</li>
             
-<li>Upgrade Gradle to 9.7.1</li>
+<li>Upgrade Gradle to 9.8.1</li>
             
 <li>Upgrade JUnit to 6.1.3</li>
         
@@ -283,6 +285,10 @@ document.write("Last Published: " + document.lastModified);
 <tbody>
             
 <tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/buglist.cgi?bug_id=54686,70146">54686 70146</a></td><td>SS_Common</td><td>DataFormatter: currency strings without a locale, and dots in literal text</td>
+</tr>
+            
+<tr class="action">
 <td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=55747">55747</a></td><td>HSSF</td><td>Keep reference operands of value functions nested in IF as value class, not reference class</td>
 </tr>
             
@@ -296,6 +302,14 @@ document.write("Last Published: " + document.lastModified);
             
 <tr class="action">
 <td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=60895">60895</a></td><td>SS_Common</td><td>CellUtil: a changed property keeps the default fill and border instead of adding new ones</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=61638">61638</a></td><td>SS_Common</td><td>DataFormatter: support a '0' placeholder before '#' placeholders, e.g. 60#########</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=62242">62242</a></td><td>SS_Common</td><td>CellFormat: '?' and '#' show an integer part of zero as insignificant</td>
 </tr>
             
 <tr class="action">
@@ -436,6 +450,10 @@ document.write("Last Published: " + document.lastModified);
             
 <tr class="action">
 <td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/969">github-969</a></td><td>XSLF</td><td>Fix rules for table style application in XSLFTables</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://bz.apache.org/bugzilla/buglist.cgi?bug_id=github-977,github-1427">github-977 github-1427</a></td><td>SS_Common</td><td>DataFormatter: allow overriding the format strings of built-in formats, and make getFormat and createFormat protected</td>
 </tr>
             
 <tr class="action">
@@ -747,7 +765,7 @@ document.write("Last Published: " + document.lastModified);
 </tr>
             
 <tr class="action">
-<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1231">github-1231</a></td><td>XSLF XDGF</td><td>Apply DEFAULT_XML_OPTIONS to remaining XMLBeans parses</td>
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1231">github-1231</a></td><td>OOXML</td><td>Apply DEFAULT_XML_OPTIONS to remaining XMLBeans parses</td>
 </tr>
             
 <tr class="action">
@@ -771,7 +789,7 @@ document.write("Last Published: " + document.lastModified);
 </tr>
             
 <tr class="action">
-<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1242">github-1242</a></td><td>XSSF XDDF</td><td>Avoid quadratic XmlBeans element access on hot paths</td>
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1242">github-1242</a></td><td>OOXML</td><td>Avoid quadratic XmlBeans element access on hot paths</td>
 </tr>
             
 <tr class="action">
@@ -903,19 +921,143 @@ document.write("Last Published: " + document.lastModified);
 </tr>
             
 <tr class="action">
-<td><img class="icon" alt="fix" src="images/fix.png"></td><td></td><td>SS_Common</td><td>Avoid NPEs when parsing formulas with unusual sheet identifiers</td>
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1358">github-1358</a></td><td>XWPF</td><td>Load header and footer references of a section in linear time</td>
 </tr>
             
 <tr class="action">
-<td><img class="icon" alt="fix" src="images/fix.png"></td><td></td><td>XSSF</td><td>Add allocation check to XSSFPivotCacheRecords</td>
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1359">github-1359</a></td><td>SS_Common</td><td>Let the CellFormat cache release formats that are no longer used</td>
 </tr>
             
 <tr class="action">
-<td><img class="icon" alt="fix" src="images/fix.png"></td><td></td><td>HEMF</td><td>Throw an exception instead of failing an assert for an invalid EMF file</td>
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1360">github-1360</a></td><td>OOXML</td><td>Fetch xmlbeans arrays once instead of calling indexed getters in loops</td>
 </tr>
             
 <tr class="action">
-<td><img class="icon" alt="update" src="images/update.png"></td><td></td><td>SS_Common</td><td><b>DataFormatter: setUseCachedValuesForFormulaCells(boolean) now defaults to true (was false in POI 5.x) (breaks backwards compatibility)</b></td>
+<td><img class="icon" alt="update" src="images/update.png"></td><td><a href="https://github.com/apache/poi/pull/1365">github-1365</a></td><td>POI_Overall</td><td>Put module-info.class in the jar root instead of a multi-release jar</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1370">github-1370</a></td><td>POI_Overall</td><td>Fix bugs, locking and per-call allocations in POI's input streams</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1372">github-1372</a></td><td>XSSF</td><td>XSSFBEventBasedExcelExtractor: make setHandleHyperlinksInCells work</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1373">github-1373</a></td><td>POI_Overall</td><td>Fix exception messages that always printed null</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1374">github-1374</a></td><td>POI_Overall</td><td>Stop POI depending on public mutable statics</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1375">github-1375</a></td><td>POI_Overall</td><td>IOUtils.skipFully: size the skip buffer to the skip</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1376">github-1376</a></td><td>POI_Overall</td><td>Don't lock on classes or other publicly accessible objects</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1377">github-1377</a></td><td>XSSF</td><td>XSSFExportToXml.compare: build the common path with a StringBuilder</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1378">github-1378</a></td><td>OPC</td><td>OpcOutputStream: drop synchronized from write</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1379">github-1379</a></td><td>HSSF HPSF HWPF</td><td>Fix equals and hashCode in HSSFPalette.CustomColor, CustomProperty and TextPiece</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1382">github-1382</a></td><td>XSSF</td><td>XSSFReader: random access to sheet parts and Strict OOXML relationships</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1384">github-1384</a></td><td>OOXML</td><td>ZipArchiveThresholdInputStream: check single-byte reads every 1 KB</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1386">github-1386</a></td><td>SS_Common</td><td>FormulaParser: limit the nesting depth of parsed formulas</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1387">github-1387</a></td><td>HWPF</td><td>Validate huge grpprl offset and size in PAPX.findHuge</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1392">github-1392</a></td><td>HSMF</td><td>Validate string stream name offset in NameIdChunks</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1396">github-1396</a></td><td>SS_Common</td><td>DataFormatter: fix trailing-comma scaling and literals between digits</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1397">github-1397</a></td><td>SS_Common</td><td>DataFormatter: support Chinese date/time formats, [DBNum] and quoted literals in date formats</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/buglist.cgi?bug_id=github-1398,github-1404">github-1398 github-1404</a></td><td>SS_Common</td><td>DataFormatter: test against text calculated by Excel, and fix mismatches</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1399">github-1399</a></td><td>SS_Common</td><td>DataFormatter: precompile regexes used when formatting</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1405">github-1405</a></td><td>SS_Common</td><td>DataFormatter: round to the nearest second, as Excel does</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/buglist.cgi?bug_id=github-1406,github-1412">github-1406 github-1412</a></td><td>SS_Common</td><td>CellFormat: fix fractions so they match Excel</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1407">github-1407</a></td><td>HWMF HEMF</td><td>Don't presize metafile buffers from untrusted header sizes</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1409">github-1409</a></td><td>HSSF</td><td>FormatTrackingHSSFListener: optionally use file FORMAT records for built-in format indexes</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1410">github-1410</a></td><td>XSSF SXSSF</td><td>Optionally escape literal _xHHHH_ sequences in strings on write</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1414">github-1414</a></td><td>HSSF</td><td>HSSFRow.copyRowFrom: shift formulas with the .xls row limit</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="add" src="images/add.png"></td><td><a href="https://github.com/apache/poi/pull/1416">github-1416</a></td><td>SS_Common</td><td>CellCopyPolicy: opt-in adjustment of relative formula references</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1426">github-1426</a></td><td>SS_Common</td><td>DataFormatter: format literal text after trailing commas with CellFormat</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/buglist.cgi?bug_id=github-1430,github-1431,github-1434">github-1430 github-1431 github-1434</a></td><td>XWPF</td><td>XWPF: keep inline SDT runs out of XWPFParagraph.getRuns(); read table rows, cells and text wrapped in SDTs and custom XML</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1432">github-1432</a></td><td>SS_Common</td><td>Reject prohibited NUL and ETX characters in sheet names</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://bz.apache.org/bugzilla/buglist.cgi?bug_id=github-1436,github-1437,github-1438,github-1439,github-1440,github-1441,github-1442,github-1443">github-1436 github-1437 github-1438 github-1439 github-1440 github-1441 github-1442 github-1443</a></td><td>POI_Overall</td><td>Avoid regex backtracking and recursion that let crafted format strings, formulas, wildcard criteria, part names, content types and field codes take quadratic or exponential time or overflow the stack</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1444">github-1444</a></td><td>SS_Common</td><td>IMAGINARY/IMREAL of a number without a real part; COMPLEX with an imaginary coefficient of -1 or both coefficients 0</td>
+</tr>
+            
+<tr class="action">
+<td><img class="icon" alt="fix" src="images/fix.png"></td><td><a href="https://github.com/apache/poi/pull/1446">github-1446</a></td><td>HWPF</td><td>WordToHtmlConverter: escape font names written into the stylesheet</td>
 </tr>
         
 </tbody>
@@ -928,7 +1070,7 @@ document.write("Last Published: " + document.lastModified);
                 5.5.1 (2025-11-30)
             </h2>
 <div class="section">
-<a name="Summary-N10A5C"></a>
+<a name="Summary-N10C9A"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -941,7 +1083,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade pdfbox dependency to 3.0.6</li>
         
 </ul>
-<a name="Changes-N10A6F"></a>
+<a name="Changes-N10CAD"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -975,7 +1117,7 @@ document.write("Last Published: " + document.lastModified);
                 5.5.0 (2025-11-15)
             </h2>
 <div class="section">
-<a name="Summary-N10AB0"></a>
+<a name="Summary-N10CEE"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1000,7 +1142,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade JaCoCo code-coverage tooling to 0.8.13</li>
         
 </ul>
-<a name="Changes-N10AD5"></a>
+<a name="Changes-N10D13"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1102,7 +1244,7 @@ document.write("Last Published: " + document.lastModified);
                 5.4.1 (2025-04-06)
             </h2>
 <div class="section">
-<a name="Summary-N10C26"></a>
+<a name="Summary-N10E64"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1117,7 +1259,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade graphics2d dependency to 3.0.3</li>
         
 </ul>
-<a name="Changes-N10C3C"></a>
+<a name="Changes-N10E7A"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1207,7 +1349,7 @@ document.write("Last Published: " + document.lastModified);
                 5.4.0 (2025-01-08)
             </h2>
 <div class="section">
-<a name="Summary-N10D5D"></a>
+<a name="Summary-N10F9B"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1236,7 +1378,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade JaCoCo code-coverage tooling to 0.8.12</li>
         
 </ul>
-<a name="Changes-N10D88"></a>
+<a name="Changes-N10FC6"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1318,7 +1460,7 @@ document.write("Last Published: " + document.lastModified);
                 5.3.0 (2024-07-02)
             </h2>
 <div class="section">
-<a name="Summary-N10E89"></a>
+<a name="Summary-N110C7"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1339,7 +1481,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade xmlbeans dependency to 5.2.1</li>
         
 </ul>
-<a name="Changes-N10EA8"></a>
+<a name="Changes-N110E6"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1409,7 +1551,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.5 (2023-11-25)
             </h2>
 <div class="section">
-<a name="Summary-N10F79"></a>
+<a name="Summary-N111B7"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1426,7 +1568,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade xmlbeans dependency to 5.2.0</li>
         
 </ul>
-<a name="Changes-N10F92"></a>
+<a name="Changes-N111D0"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1480,7 +1622,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.4 (2023-09-28)
             </h2>
 <div class="section">
-<a name="Summary-N11023"></a>
+<a name="Summary-N11261"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1507,7 +1649,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Use jdk18on versions of bouncycastle jars (v1.76)</li>
         
 </ul>
-<a name="Changes-N1104B"></a>
+<a name="Changes-N11289"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1653,7 +1795,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.3 (2022-09-16)
             </h2>
 <div class="section">
-<a name="Summary-N1124C"></a>
+<a name="Summary-N1148A"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -1672,7 +1814,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Avoid some more possible overly large memory allocations on certain input documents</li>
         
 </ul>
-<a name="Changes-N11268"></a>
+<a name="Changes-N114A6"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1874,14 +2016,14 @@ document.write("Last Published: " + document.lastModified);
                 5.2.2 (2022-03-19)
             </h2>
 <div class="section">
-<a name="Summary-N11549"></a>
+<a name="Summary-N11787"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
 <li>Upgrade log4j-api dependency to 2.17.2 and graphics2d dependency to 0.35 as well as some test dependencies</li>
         
 </ul>
-<a name="Changes-N11553"></a>
+<a name="Changes-N11791"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -1935,14 +2077,14 @@ document.write("Last Published: " + document.lastModified);
                 5.2.1 (2022-03-03)
             </h2>
 <div class="section">
-<a name="Summary-N115E4"></a>
+<a name="Summary-N11822"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
 <li>Upgrade curvesapi dependency to 1.07</li>
         
 </ul>
-<a name="Changes-N115EE"></a>
+<a name="Changes-N1182C"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2016,7 +2158,7 @@ document.write("Last Published: " + document.lastModified);
                 5.2.0 (2022-01-14)
             </h2>
 <div class="section">
-<a name="Summary-N116CF"></a>
+<a name="Summary-N1190D"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2029,7 +2171,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade PDFBox Graphics2d dependency to 0.34 and PDFBox dependency to 2.0.25</li>
         
 </ul>
-<a name="Changes-N116E2"></a>
+<a name="Changes-N11920"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2123,7 +2265,7 @@ document.write("Last Published: " + document.lastModified);
                 5.1.0 (2021-11-01)
             </h2>
 <div class="section">
-<a name="Summary-N11813"></a>
+<a name="Summary-N11A51"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2150,7 +2292,7 @@ document.write("Last Published: " + document.lastModified);
 <li>By default, no DTDs will be accepted in XML files. This can be relaxed by setting POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(false).</li>
         
 </ul>
-<a name="Changes-N1183B"></a>
+<a name="Changes-N11A79"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2352,7 +2494,7 @@ document.write("Last Published: " + document.lastModified);
                 5.0.0 (2021-01-20)
             </h2>
 <div class="section">
-<a name="Summary-N11B1C"></a>
+<a name="Summary-N11D5A"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2379,7 +2521,7 @@ document.write("Last Published: " + document.lastModified);
 <li>new experimental DeferredSXSSFWorkbook which creates fewer temp files by lazily generating rows (see DeferredGeneration in poi-examples)</li>
         
 </ul>
-<a name="Changes-N11B41"></a>
+<a name="Changes-N11D7F"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2689,7 +2831,7 @@ document.write("Last Published: " + document.lastModified);
                 4.1.2 (2020-02-17)
             </h2>
 <div class="section">
-<a name="Summary-N11FC9"></a>
+<a name="Summary-N12207"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2704,7 +2846,7 @@ document.write("Last Published: " + document.lastModified);
 <li>updated dependencies to Bouncycastle 1.64</li>
         
 </ul>
-<a name="Changes-N11FDF"></a>
+<a name="Changes-N1221D"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -2838,7 +2980,7 @@ document.write("Last Published: " + document.lastModified);
                 4.1.1 (2019-10-20)
             </h2>
 <div class="section">
-<a name="Summary-N121AA"></a>
+<a name="Summary-N123E8"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -2857,7 +2999,7 @@ document.write("Last Published: " + document.lastModified);
 <li>CVE-2019-12415 - XML External Entity (XXE) Processing in Apache POI</li>
         
 </ul>
-<a name="Changes-N121C6"></a>
+<a name="Changes-N12404"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -3007,7 +3149,7 @@ document.write("Last Published: " + document.lastModified);
                 4.1.0 (2019-04-09)
             </h2>
 <div class="section">
-<a name="Summary-N123CE"></a>
+<a name="Summary-N1260C"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -3032,7 +3174,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade to XMLSec 2.1.2</li>
         
 </ul>
-<a name="Changes-N123F3"></a>
+<a name="Changes-N12631"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -3206,7 +3348,7 @@ document.write("Last Published: " + document.lastModified);
                 4.0.1 (2018-12-03)
             </h2>
 <div class="section">
-<a name="Summary-N12664"></a>
+<a name="Summary-N128A2"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -3217,7 +3359,7 @@ document.write("Last Published: " + document.lastModified);
 <li>Upgrade to XMLBeans 3.0.2</li>
         
 </ul>
-<a name="Changes-N12674"></a>
+<a name="Changes-N128B2"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
@@ -3375,7 +3517,7 @@ document.write("Last Published: " + document.lastModified);
                 4.0.0 (2018-09-07)
             </h2>
 <div class="section">
-<a name="Summary-N128A5"></a>
+<a name="Summary-N12AE3"></a>
 <h3 class="boxed">Summary</h3>
 <ul>
             
@@ -3384,7 +3526,7 @@ document.write("Last Published: " + document.lastModified);
 <li>New OOXML schema (1.4) necessary, because of incompatible XMLBeans loading not anymore through POIXMLTypeLoader</li>
         
 </ul>
-<a name="Changes-N128B2"></a>
+<a name="Changes-N12AF0"></a>
 <h3 class="boxed">Changes</h3>
 <table class="POITable">
 <colgroup>
