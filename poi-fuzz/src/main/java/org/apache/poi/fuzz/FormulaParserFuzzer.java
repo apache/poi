@@ -20,9 +20,9 @@ package org.apache.poi.fuzz;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.util.RecordFormatException;
 
 import java.nio.BufferUnderflowException;
