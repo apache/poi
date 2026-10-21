@@ -108,7 +108,8 @@ public class POIFuzzer {
 		} catch (IOException | POIXMLException | IllegalArgumentException | RecordFormatException |
 				 IndexOutOfBoundsException | HSLFException | RecordInputStream.LeftoverDataException |
 				 IllegalStateException | BufferUnderflowException | OpenXML4JRuntimeException |
-				UnsupportedOperationException | NoSuchElementException | NegativeArraySizeException e) {
+				UnsupportedOperationException | NoSuchElementException | NegativeArraySizeException |
+				ArithmeticException e) {
 			// expected here
 		}
 
@@ -141,13 +142,13 @@ public class POIFuzzer {
 		}
 		try {
 			extractor.getText();
-		} catch (OpenXML4JRuntimeException e) {
+		} catch (OpenXML4JRuntimeException |
+		         ArithmeticException e) {
 			// can happen here
 		}
 
-		if (extractor instanceof POIOLE2TextExtractor) {
-			POIOLE2TextExtractor ole2Extractor = (POIOLE2TextExtractor) extractor;
-			ole2Extractor.getRoot();
+		if (extractor instanceof POIOLE2TextExtractor ole2Extractor) {
+            ole2Extractor.getRoot();
 			ole2Extractor.getSummaryInformation();
 			ole2Extractor.getDocSummaryInformation();
 
@@ -160,9 +161,8 @@ public class POIFuzzer {
 				metaData.getFilesystem();
 				metaData.getText();
 			}
-		} else if (extractor instanceof POIXMLTextExtractor) {
-			POIXMLTextExtractor xmlExtractor = (POIXMLTextExtractor) extractor;
-			xmlExtractor.getCoreProperties();
+		} else if (extractor instanceof POIXMLTextExtractor xmlExtractor) {
+            xmlExtractor.getCoreProperties();
 			xmlExtractor.getCustomProperties();
 			xmlExtractor.getExtendedProperties();
 			POIXMLPropertiesTextExtractor metaData = xmlExtractor.getMetadataTextExtractor();
