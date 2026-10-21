@@ -16,6 +16,9 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
+import java.util.Locale;
+import java.util.Set;
+
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
@@ -27,6 +30,9 @@ import org.w3c.dom.Element;
 @Beta
 public class WordToHtmlUtils extends AbstractWordUtils
 {
+    private static final Set<String> SAFE_HYPERLINK_SCHEMES = Set.of(
+            "http", "https", "ftp", "mailto", "file", "news", "tel" );
+
     public static void addBold( final boolean bold, StringBuilder style )
     {
         style.append("font-weight:").append(bold ? "bold" : "normal").append(";");
@@ -173,6 +179,41 @@ public class WordToHtmlUtils extends AbstractWordUtils
             }
         }
         return true;
+    }
+
+    /**
+     * The target of a HYPERLINK field comes straight from the document and ends up in the
+     * {@code href} of a link, where a scheme like {@code javascript:} runs script in the page
+     * when the link is followed. Targets without a scheme (relative paths, fragments, UNC
+     * paths), Windows drive paths and the common document link schemes are accepted. The
+     * scheme is looked up the way browsers parse it, i.e. after dropping tabs and line breaks
+     * anywhere and control characters and spaces at the start.
+     */
+    static boolean isSafeHyperlink( final String hyperlink )
+    {
+        StringBuilder target = new StringBuilder( hyperlink.length() );
+        for ( int i = 0; i < hyperlink.length(); i++ )
+        {
+            char c = hyperlink.charAt( i );
+            if ( c != '\t' && c != '\n' && c != '\r' && ( c > ' ' || target.length() > 0 ) )
+                target.append( c );
+        }
+
+        // scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." ) ":"
+        int end = 0;
+        while ( end < target.length() && isSchemeChar( target.charAt( end ), end == 0 ) )
+            end++;
+        // no scheme at all, or a single letter, i.e. a drive like C:\
+        if ( end < 2 || end == target.length() || target.charAt( end ) != ':' )
+            return true;
+        return SAFE_HYPERLINK_SCHEMES.contains( target.substring( 0, end ).toLowerCase( Locale.ROOT ) );
+    }
+
+    private static boolean isSchemeChar( final char c, final boolean first )
+    {
+        if ( ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' ) )
+            return true;
+        return !first && ( ( c >= '0' && c <= '9' ) || c == '+' || c == '-' || c == '.' );
     }
 
     public static void addFontSize( final int fontSize, StringBuilder style )

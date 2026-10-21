@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -41,6 +42,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.XMLHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -181,6 +183,41 @@ public class TestWordToHtmlConverter {
     }
 
     @Test
+    void testScriptHyperlink() throws Exception {
+        // the target of a HYPERLINK field is copied into the href of the link, so a
+        // javascript: target ran script in the page when the link was followed
+        try (POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.openResourceAsStream("hyperlink.doc"))) {
+            replaceText(fs, "http://testuri.org/", "javascript:alert(1)");
+
+            try (HWPFDocument hwpfDocument = new HWPFDocument(fs)) {
+                String result = getHtmlText(hwpfDocument, true);
+                assertNotContains(result, "javascript:");
+                assertContains(result, "<span class=\"s1\">Hyperlink text</span>");
+            }
+        }
+    }
+
+    @Test
+    void testIsSafeHyperlink() {
+        assertTrue(WordToHtmlUtils.isSafeHyperlink("http://testuri.org/"));
+        assertTrue(WordToHtmlUtils.isSafeHyperlink("HTTPS://testuri.org/"));
+        assertTrue(WordToHtmlUtils.isSafeHyperlink("mailto:someone@testuri.org"));
+        assertTrue(WordToHtmlUtils.isSafeHyperlink("file:///C:/docs/a.doc"));
+        assertTrue(WordToHtmlUtils.isSafeHyperlink("C:\\docs\\a.doc"));
+        assertTrue(WordToHtmlUtils.isSafeHyperlink("\\\\server\\share\\a.doc"));
+        assertTrue(WordToHtmlUtils.isSafeHyperlink("docs/a.doc"));
+        assertTrue(WordToHtmlUtils.isSafeHyperlink("#_Toc1"));
+        assertTrue(WordToHtmlUtils.isSafeHyperlink("a.doc#x:y"));
+        assertTrue(WordToHtmlUtils.isSafeHyperlink(""));
+        assertFalse(WordToHtmlUtils.isSafeHyperlink("javascript:alert(1)"));
+        assertFalse(WordToHtmlUtils.isSafeHyperlink("JavaScript:alert(1)"));
+        assertFalse(WordToHtmlUtils.isSafeHyperlink(" \u0001javascript:alert(1)"));
+        assertFalse(WordToHtmlUtils.isSafeHyperlink("java\tscr\nipt:alert(1)"));
+        assertFalse(WordToHtmlUtils.isSafeHyperlink("vbscript:msgbox(1)"));
+        assertFalse(WordToHtmlUtils.isSafeHyperlink("data:text/html,<script>alert(1)</script>"));
+    }
+
+    @Test
     void testCssFontFamily() {
         assertEquals("Times New Roman", WordToHtmlUtils.cssFontFamily("Times New Roman"));
         assertEquals("MS-Mincho_2", WordToHtmlUtils.cssFontFamily("MS-Mincho_2"));
@@ -211,6 +248,30 @@ public class TestWordToHtmlConverter {
             }
         }
         throw new IllegalStateException("font " + oldName + " not found");
+    }
+
+    /**
+     * Overwrites every occurrence of a text in the WordDocument stream, in place: the new
+     * text must have the same length as the old one.
+     */
+    private static void replaceText(POIFSFileSystem fs, String oldText, String newText) throws IOException {
+        byte[] oldBytes = oldText.getBytes(StandardCharsets.UTF_16LE);
+        byte[] newBytes = newText.getBytes(StandardCharsets.UTF_16LE);
+        assertEquals(oldBytes.length, newBytes.length);
+
+        byte[] stream;
+        try (InputStream is = fs.createDocumentInputStream("WordDocument")) {
+            stream = IOUtils.toByteArray(is);
+        }
+        boolean found = false;
+        for (int i = 0; i + oldBytes.length <= stream.length; i++) {
+            if (Arrays.equals(oldBytes, Arrays.copyOfRange(stream, i, i + oldBytes.length))) {
+                System.arraycopy(newBytes, 0, stream, i, newBytes.length);
+                found = true;
+            }
+        }
+        assertTrue(found, "text " + oldText + " not found");
+        fs.createOrUpdateDocument(new ByteArrayInputStream(stream), "WordDocument");
     }
 
     private static String getHtmlText(final String sampleFileName, boolean emulatePictureStorage) throws Exception {
