@@ -446,7 +446,8 @@ public final class InternalSheet {
         _rowsAggregate = new RowRecordsAggregate();
         records.add(_rowsAggregate);
         // 'Sheet View Settings'
-        records.add(windowTwo = createWindowTwo());
+        windowTwo = createWindowTwo();
+        records.add(windowTwo);
         _selection = createSelection();
         records.add(_selection);
 
@@ -1023,10 +1024,13 @@ public final class InternalSheet {
      * index of the default ExtendedFormatRecord (0xF)
      */
     public short getXFIndexForColAt(short columnIndex) {
-        ColumnInfoRecord ci = _columnInfos.findColumnInfo(columnIndex);
-        if (ci != null) {
-            return (short)ci.getXFIndex();
+        if (_columnInfos != null) {
+            ColumnInfoRecord ci = _columnInfos.findColumnInfo(columnIndex);
+            if (ci != null) {
+                return (short) ci.getXFIndex();
+            }
         }
+
         return 0xF;
     }
 
