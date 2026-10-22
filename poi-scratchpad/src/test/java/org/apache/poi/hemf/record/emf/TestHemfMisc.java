@@ -17,9 +17,11 @@
 
 package org.apache.poi.hemf.record.emf;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 import org.apache.poi.hemf.record.emf.HemfMisc.EmfExtCreatePen;
 import org.apache.poi.util.LittleEndian;
@@ -45,10 +47,53 @@ class TestHemfMisc {
         LittleEndian.putInt(data, 20, 0x7);         // penStyle with PS_USERSTYLE line dash
         LittleEndian.putInt(data, 40, 0x40000000);  // numStyleEntries
 
-        EmfExtCreatePen record = new EmfExtCreatePen();
+        EmfExtCreatePen penRecord = new EmfExtCreatePen();
         try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
             assertThrows(RecordFormatException.class,
-                    () -> record.init(leis, (long) data.length, (long) 0x5F));
+                    () -> penRecord.init(leis, (long) data.length, (long) 0x5F));
         }
+    }
+
+    @Test
+    void testInit() throws IOException {
+        HemfMisc.EmfEof misc = new HemfMisc.EmfEof();
+        assertEquals(12, misc.init(new LittleEndianInputStream(new ByteArrayInputStream(new byte[] {
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        })), 12, 0));
+    }
+
+    @Test
+    void testInitWithPal() throws IOException {
+        HemfMisc.EmfEof misc = new HemfMisc.EmfEof();
+        assertEquals(16, misc.init(new LittleEndianInputStream(new ByteArrayInputStream(new byte[] {
+                1, 0, 0, 0, 16, 0, 0, 0, 99, 98, 97, 96, 0, 0, 0, 0
+        })), 16, 0));
+    }
+
+    @Test
+    void testInitWithPalInvalid1() {
+        HemfMisc.EmfEof misc = new HemfMisc.EmfEof();
+        assertThrows(IllegalArgumentException.class,
+                () -> misc.init(new LittleEndianInputStream(new ByteArrayInputStream(new byte[] {
+                1, 0, 0, 0, 1, 0, 0, 0, 99, 98, 0, 0, 0, 0
+        })), 12, 0));
+    }
+
+    @Test
+    void testInitWithPalInvalid2() {
+        HemfMisc.EmfEof misc = new HemfMisc.EmfEof();
+        assertThrows(IllegalArgumentException.class,
+                () -> misc.init(new LittleEndianInputStream(new ByteArrayInputStream(new byte[] {
+                1, 0, 0, 0, 16, 0, 0, 0, 99, 98, 97, 96, 0, 0, 0, 0
+        })), 12, 0));
+    }
+
+    @Test
+    void testInitInvalidSize() {
+        HemfMisc.EmfEof misc = new HemfMisc.EmfEof();
+        assertThrows(IllegalArgumentException.class,
+                () -> misc.init(new LittleEndianInputStream(new ByteArrayInputStream(new byte[] {
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        })), 11, 0));
     }
 }
