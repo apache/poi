@@ -254,7 +254,7 @@ public class TestWordToHtmlConverter {
      * Overwrites every occurrence of a text in the WordDocument stream, in place: the new
      * text must have the same length as the old one.
      */
-    private static void replaceText(POIFSFileSystem fs, String oldText, String newText) throws IOException {
+    static void replaceText(POIFSFileSystem fs, String oldText, String newText) throws IOException {
         byte[] oldBytes = oldText.getBytes(StandardCharsets.UTF_16LE);
         byte[] newBytes = newText.getBytes(StandardCharsets.UTF_16LE);
         assertEquals(oldBytes.length, newBytes.length);
