@@ -106,7 +106,7 @@ allprojects {
 //    apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    version = '6.0.0'
+    version = '6.0.1-SNAPSHOT'
 
     tasks.cyclonedxDirectBom {
         // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
@@ -171,13 +171,13 @@ subprojects {
         batikVersion = '1.19'
         graphics2dVersion = '3.0.5'
         pdfboxVersion = '3.0.8'
-        saxonVersion = '13.0'
+        saxonVersion = '13.1'
         guavaVersion = '33.7.2-jre'
         slf4jVersion = '2.0.20'
         jspecifyVersion = '1.0.1'
         xmlSecVersion = '4.0.4'
-        jakartaXmlBindVersion = '4.0.2'
-        jakartaActivationVersion = '2.1.3'
+        jakartaXmlBindVersion = '4.0.5'
+        jakartaActivationVersion = '2.1.4'
         apiGuardianVersion = '1.1.2'
 
         jdkVersion = (project.properties['jdkVersion'] ?: '17') as int

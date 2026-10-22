@@ -39,8 +39,9 @@ public class POIHWPFFuzzer {
 		try (HWPFDocument doc = new HWPFDocument(new ByteArrayInputStream(input))) {
 			doc.write(NullOutputStream.INSTANCE);
 		} catch (IOException | IllegalArgumentException | IndexOutOfBoundsException | BufferUnderflowException |
-				NoSuchElementException | RecordFormatException | IllegalStateException |
-				UnsupportedOperationException | NegativeArraySizeException e) {
+		         NoSuchElementException | RecordFormatException | IllegalStateException |
+		         UnsupportedOperationException | NegativeArraySizeException |
+		         ArithmeticException e) {
 			// expected here
 		}
 
@@ -50,9 +51,10 @@ public class POIHWPFFuzzer {
 				POIFuzzer.checkExtractor(extractor);
 			}
 		} catch (IOException | IllegalArgumentException | IndexOutOfBoundsException | BufferUnderflowException |
-				NoSuchElementException | RecordFormatException | IllegalStateException |
-				DocumentFormatException | UnsupportedOperationException | NegativeArraySizeException |
-				RecordInputStream.LeftoverDataException e) {
+		         NoSuchElementException | RecordFormatException | IllegalStateException |
+		         DocumentFormatException | UnsupportedOperationException | NegativeArraySizeException |
+		         RecordInputStream.LeftoverDataException |
+		         ArithmeticException  e) {
 			// expected here
 		}
 	}

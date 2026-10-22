@@ -42,7 +42,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="6.0.0"/>
+    <property name="version.id" value="6.0.1-SNAPSHOT"/>
     <property name="release.rc" value=""/>
 
     <property environment="env"/>
@@ -133,6 +133,7 @@ under the License.
 
     <!-- Examples: -->
     <property name="examples.src" location="poi-examples/src/main/java"/>
+    <property name="examples.resources.main" value="poi-examples/src/main/resources"/>
     <property name="examples.output.dir" location="poi-examples/build/classes/ant/java"/>
 
     <!-- OOXML support: -->
@@ -1276,6 +1277,9 @@ under the License.
                 <pathelement path="lib/main"/>
                 <pathelement path="lib/ooxml"/>
             </lib>
+            <resources>
+                <fileset dir="${examples.resources.main}"/>
+            </resources>
         </compile-jar>
     </target>
 

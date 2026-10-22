@@ -19,6 +19,10 @@
 // Jazzer is provided at runtime by the OSS-Fuzz build environment; we only
 // need the API jar at compile time.
 
+plugins {
+    id 'com.gradleup.shadow' version '9.6.1'
+}
+
 dependencies {
     implementation project(':poi')
     implementation project(':poi-scratchpad')
@@ -26,6 +30,8 @@ dependencies {
     implementation project(path:':poi-integration', configuration:'tests')
 
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    // fuzzing can trigger zstd-code in commons-compress
+    implementation 'com.github.luben:zstd-jni:1.5.7-24'
     implementation 'org.apache.commons:commons-lang3:3.21.0'
     implementation 'org.opentest4j:opentest4j:1.3.0'
     implementation 'com.code-intelligence:jazzer-api:0.30.0'
@@ -37,6 +43,17 @@ dependencies {
 
 javadoc.enabled = false
 sourcesJar.enabled = false
+
+// Merging all dependency jars inevitably pulls in duplicate META-INF entries
+// (LICENSE, NOTICE, ...) from several POI modules.
+// The fat jar is not a Maven-published artifact, so keep it out of
+// "../build/dist/maven/${archivesName}" - the root build.gradle's doLast
+// cleanup for that directory only expects plain "<name>-<version>.jar" style
+// artifacts and would delete this "-all.jar" right after it is built.
+shadowJar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    destinationDirectory = layout.buildDirectory.dir('libs')
+}
 
 generateMetadataFileForPOIPublication.enabled = false
 publishPOIPublicationToMavenLocal.enabled = false

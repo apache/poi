@@ -25,6 +25,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -89,6 +90,8 @@ public class WordToHtmlConverter extends AbstractWordConverter
     private final HtmlDocumentFacade htmlDocumentFacade;
 
     private Element notes;
+
+    private Predicate<String> hyperlinkValidator = hyperlink -> true;
 
     /**
      * Creates new instance of WordToHtmlConverter. Can be used for
@@ -184,6 +187,32 @@ public class WordToHtmlConverter extends AbstractWordConverter
     public Document getDocument()
     {
         return htmlDocumentFacade.getDocument();
+    }
+
+    /**
+     * @return the extra check a HYPERLINK field target has to pass to be written as a link
+     * @see #setHyperlinkValidator(Predicate)
+     * @since 6.0.1
+     */
+    public Predicate<String> getHyperlinkValidator()
+    {
+        return hyperlinkValidator;
+    }
+
+    /**
+     * Sets an extra check a HYPERLINK field target has to pass to be written as the
+     * {@code href} of a link, e.g. to only link to some hosts. The validator is only
+     * consulted for targets that pass {@link WordToHtmlUtils#isSafeHyperlink(String)}, so
+     * it can reject standard URLs but never let a {@code javascript:} or other script
+     * target through. The text of a field whose target is rejected is kept, but it is not
+     * linked. The default accepts every target that passes the built-in check.
+     *
+     * @param hyperlinkValidator returns true for the targets to write as links
+     * @since 6.0.1
+     */
+    public void setHyperlinkValidator( Predicate<String> hyperlinkValidator )
+    {
+        this.hyperlinkValidator = Objects.requireNonNull( hyperlinkValidator, "hyperlinkValidator" );
     }
 
     @Override
@@ -316,8 +345,12 @@ public class WordToHtmlConverter extends AbstractWordConverter
             Element currentBlock, Range textRange, int currentTableLevel,
             String hyperlink )
     {
-        Element basicLink = htmlDocumentFacade.createHyperlink( hyperlink );
-        currentBlock.appendChild( basicLink );
+        // keep the text of a link to e.g. a javascript: target, but don't make it a link
+        Element basicLink = currentBlock;
+        if ( WordToHtmlUtils.isSafeHyperlink( hyperlink ) && hyperlinkValidator.test( hyperlink ) ) {
+            basicLink = htmlDocumentFacade.createHyperlink( hyperlink );
+            currentBlock.appendChild( basicLink );
+        }
 
         if ( textRange != null ) {
             processCharacters( wordDocument, currentTableLevel, textRange,

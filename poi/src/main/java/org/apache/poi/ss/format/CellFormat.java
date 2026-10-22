@@ -434,6 +434,11 @@ public class CellFormat {
 
             double val = num.doubleValue();
 
+            if (posNumFmt == null) {
+                throw new IllegalStateException(
+                        "Cannot apply cell format, check for warning logs during creation of format: " + format);
+            }
+
             if (formatPartCount == 1) {
                 if (!posNumFmt.hasCondition()
                         || (posNumFmt.hasCondition() && posNumFmt.applies(val))) {

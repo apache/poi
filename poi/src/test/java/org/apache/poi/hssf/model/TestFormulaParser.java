@@ -251,11 +251,9 @@ final class TestFormulaParser {
         Ptg[] ptgs = parseFormula(formulaText);
         confirmTokenClasses(ptgs, expectedTokenTypes);
         Ptg ptg0 = ptgs[0];
-        if (ptg0 instanceof IntPtg) {
-            IntPtg intPtg = (IntPtg) ptg0;
+        if (ptg0 instanceof IntPtg intPtg) {
             assertEquals((int)val, intPtg.getValue());
-        } else if (ptg0 instanceof NumberPtg) {
-            NumberPtg numberPtg = (NumberPtg) ptg0;
+        } else if (ptg0 instanceof NumberPtg numberPtg) {
             assertEquals(val, numberPtg.getValue(), 0.0);
         } else {
             fail("bad ptg0 " + ptg0);
@@ -727,7 +725,7 @@ final class TestFormulaParser {
      */
     private static void confirmStringParse(String singleQuotedValue) {
         // formula: internal quotes become double double, surround with double quotes
-        String formula = '"' + singleQuotedValue.replaceAll("'", "\"\"") + '"';
+        String formula = '"' + singleQuotedValue.replace("'", "\"\"") + '"';
         String expectedValue = singleQuotedValue.replace('\'', '"');
 
         StringPtg sp = (StringPtg) parseSingleToken(formula, StringPtg.class);
@@ -1589,8 +1587,11 @@ final class TestFormulaParser {
 
     @Test
     void testNPE() {
+        // fuzzing finds some strange ways of triggering NPEs
         assertThrows(FormulaParseException.class,
                 () -> parseFormula("[\f]!E鈩"));
+        assertThrows(FormulaParseException.class,
+                () -> parseFormula("R1:[]!WQW"));
     }
 
     @Test

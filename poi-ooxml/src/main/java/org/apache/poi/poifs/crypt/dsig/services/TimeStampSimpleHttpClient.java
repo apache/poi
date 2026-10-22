@@ -32,6 +32,7 @@ import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -207,6 +208,10 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
     }
 
     protected TimeStampHttpClientResponse handleRedirect(String url, MethodHandler handler, boolean followRedirect) throws IOException {
+        return handleRedirect(url, handler, followRedirect, true);
+    }
+
+    private TimeStampHttpClientResponse handleRedirect(String url, MethodHandler handler, boolean followRedirect, boolean sendAuth) throws IOException {
         final HttpURLConnection huc;
         try {
             huc = (HttpURLConnection)new URI(url).toURL().openConnection(proxy);
@@ -219,7 +224,11 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
         huc.setConnectTimeout(20000);
         huc.setReadTimeout(20000);
 
-        header.forEach(huc::setRequestProperty);
+        header.forEach((name, value) -> {
+            if (sendAuth || !BASIC_AUTH.equals(name)) {
+                huc.setRequestProperty(name, value);
+            }
+        });
 
         try {
             handler.handle(huc);
@@ -236,7 +245,8 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
                     String newUrl = huc.getHeaderField(REDIRECT_LOCATION);
                     if (newUrl != null && followRedirect) {
                         LOG.atWarn().log("Received redirect: {} -> {}", url, newUrl);
-                        return handleRedirect(newUrl, handler, false);
+                        // don't send the TSP credentials to another origin or downgrade them to http
+                        return handleRedirect(newUrl, handler, false, sendAuth && isAuthForwardable(url, newUrl));
                     }
 
                     LOG.atWarn().log("Redirect ignored - giving up: {} -> {}", url, newUrl);
@@ -264,6 +274,31 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
         } finally {
             huc.disconnect();
         }
+    }
+
+    /**
+     * Credentials are only resent to the same host, either on the same scheme and port or
+     * on an http to https upgrade with default ports.
+     */
+    private static boolean isAuthForwardable(String fromUrl, String toUrl) {
+        final URI from, to;
+        try {
+            from = new URI(fromUrl);
+            to = new URI(toUrl);
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        if (from.getHost() == null || !from.getHost().equalsIgnoreCase(to.getHost())) {
+            return false;
+        }
+        final String fromScheme = String.valueOf(from.getScheme()).toLowerCase(Locale.ROOT);
+        final String toScheme = String.valueOf(to.getScheme()).toLowerCase(Locale.ROOT);
+        if (fromScheme.equals(toScheme)) {
+            return from.getPort() == to.getPort();
+        }
+        return "http".equals(fromScheme) && "https".equals(toScheme)
+            && (from.getPort() == -1 || from.getPort() == 80)
+            && (to.getPort() == -1 || to.getPort() == 443);
     }
 
     protected void recklessConnection(HttpURLConnection conn) throws IOException {

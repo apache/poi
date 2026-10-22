@@ -115,7 +115,11 @@ public class HemfMisc {
 
             if (nPalEntries > 0 && offPalEntries > 0) {
                 int undefinedSpace1 = offPalEntries - (size + HEADER_SIZE);
-                assert (undefinedSpace1 >= 0);
+                if (undefinedSpace1 < 0) {
+                    throw new IllegalArgumentException("Provided record is invalid, offPalEntries: " +
+                            offPalEntries + ", size: " + size + ", HEADER_SIZE: " + HEADER_SIZE +
+                            ", undefinedSpace: " + undefinedSpace1);
+                }
                 leis.skipFully(undefinedSpace1);
                 size += undefinedSpace1;
 
@@ -125,7 +129,11 @@ public class HemfMisc {
                 }
 
                 int undefinedSpace2 = (int) (recordSize - size - LittleEndianConsts.INT_SIZE);
-                assert (undefinedSpace2 >= 0);
+                if (undefinedSpace2 < 0) {
+                    throw new IllegalArgumentException("Provided record is invalid, recordSize: " +
+                            recordSize + ", size: " + size + ", INT_SIZE: " + LittleEndianConsts.INT_SIZE +
+                            ", undefinedSpace: " + undefinedSpace2);
+                }
                 leis.skipFully(undefinedSpace2);
                 size += undefinedSpace2;
             }
@@ -137,7 +145,10 @@ public class HemfMisc {
             size += LittleEndianConsts.INT_SIZE;
             // some files store the whole file size in sizeLast, other just the last record size
             // assert (sizeLast == size+HEADER_SIZE);
-            assert (recordSize == size);
+            if (recordSize != size) {
+                throw new IllegalArgumentException("Provided record size and actual size do not match: " + recordSize +
+                        " and " + size);
+            }
 
             return size;
         }
