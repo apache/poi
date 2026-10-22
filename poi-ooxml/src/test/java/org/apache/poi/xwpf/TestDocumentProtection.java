@@ -18,15 +18,19 @@ package org.apache.poi.xwpf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -195,5 +199,15 @@ class TestDocumentProtection {
         boolean isValid = doc2.validateProtectionPassword("Example");
         assertTrue(isValid);
         doc2.close();
+    }
+
+    @Test
+    void spinCountTooLarge() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            doc.enforceCommentsProtection("Example", HashAlgorithm.sha512);
+            doc.getSettings().getCTSettings().getDocumentProtection()
+                .setCryptSpinCount(BigInteger.valueOf(AgileEncryptionVerifier.getMaxSpinCount() + 1L));
+            assertThrows(EncryptedDocumentException.class, () -> doc.validateProtectionPassword("Example"));
+        }
     }
 }

@@ -32,6 +32,7 @@ import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.xmlbeans.XmlOptions;
@@ -303,6 +304,11 @@ public class XWPFSettings extends POIXMLDocumentPart {
         BigInteger spinCount = safeGetDocumentProtection().getCryptSpinCount();
 
         if (sid == null || hash == null || salt == null || spinCount == null) return false;
+
+        if (spinCount.signum() < 0 || spinCount.compareTo(BigInteger.valueOf(AgileEncryptionVerifier.getMaxSpinCount())) > 0) {
+            throw new EncryptedDocumentException("SpinCount " + spinCount +
+                    " is out of the allowed range [0, " + AgileEncryptionVerifier.getMaxSpinCount() + "]");
+        }
 
         HashAlgorithm hashAlgo;
         switch (sid.intValue()) {
