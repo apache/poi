@@ -70,7 +70,7 @@
         </p>
     </section>
 
-    <release version="6.0.0" date="TBD">
+    <release version="6.0.0" date="2026-10-22">
         <summary>
             <summary-item>Minimum Java version is now JDK 17 (was JDK 8 in POI 5.x)</summary-item>
             <summary-item>DataFormatter now uses cached values for formula cells by default (see setUseCachedValuesForFormulaCells)</summary-item>
