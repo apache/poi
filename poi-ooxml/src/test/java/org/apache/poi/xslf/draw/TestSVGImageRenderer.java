@@ -20,6 +20,7 @@ package org.apache.poi.xslf.draw;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -28,9 +29,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
 
-import org.apache.batik.bridge.BridgeException;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.TempFile;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class TestSVGImageRenderer {
@@ -39,6 +40,15 @@ class TestSVGImageRenderer {
     private static final String RED_RECT =
         SVG_START + "<rect id='r' width='10' height='10' fill='red'/></svg>";
 
+    @BeforeAll
+    static void checkBatik() {
+        try {
+            Class.forName("org.apache.batik.bridge.BridgeContext");
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
+            assumeFalse(true, "Batik isn't available on the module-path");
+        }
+    }
+
     @Test
     void externalFileReferencesAreNotLoaded() throws IOException {
         File local = TempFile.createTempFile("local", ".svg");
@@ -46,9 +56,9 @@ class TestSVGImageRenderer {
             Files.write(local.toPath(), RED_RECT.getBytes(StandardCharsets.UTF_8));
             String url = local.toURI().toString();
 
-            assertThrows(BridgeException.class, () ->
+            assertThrows(IOException.class, () ->
                 render(SVG_START + "<use xlink:href='" + url + "#r'/></svg>"));
-            assertThrows(BridgeException.class, () ->
+            assertThrows(IOException.class, () ->
                 render(SVG_START + "<image width='10' height='10' xlink:href='" + url + "'/></svg>"));
         } finally {
             assertTrue(local.delete());
