@@ -615,15 +615,8 @@ and
                 despite those. We are working on getting the code changed so we avoid
                 discouraged accesses in the future.
             </p>
-            <p>NOTE: Apache POI tries to support the Java module system but it is more complicated
-                because Apache POI is still supporting Java 8 and the module system
-                cannot be fully supported while maintaining such support.
-            </p>
-            <p>
-                FYI, jaxb in current versions also causes some warnings about reflective access,
-                we cannot fix those until jaxb >= 2.4.0 is available, see
-                https://stackoverflow.com/a/50251510/411846 for details, you can set a system
-                property "com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize" to avoid this warning.
+            <p>NOTE: Apache POI 6.0.0 and newer require Java 17 or newer. The POI jars include
+                module-info descriptors so they can be used on the module path (JPMS).
             </p>
             <p>
                 For compiling Apache POI, you should use at least version 4.1.0 when it becomes available
