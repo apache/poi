@@ -19,6 +19,7 @@
 package org.apache.poi.hwpf.converter;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertNotContains;
 
 import java.io.StringWriter;
 
@@ -28,6 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.XMLHelper;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +43,12 @@ public class TestWordToFoConverter
     {
         HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
                 .getDocumentInstance().openResourceAsStream( sampleFileName ) );
+        return getFoText( hwpfDocument );
+    }
 
+    private static String getFoText( final HWPFDocument hwpfDocument )
+            throws Exception
+    {
         WordToFoConverter wordToFoConverter = new WordToFoConverter(
                 XMLHelper.newDocumentBuilder().newDocument() );
         wordToFoConverter.processDocument( hwpfDocument );
@@ -103,6 +110,26 @@ public class TestWordToFoConverter
         assertContains( result,
                 "<fo:basic-link external-destination=\"http://testuri.org/\">" );
         assertContains( result, "Hyperlink text" );
+    }
+
+    @Test
+    void testScriptHyperlink() throws Exception
+    {
+        // the target of a HYPERLINK field is copied into the external-destination of the
+        // link, which a renderer may hand on to a viewer that runs a javascript: target
+        try ( POIFSFileSystem fs = new POIFSFileSystem( POIDataSamples
+                .getDocumentInstance().openResourceAsStream( "hyperlink.doc" ) ) )
+        {
+            TestWordToHtmlConverter.replaceText( fs, "http://testuri.org/", "javascript:alert(1)" );
+
+            try ( HWPFDocument hwpfDocument = new HWPFDocument( fs ) )
+            {
+                String result = getFoText( hwpfDocument );
+                assertNotContains( result, "javascript:" );
+                assertNotContains( result, "external-destination" );
+                assertContains( result, "Hyperlink text" );
+            }
+        }
     }
 
     @Test

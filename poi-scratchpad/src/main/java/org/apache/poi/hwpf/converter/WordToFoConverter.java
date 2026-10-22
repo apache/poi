@@ -340,9 +340,12 @@ public class WordToFoConverter extends AbstractWordConverter
             Element currentBlock, Range textRange, int currentTableLevel,
             String hyperlink )
     {
-        Element basicLink = foDocumentFacade
-                .createBasicLinkExternal( hyperlink );
-        currentBlock.appendChild( basicLink );
+        // keep the text of a link to e.g. a javascript: target, but don't make it a link
+        Element basicLink = currentBlock;
+        if ( WordToHtmlUtils.isSafeHyperlink( hyperlink ) ) {
+            basicLink = foDocumentFacade.createBasicLinkExternal( hyperlink );
+            currentBlock.appendChild( basicLink );
+        }
 
         if ( textRange != null )
             processCharacters( wordDocument, currentTableLevel, textRange,
