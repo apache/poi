@@ -726,12 +726,13 @@ and
 </div>
 <a name="faq-N102B0"></a>
 <h2 class="boxed">23. 
-            Can Apache POI be compiled/used with Java 11, 17 and 21?
+            Can Apache POI be compiled/used with Java 17, 21 and 25?
         </h2>
 <div class="section">
 <p>
               POI is successfully tested with many different versions of Java. It is
-              recommended that you use Java versions that have Long Term Support (Java 11, 17 and 21).
+              recommended that you use Java versions that have Long Term Support (Java 17, 21 and 25).
+              POI 6.0.0 and newer require Java 17 or newer; POI 5.x supports Java 8 or newer.
             </p>
 <p>Including the existing binaries as normal jar-files
                 should work when using recent versions of Apache POI. You may see
@@ -739,19 +740,8 @@ and
                 despite those. We are working on getting the code changed so we avoid
                 discouraged accesses in the future.
             </p>
-<p>NOTE: Apache POI tries to support the Java module system but it is more complicated
-                because Apache POI is still supporting Java 8 and the module system
-                cannot be fully supported while maintaining such support.
-            </p>
-<p>
-                FYI, jaxb in current versions also causes some warnings about reflective access,
-                we cannot fix those until jaxb &gt;= 2.4.0 is available, see
-                https://stackoverflow.com/a/50251510/411846 for details, you can set a system
-                property "com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize" to avoid this warning.
-            </p>
-<p>
-                For compiling Apache POI, you should use at least version 4.1.0 when it becomes available
-                or a recent trunk checkout until then.
+<p>NOTE: The POI jars include module-info descriptors so they can be used on the
+                module path (JPMS).
             </p>
 <p>
               If you are building POI yourself from source files, use an up to date version of Gradle.
@@ -760,12 +750,12 @@ and
 </div>
 <a name="faq-java10"></a>
 <h2 class="boxed">24. 
-            Can Apache POI be compiled/used with Java 9 or Java 10?
+            Can Apache POI be compiled/used with Java versions older than Java 17?
         </h2>
 <div class="section">
-<p>Apache POI does not actively support Java 9 or Java 10 any longer as those versions were
-                obsoleted by Oracle already. See the previous FAQ entry for information about support for
-                Java LTS versions.
+<p>No, Apache POI 6.0.0 and newer require Java 17 or newer. If you need to stay on an older
+                Java version, use POI 5.x, which supports Java 8 or newer. See the previous FAQ entry for
+                information about support for Java LTS versions.
             </p>
 </div>
 <a name="faq-ibmjdk"></a>
