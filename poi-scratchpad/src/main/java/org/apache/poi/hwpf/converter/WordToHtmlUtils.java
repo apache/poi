@@ -188,8 +188,15 @@ public class WordToHtmlUtils extends AbstractWordUtils
      * paths), Windows drive paths and the common document link schemes are accepted. The
      * scheme is looked up the way browsers parse it, i.e. after dropping tabs and line breaks
      * anywhere and control characters and spaces at the start.
+     * <p>
+     * {@link WordToHtmlConverter} always applies this check, before any validator set with
+     * {@link WordToHtmlConverter#setHyperlinkValidator(java.util.function.Predicate)}.
+     *
+     * @param hyperlink the target of a HYPERLINK field
+     * @return true if the target can be written as the {@code href} of a link
+     * @since 6.0.1
      */
-    static boolean isSafeHyperlink( final String hyperlink )
+    public static boolean isSafeHyperlink( final String hyperlink )
     {
         StringBuilder target = new StringBuilder( hyperlink.length() );
         for ( int i = 0; i < hyperlink.length(); i++ )
