@@ -211,7 +211,17 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
         return handleRedirect(url, handler, followRedirect, true);
     }
 
-    private TimeStampHttpClientResponse handleRedirect(String url, MethodHandler handler, boolean followRedirect, boolean sendAuth) throws IOException {
+    /**
+     * @param url the url to connect to
+     * @param handler sets the request method and payload on the connection
+     * @param followRedirect if true, a single redirect is followed
+     * @param sendAuth if false, the basic authentication header is not sent, e.g. when following
+     *                 a redirect to another origin
+     * @return the response
+     * @throws IOException if the request fails
+     * @since 6.0.1
+     */
+    protected TimeStampHttpClientResponse handleRedirect(String url, MethodHandler handler, boolean followRedirect, boolean sendAuth) throws IOException {
         final HttpURLConnection huc;
         try {
             huc = (HttpURLConnection)new URI(url).toURL().openConnection(proxy);
@@ -223,6 +233,8 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
         }
         huc.setConnectTimeout(20000);
         huc.setReadTimeout(20000);
+        // redirects are handled below, so that followRedirects and the credential checks apply
+        huc.setInstanceFollowRedirects(false);
 
         header.forEach((name, value) -> {
             if (sendAuth || !BASIC_AUTH.equals(name)) {
@@ -244,6 +256,12 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
                 case HttpURLConnection.HTTP_SEE_OTHER:
                     String newUrl = huc.getHeaderField(REDIRECT_LOCATION);
                     if (newUrl != null && followRedirect) {
+                        // the Location header may be relative to the request url
+                        try {
+                            newUrl = new URI(url).resolve(newUrl).toString();
+                        } catch (URISyntaxException | IllegalArgumentException e) {
+                            throw new IOException("Invalid redirect location: " + newUrl, e);
+                        }
                         LOG.atWarn().log("Received redirect: {} -> {}", url, newUrl);
                         // don't send the TSP credentials to another origin or downgrade them to http
                         return handleRedirect(newUrl, handler, false, sendAuth && isAuthForwardable(url, newUrl));
@@ -280,7 +298,7 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
      * Credentials are only resent to the same host, either on the same scheme and port or
      * on an http to https upgrade with default ports.
      */
-    private static boolean isAuthForwardable(String fromUrl, String toUrl) {
+    static boolean isAuthForwardable(String fromUrl, String toUrl) {
         final URI from, to;
         try {
             from = new URI(fromUrl);
@@ -293,12 +311,24 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
         }
         final String fromScheme = String.valueOf(from.getScheme()).toLowerCase(Locale.ROOT);
         final String toScheme = String.valueOf(to.getScheme()).toLowerCase(Locale.ROOT);
+        final int fromPort = effectivePort(from.getPort(), fromScheme);
+        final int toPort = effectivePort(to.getPort(), toScheme);
         if (fromScheme.equals(toScheme)) {
-            return from.getPort() == to.getPort();
+            return fromPort == toPort;
         }
         return "http".equals(fromScheme) && "https".equals(toScheme)
-            && (from.getPort() == -1 || from.getPort() == 80)
-            && (to.getPort() == -1 || to.getPort() == 443);
+            && fromPort == 80 && toPort == 443;
+    }
+
+    private static int effectivePort(int port, String scheme) {
+        if (port != -1) {
+            return port;
+        }
+        switch (scheme) {
+            case "http": return 80;
+            case "https": return 443;
+            default: return -1;
+        }
     }
 
     protected void recklessConnection(HttpURLConnection conn) throws IOException {
