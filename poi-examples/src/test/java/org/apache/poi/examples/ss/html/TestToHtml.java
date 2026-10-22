@@ -25,7 +25,6 @@ import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
@@ -45,16 +44,18 @@ class TestToHtml {
         }
     }
 
-    private static void assertCellTextIsEscaped(Workbook wb) {
-        Sheet sheet = wb.createSheet();
-        Row row = sheet.createRow(0);
+    private static void assertCellTextIsEscaped(Workbook wb) throws IOException {
+        Row row = wb.createSheet().createRow(0);
         row.createCell(0).setCellValue("<script>alert(1)</script>");
         row.createCell(1).setCellValue("<a href=\"javascript:alert(1)\">x</a> & y");
 
         StringBuilder sb = new StringBuilder();
-        ToHtml.create(wb, sb).printSheet(sheet);
+        ToHtml.create(wb, sb).printPage();
         String html = sb.toString();
 
+        // the base style sheet is included
+        assertThat(html, containsString("<style type=\"text/css\">"));
+        assertThat(html, containsString(".excelDefaults {"));
         assertThat(html, not(containsString("<script>")));
         assertThat(html, not(containsString("<a href")));
         assertThat(html, containsString("&lt;script&gt;alert(1)&lt;/script&gt;"));
