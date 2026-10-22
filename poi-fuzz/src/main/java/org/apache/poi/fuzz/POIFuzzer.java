@@ -90,6 +90,8 @@ public class POIFuzzer {
 
 		POIXSSFFuzzer.fuzzerTestOneInput(input);
 
+		POIXSSFBFuzzer.fuzzerTestOneInput(input);
+
 		POIXWPFFuzzer.fuzzerTestOneInput(input);
 	}
 
