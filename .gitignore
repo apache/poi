@@ -37,3 +37,7 @@ TEST-org.apache.poi*.xml
 /*/build/
 dist
 lib/
+/poi-fuzz/jazzer
+/poi-fuzz/jazzer-linux-x86-64-0.30.0.tar.gz
+/poi-fuzz/jazzer_standalone.jar
+/poi-fuzz/corpus*/
