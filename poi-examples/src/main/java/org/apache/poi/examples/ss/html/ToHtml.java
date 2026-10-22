@@ -48,6 +48,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -473,7 +474,8 @@ public final class ToHtml {
                         CellFormat cf = CellFormat.getInstance(
                                 style.getDataFormatString());
                         CellFormatResult result = cf.apply(cell);
-                        content = result.text; //never null
+                        //the text comes from the workbook, so escape it to keep markup in it as text
+                        content = XMLHelper.escapeXml(result.text); //never null
                         if (content.isEmpty()) {
                             content = "&nbsp;";
                         }
