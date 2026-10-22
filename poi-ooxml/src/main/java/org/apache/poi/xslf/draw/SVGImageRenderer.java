@@ -30,6 +30,7 @@ import java.lang.ref.WeakReference;
 
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.BridgeException;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
@@ -52,7 +53,6 @@ public class SVGImageRenderer implements ImageRenderer {
 
     public SVGImageRenderer() {
         String parser = XMLResourceDescriptor.getXMLParserClassName();
-        // TOOO: tell the batik guys to use secure parsing feature
         svgFact = new SAXSVGDocumentFactory(parser);
         SVGUserAgent agent = new SVGUserAgent();
 
@@ -65,7 +65,12 @@ public class SVGImageRenderer implements ImageRenderer {
     public void loadImage(InputStream data, String contentType) throws IOException {
         SVGDocument document = (SVGDocument)svgFact.createDocument("", data);
         ((SVGUserAgent)context.getUserAgent()).initViewbox(document);
-        builder.build(context, document);
+        try {
+            builder.build(context, document);
+        } catch (BridgeException e) {
+            // e.g. a blocked or broken external reference - skip this picture instead of the whole slide
+            throw new IOException("Unable to render SVG image", e);
+        }
     }
 
     @Override
