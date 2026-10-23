@@ -189,8 +189,9 @@ public class WordToHtmlUtils extends AbstractWordUtils
      * scheme is looked up the way browsers parse it, i.e. after dropping tabs and line breaks
      * anywhere and control characters and spaces at the start.
      * <p>
-     * {@link WordToHtmlConverter} always applies this check, before any validator set with
-     * {@link WordToHtmlConverter#setHyperlinkValidator(java.util.function.Predicate)}.
+     * {@link WordToHtmlConverter} and {@link WordToFoConverter} always apply this check, before
+     * any validator set with {@link WordToHtmlConverter#setHyperlinkValidator(java.util.function.Predicate)}
+     * or {@link WordToFoConverter#setHyperlinkValidator(java.util.function.Predicate)}.
      *
      * @param hyperlink the target of a HYPERLINK field
      * @return true if the target can be written as the {@code href} of a link

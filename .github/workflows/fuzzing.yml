@@ -1,0 +1,138 @@
+# This workflow will perform a local fuzzer-run
+# by running each fuzz-target for some time or until it
+# finds an issue
+#
+# Any resulting crash-reproducer is collected as Artifact
+
+name: Run Fuzzing
+
+# https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
+on:
+    workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ./poi-fuzz
+
+jobs:
+  fuzzing:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '17'
+        check-latest: true
+
+    - name: Cache Gradle wrapper and dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+          corpus*
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    #- name: Verify Gradle wrapper
+    #  uses: gradle/actions/wrapper-validation@v4
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x ../gradlew
+
+    - name: Build the fuzz target
+      run: ../gradlew shadowJar
+
+    - name: Fetch initial corpus
+      run: |
+        set -eu
+        cp -a ../test-data corpus
+
+        mkdir -p corpusHSLF && cp corpus/slideshow/*.ppt corpusHSLF/
+        mkdir -p corpusHSSF && cp corpus/spreadsheet/*.xls corpusHSSF/
+        mkdir -p corpusHWPF && cp corpus/document/*.doc corpus/document/*.DOC corpusHWPF/
+        mkdir -p corpusOldExcel && cp corpus/spreadsheet/*.xls corpus/spreadsheet/*.bin corpusOldExcel/
+        mkdir -p corpusXSLF && cp corpus/slideshow/* corpus/integration/*.pptx corpusXSLF/
+        mkdir -p corpusXSSF && cp corpus/spreadsheet/* corpus/integration/*.xlsx corpusXSSF/
+        mkdir -p corpusXWPF && cp corpus/document/* corpus/integration/*.docx corpusXWPF/
+        mkdir -p corpusVisio && cp corpus/diagram/* corpusVisio/
+        mkdir -p corpusHDGF && cp corpus/diagram/*.vsd corpusHDGF/
+        mkdir -p corpusHPSF && cp corpus/hpsf/* corpusHPSF/
+        mkdir -p corpusHMEF && cp -a corpus/hmef/* corpusHMEF/
+        mkdir -p corpusHPBF && cp -a corpus/publisher/* corpusHPBF/
+        mkdir -p corpusHSMF && cp -a corpus/hsmf/* corpusHSMF/
+        mkdir -p corpusEncryptDecrypt
+        mkdir -p corpusFormulaParser
+
+        echo "Using commit $(git rev-parse HEAD)"
+
+    - name: Fetch Jazzer
+      run: wget https://github.com/CodeIntelligenceTesting/jazzer/releases/download/v0.30.0/jazzer-linux-x86-64.tar.gz
+
+    - name: Unpack Jazzer
+      run: tar xzf jazzer-*.tar.gz
+
+    - name: Run Fuzzing - POIHSLFFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHSLFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHSLF
+
+    - name: Run Fuzzing - POIHSSFFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHSSFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHSSF
+
+    - name: Run Fuzzing - POIHWPFFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHWPFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHWPF
+
+    - name: Run Fuzzing - POIOldExcelFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIOldExcelFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusOldExcel
+
+    - name: Run Fuzzing - POIXSLFFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIXSLFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXSLF
+
+    - name: Run Fuzzing - POIXSSFFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIXSSFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXSSF
+
+    - name: Run Fuzzing - POIXSSFBFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIXSSFBFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXSSF
+
+    - name: Run Fuzzing - XLSX2CSVFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.XLSX2CSVFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXSSF
+
+    - name: Run Fuzzing - POIXWPFFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIXWPFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXWPF
+
+    - name: Run Fuzzing - POIVisioFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIVisioFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusVisio
+
+    - name: Run Fuzzing - POIHDGFFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHDGFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHDGF
+
+    - name: Run Fuzzing - POIHPSFFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHPSFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHPSF
+
+    - name: Run Fuzzing - POIHMEFFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHMEFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHMEF
+
+    - name: Run Fuzzing - POIHPBFFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHPBFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHPBF
+
+    - name: Run Fuzzing - POIHSMFFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHSMFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHSMF
+
+    - name: Run Fuzzing - EncryptDecryptFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.EncryptDecryptFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusEncryptDecrypt
+
+    - name: Run Fuzzing - FormulaParserFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.FormulaParserFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusFormulaParser
+
+    - name: Run Fuzzing - POIFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar --instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.** --target_class=org.apache.poi.fuzz.POIFuzzer -rss_limit_mb=4096 -timeout=600 -timeout=600 corpus
+
+    - name: Upload reproducers
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: artifacts
+        path: poi-fuzz/*.java

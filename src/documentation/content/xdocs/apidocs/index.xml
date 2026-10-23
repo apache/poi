@@ -40,6 +40,7 @@
    each the family can also be browsed online:
   </p>
   <ul>
+    <li><a href="ext:apidocs/v60">Apache POI 6.0.x Javadocs</a></li>
     <li><a href="ext:apidocs/v50">Apache POI 5.0.x Javadocs</a></li>
     <li><a href="ext:apidocs/v41">Apache POI 4.1.x Javadocs</a></li>
     <li><a href="ext:apidocs/v40">Apache POI 4.0.x Javadocs</a></li>
