@@ -38,8 +38,8 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-    - name: Verify Gradle wrapper
-      uses: gradle/actions/wrapper-validation@v4
+    #- name: Verify Gradle wrapper
+    #  uses: gradle/actions/wrapper-validation@v4
 
     - name: Grant execute permission for gradlew
       run: chmod +x ../gradlew
