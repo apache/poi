@@ -36,8 +36,8 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.TreeMap;
 
 import javax.xml.crypto.Data;
 import javax.xml.crypto.MarshalException;
@@ -203,27 +203,30 @@ public class RelationshipTransformService extends TransformService {
             throw new TransformException(e.getMessage(), e);
         }
 
-        // keep only those relationships which id is registered in the sourceIds
+        // keep only those relationships which id is registered in the sourceIds - all of them,
+        // at any depth: the package model also reads nested elements and resolves a duplicated
+        // id to the last one, so dropping one here would leave an unsigned target out of the digest
         Element root = doc.getDocumentElement();
-        NodeList nl = root.getChildNodes();
-        TreeMap<String,Element> rsList = new TreeMap<>();
-        for (int i=nl.getLength()-1; i>=0; i--) {
-            Node n = nl.item(i);
-            if ("Relationship".equals(n.getLocalName())) {
-                Element el = (Element)n;
-                String id = el.getAttribute("Id");
-                if (sourceIds.contains(id)) {
-                    String targetMode = el.getAttribute("TargetMode");
-                    if (targetMode == null || targetMode.isEmpty()) {
-                        el.setAttribute("TargetMode", "Internal");
-                    }
-                    rsList.put(id, el);
+        NodeList nl = root.getElementsByTagNameNS("*", "Relationship");
+        List<Element> rsList = new ArrayList<>();
+        for (int i=0; i<nl.getLength(); i++) {
+            Element el = (Element)nl.item(i);
+            String id = el.getAttribute("Id");
+            if (sourceIds.contains(id)) {
+                String targetMode = el.getAttribute("TargetMode");
+                if (targetMode == null || targetMode.isEmpty()) {
+                    el.setAttribute("TargetMode", "Internal");
                 }
+                rsList.add(el);
             }
-            root.removeChild(n);
         }
 
-        for (Element el : rsList.values()) {
+        while (root.hasChildNodes()) {
+            root.removeChild(root.getFirstChild());
+        }
+
+        rsList.sort(Comparator.comparing(el -> el.getAttribute("Id")));
+        for (Element el : rsList) {
             root.appendChild(el);
         }
 
