@@ -296,4 +296,13 @@ class TestXWPFTableCell {
             assertEquals("FooBar", cell.getText());
         }
     }
+
+    @Test
+    public void testGetTableWidthIfNotPresent() throws Exception {
+        try (XWPFDocument document = XWPFTestDataSamples.openSampleDocument("bnc865381.docx")) {
+            // The cell in row 1, column 0 doesn't have a tcW element.
+            XWPFTableCell cell = document.getTableArray(0).getRow(1).getCell(0);
+            assertEquals(-1, cell.getWidth());
+        }
+    }
 }
