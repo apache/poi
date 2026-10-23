@@ -77,58 +77,58 @@ jobs:
       run: tar xzf jazzer-*.tar.gz
 
     - name: Run Fuzzing - POIHSLFFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIHSLFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHSLF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHSLFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHSLF
 
     - name: Run Fuzzing - POIHSSFFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIHSSFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHSSF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHSSFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHSSF
 
     - name: Run Fuzzing - POIHWPFFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIHWPFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHWPF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHWPFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHWPF
 
     - name: Run Fuzzing - POIOldExcelFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIOldExcelFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusOldExcel
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIOldExcelFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusOldExcel
 
     - name: Run Fuzzing - POIXSLFFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIXSLFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXSLF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIXSLFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXSLF
 
     - name: Run Fuzzing - POIXSSFFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIXSSFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXSSF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIXSSFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXSSF
 
     - name: Run Fuzzing - POIXSSFBFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIXSSFBFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXSSF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIXSSFBFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXSSF
 
     - name: Run Fuzzing - XLSX2CSVFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.XLSX2CSVFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXSSF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.XLSX2CSVFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXSSF
 
     - name: Run Fuzzing - POIXWPFFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIXWPFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXWPF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIXWPFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusXWPF
 
     - name: Run Fuzzing - POIVisioFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIVisioFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusVisio
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIVisioFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusVisio
 
     - name: Run Fuzzing - POIHDGFFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIHDGFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHDGF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHDGFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHDGF
 
     - name: Run Fuzzing - POIHPSFFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIHPSFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHPSF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHPSFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHPSF
 
     - name: Run Fuzzing - POIHMEFFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIHMEFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHMEF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHMEFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHMEF
 
     - name: Run Fuzzing - POIHPBFFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIHPBFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHPBF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHPBFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHPBF
 
     - name: Run Fuzzing - POIHSMFFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.POIHSMFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHSMF
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIHSMFFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusHSMF
 
     - name: Run Fuzzing - EncryptDecryptFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.EncryptDecryptFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusEncryptDecrypt
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.EncryptDecryptFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusEncryptDecrypt
 
     - name: Run Fuzzing - FormulaParserFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.dstadler.poi.fuzz.FormulaParserFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusFormulaParser
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.FormulaParserFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusFormulaParser
 
     - name: Run Fuzzing - POIFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar --instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.** --target_class=org.dstadler.poi.fuzz.POIFuzzer -rss_limit_mb=4096 -timeout=600 -timeout=600 corpus
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar --instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.** --target_class=org.apache.poi.fuzz.POIFuzzer -rss_limit_mb=4096 -timeout=600 -timeout=600 corpus
 
     - name: Upload reproducers
       uses: actions/upload-artifact@v7
