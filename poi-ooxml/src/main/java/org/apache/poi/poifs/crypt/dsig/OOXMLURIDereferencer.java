@@ -51,6 +51,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 public class OOXMLURIDereferencer implements URIDereferencer {
 
     private static final Logger LOG = PoiLogManager.getLogger(OOXMLURIDereferencer.class);
+    private static final String CONTENT_TYPE_QUERY = "ContentType=";
 
     private SignatureInfo signatureInfo;
     private URIDereferencer baseUriDereferencer;
@@ -86,6 +87,17 @@ public class OOXMLURIDereferencer implements URIDereferencer {
             }
             LOG.atDebug().log("cannot resolve {}, delegating to base DOM URI dereferencer", uri);
             return baseUriDereferencer.dereference(uriReference, context);
+        }
+
+        // [Content_Types].xml is not signed, so a signed reference carries the content type of
+        // the part in its query - the signature only covers the part if the content type matches
+        String query = uri.getQuery();
+        if (query != null && query.startsWith(CONTENT_TYPE_QUERY)) {
+            String signedContentType = query.substring(CONTENT_TYPE_QUERY.length());
+            if (!signedContentType.equalsIgnoreCase(part.getContentType())) {
+                throw new URIReferenceException("content type of " + part.getPartName() + " is " +
+                    part.getContentType() + ", but the signature references " + signedContentType);
+            }
         }
 
         InputStream dataStream = null;
