@@ -162,6 +162,12 @@ public class SignaturePart {
             LOG.atError().withThrowable(e).log(s);
             throw new EncryptedDocumentException(s, e);
         } catch (XMLSignatureException e) {
+            for (Throwable t = e; t != null; t = t.getCause()) {
+                if (t instanceof OOXMLURIDereferencer.ContentTypeMismatchException) {
+                    LOG.atWarn().log("the signature is invalid: {}", t.getMessage());
+                    return false;
+                }
+            }
             String s = "error in validating the signature";
             LOG.atError().withThrowable(e).log(s);
             throw new EncryptedDocumentException(s, e);

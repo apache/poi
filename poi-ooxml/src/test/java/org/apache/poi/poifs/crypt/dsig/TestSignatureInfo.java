@@ -23,12 +23,13 @@
    ================================================================= */
 package org.apache.poi.poifs.crypt.dsig;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -58,17 +59,16 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import javax.security.auth.x500.X500Principal;
 import javax.xml.crypto.MarshalException;
-import javax.xml.crypto.URIReferenceException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
@@ -363,33 +363,20 @@ class TestSignatureInfo {
     void contentTypeChangeInvalidatesSignature() throws Exception {
         // the signed references carry the part content type as "?ContentType=...", because
         // [Content_Types].xml itself is not signed
-        final String docType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml";
-        final String macroType = "application/vnd.ms-word.document.macroEnabled.main+xml";
+        final String docType = XWPFRelation.DOCUMENT.getContentType();
+        final String macroType = XWPFRelation.MACRO_DOCUMENT.getContentType();
 
-        final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
-        try (InputStream is = testdata.openResourceAsStream("hello-world-signed.docx");
-             ZipInputStream zis = new ZipInputStream(is);
-             ZipOutputStream zos = new ZipOutputStream(bos)) {
-            for (ZipEntry ze; (ze = zis.getNextEntry()) != null; ) {
-                byte[] data = IOUtils.toByteArray(zis);
-                if ("[Content_Types].xml".equals(ze.getName())) {
-                    String types = new String(data, StandardCharsets.UTF_8);
-                    assertTrue(types.contains(docType));
-                    data = types.replace(docType, macroType).getBytes(StandardCharsets.UTF_8);
-                }
-                zos.putNextEntry(new ZipEntry(ze.getName()));
-                zos.write(data);
-                zos.closeEntry();
-            }
-        }
+        InputStream modified = rewriteSignedDocx(entries -> {
+            assertThat(new String(entries.get("[Content_Types].xml"), StandardCharsets.UTF_8), containsString(docType));
+            entries.put("[Content_Types].xml", replace(entries.get("[Content_Types].xml"), docType, macroType));
+        });
 
-        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
+        try (OPCPackage pkg = OPCPackage.open(modified)) {
             assertEquals(macroType, pkg.getPart(PackagingURIHelper.createPartName("/word/document.xml")).getContentType());
             SignatureInfo si = new SignatureInfo();
             si.setOpcPackage(pkg);
             si.setSignatureConfig(new SignatureConfig());
-            EncryptedDocumentException ex = assertThrows(EncryptedDocumentException.class, si::verifySignature);
-            assertInstanceOf(URIReferenceException.class, ex.getCause().getCause());
+            assertThat(si.verifySignature(), is(false));
         }
     }
 
@@ -507,38 +494,46 @@ class TestSignatureInfo {
      * is set, a word/tampered.xml main part which says "Tampered" instead of "Hello world"
      */
     private static InputStream modifySignedDocx(String rel, boolean addTamperedPart) throws IOException {
-        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
-        try (ZipFile zf = ZipFile.builder().setFile(testdata.getFile("hello-world-signed.docx")).get();
-             ZipArchiveOutputStream zos = new ZipArchiveOutputStream(bos)) {
-            String document = null;
-            for (ZipArchiveEntry ze : Collections.list(zf.getEntries())) {
-                byte[] data;
-                try (InputStream is = zf.getInputStream(ze)) {
-                    data = IOUtils.toByteArray(is);
-                }
-                String name = ze.getName();
-                if (addTamperedPart && "[Content_Types].xml".equals(name)) {
-                    data = new String(data, StandardCharsets.UTF_8).replace("</Types>",
-                        "<Override PartName=\"/word/tampered.xml\" ContentType=\"" +
-                        XWPFRelation.DOCUMENT.getContentType() + "\"/></Types>").getBytes(StandardCharsets.UTF_8);
-                } else if ("_rels/.rels".equals(name)) {
-                    data = new String(data, StandardCharsets.UTF_8).replace("</Relationships>",
-                        rel + "</Relationships>").getBytes(StandardCharsets.UTF_8);
-                } else if ("word/document.xml".equals(name)) {
-                    document = new String(data, StandardCharsets.UTF_8);
-                }
-                zos.putArchiveEntry(new ZipArchiveEntry(name));
-                zos.write(data);
-                zos.closeArchiveEntry();
-            }
-            assertNotNull(document);
+        return rewriteSignedDocx(entries -> {
+            entries.put("_rels/.rels", replace(entries.get("_rels/.rels"), "</Relationships>", rel + "</Relationships>"));
             if (addTamperedPart) {
-                zos.putArchiveEntry(new ZipArchiveEntry("word/tampered.xml"));
-                zos.write(document.replace("Hello world", "Tampered").getBytes(StandardCharsets.UTF_8));
+                entries.put("[Content_Types].xml", replace(entries.get("[Content_Types].xml"), "</Types>",
+                    "<Override PartName=\"/word/tampered.xml\" ContentType=\"" +
+                    XWPFRelation.DOCUMENT.getContentType() + "\"/></Types>"));
+                byte[] document = entries.get("word/document.xml");
+                assertNotNull(document);
+                entries.put("word/tampered.xml", replace(document, "Hello world", "Tampered"));
+            }
+        });
+    }
+
+    /**
+     * Copies hello-world-signed.docx, letting {@code modifier} change, add or remove entries by name
+     */
+    private static InputStream rewriteSignedDocx(Consumer<Map<String, byte[]>> modifier) throws IOException {
+        Map<String, byte[]> entries = new LinkedHashMap<>();
+        try (ZipFile zf = ZipFile.builder().setFile(testdata.getFile("hello-world-signed.docx")).get()) {
+            for (ZipArchiveEntry ze : Collections.list(zf.getEntries())) {
+                try (InputStream is = zf.getInputStream(ze)) {
+                    entries.put(ze.getName(), IOUtils.toByteArray(is));
+                }
+            }
+        }
+        modifier.accept(entries);
+
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(bos)) {
+            for (Map.Entry<String, byte[]> me : entries.entrySet()) {
+                zos.putArchiveEntry(new ZipArchiveEntry(me.getKey()));
+                zos.write(me.getValue());
                 zos.closeArchiveEntry();
             }
         }
         return bos.toInputStream();
+    }
+
+    private static byte[] replace(byte[] data, String target, String replacement) {
+        return new String(data, StandardCharsets.UTF_8).replace(target, replacement).getBytes(StandardCharsets.UTF_8);
     }
 
     @Test
