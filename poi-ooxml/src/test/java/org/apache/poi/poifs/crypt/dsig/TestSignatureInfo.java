@@ -472,6 +472,20 @@ class TestSignatureInfo {
     }
 
     @Test
+    void testAddedRelationshipIsNotSigned() throws Exception {
+        // a second officeDocument relationship with a new Id, added after signing
+        String rel = "<Relationship Id=\"rId0\" Type=\"" + PackageRelationshipTypes.CORE_DOCUMENT +
+            "\" Target=\"word/tampered.xml\"/>";
+
+        try (OPCPackage pkg = OPCPackage.open(modifySignedDocx(rel, true))) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "a relationship added after signing must invalidate the signature");
+        }
+    }
+
+    @Test
     void testForeignRelationshipElementIsIgnored() throws Exception {
         // an element named Relationship in another namespace is not a relationship,
         // neither for the package model nor for the relationship transform
