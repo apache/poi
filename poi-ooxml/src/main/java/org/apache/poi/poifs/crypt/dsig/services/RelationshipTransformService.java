@@ -52,6 +52,8 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import org.apache.jcp.xml.dsig.internal.dom.ApacheNodeSetData;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
+import org.apache.poi.openxml4j.opc.PackageNamespaces;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.SuppressForbidden;
 import org.apache.xml.security.signature.XMLSignatureNodeInput;
@@ -205,9 +207,11 @@ public class RelationshipTransformService extends TransformService {
 
         // keep only those relationships which id is registered in the sourceIds - all of them,
         // at any depth: the package model also reads nested elements and resolves a duplicated
-        // id to the last one, so dropping one here would leave an unsigned target out of the digest
+        // id to the last one, so dropping a duplicate of a signed id here would leave its target
+        // out of the digest. Only elements in the relationships namespace are relationships,
+        // as in PackageRelationshipCollection
         Element root = doc.getDocumentElement();
-        NodeList nl = root.getElementsByTagNameNS("*", "Relationship");
+        NodeList nl = root.getElementsByTagNameNS(PackageNamespaces.RELATIONSHIPS, PackageRelationship.RELATIONSHIP_TAG_NAME);
         List<Element> rsList = new ArrayList<>();
         for (int i=0; i<nl.getLength(); i++) {
             Element el = (Element)nl.item(i);

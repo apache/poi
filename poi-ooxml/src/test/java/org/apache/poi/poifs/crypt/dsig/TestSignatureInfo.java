@@ -432,6 +432,40 @@ class TestSignatureInfo {
         // pointing to an unsigned part - the package model resolves rId1 to this one
         String rel = String.format(Locale.ROOT, wrapper, "<Relationship Id=\"rId1\" Type=\"" +
             PackageRelationshipTypes.CORE_DOCUMENT + "\" Target=\"word/tampered.xml\"/>");
+
+        try (OPCPackage pkg = OPCPackage.open(modifySignedDocx(rel, true));
+             XWPFDocument doc = new XWPFDocument(pkg)) {
+            assertEquals("Tampered", doc.getParagraphs().get(0).getText());
+
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "signature must not cover the substituted main part");
+        }
+    }
+
+    @Test
+    void testForeignRelationshipElementIsIgnored() throws Exception {
+        // an element named Relationship in another namespace is not a relationship,
+        // neither for the package model nor for the relationship transform
+        String rel = "<y:Relationship xmlns:y=\"urn:y\" Id=\"rId1\" Target=\"word/other.xml\"/>";
+
+        try (OPCPackage pkg = OPCPackage.open(modifySignedDocx(rel, false));
+             XWPFDocument doc = new XWPFDocument(pkg)) {
+            assertEquals("Hello world", doc.getParagraphs().get(0).getText());
+
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertTrue(si.verifySignature());
+        }
+    }
+
+    /**
+     * Copies hello-world-signed.docx, adding {@code rel} to _rels/.rels and, if {@code addTamperedPart}
+     * is set, a word/tampered.xml main part which says "Tampered" instead of "Hello world"
+     */
+    private static InputStream modifySignedDocx(String rel, boolean addTamperedPart) throws IOException {
         UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (ZipFile zf = ZipFile.builder().setFile(testdata.getFile("hello-world-signed.docx")).get();
              ZipArchiveOutputStream zos = new ZipArchiveOutputStream(bos)) {
@@ -442,7 +476,7 @@ class TestSignatureInfo {
                     data = IOUtils.toByteArray(is);
                 }
                 String name = ze.getName();
-                if ("[Content_Types].xml".equals(name)) {
+                if (addTamperedPart && "[Content_Types].xml".equals(name)) {
                     data = new String(data, StandardCharsets.UTF_8).replace("</Types>",
                         "<Override PartName=\"/word/tampered.xml\" ContentType=\"" +
                         XWPFRelation.DOCUMENT.getContentType() + "\"/></Types>").getBytes(StandardCharsets.UTF_8);
@@ -457,20 +491,13 @@ class TestSignatureInfo {
                 zos.closeArchiveEntry();
             }
             assertNotNull(document);
-            zos.putArchiveEntry(new ZipArchiveEntry("word/tampered.xml"));
-            zos.write(document.replace("Hello world", "Tampered").getBytes(StandardCharsets.UTF_8));
-            zos.closeArchiveEntry();
+            if (addTamperedPart) {
+                zos.putArchiveEntry(new ZipArchiveEntry("word/tampered.xml"));
+                zos.write(document.replace("Hello world", "Tampered").getBytes(StandardCharsets.UTF_8));
+                zos.closeArchiveEntry();
+            }
         }
-
-        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream());
-             XWPFDocument doc = new XWPFDocument(pkg)) {
-            assertEquals("Tampered", doc.getParagraphs().get(0).getText());
-
-            SignatureInfo si = new SignatureInfo();
-            si.setOpcPackage(pkg);
-            si.setSignatureConfig(new SignatureConfig());
-            assertFalse(si.verifySignature(), "signature must not cover the substituted main part");
-        }
+        return bos.toInputStream();
     }
 
     @Test
