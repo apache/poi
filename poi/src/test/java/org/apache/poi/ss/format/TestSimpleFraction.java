@@ -63,13 +63,13 @@ class TestSimpleFraction {
 
     /**
      * One ulp away from p/q, 1/(remainder) is sometimes exactly an integer, so the next remainder is zero.
-     * About 0.07% of these overflowed before, so 20,000 draws miss it with probability ~e^-13.
+     * About 0.12% of these draws overflowed before, so 200,000 draws all but always hit one.
      */
     @Test
     void testOneUlpFromRationals() {
         long seed = System.nanoTime();
         Random random = new Random(seed);
-        for (int i = 0; i < 20_000; i++) {
+        for (int i = 0; i < 200_000; i++) {
             int q = 2 + random.nextInt(998);
             int p = 1 + random.nextInt(q - 1);
             int g = gcd(p, q);

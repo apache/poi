@@ -555,7 +555,10 @@ public class DataFormatter {
         if (plainFraction || fractionWithText) {
             if (fractionWithText) {
                 try {
-                    return new CellFormatWrapper(CellFormat.getInstance(locale, formatStr));
+                    CellFormat cellFormat = CellFormat.getInstance(locale, formatStr);
+                    // a format CellFormat cannot make sense of fails here, not when formatting
+                    cellFormat.apply(cellValue);
+                    return new CellFormatWrapper(cellFormat);
                 } catch (Exception e) {
                     LOG.atWarn().withThrowable(e).log("Formatting failed for format {}, falling back", formatStr);
                 }
