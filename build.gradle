@@ -819,7 +819,8 @@ task jenkins(dependsOn: [
 task jenkinsLite(dependsOn: [
             'replaceVersion',
             subprojects.build,
-            subprojects.test
+            subprojects.test,
+            ":poi-fuzz:shadowJar"
 ]) {}
 
 /*task downloadJarsToLibs() {
