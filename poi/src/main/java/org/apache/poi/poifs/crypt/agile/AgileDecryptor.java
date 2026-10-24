@@ -32,6 +32,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.RC2ParameterSpec;
@@ -213,9 +214,41 @@ public class AgileDecryptor extends Decryptor {
     @SuppressWarnings({"java:S2095"})
     @Override
     public InputStream getDataStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
+        verifyIntegrity(dir);
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);
         _length = dis.readLong();
         return new AgileCipherInputStream(dis, _length);
+    }
+
+    /**
+     * 2.3.4.14 DataIntegrity Generation (Agile Encryption)
+     *
+     * Verifies the HMAC of the entire EncryptedPackage stream, including the StreamSize field,
+     * against the decrypted encryptedHmacValue, so modifications of the encrypted data are
+     * detected before any of it is decrypted.
+     */
+    private void verifyIntegrity(DirectoryNode dir) throws IOException, GeneralSecurityException {
+        byte[] hmacKey = getIntegrityHmacKey();
+        byte[] hmacValue = getIntegrityHmacValue();
+        if (hmacKey == null || hmacValue == null) {
+            throw new EncryptedDocumentException("The password needs to be verified before the data stream can be accessed");
+        }
+
+        HashAlgorithm hashAlgo = getEncryptionInfo().getHeader().getHashAlgorithm();
+        Mac integrityMD = CryptoFunctions.getMac(hashAlgo);
+        integrityMD.init(new SecretKeySpec(hmacKey, hashAlgo.jceHmacId));
+
+        byte[] buf = new byte[4096];
+        try (DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY)) {
+            int readBytes;
+            while ((readBytes = dis.read(buf)) != -1) {
+                integrityMD.update(buf, 0, readBytes);
+            }
+        }
+
+        if (!MessageDigest.isEqual(hmacValue, integrityMD.doFinal())) {
+            throw new EncryptedDocumentException("The data integrity check of the encrypted package failed");
+        }
     }
 
     @Override
@@ -271,9 +304,6 @@ public class AgileDecryptor extends Decryptor {
         throws GeneralSecurityException {
             super(stream, size, 4096);
         }
-
-        // TODO: calculate integrity hmac while reading the stream
-        // for a post-validation of the data
 
         @Override
         protected Cipher initCipherForBlock(Cipher cipher, int block)
