@@ -90,12 +90,13 @@ public class OOXMLURIDereferencer implements URIDereferencer {
         }
 
         // [Content_Types].xml is not signed, so a signed reference carries the content type of
-        // the part in its query - the signature only covers the part if the content type matches
+        // the part in its query - the signature only covers the part if the content type matches.
+        // Office and POI write the content type as the only query parameter
         String query = uri.getQuery();
         if (query != null && query.startsWith(CONTENT_TYPE_QUERY)) {
             String signedContentType = query.substring(CONTENT_TYPE_QUERY.length());
             if (!signedContentType.equalsIgnoreCase(part.getContentType())) {
-                throw new URIReferenceException("content type of " + part.getPartName() + " is " +
+                throw new ContentTypeMismatchException("content type of " + part.getPartName() + " is " +
                     part.getContentType() + ", but the signature references " + signedContentType);
             }
         }
@@ -140,6 +141,17 @@ public class OOXMLURIDereferencer implements URIDereferencer {
         } catch (InvalidFormatException e) {
             LOG.atWarn().log("illegal part name (not expected) in {}", uri);
             return null;
+        }
+    }
+
+    /**
+     * The content type of a part differs from the one the signature references, i.e. the signature is invalid
+     */
+    static final class ContentTypeMismatchException extends URIReferenceException {
+        private static final long serialVersionUID = 1L;
+
+        ContentTypeMismatchException(String message) {
+            super(message);
         }
     }
 }
