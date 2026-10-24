@@ -66,3 +66,8 @@ tasks.register('testJar', Jar) {
     setArchiveClassifier 'tests'
     from sourceSets.test.output + sourceSets.main.output
 }
+
+shadowJar{
+    // set name to not include the version in the file-name
+    archiveFileName = "poi-fuzz-all.jar"
+}
