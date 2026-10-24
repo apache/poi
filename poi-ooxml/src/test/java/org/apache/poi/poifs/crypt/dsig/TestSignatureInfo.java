@@ -26,7 +26,9 @@ package org.apache.poi.poifs.crypt.dsig;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -45,6 +47,7 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.security.cert.X509CRL;
@@ -57,9 +60,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.security.auth.x500.X500Principal;
 import javax.xml.crypto.MarshalException;
+import javax.xml.crypto.URIReferenceException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
@@ -77,6 +84,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.DummyKeystore.KeyCertPair;
 import org.apache.poi.poifs.crypt.dsig.facets.EnvelopedSignatureFacet;
@@ -342,6 +350,40 @@ class TestSignatureInfo {
             boolean b = si.verifySignature();
             assertTrue(b, "test-file: " + testFile);
             pkg.revert();
+        }
+    }
+
+    @Test
+    void contentTypeChangeInvalidatesSignature() throws Exception {
+        // the signed references carry the part content type as "?ContentType=...", because
+        // [Content_Types].xml itself is not signed
+        final String docType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml";
+        final String macroType = "application/vnd.ms-word.document.macroEnabled.main+xml";
+
+        final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (InputStream is = testdata.openResourceAsStream("hello-world-signed.docx");
+             ZipInputStream zis = new ZipInputStream(is);
+             ZipOutputStream zos = new ZipOutputStream(bos)) {
+            for (ZipEntry ze; (ze = zis.getNextEntry()) != null; ) {
+                byte[] data = IOUtils.toByteArray(zis);
+                if ("[Content_Types].xml".equals(ze.getName())) {
+                    String types = new String(data, StandardCharsets.UTF_8);
+                    assertTrue(types.contains(docType));
+                    data = types.replace(docType, macroType).getBytes(StandardCharsets.UTF_8);
+                }
+                zos.putNextEntry(new ZipEntry(ze.getName()));
+                zos.write(data);
+                zos.closeEntry();
+            }
+        }
+
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
+            assertEquals(macroType, pkg.getPart(PackagingURIHelper.createPartName("/word/document.xml")).getContentType());
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            EncryptedDocumentException ex = assertThrows(EncryptedDocumentException.class, si::verifySignature);
+            assertInstanceOf(URIReferenceException.class, ex.getCause().getCause());
         }
     }
 
