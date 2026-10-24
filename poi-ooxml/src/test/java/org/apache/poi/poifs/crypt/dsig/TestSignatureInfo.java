@@ -45,6 +45,7 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.security.cert.X509CRL;
@@ -53,8 +54,10 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -64,6 +67,9 @@ import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.logging.log4j.Logger;
@@ -103,6 +109,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFSignatureLine;
 import org.apache.xmlbeans.SystemProperties;
 import org.apache.xmlbeans.XmlCursor;
@@ -415,6 +422,54 @@ class TestSignatureInfo {
                 boolean b = si.verifySignature();
                 assertFalse(b, "signature should be broken");
             }
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"%s", "<x:wrap xmlns:x=\"urn:x\">%s</x:wrap>"})
+    void testDuplicateRelationshipId(String wrapper) throws Exception {
+        // add a second officeDocument relationship reusing the signed Id "rId1",
+        // pointing to an unsigned part - the package model resolves rId1 to this one
+        String rel = String.format(Locale.ROOT, wrapper, "<Relationship Id=\"rId1\" Type=\"" +
+            PackageRelationshipTypes.CORE_DOCUMENT + "\" Target=\"word/tampered.xml\"/>");
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (ZipFile zf = ZipFile.builder().setFile(testdata.getFile("hello-world-signed.docx")).get();
+             ZipArchiveOutputStream zos = new ZipArchiveOutputStream(bos)) {
+            String document = null;
+            for (ZipArchiveEntry ze : Collections.list(zf.getEntries())) {
+                byte[] data;
+                try (InputStream is = zf.getInputStream(ze)) {
+                    data = IOUtils.toByteArray(is);
+                }
+                String name = ze.getName();
+                if ("[Content_Types].xml".equals(name)) {
+                    data = new String(data, StandardCharsets.UTF_8).replace("</Types>",
+                        "<Override PartName=\"/word/tampered.xml\" ContentType=\"" +
+                        XWPFRelation.DOCUMENT.getContentType() + "\"/></Types>").getBytes(StandardCharsets.UTF_8);
+                } else if ("_rels/.rels".equals(name)) {
+                    data = new String(data, StandardCharsets.UTF_8).replace("</Relationships>",
+                        rel + "</Relationships>").getBytes(StandardCharsets.UTF_8);
+                } else if ("word/document.xml".equals(name)) {
+                    document = new String(data, StandardCharsets.UTF_8);
+                }
+                zos.putArchiveEntry(new ZipArchiveEntry(name));
+                zos.write(data);
+                zos.closeArchiveEntry();
+            }
+            assertNotNull(document);
+            zos.putArchiveEntry(new ZipArchiveEntry("word/tampered.xml"));
+            zos.write(document.replace("Hello world", "Tampered").getBytes(StandardCharsets.UTF_8));
+            zos.closeArchiveEntry();
+        }
+
+        try (OPCPackage pkg = OPCPackage.open(bos.toInputStream());
+             XWPFDocument doc = new XWPFDocument(pkg)) {
+            assertEquals("Tampered", doc.getParagraphs().get(0).getText());
+
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "signature must not cover the substituted main part");
         }
     }
 
