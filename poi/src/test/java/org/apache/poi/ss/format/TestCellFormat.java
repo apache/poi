@@ -931,6 +931,24 @@ class TestCellFormat {
     }
 
     @Test
+    void testFractionDenominatorDigitsCapped() {
+        // more than 9 denominator digits overflowed an int and the format threw when applied
+        String nine = CellFormat.getInstance("# ?????????/?????????").apply(Math.PI).text.trim();
+        for (int digits : new int[]{10, 20}) {
+            String q = "?".repeat(digits);
+            String text = CellFormat.getInstance("# " + q + "/" + q).apply(Math.PI).text;
+            assertEquals(nine.replaceAll(" +", " "), text.trim().replaceAll(" +", " "));
+        }
+    }
+
+    @Test
+    void testFractionWithZeroRemainder() {
+        // the continued fraction for this value has a zero remainder, which used to overflow
+        assertEquals("   1/324", CellFormat.getInstance("# ???/???").apply(0.00308641975308642).text);
+        assertEquals("0    ", CellFormat.getInstance("# ?/?").apply(0.00308641975308642).text);
+    }
+
+    @Test
     void testAccountingFormats() {
         char pound = '\u00A3';
         char euro  = '\u20AC';

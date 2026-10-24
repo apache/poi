@@ -464,6 +464,15 @@ class TestDataFormatter {
         }
     }
 
+    @Test
+    void testFractionWithTextAndLongDenominator() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // text in a fraction goes to CellFormat, where more than 9 denominator digits overflowed and the format threw
+        assertEquals("3: 35580937/251290841",
+                dfUS.formatRawCellContents(Math.PI, -1, "#\\:??????????/??????????").replaceAll(" +", " "));
+    }
+
     /**
      * Test that _x (blank with the space taken by "x")
      *  and *x (fill to the column width with "x"s) are

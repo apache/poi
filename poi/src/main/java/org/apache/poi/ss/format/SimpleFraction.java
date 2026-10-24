@@ -102,6 +102,10 @@ public class SimpleFraction {
         do {
             ++n;
             double r1 = 1.0 / (r0 - a0);
+            if (r1 > overflow) {
+                // a zero or tiny remainder: the next convergent would overflow, and p1/q1 is already the closest
+                return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
+            }
             long a1 = (long)Math.floor(r1);
             p2 = (a1 * p1) + p0;
             q2 = (a1 * q1) + q0;

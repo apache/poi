@@ -62,6 +62,8 @@ public class CellNumberFormatter extends CellFormatter {
     private final List<Special> denominatorSpecials = new ArrayList<>();
     private final List<Special> exponentSpecials = new ArrayList<>();
     private final List<Special> exponentDigitSpecials = new ArrayList<>();
+    /** 10^9 - 1 is the largest all-nines denominator that fits in an int */
+    private static final int MAX_DENOMINATOR_DIGITS = 9;
     private final int maxDenominator;
     /** the denominator given as a number, e.g. 4 for "# ?/4", or 0 */
     private final int fixedDenominator;
@@ -335,7 +337,7 @@ public class CellNumberFormatter extends CellFormatter {
     }
 
     private static int maxValue(List<Special> s) {
-        return Math.toIntExact(Math.round(Math.pow(10, s.size()) - 1));
+        return Math.toIntExact(Math.round(Math.pow(10, Math.min(s.size(), MAX_DENOMINATOR_DIGITS)) - 1));
     }
 
     private List<Special> specialsFor(int pos, int takeFirst) {
@@ -680,7 +682,13 @@ public class CellNumberFormatter extends CellFormatter {
         } else {
             // buildFractionMaxDenominator only gives denominators below the maximum it is passed, so pass
             // 10^digits, as FractionFormat does: e.g. "??/??" shows 0.99 as 98/99, where 99 would give 1/1
-            SimpleFraction frac = SimpleFraction.buildFractionMaxDenominator(fractional, maxDenominator + 1);
+            SimpleFraction frac;
+            try {
+                frac = SimpleFraction.buildFractionMaxDenominator(fractional, maxDenominator + 1);
+            } catch (RuntimeException e) {
+                LOG.atError().withThrowable(e).log("error while fraction evaluation");
+                frac = new SimpleFraction(Math.toIntExact(Math.round(fractional)), 1);
+            }
             n = frac.getNumerator();
             d = frac.getDenominator();
         }
