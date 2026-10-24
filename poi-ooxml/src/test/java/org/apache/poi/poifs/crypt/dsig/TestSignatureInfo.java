@@ -25,7 +25,6 @@ package org.apache.poi.poifs.crypt.dsig;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -376,7 +375,7 @@ class TestSignatureInfo {
             SignatureInfo si = new SignatureInfo();
             si.setOpcPackage(pkg);
             si.setSignatureConfig(new SignatureConfig());
-            assertThat(si.verifySignature(), is(false));
+            assertFalse(si.verifySignature(), "a changed content type must invalidate the signature");
         }
     }
 
