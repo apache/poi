@@ -446,7 +446,7 @@ class TestSignatureInfo {
 
     @Test
     void testAddedRelationshipIsNotSigned() throws Exception {
-        // a relationship which would be signed, but was added after signing
+        // a second officeDocument relationship with a new Id, added after signing
         String rel = "<Relationship Id=\"rId0\" Type=\"" + PackageRelationshipTypes.CORE_DOCUMENT +
             "\" Target=\"word/tampered.xml\"/>";
 

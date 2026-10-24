@@ -18,6 +18,8 @@
 package org.apache.poi.poifs.crypt.agile;
 
 import static org.apache.poi.poifs.crypt.Decryptor.DEFAULT_POIFS_ENTRY;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,6 +29,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -172,6 +175,51 @@ class TestAgileDecryptor {
             Decryptor dec = infoDec.getDecryptor();
             assertTrue(dec.verifyPassword("test"));
             assertThrows(EncryptedDocumentException.class, () -> dec.getDataStream(fs));
+        }
+    }
+
+    @Test
+    void testTamperedHmacValue() throws Exception {
+        byte[] plain = new byte[3000];
+        Arrays.fill(plain, (byte) 'x');
+
+        EncryptionInfo infoEnc = new EncryptionInfo(EncryptionMode.agile);
+        Encryptor enc = infoEnc.getEncryptor();
+        enc.confirmPassword("test");
+
+        byte[] encData;
+        try (POIFSFileSystem fsEnc = new POIFSFileSystem()) {
+            try (OutputStream os = enc.getDataStream(fsEnc)) {
+                os.write(plain);
+            }
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+            fsEnc.writeFilesystem(bos);
+            encData = bos.toByteArray();
+        }
+
+        try (POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(encData))) {
+            // change one character of the encryptedHmacValue, so the encrypted data is intact but the HMAC does not match
+            byte[] encInfoBytes;
+            try (DocumentInputStream dis = fs.getRoot().createDocumentInputStream(EncryptionInfo.ENCRYPTION_INFO_ENTRY)) {
+                encInfoBytes = IOUtils.toByteArray(dis);
+            }
+            String encInfo = new String(encInfoBytes, StandardCharsets.ISO_8859_1);
+            int pos = encInfo.indexOf("encryptedHmacValue=\"") + "encryptedHmacValue=\"".length();
+            encInfoBytes[pos] = (byte) (encInfoBytes[pos] == 'A' ? 'B' : 'A');
+            fs.createOrUpdateDocument(new ByteArrayInputStream(encInfoBytes), EncryptionInfo.ENCRYPTION_INFO_ENTRY);
+
+            Decryptor dec = new EncryptionInfo(fs).getDecryptor();
+            assertTrue(dec.verifyPassword("test"));
+            EncryptedDocumentException e = assertThrows(EncryptedDocumentException.class, () -> dec.getDataStream(fs));
+            assertThat(e.getMessage(), containsString("setFailOnIntegrityError(false)"));
+
+            // Excel for the web shows such a file in read-only mode, so it can be decrypted anyway
+            AgileDecryptor.setFailOnIntegrityError(false);
+            try (InputStream is = dec.getDataStream(fs)) {
+                assertArrayEquals(plain, IOUtils.toByteArray(is));
+            } finally {
+                AgileDecryptor.setFailOnIntegrityError(true);
+            }
         }
     }
 }
