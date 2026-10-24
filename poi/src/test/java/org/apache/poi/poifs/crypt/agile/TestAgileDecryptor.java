@@ -142,4 +142,36 @@ class TestAgileDecryptor {
         assertThrows(EncryptedDocumentException.class, () ->
                 new EncryptionInfo(new LittleEndianByteArrayInputStream(modifiedEncInfoBytes), null));
     }
+
+    @Test
+    void testTamperedEncryptedPackageIsRejected() throws Exception {
+        EncryptionInfo infoEnc = new EncryptionInfo(EncryptionMode.agile);
+        Encryptor enc = infoEnc.getEncryptor();
+        enc.confirmPassword("test");
+
+        byte[] encData;
+        try (POIFSFileSystem fsEnc = new POIFSFileSystem()) {
+            try (OutputStream os = enc.getDataStream(fsEnc)) {
+                os.write(new byte[3000]);
+            }
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+            fsEnc.writeFilesystem(bos);
+            encData = bos.toByteArray();
+        }
+
+        try (POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(encData))) {
+            // flip one bit of the encrypted data, i.e. behind the 8 byte StreamSize field
+            byte[] encPackage;
+            try (DocumentInputStream dis = fs.getRoot().createDocumentInputStream(DEFAULT_POIFS_ENTRY)) {
+                encPackage = IOUtils.toByteArray(dis);
+            }
+            encPackage[8 + 16] ^= 0x01;
+            fs.createOrUpdateDocument(new ByteArrayInputStream(encPackage), DEFAULT_POIFS_ENTRY);
+
+            EncryptionInfo infoDec = new EncryptionInfo(fs);
+            Decryptor dec = infoDec.getDecryptor();
+            assertTrue(dec.verifyPassword("test"));
+            assertThrows(EncryptedDocumentException.class, () -> dec.getDataStream(fs));
+        }
+    }
 }
