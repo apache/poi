@@ -25,8 +25,10 @@ import java.util.Locale;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.StringUtil;
@@ -121,6 +123,10 @@ public final class XSSFPasswordHelper {
                 HashAlgorithm hashAlgo = HashAlgorithm.fromString(algoName);
                 byte[] salt = dec64.decode(saltVal);
                 int spinCnt = Integer.parseInt(spinCount);
+                if (spinCnt < 0 || spinCnt > AgileEncryptionVerifier.getMaxSpinCount()) {
+                    throw new EncryptedDocumentException("SpinCount " + spinCnt +
+                            " is out of the allowed range [0, " + AgileEncryptionVerifier.getMaxSpinCount() + "]");
+                }
                 byte[] hash2 = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCnt, false);
                 return Arrays.equals(hash1, hash2);
             }

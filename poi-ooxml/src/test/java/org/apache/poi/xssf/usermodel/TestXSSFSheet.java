@@ -45,11 +45,13 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
 import org.apache.poi.ss.tests.usermodel.BaseTestXSheet;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
@@ -1351,6 +1353,16 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
         try (XSSFWorkbook wb3 = openSampleWorkbook("workbookProtection-sheet_password-2013.xlsx")) {
             assertTrue(wb3.getSheetAt(0).validateSheetPassword("pwd"));
+        }
+    }
+
+    @Test
+    void protectSheet_spinCountTooLarge() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet xs = wb.createSheet();
+            xs.setSheetPassword("test", HashAlgorithm.sha512);
+            xs.getCTWorksheet().getSheetProtection().setSpinCount(AgileEncryptionVerifier.getMaxSpinCount() + 1L);
+            assertThrows(EncryptedDocumentException.class, () -> xs.validateSheetPassword("test"));
         }
     }
 
