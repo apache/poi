@@ -128,7 +128,7 @@ jobs:
       run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.FormulaParserFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusFormulaParser
 
     - name: Run Fuzzing - POIFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar --instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.** --target_class=org.apache.poi.fuzz.POIFuzzer -rss_limit_mb=4096 -timeout=600 -timeout=600 corpus
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar --instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.** --target_class=org.apache.poi.fuzz.POIFuzzer -rss_limit_mb=4096 -timeout=600 -max_total_time=600 corpus
 
     - name: Upload reproducers
       uses: actions/upload-artifact@v7
