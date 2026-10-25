@@ -42,37 +42,19 @@ public class XSSFBFileHandler extends AbstractFileHandler {
         byte[] bytes = IOUtils.toByteArray(stream);
 
         try (OPCPackage opcPackage = OPCPackage.open(UnsynchronizedByteArrayInputStream.builder().setByteArray(bytes).get())) {
-            testOne(opcPackage);
-        }
-
-        try (OPCPackage opcPackage = OPCPackage.open(UnsynchronizedByteArrayInputStream.builder().setByteArray(bytes).get())) {
-            testNotHandledByWorkbookException(opcPackage);
-        }
-    }
-
-    private void testNotHandledByWorkbookException(OPCPackage pkg) throws IOException {
-        try {
-            new XSSFWorkbook(pkg).close();
-        } catch (XLSBUnsupportedException e) {
-            //this is what we'd expect
-            //swallow
+            try {
+                new XSSFWorkbook(opcPackage).close();
+            } catch (XLSBUnsupportedException e) {
+                //this is what we'd expect
+                //swallow
+            }
         }
     }
 
     @Override
     public void handleExtracting(File file) throws Exception {
-        OPCPackage pkg = OPCPackage.open(file, PackageAccess.READ);
-        try {
+        try (OPCPackage pkg = OPCPackage.open(file, PackageAccess.READ)) {
             testOne(pkg);
-        } finally {
-            pkg.close();
-        }
-
-        pkg = OPCPackage.open(file, PackageAccess.READ);
-        try {
-            testNotHandledByWorkbookException(pkg);
-        } finally {
-            pkg.close();
         }
     }
 
