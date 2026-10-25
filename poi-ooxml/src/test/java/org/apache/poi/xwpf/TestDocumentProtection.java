@@ -210,4 +210,15 @@ class TestDocumentProtection {
             assertThrows(EncryptedDocumentException.class, () -> doc.validateProtectionPassword("Example"));
         }
     }
+
+    @Test
+    void spinCountOverflowsInt() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            doc.enforceCommentsProtection("Example", HashAlgorithm.sha512);
+            // 2^32 + 100000 wraps to 100000 (the spin count actually used) when narrowed to int
+            BigInteger spinCount = BigInteger.ONE.shiftLeft(32).add(BigInteger.valueOf(100000));
+            doc.getSettings().getCTSettings().getDocumentProtection().setCryptSpinCount(spinCount);
+            assertThrows(EncryptedDocumentException.class, () -> doc.validateProtectionPassword("Example"));
+        }
+    }
 }

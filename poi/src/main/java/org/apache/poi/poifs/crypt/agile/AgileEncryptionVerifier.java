@@ -31,7 +31,8 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
 
     /**
      * Maximum allowed spinCount to prevent CPU-exhaustion DoS via crafted documents.
-     * Values beyond this are rejected during parsing.
+     * Values beyond this are rejected when parsing agile encryption info and when validating
+     * XSSF sheet/workbook protection and XWPF document protection passwords.
      */
     private static int MAX_SPIN_COUNT = DEFAULT_MAX_SPIN_COUNT;
 
@@ -40,7 +41,8 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
 
     /**
      * Maximum allowed spinCount to prevent CPU-exhaustion DoS via crafted documents.
-     * Values beyond this are rejected during parsing.
+     * Values beyond this are rejected when parsing agile encryption info and when validating
+     * XSSF sheet/workbook protection and XWPF document protection passwords.
      * @since 6.0.0
      */
     public static int getMaxSpinCount() {
@@ -49,7 +51,8 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
 
     /**
      * Maximum allowed spinCount to prevent CPU-exhaustion DoS via crafted documents.
-     * Values beyond this are rejected during parsing.
+     * Values beyond this are rejected when parsing agile encryption info and when validating
+     * XSSF sheet/workbook protection and XWPF document protection passwords.
      * @since 6.0.0
      */
     public static void setMaxSpinCount(final int maxSpinCount) {

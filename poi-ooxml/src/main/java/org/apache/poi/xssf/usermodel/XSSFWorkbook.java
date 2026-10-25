@@ -2310,6 +2310,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Validate the password against the stored hash, the hashing method will be determined
      *  by the existing password attributes
      * @return true, if the hashes match (... though original password may differ ...)
+     * @throws org.apache.poi.EncryptedDocumentException if the stored spin count is outside the range allowed by
+     *  {@link org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier#getMaxSpinCount()}
      */
     public boolean validateWorkbookPassword(String password) {
         if (!workbookProtectionPresent()) {
@@ -2336,6 +2338,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Validate the password against the stored hash, the hashing method will be determined
      *  by the existing password attributes
      * @return true if the hashes match (... though original password may differ ...)
+     * @throws org.apache.poi.EncryptedDocumentException if the stored spin count is outside the range allowed by
+     *  {@link org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier#getMaxSpinCount()}
      */
     public boolean validateRevisionsPassword(String password) {
         if (!workbookProtectionPresent()) {
