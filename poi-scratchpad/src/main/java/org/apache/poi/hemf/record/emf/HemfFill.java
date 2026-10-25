@@ -810,14 +810,20 @@ public final class HemfFill {
         final int bufferSize = Math.min(dibSize, HemfPicture.getMaxRecordLength());
         final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(bufferSize).get();
         final long cbBmiSrcAct = IOUtils.copy(leis, bos, cbBmi);
-        assert (cbBmiSrcAct == cbBmi);
+        if (cbBmiSrcAct != cbBmi) {
+            LOG.atWarn().log("cbBmiSrcAct != cbBmi: " + cbBmiSrcAct + " and " + cbBmi);
+        }
         leis.skipFully(undefinedSpace2);
         final long cbBitsSrcAct = IOUtils.copy(leis, bos, cbBits);
-        assert (cbBitsSrcAct == cbBits);
+        if (cbBitsSrcAct != cbBits) {
+            LOG.atWarn().log("cbBitsSrcAct != cbBits: " + cbBitsSrcAct + " and " + cbBits);
+        }
 
         final LittleEndianInputStream leisDib = new LittleEndianInputStream(bos.toInputStream());
         final int dibSizeAct = bitmap.init(leisDib, dibSize);
-        assert (dibSizeAct <= dibSize);
+        if (dibSizeAct > dibSize) {
+            LOG.atWarn().log("dibSizeAct > dibSize: " + dibSizeAct + " and " + dibSize);
+        }
         return (long)undefinedSpace1 + cbBmi + undefinedSpace2 + cbBits;
     }
 
@@ -827,10 +833,14 @@ public final class HemfFill {
         // *** RegionDataHeader ***
         // A 32-bit unsigned integer that specifies the size of this object in bytes. This MUST be 0x00000020.
         long rgnHdrSize = leis.readUInt();
-        assert(rgnHdrSize == 0x20);
+        if (rgnHdrSize != 0x20) {
+            LOG.atWarn().log("rgnHdrSize != 0x20: " + rgnHdrSize);
+        }
         // A 32-bit unsigned integer that specifies the region type. This SHOULD be RDH_RECTANGLES (0x00000001)
         long rgnHdrType = leis.readUInt();
-        assert(rgnHdrType == 1);
+        if (rgnHdrType != 1) {
+            LOG.atWarn().log("rgnHdrType != 1: " + rgnHdrType);
+        }
         // A 32-bit unsigned integer that specifies the number of rectangles in this region.
         long rgnCntRect = leis.readUInt();
         // A 32-bit unsigned integer that specifies the size of the buffer of rectangles in bytes.
