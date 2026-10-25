@@ -1465,6 +1465,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * Validate the password against the stored hash, the hashing method will be determined
      *  by the existing password attributes
      * @return true, if the hashes match (... though original password may differ ...)
+     * @throws org.apache.poi.EncryptedDocumentException if the stored spin count is outside the range allowed by
+     *  {@link org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier#getMaxSpinCount()}
      */
     public boolean validateSheetPassword(String password) {
         if (!isSheetProtectionEnabled()) {

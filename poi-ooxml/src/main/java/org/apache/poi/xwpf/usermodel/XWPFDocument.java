@@ -1445,6 +1445,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * Validates the existing password
      *
      * @return true, only if password was set and equals, false otherwise
+     * @throws org.apache.poi.EncryptedDocumentException if the stored spin count is outside the range allowed by
+     *  {@link org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier#getMaxSpinCount()}
      */
     public boolean validateProtectionPassword(String password) {
         return settings.validateProtectionPassword(password);

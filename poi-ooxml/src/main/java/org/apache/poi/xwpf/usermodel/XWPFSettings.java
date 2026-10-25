@@ -296,6 +296,8 @@ public class XWPFSettings extends POIXMLDocumentPart {
      *
      * @param password the password
      * @return true, only if password was set and equals, false otherwise
+     * @throws EncryptedDocumentException if the stored spin count is outside the range allowed by
+     *  {@link AgileEncryptionVerifier#getMaxSpinCount()}
      */
     public boolean validateProtectionPassword(String password) {
         BigInteger sid = safeGetDocumentProtection().getCryptAlgorithmSid();

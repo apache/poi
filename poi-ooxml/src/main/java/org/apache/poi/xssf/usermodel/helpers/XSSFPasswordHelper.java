@@ -97,6 +97,8 @@ public final class XSSFPasswordHelper {
      * @param prefix the prefix of the password attributes, may be null
      * 
      * @return true, if the hashes match
+     * @throws EncryptedDocumentException if the stored spin count is outside the range allowed by
+     *  {@link AgileEncryptionVerifier#getMaxSpinCount()}
      */
     public static boolean validatePassword(XmlObject xobj, String password, String prefix) {
         // TODO: is "velvetSweatshop" the default password?
