@@ -167,6 +167,12 @@ Can re-use XSSF-corpus as the same files are processed here
     mkdir corpusFormulaParser
     ../gradlew shadowJar && ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.FormulaParserFuzzer -rss_limit_mb=2560 corpusFormulaParser
 
+## FileHandler
+
+Reuses main corpus
+    
+    ../gradlew shadowJar && ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIFileHandlerFuzzer -rss_limit_mb=2560 corpus
+
 # Detected issues
 
 * Many of the exceptions are not declared as being thrown in the JavaDoc of Apache POI,

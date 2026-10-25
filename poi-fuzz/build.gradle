@@ -36,6 +36,9 @@ dependencies {
     implementation 'org.opentest4j:opentest4j:1.3.0'
     implementation 'com.code-intelligence:jazzer-api:0.30.0'
 
+    // POIFileHandlerFuzzer includes some code from JUnit
+    implementation 'org.junit.jupiter:junit-jupiter-api:6.1.3'
+
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
