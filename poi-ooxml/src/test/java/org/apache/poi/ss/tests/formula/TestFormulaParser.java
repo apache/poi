@@ -214,4 +214,16 @@ class TestFormulaParser {
         assertThrows(FormulaParseException.class,
                 () -> checkFormula("r:[]!d:F  "));
     }
+
+    @Test
+    void testStackOverflow() {
+        // this triggers nested method calls and thus needs to be included
+        // in the existing nested-handling in FormulaParser
+        String formula = "_a:a".repeat(4000);
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFEvaluationWorkbook evalWorkbook = HSSFEvaluationWorkbook.create(workbook);
+        assertThrows(FormulaParseException.class,
+                () -> FormulaParser.parse(formula, evalWorkbook, FormulaType.SHARED, 0));
+    }
 }

@@ -293,7 +293,8 @@ public final class FormulaParser {
     private void enterNesting() {
         if (++_nestingDepth > MAX_NESTING_DEPTH) {
             throw new FormulaParseException("Formula has more than " + MAX_NESTING_DEPTH
-                    + " levels of nested parentheses, functions or unary signs");
+                    + " levels of nested parentheses, functions or unary signs. "
+                    + "You can increase this value via FormulaParser.setMaxNestingDepth()");
         }
     }
 
@@ -1288,7 +1289,16 @@ public final class FormulaParser {
      */
     private SheetIdentifier parseSheetRange(String bookname, NameIdentifier sheet1Name, boolean isSndPartOfQuotedRange) {
         nextChar();
-        SheetIdentifier sheet2 = parseSheetName(isSndPartOfQuotedRange);
+
+        // need to keep an eye on nesting to avoid stackoverflow
+        SheetIdentifier sheet2;
+        enterNesting();
+        try {
+            sheet2 = parseSheetName(isSndPartOfQuotedRange);
+        } finally {
+            _nestingDepth--;
+        }
+
         if (sheet2 != null) {
            return new SheetRangeIdentifier(bookname, sheet1Name, sheet2.getSheetIdentifier());
         }
