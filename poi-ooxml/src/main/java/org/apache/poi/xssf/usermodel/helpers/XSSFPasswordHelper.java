@@ -122,12 +122,18 @@ public final class XSSFPasswordHelper {
                 byte[] hash1 = dec64.decode(hashVal);
                 HashAlgorithm hashAlgo = HashAlgorithm.fromString(algoName);
                 byte[] salt = dec64.decode(saltVal);
-                int spinCnt = Integer.parseInt(spinCount);
+                // spinCount is an xsd:unsignedInt, so it may not fit in an int
+                long spinCnt;
+                try {
+                    spinCnt = Long.parseLong(spinCount);
+                } catch (NumberFormatException e) {
+                    throw new EncryptedDocumentException("Invalid SpinCount", e);
+                }
                 if (spinCnt < 0 || spinCnt > AgileEncryptionVerifier.getMaxSpinCount()) {
                     throw new EncryptedDocumentException("SpinCount " + spinCnt +
                             " is out of the allowed range [0, " + AgileEncryptionVerifier.getMaxSpinCount() + "]");
                 }
-                byte[] hash2 = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCnt, false);
+                byte[] hash2 = CryptoFunctions.hashPassword(password, hashAlgo, salt, (int) spinCnt, false);
                 return Arrays.equals(hash1, hash2);
             }
         }

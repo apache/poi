@@ -44,6 +44,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.xml.namespace.QName;
+
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.common.usermodel.HyperlinkType;
@@ -68,6 +70,7 @@ import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.apache.xmlbeans.XmlCursor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -1362,6 +1365,29 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             XSSFSheet xs = wb.createSheet();
             xs.setSheetPassword("test", HashAlgorithm.sha512);
             xs.getCTWorksheet().getSheetProtection().setSpinCount(AgileEncryptionVerifier.getMaxSpinCount() + 1L);
+            assertThrows(EncryptedDocumentException.class, () -> xs.validateSheetPassword("test"));
+        }
+    }
+
+    @Test
+    void protectSheet_spinCountAboveIntRange() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet xs = wb.createSheet();
+            xs.setSheetPassword("test", HashAlgorithm.sha512);
+            // max xsd:unsignedInt, which Integer.parseInt rejects
+            xs.getCTWorksheet().getSheetProtection().setSpinCount(4294967295L);
+            assertThrows(EncryptedDocumentException.class, () -> xs.validateSheetPassword("test"));
+        }
+    }
+
+    @Test
+    void protectSheet_spinCountNotANumber() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet xs = wb.createSheet();
+            xs.setSheetPassword("test", HashAlgorithm.sha512);
+            try (XmlCursor cur = xs.getCTWorksheet().getSheetProtection().newCursor()) {
+                cur.setAttributeText(new QName("spinCount"), "abc");
+            }
             assertThrows(EncryptedDocumentException.class, () -> xs.validateSheetPassword("test"));
         }
     }
