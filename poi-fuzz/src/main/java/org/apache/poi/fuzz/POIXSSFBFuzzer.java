@@ -17,13 +17,16 @@
 
 package org.apache.poi.fuzz;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.xssf.binary.XSSFBParseException;
 import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 
 import java.io.ByteArrayInputStream;
@@ -40,24 +43,34 @@ public class POIXSSFBFuzzer {
 		}
 
 		try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(input), true)) {
-			XSSFBEventBasedExcelExtractor ex = new XSSFBEventBasedExcelExtractor(pkg);
-			ex.getText();
+            // use separate try-catch to try both things even if the first one fails
+            try {
+                new XSSFWorkbook(pkg).close();
+            } catch (IOException | POIXMLException |
+                    RecordFormatException | IndexOutOfBoundsException | IllegalArgumentException |
+                    IllegalStateException | ArithmeticException | XSSFBParseException |
+                     PartAlreadyExistsException e) {
+                // expected
+            }
 
-			/* Not supported:
-			ex.setFormulasNotResults(true);
-			ex.getText();*/
+            try {
+                XSSFBEventBasedExcelExtractor ex = new XSSFBEventBasedExcelExtractor(pkg);
+                ex.getText();
 
-			ex.setHandleHyperlinksInCells(true);
-			ex.getText();
-		} catch (IOException | XmlException | OpenXML4JException | POIXMLException |
-                 RecordFormatException | IndexOutOfBoundsException | IllegalArgumentException |
-				 IllegalStateException | ArithmeticException | XSSFBParseException ex) {
-			// expected
-		} catch (NullPointerException e) {
-			// can be removed when commons-compress is > 1.28.0 and changes from COMPRESS-598 are applied
-			if (!ExceptionUtils.getStackTrace(e).contains("org.apache.commons.compress.archivers.zip.ZipArchiveInputStream.read")) {
-				throw e;
-			}
+                /* Not supported:
+                ex.setFormulasNotResults(true);
+                ex.getText();*/
+
+                ex.setHandleHyperlinksInCells(true);
+                ex.getText();
+            } catch (IOException | XmlException | OpenXML4JException | POIXMLException |
+                    RecordFormatException | IndexOutOfBoundsException | IllegalArgumentException |
+                    IllegalStateException | ArithmeticException | XSSFBParseException e) {
+                // expected
+            }
+        } catch (IOException | InvalidFormatException | NotOfficeXmlFileException |
+                RecordFormatException ex) {
+            // expected
         }
 	}
 }
