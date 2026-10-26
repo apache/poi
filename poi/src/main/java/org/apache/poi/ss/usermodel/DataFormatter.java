@@ -2266,7 +2266,7 @@ public class DataFormatter {
                 text = cellFormat.apply(obj).text;
             } catch (RuntimeException e) {
                 // the format was checked against the first value it was created for, but this value fails
-                LOG.atWarn().withThrowable(e).log("Formatting failed for value {}, falling back to General", obj);
+                LOG.atDebug().withThrowable(e).log("Formatting failed for value {}, falling back to General", obj);
                 return generalNumberFormat.format(obj, toAppendTo, pos);
             }
             return toAppendTo.append(emulateCSV ? text : text.trim());
