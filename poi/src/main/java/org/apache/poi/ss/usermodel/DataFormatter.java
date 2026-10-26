@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,6 +44,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.format.CellFormat;
 import org.apache.poi.ss.format.CellFormatResult;
+import org.apache.poi.ss.format.SimpleFraction;
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
 import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.ss.util.NumberToTextConverter;
@@ -552,20 +554,22 @@ public class DataFormatter {
         // the '/', but Excel shows the text, e.g. "#\\:#/#" shows 23.75 as "23:3/4", and "#_#=/=#"
         // shows 3.75 as "15 =/=4": let CellFormat handle any fraction with text or spacing in it
         boolean fractionWithText = formatStr.indexOf('/') >= 0 && hasTextInFraction(formatStr);
+        // for the fallback formats, which are created when they are first needed
+        final String finalFormatStr = formatStr;
+        final double finalCellValue = cellValue;
         if (plainFraction || fractionWithText) {
-            Format fractionFormat = createFractionFormat(formatStr);
             if (fractionWithText) {
                 try {
+                    // the format is not tried on cellValue, so the cached format does not depend on which
+                    // value comes first: a value the CellFormat fails on falls back to FractionFormat
                     CellFormat cellFormat = CellFormat.getInstance(locale, formatStr);
-                    // probe with a fixed value, not cellValue, so the cached format does not depend on which
-                    // value comes first; a format that only fails for some values falls back per value
-                    cellFormat.apply(1.25);
-                    return new CellFormatWrapper(cellFormat, fractionFormat);
+                    return new CellFormatWrapper(cellFormat, formatStr,
+                            () -> createFractionFormat(finalFormatStr, SimpleFraction.MAX_DENOMINATOR_DIGITS));
                 } catch (Exception e) {
                     LOG.atWarn().withThrowable(e).log("Formatting failed for format {}, falling back", formatStr);
                 }
             }
-            return fractionFormat;
+            return createFractionFormat(formatStr, FractionFormat.MAX_DENOM_POW);
         }
 
         // DecimalFormat cannot show literal text between digit placeholders, e.g. the
@@ -576,15 +580,19 @@ public class DataFormatter {
         // the pattern, so let CellFormat handle it
         if (hasLiteralDecimalFormatCannotShow(formatStr) || hasZeroBeforeOptionalDigit(formatStr)) {
             try {
+                // a format CellFormat cannot make sense of, e.g. "#''0#0'1#10L16EE", fails when formatting,
+                // and falls back to the format that would be used without CellFormat
                 CellFormat cellFormat = CellFormat.getInstance(locale, formatStr.replace("'%'", "\\%"));
-                // a format CellFormat cannot make sense of, e.g. "#''0#0'1#10L16EE", fails here, not when formatting
-                cellFormat.apply(cellValue);
-                return new CellFormatWrapper(cellFormat, null);
+                return new CellFormatWrapper(cellFormat, formatStr, () -> createNonCellFormat(finalFormatStr, finalCellValue));
             } catch (Exception e) {
                 LOG.atWarn().withThrowable(e).log("Formatting failed for format {}, falling back", formatStr);
             }
         }
+        return createNonCellFormat(formatStr, cellValue);
+    }
 
+    /** the format for a number format that is not a date or a fraction, without CellFormat */
+    private Format createNonCellFormat(String formatStr, double cellValue) {
         if (numPattern.matcher(formatStr).find() || hasUnquotedQuestionMark(formatStr)) {
             return createNumberFormat(formatStr, cellValue);
         }
@@ -1014,7 +1022,7 @@ public class DataFormatter {
         return sb.toString();
     }
 
-    private Format createFractionFormat(String formatStr) {
+    private Format createFractionFormat(String formatStr, int maxDenominatorDigits) {
         String[] chunks = formatStr.split(";");
         for (String chunk1 : chunks) {
             String chunk = chunk1.replace("?", "#");
@@ -1025,11 +1033,11 @@ public class DataFormatter {
             //take the first match
             if (fractionMatcher.find()) {
                 String wholePart = (fractionMatcher.group(1) == null) ? "" : defaultFractionWholePartFormat;
-                return new FractionFormat(wholePart, fractionMatcher.group(3));
+                return new FractionFormat(wholePart, fractionMatcher.group(3), maxDenominatorDigits);
             }
         }
 
-        return new FractionFormat(defaultFractionWholePartFormat, defaultFractionFractionPartFormat);
+        return new FractionFormat(defaultFractionWholePartFormat, defaultFractionFractionPartFormat, maxDenominatorDigits);
     }
 
     /**
@@ -2261,11 +2269,15 @@ public class DataFormatter {
     @SuppressWarnings("serial")
     private final class CellFormatWrapper extends Format {
         private final CellFormat cellFormat;
-        /** used for a value the CellFormat fails on; null for General */
-        private final Format fallback;
-        private CellFormatWrapper(CellFormat cellFormat, Format fallback) {
+        private final String formatStr;
+        /** creates the format for a value the CellFormat fails on, which is null for General */
+        private final Supplier<Format> fallbackSupplier;
+        private Format fallback;
+        private boolean failed;
+        private CellFormatWrapper(CellFormat cellFormat, String formatStr, Supplier<Format> fallbackSupplier) {
             this.cellFormat = cellFormat;
-            this.fallback = fallback;
+            this.formatStr = formatStr;
+            this.fallbackSupplier = fallbackSupplier;
         }
         @Override
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
@@ -2273,8 +2285,17 @@ public class DataFormatter {
             try {
                 text = cellFormat.apply(obj).text;
             } catch (RuntimeException e) {
-                // the format was checked when it was created, but this value fails
-                LOG.atDebug().withThrowable(e).log("Formatting failed for value {}, falling back", obj);
+                // a failure is a bug in CellFormat, or a format it cannot make sense of:
+                // warn the first time, without filling the log when every value fails
+                if (!failed) {
+                    failed = true;
+                    fallback = fallbackSupplier.get();
+                    LOG.atWarn().withThrowable(e).log("Formatting failed for format {} and value {}, falling back",
+                            formatStr, obj);
+                } else {
+                    LOG.atDebug().withThrowable(e).log("Formatting failed for format {} and value {}, falling back",
+                            formatStr, obj);
+                }
                 return (fallback != null ? fallback : generalNumberFormat).format(obj, toAppendTo, pos);
             }
             return toAppendTo.append(emulateCSV ? text : text.trim());

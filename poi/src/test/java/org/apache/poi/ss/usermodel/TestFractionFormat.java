@@ -37,6 +37,13 @@ import org.junit.jupiter.api.Test;
  */
 final class TestFractionFormat {
     @Test
+    void testMaxDenominatorDigits() {
+        // the denominator is capped at 4 digits, unless DataFormatter asks for more
+        assertEquals("10/81", new FractionFormat("", "#########").format(0.123456789));
+        assertEquals("13566680/109890109", new FractionFormat("", "#########", 9).format(0.123456789));
+    }
+
+    @Test
     void testSingle() {
         FractionFormat f = new FractionFormat("", "##");
         double val = 321.321;
