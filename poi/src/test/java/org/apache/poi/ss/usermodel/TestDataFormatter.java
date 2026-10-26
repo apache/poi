@@ -476,9 +476,18 @@ class TestDataFormatter {
     void testFractionWithTextFallsBackForValueTooLarge() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
-        // the format works for the first value and is cached, but an improper fraction this large cannot be shown
+        // CellFormat cannot show an improper fraction this large, so FractionFormat does, without the text
         assertEquals("13=/=4", dfUS.formatRawCellContents(3.25, -1, "??\\=/=??"));
-        assertEquals("3000000001", dfUS.formatRawCellContents(3e9 + 0.5, -1, "??\\=/=??"));
+        assertEquals("6000000001/2", dfUS.formatRawCellContents(3e9 + 0.5, -1, "??\\=/=??"));
+    }
+
+    @Test
+    void testFractionWithTextFirstValueTooLarge() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // a first value too large to show must not decide the cached format for later values
+        assertEquals("6000000001/2", dfUS.formatRawCellContents(3e9 + 0.5, -1, "??\\=/=??"));
+        assertEquals("13=/=4", dfUS.formatRawCellContents(3.25, -1, "??\\=/=??"));
     }
 
     /**

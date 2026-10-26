@@ -939,6 +939,14 @@ class TestCellFormat {
             String pad = " ".repeat(digits - 1);
             assertEquals("3 " + pad + "1/4" + pad, CellFormat.getInstance("# " + q + "/" + q).apply(3.25).text);
         }
+
+        // a value with a long denominator gets the same fraction past 9 digits (POI's differs from Excel's for PI)
+        String nine = CellFormat.getInstance("# ?????????/?????????").apply(Math.PI).text.trim();
+        for (int digits : new int[]{10, 20}) {
+            String q = "?".repeat(digits);
+            String text = CellFormat.getInstance("# " + q + "/" + q).apply(Math.PI).text;
+            assertEquals(nine.replaceAll(" +", " "), text.trim().replaceAll(" +", " "));
+        }
     }
 
     @Test
