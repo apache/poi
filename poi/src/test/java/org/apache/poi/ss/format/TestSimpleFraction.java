@@ -55,6 +55,12 @@ class TestSimpleFraction {
     }
 
     @Test
+    void testNumeratorOverflow() {
+        // the numerator passes Integer.MAX_VALUE first, leaving the previous convergent
+        assertFraction(202510, 81, SimpleFraction.buildFractionMaxDenominator(2500.123456789, 1_000_000_000));
+    }
+
+    @Test
     void testMaxDenominator() {
         assertFraction(3, 5, SimpleFraction.buildFractionMaxDenominator(0.6, 10));
         assertFraction(22, 7, SimpleFraction.buildFractionMaxDenominator(Math.PI, 10));

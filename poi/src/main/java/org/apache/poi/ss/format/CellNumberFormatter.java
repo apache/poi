@@ -663,6 +663,10 @@ public class CellNumberFormatter extends CellFormatter {
     @SuppressWarnings("unchecked")
     private void writeFraction(double value, StringBuffer result,
             double fractional, StringBuffer output, Set<CellNumberStringMod> mods) {
+        // the numerator is an int, so an improper fraction of a huge value cannot be shown
+        if (Math.abs(fractional) * Math.max(fixedDenominator, 1) >= Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Value is too large to format as a fraction: " + fractional);
+        }
 
         // Work out the fraction first, as it can round to 0, or up to 1
         int n;
@@ -682,13 +686,7 @@ public class CellNumberFormatter extends CellFormatter {
         } else {
             // buildFractionMaxDenominator only gives denominators below the maximum it is passed, so pass
             // 10^digits, as FractionFormat does: e.g. "??/??" shows 0.99 as 98/99, where 99 would give 1/1
-            SimpleFraction frac;
-            try {
-                frac = SimpleFraction.buildFractionMaxDenominator(fractional, maxDenominator + 1);
-            } catch (RuntimeException e) {
-                LOG.atError().withThrowable(e).log("error while fraction evaluation");
-                frac = new SimpleFraction(Math.toIntExact(Math.round(fractional)), 1);
-            }
+            SimpleFraction frac = SimpleFraction.buildFractionMaxDenominator(fractional, maxDenominator + 1);
             n = frac.getNumerator();
             d = frac.getDenominator();
         }

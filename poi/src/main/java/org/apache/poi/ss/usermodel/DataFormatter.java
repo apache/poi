@@ -556,7 +556,8 @@ public class DataFormatter {
             if (fractionWithText) {
                 try {
                     CellFormat cellFormat = CellFormat.getInstance(locale, formatStr);
-                    // a format CellFormat cannot make sense of fails here, not when formatting
+                    // a format CellFormat cannot make sense of fails here, so the FractionFormat below is used;
+                    // a format that only fails for some values falls back in CellFormatWrapper
                     cellFormat.apply(cellValue);
                     return new CellFormatWrapper(cellFormat);
                 } catch (Exception e) {
@@ -2260,7 +2261,14 @@ public class DataFormatter {
         }
         @Override
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-            String text = cellFormat.apply(obj).text;
+            String text;
+            try {
+                text = cellFormat.apply(obj).text;
+            } catch (RuntimeException e) {
+                // the format was checked against the first value it was created for, but this value fails
+                LOG.atWarn().withThrowable(e).log("Formatting failed for value {}, falling back to General", obj);
+                return generalNumberFormat.format(obj, toAppendTo, pos);
+            }
             return toAppendTo.append(emulateCSV ? text : text.trim());
         }
         @Override

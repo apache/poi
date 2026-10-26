@@ -932,13 +932,27 @@ class TestCellFormat {
 
     @Test
     void testFractionDenominatorDigitsCapped() {
-        // more than 9 denominator digits overflowed an int and the format threw when applied
-        String nine = CellFormat.getInstance("# ?????????/?????????").apply(Math.PI).text.trim();
-        for (int digits : new int[]{10, 20}) {
+        // more than 9 denominator digits overflowed an int and the format threw when applied;
+        // Excel gives the same fraction however many digits there are, but pads to every '?'
+        for (int digits : new int[]{9, 10, 20}) {
             String q = "?".repeat(digits);
-            String text = CellFormat.getInstance("# " + q + "/" + q).apply(Math.PI).text;
-            assertEquals(nine.replaceAll(" +", " "), text.trim().replaceAll(" +", " "));
+            String pad = " ".repeat(digits - 1);
+            assertEquals("3 " + pad + "1/4" + pad, CellFormat.getInstance("# " + q + "/" + q).apply(3.25).text);
         }
+    }
+
+    @Test
+    void testImproperFractionTooLarge() {
+        // the numerator is an int, so this cannot be shown as 6000000001/2
+        assertThrows(IllegalArgumentException.class, () -> CellFormat.getInstance("?/?").apply(3e9 + 0.5));
+        assertThrows(IllegalArgumentException.class, () -> CellFormat.getInstance("?/16").apply(2.5e8 + 0.5));
+        assertEquals("3000000000 1/2", CellFormat.getInstance("# ?/?").apply(3e9 + 0.5).text);
+    }
+
+    @Test
+    void testImproperFractionNumeratorOverflow() {
+        // the numerator overflows an int long before the denominator reaches 9 digits
+        assertEquals("202510/81", CellFormat.getInstance("?????????/?????????").apply(2500.123456789).text.trim());
     }
 
     @Test

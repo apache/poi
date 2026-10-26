@@ -115,6 +115,10 @@ public class SimpleFraction {
 
                 return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
             }
+            if (epsilon == 0.0f && maxDenominator > 0 && Math.abs(p2) > overflow) {
+                // an improper fraction's numerator can overflow before the denominator reaches its maximum
+                return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
+            }
             if ((p2 > overflow) || (q2 > overflow)) {
                 throw new IllegalStateException("Overflow trying to convert "+value+" to fraction ("+p2+"/"+q2+")");
             }

@@ -469,8 +469,16 @@ class TestDataFormatter {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         // text in a fraction goes to CellFormat, where more than 9 denominator digits overflowed and the format threw
-        assertEquals("3: 35580937/251290841",
-                dfUS.formatRawCellContents(Math.PI, -1, "#\\:??????????/??????????").replaceAll(" +", " "));
+        assertEquals("3:         1/4", dfUS.formatRawCellContents(3.25, -1, "#\\:??????????/??????????"));
+    }
+
+    @Test
+    void testFractionWithTextFallsBackForValueTooLarge() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // the format works for the first value and is cached, but an improper fraction this large cannot be shown
+        assertEquals("13=/=4", dfUS.formatRawCellContents(3.25, -1, "??\\=/=??"));
+        assertEquals("3000000001", dfUS.formatRawCellContents(3e9 + 0.5, -1, "??\\=/=??"));
     }
 
     /**
