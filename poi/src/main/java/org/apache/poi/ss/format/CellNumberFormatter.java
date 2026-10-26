@@ -662,10 +662,11 @@ public class CellNumberFormatter extends CellFormatter {
     @SuppressWarnings("unchecked")
     private void writeFraction(double value, StringBuffer result,
             double fractional, StringBuffer output, Set<CellNumberStringMod> mods) {
-        // the fraction is worked out with ints, so for an improper fraction of a large value it is worked out
-        // for the part after the whole number, and the whole number is added to the numerator when it is written
+        // the fraction is worked out with ints, so for an improper fraction it is worked out for the part after
+        // the whole number, and the whole number is added to the numerator when it is written; the closest
+        // fraction to v - floor(v) with a given maximum denominator is the closest to v, less floor(v)
         BigInteger wholeNumber = null;
-        if (improperFraction && fractional * Math.max(fixedDenominator, 1) >= Integer.MAX_VALUE) {
+        if (improperFraction) {
             double floor = Math.floor(fractional);
             wholeNumber = new BigDecimal(floor).toBigInteger();
             fractional -= floor;
@@ -674,8 +675,7 @@ public class CellNumberFormatter extends CellFormatter {
         // Work out the fraction first, as it can round to 0, or up to 1
         int n;
         int d;
-        // the "fractional % 1" captures integer values in improper fractions
-        if (fractional == 0 || (improperFraction && fractional % 1 == 0)) {
+        if (fractional == 0) {
             // 0 as a fraction is reported by excel as 0/1
             n = Math.toIntExact(Math.round(fractional));
             d = fixedDenominator > 0 ? fixedDenominator : 1;

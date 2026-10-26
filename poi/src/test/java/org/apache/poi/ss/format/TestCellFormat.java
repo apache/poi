@@ -26,6 +26,8 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -967,8 +969,15 @@ class TestCellFormat {
 
     @Test
     void testImproperFractionNumeratorOverflow() {
-        // the numerator overflows an int long before the denominator reaches 9 digits
-        assertEquals("202510/81", CellFormat.getInstance("?????????/?????????").apply(2500.123456789).text.trim());
+        // the numerator overflows an int long before the denominator reaches 9 digits, which used to
+        // lose precision: 202510/81 here, and 2100000000/1 for 2.1e9 + 0.123456789
+        CellFormat cf = CellFormat.getInstance("?????????/?????????");
+        assertEquals("1044102120552/417620225", cf.apply(2500.123456789).text.trim());
+        for (double value : new double[]{300000.7071067811, 2.1e9 + 0.123456789}) {
+            String[] parts = cf.apply(value).text.trim().split("/");
+            double shown = new BigDecimal(parts[0]).divide(new BigDecimal(parts[1]), MathContext.DECIMAL64).doubleValue();
+            assertEquals(value, shown, Math.ulp(value), "value " + value);
+        }
     }
 
     @Test
