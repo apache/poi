@@ -960,6 +960,12 @@ class TestCellFormat {
     }
 
     @Test
+    void testFractionWholeNumberAboveLongMax() {
+        assertEquals("100000000000000000000    ", CellFormat.getInstance("# ?/?").apply(1e20).text);
+        assertEquals("-100000000000000000000    ", CellFormat.getInstance("# ?/?").apply(-1e20).text);
+    }
+
+    @Test
     void testImproperFractionNumeratorOverflow() {
         // the numerator overflows an int long before the denominator reaches 9 digits
         assertEquals("202510/81", CellFormat.getInstance("?????????/?????????").apply(2500.123456789).text.trim());

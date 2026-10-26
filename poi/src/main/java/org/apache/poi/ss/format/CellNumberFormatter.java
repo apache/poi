@@ -474,8 +474,8 @@ public class CellNumberFormatter extends CellFormatter {
                 value = 0;
             } else {
                 fractional = value % 1.0;
-                //noinspection SillyAssignment
-                value = (long) value;
+                // not a cast to long, which shows a value above Long.MAX_VALUE as 9223372036854775807
+                value = Math.floor(value);
             }
         }
 
