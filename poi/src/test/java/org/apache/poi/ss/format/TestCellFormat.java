@@ -951,10 +951,18 @@ class TestCellFormat {
 
     @Test
     void testImproperFractionTooLarge() {
-        // the numerator is an int, so this cannot be shown as 6000000001/2
-        assertThrows(IllegalArgumentException.class, () -> CellFormat.getInstance("?/?").apply(3e9 + 0.5));
-        assertThrows(IllegalArgumentException.class, () -> CellFormat.getInstance("?/16").apply(2.5e8 + 0.5));
+        // the numerator does not fit in an int
+        assertEquals("6000000001/2", CellFormat.getInstance("?/?").apply(3e9 + 0.5).text);
+        assertEquals("4000000008/16", CellFormat.getInstance("?/16").apply(2.5e8 + 0.5).text);
+        assertEquals("100000000000000000000/1", CellFormat.getInstance("?/?").apply(1e20).text);
+        assertEquals("6000000001=/=2 ", CellFormat.getInstance("??\\=/=??").apply(3e9 + 0.5).text);
         assertEquals("3000000000 1/2", CellFormat.getInstance("# ?/?").apply(3e9 + 0.5).text);
+    }
+
+    @Test
+    void testFractionWholeNumberAboveLongMax() {
+        assertEquals("100000000000000000000    ", CellFormat.getInstance("# ?/?").apply(1e20).text);
+        assertEquals("-100000000000000000000    ", CellFormat.getInstance("# ?/?").apply(-1e20).text);
     }
 
     @Test
