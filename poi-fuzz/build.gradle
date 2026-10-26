@@ -70,7 +70,39 @@ tasks.register('testJar', Jar) {
     from sourceSets.test.output + sourceSets.main.output
 }
 
+
+tasks.register('getFuzzDeps', Copy) {
+    from sourceSets.main.runtimeClasspath
+    into 'build/runtime/'
+}
+
 shadowJar{
     // set name to not include the version in the file-name
     archiveFileName = "poi-fuzz-all.jar"
+}
+
+idea {
+    module {
+        excludeDirs += [
+            file("corpus"),
+            file("corpusCellFormat"),
+            file("corpusEncryptDecrypt"),
+            file("corpusFormulaParser"),
+            file("corpusHDGF"),
+            file("corpusHMEF"),
+            file("corpusHPBF"),
+            file("corpusHPSF"),
+            file("corpusHSLF"),
+            file("corpusHSMF"),
+            file("corpusHSSF"),
+            file("corpusHWPF"),
+            file("corpusOldExcel"),
+            file("corpusRle"),
+            file("corpusVisio"),
+            file("corpusXSLF"),
+            file("corpusXSSF"),
+            file("corpusXSSFB"),
+            file("corpusXWPF"),
+        ]
+    }
 }
