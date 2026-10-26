@@ -1401,6 +1401,20 @@ class TestDataFormatter {
                 formatter.formatRawCellContents(-12.5, -1, "0.0\\%;\\-0.0\\%"));
     }
 
+    /**
+     * See https://github.com/apache/poi/issues/1482
+     */
+    @Test
+    void percentWithNegativeSection() {
+        DataFormatter formatter = new DataFormatter();
+        assertEquals("20.23%", formatter.formatRawCellContents(0.202345, -1, "0.00%;[Red]-0.00%"));
+        assertEquals("-20.23%", formatter.formatRawCellContents(-0.202345, -1, "0.00%;[Red]-0.00%"));
+        assertEquals("1,020.23%", formatter.formatRawCellContents(10.202345, -1, "#,##0.00%;[Red]-#,##0.00%"));
+        assertEquals("-1,020.23%", formatter.formatRawCellContents(-10.202345, -1, "#,##0.00%;[Red]-#,##0.00%"));
+        assertEquals("2023.45%%", formatter.formatRawCellContents(0.202345, -1, "0.00%%;-0.00%%"));
+        assertEquals("-2023.45%%", formatter.formatRawCellContents(-0.202345, -1, "0.00%%;-0.00%%"));
+    }
+
     @Test
     void testAdjustTo4DigitYearsIfConfigured() {
         DataFormatter dataFormatter = new DataFormatter();
