@@ -107,7 +107,7 @@ public class POIFuzzer {
 				}
 			}
 
-			wb.write(NullOutputStream.INSTANCE);
+			// writing is tested in the separate fuzzers anyway: wb.write(NullOutputStream.INSTANCE);
 		} catch (IOException | POIXMLException | IllegalArgumentException | RecordFormatException |
 				 IndexOutOfBoundsException | HSLFException | RecordInputStream.LeftoverDataException |
 				 IllegalStateException | BufferUnderflowException | OpenXML4JRuntimeException |
