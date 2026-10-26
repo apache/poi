@@ -43,6 +43,8 @@ import org.apache.poi.util.LocaleUtil;
  */
 public class CellNumberFormatter extends CellFormatter {
     private static final Logger LOG = PoiLogManager.getLogger(CellNumberFormatter.class);
+    // the largest numerator Excel shows for an improper fraction, the maximum unsigned 32-bit int
+    private static final long MAX_IMPROPER_NUMERATOR = 0xFFFFFFFFL;
 
     private final String desc;
     private final String printfFmt;
@@ -686,6 +688,15 @@ public class CellNumberFormatter extends CellFormatter {
             // a fixed denominator is always used, without reducing the fraction (2/4 stays 2/4)
             d = fixedDenominator;
             n = Math.toIntExact(Math.round(fractional * d));
+        } else if (improperFraction && wholeNumber == null) {
+            // Excel stops before an improper fraction's numerator exceeds an unsigned 32-bit int:
+            // 300000.707106781 is 2435705741/8119, where the next fraction would be 5880013860/19601
+            double floor = Math.floor(fractional);
+            wholeNumber = BigInteger.valueOf((long) floor);
+            SimpleFraction frac = SimpleFraction.buildFractionMaxDenominator(fractional - floor, maxDenominator + 1,
+                    (long) floor, MAX_IMPROPER_NUMERATOR);
+            n = frac.getNumerator();
+            d = frac.getDenominator();
         } else {
             // buildFractionMaxDenominator only gives denominators below the maximum it is passed, so pass
             // 10^digits, as FractionFormat does: e.g. "??/??" shows 0.99 as 98/99, where 99 would give 1/1
