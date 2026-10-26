@@ -654,7 +654,8 @@ public class XMLSlideShow extends POIXMLDocument
         LittleEndian.putLong(cs, 0, checksum);
 
         for (XSLFPictureData pic : getPictureData()) {
-            if (Arrays.equals(pic.getChecksum(), cs)) {
+            // the checksum is only a CRC32, so compare the data as well
+            if (Arrays.equals(pic.getChecksum(), cs) && Arrays.equals(pic.getData(), pictureData)) {
                 return pic;
             }
         }
