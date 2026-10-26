@@ -50,6 +50,7 @@ import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
@@ -967,8 +968,19 @@ class TestCellFormat {
 
     @Test
     void testImproperFractionNumeratorOverflow() {
-        // the numerator overflows an int long before the denominator reaches 9 digits
-        assertEquals("202510/81", CellFormat.getInstance("?????????/?????????").apply(2500.123456789).text.trim());
+        // the numerator overflows an int long before the denominator reaches 9 digits;
+        // Excel's =TEXT(value, "?????????/?????????") gives these results too
+        CellFormat cf = CellFormat.getInstance("?????????/?????????");
+        assertEquals("202510/81", cf.apply(2500.123456789).text.trim());
+        assertEquals("2100000000/1", cf.apply(2100000000.12345).text.trim());
+    }
+
+    @Disabled("POI stops at 1008902378/3363 because the numerator overflows an int before the denominator reaches 8119")
+    @Test
+    void testImproperFractionNumeratorOverflowExcelDenominator() {
+        // Excel's =TEXT(300000.707106781, "?????????/?????????") gives 2435705741/8119
+        CellFormat cf = CellFormat.getInstance("?????????/?????????");
+        assertEquals("2435705741/8119", cf.apply(300000.707106781).text.trim());
     }
 
     @Test
