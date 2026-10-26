@@ -1441,6 +1441,23 @@ class TestDataFormatter {
         assertEquals("-2023.45%%", formatter.formatRawCellContents(-0.202345, -1, "0.00%%;-0.00%%"));
     }
 
+    /**
+     * Each section is scaled by its own percent signs
+     */
+    @Test
+    void percentDiffersBetweenSections() {
+        DataFormatter formatter = new DataFormatter();
+        assertEquals("2500%%", formatter.formatRawCellContents(0.25, -1, "0%%;-0%"));
+        assertEquals("-25%", formatter.formatRawCellContents(-0.25, -1, "0%%;-0%"));
+        assertEquals("25%", formatter.formatRawCellContents(0.25, -1, "0%;-0%%"));
+        assertEquals("-2500%%", formatter.formatRawCellContents(-0.25, -1, "0%;-0%%"));
+        assertEquals("25%", formatter.formatRawCellContents(0.25, -1, "0%;-0"));
+        assertEquals("-5", formatter.formatRawCellContents(-5, -1, "0%;-0"));
+        assertEquals("5", formatter.formatRawCellContents(5, -1, "0;-0%"));
+        assertEquals("-500%", formatter.formatRawCellContents(-5, -1, "0;-0%"));
+        assertEquals("(5.0)", formatter.formatRawCellContents(-5, -1, "0.0%;(0.0)"));
+    }
+
     @Test
     void testAdjustTo4DigitYearsIfConfigured() {
         DataFormatter dataFormatter = new DataFormatter();
