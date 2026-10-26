@@ -37,6 +37,7 @@ TEST-org.apache.poi*.xml
 /*/build/
 dist
 lib/
+/poi-fuzz/jacoco-*.zip
 /poi-fuzz/jazzer
 /poi-fuzz/jazzer-*.tar.gz
 /poi-fuzz/jazzer_standalone.jar
