@@ -440,6 +440,22 @@ class TestXSLFSlideShow {
             assertNotSame(pic1, pic2);
             assertArrayEquals(data2, pic2.getData());
             assertEquals(2, ppt.getPictureData().size());
+
+            // real duplicates are still reused, also past a colliding entry
+            assertSame(pic1, ppt.addPicture(data1, PictureData.PictureType.PNG));
+            assertSame(pic2, ppt.addPicture(data2, PictureData.PictureType.PNG));
+            assertEquals(2, ppt.getPictureData().size());
+
+            // pictures loaded from a file have no cached checksum yet
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                XSLFPictureData readPic1 = ppt2.findPictureData(data1);
+                XSLFPictureData readPic2 = ppt2.findPictureData(data2);
+                assertNotNull(readPic1);
+                assertNotNull(readPic2);
+                assertNotSame(readPic1, readPic2);
+                assertArrayEquals(data1, readPic1.getData());
+                assertArrayEquals(data2, readPic2.getData());
+            }
         }
     }
 }
