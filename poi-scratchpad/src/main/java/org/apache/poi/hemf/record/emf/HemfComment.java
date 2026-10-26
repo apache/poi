@@ -40,6 +40,7 @@ import org.apache.poi.hemf.record.emf.HemfRecord.RenderBounds;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecordIterator;
 import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
+import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
@@ -56,8 +57,11 @@ import org.apache.poi.util.RecordFormatException;
 @Internal
 public class HemfComment {
     private static final Logger LOG = PoiLogManager.getLogger(HemfComment.class);
-    /** Max. record length - processing longer records will throw an exception */
-    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
+    /**
+     * Max. record length - processing longer records will throw an exception.
+     * Comments carry whole embedded metafiles (WMF, EMF+, EPS), so this matches HwmfPicture's limit.
+     */
+    private static final int DEFAULT_MAX_RECORD_LENGTH = HwmfPicture.DEFAULT_MAX_RECORD_LENGTH;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     /**
