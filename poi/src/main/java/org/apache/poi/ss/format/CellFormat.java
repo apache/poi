@@ -279,6 +279,15 @@ public class CellFormat {
     public CellFormatResult apply(Object value) {
         if (value instanceof Number num) {
             double val = num.doubleValue();
+
+            // check if one of the conditions below would fail with NPE
+            if (val < 0 && (
+                    (formatPartCount == 2 && posNumFmt == null) ||
+                    (formatPartCount > 1 && negNumFmt == null))) {
+                throw new IllegalStateException("Cannot apply format " + format + " on object " + value + " with empty posNumFmt : "
+                    + posNumFmt + " or negNumFmt " + negNumFmt + ", formatPartCount: " + formatPartCount);
+            }
+
             if (val < 0 &&
                     ((formatPartCount == 2
                             && !posNumFmt.hasCondition() && !negNumFmt.hasCondition())
@@ -289,7 +298,12 @@ public class CellFormat {
                 // the default leading minus sign is not also output
                 return negNumFmt.apply(-val);
             } else {
-                return getApplicableFormatPart(val).apply(val);
+                CellFormatPart applicableFormatPart = getApplicableFormatPart(val);
+                if (applicableFormatPart == null) {
+                    throw new IllegalStateException("Cannot apply format " + format + " on object " + value + ", no applicable format part found ("
+                            + "posNumFmt: " + posNumFmt + ", negNumFmt: " + negNumFmt + ", zeroNumFmt: " + zeroNumFmt);
+                }
+                return applicableFormatPart.apply(val);
             }
         } else if (value instanceof java.util.Date d) {
             // Don't know (and can't get) the workbook date windowing (1900 or 1904)
@@ -301,6 +315,10 @@ public class CellFormat {
                 throw new IllegalArgumentException("value " + numericValue + " of date " + value + " is not a valid Excel date");
             }
         } else {
+            if (textFmt == null) {
+                throw new IllegalStateException("Cannot apply format " + format + " on object " + value + " with empty format");
+            }
+
             return textFmt.apply(value);
         }
     }
