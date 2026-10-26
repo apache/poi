@@ -65,6 +65,7 @@ jobs:
         mkdir -p corpusHMEF && cp -a corpus/hmef/* corpusHMEF/
         mkdir -p corpusHPBF && cp -a corpus/publisher/* corpusHPBF/
         mkdir -p corpusHSMF && cp -a corpus/hsmf/* corpusHSMF/
+        mkdir -p corpusCellFormat
         mkdir -p corpusEncryptDecrypt
         mkdir -p corpusFormulaParser
 
@@ -125,7 +126,10 @@ jobs:
       run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.EncryptDecryptFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusEncryptDecrypt
 
     - name: Run Fuzzing - FormulaParserFuzzer
-      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.FormulaParserFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 corpusFormulaParser
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.FormulaParserFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 -dict=src/main/java/org/apache/poi/fuzz/FormulaParserFuzzer.dict corpusFormulaParser
+
+    - name: Run Fuzzing - CellFormatFuzzer
+      run: ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.CellFormatFuzzer -rss_limit_mb=4096 -timeout=120 -max_total_time=120 -dict=src/main/java/org/apache/poi/fuzz/CellFormatFuzzer.dict corpusCellFormat
 
     - name: Run Fuzzing - POIFuzzer
       run: ./jazzer --cp=build/libs/poi-fuzz-all.jar --instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.** --target_class=org.apache.poi.fuzz.POIFuzzer -rss_limit_mb=4096 -timeout=600 -max_total_time=600 corpus
