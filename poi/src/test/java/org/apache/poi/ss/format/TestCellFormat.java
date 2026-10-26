@@ -1129,7 +1129,7 @@ class TestCellFormat {
 
     @Test
     void testNamedColors() {
-        // Make sure we have all standard named colors defined 
+        // Make sure we have all standard named colors defined
         // and are returned as non-null regardless of case
         Stream.of("black", "white", "red", "green", "blue", "yellow", "magenta", "cyan",
                 "Black", "White", "Red", "Green", "Blue", "Yellow", "Magenta", "Cyan",
@@ -1137,9 +1137,9 @@ class TestCellFormat {
                 .map(CellFormatPart::getColor)
                 .forEach(Assertions::assertNotNull);
     }
-    
+
     @Test
-    void testIndexedColorsExist() {       
+    void testIndexedColorsExist() {
         // Make sure the standard indexed colors are returned correctly and regardless of case
         for (int i = 0; i < 56; ++i) {
             assertNotNull(CellFormatPart.getColor("Color " + (i + 1)));
@@ -1147,7 +1147,7 @@ class TestCellFormat {
             assertNotNull(CellFormatPart.getColor("color" + (i + 1)));
         }
     }
-    
+
     @Test
     void verifyNamedColors() {
         assertEquals(new Color(0x000000), CellFormatPart.getColor("Black"));
@@ -1159,7 +1159,7 @@ class TestCellFormat {
         assertEquals(new Color(0xFF00FF), CellFormatPart.getColor("Magenta"));
         assertEquals(new Color(0x00FFFF), CellFormatPart.getColor("cyan"));
     }
-    
+
     @Test
     void verifyIndexedColors() {
         assertEquals(CellFormatPart.getColor("Color1"), CellFormatPart.getColor("black"));
@@ -1219,7 +1219,7 @@ class TestCellFormat {
         assertEquals(new Color(0x333399), CellFormatPart.getColor("Color55"));
         assertEquals(new Color(0x333333), CellFormatPart.getColor("Color56"));
     }
-    
+
     @Test
     void testColorsInWorkbook() throws IOException {
         // Create a workbook, row and cell to test with
@@ -1230,22 +1230,22 @@ class TestCellFormat {
             CellFormatResult result;
             CellFormat cf = CellFormat.getInstance(
                     "[GREEN]#,##0.0;[RED]\\(#,##0.0\\);[COLOR22]\"===\";[COLOR 8]\\\"@\\\"");
-            
+
             cell.setCellValue(100.0);
             result = cf.apply(cell);
             assertEquals("100.0", result.text);
             assertEquals(result.textColor, CellFormatPart.getColor("color 4"));
-            
+
             cell.setCellValue(-50.0);
             result = cf.apply(cell);
             assertEquals("(50.0)", result.text);
             assertEquals(result.textColor, CellFormatPart.getColor("red"));
-    
+
             cell.setCellValue("foo");
             result = cf.apply(cell);
             assertEquals("\"foo\"", result.text);
             assertEquals(result.textColor, CellFormatPart.getColor("cyan"));
-            
+
             cell.setCellValue(0.0);
             result = cf.apply(cell);
             assertEquals("===", result.text);
@@ -1319,11 +1319,21 @@ class TestCellFormat {
 
     @Test
     void testApplyNPE() throws ParseException {
-    CellFormat cf1 = CellFormat.getInstance("broken format balsk\"§$%Q\"§$)U");
+        CellFormat cf1 = CellFormat.getInstance("broken format balsk\"§$%Q\"§$)U");
         SimpleDateFormat sdf1 = new SimpleDateFormat("M/d/y", Locale.ROOT);
         sdf1.setTimeZone(TimeZone.getTimeZone("CET"));
         Date date1 = sdf1.parse("01/11/2012");
         assertThrows(IllegalStateException.class,
                 () -> cf1.apply(date1));
+    }
+
+    @Test
+    void testApplyNPE2() {
+        String format = "1sm/#]ê?ÿþ/&TD[Á";
+
+        CellFormat cellFormat = CellFormat.getInstance(Locale.ROOT, format);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> cellFormat.apply(Double.parseDouble("-2.0579980172405396E-35")));
     }
 }

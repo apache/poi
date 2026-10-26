@@ -454,6 +454,10 @@ public class CellNumberFormatter extends CellFormatter {
 
     @Override
     public void formatValue(StringBuffer toAppendTo, Object valueObject) {
+        if (!(valueObject instanceof Number)) {
+            throw new IllegalArgumentException("Expected object of type number for format " + format + ", but had: " + valueObject);
+        }
+
         BigDecimal bd = BigDecimal.valueOf(((Number) valueObject).doubleValue()).multiply(BigDecimal.valueOf(scale));
         double value = bd.doubleValue();
 
@@ -547,6 +551,10 @@ public class CellNumberFormatter extends CellFormatter {
                     while (deletedChars.get(delPos)) {
                         delPos++;
                         modPos++;
+                    }
+
+                    if (nextChange.getEnd() == null) {
+                        throw new IllegalArgumentException("Cannot apply format, end could not determined for format: " + format);
                     }
 
                     // delete end point in original
