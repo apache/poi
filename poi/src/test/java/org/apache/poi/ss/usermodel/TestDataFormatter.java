@@ -464,6 +464,32 @@ class TestDataFormatter {
         }
     }
 
+    @Test
+    void testFractionWithTextAndLongDenominator() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // text in a fraction goes to CellFormat, where more than 9 denominator digits overflowed and the format threw
+        assertEquals("3:         1/4", dfUS.formatRawCellContents(3.25, -1, "#\\:??????????/??????????"));
+    }
+
+    @Test
+    void testFractionWithTextFallsBackForValueTooLarge() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // CellFormat cannot show an improper fraction this large, so FractionFormat does, without the text
+        assertEquals("13=/=4", dfUS.formatRawCellContents(3.25, -1, "??\\=/=??"));
+        assertEquals("6000000001/2", dfUS.formatRawCellContents(3e9 + 0.5, -1, "??\\=/=??"));
+    }
+
+    @Test
+    void testFractionWithTextFirstValueTooLarge() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // a first value too large to show must not decide the cached format for later values
+        assertEquals("6000000001/2", dfUS.formatRawCellContents(3e9 + 0.5, -1, "??\\=/=??"));
+        assertEquals("13=/=4", dfUS.formatRawCellContents(3.25, -1, "??\\=/=??"));
+    }
+
     /**
      * Test that _x (blank with the space taken by "x")
      *  and *x (fill to the column width with "x"s) are
