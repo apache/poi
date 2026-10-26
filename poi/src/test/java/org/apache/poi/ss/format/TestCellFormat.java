@@ -931,6 +931,46 @@ class TestCellFormat {
     }
 
     @Test
+    void testFractionDenominatorDigitsCapped() {
+        // more than 9 denominator digits overflowed an int and the format threw when applied;
+        // Excel gives the same fraction however many digits there are, but pads to every '?'
+        for (int digits : new int[]{9, 10, 20}) {
+            String q = "?".repeat(digits);
+            String pad = " ".repeat(digits - 1);
+            assertEquals("3 " + pad + "1/4" + pad, CellFormat.getInstance("# " + q + "/" + q).apply(3.25).text);
+        }
+
+        // a value with a long denominator gets the same fraction past 9 digits (POI's differs from Excel's for PI)
+        String nine = CellFormat.getInstance("# ?????????/?????????").apply(Math.PI).text.trim();
+        for (int digits : new int[]{10, 20}) {
+            String q = "?".repeat(digits);
+            String text = CellFormat.getInstance("# " + q + "/" + q).apply(Math.PI).text;
+            assertEquals(nine.replaceAll(" +", " "), text.trim().replaceAll(" +", " "));
+        }
+    }
+
+    @Test
+    void testImproperFractionTooLarge() {
+        // the numerator is an int, so this cannot be shown as 6000000001/2
+        assertThrows(IllegalArgumentException.class, () -> CellFormat.getInstance("?/?").apply(3e9 + 0.5));
+        assertThrows(IllegalArgumentException.class, () -> CellFormat.getInstance("?/16").apply(2.5e8 + 0.5));
+        assertEquals("3000000000 1/2", CellFormat.getInstance("# ?/?").apply(3e9 + 0.5).text);
+    }
+
+    @Test
+    void testImproperFractionNumeratorOverflow() {
+        // the numerator overflows an int long before the denominator reaches 9 digits
+        assertEquals("202510/81", CellFormat.getInstance("?????????/?????????").apply(2500.123456789).text.trim());
+    }
+
+    @Test
+    void testFractionWithZeroRemainder() {
+        // the continued fraction for this value has a zero remainder, which used to overflow
+        assertEquals("   1/324", CellFormat.getInstance("# ???/???").apply(0.00308641975308642).text);
+        assertEquals("0    ", CellFormat.getInstance("# ?/?").apply(0.00308641975308642).text);
+    }
+
+    @Test
     void testAccountingFormats() {
         char pound = '\u00A3';
         char euro  = '\u20AC';

@@ -102,6 +102,10 @@ public class SimpleFraction {
         do {
             ++n;
             double r1 = 1.0 / (r0 - a0);
+            if (r1 > overflow) {
+                // a zero or tiny remainder: the next convergent would overflow, and p1/q1 is already the closest
+                return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
+            }
             long a1 = (long)Math.floor(r1);
             p2 = (a1 * p1) + p0;
             q2 = (a1 * q1) + q0;
@@ -109,6 +113,10 @@ public class SimpleFraction {
             if (epsilon == 0.0f && maxDenominator > 0 && Math.abs(q2) > maxDenominator &&
                     Math.abs(q1) < maxDenominator){
 
+                return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
+            }
+            if (epsilon == 0.0f && maxDenominator > 0 && Math.abs(p2) > overflow) {
+                // an improper fraction's numerator can overflow before the denominator reaches its maximum
                 return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
             }
             if ((p2 > overflow) || (q2 > overflow)) {
