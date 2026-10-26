@@ -24,11 +24,14 @@ import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFileNam
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
 import static org.apache.poi.openxml4j.opc.PackagingURIHelper.createPartName;
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_WORDPROCESSINGML;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -655,6 +658,48 @@ public final class TestPackage {
             }
             // Ensure we actually found the parts we want to check
             assertEquals(3, checked);
+        }
+    }
+
+    @Test
+    void writeToZipPartThroughOldReference() throws IOException, InvalidFormatException {
+        byte[] data1 = "first".getBytes(StandardCharsets.US_ASCII);
+        byte[] data2 = "second".getBytes(StandardCharsets.US_ASCII);
+        try (InputStream is = openSampleStream("sample.docx");
+             OPCPackage pkg = OPCPackage.open(is)) {
+            PackagePartName name = createPartName("/word/fontTable.xml");
+            PackagePart zipPart = pkg.getPart(name);
+            assertEquals(ZipPackagePart.class, zipPart.getClass());
+            assertEquals(0, zipPart.getModificationCount());
+            int numParts = pkg.getParts().size();
+
+            try (OutputStream os = zipPart.getOutputStream()) {
+                os.write(data1);
+            }
+            PackagePart memoryPart = pkg.getPart(name);
+            assertNotSame(zipPart, memoryPart);
+            assertEquals(1, zipPart.getModificationCount());
+            assertEquals(1, memoryPart.getModificationCount());
+            // the old reference reads the new content
+            try (InputStream partIs = zipPart.getInputStream()) {
+                assertArrayEquals(data1, IOUtils.toByteArray(partIs));
+            }
+            assertEquals(data1.length, zipPart.getSize());
+
+            // writing through the old reference again updates the memory part
+            zipPart.clear();
+            try (OutputStream os = zipPart.getOutputStream()) {
+                os.write(data2);
+            }
+            assertSame(memoryPart, pkg.getPart(name));
+            assertEquals(2, zipPart.getModificationCount());
+            try (InputStream partIs = memoryPart.getInputStream()) {
+                assertArrayEquals(data2, IOUtils.toByteArray(partIs));
+            }
+            try (InputStream partIs = zipPart.getInputStream()) {
+                assertArrayEquals(data2, IOUtils.toByteArray(partIs));
+            }
+            assertEquals(numParts, pkg.getParts().size());
         }
     }
 

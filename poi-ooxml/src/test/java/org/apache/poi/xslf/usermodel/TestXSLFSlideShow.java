@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -455,6 +456,38 @@ class TestXSLFSlideShow {
                 assertNotSame(readPic1, readPic2);
                 assertArrayEquals(data1, readPic1.getData());
                 assertArrayEquals(data2, readPic2.getData());
+            }
+        }
+    }
+
+    @Test
+    void changePictureDataOfLoadedSlideShow() throws IOException {
+        byte[] data1 = "first".getBytes(StandardCharsets.US_ASCII);
+        byte[] data2 = "second".getBytes(StandardCharsets.US_ASCII);
+        byte[] data3 = "third".getBytes(StandardCharsets.US_ASCII);
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFPictureData newPic = ppt.addPicture(data3, PictureData.PictureType.PNG);
+            newPic.setData(data1);
+            assertArrayEquals(data1, newPic.getData());
+            assertSame(newPic, ppt.findPictureData(data1));
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                XSLFPictureData pic = ppt2.findPictureData(data1);
+                assertNotNull(pic);
+
+                pic.setData(data2);
+                assertArrayEquals(data2, pic.getData());
+                assertNull(ppt2.findPictureData(data1));
+                assertSame(pic, ppt2.findPictureData(data2));
+
+                // writing to the part directly must not leave a stale checksum behind
+                pic.getPackagePart().clear();
+                try (OutputStream os = pic.getPackagePart().getOutputStream()) {
+                    os.write(data3);
+                }
+                assertArrayEquals(data3, pic.getData());
+                assertNull(ppt2.findPictureData(data2));
+                assertSame(pic, ppt2.findPictureData(data3));
+                assertEquals(1, ppt2.getPictureData().size());
             }
         }
     }
