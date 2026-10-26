@@ -165,7 +165,12 @@ Can re-use XSSF-corpus as the same files are processed here
 ## FormulaParser
 
     mkdir corpusFormulaParser
-    ../gradlew shadowJar && ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.FormulaParserFuzzer -rss_limit_mb=2560 corpusFormulaParser
+    ../gradlew shadowJar && ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.FormulaParserFuzzer -rss_limit_mb=2560 -dict=src/main/java/org/apache/poi/fuzz/FormulaParserFuzzer.dict corpusFormulaParser
+
+## CellFormatFuzzer
+
+    mkdir corpusCellFormat
+    ../gradlew shadowJar && ./jazzer --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.CellFormatFuzzer -rss_limit_mb=2560 -dict=src/main/java/org/apache/poi/fuzz/CellFormatFuzzer.dict corpusCellFormat
 
 ## FileHandler
 
