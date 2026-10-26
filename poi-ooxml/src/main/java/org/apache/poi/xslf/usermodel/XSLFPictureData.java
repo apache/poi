@@ -166,6 +166,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
      * @return true, if this picture holds the same bytes as {@code data}
      */
     boolean hasData(byte[] data, long dataChecksum) {
+        dropStaleProperties();
         byte[] ownData = null;
         if (checksum == null) {
             ownData = getData();
@@ -181,16 +182,22 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     }
 
     /**
-     * Determine and cache image properties
+     * Forget the cached image properties, if the part was written to outside of setData
      */
-    protected void cacheProperties() {
+    private void dropStaleProperties() {
         long modificationCount = getPackagePart().getModificationCount();
         if (modificationCount != cachedModificationCount) {
-            // the part was written to outside of setData
             checksum = null;
             origSize = null;
             cachedModificationCount = modificationCount;
         }
+    }
+
+    /**
+     * Determine and cache image properties
+     */
+    protected void cacheProperties() {
+        dropStaleProperties();
         if (origSize == null || checksum == null) {
             byte[] data = getData();
             checksum = IOUtils.calculateChecksum(data);
