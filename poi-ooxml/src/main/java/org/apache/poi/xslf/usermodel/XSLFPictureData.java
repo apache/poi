@@ -23,6 +23,7 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
@@ -153,6 +154,30 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
         );
     }
     
+    /**
+     * Checks whether this picture holds the given data. The checksum is only a CRC32,
+     * so a matching checksum is confirmed by comparing the data. The part is read at
+     * most once.
+     *
+     * @param data the picture data to compare with
+     * @param dataChecksum the checksum of {@code data}
+     * @return true, if this picture holds the same bytes as {@code data}
+     */
+    boolean hasData(byte[] data, long dataChecksum) {
+        byte[] ownData = null;
+        if (checksum == null) {
+            ownData = getData();
+            checksum = IOUtils.calculateChecksum(ownData);
+        }
+        if (checksum != dataChecksum) {
+            return false;
+        }
+        if (ownData == null) {
+            ownData = getData();
+        }
+        return Arrays.equals(ownData, data);
+    }
+
     /**
      * Determine and cache image properties
      */

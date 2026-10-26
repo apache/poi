@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -53,8 +52,6 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.MathUtil;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Units;
@@ -650,12 +647,8 @@ public class XMLSlideShow extends POIXMLDocument
     @Override
     public XSLFPictureData findPictureData(byte[] pictureData) {
         long checksum = IOUtils.calculateChecksum(pictureData);
-        byte[] cs = new byte[LittleEndianConsts.LONG_SIZE];
-        LittleEndian.putLong(cs, 0, checksum);
-
         for (XSLFPictureData pic : getPictureData()) {
-            // the checksum is only a CRC32, so compare the data as well
-            if (Arrays.equals(pic.getChecksum(), cs) && Arrays.equals(pic.getData(), pictureData)) {
+            if (pic.hasData(pictureData, checksum)) {
                 return pic;
             }
         }
