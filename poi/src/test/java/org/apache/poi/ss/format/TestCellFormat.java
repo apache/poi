@@ -50,7 +50,6 @@ import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
@@ -975,7 +974,6 @@ class TestCellFormat {
         assertEquals("2100000000/1", cf.apply(2100000000.12345).text.trim());
     }
 
-    @Disabled("POI stops at 1008902378/3363 because the numerator overflows an int before the denominator reaches 8119")
     @Test
     void testImproperFractionNumeratorOverflowExcelDenominator() {
         // Excel's =TEXT(300000.707106781, "?????????/?????????") gives 2435705741/8119
