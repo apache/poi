@@ -63,6 +63,11 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      */
     private PackageRelationshipCollection _relationships;
 
+    /**
+     * Number of times an output stream was obtained for this part.
+     */
+    private long _modificationCount;
+
 
     /**
      * Constructor.
@@ -521,7 +526,13 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
         OutputStream outStream;
         // If this part is a zip package part (read only by design) we convert
         // this part into a MemoryPackagePart instance for write purpose.
-        if (this instanceof ZipPackagePart) {
+        if (this instanceof ZipPackagePart zipPart) {
+            PackagePart replacement = zipPart.getReplacement();
+            if (replacement != null) {
+                // this part was already replaced, write to the replacement
+                return replacement.getOutputStream();
+            }
+
             // Delete logically this part
             _container.removePart(this._partName);
 
@@ -533,8 +544,12 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
                         "Can't create a temporary part !");
             }
             part._relationships = this._relationships;
+            part._modificationCount = this._modificationCount + 1;
+            // callers may still hold this part, so forward to the memory part from now on
+            zipPart.setReplacement(part);
             outStream = part.getOutputStreamImpl();
         } else {
+            _modificationCount++;
             outStream = this.getOutputStreamImpl();
         }
         return outStream;
@@ -646,6 +661,18 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      */
     public long getSize() {
        return -1;
+    }
+
+    /**
+     * Returns a counter that changes whenever the content of this part may have changed.
+     * It is incremented each time {@link #getOutputStream()} is called, so callers that
+     * cache information derived from the content can detect that it is out of date.
+     *
+     * @return the modification count of this part
+     * @since 6.0.1
+     */
+    public long getModificationCount() {
+        return _modificationCount;
     }
 
     @Override

@@ -64,6 +64,8 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     }
 
     private Long checksum;
+    // modification count of the package part when checksum and origSize were cached
+    private long cachedModificationCount;
 
     // original image dimensions (for formats supported by BufferedImage)
     private Dimension origSize;
@@ -182,6 +184,13 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
      * Determine and cache image properties
      */
     protected void cacheProperties() {
+        long modificationCount = getPackagePart().getModificationCount();
+        if (modificationCount != cachedModificationCount) {
+            // the part was written to outside of setData
+            checksum = null;
+            origSize = null;
+            cachedModificationCount = modificationCount;
+        }
         if (origSize == null || checksum == null) {
             byte[] data = getData();
             checksum = IOUtils.calculateChecksum(data);
@@ -226,11 +235,14 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     }
 
     public void setData(byte[] data) throws IOException {
+        // in-memory parts append to their content, so remove the old data first
+        getPackagePart().clear();
         try (OutputStream os = getPackagePart().getOutputStream()) {
             os.write(data);
         }
         // recalculate now since we already have the data bytes available anyhow
         checksum = IOUtils.calculateChecksum(data);
+        cachedModificationCount = getPackagePart().getModificationCount();
 
         origSize = null; // need to recalculate image size
     }
