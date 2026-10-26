@@ -17,6 +17,7 @@
 package org.apache.poi.ss.format;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
@@ -62,8 +63,6 @@ public class CellNumberFormatter extends CellFormatter {
     private final List<Special> denominatorSpecials = new ArrayList<>();
     private final List<Special> exponentSpecials = new ArrayList<>();
     private final List<Special> exponentDigitSpecials = new ArrayList<>();
-    /** 10^9 - 1 is the largest all-nines denominator that fits in an int */
-    private static final int MAX_DENOMINATOR_DIGITS = 9;
     private final int maxDenominator;
     /** the denominator given as a number, e.g. 4 for "# ?/4", or 0 */
     private final int fixedDenominator;
@@ -337,7 +336,7 @@ public class CellNumberFormatter extends CellFormatter {
     }
 
     private static int maxValue(List<Special> s) {
-        return Math.toIntExact(Math.round(Math.pow(10, Math.min(s.size(), MAX_DENOMINATOR_DIGITS)) - 1));
+        return Math.toIntExact(Math.round(Math.pow(10, Math.min(s.size(), SimpleFraction.MAX_DENOMINATOR_DIGITS)) - 1));
     }
 
     private List<Special> specialsFor(int pos, int takeFirst) {
@@ -475,8 +474,8 @@ public class CellNumberFormatter extends CellFormatter {
                 value = 0;
             } else {
                 fractional = value % 1.0;
-                //noinspection SillyAssignment
-                value = (long) value;
+                // not a cast to long, which shows a value above Long.MAX_VALUE as 9223372036854775807
+                value = Math.floor(value);
             }
         }
 
@@ -663,9 +662,13 @@ public class CellNumberFormatter extends CellFormatter {
     @SuppressWarnings("unchecked")
     private void writeFraction(double value, StringBuffer result,
             double fractional, StringBuffer output, Set<CellNumberStringMod> mods) {
-        // the numerator is an int, so an improper fraction of a huge value cannot be shown
-        if (Math.abs(fractional) * Math.max(fixedDenominator, 1) >= Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Value is too large to format as a fraction: " + fractional);
+        // the fraction is worked out with ints, so for an improper fraction of a large value it is worked out
+        // for the part after the whole number, and the whole number is added to the numerator when it is written
+        BigInteger wholeNumber = null;
+        if (improperFraction && fractional * Math.max(fixedDenominator, 1) >= Integer.MAX_VALUE) {
+            double floor = Math.floor(fractional);
+            wholeNumber = new BigDecimal(floor).toBigInteger();
+            fractional -= floor;
         }
 
         // Work out the fraction first, as it can round to 0, or up to 1
@@ -749,7 +752,9 @@ public class CellNumberFormatter extends CellFormatter {
             if (improperFraction) {
                 n = Math.toIntExact(n + Math.round(value * d));
             }
-            writeSingleInteger(numeratorFmt, n, output, numeratorSpecials, mods);
+            Number numerator = wholeNumber == null ? (Number) n
+                    : wholeNumber.multiply(BigInteger.valueOf(d)).add(BigInteger.valueOf(n));
+            writeSingleInteger(numeratorFmt, numerator, output, numeratorSpecials, mods);
             if (fixedDenominator == 0) {
                 // a fixed denominator is already in the output
                 writeDenominator(d, output, mods);
@@ -812,7 +817,7 @@ public class CellNumberFormatter extends CellFormatter {
         }
     }
 
-    private void writeSingleInteger(String fmt, int num, StringBuffer output, List<Special> numSpecials, Set<CellNumberStringMod> mods) {
+    private void writeSingleInteger(String fmt, Number num, StringBuffer output, List<Special> numSpecials, Set<CellNumberStringMod> mods) {
 
         StringBuffer sb = new StringBuffer();
         try (Formatter formatter = new Formatter(sb, locale)) {

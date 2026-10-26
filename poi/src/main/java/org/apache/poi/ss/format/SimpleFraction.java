@@ -20,6 +20,12 @@ import org.apache.poi.util.MathUtil;
 
 public class SimpleFraction {
 
+    /**
+     * The most denominator digits a fraction can have: 10^9 - 1 is the largest all-nines denominator that fits in an int
+     *
+     * @since 6.0.1
+     */
+    public static final int MAX_DENOMINATOR_DIGITS = 9;
 
     /** The denominator. */
     private final int denominator;
@@ -115,11 +121,11 @@ public class SimpleFraction {
 
                 return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
             }
-            if (epsilon == 0.0f && maxDenominator > 0 && Math.abs(p2) > overflow) {
-                // an improper fraction's numerator can overflow before the denominator reaches its maximum
-                return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
-            }
-            if ((p2 > overflow) || (q2 > overflow)) {
+            if ((Math.abs(p2) > overflow) || (q2 > overflow)) {
+                if (epsilon == 0.0f && maxDenominator > 0) {
+                    // an improper fraction's numerator can overflow before the denominator reaches its maximum
+                    return new SimpleFraction(Math.toIntExact(p1), Math.toIntExact(q1));
+                }
                 throw new IllegalStateException("Overflow trying to convert "+value+" to fraction ("+p2+"/"+q2+")");
             }
 
