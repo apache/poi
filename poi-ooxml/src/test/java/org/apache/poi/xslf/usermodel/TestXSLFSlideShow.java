@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -30,8 +31,11 @@ import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -419,6 +423,23 @@ class TestXSLFSlideShow {
 
             // Ensure the value hasn't changed from the default after failed attempts
             assertEquals(1, ppt.getFirstSlideNumber());
+        }
+    }
+
+    @Test
+    void addPictureWithCollidingChecksum() throws IOException {
+        // "plumless" and "buckeroo" have the same CRC32
+        byte[] data1 = "plumless".getBytes(StandardCharsets.US_ASCII);
+        byte[] data2 = "buckeroo".getBytes(StandardCharsets.US_ASCII);
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFPictureData pic1 = ppt.addPicture(data1, PictureData.PictureType.PNG);
+            assertSame(pic1, ppt.findPictureData(data1));
+            assertNull(ppt.findPictureData(data2));
+
+            XSLFPictureData pic2 = ppt.addPicture(data2, PictureData.PictureType.PNG);
+            assertNotSame(pic1, pic2);
+            assertArrayEquals(data2, pic2.getData());
+            assertEquals(2, ppt.getPictureData().size());
         }
     }
 }
