@@ -553,28 +553,19 @@ public class DataFormatter {
         // shows 3.75 as "15 =/=4": let CellFormat handle any fraction with text or spacing in it
         boolean fractionWithText = formatStr.indexOf('/') >= 0 && hasTextInFraction(formatStr);
         if (plainFraction || fractionWithText) {
+            Format fractionFormat = createFractionFormat(formatStr);
             if (fractionWithText) {
                 try {
-                    return new CellFormatWrapper(CellFormat.getInstance(locale, formatStr));
+                    CellFormat cellFormat = CellFormat.getInstance(locale, formatStr);
+                    // probe with a fixed value, not cellValue, so the cached format does not depend on which
+                    // value comes first; a format that only fails for some values falls back per value
+                    cellFormat.apply(1.25);
+                    return new CellFormatWrapper(cellFormat, fractionFormat);
                 } catch (Exception e) {
                     LOG.atWarn().withThrowable(e).log("Formatting failed for format {}, falling back", formatStr);
                 }
             }
-            String[] chunks = formatStr.split(";");
-            for (String chunk1 : chunks) {
-                String chunk = chunk1.replace("?", "#");
-                Matcher matcher = fractionStripper.matcher(chunk);
-                chunk = matcher.replaceAll(" ");
-                chunk = multipleSpaces.matcher(chunk).replaceAll(" ");
-                Matcher fractionMatcher = fractionPattern.matcher(chunk);
-                //take the first match
-                if (fractionMatcher.find()) {
-                    String wholePart = (fractionMatcher.group(1) == null) ? "" : defaultFractionWholePartFormat;
-                    return new FractionFormat(wholePart, fractionMatcher.group(3));
-                }
-            }
-
-            return new FractionFormat(defaultFractionWholePartFormat, defaultFractionFractionPartFormat);
+            return fractionFormat;
         }
 
         // DecimalFormat cannot show literal text between digit placeholders, e.g. the
@@ -588,7 +579,7 @@ public class DataFormatter {
                 CellFormat cellFormat = CellFormat.getInstance(locale, formatStr.replace("'%'", "\\%"));
                 // a format CellFormat cannot make sense of, e.g. "#''0#0'1#10L16EE", fails here, not when formatting
                 cellFormat.apply(cellValue);
-                return new CellFormatWrapper(cellFormat);
+                return new CellFormatWrapper(cellFormat, null);
             } catch (Exception e) {
                 LOG.atWarn().withThrowable(e).log("Formatting failed for format {}, falling back", formatStr);
             }
@@ -1021,6 +1012,24 @@ public class DataFormatter {
             }
         }
         return sb.toString();
+    }
+
+    private Format createFractionFormat(String formatStr) {
+        String[] chunks = formatStr.split(";");
+        for (String chunk1 : chunks) {
+            String chunk = chunk1.replace("?", "#");
+            Matcher matcher = fractionStripper.matcher(chunk);
+            chunk = matcher.replaceAll(" ");
+            chunk = multipleSpaces.matcher(chunk).replaceAll(" ");
+            Matcher fractionMatcher = fractionPattern.matcher(chunk);
+            //take the first match
+            if (fractionMatcher.find()) {
+                String wholePart = (fractionMatcher.group(1) == null) ? "" : defaultFractionWholePartFormat;
+                return new FractionFormat(wholePart, fractionMatcher.group(3));
+            }
+        }
+
+        return new FractionFormat(defaultFractionWholePartFormat, defaultFractionFractionPartFormat);
     }
 
     /**
@@ -2252,12 +2261,22 @@ public class DataFormatter {
     @SuppressWarnings("serial")
     private final class CellFormatWrapper extends Format {
         private final CellFormat cellFormat;
-        private CellFormatWrapper(CellFormat cellFormat) {
+        /** used for a value the CellFormat fails on; null for General */
+        private final Format fallback;
+        private CellFormatWrapper(CellFormat cellFormat, Format fallback) {
             this.cellFormat = cellFormat;
+            this.fallback = fallback;
         }
         @Override
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-            String text = cellFormat.apply(obj).text;
+            String text;
+            try {
+                text = cellFormat.apply(obj).text;
+            } catch (RuntimeException e) {
+                // the format was checked when it was created, but this value fails
+                LOG.atDebug().withThrowable(e).log("Formatting failed for value {}, falling back", obj);
+                return (fallback != null ? fallback : generalNumberFormat).format(obj, toAppendTo, pos);
+            }
             return toAppendTo.append(emulateCSV ? text : text.trim());
         }
         @Override
