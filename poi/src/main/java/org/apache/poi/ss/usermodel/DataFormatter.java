@@ -1295,13 +1295,18 @@ public class DataFormatter {
             if (padsWithSpaces) {
                 pattern = pattern.replace('?', '#');
             }
-            // each '%' multiplies by 100, but DecimalFormat only allows one
-            int percents = countUnquoted(pattern, '%');
-            if (percents > 1) {
+            // each '%' multiplies by 100, but DecimalFormat only allows one in each section;
+            // the value is scaled by the percent signs of the positive section only
+            int percents = countUnquotedInSection(pattern, '%', 0);
+            boolean quotePercents = false;
+            for (int section = 0; section < 2; section++) {
+                quotePercents |= countUnquotedInSection(pattern, '%', section) > 1;
+            }
+            if (quotePercents) {
                 pattern = quoteUnquoted(pattern, '%');
             }
             df = new DecimalFormat(trimTrailingCommas(pattern), symbols);
-            if (percents > 1) {
+            if (quotePercents) {
                 df.setMultiplier((int) Math.pow(100, Math.min(percents, 4)));
             }
             setExcelStyleRoundingMode(df);
@@ -1322,14 +1327,18 @@ public class DataFormatter {
             }
         }
 
-        private static int countUnquoted(String pattern, char ch) {
+        /** counts the unquoted {@code ch} in a section of the pattern: 0 is the positive section, 1 the negative one */
+        private static int countUnquotedInSection(String pattern, char ch, int section) {
             int count = 0;
+            int currentSection = 0;
             boolean quoted = false;
             for (int i = 0; i < pattern.length(); i++) {
                 char c = pattern.charAt(i);
                 if (c == '\'') {
                     quoted = !quoted;
-                } else if (!quoted && c == ch) {
+                } else if (!quoted && c == ';') {
+                    currentSection++;
+                } else if (!quoted && c == ch && currentSection == section) {
                     count++;
                 }
             }
