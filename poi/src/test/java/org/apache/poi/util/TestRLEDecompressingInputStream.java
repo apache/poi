@@ -250,6 +250,7 @@ class TestRLEDecompressingInputStream {
      * a chunk that fails to decode must not leave bytes of the previous chunk to be read
      */
     @Test
+    @SuppressForbidden("checks available() reports nothing after a failed chunk")
     void failedChunkLeavesNoStaleBytes() throws IOException {
         // "abcd", then a chunk with the literal 'x' and a copy token reaching 2 bytes back
         final byte[] compressed = {
@@ -264,6 +265,7 @@ class TestRLEDecompressingInputStream {
             assertEquals(-1, stream.read());
             assertEquals(-1, stream.read(b));
             assertEquals(0, stream.skip(1));
+            assertEquals(0, stream.available());
         }
     }
 
