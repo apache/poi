@@ -87,7 +87,7 @@ public class RLEDecompressingInputStream extends InputStream {
         if (len == -1) {
             return -1;
         }
-        if (pos >= len) {
+        while (pos >= len) {
             if ((len = readChunk()) == -1) {
                 return -1;
             }
@@ -188,6 +188,10 @@ public class RLEDecompressingInputStream extends InputStream {
                         if (b == -1) {
                             return -1;
                         }
+                        if (outOffset >= buf.length) {
+                            throw new IllegalStateException(String.format(Locale.ROOT,
+                                "Decompressed chunk exceeds the maximum of %d bytes", buf.length));
+                        }
                         buf[outOffset++] = (byte) b;
                         inOffset++;
                     } else {
@@ -200,6 +204,18 @@ public class RLEDecompressingInputStream extends InputStream {
                         int copyLenBits = getCopyLenBits(outOffset - 1);
                         int copyOffset = (token >> (copyLenBits)) + 1;
                         int copyLen = (token & (POWER2[copyLenBits] - 1)) + 3;
+                        // MS-OVBA 2.4.1.3.19: a CopyToken may only reference bytes already
+                        // decompressed in the current chunk, and a chunk never exceeds 4096 bytes
+                        if (copyOffset > outOffset) {
+                            throw new IllegalStateException(String.format(Locale.ROOT,
+                                "Copy token offset %d reaches before the start of the chunk (%d bytes decompressed)",
+                                copyOffset, outOffset));
+                        }
+                        if (copyLen > buf.length - outOffset) {
+                            throw new IllegalStateException(String.format(Locale.ROOT,
+                                "Copy token length %d at offset %d exceeds the maximum chunk size of %d bytes",
+                                copyLen, outOffset, buf.length));
+                        }
                         int startPos = outOffset - copyOffset;
                         int endPos = startPos + copyLen;
                         for (int i = startPos; i < endPos; i++) {
