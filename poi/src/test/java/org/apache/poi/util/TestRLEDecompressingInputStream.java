@@ -19,6 +19,7 @@ package org.apache.poi.util;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -172,6 +173,72 @@ class TestRLEDecompressingInputStream {
             assertEquals(5010 % 251, stream.read());
             assertEquals(2 * chunkSize - 5011, stream.skip(10000));
             assertEquals(0, stream.skip(1));
+            assertEquals(-1, stream.read());
+        }
+    }
+
+    /**
+     * a copy token as the first item of a chunk has nothing to copy from
+     */
+    @Test
+    void copyTokenBeforeChunkStart() {
+        // compressed chunk of 3 bytes: flag byte with item 0 set, copy token 0x0000 (offset 1, length 3)
+        final byte[] compressed = {
+            0x01, 0x02, (byte)0xB0, 0x01, 0x00, 0x00
+        };
+        assertThrows(IllegalStateException.class, () -> RLEDecompressingInputStream.decompress(compressed));
+    }
+
+    /**
+     * a copy token may not expand the chunk past 4096 bytes
+     */
+    @Test
+    void copyTokenPastChunkEnd() {
+        // literal 'A', then copy token 0x0FFF: offset 1, length 4098
+        final byte[] compressed = {
+            0x01, 0x03, (byte)0xB0, 0x02, 0x41, (byte)0xFF, 0x0F
+        };
+        assertThrows(IllegalStateException.class, () -> RLEDecompressingInputStream.decompress(compressed));
+    }
+
+    /**
+     * a chunk of exactly 4096 bytes is fine, one more literal is not
+     */
+    @Test
+    void literalPastChunkEnd() throws IOException {
+        // literal 'A', then copy token 0x0FFC: offset 1, length 4095 -> 4096 bytes
+        final byte[] full = {
+            0x01, 0x03, (byte)0xB0, 0x02, 0x41, (byte)0xFC, 0x0F
+        };
+        byte[] expanded = RLEDecompressingInputStream.decompress(full);
+        assertEquals(4096, expanded.length);
+        for (byte b : expanded) {
+            assertEquals(0x41, b);
+        }
+
+        // the same chunk followed by the literal 'B'
+        final byte[] overflow = {
+            0x01, 0x04, (byte)0xB0, 0x02, 0x41, (byte)0xFC, 0x0F, 0x42
+        };
+        assertThrows(IllegalStateException.class, () -> RLEDecompressingInputStream.decompress(overflow));
+    }
+
+    /**
+     * a chunk without any token must not repeat a byte of the previous chunk
+     */
+    @Test
+    void emptyChunkDoesNotRepeatBytes() throws IOException {
+        // "abc", then a compressed chunk consisting of a flag byte only, then a chunk header without flag byte
+        final byte[] compressed = {
+            0x01, 0x03, (byte)0xB0, 0x00, 0x61, 0x62, 0x63, 0x00, (byte)0xB0, 0x00, 0x05, (byte)0xB0
+        };
+        checkRLEDecompression("abc", compressed);
+
+        try (InputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(compressed))) {
+            assertEquals('a', stream.read());
+            assertEquals('b', stream.read());
+            assertEquals('c', stream.read());
+            assertEquals(-1, stream.read());
             assertEquals(-1, stream.read());
         }
     }
