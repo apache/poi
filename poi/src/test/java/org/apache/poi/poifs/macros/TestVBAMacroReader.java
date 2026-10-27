@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.macros;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
@@ -461,6 +462,87 @@ class TestVBAMacroReader {
             }
         }
         return bos.toByteArray();
+    }
+
+    /**
+     * The module stream can be read before the dir stream that holds its offset (bug 59858 layout).
+     * A bad offset must then fall back to the brute-force search, as it does in the other order.
+     */
+    @Test
+    void badModuleOffsetFromLaterDirStream() throws IOException {
+        final String source = "Attribute VB_Name = \"Module1\"";
+        // the module stream starts with a chunk whose first token is a copy token,
+        // the real compressed source follows it
+        final ByteArrayOutputStream moduleStream = new ByteArrayOutputStream();
+        moduleStream.write(new byte[]{0x01, 0x02, (byte) 0xB0, 0x01, 0x00, 0x00});
+        moduleStream.write(compressLiterals(source.getBytes(StandardCharsets.US_ASCII)));
+
+        final ByteArrayOutputStream dir = new ByteArrayOutputStream();
+        // MODULE_STREAM_NAME "Module1", then MODULE_OFFSET 0, which points at the broken chunk
+        writeShort(dir, 0x1A);
+        writeInt(dir, 7);
+        dir.write("Module1".getBytes(StandardCharsets.US_ASCII));
+        writeShort(dir, 0x32);
+        writeInt(dir, 14);
+        dir.write("Module1".getBytes(StandardCharsets.UTF_16LE));
+        writeShort(dir, 0x31);
+        writeInt(dir, 4);
+        writeInt(dir, 0);
+
+        try (POIFSFileSystem fs = new POIFSFileSystem();
+             VBAMacroReader reader = new VBAMacroReader(fs)) {
+            DirectoryNode moduleDir = (DirectoryNode) fs.getRoot().createDirectory("first").createDirectory("VBA");
+            moduleDir.createDocument("Module1", new ByteArrayInputStream(moduleStream.toByteArray()));
+            DirectoryNode dirDir = (DirectoryNode) fs.getRoot().createDirectory("second").createDirectory("VBA");
+            dirDir.createDocument("dir", new ByteArrayInputStream(compressLiterals(dir.toByteArray())));
+
+            VBAMacroReader.ModuleMap modules = new VBAMacroReader.ModuleMap();
+            reader.readMacros(moduleDir, modules);
+            reader.readMacros(dirDir, modules);
+            assertEquals(source, new String(modules.get("Module1").buf, StandardCharsets.US_ASCII));
+        }
+    }
+
+    /**
+     * a dir stream that fails to decompress is reported as an IOException
+     */
+    @Test
+    void badDirStreamIsIOException() throws IOException {
+        try (POIFSFileSystem fs = new POIFSFileSystem();
+             VBAMacroReader reader = new VBAMacroReader(fs)) {
+            DirectoryNode vba = (DirectoryNode) fs.getRoot().createDirectory("VBA");
+            // a chunk whose first token is a copy token
+            vba.createDocument("dir", new ByteArrayInputStream(
+                    new byte[]{0x01, 0x02, (byte) 0xB0, 0x01, 0x00, 0x00}));
+            VBAMacroReader.ModuleMap modules = new VBAMacroReader.ModuleMap();
+            assertThrows(IOException.class, () -> reader.readMacros(vba, modules));
+        }
+    }
+
+    /**
+     * RLE-compresses {@code data} into a single chunk of literals only
+     */
+    private static byte[] compressLiterals(byte[] data) {
+        final ByteArrayOutputStream chunk = new ByteArrayOutputStream();
+        for (int i = 0; i < data.length; i += 8) {
+            chunk.write(0);
+            chunk.write(data, i, Math.min(8, data.length - i));
+        }
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.write(0x01);
+        writeShort(out, 0xB000 | (chunk.size() - 1));
+        out.writeBytes(chunk.toByteArray());
+        return out.toByteArray();
+    }
+
+    private static void writeShort(ByteArrayOutputStream out, int value) {
+        out.write(value);
+        out.write(value >> 8);
+    }
+
+    private static void writeInt(ByteArrayOutputStream out, int value) {
+        writeShort(out, value);
+        writeShort(out, value >> 16);
     }
 
     private static void putZipEntry(ZipOutputStream zos, String name, byte[] data) throws IOException {

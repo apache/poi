@@ -108,7 +108,7 @@ public class RLEDecompressingInputStream extends InputStream {
         int length = l;
         while (length > 0) {
             if (pos >= len) {
-                if ((len = readChunk()) == -1) {
+                if (len == -1 || (len = readChunk()) == -1) {
                     return offset > off ? offset - off : -1;
                 }
             }
@@ -155,6 +155,8 @@ public class RLEDecompressingInputStream extends InputStream {
      */
     private int readChunk() throws IOException {
         pos = 0;
+        // a chunk that fails to decode leaves the stream at its end, not with stale bytes in buf
+        len = -1;
         int w = readShort(in);
         if (w == -1 || w == 0) {
             return -1;
@@ -165,6 +167,11 @@ public class RLEDecompressingInputStream extends InputStream {
         }
         boolean rawChunk = (w & 0x8000) == 0;
         if (rawChunk) {
+            // MS-OVBA: an uncompressed chunk always holds exactly 4096 bytes
+            if (chunkSize != buf.length) {
+                throw new IllegalStateException(String.format(Locale.ROOT,
+                    "Uncompressed chunk must hold %d bytes, header gives %d", buf.length, chunkSize));
+            }
             if (IOUtils.readFully(in, buf, 0, chunkSize) < chunkSize) {
                 throw new IllegalStateException(String.format(Locale.ROOT, "Not enough bytes read, expected %d", chunkSize));
             }
@@ -186,7 +193,8 @@ public class RLEDecompressingInputStream extends InputStream {
                         // literal
                         final int b = in.read();
                         if (b == -1) {
-                            return -1;
+                            // truncated input: keep what was decompressed so far, as for a missing flag byte
+                            return outOffset;
                         }
                         if (outOffset >= buf.length) {
                             throw new IllegalStateException(String.format(Locale.ROOT,
@@ -198,7 +206,7 @@ public class RLEDecompressingInputStream extends InputStream {
                         // compressed token
                         int token = readShort(in);
                         if (token == -1) {
-                            return -1;
+                            return outOffset;
                         }
                         inOffset += 2;
                         int copyLenBits = getCopyLenBits(outOffset - 1);
