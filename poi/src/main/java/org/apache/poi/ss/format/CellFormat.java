@@ -468,23 +468,37 @@ public class CellFormat {
                 if ((!posNumFmt.hasCondition() && val >= 0)
                         || (posNumFmt.hasCondition() && posNumFmt.applies(val))) {
                     return posNumFmt;
-                } else if (!negNumFmt.hasCondition()
-                        || (negNumFmt.hasCondition() && negNumFmt.applies(val))) {
-                    return negNumFmt;
                 } else {
-                    // Return ###...### (255 #s) to match Excel 2007 behaviour
-                    return new CellFormatPart(QUOTE + INVALID_VALUE_FOR_FORMAT + QUOTE);
+                    if (negNumFmt == null) {
+                        throw new IllegalStateException(
+                                "Cannot apply cell format, check for warning logs during creation of format: " + format);
+                    }
+
+                    if (!negNumFmt.hasCondition()
+                            || (negNumFmt.hasCondition() && negNumFmt.applies(val))) {
+                        return negNumFmt;
+                    } else {
+                        // Return ###...### (255 #s) to match Excel 2007 behaviour
+                        return new CellFormatPart(QUOTE + INVALID_VALUE_FOR_FORMAT + QUOTE);
+                    }
                 }
             } else {
                 if ((!posNumFmt.hasCondition() && val > 0)
                         || (posNumFmt.hasCondition() && posNumFmt.applies(val))) {
                     return posNumFmt;
-                } else if ((!negNumFmt.hasCondition() && val < 0)
-                        || (negNumFmt.hasCondition() && negNumFmt.applies(val))) {
-                    return negNumFmt;
-                // Only the first two format parts can have conditions
                 } else {
-                    return zeroNumFmt;
+                    if (negNumFmt == null) {
+                        throw new IllegalStateException(
+                                "Cannot apply cell format, check for warning logs during creation of format: " + format);
+                    }
+
+                    if ((!negNumFmt.hasCondition() && val < 0)
+                            || (negNumFmt.hasCondition() && negNumFmt.applies(val))) {
+                        return negNumFmt;
+                        // Only the first two format parts can have conditions
+                    } else {
+                        return zeroNumFmt;
+                    }
                 }
             }
         } else {

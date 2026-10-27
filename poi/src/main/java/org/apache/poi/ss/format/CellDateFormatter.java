@@ -220,7 +220,7 @@ public class CellDateFormatter extends CellFormatter {
                         if (msecs < 0) {
                             msecs += 1000;
                         }
-                        formatter.format(locale, sFmt, msecs / 1000.0);
+                        formatter.format(locale, sFmt == null ? "%f" : sFmt, msecs / 1000.0);
                     }
                     toAppendTo.delete(pos, pos + 2);
                     doneMillis = true;

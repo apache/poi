@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.IllegalFormatConversionException;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.stream.Stream;
@@ -59,14 +60,14 @@ class TestCellFormat {
     private static TimeZone userTimeZone;
 
     @BeforeAll
-    public static void setTimeZone() {
+    static void setTimeZone() {
         userTimeZone = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
         LocaleUtil.setUserLocale(Locale.US);
     }
 
     @AfterAll
-    public static void resetTimeZone() {
+    static void resetTimeZone() {
         LocaleUtil.setUserTimeZone(userTimeZone);
         LocaleUtil.setUserLocale(Locale.ROOT);
     }
@@ -1335,5 +1336,30 @@ class TestCellFormat {
 
         assertThrows(IllegalArgumentException.class,
                 () -> cellFormat.apply(Double.parseDouble("-2.0579980172405396E-35")));
+    }
+
+    @Test
+    void testApplyNPE3() {
+        CellFormat cellFormat = CellFormat.getInstance(Locale.ROOT, ";@\u007F??.???@;['@|';??");
+
+        assertThrows(IllegalStateException.class,
+                () -> cellFormat.apply(0.0d));
+    }
+
+    @Test
+    void testApplyNPE4() {
+        CellFormat cellFormat = CellFormat.getInstance(Locale.ROOT, "y*S_#1\u0000y*\u0000\by*\u0000\n\u0000");
+
+        CellFormatResult result = cellFormat.apply(-0.0d);
+        // exact outcome may depend on current year, do not depend on it here
+        assertNotNull(result);
+    }
+
+    @Test
+    void testApplyClassCaseException() {
+        CellFormat cellFormat = CellFormat.getInstance(Locale.ENGLISH, "|;x;\b̼;\bS\n1\\E]\\E]S[S]S[$-S]");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> cellFormat.apply(""));
     }
 }

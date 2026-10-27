@@ -177,6 +177,10 @@ public class CellElapsedFormatter extends CellFormatter {
 
     @Override
     public void formatValue(StringBuffer toAppendTo, Object value) {
+        if (!(value instanceof Number)) {
+            throw new IllegalArgumentException("Expected object of type number for format " + format + ", but had: " + value);
+        }
+
         double elapsed = ((Number) value).doubleValue();
 
         if (elapsed < 0) {
