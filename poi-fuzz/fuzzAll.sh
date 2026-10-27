@@ -8,6 +8,13 @@ for i in src/main/java/org/apache/poi/fuzz/*Fuzzer.java;do
   CLASS=`basename $i | sed -e 's/.java//g'`
   CORPUS=corpus`echo ${CLASS} | sed -e 's/Fuzzer//g' | sed -e 's/POI//g'`
 
+  if [ $# -gt 0 ]; then
+    if [ "$1" != "${CLASS}" ]; then
+      echo Skipping ${CLASS} as only fuzz-target $1 should be run
+      continue
+    fi
+  fi
+
   # no separate corpus for this one
   if [ "${CLASS}" == "XLSX2CSVFuzzer" ]; then
     CORPUS=corpusXSSF
