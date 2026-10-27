@@ -36,8 +36,6 @@ import javax.xml.crypto.URIReference;
 import javax.xml.crypto.URIReferenceException;
 import javax.xml.crypto.XMLCryptoContext;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -101,24 +99,13 @@ public class OOXMLURIDereferencer implements URIDereferencer {
             }
         }
 
-        InputStream dataStream = null;
+        // .rels parts are not modified: the relationship transform drops the whitespace between
+        // relationships (e.g. of office 2007 pretty-printed .rels files), and removing line breaks
+        // inside an attribute would digest another value than the package reads
+        InputStream dataStream;
         try {
             dataStream = part.getInputStream();
-
-            // workaround for office 2007 pretty-printed .rels files
-            if (part.getPartName().toString().endsWith(".rels")) {
-                // although xmlsec has an option to ignore line breaks, currently this
-                // only affects .rels files, so we only modify these
-                try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
-                    for (int ch; (ch = dataStream.read()) != -1; ) {
-                        if (ch == 10 || ch == 13) continue;
-                        bos.write(ch);
-                    }
-                    dataStream = bos.toInputStream();
-                }
-            }
         } catch (IOException e) {
-            IOUtils.closeQuietly(dataStream);
             throw new URIReferenceException("I/O error: " + e.getMessage(), e);
         }
 

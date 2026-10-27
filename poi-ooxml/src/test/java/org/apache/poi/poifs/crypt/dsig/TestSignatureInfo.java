@@ -502,6 +502,31 @@ class TestSignatureInfo {
         }
     }
 
+    @Test
+    void testLineBreakInSignedRelationshipTarget() throws Exception {
+        // a line break in an attribute is read as a space, so the target becomes "word/document.xml "
+        // (stored as /word/document.xml%20) - another part than the signed one
+        InputStream modified = rewriteSignedDocx(entries -> {
+            String target = "Target=\"word/document.xml\"";
+            assertThat(new String(entries.get("_rels/.rels"), StandardCharsets.UTF_8), containsString(target));
+            entries.put("_rels/.rels", replace(entries.get("_rels/.rels"), target, "Target=\"word/document.xml\n\""));
+            entries.put("[Content_Types].xml", replace(entries.get("[Content_Types].xml"), "</Types>",
+                "<Override PartName=\"/word/document.xml%20\" ContentType=\"" +
+                XWPFRelation.DOCUMENT.getContentType() + "\"/></Types>"));
+            entries.put("word/document.xml%20", replace(entries.get("word/document.xml"), "Hello world", "Tampered"));
+        });
+
+        try (OPCPackage pkg = OPCPackage.open(modified);
+             XWPFDocument doc = new XWPFDocument(pkg)) {
+            assertEquals("Tampered", doc.getParagraphs().get(0).getText());
+
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "signature must not cover the substituted main part");
+        }
+    }
+
     /**
      * Copies hello-world-signed.docx, adding {@code rel} to _rels/.rels and, if {@code addTamperedPart}
      * is set, a word/tampered.xml main part which says "Tampered" instead of "Hello world"
