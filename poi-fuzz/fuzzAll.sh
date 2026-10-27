@@ -79,5 +79,5 @@ for i in src/main/java/org/apache/poi/fuzz/*Fuzzer.java;do
     -rss_limit_mb=2560 \
     -timeout=600 \
     -max_total_time=600 \
-    ${CORPUS}
+    ${CORPUS} || (echo "Failed while running ${CLASS}" && exit 1)
 done
