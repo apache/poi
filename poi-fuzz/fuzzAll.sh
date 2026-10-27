@@ -72,11 +72,11 @@ for i in src/main/java/org/apache/poi/fuzz/*Fuzzer.java;do
       ;;
   esac
 
-  nice -n 19 ./jazzer \
+  JAVA_OPTS="-Xmx3000m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp" nice -n 19 ./jazzer \
     --cp=build/libs/poi-fuzz-all.jar \
     "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" \
     --target_class=org.apache.poi.fuzz.${CLASS} \
-    -rss_limit_mb=2560 \
+    -rss_limit_mb=4500 \
     -timeout=600 \
     -max_total_time=600 \
     ${CORPUS} || (echo "Failed while running ${CLASS}" && exit 1)
