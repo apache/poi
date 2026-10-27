@@ -79,6 +79,15 @@ tasks.register('getFuzzDeps', Copy) {
 shadowJar{
     // set name to not include the version in the file-name
     archiveFileName = "poi-fuzz-all.jar"
+
+    // log4j2-test.xml would take precedence over log4j2.xml, so keep it out
+    exclude 'log4j2-test.xml'
+
+    // remove some native code that is not needed for now
+    exclude 'aix/**'
+    exclude 'darwin/**'
+    exclude 'freebsd/**'
+    exclude 'win/**'
 }
 
 idea {
