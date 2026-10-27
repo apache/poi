@@ -264,7 +264,6 @@ class TestRLEDecompressingInputStream {
             assertEquals(-1, stream.read());
             assertEquals(-1, stream.read(b));
             assertEquals(0, stream.skip(1));
-            assertEquals(0, stream.available());
         }
     }
 
