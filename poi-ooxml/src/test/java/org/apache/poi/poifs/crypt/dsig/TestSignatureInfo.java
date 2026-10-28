@@ -527,6 +527,30 @@ class TestSignatureInfo {
         }
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+        // line breaks between the attributes
+        "\r\n    Target=\"word/document.xml\"\r\n/>",
+        // content of the Relationship element is not part of the transform output
+        "Target=\"word/document.xml\">\r\n</Relationship>",
+        "Target=\"word/document.xml\"><x:ext xmlns:x=\"urn:x\">text</x:ext></Relationship>"
+    })
+    void testSignedRelationshipFormatting(String reformatted) throws Exception {
+        // the relationship transform digests the relationships, not how they are written
+        InputStream modified = rewriteSignedDocx(entries -> {
+            String target = "Target=\"word/document.xml\"/>";
+            assertThat(new String(entries.get("_rels/.rels"), StandardCharsets.UTF_8), containsString(target));
+            entries.put("_rels/.rels", replace(entries.get("_rels/.rels"), target, reformatted));
+        });
+
+        try (OPCPackage pkg = OPCPackage.open(modified)) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertTrue(si.verifySignature());
+        }
+    }
+
     /**
      * Copies hello-world-signed.docx, adding {@code rel} to _rels/.rels and, if {@code addTamperedPart}
      * is set, a word/tampered.xml main part which says "Tampered" instead of "Hello world"

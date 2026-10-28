@@ -229,8 +229,14 @@ public class RelationshipTransformService extends TransformService {
             root.removeChild(root.getFirstChild());
         }
 
+        // the transform removes any content of the Relationship elements, e.g. whitespace of a
+        // pretty-printed <Relationship ...></Relationship> - Office/.NET digest them as empty elements.
+        // A nested relationship which is kept is moved to the root, before or after its parent is emptied
         rsList.sort(Comparator.comparing(el -> el.getAttribute("Id")));
         for (Element el : rsList) {
+            while (el.hasChildNodes()) {
+                el.removeChild(el.getFirstChild());
+            }
             root.appendChild(el);
         }
 
