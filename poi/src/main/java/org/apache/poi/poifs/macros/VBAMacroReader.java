@@ -268,15 +268,24 @@ public class VBAMacroReader implements Closeable {
             // Would adding module.read(in) here be correct?
         } else {
             // Decompress a previously found module and store the decompressed result into module.buf
-            InputStream stream = new RLEDecompressingInputStream(
+            final byte[] compressed = module.buf;
+            try (InputStream stream = new RLEDecompressingInputStream(
                     UnsynchronizedByteArrayInputStream.builder().
-                            setByteArray(module.buf).
+                            setByteArray(compressed).
                             setOffset(moduleOffset).
-                            setLength(module.buf.length - moduleOffset).
+                            setLength(compressed.length - moduleOffset).
                             get()
-            );
-            module.read(stream);
-            stream.close();
+            )) {
+                module.read(stream);
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                //bad moduleOffset, try brute force as readModuleFromDocumentStream does
+                byte[] decompressedBytes = findCompressedStreamWBruteForce(
+                        UnsynchronizedByteArrayInputStream.builder().setByteArray(compressed).get());
+                if (decompressedBytes == null) {
+                    throw e;
+                }
+                module.read(UnsynchronizedByteArrayInputStream.builder().setByteArray(decompressedBytes).get());
+            }
         }
     }
 
@@ -623,7 +632,7 @@ public class VBAMacroReader implements Closeable {
                             break;
                     }
                 }
-            } catch (final IOException e) {
+            } catch (final IOException | IllegalArgumentException | IllegalStateException e) {
                 throw new IOException(
                         "Error occurred while reading macros at section id "
                                 + recordId + " (" + HexDump.shortToHex(recordId) + ")", e);
