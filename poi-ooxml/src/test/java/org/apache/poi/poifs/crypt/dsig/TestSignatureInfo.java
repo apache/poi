@@ -69,8 +69,13 @@ import java.util.function.Supplier;
 import javax.security.auth.x500.X500Principal;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
+import javax.xml.crypto.dsig.DigestMethod;
+import javax.xml.crypto.dsig.Reference;
+import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLSignatureException;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
+import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -99,6 +104,8 @@ import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESXLSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
+import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
+import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService.RelationshipTransformParameterSpec;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
@@ -551,6 +558,67 @@ class TestSignatureInfo {
         }
     }
 
+    @Test
+    void testRelationshipsGroupReference() throws Exception {
+        // sign with an additional reference to the document relationships, which signs all
+        // attachedTemplate relationships as a group - there is none of them when signing
+        String templateType = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/attachedTemplate";
+        String relsName = "word/_rels/document.xml.rels";
+
+        DummyKeystore ks = new DummyKeystore(STORE_PASS);
+        KeyCertPair certPair = ks.createDummyKey();
+        SignatureConfig sic = new SignatureConfig();
+        sic.setKey(certPair.getKey());
+        sic.setSigningCertificateChain(certPair.getX509Chain());
+        sic.setSignatureFacets(Arrays.asList(new OOXMLSignatureFacet() {
+            @Override
+            protected void addManifestReferences(SignatureInfo signatureInfo, List<Reference> manifestReferences)
+            throws XMLSignatureException {
+                super.addManifestReferences(signatureInfo, manifestReferences);
+                RelationshipTransformParameterSpec parameterSpec = new RelationshipTransformParameterSpec();
+                parameterSpec.addRelationshipGroupReference(templateType);
+                XMLSignatureFactory sigFac = signatureInfo.getSignatureFactory();
+                try {
+                    List<Transform> transforms = Arrays.asList(
+                        sigFac.newTransform(RelationshipTransformService.TRANSFORM_URI, parameterSpec),
+                        sigFac.newTransform(CanonicalizationMethod.INCLUSIVE, (TransformParameterSpec)null));
+                    DigestMethod digestMethod = sigFac.newDigestMethod(signatureInfo.getSignatureConfig().getDigestMethodUri(), null);
+                    manifestReferences.add(sigFac.newReference("/" + relsName +
+                        "?ContentType=application/vnd.openxmlformats-package.relationships+xml", digestMethod, transforms, null, null));
+                } catch (GeneralSecurityException e) {
+                    throw new XMLSignatureException(e);
+                }
+            }
+        }, new KeyInfoSignatureFacet()));
+
+        File signed = copy(testdata.getFile("hello-world-unsigned.docx"));
+        try (OPCPackage pkg = OPCPackage.open(signed, PackageAccess.READ_WRITE)) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(sic);
+            si.confirmSignature();
+        }
+
+        try (OPCPackage pkg = OPCPackage.open(signed, PackageAccess.READ)) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertTrue(si.verifySignature());
+        }
+
+        // a template relationship added after signing is one of the relationships signed as a group
+        String rel = "<Relationship Id=\"rId99\" Type=\"" + templateType +
+            "\" Target=\"https://example.com/template.dotm\" TargetMode=\"External\"/>";
+        InputStream tampered = rewriteDocx(signed, entries -> entries.put(relsName,
+            replace(entries.get(relsName), "</Relationships>", rel + "</Relationships>")));
+        try (OPCPackage pkg = OPCPackage.open(tampered)) {
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "a relationship of a type signed as a group must be covered by the digest");
+        }
+    }
+
     /**
      * Copies hello-world-signed.docx, adding {@code rel} to _rels/.rels and, if {@code addTamperedPart}
      * is set, a word/tampered.xml main part which says "Tampered" instead of "Hello world"
@@ -573,8 +641,15 @@ class TestSignatureInfo {
      * Copies hello-world-signed.docx, letting {@code modifier} change, add or remove entries by name
      */
     private static InputStream rewriteSignedDocx(Consumer<Map<String, byte[]>> modifier) throws IOException {
+        return rewriteDocx(testdata.getFile("hello-world-signed.docx"), modifier);
+    }
+
+    /**
+     * Copies {@code file}, letting {@code modifier} change, add or remove entries by name
+     */
+    private static InputStream rewriteDocx(File file, Consumer<Map<String, byte[]>> modifier) throws IOException {
         Map<String, byte[]> entries = new LinkedHashMap<>();
-        try (ZipFile zf = ZipFile.builder().setFile(testdata.getFile("hello-world-signed.docx")).get()) {
+        try (ZipFile zf = ZipFile.builder().setFile(file).get()) {
             for (ZipArchiveEntry ze : Collections.list(zf.getEntries())) {
                 try (InputStream is = zf.getInputStream(ze)) {
                     entries.put(ze.getName(), IOUtils.toByteArray(is));
