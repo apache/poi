@@ -46,6 +46,11 @@ public class POIXSSFFuzzer {
 				 OpenXML4JRuntimeException | IllegalArgumentException | IndexOutOfBoundsException  |
 				 ArithmeticException e) {
 			// expected here
+		} catch (NullPointerException e) {
+			// can be removed when commons-compress is > 1.28.0 and changes from COMPRESS-598 are applied
+			if (!ExceptionUtils.getStackTrace(e).contains("org.apache.commons.compress.archivers.zip.ZipArchiveInputStream.read")) {
+				throw e;
+			}
 		}
 
 		try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(input))) {
