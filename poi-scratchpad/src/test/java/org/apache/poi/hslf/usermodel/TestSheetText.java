@@ -56,6 +56,7 @@ public final class TestSheetText {
         }
     }
 
+    @Test
     void testSheetTwo() {
         HSLFSheet slideTwo = ss.getSlides().get(1);
         String[] expectText = new String[] {"This is the title on page 2","This is page two\rIt has several blocks of text\rNone of them have formatting"};
@@ -71,6 +72,7 @@ public final class TestSheetText {
      *  TextProps don't have enough data.
      * (Make sure we don't screw up / throw an exception etc)
      */
+    @Test
     void testWithShortTextPropData() throws IOException {
         HSLFSlideShow sss = HSLFTestDataSamples.getSlideShow("iisd_report.ppt");
 
@@ -81,13 +83,13 @@ public final class TestSheetText {
         // Check text on first slide
         HSLFSlide s = sss.getSlides().get(0);
         String exp =
-            "Realizing the Development Dividend:\n" +
-            "Community Capacity Building and CDM.\n" +
-            "Can they co-exist?\n\n" +
-            "Gay Harley\n" +
-            "Clean Development Alliance\n" +
-            "COP 11 \u2013 MOP 1\n" + // special long hyphen
-            "December 5, 2005\n";
+            "Realizing the Development Dividend:\r" +
+            "Community Capacity Building and CDM.\r" +
+            "Can they co-exist?\r\r" +
+            "Gay Harley\r" +
+            "Clean Development Alliance\r" +
+            "COP 11 \u2013 MOP 1\r" + // special long hyphen
+            "December 5, 2005\r";
 
         assertEquals(1, s.getTextParagraphs().size());
         assertEquals(exp, HSLFTextParagraph.getRawText(s.getTextParagraphs().get(0)));
