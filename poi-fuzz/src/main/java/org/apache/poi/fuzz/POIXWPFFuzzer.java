@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
@@ -61,6 +62,11 @@ public class POIXWPFFuzzer {
 		} catch (IOException | POIXMLException | RecordFormatException | OpenXML4JRuntimeException |
 				 IllegalArgumentException | IllegalStateException | IndexOutOfBoundsException e) {
 			// expected
+		} catch (NullPointerException e) {
+			// can be removed when commons-compress is > 1.28.0 and changes from COMPRESS-598 are applied
+			if (!ExceptionUtils.getStackTrace(e).contains("org.apache.commons.compress.archivers.zip.ZipArchiveInputStream.read")) {
+				throw e;
+			}
 		}
 	}
 }

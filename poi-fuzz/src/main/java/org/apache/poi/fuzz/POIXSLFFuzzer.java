@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -43,6 +44,11 @@ public class POIXSLFFuzzer {
 		} catch (IOException | POIXMLException | RecordFormatException | OpenXML4JRuntimeException |
 				 IndexOutOfBoundsException | IllegalArgumentException e) {
 			// expected here
+		} catch (NullPointerException e) {
+			// can be removed when commons-compress is > 1.28.0 and changes from COMPRESS-598 are applied
+			if (!ExceptionUtils.getStackTrace(e).contains("org.apache.commons.compress.archivers.zip.ZipArchiveInputStream.read")) {
+				throw e;
+			}
 		}
 
 		try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(input))) {
@@ -52,6 +58,11 @@ public class POIXSLFFuzzer {
 		} catch (IOException | OpenXML4JException | XmlException | IllegalArgumentException | POIXMLException |
 				 RecordFormatException | IllegalStateException | OpenXML4JRuntimeException | IndexOutOfBoundsException e) {
 			// expected here
+		} catch (NullPointerException e) {
+			// can be removed when commons-compress is > 1.28.0 and changes from COMPRESS-598 are applied
+			if (!ExceptionUtils.getStackTrace(e).contains("org.apache.commons.compress.archivers.zip.ZipArchiveInputStream.read")) {
+				throw e;
+			}
 		}
 
 		try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(input))) {
@@ -61,6 +72,11 @@ public class POIXSLFFuzzer {
 		} catch (IOException | InvalidFormatException | POIXMLException | IllegalArgumentException |
 				RecordFormatException | IllegalStateException | IndexOutOfBoundsException e) {
 			// expected
+		} catch (NullPointerException e) {
+			// can be removed when commons-compress is > 1.28.0 and changes from COMPRESS-598 are applied
+			if (!ExceptionUtils.getStackTrace(e).contains("org.apache.commons.compress.archivers.zip.ZipArchiveInputStream.read")) {
+				throw e;
+			}
 		}
 	}
 }
