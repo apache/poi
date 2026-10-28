@@ -169,10 +169,10 @@ public class HwmfEscape implements HwmfRecord {
         SPCLPASSTHROUGH2(0x11D8, WmfEscapeUnknownData::new);
 
         private final int flag;
-        private final Supplier<? extends HwmfEscape.HwmfEscapeData> constructor;
+        private final Supplier<? extends HwmfEscapeData> constructor;
 
 
-        EscapeFunction(int flag, Supplier<? extends HwmfEscape.HwmfEscapeData> constructor) {
+        EscapeFunction(int flag, Supplier<? extends HwmfEscapeData> constructor) {
             this.flag = flag;
             this.constructor = constructor;
         }
@@ -312,7 +312,7 @@ public class HwmfEscape implements HwmfRecord {
             // This value MUST be 0x00000001.
             commentType = leis.readInt();
             if (commentType != 0x00000001) {
-                HwmfEscape.log.atWarn().log("Unexpected comment-type: {}", commentType);
+                log.atWarn().log("Unexpected comment-type: {}", commentType);
             }
 
             // A 32-bit unsigned integer that specifies EMF metafile interoperability. This SHOULD be 0x00010000.
@@ -324,7 +324,9 @@ public class HwmfEscape implements HwmfRecord {
 
             // This 32-bit unsigned integer is unused and MUST be set to zero.
             flags = leis.readInt();
-            assert(flags == 0);
+            if (flags != 0) {
+                log.atWarn().log("Unexpected flags: {}", flags);
+            }
 
             // A 32-bit unsigned integer that specifies the total number of consecutive META_ESCAPE_ENHANCED_METAFILE
             // records that contain the embedded EMF metafile.
@@ -333,7 +335,9 @@ public class HwmfEscape implements HwmfRecord {
             // A 32-bit unsigned integer that specifies the size, in bytes, of the EnhancedMetafileData field.
             // This value MUST be less than or equal to 8,192.
             currentRecordSize = leis.readInt();
-            assert(0 <= currentRecordSize && currentRecordSize <= 0x2000);
+            if (0 > currentRecordSize || currentRecordSize > 0x2000) {
+                throw new IllegalArgumentException("Invalid recordSize, should be in range [0,0x2000], had: " + currentRecordSize);
+            }
 
             // A 32-bit unsigned integer that specifies the number of bytes in the EMF stream that remain to be
             // processed after this record. Those additional EMF bytes MUST follow in the EnhancedMetafileData
