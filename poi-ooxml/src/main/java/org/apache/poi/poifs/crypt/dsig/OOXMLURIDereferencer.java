@@ -25,7 +25,6 @@
 package org.apache.poi.poifs.crypt.dsig;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -102,14 +101,11 @@ public class OOXMLURIDereferencer implements URIDereferencer {
         // .rels parts are not modified: the relationship transform drops the whitespace between
         // relationships (e.g. of office 2007 pretty-printed .rels files), and removing line breaks
         // inside an attribute would digest another value than the package reads
-        InputStream dataStream;
         try {
-            dataStream = part.getInputStream();
+            return new OctetStreamData(part.getInputStream(), uri.toString(), null);
         } catch (IOException e) {
             throw new URIReferenceException("I/O error: " + e.getMessage(), e);
         }
-
-        return new OctetStreamData(dataStream, uri.toString(), null);
     }
 
     private PackagePart findPart(URI uri) {
