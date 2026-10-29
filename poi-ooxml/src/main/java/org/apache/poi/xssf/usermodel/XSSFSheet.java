@@ -101,7 +101,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      */
     private Map<Integer, CTCellFormula> sharedFormulas;
     private SortedMap<String,XSSFTable> tables;
-    private List<CellRangeAddress> arrayFormulas;
+    private ArrayFormulaRanges arrayFormulas;
     private final XSSFDataValidationHelper dataValidationHelper;
     private XSSFVMLDrawing xssfvmlDrawing;
     private CellRangeAddress dimensionOverride;
@@ -200,7 +200,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         _rows.clear();
         tables = new TreeMap<>();
         sharedFormulas = new HashMap<>();
-        arrayFormulas = new ArrayList<>();
+        arrayFormulas = new ArrayFormulaRanges();
         for (CTRow row : worksheetParam.getSheetData().getRowArray()) {
             XSSFRow r = new XSSFRow(row, this);
             // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
@@ -4298,25 +4298,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /* package */ boolean isCellInArrayFormulaContext(XSSFCell cell) {
-        final int rowIndex = cell.getRowIndex();
-        final int columnIndex = cell.getColumnIndex();
-        for (CellRangeAddress range : arrayFormulas) {
-            if (range.isInRange(rowIndex, columnIndex)) {
-                return true;
-            }
-        }
-        return false;
+        return arrayFormulas.find(cell.getRowIndex(), cell.getColumnIndex()) != null;
     }
 
     /* package */ XSSFCell getFirstCellInArrayFormula(XSSFCell cell) {
-        final int rowIndex = cell.getRowIndex();
-        final int columnIndex = cell.getColumnIndex();
-        for (CellRangeAddress range : arrayFormulas) {
-            if (range.isInRange(rowIndex, columnIndex)) {
-                return getRow(range.getFirstRow()).getCell(range.getFirstColumn());
-            }
-        }
-        return null;
+        CellRangeAddress range = arrayFormulas.find(cell.getRowIndex(), cell.getColumnIndex());
+        return range == null ? null : getRow(range.getFirstRow()).getCell(range.getFirstColumn());
     }
 
     /**
@@ -4352,10 +4339,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         XSSFCell mainArrayFormulaCell = cr.getTopLeftCell();
         mainArrayFormulaCell.setCellArrayFormula(formula, range);
-        // re-entering an array formula over its range replaces it, so don't record the range twice
-        if (!arrayFormulas.contains(range)) {
-            arrayFormulas.add(range);
-        }
+        // re-entering an array formula over its range replaces it; add() doesn't record the range twice
+        arrayFormulas.add(range);
         return cr;
     }
 
@@ -4364,15 +4349,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         if (cell.getSheet() != this) {
             throw new IllegalArgumentException("Specified cell does not belong to this sheet.");
         }
-        for (CellRangeAddress range : arrayFormulas) {
-            if (range.isInRange(cell)) {
-                arrayFormulas.remove(range);
-                CellRange<XSSFCell> cr = getCellRange(range);
-                for (XSSFCell c : cr) {
-                    c.setBlank();
-                }
-                return cr;
+        CellRangeAddress range = arrayFormulas.find(cell.getRowIndex(), cell.getColumnIndex());
+        if (range != null) {
+            arrayFormulas.remove(range);
+            CellRange<XSSFCell> cr = getCellRange(range);
+            for (XSSFCell c : cr) {
+                c.setBlank();
             }
+            return cr;
         }
         String ref = new CellReference(cell).formatAsString();
         throw new IllegalArgumentException("Cell " + ref + " is not part of an array formula.");
