@@ -356,10 +356,7 @@ final class TestPOIFSMiniStore {
         assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
         assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(2));
         // Ministore has no blocks, so can't iterate until used
-        try {
-            ministore.getNextBlock(0);
-        } catch (IndexOutOfBoundsException e) {
-        }
+        assertThrows(IndexOutOfBoundsException.class, () -> fs.getMiniStore().getNextBlock(0), "Empty ministore has no blocks");
 
         // Write a very small new document, will populate the ministore for us
         byte[] data = new byte[8];
