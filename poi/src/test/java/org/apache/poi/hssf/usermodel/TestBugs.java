@@ -2645,4 +2645,34 @@ final class TestBugs extends BaseTestBugzillaIssues {
             workbook.write(bos);
         }
     }
+
+    /**
+     * Write-protected file whose FileSharingRecord stores a non-latin
+     * user name as UTF-16LE. Used to fail with a LeftoverDataException.
+     */
+    @Test
+    void bug70292() throws IOException {
+        final String username = "\uD64D\uAE38\uB3D9";
+        try (HSSFWorkbook wb1 = openSampleWorkbook("70292.xls")) {
+            assertTrue(wb1.isWriteProtected(), "sample file should be write protected");
+            assertEquals(username, wb1.getInternalWorkbook().getFileSharing().getUsername());
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
+                assertTrue(wb2.isWriteProtected(), "workbook should still be write protected after round trip");
+                assertEquals(username, wb2.getInternalWorkbook().getFileSharing().getUsername());
+            }
+        }
+    }
+
+    @Test
+    void bug70292WriteProtectWithUnicodeUsername() throws IOException {
+        final String username = "\uD64D\uAE38\uB3D9";
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
+            wb1.createSheet();
+            wb1.writeProtectWorkbook("test", username);
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
+                assertTrue(wb2.isWriteProtected(), "workbook should still be write protected after round trip");
+                assertEquals(username, wb2.getInternalWorkbook().getFileSharing().getUsername());
+            }
+        }
+    }
 }

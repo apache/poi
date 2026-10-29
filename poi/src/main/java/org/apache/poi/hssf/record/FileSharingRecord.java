@@ -33,7 +33,6 @@ public final class FileSharingRecord extends StandardRecord {
     public static final short sid = 0x005B;
     private short             field_1_readonly;
     private short             field_2_password;
-    private byte              field_3_username_unicode_options;
     private String            field_3_username_value;
 
     public FileSharingRecord() {}
@@ -42,7 +41,6 @@ public final class FileSharingRecord extends StandardRecord {
         super(other);
         field_1_readonly = other.field_1_readonly;
         field_2_password = other.field_2_password;
-        field_3_username_unicode_options = other.field_3_username_unicode_options;
         field_3_username_value = other.field_3_username_value;
     }
 
@@ -53,9 +51,11 @@ public final class FileSharingRecord extends StandardRecord {
         int nameLen = in.readShort();
 
         if(nameLen > 0) {
-            // TODO - Current examples(3) from junits only have zero length username.
-            field_3_username_unicode_options = in.readByte();
-            field_3_username_value = in.readCompressedUnicode(nameLen);
+            // stUNUsername is an XLUnicodeString: bit 0 of fHighByte set means UTF-16LE characters
+            byte unicodeOptions = in.readByte();
+            field_3_username_value = (unicodeOptions & 0x01) == 0
+                ? in.readCompressedUnicode(nameLen)
+                : in.readUnicodeLEString(nameLen);
         } else {
             field_3_username_value = "";
         }
@@ -110,13 +110,11 @@ public final class FileSharingRecord extends StandardRecord {
 
 
     public void serialize(LittleEndianOutput out) {
-        // TODO - junit
         out.writeShort(getReadOnly());
         out.writeShort(getPassword());
         out.writeShort(field_3_username_value.length());
         if(field_3_username_value.length() > 0) {
-            out.writeByte(field_3_username_unicode_options);
-            StringUtil.putCompressedUnicode(getUsername(), out);
+            StringUtil.writeUnicodeStringFlagAndData(out, getUsername());
         }
     }
 
@@ -125,7 +123,7 @@ public final class FileSharingRecord extends StandardRecord {
         if (nameLen < 1) {
             return 6;
         }
-        return 7+nameLen;
+        return 4 + StringUtil.getEncodedSize(field_3_username_value);
     }
 
     public short getSid() {
