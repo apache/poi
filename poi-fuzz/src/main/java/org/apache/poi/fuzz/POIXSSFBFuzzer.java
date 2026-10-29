@@ -17,6 +17,7 @@
 
 package org.apache.poi.fuzz;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
@@ -25,8 +26,8 @@ import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.xssf.binary.XSSFBParseException;
+import org.apache.poi.xssf.eventusermodel.XSSFBReader;
 import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 
 import java.io.ByteArrayInputStream;
@@ -45,11 +46,11 @@ public class POIXSSFBFuzzer {
 		try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(input), true)) {
             // use separate try-catch to try both things even if the first one fails
             try {
-                new XSSFWorkbook(pkg).close();
+                new XSSFBReader(pkg);
             } catch (IOException | POIXMLException |
-                    RecordFormatException | IndexOutOfBoundsException | IllegalArgumentException |
-                    IllegalStateException | ArithmeticException | XSSFBParseException |
-                     PartAlreadyExistsException e) {
+                     RecordFormatException | IndexOutOfBoundsException | IllegalArgumentException |
+                     IllegalStateException | ArithmeticException | XSSFBParseException |
+                     PartAlreadyExistsException | OpenXML4JException e) {
                 // expected
             }
 
