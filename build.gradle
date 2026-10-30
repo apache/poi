@@ -880,6 +880,7 @@ distributions {
                 exclude 'lib/**'
                 exclude 'lib.stored/**'
                 exclude 'bin/**'
+                exclude '*/out/**'
                 exclude 'out/**'
                 exclude 'tmp/**'
                 exclude 'gradle/**'
@@ -915,6 +916,15 @@ distributions {
 
                 // exclude intermediate files
                 exclude '**/*-saved.xls'
+
+                // exclude fuzz-corpus and crash-files
+                exclude 'poi-fuzz/corpus*'
+                exclude 'poi-fuzz/Crash_*.java'
+                exclude 'poi-fuzz/crash-*'
+                exclude 'poi-fuzz/oom-*'
+                exclude 'poi-fuzz/slow-unit-*'
+                exclude 'poi-fuzz/jazzer*'
+                exclude 'poi-fuzz/jacoco*'
             }
             from('legal') { exclude 'HEADER' }
 
