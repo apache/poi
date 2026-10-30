@@ -64,7 +64,7 @@ public final class ConcatEval  extends Fixed2ArgFunction implements ArrayFunctio
         if (ve == BlankEval.instance) {
             return "";
         }
-        throw new IllegalAccessError("Unexpected value type ("
+        throw new IllegalArgumentException("Unexpected value type ("
                     + ve.getClass().getName() + ")");
     }
 }
