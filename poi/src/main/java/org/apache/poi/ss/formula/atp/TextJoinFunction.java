@@ -42,19 +42,17 @@ import java.util.List;
  */
 final class TextJoinFunction implements FreeRefFunction {
 
-    public static final FreeRefFunction instance = new TextJoinFunction(ArgumentsEvaluator.instance);
+    public static final FreeRefFunction instance = new TextJoinFunction();
 
-    private ArgumentsEvaluator evaluator;
-
-    private TextJoinFunction(ArgumentsEvaluator anEvaluator) {
+    private TextJoinFunction() {
         // enforces singleton
-        this.evaluator = anEvaluator;
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         /*
          * Must be at least three arguments:
-         *  - delimiter    Delimiter for joining text arguments
+         *  - delimiter    The delimiter for joining text arguments
          *  - ignoreEmpty  If true, empty strings will be ignored in the join
          *  - text1        First value to be evaluated as text and joined
          *  - text2, etc.  Optional additional values to be evaluated and joined
@@ -75,7 +73,7 @@ final class TextJoinFunction implements FreeRefFunction {
 
             // Get the boolean ignoreEmpty argument
             ValueEval ignoreEmptyArg = OperandResolver.getSingleValue(args[1], srcRowIndex, srcColumnIndex);
-            boolean ignoreEmpty = OperandResolver.coerceValueToBoolean(ignoreEmptyArg, false);
+            Boolean ignoreEmpty = OperandResolver.coerceValueToBoolean(ignoreEmptyArg, false);
 
             // Get a list of string values for each text argument
             ArrayList<String> textValues = new ArrayList<>();
@@ -86,7 +84,7 @@ final class TextJoinFunction implements FreeRefFunction {
                     String textValue = OperandResolver.coerceValueToString(textArg);
 
                     // If we're not ignoring empty values or if our value is not empty, add it to the list
-                    if (!ignoreEmpty || (textValue != null && !textValue.isEmpty())) {
+                    if (ignoreEmpty == null || !ignoreEmpty || (textValue != null && !textValue.isEmpty())) {
                         textValues.add(textValue);
                     }
                 }
