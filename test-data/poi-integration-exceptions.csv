@@ -345,6 +345,7 @@ diagram/clusterfuzz-testcase-minimized-POIVisioFuzzer-5842659694215168.vsdx,hand
 document/clusterfuzz-testcase-minimized-POIHWPFFuzzer-5195207308541952.doc,additional,HPSF,,java.lang.ArithmeticException,integer overflow,
 document/clusterfuzz-testcase-minimized-POIHWPFFuzzer-5195207308541952.doc,handle,HWPF,,java.lang.IndexOutOfBoundsException,Block 111 not found,
 document/clusterfuzz-testcase-minimized-POIHWPFFuzzer-5195207308541952.doc,handle,HPSF,,org.opentest4j.AssertionFailedError,expected: <true> but was: <false>,
+document/clusterfuzz-testcase-minimized-POIHWPFFuzzer-5195207308541952.doc,extract,"HWPF,HPSF",,java.lang.IllegalArgumentException,This paragraph is not the first one in the table,
 slideshow/clusterfuzz-testcase-minimized-POIXSLFFuzzer-5611274456596480.pptx,"handle,extract","XSLF,OPC",,java.io.IOException,has more data than its declared size,
 diagram/clusterfuzz-testcase-minimized-POIHDGFFuzzer-6478389109981184.vsd,extract,"HDGF,HPSF",,java.lang.IllegalArgumentException,"Encountered too deep nesting, cannot process stream",
 diagram/clusterfuzz-testcase-minimized-POIHDGFFuzzer-6478389109981184.vsd,handle,HDGF,,java.lang.IllegalArgumentException,"Encountered too deep nesting, cannot process stream",
