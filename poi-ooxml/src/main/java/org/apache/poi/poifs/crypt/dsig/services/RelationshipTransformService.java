@@ -217,8 +217,10 @@ public class RelationshipTransformService extends TransformService {
             Element el = (Element)nl.item(i);
             String id = el.getAttribute("Id");
             if (sourceIds.contains(id)) {
-                String targetMode = el.getAttribute("TargetMode");
-                if (targetMode == null || targetMode.isEmpty()) {
+                // the default applies to an absent attribute only: the package model reads a
+                // present TargetMode with any value other than "Internal" as an external
+                // relationship, so an empty one has to be digested as what it is
+                if (!el.hasAttribute("TargetMode")) {
                     el.setAttribute("TargetMode", "Internal");
                 }
                 rsList.add(el);
