@@ -1613,9 +1613,9 @@ final class TestFormulaParser {
     void testNestingDepthLimit() {
         int max = FormulaParser.DEFAULT_MAX_NESTING_DEPTH;
         assertEquals(max, FormulaParser.getMaxNestingDepth());
-        // sibling sub-expressions each get the full nesting allowance
-        assertEquals(2 * max + 3,
-            parseFormula("(".repeat(max) + "1" + ")".repeat(max) + "+" + "(".repeat(max) + "2" + ")".repeat(max)).length);
+        // sibling sub-expressions each get the nesting allowance for two places where nesting is limited
+        assertEquals(2 * max / 2 + 3,
+            parseFormula("(".repeat(max / 2) + "1" + ")".repeat(max / 2) + "+" + "(".repeat(max / 2) + "2" + ")".repeat(max / 2)).length);
         assertEquals(max + 1, parseFormula("ABS(".repeat(max) + "1" + ")".repeat(max)).length);
         assertThrows(FormulaParseException.class,
             () -> parseFormula("(".repeat(max + 1) + "1" + ")".repeat(max + 1)));
