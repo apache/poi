@@ -236,7 +236,7 @@ class TestFormulaParser {
 
     @Test
     void testNestingIsLimited() throws IOException {
-        File file = POIDataSamples.getIntegrationInstance()
+        File file = POIDataSamples.getSpreadSheetInstance()
                 .getFile("clusterfuzz-testcase-minimized-FormulaParserFuzzer-5191407997091840");
 
         String formula = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
