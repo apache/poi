@@ -804,6 +804,11 @@ public final class InternalWorkbook {
 
         Record rec = records.get(records.getTabpos());
 
+        if (!(rec instanceof TabIdRecord)) {
+            throw new IllegalStateException("Invalid tab-pos " + records.getTabpos() +
+                    ", found wrong type of record: " + rec);
+        }
+
         TabIdRecord tir = ( TabIdRecord ) rec;
         short[]     tia = new short[ boundsheets.size() ];
 
