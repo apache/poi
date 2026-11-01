@@ -131,6 +131,9 @@ jobs:
     - name: Run Fuzzing - CellFormatFuzzer
       run: ./jazzer --jvm_args=-Xmx3000m --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.CellFormatFuzzer -rss_limit_mb=4500 -timeout=120 -max_total_time=120 -dict=src/main/java/org/apache/poi/fuzz/CellFormatFuzzer.dict corpusCellFormat
 
+    - name: Run Fuzzing - RleFuzzer
+      run: ./jazzer --jvm_args=-Xmx3000m --cp=build/libs/poi-fuzz-all.jar "--instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.**" --target_class=org.apache.poi.fuzz.POIRleFuzzer -rss_limit_mb=4500 -timeout=120 -max_total_time=120 -dict=src/main/java/org/apache/poi/fuzz/CellFormatFuzzer.dict corpusRle
+
     - name: Run Fuzzing - POIFuzzer
       run: ./jazzer --jvm_args=-Xmx3000m --cp=build/libs/poi-fuzz-all.jar --instrumentation_includes=org.apache.poi.**:org.apache.xmlbeans.** --target_class=org.apache.poi.fuzz.POIFuzzer -rss_limit_mb=4500 -timeout=600 -max_total_time=600 corpus
 
