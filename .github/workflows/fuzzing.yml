@@ -58,6 +58,7 @@ jobs:
         mkdir -p corpusOldExcel && cp corpus/spreadsheet/*.xls corpus/spreadsheet/*.bin corpusOldExcel/
         mkdir -p corpusXSLF && cp corpus/slideshow/* corpus/integration/*.pptx corpusXSLF/
         mkdir -p corpusXSSF && cp corpus/spreadsheet/* corpus/integration/*.xlsx corpusXSSF/
+        mkdir -p corpusXSSFB && cp corpus/spreadsheet/*.xlsb corpusXSSFB/
         mkdir -p corpusXWPF && cp corpus/document/* corpus/integration/*.docx corpusXWPF/
         mkdir -p corpusVisio && cp corpus/diagram/* corpusVisio/
         mkdir -p corpusHDGF && cp corpus/diagram/*.vsd corpusHDGF/
