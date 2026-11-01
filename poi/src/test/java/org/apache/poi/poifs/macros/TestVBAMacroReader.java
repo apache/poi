@@ -503,6 +503,58 @@ class TestVBAMacroReader {
         }
     }
 
+    @Test
+    void moduleMapKeyedByStreamNameUnicode() throws IOException {
+        final String unicodeStreamName = "\u9ad9\u6a4b\u2460";
+        final String source = "Attribute VB_Name = \"Mod1\"\r\nSub Run()\r\nEnd Sub\r\n";
+        // Simulate an MBCS StreamName that does not round-trip to the UTF-16 entry name
+        final byte[] mbcsName = "???".getBytes(StandardCharsets.US_ASCII);
+        final byte[] utf16Name = unicodeStreamName.getBytes(StandardCharsets.UTF_16LE);
+
+        final ByteArrayOutputStream dir = new ByteArrayOutputStream();
+        // PROJECT_CODEPAGE = 1252
+        writeShort(dir, 0x0003);
+        writeInt(dir, 2);
+        writeShort(dir, 1252);
+        // MODULE_STREAM_NAME (MBCS + 0x0032 + UTF-16LE)
+        writeShort(dir, 0x001A);
+        writeInt(dir, mbcsName.length);
+        dir.writeBytes(mbcsName);
+        writeShort(dir, 0x0032);
+        writeInt(dir, utf16Name.length);
+        dir.writeBytes(utf16Name);
+        // MODULE_OFFSET = 0
+        writeShort(dir, 0x0031);
+        writeInt(dir, 4);
+        writeInt(dir, 0);
+        // DIR_STREAM_TERMINATOR
+        writeShort(dir, 0x0010);
+        writeInt(dir, 0);
+
+        final ByteArrayOutputStream projectWm = new ByteArrayOutputStream();
+        projectWm.writeBytes(mbcsName);
+        projectWm.write(0);
+        projectWm.writeBytes(utf16Name);
+        projectWm.write(new byte[]{0, 0, 0, 0});
+
+        try (POIFSFileSystem fs = new POIFSFileSystem();
+             VBAMacroReader reader = new VBAMacroReader(fs)) {
+            DirectoryNode vba = (DirectoryNode) fs.getRoot().createDirectory("VBA");
+            vba.createDocument("dir", new ByteArrayInputStream(compressLiterals(dir.toByteArray())));
+            vba.createDocument(unicodeStreamName, new ByteArrayInputStream(
+                    compressLiterals(source.getBytes(StandardCharsets.US_ASCII))));
+            fs.getRoot().createDocument("PROJECTwm", new ByteArrayInputStream(projectWm.toByteArray()));
+            fs.getRoot().createDocument("PROJECT", new ByteArrayInputStream(
+                    "Module=???\r\n".getBytes(StandardCharsets.US_ASCII)));
+
+            Map<String, String> macros = reader.readMacros();
+            assertEquals(Collections.singletonMap(unicodeStreamName, source), macros);
+
+            Map<String, Module> modules = reader.readMacroModules();
+            assertEquals(Module.ModuleType.Module, modules.get(unicodeStreamName).geModuleType());
+        }
+    }
+
     /**
      * a dir stream that fails to decompress is reported as an IOException
      */
