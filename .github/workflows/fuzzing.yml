@@ -68,6 +68,7 @@ jobs:
         mkdir -p corpusCellFormat
         mkdir -p corpusEncryptDecrypt
         mkdir -p corpusFormulaParser
+        mkdir -p corpusRle
 
         echo "Using commit $(git rev-parse HEAD)"
 
