@@ -73,7 +73,7 @@ final class OperandClassTransformer {
             default -> throw new IllegalStateException("Incomplete code - formula type ("
                     + _formulaType + ") not supported yet");
         };
-        transformNode(rootNode, rootNodeOperandClass, false);
+        transformNode(rootNode, rootNodeOperandClass, false, 0);
     }
 
     /**
@@ -82,7 +82,13 @@ final class OperandClassTransformer {
      * the function return value).
      */
     private void transformNode(ParseNode node, byte desiredOperandClass,
-            boolean callerForceArrayFlag) {
+            boolean callerForceArrayFlag, int nesting) {
+        if (nesting > FormulaParser.getMaxNestingDepth()) {
+            throw new FormulaParseException("Formula has more than " + FormulaParser.getMaxNestingDepth()
+                    + " levels of nested parentheses, functions or unary signs. "
+                    + "You can increase the limit via FormulaParser.setMaxNestingDepth()");
+        }
+
         Ptg token = node.getToken();
         ParseNode[] children = node.getChildren();
         boolean isSimpleValueFunc = isSimpleValueFunction(token);
@@ -99,7 +105,7 @@ final class OperandClassTransformer {
                     // caller's class, e.g. FREQUENCY stays 'A' in COUNT(ABS(FREQUENCY(...))).
                     childOperandClass = Ptg.CLASS_VALUE;
                 }
-                transformNode(child, childOperandClass, localForceArray);
+                transformNode(child, childOperandClass, localForceArray, nesting + 1);
             }
             setSimpleValueFuncClass((AbstractFunctionPtg) token, desiredOperandClass, callerForceArrayFlag);
             return;
@@ -125,12 +131,12 @@ final class OperandClassTransformer {
             // be converted to 'V' type.
             byte localDesiredOperandClass = desiredOperandClass == Ptg.CLASS_REF ? Ptg.CLASS_VALUE : desiredOperandClass;
             for (ParseNode child : children) {
-                transformNode(child, localDesiredOperandClass, callerForceArrayFlag);
+                transformNode(child, localDesiredOperandClass, callerForceArrayFlag, nesting + 1);
             }
             return;
         }
         if (token instanceof AbstractFunctionPtg afp) {
-            transformFunctionNode(afp, children, desiredOperandClass, callerForceArrayFlag);
+            transformFunctionNode(afp, children, desiredOperandClass, callerForceArrayFlag, nesting + 1);
             return;
         }
         if (children.length > 0) {
@@ -191,7 +197,7 @@ final class OperandClassTransformer {
     }
 
     private void transformFunctionNode(AbstractFunctionPtg afp, ParseNode[] children,
-            byte desiredOperandClass, boolean callerForceArrayFlag) {
+            byte desiredOperandClass, boolean callerForceArrayFlag, int nesting) {
 
         boolean localForceArrayFlag;
         byte defaultReturnOperandClass = afp.getDefaultOperandClass();
@@ -271,7 +277,7 @@ final class OperandClassTransformer {
         for (int i = 0; i < children.length; i++) {
             ParseNode child = children[i];
             byte paramOperandClass = afp.getParameterClass(i);
-            transformNode(child, paramOperandClass, localForceArrayFlag);
+            transformNode(child, paramOperandClass, localForceArrayFlag, nesting + 1);
         }
     }
 

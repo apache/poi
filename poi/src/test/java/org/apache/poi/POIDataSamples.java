@@ -125,6 +125,11 @@ public final class POIDataSamples {
         return _instXmlDSign;
     }
 
+    public static POIDataSamples getIntegrationInstance() {
+        if(_instXmlDSign == null) _instXmlDSign = new POIDataSamples("integration");
+        return _instXmlDSign;
+    }
+
     /**
      * Opens a sample file from the test data directory
      *

@@ -19,11 +19,18 @@
 package org.apache.poi.ss.tests.formula;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParseException;
@@ -225,5 +232,23 @@ class TestFormulaParser {
         HSSFEvaluationWorkbook evalWorkbook = HSSFEvaluationWorkbook.create(workbook);
         assertThrows(FormulaParseException.class,
                 () -> FormulaParser.parse(formula, evalWorkbook, FormulaType.SHARED, 0));
+    }
+
+    @Test
+    void testNestingIsLimited() throws IOException {
+        File file = POIDataSamples.getIntegrationInstance()
+                .getFile("clusterfuzz-testcase-minimized-FormulaParserFuzzer-5191407997091840");
+
+        String formula = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        assertNotNull(formula);
+        assertFalse(formula.isEmpty());
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFEvaluationWorkbook evalWorkbook = HSSFEvaluationWorkbook.create(workbook);
+
+        // prevention of StackOverflowException should kick in and report a more meaningful exception
+        assertThrows(FormulaParseException.class,
+                () -> FormulaParser.parse(formula + ".", evalWorkbook, FormulaType.SHARED, 0));
+
     }
 }

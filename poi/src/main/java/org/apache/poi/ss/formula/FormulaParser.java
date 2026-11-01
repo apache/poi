@@ -294,7 +294,7 @@ public final class FormulaParser {
         if (++_nestingDepth > MAX_NESTING_DEPTH) {
             throw new FormulaParseException("Formula has more than " + MAX_NESTING_DEPTH
                     + " levels of nested parentheses, functions or unary signs. "
-                    + "You can increase this value via FormulaParser.setMaxNestingDepth()");
+                    + "You can increase the limit via FormulaParser.setMaxNestingDepth()");
         }
     }
 
@@ -395,7 +395,7 @@ public final class FormulaParser {
 
     private static ParseNode augmentWithMemPtg(ParseNode root) {
         Ptg memPtg;
-        if (needsMemFunc(root)) {
+        if (needsMemFunc(root, 0)) {
             memPtg = new MemFuncPtg(root.getEncodedSize());
         } else {
             memPtg = new MemAreaPtg(root.getEncodedSize());
@@ -408,7 +408,13 @@ public final class FormulaParser {
      *  a tMemFunc token is used"
      *
      */
-    private static boolean needsMemFunc(ParseNode root) {
+    private static boolean needsMemFunc(ParseNode root, int nesting) {
+        if (nesting > FormulaParser.getMaxNestingDepth()) {
+            throw new FormulaParseException("Formula has more than " + FormulaParser.getMaxNestingDepth()
+                    + " levels of nested parentheses, functions or unary signs. "
+                    + "You can increase the limit via FormulaParser.setMaxNestingDepth()");
+        }
+
         Ptg token = root.getToken();
         if (token instanceof AbstractFunctionPtg) {
             return true;
@@ -423,7 +429,7 @@ public final class FormulaParser {
         if (token instanceof OperationPtg || token instanceof ParenthesisPtg) {
             // expect RangePtg, but perhaps also UnionPtg, IntersectionPtg etc
             for(ParseNode child : root.getChildren()) {
-                if (needsMemFunc(child)) {
+                if (needsMemFunc(child, nesting + 1)) {
                     return true;
                 }
             }
