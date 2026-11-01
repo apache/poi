@@ -28,11 +28,13 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfFill;
 import org.apache.poi.hemf.record.emf.HemfRecord.RenderBounds;
 import org.apache.poi.hwmf.record.HwmfRegionMode;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
@@ -41,6 +43,8 @@ import org.apache.poi.util.LittleEndianInputStream;
 
 @SuppressWarnings("WeakerAccess")
 public class HemfPlusMisc {
+    private static final Logger LOG = PoiLogManager.getLogger(HemfPlusMisc.class);
+
     public interface EmfPlusObjectId {
         BitField OBJECT_ID = BitFieldFactory.getInstance(0x00FF);
 
@@ -101,7 +105,9 @@ public class HemfPlusMisc {
         @Override
         public long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException {
             this.flags = flags;
-            assert(dataSize == 0);
+            if (dataSize != 0) {
+                LOG.atWarn().log("Invalid dataSize, should be 0: {}", dataSize);
+            }
             recordType = HemfPlusRecordType.getById(recordId);
             return 0;
         }
