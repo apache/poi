@@ -252,9 +252,9 @@ public final class TestBasics {
       // Defaults to CP1251
       assertEquals("CP1252", chinese.getRecipientDetailsChunks()[0].getRecipientDisplayNameChunk().get7BitEncoding());
 
-      // But after guessing goes to the correct one, cp950 (Windows Traditional Chinese)
+      // But after guessing goes to the correct one, MS950 (Microsoft's Windows Traditional Chinese Big5 variant)
       chinese.guess7BitEncoding();
-      assertEquals("cp950", chinese.getRecipientDetailsChunks()[0].getRecipientDisplayNameChunk().get7BitEncoding());
+      assertEquals("MS950", chinese.getRecipientDetailsChunks()[0].getRecipientDisplayNameChunk().get7BitEncoding());
    }
 
    @Disabled(value = "expected to fail")
