@@ -571,6 +571,44 @@ class TestVBAMacroReader {
         }
     }
 
+    @Test
+    void unsupportedProjectCodepageFallsBackToWindows1252() throws IOException {
+        final String source = "Attribute VB_Name = \"Module1\"\r\nSub Run()\r\nMsgBox \"\u00e9\"\r\nEnd Sub\r\n";
+        final byte[] sourceBytes = source.getBytes(StringUtil.WIN_1252);
+        final byte[] asciiName = "Module1".getBytes(StandardCharsets.US_ASCII);
+        final byte[] utf16Name = "Module1".getBytes(StandardCharsets.UTF_16LE);
+
+        // Test both an unknown positive code page (UnsupportedCharsetException)
+        // and code page 0 (UnsupportedEncodingException from CodePageUtil).
+        for (int unsupportedCodepage : new int[]{10025, 0}) {
+            final ByteArrayOutputStream dir = new ByteArrayOutputStream();
+            writeShort(dir, 0x0003);
+            writeInt(dir, 2);
+            writeShort(dir, unsupportedCodepage);
+            writeShort(dir, 0x001A);
+            writeInt(dir, asciiName.length);
+            dir.writeBytes(asciiName);
+            writeShort(dir, 0x0032);
+            writeInt(dir, utf16Name.length);
+            dir.writeBytes(utf16Name);
+            writeShort(dir, 0x0031);
+            writeInt(dir, 4);
+            writeInt(dir, 0);
+            writeShort(dir, 0x0010);
+            writeInt(dir, 0);
+
+            try (POIFSFileSystem fs = new POIFSFileSystem();
+                 VBAMacroReader reader = new VBAMacroReader(fs)) {
+                DirectoryNode vba = (DirectoryNode) fs.getRoot().createDirectory("VBA");
+                vba.createDocument("dir", new ByteArrayInputStream(compressLiterals(dir.toByteArray())));
+                vba.createDocument("Module1", new ByteArrayInputStream(compressLiterals(sourceBytes)));
+
+                Map<String, String> macros = reader.readMacros();
+                assertEquals(Collections.singletonMap("Module1", source), macros);
+            }
+        }
+    }
+
     /**
      * RLE-compresses {@code data} into a single chunk of literals only
      */
