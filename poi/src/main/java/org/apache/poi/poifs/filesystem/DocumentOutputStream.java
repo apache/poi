@@ -84,6 +84,8 @@ public final class DocumentOutputStream extends OutputStream {
     }
 
     DocumentOutputStream(POIFSDocument document, long limit) throws IOException {
+        // before the old contents are freed
+        document.getFileSystem().checkWriteable();
         _document = document;
         _document.free();
 
@@ -103,6 +105,7 @@ public final class DocumentOutputStream extends OutputStream {
         if (!(parent instanceof DirectoryNode)) {
             throw new IOException("Cannot open internal directory storage, " + parent + " not a Directory Node");
         }
+        ((DirectoryNode) parent).getFileSystem().checkWriteable();
 
         // Have an empty one created for now
         return parent.createDocument(name, UnsynchronizedByteArrayInputStream.builder().setByteArray(new byte[0]).get());

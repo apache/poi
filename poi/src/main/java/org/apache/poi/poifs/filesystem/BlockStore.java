@@ -78,6 +78,16 @@ public abstract class BlockStore {
     protected abstract ChainLoopDetector getChainLoopDetector() throws IOException;
 
     /**
+     * Checks that the blocks may be changed, i.e. that changes to them are kept
+     *
+     * @throws IllegalStateException if the blocks are read-only
+     * @since 6.0.1
+     */
+    protected void checkWriteable() {
+        // writeable by default
+    }
+
+    /**
      * Used to detect if a chain has a loop in it, so
      *  we can bail out with an error rather than
      *  spinning away for ever...

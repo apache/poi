@@ -251,6 +251,7 @@ public class POIFSStream implements Iterable<ByteBuffer>
         int prevBlock, nextBlock;
 
         StreamBlockByteBuffer() throws IOException {
+            blockStore.checkWriteable();
             loopDetector = blockStore.getChainLoopDetector();
             prevBlock = POIFSConstants.END_OF_CHAIN;
             nextBlock = startBlock;
