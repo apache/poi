@@ -213,10 +213,27 @@ public class PAPBinTable
 
             if ( papxs.isEmpty() )
             {
-                LOG.atWarn().log("Paragraph [{}; {}) has no PAPX. Creating new one.", box(startInclusive),box(endExclusive));
-                // create it manually
-                PAPX papx = new PAPX( startInclusive, endExclusive,
-                        new SprmBuffer( 2 ) );
+                // No PAPX ends at this paragraph mark, so it is inside a PAPX interval. Per
+                // [MS-DOC] 2.4.2 the properties of that interval cover all of its text.
+                List<PAPX> covering = getCoveringPapxs( oldPapxSortedByEndPos,
+                        lastPapxIndex, charIndex );
+                SprmBuffer sprmBuffer = null;
+                if ( !covering.isEmpty() )
+                {
+                    covering.sort( papxFileOrderComparator );
+                    sprmBuffer = mergeSprms( covering );
+                }
+                if ( sprmBuffer == null )
+                {
+                    LOG.atWarn().log("Paragraph [{}; {}) has no PAPX. Creating new one.", box(startInclusive),box(endExclusive));
+                    sprmBuffer = new SprmBuffer( 2 );
+                }
+                else
+                {
+                    // the cell and row end marks belong to the interval's last paragraph only
+                    sprmBuffer = withoutTableEndMarks( sprmBuffer );
+                }
+                PAPX papx = new PAPX( startInclusive, endExclusive, sprmBuffer );
                 newPapxs.add( papx );
 
                 lastParStart = endExclusive;
@@ -239,18 +256,7 @@ public class PAPBinTable
             // restore file order of PAPX
             papxs.sort(papxFileOrderComparator);
 
-            SprmBuffer sprmBuffer = null;
-            for ( PAPX papx : papxs )
-            {
-                if ( papx.getGrpprl() == null || papx.getGrpprl().length <= 2 )
-                    continue;
-
-                if ( sprmBuffer == null ) {
-                    sprmBuffer = papx.getSprmBuf().copy();
-                } else {
-                    sprmBuffer.append( papx.getGrpprl(), 2 );
-                }
-            }
+            SprmBuffer sprmBuffer = mergeSprms( papxs );
             PAPX newPapx = new PAPX( startInclusive, endExclusive, sprmBuffer );
             newPapxs.add( newPapx );
 
@@ -261,6 +267,82 @@ public class PAPBinTable
         paragraphs.addAll( newPapxs );
 
         LOG.atDebug().log("PAPX rebuilded from document text in {} ms ({} elements)", box(currentTimeMillis() - start),box(paragraphs.size()));
+    }
+
+    /**
+     * @return the PAPXs whose interval contains {@code charIndex}, starting the search at
+     *  {@code fromIndex} in {@code papxsSortedByEnd}
+     */
+    private static List<PAPX> getCoveringPapxs( List<PAPX> papxsSortedByEnd,
+            int fromIndex, int charIndex )
+    {
+        List<PAPX> covering = new ArrayList<>();
+        for ( int papxIndex = fromIndex; papxIndex < papxsSortedByEnd.size(); papxIndex++ )
+        {
+            PAPX papx = papxsSortedByEnd.get( papxIndex );
+            if ( papx.getStart() > charIndex )
+            {
+                // a later PAPX could only cover charIndex by overlapping this one, which
+                // doesn't happen for the PAPXs of one FKP; stop to keep the search short
+                break;
+            }
+            if ( papx.getEnd() > charIndex )
+            {
+                covering.add( papx );
+            }
+        }
+        return covering;
+    }
+
+    /**
+     * @return the SPRMs of {@code papxs} concatenated in list order, or {@code null} if none
+     *  of them has any
+     */
+    private static SprmBuffer mergeSprms( List<PAPX> papxs )
+    {
+        SprmBuffer sprmBuffer = null;
+        for ( PAPX papx : papxs )
+        {
+            if ( papx.getGrpprl() == null || papx.getGrpprl().length <= 2 )
+                continue;
+
+            if ( sprmBuffer == null ) {
+                sprmBuffer = papx.getSprmBuf().copy();
+            } else {
+                sprmBuffer.append( papx.getGrpprl(), 2 );
+            }
+        }
+        return sprmBuffer;
+    }
+
+    /**
+     * @return a copy of {@code sprmBuffer} without the SPRMs that mark a paragraph as the
+     *  end of a table cell or row
+     */
+    private static SprmBuffer withoutTableEndMarks( SprmBuffer sprmBuffer )
+    {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        // keep the istd
+        bos.write( sprmBuffer.toByteArray(), 0, 2 );
+        for ( SprmIterator iterator = sprmBuffer.iterator(); iterator.hasNext(); )
+        {
+            SprmOperation sprm = iterator.next();
+            if ( sprm.getType() == SprmOperation.TYPE_PAP )
+            {
+                switch ( sprm.getOperation() )
+                {
+                    case 0x17: // sprmPFTtp
+                    case 0x4b: // sprmPFInnerTableCell
+                    case 0x4c: // sprmPFInnerTtp
+                        continue;
+                    default:
+                        break;
+                }
+            }
+            byte[] bytes = sprm.toByteArray();
+            bos.write( bytes, 0, bytes.length );
+        }
+        return new SprmBuffer( bos.toByteArray(), 2 );
     }
 
     public void insert(int listIndex, int cpStart, SprmBuffer buf)
