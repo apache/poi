@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -2598,6 +2599,79 @@ final class TestPOIFSStream {
             count++;
         }
         return count;
+    }
+
+    /**
+     * Free blocks are written out with the file system, so they mustn't keep
+     * the data of deleted or replaced streams
+     */
+    @Test
+    void deletedDataIsNotWrittenOut() throws IOException {
+        byte[] data = new byte[10_000];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (byte)('A' + i % 26);
+        }
+        byte[] marker = Arrays.copyOf(data, 26);
+
+        byte[] original;
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            // big block streams and one in the mini stream
+            fs.createDocument(new ByteArrayInputStream(data), "Big");
+            fs.createDocument(new ByteArrayInputStream(data), "Replaced");
+            fs.createDocument(new ByteArrayInputStream(data, 0, 1_000), "Small");
+            original = writeOut(fs);
+        }
+        assertTrue(contains(original, marker));
+
+        byte[] modified;
+        try (POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(original))) {
+            deleteAndReplace(fs);
+            modified = writeOut(fs);
+        }
+        assertFalse(contains(modified, marker));
+        try (POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(modified))) {
+            assertEquals(1, fs.getRoot().getEntryCount());
+            assertEquals(10, ((DocumentEntry)fs.getRoot().getEntry("Replaced")).getSize());
+        }
+
+        // same when the file is updated in place
+        File file = TempFile.createTempFile("poifs-free-blocks", ".ole2");
+        try {
+            Files.write(file.toPath(), original);
+            try (POIFSFileSystem fs = new POIFSFileSystem(file, false)) {
+                deleteAndReplace(fs);
+                fs.writeFilesystem();
+            }
+            modified = Files.readAllBytes(file.toPath());
+            assertFalse(contains(modified, marker));
+        } finally {
+            assertTrue(file.delete());
+        }
+    }
+
+    private static void deleteAndReplace(POIFSFileSystem fs) throws IOException {
+        assertTrue(fs.getRoot().getEntry("Big").delete());
+        assertTrue(fs.getRoot().getEntry("Small").delete());
+        fs.createOrUpdateDocument(new ByteArrayInputStream(new byte[10]), "Replaced");
+    }
+
+    private static byte[] writeOut(POIFSFileSystem fs) throws IOException {
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+        fs.writeFilesystem(bos);
+        return bos.toByteArray();
+    }
+
+    private static boolean contains(byte[] data, byte[] part) {
+        outer:
+        for (int i = 0; i + part.length <= data.length; i++) {
+            for (int j = 0; j < part.length; j++) {
+                if (data[i + j] != part[j]) {
+                    continue outer;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
