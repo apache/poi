@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -548,6 +549,28 @@ class TestSignatureInfo {
             si.setOpcPackage(pkg);
             si.setSignatureConfig(new SignatureConfig());
             assertTrue(si.verifySignature());
+        }
+    }
+
+    @Test
+    void testEmptyTargetModeOnSignedRelationship() throws Exception {
+        // an empty TargetMode is not the absent attribute: the package reads it as an external
+        // relationship, so the signed styles part is no longer part of the document
+        InputStream modified = rewriteSignedDocx(entries -> {
+            String rel = "Target=\"styles.xml\"/>";
+            byte[] rels = entries.get("word/_rels/document.xml.rels");
+            assertThat(new String(rels, StandardCharsets.UTF_8), containsString(rel));
+            entries.put("word/_rels/document.xml.rels", replace(rels, rel, "Target=\"styles.xml\" TargetMode=\"\"/>"));
+        });
+
+        try (OPCPackage pkg = OPCPackage.open(modified);
+             XWPFDocument doc = new XWPFDocument(pkg)) {
+            assertNull(doc.getStyles(), "the styles part is not reachable through the relationship anymore");
+
+            SignatureInfo si = new SignatureInfo();
+            si.setOpcPackage(pkg);
+            si.setSignatureConfig(new SignatureConfig());
+            assertFalse(si.verifySignature(), "signature must not cover a relationship whose target mode was changed");
         }
     }
 
