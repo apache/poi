@@ -323,7 +323,7 @@ public class CodePageUtil
                     return "windows-1255";
             case CP_WINDOWS_1256:
                 if (javaLangFormat)
-                    return "Cp1255";
+                    return "Cp1256";
                 else
                     return "windows-1256";
             case CP_WINDOWS_1257:
