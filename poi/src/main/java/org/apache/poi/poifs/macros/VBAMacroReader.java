@@ -535,7 +535,9 @@ public class VBAMacroReader implements Closeable {
                             break;
                         case MODULE_STREAM_NAME:
                             ASCIIUnicodeStringPair pair = readStringPair(in, modules.charset, STREAMNAME_RESERVED);
-                            streamName = pair.ascii();
+                            // [MS-OVBA] 2.3.4.2.3.2.3: StreamNameUnicode MUST contain the UTF-16 encoding
+                            // of StreamName, matching the UTF-16 compound file entry name ([MS-CFB] 2.6.1).
+                            streamName = pair.unicode().isEmpty() ? pair.ascii() : pair.unicode();
                             break;
                         case PROJECT_DOC_STRING:
                             readStringPair(in, modules.charset, DOC_STRING_RESERVED);
