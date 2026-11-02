@@ -44,7 +44,7 @@ plugins {
     id 'org.sonarqube' version '7.5.0.8588'
     id 'org.cyclonedx.bom' version '3.5.1'
     id 'com.adarshr.test-logger' version '4.0.0'
-    id 'me.champeau.jmh' version '0.7.3' apply false
+    id 'me.champeau.jmh' version '0.7.4' apply false
 }
 
 repositories {
