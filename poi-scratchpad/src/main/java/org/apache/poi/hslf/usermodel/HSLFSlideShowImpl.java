@@ -36,12 +36,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -987,6 +989,38 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
         _records = r;
         return addedAt;
+    }
+
+    /**
+     * Removes persist objects, e.g. the slide and notes of a removed slide: their entries in
+     * the persist directories and the root level records these point to, including older
+     * versions of the records kept by incremental saves.
+     *
+     * @param persistIds the persist ids of the objects to remove
+     */
+    void removePersistObjects(Collection<Integer> persistIds) {
+        Set<Integer> removedOffsets = new HashSet<>();
+        Set<Integer> keptOffsets = new HashSet<>();
+        for (Record record : _records) {
+            if (!(record instanceof PersistPtrHolder pph)) {
+                continue;
+            }
+            Map<Integer, Integer> locations = new HashMap<>(pph.getSlideLocationsLookup());
+            for (Integer persistId : persistIds) {
+                Integer offset = locations.remove(persistId);
+                if (offset != null) {
+                    removedOffsets.add(offset);
+                }
+            }
+            keptOffsets.addAll(locations.values());
+            pph.clear();
+            locations.forEach(pph::addSlideLookup);
+        }
+        removedOffsets.removeAll(keptOffsets);
+
+        _records = Arrays.stream(_records)
+            .filter(r -> !(r instanceof PositionDependentRecord pdr && removedOffsets.contains(pdr.getLastOnDiskOffset())))
+            .toArray(Record[]::new);
     }
 
     /**

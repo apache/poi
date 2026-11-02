@@ -727,6 +727,10 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         _notes.remove(removedSlide.getNotes());
         sa.remove(index);
 
+        // persist ids of the slide and notes records, which are dropped from the document stream
+        List<Integer> removedPersistIds = new ArrayList<>();
+        removedPersistIds.add(removedSlide._getSheetRefId());
+
         int i=0;
         for (HSLFSlide s : _slides) {
             s.setSlideNumber(i++);
@@ -753,6 +757,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
             if (nslwt != null) {
                 for (SlideAtomsSet ns : nslwt.getSlideAtomsSets()) {
                     if (ns.getSlidePersistAtom().getSlideIdentifier() == notesId) {
+                        removedPersistIds.add(ns.getSlidePersistAtom().getRefID());
                         continue;
                     }
                     na.add(ns);
@@ -771,6 +776,10 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
                 _documentRecord.removeSlideListWithText(nslwt);
             }
         }
+
+        // without their slide list entries the records are no longer reachable, but they would
+        // still be written out with the content of the removed slide
+        _hslfSlideShow.removePersistObjects(removedPersistIds);
 
         return removedSlide;
     }

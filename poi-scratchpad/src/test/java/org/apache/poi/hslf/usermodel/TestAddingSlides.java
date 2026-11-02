@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -27,7 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.HSLFTestDataSamples;
+import org.apache.poi.hslf.extractor.QuickButCruddyTextExtractor;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
@@ -245,6 +248,51 @@ public final class TestAddingSlides {
 
         try (HSLFSlideShow ss_read = HSLFTestDataSamples.writeOutAndReadBack(ss_empty)) {
             assertEquals(1, ss_read.getSlides().size());
+        }
+    }
+
+    /**
+     * The records of a removed slide and its notes are not written out again
+     */
+    @Test
+    void removedSlideIsNotWrittenOut() throws IOException {
+        ss_empty.createSlide().createTextBox().setText("Text on the removed slide");
+        ss_empty.createSlide().createTextBox().setText("Text on the kept slide");
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.writeOutAndReadBack(ss_empty)) {
+            ppt.removeSlide(0);
+            String text = getRawText(ppt);
+            assertTrue(text.contains("Text on the kept slide"));
+            assertFalse(text.contains("Text on the removed slide"));
+        }
+
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("42474-1.ppt")) {
+            ppt.removeSlide(0);
+            String text = getRawText(ppt);
+            assertTrue(text.contains("Notes-2"));
+            assertFalse(text.contains("Notes-1"));
+
+            try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(1, ppt2.getSlides().size());
+                HSLFNotes notes = ppt2.getSlides().get(0).getNotes();
+                assertNotNull(notes);
+                assertEquals("Notes-2", HSLFTextParagraph.getRawText(notes.getTextParagraphs().get(0)));
+            }
+        }
+    }
+
+    /**
+     * @return the text of all text records in the written PowerPoint stream,
+     *  including records which no slide refers to
+     */
+    private static String getRawText(HSLFSlideShow ppt) throws IOException {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+            ppt.write(bos);
+            QuickButCruddyTextExtractor extractor = new QuickButCruddyTextExtractor(bos.toInputStream());
+            try {
+                return extractor.getTextAsString();
+            } finally {
+                extractor.close();
+            }
         }
     }
 
