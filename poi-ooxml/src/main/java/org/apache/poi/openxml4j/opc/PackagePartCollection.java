@@ -20,7 +20,9 @@ package org.apache.poi.openxml4j.opc;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.ToIntFunction;
@@ -44,6 +46,12 @@ public final class PackagePartCollection implements Serializable {
      */
     private final Set<String> registerPartNameStr = new HashSet<>();
 
+    /**
+     * The lengths of the names in {@link #registerPartNameStr}, with the number
+     * of names of each length.
+     */
+    private final Map<Integer, Integer> registerPartNameLengths = new HashMap<>();
+
     private final TreeMap<String, PackagePart> packagePartLookup =
         new TreeMap<>(PackagePartName::compare);
 
@@ -63,17 +71,24 @@ public final class PackagePartCollection implements Serializable {
      */
     public PackagePart put(final PackagePartName partName, final PackagePart part) {
         final String ppName = partName.getName();
-        final StringBuilder concatSeg = new StringBuilder();
-        // split at slash, but keep leading slash
-        final String delim = "(?=["+PackagingURIHelper.FORWARD_SLASH_STRING+"])";
-        for (String seg : ppName.split(delim)) {
-            concatSeg.append(seg);
-            if (registerPartNameStr.contains(concatSeg.toString())) {
+        // check the name up to each slash (but the leading one) and the whole name -
+        // only build the prefixes which are as long as a registered name, as building
+        // every prefix takes quadratic time for deeply nested names
+        int end = ppName.indexOf(PackagingURIHelper.FORWARD_SLASH_CHAR, 1);
+        while (true) {
+            final int len = (end < 0) ? ppName.length() : end;
+            if (registerPartNameLengths.containsKey(len)
+                    && registerPartNameStr.contains(ppName.substring(0, len))) {
                 throw new InvalidOperationException(
                     "You can't add a part with a part name derived from another part ! [M1.11]");
             }
+            if (end < 0) {
+                break;
+            }
+            end = ppName.indexOf(PackagingURIHelper.FORWARD_SLASH_CHAR, end + 1);
         }
         registerPartNameStr.add(ppName);
+        registerPartNameLengths.merge(ppName.length(), 1, Integer::sum);
         return packagePartLookup.put(ppName, part);
     }
 
@@ -83,8 +98,8 @@ public final class PackagePartCollection implements Serializable {
         }
         final String ppName = key.getName();
         PackagePart pp = packagePartLookup.remove(ppName);
-        if (pp != null) {
-            this.registerPartNameStr.remove(ppName);
+        if (pp != null && this.registerPartNameStr.remove(ppName)) {
+            registerPartNameLengths.computeIfPresent(ppName.length(), (len, count) -> count == 1 ? null : count - 1);
         }
         return pp;
     }
