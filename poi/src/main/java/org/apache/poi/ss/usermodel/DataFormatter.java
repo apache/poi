@@ -1251,6 +1251,8 @@ public class DataFormatter {
         private final BigDecimal divider;
         private static final BigDecimal ONE_THOUSAND = BigDecimal.valueOf(1000);
         private final DecimalFormat df;
+        /** formats negative values: the same as df, apart from the multiplier when the sections have different percent signs */
+        private final DecimalFormat negativeDf;
         /** the integer and fraction digit placeholders of the positive section, e.g. "??0" and "0?" */
         private final String integerPlaceholders;
         private final String fractionPlaceholders;
@@ -1286,19 +1288,31 @@ public class DataFormatter {
             if (padsWithSpaces) {
                 pattern = pattern.replace('?', '#');
             }
-            // each '%' multiplies by 100, but DecimalFormat only allows one
-            int percents = countUnquoted(pattern, '%');
-            if (percents > 1) {
+            // each '%' multiplies by 100, but DecimalFormat only allows one in each section,
+            // and it scales negative values by the percent signs of the positive section
+            int percents = countUnquotedInSection(pattern, '%', 0);
+            int negativePercents = countUnquotedInSection(pattern, '%', 1);
+            if (negativePercents < 0) {
+                negativePercents = percents;
+            }
+            boolean quotePercents = percents > 1 || negativePercents > 1 || percents != negativePercents;
+            if (quotePercents) {
                 pattern = quoteUnquoted(pattern, '%');
             }
             df = new DecimalFormat(trimTrailingCommas(pattern), symbols);
-            if (percents > 1) {
-                df.setMultiplier((int) Math.pow(100, Math.min(percents, 4)));
+            if (quotePercents) {
+                df.setMultiplier(percentMultiplier(percents));
             }
             setExcelStyleRoundingMode(df);
             // Excel shows the decimal point even when there are no digits after it, e.g. "#.#" shows 1 as "1."
             if (hasDecimalPoint(pattern)) {
                 df.setDecimalSeparatorAlwaysShown(true);
+            }
+            if (negativePercents == percents) {
+                negativeDf = df;
+            } else {
+                negativeDf = (DecimalFormat) df.clone();
+                negativeDf.setMultiplier(percentMultiplier(negativePercents));
             }
             Matcher endsWithCommasMatcher = endsWithCommas.matcher(pattern);
             if (endsWithCommasMatcher.find()) {
@@ -1313,18 +1327,29 @@ public class DataFormatter {
             }
         }
 
-        private static int countUnquoted(String pattern, char ch) {
+        private static int percentMultiplier(int percents) {
+            return (int) Math.pow(100, Math.min(percents, 4));
+        }
+
+        /**
+         * counts the unquoted {@code ch} in a section of the pattern: 0 is the positive section, 1 the negative one;
+         * -1 when the pattern does not have the section
+         */
+        private static int countUnquotedInSection(String pattern, char ch, int section) {
             int count = 0;
+            int currentSection = 0;
             boolean quoted = false;
             for (int i = 0; i < pattern.length(); i++) {
                 char c = pattern.charAt(i);
                 if (c == '\'') {
                     quoted = !quoted;
-                } else if (!quoted && c == ch) {
+                } else if (!quoted && c == ';') {
+                    currentSection++;
+                } else if (!quoted && c == ch && currentSection == section) {
                     count++;
                 }
             }
-            return count;
+            return currentSection < section ? -1 : count;
         }
 
         /** quotes each run of unquoted {@code ch}, so that DecimalFormat shows them as text */
@@ -1389,10 +1414,11 @@ public class DataFormatter {
         @Override
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
             obj = scaleInput(obj);
+            DecimalFormat format = obj instanceof Number && ((Number) obj).doubleValue() < 0 ? negativeDf : df;
             if (!padsWithSpaces) {
-                return df.format(obj, toAppendTo, pos);
+                return format.format(obj, toAppendTo, pos);
             }
-            return toAppendTo.append(padWithSpaces(df.format(obj)));
+            return toAppendTo.append(padWithSpaces(format.format(obj)));
         }
 
         /**
