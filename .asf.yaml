@@ -42,6 +42,7 @@ github:
   protected_branches:
     trunk: {}
     5.5.x: {}
+    6.0.x: {}
     asf-site: {}
 
   pull_requests:
