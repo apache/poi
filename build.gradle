@@ -106,7 +106,7 @@ allprojects {
 //    apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    version = '6.0.0'
+    version = '6.0.1-SNAPSHOT'
 
     tasks.cyclonedxDirectBom {
         // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
