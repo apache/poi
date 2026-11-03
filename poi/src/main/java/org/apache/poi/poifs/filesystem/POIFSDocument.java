@@ -158,6 +158,7 @@ public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> 
      * Frees the underlying stream and property
      */
     void free() throws IOException {
+        _filesystem.markChanged();
         _stream.free();
         _property.setStartBlock(POIFSConstants.END_OF_CHAIN);
     }
@@ -187,6 +188,8 @@ public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> 
     }
 
     public void replaceContents(InputStream stream) throws IOException {
+        // before the old contents are freed
+        _filesystem.checkWriteable();
         free();
         int size = store(stream);
         _property.setStartBlock(_stream.getStartBlock());

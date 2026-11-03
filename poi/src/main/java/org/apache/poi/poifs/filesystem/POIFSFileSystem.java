@@ -87,6 +87,8 @@ public class POIFSFileSystem extends BlockStore
     private final List<BATBlock> _bat_blocks;
     private HeaderBlock _header;
     private DirectoryNode _root;
+    // whether the entries were changed, see markChanged()
+    private boolean _changed;
 
     protected DataSource _data;
 
@@ -758,10 +760,19 @@ public class POIFSFileSystem extends BlockStore
      * @param stream the OutputStream to which the filesystem will be
      *               written
      * @throws IOException thrown on errors writing to the stream
+     * @throws IllegalStateException if the filesystem was opened read only from a file, and its entries were changed
      */
     public void writeFilesystem(final OutputStream stream) throws IOException {
-        // Have the datasource updated
-        syncWithDataSource();
+        // Have the datasource updated - the blocks of a read only file are
+        //  copies which wouldn't take the update, so it can only be copied as it is
+        if (!isReadOnlyFile()) {
+            syncWithDataSource();
+        } else if (_changed) {
+            throw new IllegalStateException(
+                    "POIFS opened in read only mode was changed, and the changes can't be written out. " +
+                            "Open the FileSystem in read-write mode, or from an InputStream, first"
+            );
+        }
 
         // Now copy the contents to the stream
         _data.copyTo(stream);
@@ -990,6 +1001,35 @@ public class POIFSFileSystem extends BlockStore
         if (_data instanceof FileBackedDataSource fbds) {
             fbds.releaseBuffer(buffer);
         }
+    }
+
+    /**
+     * A file opened in read only mode is read into copies of its blocks,
+     *  so changes to it would be silently dropped
+     */
+    private boolean isReadOnlyFile() {
+        return (_data instanceof FileBackedDataSource fbds) && !fbds.isWriteable();
+    }
+
+    /**
+     * Stream data written to a read only file would be lost straight away
+     */
+    @Override
+    protected void checkWriteable() {
+        if (isReadOnlyFile()) {
+            throw new IllegalStateException(
+                    "POIFS opened in read only mode, so stream data may not be written. " +
+                            "Open the FileSystem in read-write mode, or from an InputStream, first"
+            );
+        }
+    }
+
+    /**
+     * Records a change to the entries, which only lives in memory
+     *  if the file was opened in read only mode
+     */
+    void markChanged() {
+        _changed = true;
     }
 
     private static void sanityCheckBlockCount(int block_count) throws IOException {
