@@ -192,7 +192,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
     /**
      * @return the extra check a HYPERLINK field target has to pass to be written as a link
      * @see #setHyperlinkValidator(Predicate)
-     * @since 6.0.1
+     * @since 6.1.0
      */
     public Predicate<String> getHyperlinkValidator()
     {
@@ -208,7 +208,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
      * linked. The default accepts every target that passes the built-in check.
      *
      * @param hyperlinkValidator returns true for the targets to write as links
-     * @since 6.0.1
+     * @since 6.1.0
      */
     public void setHyperlinkValidator( Predicate<String> hyperlinkValidator )
     {

@@ -219,7 +219,7 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
      *                 a redirect to another origin
      * @return the response
      * @throws IOException if the request fails
-     * @since 6.0.1
+     * @since 6.1.0
      */
     protected TimeStampHttpClientResponse handleRedirect(String url, MethodHandler handler, boolean followRedirect, boolean sendAuth) throws IOException {
         final HttpURLConnection huc;

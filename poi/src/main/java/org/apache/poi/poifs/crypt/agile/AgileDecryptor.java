@@ -73,7 +73,7 @@ public class AgileDecryptor extends Decryptor {
     /**
      * Whether {@link #getDataStream(DirectoryNode)} fails when the DataIntegrity HMAC of the
      * encrypted package does not match. Defaults to {@code true}.
-     * @since 6.0.1
+     * @since 6.1.0
      */
     public static boolean isFailOnIntegrityError() {
         return FAIL_ON_INTEGRITY_ERROR;
@@ -86,7 +86,7 @@ public class AgileDecryptor extends Decryptor {
      * Set it to {@code false} to only log a warning and decrypt the package anyway, e.g. to
      * extract the content of a file whose HMAC was written incorrectly. Excel for the web shows such
      * files, but only in read-only mode.
-     * @since 6.0.1
+     * @since 6.1.0
      */
     public static void setFailOnIntegrityError(final boolean failOnIntegrityError) {
         FAIL_ON_INTEGRITY_ERROR = failOnIntegrityError;
