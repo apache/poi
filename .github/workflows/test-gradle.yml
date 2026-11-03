@@ -5,9 +5,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ trunk, 5.5.x ]
+    branches: [ trunk, 5.5.x, 6.0.x ]
   pull_request:
-    branches: [ trunk, 5.5.x ]
+    branches: [ trunk, 5.5.x, 6.0.x ]
 
 # one run per PR: a new commit cancels the run still in flight for the previous one;
 # pushes to the protected branches are never cancelled, so every commit there gets its result
