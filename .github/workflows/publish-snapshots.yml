@@ -5,12 +5,12 @@ name: Publish snapshots
 
 on:
   push:
-    branches: [ trunk ]
+    branches: [ trunk, 6.0.x ]
   workflow_dispatch:
 
-# never cancel a publish that is in progress, but only run one at a time
+# never cancel a publish that is in progress, but only run one at a time per branch
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
