@@ -96,7 +96,7 @@ public class RelationshipTransformService extends TransformService {
         /**
          * Adds a RelationshipsGroupReference, i.e. signs all relationships of the given type
          *
-         * @since 6.0.1
+         * @since 6.1.0
          */
         public void addRelationshipGroupReference(String relationshipType) {
             sourceTypes.add(relationshipType);

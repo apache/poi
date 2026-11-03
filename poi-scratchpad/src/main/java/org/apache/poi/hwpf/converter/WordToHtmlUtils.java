@@ -195,7 +195,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
      *
      * @param hyperlink the target of a HYPERLINK field
      * @return true if the target can be written as the {@code href} of a link
-     * @since 6.0.1
+     * @since 6.1.0
      */
     public static boolean isSafeHyperlink( final String hyperlink )
     {

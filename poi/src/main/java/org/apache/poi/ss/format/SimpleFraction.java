@@ -23,7 +23,7 @@ public class SimpleFraction {
     /**
      * The most denominator digits a fraction can have: 10^9 - 1 is the largest all-nines denominator that fits in an int
      *
-     * @since 6.0.1
+     * @since 6.1.0
      */
     public static final int MAX_DENOMINATOR_DIGITS = 9;
 

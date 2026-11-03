@@ -669,7 +669,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      * cache information derived from the content can detect that it is out of date.
      *
      * @return the modification count of this part
-     * @since 6.0.1
+     * @since 6.1.0
      */
     public long getModificationCount() {
         return _modificationCount;

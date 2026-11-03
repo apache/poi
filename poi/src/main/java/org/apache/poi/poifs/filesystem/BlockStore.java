@@ -81,7 +81,7 @@ public abstract class BlockStore {
      * Checks that the blocks may be changed, i.e. that changes to them are kept
      *
      * @throws IllegalStateException if the blocks are read-only
-     * @since 6.0.1
+     * @since 6.1.0
      */
     protected void checkWriteable() {
         // writeable by default
