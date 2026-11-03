@@ -323,7 +323,7 @@ public class CodePageUtil
                     return "windows-1255";
             case CP_WINDOWS_1256:
                 if (javaLangFormat)
-                    return "Cp1255";
+                    return "Cp1256";
                 else
                     return "windows-1256";
             case CP_WINDOWS_1257:
@@ -436,7 +436,24 @@ public class CodePageUtil
             case CP_GB18030:
                 return "GB18030";
             case CP_SJIS:
-                return "SJIS";
+                // Windows code page 932 is Microsoft's Shift_JIS variant (IANA
+                // "Windows-31J"). Java's "SJIS" is JIS X 0208 Shift_JIS, which
+                // lacks the NEC and IBM extensions and maps some symbols
+                // differently.
+                if (javaLangFormat) {
+                    return "MS932";
+                } else {
+                    return "windows-31j";
+                }
+            case 950:
+                // Windows code page 950 is Microsoft's Big5 variant. Without
+                // this case, the default "cp950" resolves to IBM's variant
+                // (x-IBM950).
+                if (javaLangFormat) {
+                    return "MS950";
+                } else {
+                    return "x-windows-950";
+                }
             default:
                 return "cp" + codepage;
         }

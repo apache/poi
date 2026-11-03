@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.macros;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
@@ -461,6 +462,122 @@ class TestVBAMacroReader {
             }
         }
         return bos.toByteArray();
+    }
+
+    @Test
+    void moduleMapKeyedByStreamNameUnicode() throws IOException {
+        final String unicodeStreamName = "\u9ad9\u6a4b\u2460";
+        final String source = "Attribute VB_Name = \"Mod1\"\r\nSub Run()\r\nEnd Sub\r\n";
+        // Simulate an MBCS StreamName that does not round-trip to the UTF-16 entry name
+        final byte[] mbcsName = "???".getBytes(StandardCharsets.US_ASCII);
+        final byte[] utf16Name = unicodeStreamName.getBytes(StandardCharsets.UTF_16LE);
+
+        final ByteArrayOutputStream dir = new ByteArrayOutputStream();
+        // PROJECT_CODEPAGE = 1252
+        writeShort(dir, 0x0003);
+        writeInt(dir, 2);
+        writeShort(dir, 1252);
+        // MODULE_STREAM_NAME (MBCS + 0x0032 + UTF-16LE)
+        writeShort(dir, 0x001A);
+        writeInt(dir, mbcsName.length);
+        dir.writeBytes(mbcsName);
+        writeShort(dir, 0x0032);
+        writeInt(dir, utf16Name.length);
+        dir.writeBytes(utf16Name);
+        // MODULE_OFFSET = 0
+        writeShort(dir, 0x0031);
+        writeInt(dir, 4);
+        writeInt(dir, 0);
+        // DIR_STREAM_TERMINATOR
+        writeShort(dir, 0x0010);
+        writeInt(dir, 0);
+
+        final ByteArrayOutputStream projectWm = new ByteArrayOutputStream();
+        projectWm.writeBytes(mbcsName);
+        projectWm.write(0);
+        projectWm.writeBytes(utf16Name);
+        projectWm.write(new byte[]{0, 0, 0, 0});
+
+        try (POIFSFileSystem fs = new POIFSFileSystem();
+             VBAMacroReader reader = new VBAMacroReader(fs)) {
+            DirectoryNode vba = (DirectoryNode) fs.getRoot().createDirectory("VBA");
+            vba.createDocument("dir", new ByteArrayInputStream(compressLiterals(dir.toByteArray())));
+            vba.createDocument(unicodeStreamName, new ByteArrayInputStream(
+                    compressLiterals(source.getBytes(StandardCharsets.US_ASCII))));
+            fs.getRoot().createDocument("PROJECTwm", new ByteArrayInputStream(projectWm.toByteArray()));
+            fs.getRoot().createDocument("PROJECT", new ByteArrayInputStream(
+                    "Module=???\r\n".getBytes(StandardCharsets.US_ASCII)));
+
+            Map<String, String> macros = reader.readMacros();
+            assertEquals(Collections.singletonMap(unicodeStreamName, source), macros);
+
+            Map<String, Module> modules = reader.readMacroModules();
+            assertEquals(Module.ModuleType.Module, modules.get(unicodeStreamName).geModuleType());
+        }
+    }
+
+    @Test
+    void unsupportedProjectCodepageFallsBackToWindows1252() throws IOException {
+        final String source = "Attribute VB_Name = \"Module1\"\r\nSub Run()\r\nMsgBox \"\u00e9\"\r\nEnd Sub\r\n";
+        final byte[] sourceBytes = source.getBytes(StringUtil.WIN_1252);
+        final byte[] asciiName = "Module1".getBytes(StandardCharsets.US_ASCII);
+        final byte[] utf16Name = "Module1".getBytes(StandardCharsets.UTF_16LE);
+
+        // Test both an unknown positive code page (UnsupportedCharsetException)
+        // and code page 0 (UnsupportedEncodingException from CodePageUtil).
+        for (int unsupportedCodepage : new int[]{10025, 0}) {
+            final ByteArrayOutputStream dir = new ByteArrayOutputStream();
+            writeShort(dir, 0x0003);
+            writeInt(dir, 2);
+            writeShort(dir, unsupportedCodepage);
+            writeShort(dir, 0x001A);
+            writeInt(dir, asciiName.length);
+            dir.writeBytes(asciiName);
+            writeShort(dir, 0x0032);
+            writeInt(dir, utf16Name.length);
+            dir.writeBytes(utf16Name);
+            writeShort(dir, 0x0031);
+            writeInt(dir, 4);
+            writeInt(dir, 0);
+            writeShort(dir, 0x0010);
+            writeInt(dir, 0);
+
+            try (POIFSFileSystem fs = new POIFSFileSystem();
+                 VBAMacroReader reader = new VBAMacroReader(fs)) {
+                DirectoryNode vba = (DirectoryNode) fs.getRoot().createDirectory("VBA");
+                vba.createDocument("dir", new ByteArrayInputStream(compressLiterals(dir.toByteArray())));
+                vba.createDocument("Module1", new ByteArrayInputStream(compressLiterals(sourceBytes)));
+
+                Map<String, String> macros = reader.readMacros();
+                assertEquals(Collections.singletonMap("Module1", source), macros);
+            }
+        }
+    }
+
+    /**
+     * RLE-compresses {@code data} into a single chunk of literals only
+     */
+    private static byte[] compressLiterals(byte[] data) {
+        final ByteArrayOutputStream chunk = new ByteArrayOutputStream();
+        for (int i = 0; i < data.length; i += 8) {
+            chunk.write(0);
+            chunk.write(data, i, Math.min(8, data.length - i));
+        }
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.write(0x01);
+        writeShort(out, 0xB000 | (chunk.size() - 1));
+        out.writeBytes(chunk.toByteArray());
+        return out.toByteArray();
+    }
+
+    private static void writeShort(ByteArrayOutputStream out, int value) {
+        out.write(value);
+        out.write(value >> 8);
+    }
+
+    private static void writeInt(ByteArrayOutputStream out, int value) {
+        writeShort(out, value);
+        writeShort(out, value >> 16);
     }
 
     private static void putZipEntry(ZipOutputStream zos, String name, byte[] data) throws IOException {
