@@ -277,7 +277,7 @@ public final class HeadersFooters {
             HSLFSimpleShape ss = _sheet.getPlaceholder(placeholderId);
             visible = ss instanceof HSLFTextShape textShape && textShape.getText() != null;
         } else {
-            visible = _container.getHeadersFootersAtom().getFlag(flag);
+            visible = _container.getHeadersFootersAtom() != null && _container.getHeadersFootersAtom().getFlag(flag);
         }
         return visible;
     }
