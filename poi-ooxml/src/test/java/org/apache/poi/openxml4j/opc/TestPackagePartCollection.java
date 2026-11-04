@@ -20,19 +20,17 @@ package org.apache.poi.openxml4j.opc;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.junit.jupiter.api.Test;
 
 public class TestPackagePartCollection {
@@ -53,28 +51,73 @@ public class TestPackagePartCollection {
 
     /**
      * Checking rule M1.11 used to build and look up every prefix of a part name,
-     * which is quadratic in the length of deeply nested names
+     * which is quadratic in the length of deeply nested names. Filtering the
+     * prefixes by the lengths of the registered names isn't enough either, as a
+     * package can also contain names with just those lengths. The check must
+     * compare each character of a name a bounded number of times, whatever
+     * names are registered.
      */
     @Test
     void testDeeplyNestedPartNames() throws Exception {
-        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
-        try (ZipOutputStream zos = new ZipOutputStream(bos)) {
-            zos.putNextEntry(new ZipEntry("[Content_Types].xml"));
-            zos.write(("<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">" +
-                "<Default Extension=\"xml\" ContentType=\"application/xml\"/></Types>").getBytes(StandardCharsets.UTF_8));
-            String folder = "a/".repeat(30_000);
-            for (int i = 0; i < 20; i++) {
-                zos.putNextEntry(new ZipEntry(folder + i + ".xml"));
-                zos.write("<x/>".getBytes(StandardCharsets.UTF_8));
-            }
+        PackagePartCollection parts = new PackagePartCollection();
+        String folder = "/" + "a/".repeat(1_000);
+
+        // names in the same folder with lengths that line up with the slashes of the deep names below
+        for (int i = 0; i < 100; i++) {
+            put(parts, folder + "d" + "x".repeat(i) + ".xml");
         }
 
-        int parts = assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
-            try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
-                return pkg.getParts().size();
-            }
-        });
-        assertEquals(20, parts);
+        long before = parts.comparedChars();
+        long deepChars = 0;
+        for (int i = 0; i < 100; i++) {
+            String name = folder + "a/".repeat(1_000) + "p" + i + ".xml";
+            put(parts, name);
+            deepChars += name.length();
+        }
+        assertEquals(200, parts.size());
+        assertTrue(parts.comparedChars() - before <= 2 * deepChars,
+            "the M1.11 check compared " + (parts.comparedChars() - before) + " chars for " + deepChars + " chars of names");
+
+        assertThrows(InvalidOperationException.class,
+            () -> put(parts, folder + "a/".repeat(1_000) + "p0.xml/derived.xml"));
+        assertThrows(InvalidOperationException.class, () -> put(parts, folder + "dx.xml/derived.xml"));
+    }
+
+    @Test
+    void testDerivedPartNames() throws Exception {
+        PackagePartCollection parts = new PackagePartCollection();
+        put(parts, "/a/b/c.xml");
+        put(parts, "/a/b/d.xml");
+        put(parts, "/a/x.xml");
+
+        assertThrows(InvalidOperationException.class, () -> put(parts, "/a/b/c.xml/y.xml"));
+        assertThrows(InvalidOperationException.class, () -> put(parts, "/a/x.xml/y.xml"));
+        // a prefix which doesn't end at a slash is fine
+        put(parts, "/a/b/c.xm");
+        put(parts, "/a/b.xml");
+        assertEquals(5, parts.size());
+
+        assertNotNull(parts.remove(PackagingURIHelper.createPartName("/a/b/c.xml")));
+        assertNull(parts.remove(PackagingURIHelper.createPartName("/a/b/c.xml")));
+        put(parts, "/a/b/c.xml/y.xml");
+        assertThrows(InvalidOperationException.class, () -> put(parts, "/a/b/d.xml/y.xml"));
+        assertEquals(5, parts.size());
+    }
+
+    /**
+     * Part names are equal regardless of case, so the derived name check and
+     * {@link PackagePartCollection#remove} have to ignore case as well
+     */
+    @Test
+    void testDerivedPartNamesIgnoreCase() throws Exception {
+        PackagePartCollection parts = new PackagePartCollection();
+        put(parts, "/word/document.xml");
+        assertThrows(InvalidOperationException.class, () -> put(parts, "/Word/Document.xml/image1.gif"));
+
+        put(parts, "/A.xml");
+        assertNotNull(parts.remove(PackagingURIHelper.createPartName("/a.xml")));
+        put(parts, "/A.xml/x.xml");
+        assertEquals(2, parts.size());
     }
 
     @Test
@@ -89,5 +132,10 @@ public class TestPackagePartCollection {
             assertNotNull(pkg.createPart(derived, ContentTypes.IMAGE_GIF));
             pkg.revert();
         }
+    }
+
+    private static void put(PackagePartCollection parts, String name) throws Exception {
+        PackagePartName partName = PackagingURIHelper.createPartName(name);
+        parts.put(partName, new MemoryPackagePart(null, partName, ContentTypes.XML, false));
     }
 }
