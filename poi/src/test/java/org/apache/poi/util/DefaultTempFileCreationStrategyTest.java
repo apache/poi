@@ -221,6 +221,30 @@ class DefaultTempFileCreationStrategyTest {
     }
 
     @Test
+    void testDirectoryOwnedByOtherUser() throws IOException {
+        // the root-owned, world-writable /tmp stands in for a poifiles directory created by another user
+        Path shared = Path.of("/tmp");
+        Assumptions.assumeTrue(Files.isDirectory(shared)
+                && Files.getFileAttributeView(shared, PosixFileAttributeView.class) != null,
+                "POSIX /tmp not available");
+        File probe = new DefaultTempFileCreationStrategy().createTempFile("POITest", ".tmp");
+        try {
+            Assumptions.assumeFalse(Files.getOwner(shared).equals(Files.getOwner(probe.toPath())),
+                    "/tmp is owned by the user running the test");
+        } finally {
+            assertTrue(probe.delete());
+        }
+
+        DefaultTempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy() {
+            @Override
+            protected Path getPOIFilesDirectoryPath() {
+                return shared;
+            }
+        };
+        assertThrows(IOException.class, () -> strategy.createTempFile("POITest", ".tmp"));
+    }
+
+    @Test
     void testPosixPermissions() throws IOException {
         DefaultTempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy();
         File dir = strategy.createTempDirectory("posixtest");
