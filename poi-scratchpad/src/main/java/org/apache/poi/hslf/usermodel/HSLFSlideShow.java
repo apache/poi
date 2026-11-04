@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -701,6 +702,12 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
      * Shifts any subsequent slides to the left (subtracts one from their slide
      * numbers).
      * </p>
+     * <p>
+     * The records of the slide and its notes are not written out anymore, but content of the
+     * slide can stay in the file in other places: older versions of the {@code Document} record
+     * kept by incremental saves (see {@link HSLFSlideShowImpl#normalizeRecords()}), embedded
+     * objects and hyperlinks, and the title and thumbnail in the document properties.
+     * </p>
      *
      * @param index
      *            the index of the slide to remove (0-based)
@@ -724,8 +731,22 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         List<SlideAtomsSet> sa = new ArrayList<>(Arrays.asList(sas));
 
         HSLFSlide removedSlide = _slides.remove(index);
-        _notes.remove(removedSlide.getNotes());
-        sa.remove(index);
+        // not by index: there is no slide for a SlideAtomsSet which doesn't point to a valid record
+        SlideAtomsSet removedSet = removedSlide.getSlideAtomsSet();
+        sa.removeIf(s -> removedSet != null ? s == removedSet
+            : s.getSlidePersistAtom().getRefID() == removedSlide._getSheetRefId());
+
+        // persist ids of the slide and notes records, which are dropped from the document stream
+        List<Integer> removedPersistIds = new ArrayList<>();
+        removedPersistIds.add(removedSlide._getSheetRefId());
+
+        // the notes are kept if another (malformed) slide still refers to them
+        int notesId = removedSlide.getSlideRecord().getSlideAtom().getNotesID();
+        boolean notesShared = notesId != 0 && _slides.stream()
+            .anyMatch(s -> s.getSlideRecord().getSlideAtom().getNotesID() == notesId);
+        if (!notesShared) {
+            _notes.remove(removedSlide.getNotes());
+        }
 
         int i=0;
         for (HSLFSlide s : _slides) {
@@ -745,14 +766,18 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
         // if the removed slide had notes - remove references to them too
 
-        int notesId = removedSlide.getSlideRecord().getSlideAtom().getNotesID();
-        if (notesId != 0) {
+        if (notesId != 0 && !notesShared) {
             SlideListWithText nslwt = _documentRecord.getNotesSlideListWithText();
             records = new ArrayList<>();
             ArrayList<SlideAtomsSet> na = new ArrayList<>();
             if (nslwt != null) {
                 for (SlideAtomsSet ns : nslwt.getSlideAtomsSets()) {
                     if (ns.getSlidePersistAtom().getSlideIdentifier() == notesId) {
+                        // a (malformed) SlideAtomsSet can point to any other type of record
+                        int notesRefId = ns.getSlidePersistAtom().getRefID();
+                        if (getCoreRecordForRefID(notesRefId) instanceof Notes) {
+                            removedPersistIds.add(notesRefId);
+                        }
                         continue;
                     }
                     na.add(ns);
@@ -772,7 +797,39 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
             }
         }
 
+        // without their slide list entries the records are no longer reachable, but they would
+        // still be written out with the content of the removed slide
+        removedPersistIds.removeIf(this::isInSlideList);
+        _hslfSlideShow.removePersistObjects(removedPersistIds);
+        removeCoreRecords(removedPersistIds);
+
         return removedSlide;
+    }
+
+    /**
+     * @return whether a slide list still points to the record, which another (malformed) one can share
+     */
+    private boolean isInSlideList(int refId) {
+        return Arrays.stream(_documentRecord.getSlideListWithTexts())
+            .flatMap(slwt -> Arrays.stream(slwt.getSlideAtomsSets()))
+            .anyMatch(sas -> sas.getSlidePersistAtom().getRefID() == refId);
+    }
+
+    /**
+     * Drops removed sheets from the most recent core records and the refID lookup into them
+     */
+    private void removeCoreRecords(Collection<Integer> refIds) {
+        List<Record> records = new ArrayList<>(_mostRecentCoreRecords.length);
+        Map<Integer,Integer> lookup = new HashMap<>();
+        _sheetIdToCoreRecordsLookup.entrySet().stream()
+            .sorted(Map.Entry.comparingByValue())
+            .filter(me -> !refIds.contains(me.getKey()))
+            .forEach(me -> {
+                lookup.put(me.getKey(), records.size());
+                records.add(_mostRecentCoreRecords[me.getValue()]);
+            });
+        _mostRecentCoreRecords = records.toArray(new Record[0]);
+        _sheetIdToCoreRecordsLookup = lookup;
     }
 
     /**
