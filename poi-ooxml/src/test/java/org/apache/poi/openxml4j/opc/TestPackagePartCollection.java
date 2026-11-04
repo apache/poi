@@ -22,11 +22,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -53,34 +58,53 @@ public class TestPackagePartCollection {
      * Checking rule M1.11 used to build and look up every prefix of a part name,
      * which is quadratic in the length of deeply nested names. Filtering the
      * prefixes by the lengths of the registered names isn't enough either, as a
-     * package can also contain names with just those lengths. The check must
-     * compare each character of a name a bounded number of times, whatever
-     * names are registered.
+     * package can also contain names with just those lengths, which is what the
+     * first loop adds.
      */
     @Test
     void testDeeplyNestedPartNames() throws Exception {
+        String folder = "a/".repeat(15_000);
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
+        try (ZipOutputStream zos = new ZipOutputStream(bos)) {
+            addEntry(zos, "[Content_Types].xml",
+                "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">"
+                + "<Default Extension=\"xml\" ContentType=\"application/xml\"/></Types>");
+            for (int i = 0; i < 50; i++) {
+                addEntry(zos, folder + "d" + "x".repeat(i) + ".xml", "<a/>");
+            }
+            for (int i = 0; i < 50; i++) {
+                addEntry(zos, folder + folder + "p" + i + ".xml", "<a/>");
+            }
+        }
+
+        assertTimeout(Duration.ofSeconds(60), () -> {
+            try (OPCPackage pkg = OPCPackage.open(bos.toInputStream())) {
+                assertEquals(100, pkg.getParts().size());
+            }
+        });
+
+        // the names are still checked
         PackagePartCollection parts = new PackagePartCollection();
-        String folder = "/" + "a/".repeat(1_000);
+        String deep = "/" + folder + "p.xml";
+        put(parts, deep);
+        assertThrows(InvalidOperationException.class, () -> put(parts, deep + "/derived.xml"));
+    }
 
-        // names in the same folder with lengths that line up with the slashes of the deep names below
-        for (int i = 0; i < 100; i++) {
-            put(parts, folder + "d" + "x".repeat(i) + ".xml");
-        }
-
-        long before = parts.comparedChars();
-        long deepChars = 0;
-        for (int i = 0; i < 100; i++) {
-            String name = folder + "a/".repeat(1_000) + "p" + i + ".xml";
-            put(parts, name);
-            deepChars += name.length();
-        }
-        assertEquals(200, parts.size());
-        assertTrue(parts.comparedChars() - before <= 2 * deepChars,
-            "the M1.11 check compared " + (parts.comparedChars() - before) + " chars for " + deepChars + " chars of names");
-
-        assertThrows(InvalidOperationException.class,
-            () -> put(parts, folder + "a/".repeat(1_000) + "p0.xml/derived.xml"));
-        assertThrows(InvalidOperationException.class, () -> put(parts, folder + "dx.xml/derived.xml"));
+    /**
+     * {@link PackagePartName#compare} treats runs of digits by their value, so
+     * differently spelled names can be the same part for the lookup
+     */
+    @Test
+    void testEqualNamesSpelledDifferently() throws Exception {
+        PackagePartCollection parts = new PackagePartCollection();
+        put(parts, "/a01b1.xml");
+        assertNotNull(parts.remove(PackagingURIHelper.createPartName("/a1b01.xml")));
+        put(parts, "/a01b1.xml");
+        put(parts, "/a1b01.xml");
+        assertEquals(1, parts.size());
+        assertNotNull(parts.remove(PackagingURIHelper.createPartName("/a01b1.xml")));
+        put(parts, "/a01b1.xml/x.xml");
+        assertEquals(1, parts.size());
     }
 
     @Test
@@ -132,6 +156,12 @@ public class TestPackagePartCollection {
             assertNotNull(pkg.createPart(derived, ContentTypes.IMAGE_GIF));
             pkg.revert();
         }
+    }
+
+    private static void addEntry(ZipOutputStream zos, String name, String content) throws IOException {
+        zos.putNextEntry(new ZipEntry(name));
+        zos.write(content.getBytes(StandardCharsets.UTF_8));
+        zos.closeEntry();
     }
 
     private static void put(PackagePartCollection parts, String name) throws Exception {

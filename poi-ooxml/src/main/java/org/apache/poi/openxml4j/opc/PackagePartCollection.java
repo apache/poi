@@ -46,20 +46,9 @@ public final class PackagePartCollection implements Serializable {
 
     /**
      * The registered part names as a tree of their segments, for checking rule
-     * M1.11. Not serialized, as older versions didn't have it: it is rebuilt from
-     * {@link #packagePartLookup} on first use.
+     * M1.11.
      */
-    private transient PartNameTree registeredNames;
-
-    private PartNameTree registeredNames() {
-        if (registeredNames == null) {
-            registeredNames = new PartNameTree();
-            for (String name : packagePartLookup.keySet()) {
-                registeredNames.add(name);
-            }
-        }
-        return registeredNames;
-    }
+    private final transient PartNameTree registeredNames = new PartNameTree();
 
 
     /**
@@ -77,33 +66,30 @@ public final class PackagePartCollection implements Serializable {
      */
     public PackagePart put(final PackagePartName partName, final PackagePart part) {
         final String ppName = partName.getName();
-        final PartNameTree names = registeredNames();
-        if (names.containsPrefixOf(ppName)) {
+        final String normalized = PartNameTree.normalize(ppName);
+        if (registeredNames.containsPrefixOf(normalized)) {
             throw new InvalidOperationException(
                 "You can't add a part with a part name derived from another part ! [M1.11]");
         }
-        names.add(ppName);
-        return packagePartLookup.put(ppName, part);
+        // the lookup can see this name as equal to one spelled differently, e.g. /a01.xml and /a1.xml
+        final PackagePart previous = packagePartLookup.put(ppName, part);
+        if (previous != null) {
+            registeredNames.remove(PartNameTree.normalize(previous.getPartName().getName()));
+        }
+        registeredNames.add(normalized);
+        return previous;
     }
 
     public PackagePart remove(PackagePartName key) {
         if (key == null) {
             return null;
         }
-        final String ppName = key.getName();
-        PackagePart pp = packagePartLookup.remove(ppName);
+        PackagePart pp = packagePartLookup.remove(key.getName());
         if (pp != null) {
-            registeredNames().remove(ppName);
+            // not the key's name: the lookup can see differently spelled names as equal
+            registeredNames.remove(PartNameTree.normalize(pp.getPartName().getName()));
         }
         return pp;
-    }
-
-    /**
-     * @return the number of characters compared so far while checking rule M1.11,
-     *      which must stay linear in the length of the checked names (for tests)
-     */
-    long comparedChars() {
-        return registeredNames().comparedChars;
     }
 
     /**
@@ -113,7 +99,7 @@ public final class PackagePartCollection implements Serializable {
      * the registered names are. Segments without a branch or a name end in
      * between are kept in one node, so the tree takes memory linear in the total
      * length of the registered names. Names are compared ignoring case, like
-     * {@link PackagePartName}.
+     * {@link PackagePartName}, so all the names passed in have to be {@link #normalize normalized}.
      */
     private static final class PartNameTree {
         private static final class Node {
@@ -132,20 +118,15 @@ public final class PackagePartCollection implements Serializable {
 
         private final Node root = new Node("", false);
 
-        /** the characters compared by {@link #containsPrefixOf}, for tests */
-        private long comparedChars;
-
         /**
          * @return whether a registered name equals the given name or is a prefix
          *      of it ending at a slash
          */
-        boolean containsPrefixOf(String name) {
-            final String n = normalize(name);
+        boolean containsPrefixOf(String n) {
             Node node = root;
             int pos = 0;
             while (true) {
                 final String segment = segmentAt(n, pos);
-                comparedChars += segment.length();
                 final Node child = node.children.get(segment);
                 if (child == null) {
                     return false;
@@ -155,7 +136,6 @@ public final class PackagePartCollection implements Serializable {
                 if (end > n.length()) {
                     return false;
                 }
-                comparedChars += label.length();
                 if (!n.startsWith(label, pos) || !isSegmentEnd(n, end)) {
                     return false;
                 }
@@ -170,8 +150,7 @@ public final class PackagePartCollection implements Serializable {
             }
         }
 
-        void add(String name) {
-            final String n = normalize(name);
+        void add(String n) {
             Node node = root;
             int pos = 0;
             while (true) {
@@ -200,8 +179,7 @@ public final class PackagePartCollection implements Serializable {
             }
         }
 
-        void remove(String name) {
-            final String n = normalize(name);
+        void remove(String n) {
             final List<Node> path = new ArrayList<>();
             final List<String> keys = new ArrayList<>();
             Node node = root;
@@ -233,7 +211,7 @@ public final class PackagePartCollection implements Serializable {
         }
 
         /** @return the name in lower case and without its leading slash */
-        private static String normalize(String name) {
+        static String normalize(String name) {
             final String n = name.toLowerCase(Locale.ROOT);
             return n.startsWith(PackagingURIHelper.FORWARD_SLASH_STRING) ? n.substring(1) : n;
         }
