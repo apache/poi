@@ -38,6 +38,7 @@ import org.apache.poi.hslf.extractor.QuickButCruddyTextExtractor;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -314,6 +315,95 @@ public final class TestAddingSlides {
                 assertEquals("Notes-1", HSLFTextParagraph.getRawText(notes.getTextParagraphs().get(0)));
             }
         }
+    }
+
+    /**
+     * The slide list can hold entries without a slide, so its positions can differ from the slides
+     */
+    @Test
+    void removedSlideWithSkippedSlideListEntry() throws IOException {
+        ss_empty.createSlide().createTextBox().setText("Text 1");
+        ss_empty.createSlide().createTextBox().setText("Text 2");
+        ss_empty.createSlide().createTextBox().setText("Text 3");
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.writeOutAndReadBack(ss_empty)) {
+            ppt.getDocumentRecord().getSlideSlideListWithText().getSlideAtomsSets()[0]
+                .getSlidePersistAtom().setRefID(9999);
+            try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(2, ppt2.getSlides().size());
+                ppt2.removeSlide(1);
+                assertThat(getRawText(ppt2), not(containsString("Text 3")));
+                try (HSLFSlideShow ppt3 = HSLFTestDataSamples.writeOutAndReadBack(ppt2)) {
+                    assertEquals(1, ppt3.getSlides().size());
+                    assertEquals("Text 2",
+                        HSLFTextParagraph.getRawText(ppt3.getSlides().get(0).getTextParagraphs().get(0)));
+                }
+            }
+        }
+    }
+
+    /**
+     * A notes entry of the removed slide which points to another type of record doesn't remove that
+     */
+    @Test
+    void removedSlideKeepsRecordOfBadNotesEntry() throws IOException {
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("42474-1.ppt")) {
+            int docRef = -1;
+            for (Record r : ppt.getSlideShowImpl().getRecords()) {
+                if (r instanceof UserEditAtom) {
+                    docRef = ((UserEditAtom) r).getDocPersistRef();
+                }
+            }
+            notesEntryOfSlide(ppt, 0).getSlidePersistAtom().setRefID(docRef);
+
+            try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                ppt2.removeSlide(0);
+                try (HSLFSlideShow ppt3 = HSLFTestDataSamples.writeOutAndReadBack(ppt2)) {
+                    assertEquals(1, ppt3.getSlides().size());
+                }
+            }
+        }
+    }
+
+    /**
+     * Records another slide list entry still points to are kept when a slide is removed
+     */
+    @Test
+    void removedSlideKeepsRecordsOfOtherEntries() throws IOException {
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("42474-1.ppt")) {
+            notesEntryOfSlide(ppt, 1).getSlidePersistAtom()
+                .setRefID(notesEntryOfSlide(ppt, 0).getSlidePersistAtom().getRefID());
+            try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                ppt2.removeSlide(0);
+                try (HSLFSlideShow ppt3 = HSLFTestDataSamples.writeOutAndReadBack(ppt2)) {
+                    assertEquals(1, ppt3.getSlides().size());
+                    HSLFNotes notes = ppt3.getSlides().get(0).getNotes();
+                    assertNotNull(notes);
+                    assertEquals("Notes-1", HSLFTextParagraph.getRawText(notes.getTextParagraphs().get(0)));
+                }
+            }
+        }
+
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("42474-1.ppt")) {
+            SlideAtomsSet[] sets = ppt.getDocumentRecord().getSlideSlideListWithText().getSlideAtomsSets();
+            sets[1].getSlidePersistAtom().setRefID(sets[0].getSlidePersistAtom().getRefID());
+            try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(2, ppt2.getSlides().size());
+                ppt2.removeSlide(0);
+                try (HSLFSlideShow ppt3 = HSLFTestDataSamples.writeOutAndReadBack(ppt2)) {
+                    assertEquals(1, ppt3.getSlides().size());
+                }
+            }
+        }
+    }
+
+    private static SlideAtomsSet notesEntryOfSlide(HSLFSlideShow ppt, int slide) {
+        int notesId = ppt.getSlides().get(slide).getSlideRecord().getSlideAtom().getNotesID();
+        for (SlideAtomsSet sas : ppt.getDocumentRecord().getNotesSlideListWithText().getSlideAtomsSets()) {
+            if (sas.getSlidePersistAtom().getSlideIdentifier() == notesId) {
+                return sas;
+            }
+        }
+        throw new AssertionError("No notes entry for slide " + slide);
     }
 
     /**

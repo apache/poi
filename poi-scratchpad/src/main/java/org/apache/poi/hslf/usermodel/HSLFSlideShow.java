@@ -702,6 +702,12 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
      * Shifts any subsequent slides to the left (subtracts one from their slide
      * numbers).
      * </p>
+     * <p>
+     * The records of the slide and its notes are not written out anymore, but content of the
+     * slide can stay in the file in other places: older versions of the {@code Document} record
+     * kept by incremental saves (see {@link HSLFSlideShowImpl#normalizeRecords()}), embedded
+     * objects and hyperlinks, and the title and thumbnail in the document properties.
+     * </p>
      *
      * @param index
      *            the index of the slide to remove (0-based)
@@ -725,7 +731,10 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         List<SlideAtomsSet> sa = new ArrayList<>(Arrays.asList(sas));
 
         HSLFSlide removedSlide = _slides.remove(index);
-        sa.remove(index);
+        // not by index: there is no slide for a SlideAtomsSet which doesn't point to a valid record
+        SlideAtomsSet removedSet = removedSlide.getSlideAtomsSet();
+        sa.removeIf(s -> removedSet != null ? s == removedSet
+            : s.getSlidePersistAtom().getRefID() == removedSlide._getSheetRefId());
 
         // persist ids of the slide and notes records, which are dropped from the document stream
         List<Integer> removedPersistIds = new ArrayList<>();
@@ -764,7 +773,11 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
             if (nslwt != null) {
                 for (SlideAtomsSet ns : nslwt.getSlideAtomsSets()) {
                     if (ns.getSlidePersistAtom().getSlideIdentifier() == notesId) {
-                        removedPersistIds.add(ns.getSlidePersistAtom().getRefID());
+                        // a (malformed) SlideAtomsSet can point to any other type of record
+                        int notesRefId = ns.getSlidePersistAtom().getRefID();
+                        if (getCoreRecordForRefID(notesRefId) instanceof Notes) {
+                            removedPersistIds.add(notesRefId);
+                        }
                         continue;
                     }
                     na.add(ns);
@@ -786,10 +799,20 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
         // without their slide list entries the records are no longer reachable, but they would
         // still be written out with the content of the removed slide
+        removedPersistIds.removeIf(this::isInSlideList);
         _hslfSlideShow.removePersistObjects(removedPersistIds);
         removeCoreRecords(removedPersistIds);
 
         return removedSlide;
+    }
+
+    /**
+     * @return whether a slide list still points to the record, which another (malformed) one can share
+     */
+    private boolean isInSlideList(int refId) {
+        return Arrays.stream(_documentRecord.getSlideListWithTexts())
+            .flatMap(slwt -> Arrays.stream(slwt.getSlideAtomsSets()))
+            .anyMatch(sas -> sas.getSlidePersistAtom().getRefID() == refId);
     }
 
     /**

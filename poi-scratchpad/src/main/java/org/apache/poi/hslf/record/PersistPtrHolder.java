@@ -170,6 +170,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom {
      * @param slideID the persist id to remove
      * @return the position on disk this pointed to for the persist id, or
      *  {@code null} if it didn't know about the persist id
+     * @since 6.1.0
      */
     public Integer removeSlideLookup(int slideID) {
         return _slideLocations.remove(slideID);
