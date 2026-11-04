@@ -17,7 +17,6 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
@@ -575,10 +574,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
                     idx2++;
                 }
 
-                // note: BigInteger for extra safety
-                final BigInteger b1 = new BigInteger(name1.substring(beg1, idx1));
-                final BigInteger b2 = new BigInteger(name2.substring(beg2, idx2));
-                final int cmp = b1.compareTo(b2);
+                final int cmp = compareNumbers(name1, beg1, idx1, name2, beg2, idx2);
                 if (cmp != 0) {
                     return cmp;
                 }
@@ -589,6 +585,31 @@ public final class PackagePartName implements Comparable<PackagePartName> {
         }
 
         return (len1 - len2);
+    }
+
+    /**
+     * Compares two runs of digits by their numerical value, in time linear in their
+     * length: parsing them as a BigInteger is quadratic, and a part name can hold
+     * tens of thousands of digits.
+     */
+    private static int compareNumbers(String str1, int beg1, int end1, String str2, int beg2, int end2) {
+        while (beg1 < end1 && Character.digit(str1.charAt(beg1), 10) == 0) {
+            beg1++;
+        }
+        while (beg2 < end2 && Character.digit(str2.charAt(beg2), 10) == 0) {
+            beg2++;
+        }
+        final int cmp = (end1 - beg1) - (end2 - beg2);
+        if (cmp != 0) {
+            return cmp;
+        }
+        while (beg1 < end1) {
+            final int diff = Character.digit(str1.charAt(beg1++), 10) - Character.digit(str2.charAt(beg2++), 10);
+            if (diff != 0) {
+                return diff;
+            }
+        }
+        return 0;
     }
 
     private static boolean isDigitOrLetter(char c) {

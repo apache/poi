@@ -17,6 +17,9 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -80,5 +83,31 @@ public final class TestPackagePartName {
         Boolean result = assertTimeoutPreemptively(Duration.ofSeconds(10),
                 () -> PackagingURIHelper.createPartName(name).isRelationshipPartURI());
         assertFalse(result);
+    }
+
+    @Test
+    void testCompareNumbers() {
+        assertThat(PackagePartName.compare("/f2.png", "/f10.png"), lessThan(0));
+        assertThat(PackagePartName.compare("/f10.png", "/f2.png"), greaterThan(0));
+        assertThat(PackagePartName.compare("/f007.xml", "/f7.xml"), greaterThan(0));
+        assertThat(PackagePartName.compare("/f00.xml", "/f0.xml"), greaterThan(0));
+        assertEquals(0, PackagePartName.compare("/a01b1.xml", "/a1b01.xml"));
+        // more digits than fit in a long
+        assertThat(PackagePartName.compare("/f" + "9".repeat(30), "/f1" + "0".repeat(30)), lessThan(0));
+        assertThat(PackagePartName.compare("/f" + "2".repeat(30), "/f" + "1".repeat(30)), greaterThan(0));
+    }
+
+    /**
+     * Parsing the digits as a BigInteger is quadratic in their number
+     */
+    @Test
+    void testCompareSlowness() {
+        String name1 = "/" + "1".repeat(65_000) + "2.xml";
+        String name2 = "/" + "1".repeat(65_000) + "3.xml";
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            for (int i = 0; i < 1_000; i++) {
+                assertThat(PackagePartName.compare(name1, name2), lessThan(0));
+            }
+        });
     }
 }
