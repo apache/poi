@@ -116,7 +116,7 @@ public class Ole10Native {
      * @param poifs POI Filesystem object
      * @return Returns an instance of this class
      * @throws IOException          on IO error
-     * @throws Ole10NativeException on invalid or unexcepted data format
+     * @throws Ole10NativeException on invalid or unexpected data format
      */
     public static Ole10Native createFromEmbeddedOleObject(POIFSFileSystem poifs) throws IOException, Ole10NativeException {
         return createFromEmbeddedOleObject(poifs.getRoot());
@@ -130,7 +130,7 @@ public class Ole10Native {
      * @param directory POI Filesystem object
      * @return Returns an instance of this class
      * @throws IOException          on IO error
-     * @throws Ole10NativeException on invalid or unexcepted data format
+     * @throws Ole10NativeException on invalid or unexpected data format
      */
     public static Ole10Native createFromEmbeddedOleObject(DirectoryNode directory) throws IOException, Ole10NativeException {
         DocumentEntry nativeEntry = (DocumentEntry) directory.getEntryCaseInsensitive(OLE10_NATIVE);
@@ -185,7 +185,7 @@ public class Ole10Native {
      *
      * @param data   The buffer containing the Ole10Native record
      * @param offset The start offset of the record in the buffer
-     * @throws Ole10NativeException on invalid or unexcepted data format
+     * @throws Ole10NativeException on invalid or unexpected data format
      */
     public Ole10Native(final byte[] data, final int offset) throws Ole10NativeException {
         LittleEndianByteArrayInputStream leis = new LittleEndianByteArrayInputStream(data, offset);
