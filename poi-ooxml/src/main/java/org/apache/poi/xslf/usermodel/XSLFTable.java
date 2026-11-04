@@ -182,6 +182,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
             row.addCell();
         }
         _rows.add(rowIdx, row);
+        updateRowColIndexes();
         return row;
     }
 
