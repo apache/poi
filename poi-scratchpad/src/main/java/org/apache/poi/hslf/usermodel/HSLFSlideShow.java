@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -724,12 +725,19 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         List<SlideAtomsSet> sa = new ArrayList<>(Arrays.asList(sas));
 
         HSLFSlide removedSlide = _slides.remove(index);
-        _notes.remove(removedSlide.getNotes());
         sa.remove(index);
 
         // persist ids of the slide and notes records, which are dropped from the document stream
         List<Integer> removedPersistIds = new ArrayList<>();
         removedPersistIds.add(removedSlide._getSheetRefId());
+
+        // the notes are kept if another (malformed) slide still refers to them
+        int notesId = removedSlide.getSlideRecord().getSlideAtom().getNotesID();
+        boolean notesShared = notesId != 0 && _slides.stream()
+            .anyMatch(s -> s.getSlideRecord().getSlideAtom().getNotesID() == notesId);
+        if (!notesShared) {
+            _notes.remove(removedSlide.getNotes());
+        }
 
         int i=0;
         for (HSLFSlide s : _slides) {
@@ -749,8 +757,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
         // if the removed slide had notes - remove references to them too
 
-        int notesId = removedSlide.getSlideRecord().getSlideAtom().getNotesID();
-        if (notesId != 0) {
+        if (notesId != 0 && !notesShared) {
             SlideListWithText nslwt = _documentRecord.getNotesSlideListWithText();
             records = new ArrayList<>();
             ArrayList<SlideAtomsSet> na = new ArrayList<>();
@@ -780,8 +787,26 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         // without their slide list entries the records are no longer reachable, but they would
         // still be written out with the content of the removed slide
         _hslfSlideShow.removePersistObjects(removedPersistIds);
+        removeCoreRecords(removedPersistIds);
 
         return removedSlide;
+    }
+
+    /**
+     * Drops removed sheets from the most recent core records and the refID lookup into them
+     */
+    private void removeCoreRecords(Collection<Integer> refIds) {
+        List<Record> records = new ArrayList<>(_mostRecentCoreRecords.length);
+        Map<Integer,Integer> lookup = new HashMap<>();
+        _sheetIdToCoreRecordsLookup.entrySet().stream()
+            .sorted(Map.Entry.comparingByValue())
+            .filter(me -> !refIds.contains(me.getKey()))
+            .forEach(me -> {
+                lookup.put(me.getKey(), records.size());
+                records.add(_mostRecentCoreRecords[me.getValue()]);
+            });
+        _mostRecentCoreRecords = records.toArray(new Record[0]);
+        _sheetIdToCoreRecordsLookup = lookup;
     }
 
     /**

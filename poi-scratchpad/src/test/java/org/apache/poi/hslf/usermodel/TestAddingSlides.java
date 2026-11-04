@@ -17,8 +17,11 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -26,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -259,23 +263,55 @@ public final class TestAddingSlides {
         ss_empty.createSlide().createTextBox().setText("Text on the removed slide");
         ss_empty.createSlide().createTextBox().setText("Text on the kept slide");
         try (HSLFSlideShow ppt = HSLFTestDataSamples.writeOutAndReadBack(ss_empty)) {
-            ppt.removeSlide(0);
+            HSLFSlide removed = ppt.removeSlide(0);
             String text = getRawText(ppt);
-            assertTrue(text.contains("Text on the kept slide"));
-            assertFalse(text.contains("Text on the removed slide"));
+            assertThat(text, containsString("Text on the kept slide"));
+            assertThat(text, not(containsString("Text on the removed slide")));
+
+            assertNull(ppt.getCoreRecordForRefID(removed._getSheetRefId()));
+            assertThat(Arrays.asList(ppt.getMostRecentCoreRecords()), not(hasItem(removed.getSlideRecord())));
+            assertSame(ppt.getSlides().get(0).getSlideRecord(),
+                ppt.getCoreRecordForRefID(ppt.getSlides().get(0)._getSheetRefId()));
         }
 
         try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("42474-1.ppt")) {
-            ppt.removeSlide(0);
+            HSLFSlide removed = ppt.removeSlide(0);
             String text = getRawText(ppt);
-            assertTrue(text.contains("Notes-2"));
-            assertFalse(text.contains("Notes-1"));
+            assertThat(text, containsString("Notes-2"));
+            assertThat(text, not(containsString("Notes-1")));
+
+            assertNull(ppt.getCoreRecordForRefID(removed.getNotes()._getSheetRefId()));
+            assertThat(Arrays.asList(ppt.getMostRecentCoreRecords()), not(hasItem(removed.getNotes().getSheetContainer())));
 
             try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt)) {
                 assertEquals(1, ppt2.getSlides().size());
                 HSLFNotes notes = ppt2.getSlides().get(0).getNotes();
                 assertNotNull(notes);
                 assertEquals("Notes-2", HSLFTextParagraph.getRawText(notes.getTextParagraphs().get(0)));
+            }
+        }
+    }
+
+    /**
+     * Notes which another slide still refers to are kept when a slide is removed
+     */
+    @Test
+    void removedSlideKeepsSharedNotes() throws IOException {
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("42474-1.ppt")) {
+            HSLFSlide first = ppt.getSlides().get(0);
+            HSLFSlide second = ppt.getSlides().get(1);
+            HSLFNotes sharedNotes = first.getNotes();
+            second.getSlideRecord().getSlideAtom().setNotesID(first.getSlideRecord().getSlideAtom().getNotesID());
+
+            ppt.removeSlide(0);
+            assertThat(ppt.getNotes(), hasItem(sharedNotes));
+            assertThat(getRawText(ppt), containsString("Notes-1"));
+
+            try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(1, ppt2.getSlides().size());
+                HSLFNotes notes = ppt2.getSlides().get(0).getNotes();
+                assertNotNull(notes);
+                assertEquals("Notes-1", HSLFTextParagraph.getRawText(notes.getTextParagraphs().get(0)));
             }
         }
     }

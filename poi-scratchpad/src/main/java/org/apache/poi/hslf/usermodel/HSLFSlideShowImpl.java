@@ -64,11 +64,13 @@ import org.apache.poi.hslf.record.CurrentUserAtom;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.DocumentEncryptionAtom;
 import org.apache.poi.hslf.record.ExOleObjStg;
+import org.apache.poi.hslf.record.Notes;
 import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.PersistRecord;
 import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.Slide;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -992,11 +994,12 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     }
 
     /**
-     * Removes persist objects, e.g. the slide and notes of a removed slide: their entries in
-     * the persist directories and the root level records these point to, including older
-     * versions of the records kept by incremental saves.
+     * Removes the slide and notes of a removed slide: their entries in the persist directories
+     * and the {@link Slide} and {@link Notes} root level records these point to, including older
+     * versions of the records kept by incremental saves. Root level records of any other type are
+     * kept, even if a persist directory entry points at them.
      *
-     * @param persistIds the persist ids of the objects to remove
+     * @param persistIds the persist ids of the slide and notes to remove
      */
     void removePersistObjects(Collection<Integer> persistIds) {
         Set<Integer> removedOffsets = new HashSet<>();
@@ -1005,21 +1008,19 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             if (!(record instanceof PersistPtrHolder pph)) {
                 continue;
             }
-            Map<Integer, Integer> locations = new HashMap<>(pph.getSlideLocationsLookup());
             for (Integer persistId : persistIds) {
-                Integer offset = locations.remove(persistId);
+                Integer offset = pph.removeSlideLookup(persistId);
                 if (offset != null) {
                     removedOffsets.add(offset);
                 }
             }
-            keptOffsets.addAll(locations.values());
-            pph.clear();
-            locations.forEach(pph::addSlideLookup);
+            keptOffsets.addAll(pph.getSlideLocationsLookup().values());
         }
         removedOffsets.removeAll(keptOffsets);
 
         _records = Arrays.stream(_records)
-            .filter(r -> !(r instanceof PositionDependentRecord pdr && removedOffsets.contains(pdr.getLastOnDiskOffset())))
+            .filter(r -> !((r instanceof Slide || r instanceof Notes)
+                && removedOffsets.contains(((PositionDependentRecord) r).getLastOnDiskOffset())))
             .toArray(Record[]::new);
     }
 
