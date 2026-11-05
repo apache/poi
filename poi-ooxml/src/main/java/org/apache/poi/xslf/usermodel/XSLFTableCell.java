@@ -21,6 +21,7 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.util.function.BiConsumer;
 
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.ColorStyle;
@@ -42,6 +43,13 @@ import org.openxmlformats.schemas.drawingml.x2006.main.*;
 
 /**
  * Represents a cell of a table in a .pptx presentation
+ * <p>
+ * PowerPoint draws an edge shared by two cells from the bottom or right border of the upper or left cell,
+ * even if that border is unset or has no fill, and it ignores the borders of merged-away cells.
+ * So setting or removing a border also updates the other cell sharing that edge. For a merged-away cell,
+ * it also updates the first cell of the merged range and all the neighbours along the merged range.
+ * If two cells set the same shared edge, the last call wins.
+ * Merging cells does not update existing borders, so merge the cells before setting their borders.
  */
 public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape, XSLFTextParagraph> {
     private CTTableCellProperties _tcPr;
@@ -144,11 +152,108 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         CTLineProperties props = getCTLine(edge, true);
         if (props != null) {
             props.set(properties.getXmlObject().copy());
+            syncBorder(edge);
         }
+    }
+
+    /**
+     * Copies a border to the cells which share its edge
+     */
+    private void syncBorder(BorderEdge edge) {
+        final CTLineProperties ln = getCTLine(edge, false);
+        forEachSharedEdge(edge, (cell, sharedEdge) -> cell.getCTLine(sharedEdge, true).set(ln));
+    }
+
+    private void forEachSharedEdge(BorderEdge edge, BiConsumer<XSLFTableCell, BorderEdge> action) {
+        final XSLFTableCell first = getFirstMergedCell();
+        final int firstRow = first.row;
+        final int firstCol = first.col;
+        final int lastRow = Math.min(firstRow + first.getRowSpan(), table.getNumberOfRows()) - 1;
+        final int lastCol = Math.min(firstCol + first.getGridSpan(), table.getNumberOfColumns()) - 1;
+
+        // the borders of the first cell apply to the whole merged range
+        final boolean outerEdge = first == this || switch (edge) {
+            case top -> row == firstRow;
+            case bottom -> row == lastRow;
+            case left -> col == firstCol;
+            case right -> col == lastCol;
+        };
+        // the edges inside a merged range aren't visible
+        if (!outerEdge) {
+            return;
+        }
+
+        if (first != this) {
+            action.accept(first, edge);
+        }
+
+        switch (edge) {
+            case top -> applyToRow(firstRow - 1, firstCol, lastCol, BorderEdge.bottom, action);
+            case bottom -> applyToRow(lastRow + 1, firstCol, lastCol, BorderEdge.top, action);
+            case left -> applyToColumn(firstCol - 1, firstRow, lastRow, BorderEdge.right, action);
+            case right -> applyToColumn(lastCol + 1, firstRow, lastRow, BorderEdge.left, action);
+        }
+    }
+
+    private void applyToRow(int rowIdx, int firstCol, int lastCol, BorderEdge edge,
+            BiConsumer<XSLFTableCell, BorderEdge> action) {
+        for (int colIdx = firstCol; colIdx <= lastCol; colIdx++) {
+            XSLFTableCell cell = table.getCell(rowIdx, colIdx);
+            if (cell != null) {
+                action.accept(cell, edge);
+            }
+        }
+    }
+
+    private void applyToColumn(int colIdx, int firstRow, int lastRow, BorderEdge edge,
+            BiConsumer<XSLFTableCell, BorderEdge> action) {
+        for (int rowIdx = firstRow; rowIdx <= lastRow; rowIdx++) {
+            XSLFTableCell cell = table.getCell(rowIdx, colIdx);
+            if (cell != null) {
+                action.accept(cell, edge);
+            }
+        }
+    }
+
+    /**
+     * @return the first cell of the merged range containing this cell, or this cell if it isn't merged
+     */
+    private XSLFTableCell getFirstMergedCell() {
+        XSLFTableCell first = this;
+        while (first.isHMerged() && first.col > 0) {
+            XSLFTableCell previous = table.getCell(first.row, first.col - 1);
+            if (previous == null) {
+                break;
+            }
+            first = previous;
+        }
+        while (first.isVMerged() && first.row > 0) {
+            XSLFTableCell previous = table.getCell(first.row - 1, first.col);
+            if (previous == null) {
+                break;
+            }
+            first = previous;
+        }
+        return first;
+    }
+
+    private boolean isHMerged() {
+        CTTableCell c = getCell();
+        return c.isSetHMerge() && c.getHMerge();
+    }
+
+    private boolean isVMerged() {
+        CTTableCell c = getCell();
+        return c.isSetVMerge() && c.getVMerge();
     }
 
     @Override
     public void removeBorder(BorderEdge edge) {
+        removeOwnBorder(edge);
+        forEachSharedEdge(edge, XSLFTableCell::removeOwnBorder);
+    }
+
+    private void removeOwnBorder(BorderEdge edge) {
         CTTableCellProperties pr = getCellProperties(false);
         if (pr == null) {
             return;
@@ -248,6 +353,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             return;
         }
         ln.setW(Units.toEMU(width));
+        syncBorder(edge);
     }
 
     private CTLineProperties setBorderDefaults(BorderEdge edge) {
@@ -306,6 +412,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         CTSolidColorFillProperties fill = ln.addNewSolidFill();
         XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr(), getSheet());
         c.setColor(color);
+        syncBorder(edge);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -338,6 +445,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
 
         CTLineProperties ln = setBorderDefaults(edge);
         ln.setCmpd(STCompoundLine.Enum.forInt(compound.ooxmlId));
+        syncBorder(edge);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -361,6 +469,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             ln.addNewPrstDash();
         }
         ln.getPrstDash().setVal(STPresetLineDashVal.Enum.forInt(dash.ooxmlId));
+        syncBorder(edge);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -381,6 +490,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
 
         CTLineProperties ln = setBorderDefaults(edge);
         ln.setCap(STLineCap.Enum.forInt(cap.ooxmlId));
+        syncBorder(edge);
     }
 
     /**
@@ -683,8 +793,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
      */
     @Override
     public boolean isMerged() {
-        CTTableCell c = getCell();
-        return (c.isSetHMerge() && c.getHMerge()) || (c.isSetVMerge() && c.getVMerge());
+        return isHMerged() || isVMerged();
     }
 
     /**
