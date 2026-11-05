@@ -27,6 +27,7 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +45,7 @@ import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.PaintModifier;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.Shadow;
 import org.apache.poi.sl.usermodel.SimpleShape;
 import org.apache.poi.util.Units;
@@ -355,14 +357,9 @@ public class DrawSimpleShape extends DrawShape {
         SolidPaint shadowPaint = shadow.getFillStyle();
         Color shadowColor = DrawPaint.applyColorTransform(shadowPaint.getSolidColor());
 
-        double shapeRotation = getShape().getRotation();
-        if (getShape().getFlipVertical()) {
-            shapeRotation += 180;
-        }
-        double angle = shadow.getAngle() - shapeRotation;
-        double dist = shadow.getDistance();
-        double dx = dist * Math.cos(Math.toRadians(angle));
-        double dy = dist * Math.sin(Math.toRadians(angle));
+        Point2D offset = getShadowOffset(shadow);
+        double dx = offset.getX();
+        double dy = offset.getY();
 
         graphics.translate(dx, dy);
 
@@ -380,6 +377,43 @@ public class DrawSimpleShape extends DrawShape {
         }
 
         graphics.translate(-dx, -dy);
+    }
+
+    /**
+     * Calculates the shadow offset to apply to a graphics, which already has the transforms
+     * of this shape and its parent groups applied (see {@link DrawShape#applyTransform(Graphics2D)}).
+     *
+     * @param shadow the shadow of this shape
+     * @return the offset in the coordinate system of the transformed graphics
+     *
+     * @since 6.1.0
+     */
+    protected Point2D getShadowOffset(Shadow<?,?> shadow) {
+        double angle = Math.toRadians(shadow.getAngle());
+        double dist = shadow.getDistance();
+        Point2D offset = new Point2D.Double(dist * Math.cos(angle), dist * Math.sin(angle));
+        if (shadow.isRotateWithShape()) {
+            // the graphics transform rotates and flips the offset together with the shape
+            return offset;
+        }
+
+        // the offset is relative to the page, so revert the rotation and flips of the graphics transform
+        AffineTransform inverse = new AffineTransform();
+        Object current = getShape();
+        while (current instanceof PlaceableShape<?,?> ps) {
+            double rotation = Math.toRadians(ps.getRotation());
+            double scaleX = ps.getFlipHorizontal() ? -1 : 1;
+            double scaleY = ps.getFlipVertical() ? -1 : 1;
+            if (isHSLF(ps)) {
+                inverse.rotate(-rotation);
+                inverse.scale(scaleX, scaleY);
+            } else {
+                inverse.scale(scaleX, scaleY);
+                inverse.rotate(-rotation);
+            }
+            current = ps.getParent();
+        }
+        return inverse.deltaTransform(offset, null);
     }
 
     protected Collection<Outline> computeOutlines(Graphics2D graphics) {
