@@ -75,15 +75,19 @@ public class DrawShape implements Drawable {
     }
 
     private static void flipHorizontal(PlaceableShape<?,?> ps, Graphics2D graphics, Rectangle2D anchor) {
-        graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
-        graphics.scale(-1, 1);
-        graphics.translate(-anchor.getX(), -anchor.getY());
+        if (ps.getFlipHorizontal()) {
+            graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
+            graphics.scale(-1, 1);
+            graphics.translate(-anchor.getX(), -anchor.getY());
+        }
     }
 
     private static void flipVertical(PlaceableShape<?,?> ps, Graphics2D graphics, Rectangle2D anchor) {
-        graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
-        graphics.scale(1, -1);
-        graphics.translate(-anchor.getX(), -anchor.getY());
+        if (ps.getFlipVertical()) {
+            graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
+            graphics.scale(1, -1);
+            graphics.translate(-anchor.getX(), -anchor.getY());
+        }
     }
 
     private static void rotate(PlaceableShape<?,?> ps, Graphics2D graphics, Rectangle2D anchor) {

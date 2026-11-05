@@ -613,7 +613,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
 
     public void setFlipHorizontal(boolean flip) {
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
-        int flag = spRecord.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ;
+        int flag = flip
+            ? spRecord.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ
+            : spRecord.getFlags() & ~EscherSpRecord.FLAG_FLIPHORIZ;
         spRecord.setFlags(flag);
     }
 
@@ -624,7 +626,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
 
     public void setFlipVertical(boolean flip) {
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
-        int flag = spRecord.getFlags() | EscherSpRecord.FLAG_FLIPVERT;
+        int flag = flip
+            ? spRecord.getFlags() | EscherSpRecord.FLAG_FLIPVERT
+            : spRecord.getFlags() & ~EscherSpRecord.FLAG_FLIPVERT;
         spRecord.setFlags(flag);
     }
 
