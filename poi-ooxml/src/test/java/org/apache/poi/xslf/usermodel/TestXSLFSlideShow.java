@@ -274,6 +274,27 @@ class TestXSLFSlideShow {
         }
     }
 
+    /**
+     * This test ensures that the parts used by a removed slide's chart and SmartArt,
+     * i.e. the embedded workbook and the diagram data, are not left orphaned.
+     */
+    @Test
+    void testRemoveSlideThatHasChartAndSmartArt() throws IOException {
+        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("pie-chart.pptx")) {
+            ppt.removeSlide(0);
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(0, ppt2.getPackage().getPartsByName(Pattern.compile("/ppt/(charts|embeddings)/.*")).size());
+            }
+        }
+
+        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("smartart-simple.pptx")) {
+            ppt.removeSlide(0);
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(0, ppt2.getPackage().getPartsByName(Pattern.compile("/ppt/(diagrams|media)/.*")).size());
+            }
+        }
+    }
+
     @Test
     void testDimension() throws IOException {
         try (XMLSlideShow  ppt = new XMLSlideShow()) {

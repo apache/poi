@@ -29,6 +29,7 @@ import java.util.Set;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -406,15 +407,74 @@ public class POIXMLDocumentPart {
         if (removeUnusedParts) {
             /* if last relation to target part was removed, delete according target part */
             if (part.getRelationCounter() == 0) {
-                try {
-                    part.onDocumentRemove();
-                } catch (IOException e) {
-                    throw new POIXMLException(e);
-                }
-                getPackagePart().getPackage().removePart(part.getPackagePart());
+                part.removeFromPackage();
             }
         }
         return true;
+    }
+
+    /**
+     * Remove this part from the package, together with the parts it relates to
+     * which are not used by any other part
+     */
+    private void removeFromPackage() {
+        try {
+            onDocumentRemove();
+        } catch (IOException e) {
+            throw new POIXMLException(e);
+        }
+        for (RelationPart rp : getRelationParts()) {
+            POIXMLDocumentPart child = rp.getDocumentPart();
+            removeRelation(rp.getRelationship().getId(), false);
+            // the relation counter alone is not enough, as a package part can be
+            // represented by more than one document part, e.g. a picture on two sheets
+            if (child.getRelationCounter() == 0 && !child.isRelationshipTarget()) {
+                child.removeFromPackage();
+            }
+        }
+        getPackagePart().getPackage().removePart(getPackagePart());
+    }
+
+    /**
+     * @return true, if a relationship of the package or one of its parts targets this part
+     */
+    private boolean isRelationshipTarget() {
+        OPCPackage pkg = getPackagePart().getPackage();
+        PackagePartName name = getPackagePart().getPartName();
+        try {
+            if (hasTarget(pkg.getRelationships(), name)) {
+                return true;
+            }
+            for (PackagePart pp : pkg.getParts()) {
+                if (!pp.isRelationshipPart() && hasTarget(pp.getRelationships(), name)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (InvalidFormatException | InvalidOperationException e) {
+            // keep the part, if the package relationships can't be checked
+            return true;
+        }
+    }
+
+    private static boolean hasTarget(PackageRelationshipCollection rels, PackagePartName name) {
+        for (PackageRelationship rel : rels) {
+            if (rel.getTargetMode() != TargetMode.INTERNAL) {
+                continue;
+            }
+            URI uri = rel.getTargetURI();
+            try {
+                PackagePartName target = (uri.getRawFragment() != null)
+                        ? PackagingURIHelper.createPartName(uri.getPath())
+                        : PackagingURIHelper.createPartName(uri);
+                if (name.equals(target)) {
+                    return true;
+                }
+            } catch (InvalidFormatException e) {
+                // not a part name
+            }
+        }
+        return false;
     }
 
 
