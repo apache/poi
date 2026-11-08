@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestXSLFSlideShow {
     @Test
@@ -291,6 +292,32 @@ class TestXSLFSlideShow {
             ppt.removeSlide(0);
             try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
                 assertEquals(0, ppt2.getPackage().getPartsByName(Pattern.compile("/ppt/(diagrams|media)/.*")).size());
+            }
+        }
+    }
+
+    /**
+     * The picture data of the slideshow must not list the pictures removed together with a slide,
+     * whether they were used through a SmartArt diagram or directly by the slide.
+     */
+    @Test
+    void testRemoveSlideUpdatesPictureData() throws IOException {
+        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("smartart-simple.pptx")) {
+            // the SmartArt image is the only picture of the deck
+            byte[] data = ppt.getPictureData().get(0).getData();
+            ppt.removeSlide(0);
+            assertTrue(ppt.getPictureData().isEmpty());
+
+            // adding the same image again creates a new part instead of returning the removed one
+            XSLFPictureData pd = ppt.addPicture(data, PictureData.PictureType.JPEG);
+            ppt.createSlide().createPicture(pd);
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                XSLFPictureShape pic = (XSLFPictureShape) ppt2.getSlides().get(0).getShapes().get(0);
+                assertArrayEquals(data, pic.getPictureData().getData());
+
+                assertEquals(1, ppt2.getPictureData().size());
+                ppt2.removeSlide(0);
+                assertTrue(ppt2.getPictureData().isEmpty());
             }
         }
     }

@@ -463,7 +463,16 @@ public class POIXMLDocumentPart {
                 continue;
             }
             URI uri = rel.getTargetURI();
+            String path = uri.getRawPath();
+            if (uri.isAbsolute() || path == null || path.isEmpty()) {
+                // not a part name, or a fragment within the source part
+                continue;
+            }
             try {
+                // internal hyperlinks keep the target as written, so it can still be relative
+                if (!path.startsWith("/")) {
+                    uri = PackagingURIHelper.resolvePartUri(rel.getSourceURI(), uri);
+                }
                 PackagePartName target = (uri.getRawFragment() != null)
                         ? PackagingURIHelper.createPartName(uri.getPath())
                         : PackagingURIHelper.createPartName(uri);
