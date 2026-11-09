@@ -607,7 +607,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     @Override
     public int addPicture(byte[] pictureData, int format) {
-        int imageNumber = getAllPictures().size() + 1;
+        int imageNumber = nextPictureNumber(format);
         XSSFPictureData img = createRelationship(XSSFPictureData.getRelationForType(format), this.xssfFactory, imageNumber, true).getDocumentPart();
         try (OutputStream out = img.getPackagePart().getOutputStream()) {
             out.write(pictureData);
@@ -615,7 +615,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             throw new POIXMLException(e);
         }
         pictures.add(img);
-        return imageNumber - 1;
+        return pictures.size() - 1;
     }
 
     /**
@@ -634,13 +634,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @see #getAllPictures()
      */
     public int addPicture(InputStream is, int format) throws IOException {
-        int imageNumber = getAllPictures().size() + 1;
+        int imageNumber = nextPictureNumber(format);
         XSSFPictureData img = createRelationship(XSSFPictureData.getRelationForType(format), this.xssfFactory, imageNumber, true).getDocumentPart();
         try (OutputStream out = img.getPackagePart().getOutputStream()) {
             IOUtils.copy(is, out);
         }
         pictures.add(img);
-        return imageNumber - 1;
+        return pictures.size() - 1;
+    }
+
+    /**
+     * The picture list can have gaps in the part numbers once the pictures only
+     * a removed sheet used have been dropped, so look for a free one
+     */
+    private int nextPictureNumber(int format) {
+        return getNextPartNumber(XSSFPictureData.getRelationForType(format), getAllPictures().size() + 1);
     }
 
     /**
@@ -1442,6 +1450,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         XSSFSheet sheet = getSheetAt(index);
         removeRelation(sheet);
         sheets.remove(index);
+
+        // removing the sheet also removes the pictures only it used
+        if (pictures != null) {
+            pictures.removeIf(p -> !getPackage().containPart(p.getPackagePart().getPartName()));
+        }
 
         // only set new sheet if there are still some left
         if(sheets.isEmpty()) {

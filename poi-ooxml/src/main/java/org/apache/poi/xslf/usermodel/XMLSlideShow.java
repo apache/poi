@@ -503,7 +503,6 @@ public class XMLSlideShow extends POIXMLDocument
      */
     public XSLFSlide removeSlide(int index) {
         XSLFSlide slide = _slides.remove(index);
-        removeRelation(slide);
         _presentation.getSldIdLst().removeSldId(index);
         for (POIXMLDocumentPart p : slide.getRelations()) {
             if (p instanceof XSLFChart chart) {
@@ -519,6 +518,12 @@ public class XMLSlideShow extends POIXMLDocument
                 _pictures.remove(picture);
             }
         }
+        // removing the slide also removes the parts which only it used,
+        // so the relations above need to be handled first
+        removeRelation(slide);
+        // the picture list holds its own instances, so drop them by part,
+        // which also covers images reached through other parts, e.g. SmartArt
+        _pictures.removeIf(p -> !getPackage().containPart(p.getPackagePart().getPartName()));
         return slide;
     }
 
