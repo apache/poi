@@ -350,8 +350,8 @@ public class HemfPlusBrush {
                 size = 0;
             } else {
                 int brushInt = leis.readInt();
+                // an unknown type is only reported when the brush data is used
                 brushType = EmfPlusBrushType.valueOf(brushInt);
-                assert(brushType != null);
                 size += LittleEndianConsts.INT_SIZE;
             }
 
@@ -393,6 +393,9 @@ public class HemfPlusBrush {
          * @throws IllegalStateException if the data cannot be processed
          */
         public EmfPlusBrushData getBrushData(List<? extends EmfPlusObjectData> continuedObjectData) {
+            if (brushType == null) {
+                throw new IllegalStateException("Unknown brush type");
+            }
             EmfPlusBrushData brushData = brushType.constructor.get();
             byte[] buf = getRawData(continuedObjectData);
             try (UnsynchronizedByteArrayInputStream bis = UnsynchronizedByteArrayInputStream.builder().setByteArray(buf).get()){

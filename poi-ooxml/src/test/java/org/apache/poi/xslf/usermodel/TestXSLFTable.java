@@ -568,4 +568,18 @@ class TestXSLFTable {
 
         ppt.close();
     }
+
+    @Test
+    void testSpanPastTableEnd() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFTable tab = ppt.createSlide().createTable(2, 2);
+            tab.setAnchor(new Rectangle2D.Double(0, 0, 200, 100));
+            // spans that reach past the last column and row of the table
+            tab.getCell(0, 1).setGridSpan(3);
+            tab.getCell(1, 0).setRowSpan(2);
+
+            assertDoesNotThrow(tab::updateCellAnchor);
+            assertNotNull(tab.getCell(0, 1).getAnchor());
+        }
+    }
 }

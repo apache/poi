@@ -68,6 +68,7 @@ import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
 import org.apache.poi.hwmf.record.HwmfRegionMode;
+import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
 import org.apache.poi.hwmf.record.HwmfText.WmfExtTextOutOptions;
 import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
 import org.apache.poi.sl.draw.BitmapImageRenderer;
@@ -732,13 +733,15 @@ public class HwmfGraphics implements HwmfCharsetAware {
             return;
         }
         HwmfDrawProperties prop = getProperties();
+        // an unset or unknown raster op is drawn like SRCCOPY
+        final HwmfTernaryRasterOp rasterOp = (prop.getRasterOp3() == null) ? HwmfTernaryRasterOp.SRCCOPY : prop.getRasterOp3();
 
         // handle raster op
         // currently the raster op as described in https://docs.microsoft.com/en-us/windows/desktop/gdi/ternary-raster-operations
         // are not supported, as we would need to extract the destination image area from the underlying buffered image
         // and therefore would make it mandatory that the graphics context must be from a buffered image
         // furthermore I doubt the purpose of bitwise image operations on non-black/white images
-        switch (prop.getRasterOp3()) {
+        switch (rasterOp) {
             case D:
                 // keep destination, i.e. do nothing
                 break;
@@ -787,7 +790,7 @@ public class HwmfGraphics implements HwmfCharsetAware {
                 // of the referenced image and can be also negative
                 Composite old = graphicsCtx.getComposite();
                 int newComp;
-                switch (prop.getRasterOp3()) {
+                switch (rasterOp) {
                     default:
                     case SRCCOPY:
                         newComp = AlphaComposite.SRC_OVER;

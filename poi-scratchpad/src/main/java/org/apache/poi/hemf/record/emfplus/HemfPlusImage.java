@@ -366,7 +366,6 @@ public class HemfPlusImage {
                     pixelFormat = (bitmapType == EmfPlusBitmapDataType.PIXEL)
                             ? EmfPlusPixelFormat.valueOf(pixelFormatInt)
                             : EmfPlusPixelFormat.UNDEFINED;
-                    assert (pixelFormat != null);
 
                     fileSize = dataSize - size;
 
@@ -511,6 +510,9 @@ public class HemfPlusImage {
 
         private String getContentType(final byte[] data) {
             PictureType pictureType = PictureType.UNKNOWN;
+            if (getImageDataType() == null) {
+                return pictureType.contentType;
+            }
             switch (getImageDataType()) {
                 case BITMAP:
                     if (getBitmapType() == EmfPlusBitmapDataType.PIXEL) {
@@ -528,11 +530,12 @@ public class HemfPlusImage {
                     break;
 
                 case METAFILE:
-                    assert (getMetafileType() != null);
-                    pictureType = switch (getMetafileType()) {
-                        case Wmf, WmfPlaceable -> PictureType.WMF;
-                        case Emf, EmfPlusDual, EmfPlusOnly -> PictureType.EMF;
-                    };
+                    if (getMetafileType() != null) {
+                        pictureType = switch (getMetafileType()) {
+                            case Wmf, WmfPlaceable -> PictureType.WMF;
+                            case Emf, EmfPlusDual, EmfPlusOnly -> PictureType.EMF;
+                        };
+                    }
                     break;
             }
 

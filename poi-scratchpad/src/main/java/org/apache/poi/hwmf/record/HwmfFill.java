@@ -984,8 +984,9 @@ public class HwmfFill {
         int rasterOpCode = leis.readUShort();
         int rasterOpIndex = leis.readUShort();
 
+        // null for an unknown raster operation, which is drawn like SRCCOPY
         HwmfTernaryRasterOp rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
-        assert(rasterOperation != null && rasterOpCode == rasterOperation.getOpCode());
+        assert(rasterOperation == null || rasterOpCode == rasterOperation.getOpCode());
         return rasterOperation;
     }
 }

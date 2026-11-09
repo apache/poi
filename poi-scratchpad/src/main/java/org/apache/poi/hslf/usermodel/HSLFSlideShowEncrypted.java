@@ -565,13 +565,16 @@ public class HSLFSlideShowEncrypted implements Closeable {
                 deaIdx = idx;
             }
         }
-        assert(ueaIdx != -1 && ptrIdx != -1 && ptrIdx < ueaIdx);
         if (deaIdx != -1) {
             DocumentEncryptionAtom deaOld = (DocumentEncryptionAtom)records[deaIdx];
             dea.setLastOnDiskOffset(deaOld.getLastOnDiskOffset());
             records[deaIdx] = dea;
             return records;
         } else {
+            if (ueaIdx == -1 || ptrIdx == -1 || ptrIdx > ueaIdx) {
+                throw new CorruptPowerPointFileException(
+                    "Expected a PersistPtrHolder followed by a UserEditAtom to add the encryption record");
+            }
             PersistPtrHolder ptr = (PersistPtrHolder)records[ptrIdx];
             UserEditAtom uea = ((UserEditAtom)records[ueaIdx]);
             dea.setLastOnDiskOffset(ptr.getLastOnDiskOffset()-1);
