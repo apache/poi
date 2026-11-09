@@ -122,7 +122,7 @@ public class SXSSFCell extends CellBase {
      * @return the Row that owns this cell
      */
     @Override
-    public Row getRow()
+    public SXSSFRow getRow()
     {
         return _row;
     }
