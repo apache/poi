@@ -256,6 +256,9 @@ public class XMLSlideShow extends POIXMLDocument
 
     @Override
     public List<XSLFPictureData> getPictureData() {
+        // removing a slide or shape can remove image parts from the package, and the list
+        // holds its own instances, so drop the entries by part rather than by instance
+        _pictures.removeIf(p -> !getPackage().containPart(p.getPackagePart().getPartName()));
         if (_pictures.isEmpty()) {
             getPackage().getPartsByName(GET_PICTURE_DATA_PATTERN).forEach(part -> {
                 XSLFPictureData pd = new XSLFPictureData(part);
@@ -521,9 +524,6 @@ public class XMLSlideShow extends POIXMLDocument
         // removing the slide also removes the parts which only it used,
         // so the relations above need to be handled first
         removeRelation(slide);
-        // the picture list holds its own instances, so drop them by part,
-        // which also covers images reached through other parts, e.g. SmartArt
-        _pictures.removeIf(p -> !getPackage().containPart(p.getPackagePart().getPartName()));
         return slide;
     }
 
