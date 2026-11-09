@@ -40,8 +40,12 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusPath.EmfPlusPath;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.RecordFormatException;
 
 public class HemfPlusRegion {
+    /** Maximum nesting depth of region nodes, to avoid a stack overflow on malformed data */
+    private static final int MAX_NODE_DEPTH = 1000;
+
     public enum EmfPlusRegionNodeDataType {
         /**
          * Specifies a region node with child nodes. A Boolean AND operation SHOULD be applied to the left and right
@@ -120,7 +124,7 @@ public class HemfPlusRegion {
             // An array of RegionNodeCount+1 EmfPlusRegionNode objects. Regions are specified as a binary tree of
             // region nodes, and each node MUST either be a terminal node or specify one or two child nodes.
             // RegionNode MUST contain at least one element.
-            size += readNode(leis, this::setRegionNode);
+            size += readNode(leis, this::setRegionNode, 0);
 
             return size;
         }
@@ -258,8 +262,12 @@ public class HemfPlusRegion {
 
         @Override
         public long init(LittleEndianInputStream leis) throws IOException {
-            long size = readNode(leis, this::setLeft);
-            size += readNode(leis, this::setRight);
+            return init(leis, 0);
+        }
+
+        private long init(LittleEndianInputStream leis, int depth) throws IOException {
+            long size = readNode(leis, this::setLeft, depth + 1);
+            size += readNode(leis, this::setRight, depth + 1);
             return size;
         }
 
@@ -325,7 +333,10 @@ public class HemfPlusRegion {
         }
     }
 
-    private static long readNode(LittleEndianInputStream leis, Consumer<EmfPlusRegionNodeData> con) throws IOException {
+    private static long readNode(LittleEndianInputStream leis, Consumer<EmfPlusRegionNodeData> con, int depth) throws IOException {
+        if (depth > MAX_NODE_DEPTH) {
+            throw new RecordFormatException("Region nodes are nested deeper than " + MAX_NODE_DEPTH + " levels");
+        }
         // A 32-bit unsigned integer that specifies the type of data in the RegionNodeData field.
         // This value MUST be defined in the RegionNodeDataType enumeration
         EmfPlusRegionNodeDataType type = EmfPlusRegionNodeDataType.valueOf(leis.readInt());
@@ -333,6 +344,9 @@ public class HemfPlusRegion {
         EmfPlusRegionNodeData nd = type.constructor.get();
         con.accept(nd);
         nd.setNodeType(type);
-        return LittleEndianConsts.INT_SIZE + nd.init(leis);
+        long size = (nd instanceof EmfPlusRegionNode)
+            ? ((EmfPlusRegionNode) nd).init(leis, depth)
+            : nd.init(leis);
+        return LittleEndianConsts.INT_SIZE + size;
     }
 }
