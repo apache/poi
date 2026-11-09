@@ -107,6 +107,9 @@ public abstract class BlockStore {
           used_blocks = new boolean[numBlocks];
        }
        protected void claim(int offset) {
+          if(offset < 0) {
+             throw new IllegalStateException("Invalid block offset " + offset);
+          }
           if(offset >= used_blocks.length) {
              // They're writing, and have had new blocks requested
              //  for the write to proceed. That means they're into
