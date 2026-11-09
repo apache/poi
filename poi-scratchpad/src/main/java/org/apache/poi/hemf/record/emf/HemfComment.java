@@ -273,7 +273,10 @@ public class HemfComment {
 
                 long readBytes = record.init(leis, dataSize);
                 final long skipBytes = recordSize-4-readBytes;
-                assert (skipBytes >= 0);
+                if (skipBytes < 0) {
+                    throw new RecordFormatException("Comment record limit exceeded - readBytes: " + readBytes
+                        + " / recordSize: " + recordSize);
+                }
                 leis.skipFully(skipBytes);
 
                 return record;

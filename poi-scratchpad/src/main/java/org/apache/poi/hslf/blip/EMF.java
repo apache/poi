@@ -67,8 +67,10 @@ public final class EMF extends Metafile {
                 InflaterInputStream inflater = new InflaterInputStream(is);
                 UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
-            long len = IOUtils.skipFully(is,header.getSize() + (long)CHECKSUM_SIZE);
-            assert(len == header.getSize() + CHECKSUM_SIZE);
+            long skipLen = header.getSize() + (long)CHECKSUM_SIZE;
+            if (IOUtils.skipFully(is, skipLen) != skipLen) {
+                throw new RecordFormatException("EMF data is shorter than its header");
+            }
 
             final int maxLength = getMaxRecordLength();
             long copied = IOUtils.copy(inflater, out, (long) maxLength + 1);

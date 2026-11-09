@@ -92,6 +92,9 @@ public class HemfPlusGDIImageRenderer extends BitmapImageRenderer {
      * @return the BufferedImage
      */
     public BufferedImage readGDIImage(final byte[] data) {
+        if (pixelFormat == null) {
+            throw new IllegalStateException("Unknown pixel format");
+        }
         int[] nBits, bOffs;
         bOffs = switch (pixelFormat) {
             case ARGB_32BPP -> {

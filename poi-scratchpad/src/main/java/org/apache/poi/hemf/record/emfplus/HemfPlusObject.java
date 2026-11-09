@@ -44,6 +44,7 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.RecordFormatException;
 
 public class HemfPlusObject {
     private static final int MAX_OBJECT_SIZE = 50_000_000;
@@ -172,7 +173,9 @@ public class HemfPlusObject {
 
             objectId = getObjectId();
             EmfPlusObjectType objectType = getObjectType();
-            assert (objectType != null);
+            if (objectType == null) {
+                throw new RecordFormatException("Unknown EMF+ object type " + OBJECT_TYPE.getValue(flags));
+            }
 
             long size = 0;
 

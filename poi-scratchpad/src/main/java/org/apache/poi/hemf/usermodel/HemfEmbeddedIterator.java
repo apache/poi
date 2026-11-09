@@ -230,7 +230,6 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
 
         assert(epo.getObjectType() == EmfPlusObjectType.IMAGE);
         EmfPlusImage img = epo.getObjectData();
-        assert(img.getImageDataType() != null);
 
         final HwmfEmbedded emb = getEmfPlusImageData();
         if (emb == null) {
@@ -238,6 +237,10 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         }
 
         final HwmfEmbeddedType et;
+        if (img.getImageDataType() == null) {
+            emb.setEmbeddedType(HwmfEmbeddedType.UNKNOWN);
+            return emb;
+        }
         switch (img.getImageDataType()) {
             case BITMAP -> {
                 if (img.getBitmapType() == EmfPlusBitmapDataType.COMPRESSED) {
@@ -253,14 +256,13 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
                     compressGDIBitmap(img, emb, et);
                 }
             }
-            case METAFILE -> {
-                assert(img.getMetafileType() != null);
-                et = switch (img.getMetafileType()) {
+            case METAFILE -> et = (img.getMetafileType() == null)
+                ? HwmfEmbeddedType.UNKNOWN
+                : switch (img.getMetafileType()) {
                     case Wmf, WmfPlaceable -> HwmfEmbeddedType.WMF;
                     case Emf, EmfPlusDual, EmfPlusOnly -> HwmfEmbeddedType.EMF;
                     default -> HwmfEmbeddedType.UNKNOWN;
                 };
-            }
             default -> et = HwmfEmbeddedType.UNKNOWN;
         }
         emb.setEmbeddedType(et);
@@ -304,7 +306,6 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
             boolean hasNext = false;
             do {
                 EmfPlusImage img = epo.getObjectData();
-                assert(img.getImageDataType() != null);
                 assert(!hasNext || img.getImageDataType() == HemfPlusImage.EmfPlusImageDataType.CONTINUED);
                 bos.write(img.getImageData());
                 current = null;

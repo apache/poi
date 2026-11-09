@@ -500,12 +500,12 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
         TextPFException9[] ant = styleTextProp9Atom.getAutoNumberTypes();
         int level = getIndentLevel();
-        if (ant == null || level  >= ant.length) {
+        if (ant == null || level < 0 || level >= ant.length) {
             return null;
         }
+        // null, if the paragraph has no auto numbered bullet
         Short startAt = ant[level].getAutoNumberStartNumber();
-        assert(startAt != null);
-        return startAt.intValue();
+        return (startAt == null) ? null : startAt.intValue();
     }
 
 

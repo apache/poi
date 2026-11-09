@@ -64,8 +64,9 @@ public final class WMF extends Metafile {
             Header header = new Header();
             header.read(rawdata, Math.multiplyExact(CHECKSUM_SIZE, getUIDInstanceCount()));
             long skipLen = header.getSize() + (long)CHECKSUM_SIZE*getUIDInstanceCount();
-            long skipped = IOUtils.skipFully(is, skipLen);
-            assert(skipped == skipLen);
+            if (IOUtils.skipFully(is, skipLen) != skipLen) {
+                throw new RecordFormatException("WMF data is shorter than its header");
+            }
 
             ImageHeaderWMF aldus = new ImageHeaderWMF(header.getBounds());
             UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
