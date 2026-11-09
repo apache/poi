@@ -396,12 +396,11 @@ public class HemfPlusImage {
                     bitmapType = null;
                     pixelFormat = null;
 
-                    fileSize = dataSize;
+                    // the version and type of an unknown image were read already
+                    fileSize = dataSize - size;
                     break;
 
             }
-
-            assert (fileSize <= dataSize - size);
 
             imageData = IOUtils.toByteArray(leis, fileSize, MAX_OBJECT_SIZE);
 

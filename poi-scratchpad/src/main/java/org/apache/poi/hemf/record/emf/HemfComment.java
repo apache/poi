@@ -182,7 +182,9 @@ public class HemfComment {
             if (commentIdentifier == HemfCommentRecordType.emfPublic.id) {
                 commentIdentifier = (int) leis.readUInt();
             }
-            assert(commentIdentifier == commentType.id);
+            if (commentIdentifier != commentType.id) {
+                LOG.atWarn().log("Unexpected comment identifier for {} in emf file: {}", commentType, commentIdentifier);
+            }
         }
 
         @Override
@@ -237,7 +239,9 @@ public class HemfComment {
                 // as a comment record. This value MUST be 0x00000046.
                 try {
                     long type = leis.readUInt();
-                    assert(type == HemfRecordType.comment.id);
+                    if (type != HemfRecordType.comment.id) {
+                        LOG.atWarn().log("Unexpected record type in emf comment: {}", type);
+                    }
                 } catch (RuntimeException e) {
                     // EOF
                     return null;

@@ -21,14 +21,18 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.record.HwmfPalette;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 @SuppressWarnings("WeakerAccess")
 public class HemfPalette {
+    private static final Logger LOG = PoiLogManager.getLogger(HemfPalette.class);
+
     /** The EMR_SELECTPALETTE record specifies a logical palette for the playback device context. */
     public static class EmfSelectPalette extends HwmfPalette.WmfSelectPalette implements HemfRecord {
         @Override
@@ -74,7 +78,9 @@ public class HemfPalette {
             paletteIndex = (int) leis.readUInt();
             /* A 16-bit unsigned integer that specifies the version number of the system. This MUST be 0x0300. */
             int version = leis.readUShort();
-            assert(version == 0x0300);
+            if (version != 0x0300) {
+                LOG.atWarn().log("Unexpected palette version in emf file: {}", version);
+            }
             long size = readPaletteEntries(leis, -1);
             return size + LittleEndianConsts.INT_SIZE + LittleEndianConsts.SHORT_SIZE;
         }

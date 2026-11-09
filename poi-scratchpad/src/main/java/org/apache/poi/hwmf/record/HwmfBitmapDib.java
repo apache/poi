@@ -254,8 +254,6 @@ public class HwmfBitmapDib implements GenericRecord {
         // BI_RGB, BI_BITFIELDS, or BI_CMYK.
         // Otherwise, the size of aData MUST be the BitmapInfoHeader Object value ImageSize.
 
-        assert( headerSize != 0x0C || bodySize == headerImageSize);
-
         if (headerSize == 0x0C ||
             headerCompression == Compression.BI_RGB ||
             headerCompression == Compression.BI_BITFIELDS ||
@@ -302,6 +300,8 @@ public class HwmfBitmapDib implements GenericRecord {
             // A 16-bit unsigned integer that defines the format of each pixel, and the
             // maximum number of colors in the DIB.
             headerBitCount = BitCount.valueOf(leis.readUShort());
+            // a BitmapCoreHeader has no compression field, its bitmaps are uncompressed
+            headerCompression = Compression.BI_RGB;
             size += 4*LittleEndianConsts.SHORT_SIZE;
         } else {
             // fix header size, sometimes this is invalid

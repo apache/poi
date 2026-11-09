@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hemf.record.emf.HemfComment;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfComment;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataFormat;
@@ -44,10 +45,13 @@ import org.apache.poi.hwmf.record.HwmfBitmapDib;
 import org.apache.poi.hwmf.record.HwmfFill;
 import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
 import org.apache.poi.hwmf.usermodel.HwmfEmbeddedType;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.IOUtils;
 
 public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
+    private static final Logger LOG = PoiLogManager.getLogger(HemfEmbeddedIterator.class);
+
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
@@ -306,7 +310,9 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
             boolean hasNext = false;
             do {
                 EmfPlusImage img = epo.getObjectData();
-                assert(!hasNext || img.getImageDataType() == HemfPlusImage.EmfPlusImageDataType.CONTINUED);
+                if (hasNext && img.getImageDataType() != HemfPlusImage.EmfPlusImageDataType.CONTINUED) {
+                    LOG.atWarn().log("Unexpected image data type of continued emf+ image: {}", img.getImageDataType());
+                }
                 bos.write(img.getImageData());
                 current = null;
                 hasNext = moveNext() &&
