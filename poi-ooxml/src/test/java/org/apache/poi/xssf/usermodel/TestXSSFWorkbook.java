@@ -46,6 +46,7 @@ import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellReferenceType;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -67,7 +68,9 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -89,6 +92,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -103,6 +107,9 @@ import static org.apache.poi.xssf.XSSFTestDataSamples.getSampleFile;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOut;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -1204,6 +1211,118 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         assertEquals(sheet2Name, wb.getNameAt(0));
 
         wb.close();
+    }
+
+    @Test
+    void testRemoveUnusedSharedStrings() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet removed = wb.createSheet("Removed");
+            removed.createRow(0).createCell(0).setCellValue("only on removed");
+            removed.getRow(0).createCell(1).setCellValue("on both");
+
+            XSSFSheet kept = wb.createSheet("Kept");
+            XSSFRow row = kept.createRow(0);
+            row.createCell(0).setCellValue("on both");
+            XSSFRichTextString rich = new XSSFRichTextString("rich text");
+            XSSFFont font = wb.createFont();
+            font.setBold(true);
+            rich.applyFont(0, 4, font);
+            row.createCell(1).setCellValue(rich);
+            row.createCell(2).setCellValue("on both");
+
+            // changing a cell leaves its old string unused too
+            XSSFCell changed = row.createCell(3);
+            changed.setCellValue("old value");
+            changed.setCellValue("new value");
+
+            wb.removeSheetAt(0);
+            assertEquals(2, wb.removeUnusedSharedStrings());
+
+            SharedStringsTable sst = wb.getSharedStringSource();
+            assertEquals(3, sst.getUniqueCount());
+            assertEquals(4, sst.getCount());
+            List<String> texts = sst.getSharedStringItems().stream().map(RichTextString::getString).toList();
+            assertEquals(List.of("on both", "rich text", "new value"), texts);
+
+            // a string added afterwards reuses the renumbered entry
+            XSSFCell added = row.createCell(4);
+            added.setCellValue("new value");
+            assertEquals("2", added.getCTCell().getV());
+            assertEquals(0, wb.removeUnusedSharedStrings());
+
+            try (XSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                SharedStringsTable sst2 = wb2.getSharedStringSource();
+                assertEquals(3, sst2.getUniqueCount());
+                List<String> texts2 = sst2.getSharedStringItems().stream().map(RichTextString::getString).toList();
+                assertThat(texts2, not(hasItem("only on removed")));
+                assertThat(texts2, not(hasItem("old value")));
+
+                XSSFRow row2 = wb2.getSheet("Kept").getRow(0);
+                assertEquals("on both", row2.getCell(0).getStringCellValue());
+                XSSFRichTextString rich2 = row2.getCell(1).getRichStringCellValue();
+                assertEquals("rich text", rich2.getString());
+                assertTrue(rich2.getFontAtIndex(0).getBold(), "formatting runs should be kept");
+                assertEquals("on both", row2.getCell(2).getStringCellValue());
+                assertEquals("new value", row2.getCell(3).getStringCellValue());
+            }
+        }
+    }
+
+    @Test
+    void testRemoveUnusedSharedStringsKeepsCellValues() throws IOException {
+        for (String file : new String[]{"sample.xlsx", "WithVariousData.xlsx", "Formatting.xlsx"}) {
+            try (XSSFWorkbook wb = openSampleWorkbook(file)) {
+                wb.removeSheetAt(0);
+                List<String> expected = stringCellValues(wb);
+                int before = wb.getSharedStringSource().getSharedStringItems().size();
+
+                int removed = wb.removeUnusedSharedStrings();
+                assertTrue(removed > 0, file + " should have strings only used by its first sheet");
+                assertEquals(before - removed, wb.getSharedStringSource().getSharedStringItems().size(), file);
+                assertEquals(expected, stringCellValues(wb), file);
+                try (XSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                    assertEquals(expected, stringCellValues(wb2), file);
+                }
+            }
+        }
+    }
+
+    private static List<String> stringCellValues(XSSFWorkbook wb) {
+        List<String> values = new ArrayList<>();
+        for (Sheet sheet : wb) {
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    if (cell.getCellType() == CellType.STRING) {
+                        values.add(cell.getAddress() + "=" + ((XSSFCell) cell).getRichStringCellValue().getCTRst());
+                    }
+                }
+            }
+        }
+        return values;
+    }
+
+    @Test
+    void testRemoveUnusedSharedStringsRefusesRevisionLogs() throws IOException {
+        try (XSSFWorkbook wb = openSampleWorkbook("workbookProtection_workbook_revision_protected.xlsx")) {
+            IllegalStateException ex = assertThrows(IllegalStateException.class, wb::removeUnusedSharedStrings);
+            assertEquals("The workbook has revision logs, which use the shared strings", ex.getMessage());
+        }
+    }
+
+    @Test
+    void testRemoveUnusedSharedStringsWithSXSSF() throws IOException {
+        // streamed rows refer to the shared strings by index, so they can't be renumbered
+        try (SXSSFWorkbook wb = new SXSSFWorkbook(null, 100, false, true)) {
+            wb.createSheet().createRow(0).createCell(0).setCellValue("streamed");
+            IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> wb.getXSSFWorkbook().removeUnusedSharedStrings());
+            assertEquals("The shared strings are used by streamed rows, so they can't be renumbered", ex.getMessage());
+        }
+        // without a shared strings table, streamed rows use inline strings
+        try (SXSSFWorkbook wb = new SXSSFWorkbook(null, 100, false, false)) {
+            wb.createSheet().createRow(0).createCell(0).setCellValue("streamed");
+            assertEquals(0, wb.getXSSFWorkbook().removeUnusedSharedStrings());
+        }
     }
 
     @Test
