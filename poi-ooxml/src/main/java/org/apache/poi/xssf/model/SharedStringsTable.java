@@ -304,17 +304,27 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
 
     /**
      * Removes the entries whose index is not set in {@code used} and renumbers the remaining ones,
-     * keeping their order.
+     * keeping their order.<p>
+     *
+     * Subclasses that keep the entries in their own storage must override this method,
+     * as this implementation only works on the storage of this class.
      *
      * @param used the indexes of the entries to keep
      * @param count the new total count of strings in the workbook, see {@link #getCount()}
      * @return the new index for each old index, or -1 for a removed entry, with one element per entry before the removal
      * @throws IllegalStateException if the indexes can't be changed, see {@link #setFixedIndexes()}
      * @throws IllegalArgumentException if {@code used} contains an index past the last entry
+     * @throws UnsupportedOperationException if called on a subclass that doesn't override this method
      * @since 6.1.0
      */
     @Internal
     public int[] removeUnusedEntries(SparseBitSet used, int count) {
+        if (getClass() != SharedStringsTable.class) {
+            // a subclass may keep the entries elsewhere, e.g. in a temp file, so changing
+            // only the storage of this class would leave its entries and counts inconsistent
+            throw new UnsupportedOperationException(getClass().getName()
+                    + " doesn't support removing unused shared strings");
+        }
         if (fixedIndexes) {
             throw new IllegalStateException("The shared strings are used by streamed rows, so they can't be renumbered");
         }
