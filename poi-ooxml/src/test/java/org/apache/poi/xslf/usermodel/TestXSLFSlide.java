@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
@@ -208,5 +209,14 @@ class TestXSLFSlide {
         assertEquals(partName, chart.getPackagePart().getPartName().getName());
 
         ppt.close();
+    }
+
+    @Test
+    void setNotesIsNotSupported() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide = ppt.createSlide();
+            XSLFNotes notes = ppt.getNotesSlide(slide);
+            assertThrows(UnsupportedOperationException.class, () -> slide.setNotes(notes));
+        }
     }
 }

@@ -2476,4 +2476,24 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertEquals("2-1,2-1,1+2,2-1,2-1,3+3,3+3,3+3,2-1,2-1,", sb.toString());
         }
     }
+
+    @Test
+    void removeMergedRegionOutOfRange() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            // without merged regions there is nothing to remove
+            sheet.removeMergedRegion(1);
+
+            sheet.addMergedRegion(CellRangeAddress.valueOf("A1:B2"));
+            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> sheet.removeMergedRegion(1));
+            assertEquals("Specified merged region index 1 is outside the allowable range (0..0)", ex.getMessage());
+            // the only region was removed for any index before
+            assertEquals(1, sheet.getNumMergedRegions());
+
+            sheet.addMergedRegion(CellRangeAddress.valueOf("C3:D4"));
+            assertThrows(IllegalArgumentException.class, () -> sheet.removeMergedRegion(-1));
+            assertThrows(IllegalArgumentException.class, () -> sheet.removeMergedRegion(2));
+            assertEquals(2, sheet.getNumMergedRegions());
+        }
+    }
 }

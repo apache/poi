@@ -166,8 +166,16 @@ public class EscherColorRef {
         this.colorRef = colorRef;
     }
     
+    /**
+     * @param source the data to read the color from
+     * @param start the offset of the color in {@code source}
+     * @param len 4 for just the color, or 6 if it is preceded by an opid
+     * @throws IllegalArgumentException if {@code len} is neither 4 nor 6
+     */
     public EscherColorRef(byte[] source, int start, int len) {
-        assert(len == 4 || len == 6);
+        if (len != 4 && len != 6) {
+            throw new IllegalArgumentException("Length must be 4 or 6, but was " + len);
+        }
         
         int offset = start;
         if (len == 6) {

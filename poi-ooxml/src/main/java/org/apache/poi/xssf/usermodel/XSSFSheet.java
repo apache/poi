@@ -1967,6 +1967,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * Removes a merged region of cells (hence letting them free)
      *
      * @param index of the region to unmerge
+     * @throws IllegalArgumentException if the sheet has merged regions, but none at {@code index}
      */
     @Override
     public void removeMergedRegion(int index) {
@@ -1976,7 +1977,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
         int size = ctMergeCells.sizeOfMergeCellArray();
-        assert(0 <= index && index < size);
+        if (index < 0 || index >= size) {
+            throw new IllegalArgumentException("Specified merged region index " + index
+                    + " is outside the allowable range (0.." + (size - 1) + ")");
+        }
         if (size > 1) {
             ctMergeCells.removeMergeCell(index);
             ctMergeCells.setCount(ctMergeCells.getCount() - 1);

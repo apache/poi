@@ -33,4 +33,10 @@ class TestHSLFSlideShowEncrypted {
         assertThrows(CorruptPowerPointFileException.class,
             () -> HSLFSlideShowEncrypted.addEncryptionRecord(records, new DocumentEncryptionAtom()));
     }
+
+    @Test
+    void addEncryptionRecordNeedsAtom() {
+        assertThrows(NullPointerException.class,
+            () -> HSLFSlideShowEncrypted.addEncryptionRecord(new Record[0], null));
+    }
 }

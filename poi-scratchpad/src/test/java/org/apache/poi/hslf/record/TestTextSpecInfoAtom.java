@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
@@ -78,5 +79,13 @@ public final class TestTextSpecInfoAtom  {
         assertEquals(1, run2.length);
 
         assertEquals(32, run2[0].getLength());
+    }
+
+    @Test
+    void testSetParentSizeNotPositive() {
+        TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
+        assertThrows(IllegalArgumentException.class, () -> spec.setParentSize(0));
+        assertThrows(IllegalArgumentException.class, () -> spec.setParentSize(-1));
+        assertEquals(5, spec.getTextSpecInfoRuns().length);
     }
 }
