@@ -381,11 +381,15 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * This method is not yet supported.
+     *
+     * @throws UnsupportedOperationException this method is not yet supported
+     */
     @Override
     @NotImplemented
     public void setNotes(Notes<XSLFShape,XSLFTextParagraph> notes) {
-        assert(notes instanceof XSLFNotes);
-        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException();
     }
 
     @Override

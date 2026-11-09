@@ -125,9 +125,14 @@ public final class TextSpecInfoAtom extends RecordAtom {
     /**
      * Adapts the size by enlarging the last {@link TextSpecInfoRun}
      * or chopping the runs to the given length
+     *
+     * @param size the new length, which must be positive
+     * @throws IllegalArgumentException if {@code size} isn't positive
      */
     public void setParentSize(int size) {
-        assert(size > 0);
+        if (size <= 0) {
+            throw new IllegalArgumentException("Size must be positive, but was " + size);
+        }
 
         try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             TextSpecInfoRun[] runs = getTextSpecInfoRuns();

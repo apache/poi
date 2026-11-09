@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -553,7 +554,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
 
 
     protected static org.apache.poi.hslf.record.Record[] addEncryptionRecord(org.apache.poi.hslf.record.Record[] records, DocumentEncryptionAtom dea) {
-        assert(dea != null);
+        Objects.requireNonNull(dea, "dea");
         int ueaIdx = -1, ptrIdx = -1, deaIdx = -1, idx = -1;
         for (org.apache.poi.hslf.record.Record r : records) {
             idx++;
