@@ -19,8 +19,10 @@ package org.apache.poi.hmef.attribute;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,6 +35,8 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public final class TestMAPIAttributes {
     private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
@@ -178,5 +182,37 @@ public final class TestMAPIAttributes {
 
         assertEquals("quick.doc", quick.getAttachments().get(0).getLongFilename());
         assertEquals(".doc", quick.getAttachments().get(0).getExtension());
+    }
+
+    /**
+     * A named property whose custom name length is too short to hold
+     *  the UTF-16 null terminator is rejected (GitHub #1546)
+     */
+    @ParameterizedTest
+    @ValueSource(ints = {-1, 0, 1})
+    void testNamedPropertyNameTooShort(int mplen) {
+        // One Boolean named property with a custom name of the given length
+        byte[] mapiData = new byte[]{
+                // One attribute
+                0x01, 0x00, 0x00, 0x00,
+                // Boolean, id 0x8000
+                0x0B, 0x00, 0x00, (byte) 0x80,
+                // GUID
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                // Custom name
+                0x01, 0x00, 0x00, 0x00,
+                // Name length
+                (byte) mplen, (byte) (mplen >> 8), (byte) (mplen >> 16), (byte) (mplen >> 24),
+                // Name data, padding and value
+                0x41, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
+        };
+        byte[] data = new byte[8 + mapiData.length + 2];
+        // Id 36867 (MAPI properties), type 6
+        LittleEndian.putUShort(data, 0, 0x9003);
+        LittleEndian.putUShort(data, 2, 0x0006);
+        LittleEndian.putInt(data, 4, mapiData.length);
+        System.arraycopy(mapiData, 0, data, 8, mapiData.length);
+
+        assertThrows(IOException.class, () -> TNEFAttribute.create(new ByteArrayInputStream(data)));
     }
 }
