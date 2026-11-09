@@ -18,6 +18,7 @@
 package org.apache.poi.hwmf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -45,5 +46,22 @@ class TestHwmfBitmapDib {
         try (LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
             assertEquals(data.length, dib.init(leis, data.length));
         }
+    }
+
+    @Test
+    void rejectsUnknownCompression() {
+        byte[] data = new byte[44];
+        // BitmapInfoHeader: size, 1x1 pixel, 1 plane, 24 bits per pixel, compression 0x7F isn't defined
+        LittleEndian.putInt(data, 0, 40);
+        LittleEndian.putInt(data, 4, 1);
+        LittleEndian.putInt(data, 8, 1);
+        LittleEndian.putUShort(data, 12, 1);
+        LittleEndian.putUShort(data, 14, 24);
+        LittleEndian.putInt(data, 16, 0x7F);
+
+        HwmfBitmapDib dib = new HwmfBitmapDib();
+        LittleEndianInputStream leis = new LittleEndianInputStream(new ByteArrayInputStream(data));
+        IOException ex = assertThrows(IOException.class, () -> dib.init(leis, data.length));
+        assertEquals("Invalid compression option (unknown) for bitcount (BI_BITCOUNT_5).", ex.getMessage());
     }
 }

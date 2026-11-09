@@ -374,6 +374,7 @@ public class HwmfBitmapDib implements GenericRecord {
             // 256 colors
             return readRGBQuad(leis, headerColorUsed == 0 ? 256 : Math.toIntExact(Math.min(headerColorUsed,256)));
         case BI_BITCOUNT_4:
+            checkCompression();
             switch (headerCompression) {
             case BI_RGB:
                 colorMaskB = 0x1F;
@@ -390,6 +391,7 @@ public class HwmfBitmapDib implements GenericRecord {
             }
         case BI_BITCOUNT_5:
         case BI_BITCOUNT_6:
+            checkCompression();
             switch (headerCompression) {
             case BI_RGB:
                 colorMaskR=0xFF;
@@ -404,6 +406,13 @@ public class HwmfBitmapDib implements GenericRecord {
             default:
                 throw new IOException("Invalid compression option ("+headerCompression+") for bitcount ("+headerBitCount+").");
             }
+        }
+    }
+
+    private void checkCompression() throws IOException {
+        // an unknown compression value is read as null
+        if (headerCompression == null) {
+            throw new IOException("Invalid compression option (unknown) for bitcount ("+headerBitCount+").");
         }
     }
 
