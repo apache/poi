@@ -339,8 +339,11 @@ public class HemfPlusRegion {
         }
         // A 32-bit unsigned integer that specifies the type of data in the RegionNodeData field.
         // This value MUST be defined in the RegionNodeDataType enumeration
-        EmfPlusRegionNodeDataType type = EmfPlusRegionNodeDataType.valueOf(leis.readInt());
-        assert(type != null);
+        int typeId = leis.readInt();
+        EmfPlusRegionNodeDataType type = EmfPlusRegionNodeDataType.valueOf(typeId);
+        if (type == null) {
+            throw new RecordFormatException("Unknown region node type 0x" + Integer.toHexString(typeId));
+        }
         EmfPlusRegionNodeData nd = type.constructor.get();
         con.accept(nd);
         nd.setNodeType(type);

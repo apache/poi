@@ -67,6 +67,18 @@ class TestHemfPlusRegion {
         assertEquals("Region nodes are nested deeper than 1000 levels", ex.getMessage());
     }
 
+    /**
+     * An unknown region node type is rejected instead of causing a NullPointerException
+     */
+    @Test
+    void rejectsUnknownNodeType() {
+        // AND with an unknown left child
+        byte[] data = regionData(EmfPlusRegionNodeDataType.AND.id, 0x12345678);
+
+        RecordFormatException ex = assertThrows(RecordFormatException.class, () -> parse(data));
+        assertEquals("Unknown region node type 0x12345678", ex.getMessage());
+    }
+
     private static byte[] regionData(int... nodeTypes) {
         byte[] data = new byte[8 + nodeTypes.length * 4];
         // EmfPlusGraphicsVersion: metafile signature 0xDBC01, graphics version 1
