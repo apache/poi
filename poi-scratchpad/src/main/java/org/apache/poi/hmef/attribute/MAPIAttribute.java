@@ -166,6 +166,10 @@ public class MAPIAttribute {
                } else {
                   // Custom name was stored
                   int mplen = LittleEndian.readInt(inp);
+                  if (mplen < 2) {
+                     // Must hold at least the 2-byte UTF-16 null terminator
+                     throw new IOException("Invalid named MAPI property name length " + mplen + ", must be at least 2");
+                  }
                   byte[] mpdata = IOUtils.safelyAllocate(mplen, MAX_RECORD_LENGTH, "MAPIAttribute.setMaxRecordLength()");
                   if (IOUtils.readFully(inp, mpdata) < 0) {
                      throw new IOException("Not enough data to read " + mplen + " bytes for attribute name");
