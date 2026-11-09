@@ -1227,6 +1227,75 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
+     * Returns the number of breaks in the run content.
+     *
+     * @return number of break elements in this run
+     * @see #getBreak(int)
+     * @since 6.1.0
+     */
+    public int getNumberOfBreaks() {
+        return run.sizeOfBrArray();
+    }
+
+    /**
+     * Get the type of the break at the given position in the run content.
+     * <p>
+     * A run may contain any number of breaks, mixed with text, tabs and other
+     * run content. The position only counts break elements, in document
+     * order: it is not related to the positions used by text-related methods
+     * such as {@link #getText(int)}, so it does not tell where the break is
+     * placed relative to the text of the run.
+     * </p>
+     * <p>
+     * If the break does not specify a type, {@link BreakType#TEXT_WRAPPING}
+     * is returned, as that is the default value defined by the specification.
+     * </p>
+     *
+     * @param pos the 0-based position of the break among the breaks of this
+     *  run, lower than {@link #getNumberOfBreaks()}
+     * @return the type of the break at the given position, or {@code null} if
+     *  there is no break at that position
+     * @see #addBreak(BreakType)
+     * @since 6.1.0
+     */
+    public BreakType getBreak(int pos) {
+        if (pos < 0 || pos >= run.sizeOfBrArray()) {
+            return null;
+        }
+        STBrType.Enum type = run.getBrArray(pos).getType();
+        return type == null ? BreakType.TEXT_WRAPPING : BreakType.valueOf(type.intValue());
+    }
+
+    /**
+     * Get the clear setting of the break at the given position in the run
+     * content.
+     * <p>
+     * The clear setting specifies where text restarts after a text wrapping
+     * break that is next to a floating object. The position only counts
+     * break elements, in document order, as in {@link #getBreak(int)}.
+     * </p>
+     * <p>
+     * If the break does not specify a clear setting, {@link BreakClear#NONE}
+     * is returned, as that is the default value defined by the specification.
+     * </p>
+     *
+     * @param pos the 0-based position of the break among the breaks of this
+     *  run, lower than {@link #getNumberOfBreaks()}
+     * @return the clear setting of the break at the given position, or
+     *  {@code null} if there is no break at that position
+     * @see #addBreak(BreakClear)
+     * @see #getBreak(int)
+     * @since 6.1.0
+     */
+    public BreakClear getBreakClear(int pos) {
+        if (pos < 0 || pos >= run.sizeOfBrArray()) {
+            return null;
+        }
+        STBrClear.Enum clear = run.getBrArray(pos).getClear();
+        return clear == null ? BreakClear.NONE : BreakClear.valueOf(clear.intValue());
+    }
+
+    /**
      * Specifies that a tab shall be placed at the current location in
      * the run content.
      */

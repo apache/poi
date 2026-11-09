@@ -58,6 +58,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STEm;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STThemeColor;
@@ -366,6 +367,105 @@ class TestXWPFRun {
         run.setText("TEXT2");
         run.addBreak(BreakType.TEXT_WRAPPING);
         assertEquals(2, run.getCTR().sizeOfBrArray());
+    }
+
+    @Test
+    void testGetBreak() {
+        XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), irb);
+        assertEquals(0, run.getNumberOfBreaks());
+        assertNull(run.getBreak(0));
+
+        run.setText("TEXT1");
+        assertEquals(0, run.getNumberOfBreaks());
+        assertNull(run.getBreak(0));
+
+        // a break without a type defaults to text wrapping
+        run.addBreak();
+        assertEquals(1, run.getNumberOfBreaks());
+        assertEquals(BreakType.TEXT_WRAPPING, run.getBreak(0));
+        assertNull(run.getBreak(1));
+        assertNull(run.getBreak(-1));
+
+        // breaks are indexed among breaks only, regardless of other run content
+        run.setText("TEXT2");
+        run.addTab();
+        run.addBreak(BreakType.PAGE);
+        run.setText("TEXT3");
+        run.addBreak(BreakType.COLUMN);
+        assertEquals(3, run.getNumberOfBreaks());
+        assertEquals(3, run.getNumberOfTexts());
+        assertEquals(BreakType.TEXT_WRAPPING, run.getBreak(0));
+        assertEquals(BreakType.PAGE, run.getBreak(1));
+        assertEquals(BreakType.COLUMN, run.getBreak(2));
+        assertNull(run.getBreak(3));
+
+        for (BreakType type : BreakType.values()) {
+            XWPFRun r = new XWPFRun(CTR.Factory.newInstance(), irb);
+            r.addBreak(type);
+            assertEquals(type, r.getBreak(0));
+        }
+
+        XWPFRun clearRun = new XWPFRun(CTR.Factory.newInstance(), irb);
+        clearRun.addBreak(BreakClear.ALL);
+        assertEquals(BreakType.TEXT_WRAPPING, clearRun.getBreak(0));
+
+        // breaks created directly in the XML
+        XWPFRun xmlRun = new XWPFRun(CTR.Factory.newInstance(), irb);
+        CTR ctr = xmlRun.getCTR();
+        ctr.addNewT().setStringValue("T1");
+        ctr.addNewBr().setType(STBrType.COLUMN);
+        ctr.addNewT().setStringValue("T2");
+        ctr.addNewBr();
+        assertEquals(2, xmlRun.getNumberOfBreaks());
+        assertEquals(BreakType.COLUMN, xmlRun.getBreak(0));
+        assertEquals(BreakType.TEXT_WRAPPING, xmlRun.getBreak(1));
+        assertNull(xmlRun.getBreak(2));
+    }
+
+    @Test
+    void testGetBreakClear() {
+        XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), irb);
+        assertNull(run.getBreakClear(0));
+
+        run.setText("TEXT1");
+        assertNull(run.getBreakClear(0));
+
+        // a break without a clear attribute defaults to none
+        run.addBreak();
+        assertEquals(BreakClear.NONE, run.getBreakClear(0));
+        assertNull(run.getBreakClear(1));
+        assertNull(run.getBreakClear(-1));
+
+        // breaks are indexed among breaks only, regardless of other run content
+        run.setText("TEXT2");
+        run.addBreak(BreakType.PAGE);
+        run.addTab();
+        run.addBreak(BreakClear.RIGHT);
+        assertEquals(BreakClear.NONE, run.getBreakClear(0));
+        assertEquals(BreakClear.NONE, run.getBreakClear(1));
+        assertEquals(BreakClear.RIGHT, run.getBreakClear(2));
+        assertEquals(BreakType.TEXT_WRAPPING, run.getBreak(2));
+        assertNull(run.getBreakClear(3));
+
+        for (BreakClear clear : BreakClear.values()) {
+            XWPFRun r = new XWPFRun(CTR.Factory.newInstance(), irb);
+            r.addBreak(clear);
+            assertEquals(clear, r.getBreakClear(0));
+        }
+
+        // breaks created directly in the XML
+        XWPFRun xmlRun = new XWPFRun(CTR.Factory.newInstance(), irb);
+        CTR ctr = xmlRun.getCTR();
+        ctr.addNewBr().setClear(STBrClear.ALL);
+        ctr.addNewT().setStringValue("T1");
+        ctr.addNewBr().setClear(STBrClear.NONE);
+        CTBr br = ctr.addNewBr();
+        br.setType(STBrType.PAGE);
+        br.setClear(STBrClear.LEFT);
+        assertEquals(BreakClear.ALL, xmlRun.getBreakClear(0));
+        assertEquals(BreakClear.NONE, xmlRun.getBreakClear(1));
+        assertEquals(BreakClear.LEFT, xmlRun.getBreakClear(2));
+        assertEquals(BreakType.PAGE, xmlRun.getBreak(2));
     }
 
     /**
