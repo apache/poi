@@ -1503,6 +1503,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      *  cells, i.e. when this workbook is used by an {@code SXSSFWorkbook} with a shared strings
      *  table, or when it has shared workbook revision logs, or if a cell refers to an entry
      *  past the end of the table
+     * @throws UnsupportedOperationException if the shared strings table is a subclass of
+     *  {@link SharedStringsTable} that doesn't support it, see
+     *  {@link SharedStringsTable#removeUnusedEntries(com.zaxxer.sparsebits.SparseBitSet, int)}
      * @since 6.1.0
      */
     public int removeUnusedSharedStrings() {
