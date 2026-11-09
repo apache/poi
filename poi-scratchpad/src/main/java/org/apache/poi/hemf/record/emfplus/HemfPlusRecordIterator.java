@@ -85,7 +85,9 @@ public class HemfPlusRecordIterator implements Iterator<HemfPlusRecord> {
 
         try {
             long readBytes = record.init(leis, dataSize, recordId, flags);
-            assert (readBytes <= recordSize-12);
+            if (readBytes > recordSize-12) {
+                throw new RecordFormatException("Record limit exceeded - readBytes: "+readBytes+" / remBytes: "+(recordSize-12));
+            }
             leis.skipFully((int)(recordSize-12-readBytes));
         } catch (IOException e) {
             throw new RecordFormatException(e);

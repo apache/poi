@@ -41,6 +41,7 @@ import java.util.function.Supplier;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfFill;
@@ -51,6 +52,7 @@ import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
 import org.apache.poi.hwmf.record.HwmfText;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -63,6 +65,8 @@ import org.apache.poi.util.StringUtil;
 
 @SuppressWarnings("WeakerAccess")
 public final class HemfPlusDraw {
+    private static final Logger LOG = PoiLogManager.getLogger(HemfPlusDraw.class);
+
     private static final int MAX_OBJECT_SIZE = 1_000_000;
 
     private HemfPlusDraw() {}
@@ -204,9 +208,12 @@ public final class HemfPlusDraw {
             // A 32-bit unsigned integer that specifies an index in the EMF+ Object Table for an EmfPlusPen object
             // to use for drawing the EmfPlusPath. The value MUST be zero to 63, inclusive.
             penId = leis.readInt();
-            assert (0 <= penId && penId <= 63);
-
-            assert (dataSize == LittleEndianConsts.INT_SIZE);
+            if (penId < 0 || penId > 63) {
+                LOG.atWarn().log("Unexpected pen id in emf+ file: {}", penId);
+            }
+            if (dataSize != LittleEndianConsts.INT_SIZE) {
+                LOG.atWarn().log("Unexpected data size of DrawPath record in emf+ file: {}", dataSize);
+            }
 
             return LittleEndianConsts.INT_SIZE;
         }
@@ -370,7 +377,9 @@ public final class HemfPlusDraw {
             // A 32-bit signed integer that defines the units of the SrcRect field.
             // It MUST be the UnitPixel value of the UnitType enumeration
             srcUnit = EmfPlusUnitType.valueOf(leis.readInt());
-            assert(srcUnit == EmfPlusUnitType.Pixel);
+            if (srcUnit != EmfPlusUnitType.Pixel) {
+                LOG.atWarn().log("Unexpected source unit of DrawImagePoints record in emf+ file: {}", srcUnit);
+            }
 
             int size = 2 * LittleEndianConsts.INT_SIZE;
 
@@ -380,7 +389,9 @@ public final class HemfPlusDraw {
             // A 32-bit unsigned integer that specifies the number of points in the PointData array.
             // Exactly 3 points MUST be specified.
             int count = leis.readInt();
-            assert(count == 3);
+            if (count != 3) {
+                LOG.atWarn().log("Unexpected point count of DrawImagePoints record in emf+ file: {}", count);
+            }
             size += LittleEndianConsts.INT_SIZE;
 
             BiFunction<LittleEndianInputStream, Point2D, Integer> readPoint;
@@ -518,7 +529,9 @@ public final class HemfPlusDraw {
             // A 32-bit signed integer that defines the units of the SrcRect field.
             // It MUST be the UnitPixel value of the UnitType enumeration
             srcUnit = EmfPlusUnitType.valueOf(leis.readInt());
-            assert(srcUnit == EmfPlusUnitType.Pixel);
+            if (srcUnit != EmfPlusUnitType.Pixel) {
+                LOG.atWarn().log("Unexpected source unit of DrawImage record in emf+ file: {}", srcUnit);
+            }
 
             int size = 2 * LittleEndianConsts.INT_SIZE;
 

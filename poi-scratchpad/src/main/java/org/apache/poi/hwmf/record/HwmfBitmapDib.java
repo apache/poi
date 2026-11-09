@@ -254,8 +254,6 @@ public class HwmfBitmapDib implements GenericRecord {
         // BI_RGB, BI_BITFIELDS, or BI_CMYK.
         // Otherwise, the size of aData MUST be the BitmapInfoHeader Object value ImageSize.
 
-        assert( headerSize != 0x0C || bodySize == headerImageSize);
-
         if (headerSize == 0x0C ||
             headerCompression == Compression.BI_RGB ||
             headerCompression == Compression.BI_BITFIELDS ||
@@ -302,6 +300,8 @@ public class HwmfBitmapDib implements GenericRecord {
             // A 16-bit unsigned integer that defines the format of each pixel, and the
             // maximum number of colors in the DIB.
             headerBitCount = BitCount.valueOf(leis.readUShort());
+            // a BitmapCoreHeader has no compression field, its bitmaps are uncompressed
+            headerCompression = Compression.BI_RGB;
             size += 4*LittleEndianConsts.SHORT_SIZE;
         } else {
             // fix header size, sometimes this is invalid
@@ -374,6 +374,7 @@ public class HwmfBitmapDib implements GenericRecord {
             // 256 colors
             return readRGBQuad(leis, headerColorUsed == 0 ? 256 : Math.toIntExact(Math.min(headerColorUsed,256)));
         case BI_BITCOUNT_4:
+            checkCompression();
             switch (headerCompression) {
             case BI_RGB:
                 colorMaskB = 0x1F;
@@ -390,6 +391,7 @@ public class HwmfBitmapDib implements GenericRecord {
             }
         case BI_BITCOUNT_5:
         case BI_BITCOUNT_6:
+            checkCompression();
             switch (headerCompression) {
             case BI_RGB:
                 colorMaskR=0xFF;
@@ -404,6 +406,13 @@ public class HwmfBitmapDib implements GenericRecord {
             default:
                 throw new IOException("Invalid compression option ("+headerCompression+") for bitcount ("+headerBitCount+").");
             }
+        }
+    }
+
+    private void checkCompression() throws IOException {
+        // an unknown compression value is read as null
+        if (headerCompression == null) {
+            throw new IOException("Invalid compression option (unknown) for bitcount ("+headerBitCount+").");
         }
     }
 

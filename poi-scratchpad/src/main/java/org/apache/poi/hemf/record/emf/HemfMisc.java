@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.usermodel.HemfPicture;
@@ -48,6 +49,7 @@ import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.hwmf.record.HwmfPalette.PaletteEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
@@ -55,6 +57,8 @@ import org.apache.poi.util.LittleEndianInputStream;
 
 @SuppressWarnings("WeakerAccess")
 public class HemfMisc {
+    private static final Logger LOG = PoiLogManager.getLogger(HemfMisc.class);
+
 
     public enum HemfModifyWorldTransformMode {
         /**
@@ -625,7 +629,9 @@ public class HemfMisc {
             final int numStyleEntries = (int) leis.readUInt();
             size += LittleEndianConsts.INT_SIZE;
 
-            assert (numStyleEntries == 0 || penStyle.getLineDash() == HwmfLineDash.USERSTYLE);
+            if (numStyleEntries != 0 && penStyle.getLineDash() != HwmfLineDash.USERSTYLE) {
+                LOG.atWarn().log("Unexpected style entries for a pen without user style in emf file: {}", numStyleEntries);
+            }
 
             // An optional array of 32-bit unsigned integers that defines the lengths of
             // dashes and gaps in the line drawn by this pen, when the value of PenStyle is
