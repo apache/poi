@@ -29,7 +29,9 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.storage.RawDataUtil;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.StringUtil;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -150,5 +152,24 @@ final class TestDocumentProperty {
         property.writeData(stream);
         byte[] output = stream.toByteArray();
         assertArrayEquals(testblock, output);
+    }
+
+    /**
+     * A name size larger than the name field is capped to the field
+     *  (GitHub #1545)
+     */
+    @Test
+    void testNameSizeTooLarge() {
+        byte[] input = new byte[128];
+        // Fill the whole 64-byte name field, with no null terminator
+        for (int i = 0; i < 32; i++) {
+            LittleEndian.putShort(input, i * 2, (short) 'A');
+        }
+        LittleEndian.putShort(input, 0x40, (short) 0x7FFE);
+        // Document type
+        input[0x42] = 2;
+
+        DocumentProperty property = new DocumentProperty(0, input, 0);
+        assertEquals(StringUtil.repeat('A', 31), property.getName());
     }
 }

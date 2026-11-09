@@ -138,7 +138,8 @@ public abstract class Property implements Child, POIFSViewable {
         _start_block       = new IntegerField(_start_block_offset, _raw_data);
         _size              = new IntegerField(_size_offset, _raw_data);
         _index             = index;
-        int name_length = (_name_size.get() / LittleEndianConsts.SHORT_SIZE) - 1;
+        // The name field holds at most _max_name_length characters
+        int name_length = Math.min((_name_size.get() / LittleEndianConsts.SHORT_SIZE) - 1, _max_name_length);
 
         if (name_length < 1)
         {
