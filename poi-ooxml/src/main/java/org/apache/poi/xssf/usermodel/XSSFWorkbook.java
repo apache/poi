@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.commons.collections4.ListValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -78,6 +80,7 @@ import org.apache.poi.ss.usermodel.CellReferenceType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Date1904Support;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -114,6 +117,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
     private static final Pattern GET_ALL_PICTURES_PATTERN = Pattern.compile("/xl/media/.*?");
     private static final int MAX_NODE_DEPTH = 1000;
+    private static final String REVISION_HEADERS_RELATION =
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/revisionHeaders";
 
     /**
      * Images formats supported by XSSF but not by HSSF
@@ -1437,7 +1442,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * This method makes sure that if the removed sheet was active, another sheet will become
      * active in its place.  Furthermore, if the removed sheet was the only selected sheet, another
      * sheet will become selected.  The newly active/selected sheet will have the same index, or
-     * one less if the removed sheet was the last in the workbook.
+     * one less if the removed sheet was the last in the workbook.<p>
+     *
+     * The text of the removed sheet's cells stays in the shared strings table, and so in the
+     * written file. Call {@link #removeUnusedSharedStrings()} to remove it.
      *
      * @param index of the sheet  (0-based)
      */
@@ -1475,6 +1483,95 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         } else if (active > index) {
             // removed sheet was below the active one => active is one less now
             setActiveSheet(active-1);
+        }
+    }
+
+    /**
+     * Removes the entries of the shared strings table that no cell uses, e.g. the text of
+     * removed sheets or of cells that were changed, and renumbers the cells which use the
+     * remaining entries.<p>
+     *
+     * The shared strings table only grows while a workbook is edited, so its entries stay in
+     * the written file after the cells using them are removed. This method scans every cell of
+     * the workbook, so it is best called once, before writing.<p>
+     *
+     * Indexes returned by {@link SharedStringsTable#addSharedStringItem(org.apache.poi.ss.usermodel.RichTextString)} before
+     * this call are no longer valid afterwards.
+     *
+     * @return the number of entries removed
+     * @throws IllegalStateException if the indexes of the shared strings are used outside the
+     *  cells, i.e. when this workbook is used by an {@code SXSSFWorkbook} with a shared strings
+     *  table, or when it has shared workbook revision logs, or if a cell refers to an entry
+     *  past the end of the table
+     * @throws UnsupportedOperationException if the shared strings table is a subclass of
+     *  {@link SharedStringsTable} that doesn't support it, see
+     *  {@link SharedStringsTable#removeUnusedEntries(com.zaxxer.sparsebits.SparseBitSet, int)}
+     * @since 6.1.0
+     */
+    public int removeUnusedSharedStrings() {
+        SharedStringsTable sst = getSharedStringSource();
+        if (sst == null) {
+            return 0;
+        }
+        try {
+            // the cells in revision logs refer to shared strings too, but aren't parsed by POI
+            if (!getPackagePart().getRelationshipsByType(REVISION_HEADERS_RELATION).isEmpty()) {
+                throw new IllegalStateException("The workbook has revision logs, which use the shared strings");
+            }
+        } catch (InvalidFormatException e) {
+            throw new POIXMLException(e);
+        }
+
+        SparseBitSet used = new SparseBitSet();
+        int count = 0;
+        for (XSSFSheet sheet : sheets) {
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    int idx = getSharedStringIndex((XSSFCell) cell);
+                    if (idx >= 0) {
+                        used.set(idx);
+                        count++;
+                    }
+                }
+            }
+        }
+
+        int[] newIndexes;
+        try {
+            newIndexes = sst.removeUnusedEntries(used, count);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+        int removed = (int) Arrays.stream(newIndexes).filter(i -> i < 0).count();
+        if (removed > 0) {
+            for (XSSFSheet sheet : sheets) {
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
+                        XSSFCell xcell = (XSSFCell) cell;
+                        int idx = getSharedStringIndex(xcell);
+                        if (idx >= 0) {
+                            xcell.getCTCell().setV(Integer.toString(newIndexes[idx]));
+                        }
+                    }
+                }
+            }
+        }
+        return removed;
+    }
+
+    /**
+     * @return the shared string index of the cell, or -1 if it doesn't have a valid one
+     */
+    private static int getSharedStringIndex(XSSFCell cell) {
+        CTCell ct = cell.getCTCell();
+        if (ct.getT() != STCellType.S || !ct.isSetV()) {
+            return -1;
+        }
+        try {
+            return Math.max(-1, Integer.parseInt(ct.getV()));
+        } catch (NumberFormatException e) {
+            // XSSFCell reads such a value as an empty string, which renumbering doesn't change
+            return -1;
         }
     }
 
