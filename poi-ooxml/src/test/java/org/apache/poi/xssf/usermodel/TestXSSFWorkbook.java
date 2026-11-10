@@ -43,6 +43,7 @@ import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellReferenceType;
@@ -1282,6 +1283,66 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
             wb.removeSheetAt(0);
             assertTrue(wb.getPackage().containPart(image));
+        }
+    }
+
+    @Test
+    void testRemoveSheetRemovesPivotCache() throws IOException {
+        try (XSSFWorkbook wb = openSampleWorkbook("ExcelPivotTableSample.xlsx")) {
+            // Tabelle2 has the pivot table with cache 0, Tabelle3 the one with cache 2
+            wb.removeSheetAt(wb.getSheetIndex("Tabelle2"));
+            assertEquals(1, wb.getPivotTables().size());
+            assertEquals(2, wb.getPivotTables().get(0).getCTPivotTableDefinition().getCacheId());
+
+            try (XSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                CTPivotCache[] caches = wb2.getCTWorkbook().getPivotCaches().getPivotCacheArray();
+                assertEquals(1, caches.length);
+                assertEquals(2, caches[0].getCacheId());
+                assertEquals(0, wb2.getPackage().getPartsByName(Pattern.compile("/xl/pivotTables/pivotTable1.xml")).size());
+                assertEquals(0, wb2.getPackage().getPartsByName(Pattern.compile("/xl/pivotCache/pivotCache.*1.xml")).size());
+                assertEquals(2, wb2.getPackage().getPartsByName(Pattern.compile("/xl/pivotCache/pivotCache.*2.xml")).size());
+                XSSFPivotTable pivotTable = wb2.getSheet("Tabelle3").getPivotTables().get(0);
+                assertNotNull(pivotTable.getPivotCacheDefinition());
+
+                // removing the last pivot table removes the pivotCaches element
+                wb2.removeSheetAt(wb2.getSheetIndex("Tabelle3"));
+                assertFalse(wb2.getCTWorkbook().isSetPivotCaches(), "pivotCaches should be removed");
+                assertEquals(0, wb2.getPackage().getPartsByName(Pattern.compile("/xl/pivot\\w+/pivot\\w+\\.xml")).size());
+            }
+        }
+    }
+
+    @Test
+    void testRemoveSheetRemovesCreatedPivotCache() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet data = wb.createSheet("Data");
+            for (int r = 0; r < 3; r++) {
+                XSSFRow row = data.createRow(r);
+                row.createCell(0).setCellValue(r == 0 ? "Name" : "secret" + r);
+                row.createCell(1).setCellValue(r == 0 ? "Value" : String.valueOf(r));
+            }
+            AreaReference source = new AreaReference("Data!A1:B3", SpreadsheetVersion.EXCEL2007);
+            wb.createSheet("Pivot1").createPivotTable(source, new CellReference("A1"));
+            wb.createSheet("Pivot2").createPivotTable(source, new CellReference("A1"));
+
+            wb.removeSheetAt(wb.getSheetIndex("Pivot1"));
+            assertEquals(1, wb.getPivotTables().size());
+            assertEquals(1, wb.getCTWorkbook().getPivotCaches().sizeOfPivotCacheArray());
+            assertEquals(3, wb.getCTWorkbook().getPivotCaches().getPivotCacheArray(0).getCacheId());
+            assertEquals(0, wb.getPackage().getPartsByName(Pattern.compile("/xl/pivot\\w+/pivot\\w+1\\.xml")).size());
+
+            // a new pivot table gets ids and part names which don't clash with the remaining one
+            XSSFPivotTable created = wb.createSheet("Pivot3").createPivotTable(source, new CellReference("A1"));
+            assertEquals(4, created.getCTPivotTableDefinition().getCacheId());
+
+            try (XSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                assertEquals(2, wb2.getPivotTables().size());
+                assertEquals(2, wb2.getCTWorkbook().getPivotCaches().sizeOfPivotCacheArray());
+                assertEquals(6, wb2.getPackage().getPartsByName(Pattern.compile("/xl/pivot\\w+/pivot\\w+\\.xml")).size());
+                for (XSSFPivotTable pivotTable : wb2.getPivotTables()) {
+                    assertNotNull(pivotTable.getPivotCacheDefinition());
+                }
+            }
         }
     }
 

@@ -30,12 +30,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.regex.Pattern;
 
@@ -1445,11 +1447,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public void removeSheetAt(int index) {
         validateSheetIndex(index);
 
+        XSSFSheet sheet = getSheetAt(index);
+        List<XSSFPivotTable> removedPivotTables = sheet.getPivotTables();
+
         onSheetDelete(index);
 
-        XSSFSheet sheet = getSheetAt(index);
         removeRelation(sheet);
         sheets.remove(index);
+
+        // removing the sheet also removes the pivot caches only its pivot tables used
+        if (!removedPivotTables.isEmpty()) {
+            pivotTables.removeAll(removedPivotTables);
+            removeUnusedPivotCaches(removedPivotTables);
+        }
 
         // removing the sheet also removes the pictures only it used
         if (pictures != null) {
@@ -1475,6 +1485,43 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         } else if (active > index) {
             // removed sheet was below the active one => active is one less now
             setActiveSheet(active-1);
+        }
+    }
+
+    /**
+     * Remove the pivot caches of the given (removed) pivot tables which no remaining pivot table uses:
+     * the {@code pivotCache} entry in the workbook, the workbook relationship and with it the
+     * pivot cache definition and records parts, which hold a copy of the pivot's source data.
+     */
+    private void removeUnusedPivotCaches(List<XSSFPivotTable> removedPivotTables) {
+        if (!workbook.isSetPivotCaches()) {
+            return;
+        }
+        Set<Long> usedCacheIds = new HashSet<>();
+        for (XSSFPivotTable pivotTable : pivotTables) {
+            usedCacheIds.add(pivotTable.getCTPivotTableDefinition().getCacheId());
+        }
+        Set<Long> unusedCacheIds = new HashSet<>();
+        for (XSSFPivotTable pivotTable : removedPivotTables) {
+            long cacheId = pivotTable.getCTPivotTableDefinition().getCacheId();
+            if (!usedCacheIds.contains(cacheId)) {
+                unusedCacheIds.add(cacheId);
+            }
+        }
+        CTPivotCaches caches = workbook.getPivotCaches();
+        for (int i = caches.sizeOfPivotCacheArray() - 1; i >= 0; i--) {
+            CTPivotCache cache = caches.getPivotCacheArray(i);
+            if (!unusedCacheIds.contains(cache.getCacheId())) {
+                continue;
+            }
+            String rId = cache.getId();
+            caches.removePivotCache(i);
+            if (rId != null && getRelationById(rId) != null) {
+                removeRelation(rId);
+            }
+        }
+        if (caches.sizeOfPivotCacheArray() == 0) {
+            workbook.unsetPivotCaches();
         }
     }
 
@@ -2463,10 +2510,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         } else {
             caches = ctWorkbook.addNewPivotCaches();
         }
+        // the cache ids of removed or loaded pivot tables need not be contiguous
+        long cacheId = pivotTables.size() + 1;
+        for (CTPivotCache existing : caches.getPivotCacheArray()) {
+            cacheId = Math.max(cacheId, existing.getCacheId() + 1);
+        }
         CTPivotCache cache = caches.addNewPivotCache();
-
-        final int tableId = pivotTables.size() + 1;
-        cache.setCacheId(tableId);
+        cache.setCacheId(cacheId);
         cache.setId(rId);
         return cache;
     }
