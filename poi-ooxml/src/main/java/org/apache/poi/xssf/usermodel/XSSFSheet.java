@@ -4752,14 +4752,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         int tableId = getWorkbook().getPivotTables().size()+1;
         //Create relationship between pivotTable and the worksheet
         XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE,
-                getWorkbook().getXssfFactory(), tableId);
+                getWorkbook().getXssfFactory(), getNextPartNumber(XSSFRelation.PIVOT_TABLE, tableId));
         pivotTable.setParentSheet(this);
         wb.addPivotTable(pivotTable);
         XSSFWorkbook workbook = getWorkbook();
 
         //Create relationship between the pivot cache definition and the workbook
         XSSFPivotCacheDefinition pivotCacheDefinition = (XSSFPivotCacheDefinition) workbook.
-                createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, getWorkbook().getXssfFactory(), tableId);
+                createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, getWorkbook().getXssfFactory(),
+                        getNextPartNumber(XSSFRelation.PIVOT_CACHE_DEFINITION, tableId));
         String rId = workbook.getRelationId(pivotCacheDefinition);
         //Create relationship between pivotTable and pivotCacheDefinition without creating a new instance
         PackagePart pivotPackagePart = pivotTable.getPackagePart();
@@ -4773,7 +4774,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         //Create relationship between pivotcacherecord and pivotcachedefinition
         XSSFPivotCacheRecords pivotCacheRecords = (XSSFPivotCacheRecords) pivotCacheDefinition.
-                createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, getWorkbook().getXssfFactory(), tableId);
+                createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, getWorkbook().getXssfFactory(),
+                        getNextPartNumber(XSSFRelation.PIVOT_CACHE_RECORDS, tableId));
 
         //Set relationships id for pivotCacheDefinition to pivotCacheRecords
         pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition().setId(pivotCacheDefinition.getRelationId(pivotCacheRecords));
